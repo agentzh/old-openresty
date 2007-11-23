@@ -1,9 +1,37 @@
 use Test::Base;
+use LWP::UserAgent;
+#use Smart::Comments;
 
 plan tests => 3 * blocks();
 
+my $ua = LWP::UserAgent->new;
+my $host = 'http://localhost';
+
 run {
-    my $
+    my $block = shift;
+    my $name = $block->name;
+    my $request = $block->request;
+    my $type = 'text/plain';
+    if ($request =~ /^(GET|POST|HEAD|PUT|DELETE)\s+(\S+)\s*\n(.*)/s) {
+        my ($method, $url, $body) = ($1, $2, $3);
+        ### $method
+        ### $url
+        ### $body
+        my $req = HTTP::Request->new($method);
+        $req->header('Content-Type' => $type);
+        $req->header('Accept', '*/*');
+        $req->url($host . $url);
+        if ($body) {
+            $req->content($body);
+        }
+        my $res = $ua->request($req);
+        ok $res->is_success, "request returns OK - $name";
+        is $res->content, $block->response, "response content OK - $name";
+    } else {
+        my ($firstline) = ($request =~ /^([^\n]*)/s);
+        die "Invalid request head: \"$firstline\" in $name\n";
+    }
+
 };
 
 __DATA__
