@@ -1,4 +1,8 @@
-lighttpd configuration:
+To run "make test", you need to have lighttpd and postgres installed.
+Also you need to create an empty database named "test" and also make user
+'agentzh' a Pg login account (with the password 'agentzh').
+
+Sample lighttpd configuration:
 
 # lighttpd.conf
 fastcgi.server = (
