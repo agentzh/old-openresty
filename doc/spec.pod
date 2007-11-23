@@ -1,0 +1,650 @@
+=encoding UTF-8
+
+=head1 NAME
+
+OpenAPI REST Protocol Specification [draft] - OpenAPI REST 协议白皮书（草案）
+
+=head1 AUTHOR
+
+Agent Zhang (章亦春) <agentzh@yahoo.cn>
+
+=head1 VERSION
+
+    CREATED:       Nov 19, 2007
+    LAST MODIFIED: Nov 22, 2007
+    VERSION:       0.01
+
+=head1 DESCRIPTION
+
+本文定义了 OpenAPI 基于 REST 风格的 web service API 协议组。
+
+=head2 DESIGN GOALS
+
+=over
+
+=item *
+
+确保对于简单的需求，API 足够简单；同时又能满足很复杂的高级需求。
+
+"Make simple things easy, hard things possible" -- Larry Wall
+
+API 应能映射到绝大部分常见的 SQL 请求语句 ，但应能阻止 SQL injection 的发生。
+
+=item *
+
+API 应该足够直观和友好，应尽量做到 DWIM (Do What I mean).
+
+=item *
+
+确保 API 能够在绝大多数支持 HTTP 1.1 和 cookie 的环境中使用。包括但不限于网页中的 Javascript, 应用程序中的 Perl, C/C++, Java, C#, VB，
+以及纯命令行工具 wget 和 curl 等等。
+
+=item *
+
+来自客户的 API 访问请求应保持无状态。单个请求中应包含所有信息（除了用户身分认证可以存储在 cookie 中供反复使用以外）。
+
+=item *
+
+来自服务器的数据格式（XML，JSON，YAML）应能由客户自由控制，同时客户能指定编码(charset).
+
+=item *
+
+API 在形式上必须保持统一和一致。同时单次返回的结果中应包含足够的导航信息，帮助用户进行后续请求，以取得与之相关的其他数据。
+
+=item *
+
+出于安全性方面的考虑，数据存储应采用类似 wiki 和 Subversion 版本控制方式，应提供接口允许用户拄撤销和恢复临近一段时间的操作或数据.
+
+=item *
+
+API 应支持自省能力。用户可以通过 API 获得有关 Models, Actions, 和 API 本身的帮助信息.
+
+=back
+
+=head2 DESIGN BACKGROUND
+
+本 API 的设计基于美国 Best Practical 公司的 Jifty 框架中所包含的 REST Web Service 接口设计 ( L<http://search.cpan.org/perldoc?Jifty::Manual::TutorialRest> )。
+
+=head1 PROTOCOL BASIS
+
+我们的 API 将基于最基本的 HTTP 1.1 协议。特别地，我们将充分利用 HEAD, GET, POST, PUT, DELETE 这几种基本的 HTTP 方法
+来简化我们的 API。
+
+在本文中，除非特别说明，将总是假设使用 C<http://> 模式。
+
+=head1 URL SYNTAX
+
+所有的 URL 都是大小写敏感的。
+
+=head2 The leading C</=/>
+
+为使我们的 API 能够在 URL 上复用已有的域名，如 www.yahoo.cn，同时避免污染已有的 URL 名字空间，所有的 URL 都以 /=/
+起始。
+
+如果域名不存在与常规网页 URL 冲突的风险，前导 C</=/> 可省略，或替换为其他形式，比如 C</webservice/> 或者 C</~/> 之类。
+
+在本文中，将总是使用 C</=/> 前导，以强调这些 URL 是特殊的（从某种意义上说），并保持一致性。
+
+=head2 Help
+
+
+    GET /=/help
+
+[猜想：该命令可以返回一个无结构的纯文本帮助，或者是有结构的帮助目录列表。]
+
+=head2 Login
+
+    POST /=/login
+
+登录验证，目前有两种选择：
+
+=over
+
+=item 1.
+
+使用明文传输口令
+
+此种方法使用简单，尤其对于 wget, curl 这样的工具友好。缺点是安全性不高。
+
+一种可能的方式是： GET /=/login?user=foo&password=bar
+
+=item 2.
+
+使用加密传输口令
+
+此种方法使用复杂，需要握手过程，以及加密库的支持。
+
+POST 请求的内容需要经过加密处理。
+
+=back
+
+登录获取的 session ID 将被存储于 cookie 中，供后续请求使用。
+
+[猜想： 在轻量级应用中使用明文，以降低接口使用门槛，适应普通用户。对于数据安全性高的企业级应用，使用加密传输的方法。]
+
+OAuth 支持也应认真考虑：
+
+L<http://oauth.net/>
+
+还包括 OpenID 协议：
+
+L<http://openid.net/>
+
+=head2 Models
+
+模型是一种抽象的数据库表格。它可以映射到数据库的物理表，亦可以映射到虚拟的存储结构，如果电子信箱的 inbox.
+模型按创建者，可以分为内置和用户自定义两种类型。模型拥有自己细化的权限模型，如可写权限分配，以及可读权限分配。
+
+=head3 Create Models
+
+    POST /=/model
+
+新创建的 Model 的 schema 在 POST 的 content body 中通过对应格式( 比如 JSON )的 schema 说明.
+
+一个例子是：
+
+    POST /=/model.json
+
+I<POST body>
+
+    {
+        name: 'Bookmark',
+        description: 'My favorite bookmarks',
+        columns: [
+        { name: 'id',    type: 'serial', label: 'Bookmark ID' },
+        { name: 'url',   type: 'string', label: 'Bookmark URL' },
+        { name: 'title', type: 'string', label: 'Bookmark Title' },
+        { name: 'description', type: 'string', label: 'Bookmark Description' } ]
+    }
+
+一次 POST 请求只能指定创建单个 Model. Model 的声明包含两部分，一是模型名，即 C<name> 字段，一是列声明，即 C<columns> 字段。
+
+每个模型必须提供一个非空的 description 属性，同时模型各列的定义必须包含 label 这一属性，而且必须为非空。
+
+当模型已存在时，服务器返回出错信息，详情请见 L</ERROR HANDLING> 一节。
+
+=head3 Read Models
+
+=over
+
+=item 显示模型列表
+
+    GET /=/model
+
+返回的数据为一无序列表，其内容为用户所有可见的模型的名字，以及对应的 URL。
+
+一个 JSON 格式的例子为：
+
+    GET /=/model.json
+
+    [
+        { description: 'My favorite bookmark', name: 'Bookmark', url: '/=/model/Bookmark.json', writable: 'true' },
+        { description: 'My favorite music', type: 'model', name: 'Music', url: '/=/model/Music.json', writable: true },
+        { description: 'My frequently accessed blog', name: 'Blog', url: '/=/model/Blog.json', writable: false },
+    ]
+
+有关结果格式的讨论，请见 L</DATA FORMAT> 一节.
+
+=item 显示指定模型的 schema
+
+值得指出的是，模型的 schema 并不等同于真实的数据库物理表的 schema. 模型是一种抽象的概念。
+
+在模型名的命名上，一般取为首字母大写的名词单词，如 Bookmark, Book, Music 等等，
+而不像数据库表格一般取成 bookmarks, books, music 这样的形式。
+
+    GET /=/model/<model name>
+
+该 URL 将返回模型名为 <model name> 的 schema 定义。
+
+一个 JSON 的例子如下：
+
+    GET /=/model/Bookmark.json
+
+    [
+        { name: 'id', type: 'serial', url: '/=/model/Bookmark/id.json', writable: false },
+        { name: 'title', type: 'string', url: '/=/model/Bookmark/string.json', writable: true },
+        { name: 'url', type: 'string', url: '/=/model/Bookmark/url.json', writable: false },
+        { name: 'description', type: 'string', url: '/=/model/Bookmark/description.json', writable: true },
+    ]
+
+具体的实现会对一个 Model 所含的字段数目和类型进行约束。
+
+=item 显示指定字段的记录列表
+
+    GET /=/model/<model name>/<column name>
+
+逻辑上相当于下面这行 SQL 语句：
+
+    select <column name>
+    from <model name>
+
+注意此处以及下文所给出的 SQL 语句也并非真实的 SQL，用来解释 API URL 的语义。
+
+对于超过 10 条的返回结果，API 总是返回前十条。翻页功能可通过 page 参数来控制，例如
+
+    GET /=/model/Bookmark/title.json?page=2
+
+    [
+        { title: 'XUL::App - Jifty way of doing XUL' },
+        { title: '中文搜索 同时用三家引擎 searchall' },
+        { title: 'Revision 32: trunk/'},
+    ]
+
+
+=item 显示指定字段的指定取值的记录列表
+
+    GET /=/model/<model name>/<column name>/<column value>
+
+其功能上相当于下面这条 SQL 语句：
+
+    select *
+    from <model name>
+    where <column name>=<column value>
+
+一个具体的体子是：
+
+    GET /=/model/Bookmark/id/1.json
+
+相当于
+
+    select *
+    from bookmarks
+    where id = 1
+
+服务器返回的结果类似于：
+
+    [
+        { id: 1, title: "Revision 34: /trunk", url: 'http://svn.openfoundry.com/xulapp/trunk', description: '' }
+    ]
+
+如果不希望用 C<=> 执行精确匹配的话，可以通过指定 C<op> 选项来指定其他运算符，比如 C<like>, C<< > >>, 和 C<< < >>.
+
+下面是一个例子：
+
+    GET /=/model/Bookmark/title/Yahoo%.json?op=like
+
+近似于
+
+    select *
+    from bookmarks
+    where title like 'Yahoo%'
+
+典型的返回结果如下：
+
+    [
+        { id: 56, title: "Yahoo News", url: 'http://news.yahoo.com', description: '美国雅虎网站' },
+        { id: 57, title: "Yahoo中国", url: 'http://cn.yahoo.com', description: '阿里巴巴中国雅虎首页' }
+    ]
+
+=back
+
+更高级的检索需求 (比如 table join 和 group by) 应由 C</=/action/ModelSearch> 来完成.
+
+=head3 Update Models
+
+=over
+
+=item 插入记录
+
+    POST /=/model/<model name>
+
+该命令用于向指定模型上传若干新记录。一个例子是：
+
+    POST /=/model/Bookmark.json
+
+I<POST body>
+
+    [
+        { title: "Yahoo News", url: 'http://news.yahoo.com', description: '美国雅虎网站' },
+        { title: "Yahoo中国", url: 'http://cn.yahoo.com', description: '阿里巴巴中国雅虎首页' },
+        { title: "Revision: /trunk", url: 'http://svn.openfoundry.org/xulapp/trunk', description: '我的 XUL::App 项目' }
+    ]
+
+I<Output>
+
+    XXX report success or so
+
+具体的实现会对一次插入的记录数目进行限制。
+
+=item 修改记录
+
+    PUT /=/model/<model name>/<column name>/<column value>
+
+修改指定记录的字段值。
+
+一个例子是：
+
+    PUT /=/model/Bookmark/url/yahoo.json?op=like
+
+I<POST body>
+
+    { title: 'My Yahoo Home', description: 'As title' }
+
+对应的伪 SQL 为：
+
+    update bookmarks
+    set title = "My Yahoo Home", description = "As title"
+    where url like 'yahoo'
+
+[猜想：PUT 请求亦可专用于上传二进制的多媒体数据。]
+
+=item 删除记录
+
+用于删除指定的记录
+
+一个例子是：
+
+    DELETE /=/model/Bookmark/url/yahoo.json?op=like
+
+对应的伪 SQL 为：
+
+    delete from bookmarks
+    where url like 'yahoo'
+
+=back
+
+=head3 Delete Models
+
+    DELETE /=/model/<model name>
+
+该命令将删除名为 <model_name> 的模型。
+
+在功能上相当于下面这条 SQL 语句：
+
+    drop table <model name>
+
+=head3 Namespace and Databases
+
+模型的名字可以写成名字空间修饰的形式，比如 C<Foo.Bar.Baz>. 从逻辑上讲, C<Foo> 相当于一个数据库，或者说是模型的集合。
+
+[猜想: 模型检索时应提供名字空间级别上的搜索。]
+
+=head2 Actions
+
+"动作(Action)"是一种抽象的功能实体。典型的 Action 的例子有"网页搜索", "模型搜索", 以及"邮件发送"等等。
+Action 在概念上与编程语言中的函数相近。
+
+每一个 Action 都有一个界面，界面一般由若干个 parameters 组成。就像每一个 model
+都由若干个 columns 组成一样。
+
+Action 一般都拥有返回值, 比如“网页搜索”这个动作会返回一个结果列表，而"邮件发送"这个Action
+只会返回 true 或者 false.
+
+Action 亦可分为内建 Action (如 WebSearch 和 ModelSearch ) 和用户自定义 Action 两大类.
+
+=head3 Create Actions
+
+警告：这一部分是高度猜想性质。
+
+用户自定义的 Action 在概念上等同于数据库中的视图(view)，并将通过 OpenAPI 自己定义的 miniSQL 语言来表达其功能.
+
+miniSQL 将不支持嵌套语句，比如嵌套型 select 语句.
+
+示例：
+
+    POST /=/action.json
+
+I<POST body>
+
+    [
+      {
+        name: 'My SVN bookmarks',
+        body: "select * from Bookmark where url like '%svn.%' or description like '%SVN%'"
+      },
+      {
+        name: 'My Yahoo bookmarks',
+        body: "select * from Bookmark where url like '%yahoo%' and title like '%yahoo%'"
+      }
+    ]
+
+=head3 Inspect Actions
+
+    GET /=/action/<action name>
+
+可获得指定 action 的界面
+
+示例：
+
+    GET /=/action/WebSearch.json
+
+
+=head3 Call Actions
+
+    GET /=/action/<action name>/<parameter1>/<value1>?<parameter2>=<value2>&<parameter3>=<value3>&...
+
+以指定的参数调用 actions. 示例：
+
+    GET /=/action/WebSearch/query/Hello,world.json
+    [
+        { title: 'Hello world program - Wikipedia, the free encyclopedia', url: 'en.wikipedia.org/wiki/Hello_world_program', summary: '...' },
+        { title: 'Helloworld.com', url: 'www.helloworld.com/', summary: '...' },
+        { title: '...', url: '...', summary: '...' },
+        ...
+    ]
+
+对于无参数的 Action 调用时使用
+
+    GET /=/action/<action name>/dummy/nil
+
+的形式。
+
+=head3 Remove Actions
+
+    DELETE /=/action/<action name>
+
+=head3 Built-in Actions
+
+=over
+
+=item ModelSearch
+
+ModelSearch 提供了用 MiniSQL 对 Models 进行高级查询的方式。下面是一个例子：
+
+    POST /=/action/ModelSearch/lang/miniSQL
+
+I<POST body>
+
+    "select * from Music, Bookmark where Music.url = Bookmark.url"
+
+=item WebSearch
+
+    GET /=/action/WebSearch.json
+    [
+        { name: 'query', type: 'string' }
+    ]
+
+    GET /=/action/WebSearch/query/Hello,world.json
+    [
+        { title: 'Hello world program - Wikipedia, the free encyclopedia', url: 'en.wikipedia.org/wiki/Hello_world_program', summary: '...' },
+        { title: 'Helloworld.com', url: 'www.helloworld.com/', summary: '...' },
+        { title: '...', url: '...', summary: '...' },
+        ...
+    ]
+
+=back
+
+=head2 Administration
+
+    GET/POST/DELETE /=/admin/...
+
+XXX needs work...
+
+=head1 DATA FORMAT
+
+服务器返回的数据格式可以由用户通过 URL 后缀来控制。
+
+支持的格式后缀为 C<.json>, C<.xml>, 和 C<.yaml>. 它们分别对应 JSON 格式，XML/RDF 格式，和 YAML 格式。
+它们的别名为 C<.js>, C<.rdf>, 和 C<.yml>.
+
+当后缀名未指定时，缺省为 C<.xml>。
+
+在绝大多数情况下，服务器返回的都为列表型数据。当数据量较大，出现分页的时候，列表数据的最后一个元素总为一特殊的结构：
+
+    { type: 'meta', next: '/=/url/to/the/next/page' 
+
+一个例子是：
+
+    GET /=/model/Bookmark/id.json?page=2
+
+    [
+        { id: 11 },
+        { id: 12 },
+        { id: 13 },
+        ...
+        { id: 20 },
+        { type: 'meta', next: '/=/model/Bookmark/id.json?page=3' }
+    ]
+
+=head2 Parameters
+
+=over
+
+=item charset
+
+指定输入／输出数据和 URL 本身所使用的字符集。
+
+示例：
+
+    GET /=/model/Bookmark/title/Yahoo?charset=GBK
+
+=item page
+
+用于指定页码，从 0 起始。缺省为 1.
+
+示例：
+
+    GET /=/model/Bookmark/title/Yahoo?page=4
+
+超出页码范围时，返回空列表.
+
+=item order_by
+
+指定排序项（可指定多个，以逗号分隔). 例如：
+
+    GET /=/model/Bookmark/title/Yahoo?op=like&order_by=title,url
+
+在语义上近似于下面这条 SQL 语句：
+
+    select *
+    from bookmarks
+    where title like 'Yahoo'
+    order by title, url
+
+=item user
+
+该选项指定用户名
+
+=item password
+
+该选项指定密码
+
+示例
+
+    GET /=/model/Bookmark/id.xml?user=foo&password=bar
+
+注：以明文方式传递用户名和密码在安全性较高的场合是不允许使用的。
+
+=back
+
+=head1 ERROR HANDLING
+
+XXX Needs work...
+
+=head1 GRAMMAR FOR miniSQL
+
+miniSQL 语言是标准 SQL 一个核心子集. 其基本语法如下：
+
+    miniSQL: statement
+
+    statement: select_stmt
+             | update_stmt
+             | delete_stmt
+
+    select_stmt: 'select' pattern_list 'from' models postfix_clause_list
+               | 'select' pattern_list 'from' models
+
+    pattern_list: pattern ',' pattern_list
+                | pattern
+
+    pattern: aggregate alias
+           | aggregate
+           | column
+
+    aggregate: func '(' column ')'
+    func: 'max'
+        | 'min'
+        | 'count'
+        | 'sum'
+
+    column: qualified_symbol
+          | symbol
+    qualified_symbol: symbol '.' symbol
+    symbol: /[A-Za-z]+/
+
+    alias: symbol
+
+    postfix_clause_list: postfix_clause postfix_clause_list
+                       | postfix_clause
+
+    postfix_clause: where_clause
+                  | group_by_clause
+                  | order_by_clause
+
+    where_clause: 'where' conditon
+
+    condition: disjunction
+    disjunction: conjunction 'or' disjuntion
+               | conjunction
+    conjunction: comparison 'and' conjunction
+               | comparison
+    comparison: column operator literal
+              | column operator column
+              | '(' condition ')'
+
+    operator: '>'
+            | '>='
+            | '<'
+            | '<='
+            | '<>'
+            | '='
+            | 'like'
+
+    literal: string
+           | integer
+    string: '"' symbol '"'
+          | "'" symbol "'"
+    integer: /\d+/
+
+    group_by_clause: 'group by' column_list
+
+    column_list: column ',' column_list
+               | column
+
+    order_by_clause: 'order by' column_list
+
+    delete_stmt: 'delete' 'from' symbol where_clause
+    update_stmt: 'update' symbol set_clause where_clause
+               | 'update' symbol set_clause
+
+    set_clause: 'set' symbol '=' literal
+
+=begin comment
+
+=> \&show_item_field;
+on GET    '/=/model/*/*/*'      => \&show_item;
+on GET    '/=/model/*/*'        => \&list_model_items;
+on GET    '/=/model/*'          => \&list_model_columns;
+on GET    '/=/model'            => \&list_models;
+
+on POST   '/=/model/*'          => \&create_item;
+on PUT    '/=/model/*/*/*'      => \&replace_item;
+on DELETE '/=/model/*/*/*'      => \&delete_item;
+
+on GET    '/=/action/*'         => \&list_action_params;
+on GET    '/=/action'           => \&list_actions;
+on POST   '/=/action/*'         => \&run_action;
+
+on GET    '/=/help'             => \&show_help;
+
+=end comment
+
