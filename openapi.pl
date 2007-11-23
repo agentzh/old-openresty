@@ -21,18 +21,7 @@ use DBI;
 
 my $dbh = DBI->connect("dbi:Pg:dbname=test", "agentzh", "agentzh", {AutoCommit => 1, RaiseError => 1});
 
-=begin comment
-sub getRequestBody() {
-    my ($in);
-    binmode STDIN;
-    read(STDIN,$in,$ENV{'CONTENT_LENGTH'}) ||
-        die "Can't read from STDIN: $!\n";
-    return $in;
-}
-=end comment
-=cut
-
-$CGI::POST_MAX=1024 * 100;  # max 100K posts
+$CGI::POST_MAX = 1024 * 1000;  # max 1000K posts
 $CGI::DISABLE_UPLOADS = 1;  # no uploads
 
 my $COUNTER = 0;
