@@ -4,6 +4,11 @@
 use strict;
 use warnings;
 
+BEGIN {
+    $SIG{__WARN__} = sub { print @_ };
+    $SIG{__DIE__} = sub { print @_  };
+}
+
 use URI;
 use Web::Scraper;
 use CGI::Fast qw(:standard);
@@ -12,6 +17,9 @@ use JSON::Syck ();
 use Data::Dumper;
 use XML::Simple qw(:strict);
 use FindBin;
+use DBI;
+
+my $dbh = DBI->connect("dbi:Pg:dbname=test", "agentzh", "agentzh", {AutoCommit => 1, RaiseError => 1});
 
 =begin comment
 sub getRequestBody() {
@@ -38,7 +46,7 @@ while (my $query = new CGI::Fast) {
     #print "Content-type: ", content_type(), "\n";
     eval {
         #$data = getRequestBody();
-    };
+    };;
     if ($@) { print $@; }
     #print "POSTDATA: $data\n";
     $data = param('POSTDATA');
