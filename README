@@ -1,0 +1,19 @@
+lighttpd configuration:
+
+# lighttpd.conf
+fastcgi.server = (
+    "" => (
+        "openapi" => (
+            "socket"       => "/tmp/openapi.socket",
+            "check-local"  => "disable",
+            "bin-path"     => "/path/to/openapi.pl",
+            #"bin-environment" => ( "JIFTY_COMMAND" => "fastcgi" ),
+            "min-procs"    => 1,
+            "max-procs"    => 5,
+            "max-load-per-proc" => 1,
+            "idle-timeout" => 20,
+        )
+    )
+)
+
+
