@@ -13,7 +13,7 @@ sub init {
     is $res->content, '', 'no error msg';
 }
 
-init();
+#init();
 
 sub do_request {
     my ($method, $url, $body, $type) = @_;
@@ -50,15 +50,23 @@ run {
 
 __DATA__
 
-=== TEST 1: Get model list
+=== TEST 1: Delete existing modes
+--- request
+DELETE /=/model.js
+--- response
+{"success":1}
+
+
+
+=== TEST 2: Get model list
 --- request
 GET /=/model.js
---- response
+--- response chomp
 []
 
 
 
-=== TEST 2: Create a model
+=== TEST 3: Create a model
 --- request
 POST /=/model.js
 {
@@ -71,5 +79,5 @@ POST /=/model.js
     ]
 }
 --- response
-{success:'true'}
+{'success':1}
 

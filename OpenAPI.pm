@@ -14,7 +14,13 @@ my %ext2dumper = (
     '.json' => \&JSON::Syck::Dump,
 );
 
-our $dbh;
+our ($dbh, $Dumper);
+
+sub set_dumper {
+    my ($self, $ext) = @_;
+    $ext ||= '.yaml';
+    $Dumper = $ext2dumper{$ext};
+}
 
 sub connect {
     shift;
@@ -24,16 +30,15 @@ sub connect {
 sub get_tables {
     #my ($self, $user) = @_;
     my $self = shift;
-    $self->selectall_arrayref(<<_EOC_);
+    return $self->selectall_arrayref(<<_EOC_);
 select name
 from _tables
 _EOC_
 }
 
 sub emit_data {
-    my ($self, $data, $ext) = @_;
-    my $dumper = $ext2dumper{$ext};
-    print $dumper->($data), "\n";
+    my ($self, $data) = @_;
+    return $Dumper->($data);
 }
 
 sub has_user {
@@ -70,6 +75,14 @@ _EOC_
     };
 }
 
+sub drop_table {
+    my ($self, $table) = @_;
+    $self->do(<<_EOC_);
+drop table $table;
+delete from $table where name = '$table';
+_EOC_
+}
+
 sub drop_user {
     my $self = shift;
     my $user = shift;
@@ -83,16 +96,26 @@ sub do {
     if (!$dbh) {
         die "No database handler found;";
     }
-    return eval { $dbh->do(@_) };
+    return $dbh->do(@_);
+}
+
+sub emit_success {
+    my $self = shift;
+    return $self->emit_data( { success => 1 } );
+}
+
+sub emit_error {
+    my $self = shift;
+    my $msg = shift;
+    return $self->emit_data( { error => $msg } );
 }
 
 sub selectall_arrayref {
-    shift;
-    my $sql = shift;
+    my $self = shift;
     if (!$dbh) {
         die "No database handler found;";
     }
-    return eval { $dbh->selectall_arrayref(@_) };
+    return $dbh->selectall_arrayref(@_);
 }
 
 1;

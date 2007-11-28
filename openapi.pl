@@ -62,11 +62,18 @@ while (my $query = new CGI::Fast) {
     if ($method eq 'GET') {
         ### GET method detected: $url
         if ($url =~ m{^/=/model($ext)?$}) {
-            my $ext = $1;
+            OpenAPI->set_dumper($1);
             ### Showing model list with ext: $ext
-            my $tables = OpenAPI->get_tables;
+            my $tables;
+            eval {
+                $tables = OpenAPI->get_tables;
+            };
+            if ($@) {
+                OpenAPI->emit_error($@);
+                next;
+            }
             $tables ||= [];
-            print OpenAPI->emit_data($tables, $ext);
+            print OpenAPI->emit_data($tables);
         } elsif ($url =~ m{^/=/model/(\w+)($ext)?}) {
             my ($table, $ext) = ($1, $2);
             ### Showing model $table with ext: $ext
@@ -74,13 +81,30 @@ while (my $query = new CGI::Fast) {
     } elsif ($method eq 'DELETE') {
         ### DELETE method detected: $url
         if ($url =~ m{^/=/model($ext)?$}) {
+            OpenAPI->set_dumper($1);
             ### Deleting all the models...
-            my $tables = OpenAPI->get_tables($user);
-            if ($tables && @$tables) {
-                ### tables: @$tables
-                for my $table (@$tables) {
+            my $tables;
+            eval {
+                $tables = OpenAPI->get_tables($user);
+            };
+            if ($@) { print OpenAPI->emit_error($@); next; }
+            $tables ||= [];
+            ### tables: @$tables
+            my $failed = 0;
+            for my $table (@$tables) {
+                eval {
                     OpenAPI->drop_table($user, $table);
+                };
+                if ($@) {
+                    $failed = 1;
+                    last;
                 }
+            }
+            if ($failed) {
+                print OpenAPI->emit_error($@);
+                next;
+            } else {
+                print OpenAPI->emit_success(), "\n";
             }
         }
     } elsif ($method eq 'POST') {
