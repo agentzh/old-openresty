@@ -84,7 +84,7 @@ while (my $query = new CGI::Fast) {
         }
     } elsif ($method eq 'POST') {
         ### POST method detected: $url
-        # check for content-type...
+        # XXX check for content-type...
         $data = param('POSTDATA');
         ### POST data: $data
     } elsif ($method eq 'PUT') {
