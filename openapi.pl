@@ -14,8 +14,6 @@ use OpenAPI;
 use URI;
 use Web::Scraper;
 use CGI::Fast qw(:standard);
-use YAML::Syck ();
-use JSON::Syck ();
 use Data::Dumper;
 use XML::Simple qw(:strict);
 use FindBin;
@@ -60,12 +58,15 @@ while (my $query = new CGI::Fast) {
     OpenAPI->do("SET search_path TO $user");
     #print "POSTDATA: $data\n";
     my $method = $ENV{'REQUEST_METHOD'};
-    print $method, "\n";
+    #print $method, "\n";
     if ($method eq 'GET') {
         ### GET method detected: $url
         if ($url =~ m{^/=/model($ext)?$}) {
             my $ext = $1;
             ### Showing model list with ext: $ext
+            my $tables = OpenAPI->get_tables;
+            $tables ||= [];
+            print OpenAPI->emit_data($tables, $ext);
         } elsif ($url =~ m{^/=/model/(\w+)($ext)?}) {
             my ($table, $ext) = ($1, $2);
             ### Showing model $table with ext: $ext
