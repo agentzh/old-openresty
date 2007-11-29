@@ -19,7 +19,7 @@ use XML::Simple qw(:strict);
 use FindBin;
 use DBI;
 use Smart::Comments;
-
+#use Perl6::Say;
 
 $CGI::POST_MAX = 1024 * 1000;  # max 1000K posts
 $CGI::DISABLE_UPLOADS = 1;  # no uploads
@@ -42,38 +42,43 @@ while (my $query = new CGI::Fast) {
     #warn "Hello!";
     #print "charset: ", url_param("charset"), "\n";
     if ($LastError) {
-        print $LastError;
+        print OpenAPI->emit_error($LastError), "\n";
     }
     my $data;
     ### Content-type: content_type()
     my $user = 'test';
-    #OpenAPI->drop_user($user);
+    eval {
+        #OpenAPI->drop_user($user);
+    };
+    if ($@) { warn $@; }
     if (my $retval = OpenAPI->has_user($user)) {
         ### Found user: $user
-        ### Retval: $retval
     } else {
         ### Creating new user: $user
         OpenAPI->new_user($user);
     };
-    OpenAPI->do("SET search_path TO $user");
-    #print "POSTDATA: $data\n";
+    eval {
+        OpenAPI->do("SET search_path TO $user,public");
+    };
+    if ($@) { print OpenAPI->emit_error($@), "\n"; next; }
     my $method = $ENV{'REQUEST_METHOD'};
-    #print $method, "\n";
     if ($method eq 'GET') {
         ### GET method detected: $url
         if ($url =~ m{^/=/model($ext)?$}) {
-            OpenAPI->set_dumper($1);
+            OpenAPI->set_formatter($1);
             ### Showing model list with ext: $ext
-            my $tables;
+            my $models;
             eval {
-                $tables = OpenAPI->get_tables;
+                $models = OpenAPI->get_models;
             };
             if ($@) {
-                OpenAPI->emit_error($@);
+                print OpenAPI->emit_error($@);
                 next;
             }
-            $tables ||= [];
-            print OpenAPI->emit_data($tables);
+            $models ||= [];
+            ### $models
+            map { $_->{src} = "/=/model/$_->{name}" } @$models;
+            print OpenAPI->emit_data($models), "\n";
         } elsif ($url =~ m{^/=/model/(\w+)($ext)?}) {
             my ($table, $ext) = ($1, $2);
             ### Showing model $table with ext: $ext
@@ -81,19 +86,24 @@ while (my $query = new CGI::Fast) {
     } elsif ($method eq 'DELETE') {
         ### DELETE method detected: $url
         if ($url =~ m{^/=/model($ext)?$}) {
-            OpenAPI->set_dumper($1);
+            OpenAPI->set_formatter($1);
             ### Deleting all the models...
-            my $tables;
+            my $res;
             eval {
-                $tables = OpenAPI->get_tables($user);
+                $res = OpenAPI->get_tables($user);
             };
-            if ($@) { print OpenAPI->emit_error($@); next; }
-            $tables ||= [];
-            ### tables: @$tables
+            if ($@) { print OpenAPI->emit_error($@), "\n"; next; }
+            if (!$res) {
+                print OpenAPI->emit_success(), "\n";
+                next;
+            }; # no-op
+            my @tables = map { @$_ } @$res;
+            #$tables = $tables->[0];
+            ### tables: @tables
             my $failed = 0;
-            for my $table (@$tables) {
+            for my $table (@tables) {
                 eval {
-                    OpenAPI->drop_table($user, $table);
+                    OpenAPI->drop_table($table);
                 };
                 if ($@) {
                     $failed = 1;
@@ -101,16 +111,29 @@ while (my $query = new CGI::Fast) {
                 }
             }
             if ($failed) {
-                print OpenAPI->emit_error($@);
+                print OpenAPI->emit_error($@), "\n";
                 next;
-            } else {
-                print OpenAPI->emit_success(), "\n";
             }
+            print OpenAPI->emit_success(), "\n";
         }
     } elsif ($method eq 'POST') {
         ### POST method detected: $url
         # XXX check for content-type...
         $data = param('POSTDATA');
+        if (!$data) {
+            print OpenAPI->emit_error("No model specified."), "\n";
+        }
+        if ($url =~ m{^/=/model($ext)?$}) {
+            OpenAPI->set_formatter($1);
+            eval {
+                OpenAPI->new_model($data);
+            };
+            if ($@) {
+                print OpenAPI->emit_error($@), "\n";
+                next;
+            }
+            print OpenAPI->emit_success(), "\n";
+        }
         ### POST data: $data
     } elsif ($method eq 'PUT') {
         ### PUT method detected: $url

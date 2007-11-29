@@ -2,7 +2,7 @@ use Test::Base;
 use LWP::UserAgent;
 #use Smart::Comments;
 
-plan tests => 3 * blocks();
+plan tests => 2 * blocks();
 
 my $ua = LWP::UserAgent->new;
 my $host = 'http://localhost';
@@ -61,7 +61,7 @@ DELETE /=/model.js
 === TEST 2: Get model list
 --- request
 GET /=/model.js
---- response chomp
+--- response
 []
 
 
@@ -75,9 +75,17 @@ POST /=/model.js
     columns: [
         { name: 'id', type: 'serial', label: 'ID' },
         { name: 'title', label: '标题' },
-        { name: 'url', label: '网址' },
+        { name: 'url', label: '网址' }
     ]
 }
 --- response
-{'success':1}
+{"success":1}
+
+
+
+==== TEST 4: check the model list again
+--- request
+GET /=/model.js
+--- response
+[{"src":"/=/model/Bookmark","name":"Bookmark","description":"我的书签"}]
 

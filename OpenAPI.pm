@@ -3,9 +3,11 @@ package OpenAPI;
 use strict;
 use warnings;
 
+use Smart::Comments;
 use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
+use Lingua::EN::Inflect qw(PL_N ORD);
 
 my %ext2dumper = (
     '.yml' => \&YAML::Syck::Dump,
@@ -14,12 +16,33 @@ my %ext2dumper = (
     '.json' => \&JSON::Syck::Dump,
 );
 
-our ($dbh, $Dumper);
+my %ext2importer = (
+    '.yml' => \&YAML::Syck::Load,
+    '.yaml' => \&YAML::Syck::Load,
+    '.js' => \&JSON::Syck::Load,
+    '.json' => \&JSON::Syck::Load,
+);
 
-sub set_dumper {
+
+our ($dbh, $Dumper, $Importer);
+
+# XXX more data types...
+our %to_native_type = (
+    text => 'text',
+    integer => 'integer',
+    date => 'date',
+    serial => 'serial',
+    time => 'time',
+    timestamp => 'timestamp',
+    real => 'real',
+    double => 'double precision',
+);
+
+sub set_formatter {
     my ($self, $ext) = @_;
     $ext ||= '.yaml';
     $Dumper = $ext2dumper{$ext};
+    $Importer = $ext2importer{$ext};
 }
 
 sub connect {
@@ -31,8 +54,16 @@ sub get_tables {
     #my ($self, $user) = @_;
     my $self = shift;
     return $self->selectall_arrayref(<<_EOC_);
-select name
-from _tables
+select table_name
+from _models
+_EOC_
+}
+
+sub get_models {
+    my $self = shift;
+    return $self->selectall_arrayref(<<_EOC_, { Slice => {} });
+select name, description
+from _models
 _EOC_
 }
 
@@ -49,6 +80,7 @@ sub has_user {
 select nspname
 from pg_namespace
 where nspname='$user'
+limit 1
 _EOC_
     };
     return $retval + 0;
@@ -60,8 +92,9 @@ sub new_user {
     eval {
         $self->do(<<"_EOC_");
 create schema $user
-    create table _tables (
+    create table _models (
         name text primary key,
+        table_name text unique,
         columns integer[],
         description text
     )
@@ -69,17 +102,99 @@ create schema $user
         id serial primary key,
         name text,
         type text,
+        native_type varchar(20),
         label text
     );
 _EOC_
     };
 }
 
+sub new_model {
+    my ($self, $data) = @_;
+    $data = $Importer->($data);
+    my $model = $data->{name} or
+        die "No 'name' field found for the new model\n";
+    if (length($model) >= 32) {
+        die "Model name \"$model\" is too long.\n";
+    }
+    if ($model !~ /^[A-Z]\w*$/) {
+        die "Invalid model name: \"$model\"\n";
+    }
+    my $table = lc(PL_N($model));
+    ### Table: $table
+    my $description = $data->{description} or
+        die "No 'description' specified for model \"$model\".\n";
+    # XXX Should we allow 0 column table here?
+    my $columns = $data->{columns};
+    if (!$columns or !@$columns) {
+        die "No 'columns' specified for model \"$model\".\n";
+    }
+    my $i = 1;
+    if ($self->has_model($model)) {
+        die "Model $model already exists.\n";
+    }
+    my $sql .= <<_EOC_;
+insert into _models (name, table_name, description)
+values ('$model', '$table', '$description');
+_EOC_
+    $sql .=
+        "create table $table (\n\tid serial primary key";
+    for my $col (@$columns) {
+        my $name = $col->{name} or
+            die "No 'name' specified for the " . ORD($i) . " column.\n";
+        if (length($name) >= 32) {
+            die "Column name \"$name\" is too long.\n";
+        }
+        $name = lc($name);
+        # discard 'id' column
+        if ($name eq 'id') {
+            $col = undef;
+            next;
+        }
+        # type defaults to 'text' if not specified.
+        my $type = $col->{type} || 'text';
+        my $label = $col->{label} or
+            die "No 'label' specified for column \"$name\" in model \"$model\".\n";
+        my $ntype = $to_native_type{$type};
+        if (!$ntype) {
+            die "Invalid column type: $type\n",
+                "\tOnly the following types are available: ",
+                join(", ", sort keys %to_native_type), "\n";
+        }
+        $sql .= ",\n\t$name $ntype";
+        $i++;
+    }
+    $sql .= "\n)";
+    ### $sql
+    #register_table($table);
+    #register_columns
+    eval {
+        $self->do($sql);
+    };
+    if ($@) {
+        die "Failed to create model \"$model\": $@\n";
+    }
+}
+
+sub has_model {
+    my ($self, $model) = @_;
+    my $retval;
+    eval {
+        $retval = $self->do(<<"_EOC_");
+select name
+from _models
+where name='$model'
+limit 1
+_EOC_
+    };
+    return $retval + 0;
+}
+
 sub drop_table {
     my ($self, $table) = @_;
     $self->do(<<_EOC_);
 drop table $table;
-delete from $table where name = '$table';
+delete from _models where table_name = '$table';
 _EOC_
 }
 
@@ -113,10 +228,17 @@ sub emit_error {
 sub selectall_arrayref {
     my $self = shift;
     if (!$dbh) {
-        die "No database handler found;";
+        die "No database handler found.\n";
     }
     return $dbh->selectall_arrayref(@_);
 }
 
+sub selectall_hashref {
+    my $self = shift;
+    if (!$dbh) {
+        die "No database handler found.\n";
+    }
+    return $dbh->selectall_hashref(@_);
+}
 1;
 
