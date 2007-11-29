@@ -6,7 +6,7 @@ run_tests;
 
 __DATA__
 
-=== TEST 1: Delete existing modes
+=== TEST 1: Delete existing models
 --- request
 DELETE /=/model.js
 --- response
