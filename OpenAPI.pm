@@ -67,6 +67,19 @@ from _models
 _EOC_
 }
 
+sub get_model_cols {
+    my ($self, $model) = @_;
+    if (!$self->has_model($model)) {
+        die "Model \"$model\" not found.\n";
+    }
+    my $table = lc(PL_N($model));
+    return $self->selectall_arrayref(<<_EOC_, { Slice => {} });
+select name, type, label
+from _columns
+where table_name='$table'
+_EOC_
+}
+
 sub emit_data {
     my ($self, $data) = @_;
     return $Dumper->($data);
@@ -95,13 +108,13 @@ create schema $user
     create table _models (
         name text primary key,
         table_name text unique,
-        columns integer[],
         description text
     )
     create table _columns (
         id serial primary key,
         name text,
         type text,
+        table_name text,
         native_type varchar(20),
         label text
     );
@@ -136,7 +149,9 @@ sub new_model {
     my $sql .= <<_EOC_;
 insert into _models (name, table_name, description)
 values ('$model', '$table', '$description');
+
 _EOC_
+    my $sth = $dbh->prepare("insert into _columns (name, type, native_type, label, table_name) values (?, ?, ?, ?, ?)");
     $sql .=
         "create table $table (\n\tid serial primary key";
     for my $col (@$columns) {
@@ -162,6 +177,7 @@ _EOC_
                 join(", ", sort keys %to_native_type), "\n";
         }
         $sql .= ",\n\t$name $ntype";
+        $sth->execute($name, $type, $ntype, $label, $table);
         $i++;
     }
     $sql .= "\n)";
@@ -194,7 +210,8 @@ sub drop_table {
     my ($self, $table) = @_;
     $self->do(<<_EOC_);
 drop table $table;
-delete from _models where table_name = '$table';
+delete from _models where table_name='$table';
+delete from _columns where table_name='$table';
 _EOC_
 }
 
@@ -240,5 +257,7 @@ sub selectall_hashref {
     }
     return $dbh->selectall_hashref(@_);
 }
+
+
 1;
 

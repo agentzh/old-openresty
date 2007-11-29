@@ -4,6 +4,7 @@ use Test::Base -Base;
 
 #use Smart::Comments;
 use LWP::UserAgent;
+use Test::LongString;
 
 our @EXPORT = qw(init run_tests run_test);
 
@@ -51,7 +52,12 @@ sub run_test ($) {
         ### $host
         my $res = do_request($method, $host.$url, $body, $type);
         ok $res->is_success, "request returns OK - $name";
-        is $res->content, $block->response, "response content OK - $name";
+        (my $expected_res = $block->response) =~ s/\n[ \t]*([^\n\s])/$1/sg;
+        if ($expected_res) {
+            is_string $res->content, $expected_res, "response content OK - $name";
+        } else {
+            is $res->content, $expected_res, "response content OK - $name";
+        }
     } else {
         my ($firstline) = ($request =~ /^([^\n]*)/s);
         die "Invalid request head: \"$firstline\" in $name\n";

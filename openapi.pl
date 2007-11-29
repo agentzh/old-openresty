@@ -80,8 +80,19 @@ while (my $query = new CGI::Fast) {
             map { $_->{src} = "/=/model/$_->{name}" } @$models;
             print OpenAPI->emit_data($models), "\n";
         } elsif ($url =~ m{^/=/model/(\w+)($ext)?}) {
-            my ($table, $ext) = ($1, $2);
+            my ($model, $ext) = ($1, $2);
+            OpenAPI->set_formatter($ext);
             ### Showing model $table with ext: $ext
+            my $res;
+            eval {
+                $res = OpenAPI->get_model_cols($model);
+            };
+            if ($@) {
+                print OpenAPI->emit_error($@), "\n";
+                next;
+            }
+            ### $res
+            print OpenAPI->emit_data($res), "\n";
         }
     } elsif ($method eq 'DELETE') {
         ### DELETE method detected: $url

@@ -39,9 +39,28 @@ POST /=/model.js
 
 
 
-==== TEST 4: check the model list again
+=== TEST 4: check the model list again
 --- request
 GET /=/model.js
 --- response
 [{"src":"/=/model/Bookmark","name":"Bookmark","description":"我的书签"}]
+
+
+
+=== TEST 5: check the column
+--- request
+GET /=/model/Bookmark.js
+--- response
+[
+    {"name":"title","label":"标题","type":"text"},
+    {"name":"url","label":"网址","type":"text"}
+]
+
+
+
+=== TEST 6: access inexistent models
+--- request
+GET /=/model/Foo.js
+--- response
+{"error":"Model \"Foo\" not found.\n"}
 
