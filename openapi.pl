@@ -131,6 +131,7 @@ while (my $query = new CGI::Fast) {
         ### POST method detected: $url
         # XXX check for content-type...
         $data = param('POSTDATA');
+        ### $data
         if (!$data) {
             print OpenAPI->emit_error("No model specified."), "\n";
         }
@@ -144,6 +145,18 @@ while (my $query = new CGI::Fast) {
                 next;
             }
             print OpenAPI->emit_success(), "\n";
+        } elsif ($url =~ m{^/=/model/(\w+)($ext)?$}) {
+            my ($model, $ext) = ($1, $2);
+            OpenAPI->set_formatter($ext);
+            my $res;
+            eval {
+                $res = OpenAPI->insert_data($model, $data);
+            };
+            if ($@) {
+                print OpenAPI->emit_error($@), "\n";
+                next;
+            }
+            print OpenAPI->emit_data($res), "\n";
         }
         ### POST data: $data
     } elsif ($method eq 'PUT') {

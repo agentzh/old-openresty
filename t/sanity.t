@@ -52,6 +52,7 @@ GET /=/model.js
 GET /=/model/Bookmark.js
 --- response
 [
+    {"name":"id","label":"ID","type":"serial"},
     {"name":"title","label":"标题","type":"text"},
     {"name":"url","label":"网址","type":"text"}
 ]
@@ -63,4 +64,14 @@ GET /=/model/Bookmark.js
 GET /=/model/Foo.js
 --- response
 {"error":"Model \"Foo\" not found.\n"}
+
+
+
+=== TEST 7: insert data
+--- request
+POST /=/model/Bookmark.js
+{ title: 'Yahoo Search', url: 'http://www.yahoo.cn' }
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/1"}
+
 

@@ -73,11 +73,29 @@ sub get_model_cols {
         die "Model \"$model\" not found.\n";
     }
     my $table = lc(PL_N($model));
-    return $self->selectall_arrayref(<<_EOC_, { Slice => {} });
+    my $list = $self->selectall_arrayref(<<_EOC_, { Slice => {} });
 select name, type, label
 from _columns
 where table_name='$table'
 _EOC_
+    if (!$list or !ref $list) { $list = []; }
+    unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
+    return $list;
+}
+
+sub get_model_col_names {
+    my ($self, $model) = @_;
+    if (!$self->has_model($model)) {
+        die "Model \"$model\" not found.\n";
+    }
+    my $table = lc(PL_N($model));
+    my $list = $self->selectall_arrayref(<<_EOC_);
+select name
+from _columns
+where table_name='$table'
+_EOC_
+    if (!$list or !ref $list) { return []; }
+    return [map { @$_ } @$list];
 }
 
 sub emit_data {
@@ -138,6 +156,9 @@ sub new_model {
     my $description = $data->{description} or
         die "No 'description' specified for model \"$model\".\n";
     # XXX Should we allow 0 column table here?
+    if (!ref $data) {
+        die "Malformed data. Hash expected.\n";
+    }
     my $columns = $data->{columns};
     if (!$columns or !@$columns) {
         die "No 'columns' specified for model \"$model\".\n";
@@ -258,6 +279,36 @@ sub selectall_hashref {
     return $dbh->selectall_hashref(@_);
 }
 
+sub insert_data {
+    my ($self, $model, $data) = @_;
+    $data = $Importer->($data);
+    if (!ref $data) {
+        die "Malformed data: Hash or Array expected\n";
+    }
+    ## Data: $data
+    my $table = lc(PL_N($model));
+    if (ref $data eq 'HASH') { # record found
+        my $cols = $self->get_model_col_names($model);
+        my $flds = join(",", @$cols);
+        my $place_holders = join(",", map { "?" } @$cols);
+        my $sth = $dbh->prepare("insert into $table ($flds) values ($place_holders)");
+        my @vals;
+        for my $col (@$cols) {
+            push @vals, delete $data->{$col};
+        }
+        if (%$data) {
+            die "Unknown columns ", join(", ", keys %$data), "\n";
+        }
+        my $num = $sth->execute(@vals);
+        my $last_id = $dbh->last_insert_id(undef, undef, undef, undef, { sequence => $table . '_id_seq' });
+        return { rows_affected => $num, last_row => "/=/model/$model/id/$last_id", success => $num?1:0 };
+    } elsif (ref $data eq 'ARRAY') {
+        while (my ($key, $val) = each %$data) {
+        }
+    } else {
+        die "Malformed data: Hash or Array expected.\n";
+    }
+}
 
 1;
 
