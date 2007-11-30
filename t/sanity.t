@@ -63,7 +63,7 @@ GET /=/model/Bookmark.js
 --- request
 GET /=/model/Foo.js
 --- response
-{"error":"Model \"Foo\" not found.\n"}
+{"success":0,"error":"Model \"Foo\" not found."}
 
 
 

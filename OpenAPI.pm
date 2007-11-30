@@ -260,7 +260,8 @@ sub emit_success {
 sub emit_error {
     my $self = shift;
     my $msg = shift;
-    return $self->emit_data( { error => $msg } );
+    $msg =~ s/\n+$//s;
+    return $self->emit_data( { success => 0, error => $msg } );
 }
 
 sub selectall_arrayref {
