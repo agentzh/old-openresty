@@ -104,3 +104,11 @@ GET /=/model/Bookmark/id/1.js
 --- response
 [{"url":"http://www.yahoo.cn","title":"Yahoo Search","id":"1"}]
 
+
+
+=== TEST 11: read another record
+--- request
+GET /=/model/Bookmark/id/5.js
+--- response
+[{"url":"http://www.perl.com","title":"Perl.com","id":"5"}]
+
