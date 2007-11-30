@@ -119,12 +119,9 @@ GET /=/model/Bookmark/id/5.js
 GET /=/model/Bookmark/url.js
 --- response
 [
-    {"url":"http://www.yahoo.cn","title":"Yahoo Search","id":"1"},
-    {"url":"http://www.yahoo.cn","title":"Yahoo Search","id":"2"},
-    {"url":"http://www.google.cn","title":"Google搜索","id":"3"},
-    {"url":"http://www.baidu.com","title":null,"id":"4"},
-    {"url":"http://www.perl.com","title":"Perl.com","id":"5"}
+    {"url":"http://www.baidu.com"},
+    {"url":"http://www.google.cn"},
+    {"url":"http://www.perl.com"},
+    {"url":"http://www.yahoo.cn"}
 ]
-
-
 

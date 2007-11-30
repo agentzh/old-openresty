@@ -344,8 +344,12 @@ sub select_records {
         if ($col eq $user_col) { $found = 1; last; }
     }
     my $flds = join(",", @$cols);
-    my $sql = "select id,$flds from $table";
-    if (defined $val) { $sql .= " where $user_col=?"; }
+    my $sql;
+    if (defined $val) { 
+        $sql = "select id,$flds from $table where $user_col=?";
+    } else {
+        $sql = "select distinct $user_col from $table";
+    }
     my $sth = $dbh->prepare($sql);
     ### $sql
     ### $val
