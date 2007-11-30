@@ -175,6 +175,7 @@ _EOC_
     my $sth = $dbh->prepare("insert into _columns (name, type, native_type, label, table_name) values (?, ?, ?, ?, ?)");
     $sql .=
         "create table $table (\n\tid serial primary key";
+    my $found_id = undef;
     for my $col (@$columns) {
         my $name = $col->{name} or
             die "No 'name' specified for the " . ORD($i) . " column.\n";
@@ -184,7 +185,7 @@ _EOC_
         $name = lc($name);
         # discard 'id' column
         if ($name eq 'id') {
-            $col = undef;
+            $found_id = 1;
             next;
         }
         # type defaults to 'text' if not specified.
@@ -211,6 +212,10 @@ _EOC_
     if ($@) {
         die "Failed to create model \"$model\": $@\n";
     }
+    return {
+        success => 1,
+        $found_id ? (warning => "Column \"id\" ignored.") : ()
+    };
 }
 
 sub has_model {

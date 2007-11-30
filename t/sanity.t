@@ -35,7 +35,7 @@ POST /=/model.js
     ]
 }
 --- response
-{"success":1}
+{"success":1,"warning":"Column \"id\" ignored."}
 
 
 

@@ -137,14 +137,15 @@ while (my $query = new CGI::Fast) {
         }
         if ($url =~ m{^/=/model($ext)?$}) {
             OpenAPI->set_formatter($1);
+            my $res;
             eval {
-                OpenAPI->new_model($data);
+                $res = OpenAPI->new_model($data);
             };
             if ($@) {
                 print OpenAPI->emit_error($@), "\n";
                 next;
             }
-            print OpenAPI->emit_success(), "\n";
+            print OpenAPI->emit_data($res), "\n";
         } elsif ($url =~ m{^/=/model/(\w+)($ext)?$}) {
             my ($model, $ext) = ($1, $2);
             OpenAPI->set_formatter($ext);
