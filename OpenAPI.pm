@@ -8,6 +8,7 @@ use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
 use Lingua::EN::Inflect qw(PL_N ORD);
+use List::Util qw(first);
 
 my %ext2dumper = (
     '.yml' => \&YAML::Syck::Dump,
@@ -299,6 +300,7 @@ sub insert_records {
     my $sth = $dbh->prepare("insert into $table ($flds) values ($place_holders)");
 
     if (ref $data eq 'HASH') { # record found
+        ### Row inserted: $data
         my $num = insert_record($sth, $data, $cols, 1);
         #...
         my $last_id = $dbh->last_insert_id(undef, undef, undef, undef, { sequence => $table . '_id_seq' });
@@ -331,6 +333,25 @@ sub insert_record {
             join(", ", keys %$row_data), "\n";
     }
     return 0 + $sth->execute(@vals);
+}
+
+sub select_records {
+    my ($self, $model, $user_col, $val) = @_;
+    my $table = lc(PL_N($model));
+    my $cols = $self->get_model_col_names($model);
+    my $found = 0;
+    for my $col (@$cols) {
+        if ($col eq $user_col) { $found = 1; last; }
+    }
+    my $flds = join(",", @$cols);
+    my $sql = "select id,$flds from $table where $user_col=?";
+    my $sth = $dbh->prepare($sql);
+    ### $sql
+    ### $val
+    $sth->execute($val);
+    my $res = $sth->fetchall_arrayref({});
+    if (!$res and !ref $res) { return []; }
+    return $res;
 }
 
 1;

@@ -26,12 +26,12 @@ GET /=/model.js
 --- request
 POST /=/model.js
 {
-    name: 'Bookmark',
-    description: '我的书签',
+    name: "Bookmark",
+    description: "我的书签",
     columns: [
-        { name: 'id', type: 'serial', label: 'ID' },
-        { name: 'title', label: '标题' },
-        { name: 'url', label: '网址' }
+        { name: "id", type: "serial", label: "ID" },
+        { name: "title", label: "标题" },
+        { name: "url", label: "网址" }
     ]
 }
 --- response
@@ -70,7 +70,7 @@ GET /=/model/Foo.js
 === TEST 7: insert a single record
 --- request
 POST /=/model/Bookmark.js
-{ title: 'Yahoo Search', url: 'http://www.yahoo.cn' }
+{ title: "Yahoo Search", url: "http://www.yahoo.cn" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/1"}
 
@@ -79,21 +79,28 @@ POST /=/model/Bookmark.js
 === TEST 8: insert another record
 --- request
 POST /=/model/Bookmark.js
-{ title: 'Yahoo Search', url: 'http://www.yahoo.cn' }
+{ title: "Yahoo Search", url: "http://www.yahoo.cn" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/2"}
 
 
 
-=== TEST 9: insert multiple records
+=== TEST 9: insert multiple records at a time
 --- request
 POST /=/model/Bookmark.js
 [
-    { title: 'Google搜索', url: 'http://www.google.cn' },
-    { title: 'Baidu Search', url: 'http://www.baidu.com' },
-    { title: 'Perl.com', url: 'http://www.perl.com' }
+    { title: "Google搜索", url: "http://www.google.cn" },
+    { url: "http://www.baidu.com" },
+    { title: "Perl.com", url: "http://www.perl.com" }
 ]
 --- response
 {"success":1,"rows_affected":3,"last_row":"/=/model/Bookmark/id/5"}
 
+
+
+=== TEST 10: read a record
+--- request
+GET /=/model/Bookmark/id/1.js
+--- response
+[{"url":"http://www.yahoo.cn","title":"Yahoo Search","id":"1"}]
 

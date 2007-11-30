@@ -79,13 +79,27 @@ while (my $query = new CGI::Fast) {
             ### $models
             map { $_->{src} = "/=/model/$_->{name}" } @$models;
             print OpenAPI->emit_data($models), "\n";
-        } elsif ($url =~ m{^/=/model/(\w+)($ext)?}) {
+        } elsif ($url =~ m{^/=/model/(\w+)($ext)?$}) {
             my ($model, $ext) = ($1, $2);
             OpenAPI->set_formatter($ext);
             ### Showing model $table with ext: $ext
             my $res;
             eval {
                 $res = OpenAPI->get_model_cols($model);
+            };
+            if ($@) {
+                print OpenAPI->emit_error($@), "\n";
+                next;
+            }
+            ### $res
+            print OpenAPI->emit_data($res), "\n";
+        } elsif ($url =~ m{^/=/model/(\w+)/(\w+)/([^/]+?)($ext)?$}) {
+            my ($model, $column, $value, $ext) = ($1, $2, $3, $4);
+            OpenAPI->set_formatter($ext);
+            #### Showing selected records: $url
+            my $res;
+            eval {
+                $res = OpenAPI->select_records($model, $column, $value);
             };
             if ($@) {
                 print OpenAPI->emit_error($@), "\n";
