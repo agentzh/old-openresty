@@ -214,7 +214,7 @@ _EOC_
     }
     return {
         success => 1,
-        $found_id ? (warning => "Column \"id\" ignored.") : ()
+        $found_id ? (warning => "Column \"id\" reserved. Ignored.") : ()
     };
 }
 
