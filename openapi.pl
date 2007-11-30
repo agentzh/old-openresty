@@ -93,6 +93,20 @@ while (my $query = new CGI::Fast) {
             }
             ### $res
             print OpenAPI->emit_data($res), "\n";
+        } elsif ($url =~ m{^/=/model/(\w+)/(\w+)($ext)?$}) {
+            my ($model, $column, $ext) = ($1, $2, $3);
+            OpenAPI->set_formatter($ext);
+            ### Showing one field of all records:
+            my $res;
+            eval {
+                $res = OpenAPI->select_records($model, $column);
+            };
+            if ($@) {
+                print OpenAPI->emit_error($@), "\n";
+                next;
+            }
+            ### $res
+            print OpenAPI->emit_data($res), "\n";
         } elsif ($url =~ m{^/=/model/(\w+)/(\w+)/([^/]+?)($ext)?$}) {
             my ($model, $column, $value, $ext) = ($1, $2, $3, $4);
             OpenAPI->set_formatter($ext);

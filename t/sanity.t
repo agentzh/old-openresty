@@ -112,3 +112,19 @@ GET /=/model/Bookmark/id/5.js
 --- response
 [{"url":"http://www.perl.com","title":"Perl.com","id":"5"}]
 
+
+
+=== TEST 12: read urls of all the records
+--- request
+GET /=/model/Bookmark/url.js
+--- response
+[
+    {"url":"http://www.yahoo.cn","title":"Yahoo Search","id":"1"},
+    {"url":"http://www.yahoo.cn","title":"Yahoo Search","id":"2"},
+    {"url":"http://www.google.cn","title":"Google搜索","id":"3"},
+    {"url":"http://www.baidu.com","title":null,"id":"4"},
+    {"url":"http://www.perl.com","title":"Perl.com","id":"5"}
+]
+
+
+

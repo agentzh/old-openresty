@@ -344,11 +344,12 @@ sub select_records {
         if ($col eq $user_col) { $found = 1; last; }
     }
     my $flds = join(",", @$cols);
-    my $sql = "select id,$flds from $table where $user_col=?";
+    my $sql = "select id,$flds from $table";
+    if (defined $val) { $sql .= " where $user_col=?"; }
     my $sth = $dbh->prepare($sql);
     ### $sql
     ### $val
-    $sth->execute($val);
+    $sth->execute(defined $val ? $val : ());
     my $res = $sth->fetchall_arrayref({});
     if (!$res and !ref $res) { return []; }
     return $res;
