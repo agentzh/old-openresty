@@ -359,5 +359,16 @@ sub select_records {
     return $res;
 }
 
+sub select_all_records {
+    my ($self, $model) = @_;
+    if (!$self->has_model($model)) {
+        die "Model \"$model\" not found.\n";
+    }
+    my $table = lc(PL_N($model));
+    my $list = $self->selectall_arrayref("select * from $table", { Slice => {} });
+    if (!$list or !ref $list) { return []; }
+    return $list;
+}
+
 1;
 

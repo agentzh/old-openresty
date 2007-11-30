@@ -94,6 +94,19 @@ while (my $query = new CGI::Fast) {
             }
             ### $res
             print OpenAPI->emit_data($res), "\n";
+        } elsif ($url =~ m{^/=/model/(\w+)/\%2A($ext)?$}) {
+            my ($model, $ext) = ($1, $2);
+            OpenAPI->set_formatter($ext);
+            ### Showing all the records: $url
+            my $res;
+            eval {
+                $res = OpenAPI->select_all_records($model);
+            };
+            if ($@) {
+                print OpenAPI->emit_error($@), "\n";
+                next;
+            }
+            print OpenAPI->emit_data($res), "\n";
         } elsif ($url =~ m{^/=/model/(\w+)/(\w+)($ext)?$}) {
             my ($model, $column, $ext) = ($1, $2, $3);
             OpenAPI->set_formatter($ext);
