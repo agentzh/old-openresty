@@ -125,3 +125,14 @@ GET /=/model/Bookmark/url.js
     {"url":"http://www.yahoo.cn"}
 ]
 
+
+
+=== TEST 13: select records
+--- request
+GET /=/model/Bookmark/url/http://www.yahoo.cn.js
+--- response
+[
+    {"url":"http://www.yahoo.cn","title":"Yahoo Search","id":"1"},
+    {"url":"http://www.yahoo.cn","title":"Yahoo Search","id":"2"}
+]
+

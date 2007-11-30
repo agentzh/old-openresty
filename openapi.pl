@@ -5,17 +5,17 @@ use strict;
 use warnings;
 #use subs 'warn';
 
-use FindBin;
 #$SIG{__WARN__} = sub { print @_; };
 #$SIG{__DIE__} = sub { print @_;  };
 
+use FindBin;
 use lib "$FindBin::Bin";
 use OpenAPI;
 use URI;
-use Web::Scraper;
+#use Web::Scraper;
 use CGI::Fast qw(:standard);
 use Data::Dumper;
-use XML::Simple qw(:strict);
+#use XML::Simple qw(:strict);
 use FindBin;
 use DBI;
 use Smart::Comments;
@@ -23,8 +23,9 @@ use Smart::Comments;
 
 $CGI::POST_MAX = 1024 * 1000;  # max 1000K posts
 $CGI::DISABLE_UPLOADS = 1;  # no uploads
-our $LastError;
+my $LastError;
 
+# XXX Excpetion not caputred...when database 'test' not created.
 eval {
     OpenAPI->connect();
 };
@@ -32,7 +33,7 @@ if ($@) {
     $LastError = $@;
 }
 
-my $ext = qr/\.\w+/;
+my $ext = qr/\.(?:js|json|xml|yaml|yml)/;
 my $COUNTER = 0;
 while (my $query = new CGI::Fast) {
     my $url  = url(-absolute=>1);
@@ -107,7 +108,7 @@ while (my $query = new CGI::Fast) {
             }
             ### $res
             print OpenAPI->emit_data($res), "\n";
-        } elsif ($url =~ m{^/=/model/(\w+)/(\w+)/([^/]+?)($ext)?$}) {
+        } elsif ($url =~ m{^/=/model/(\w+)/(\w+)/(.+?)($ext)?$}) {
             my ($model, $column, $value, $ext) = ($1, $2, $3, $4);
             OpenAPI->set_formatter($ext);
             #### Showing selected records: $url
