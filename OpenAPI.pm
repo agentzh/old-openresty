@@ -348,7 +348,7 @@ sub select_records {
     if (defined $val) { 
         $sql = "select id,$flds from $table where $user_col=?";
     } else {
-        $sql = "select distinct $user_col from $table";
+        $sql = "select $user_col from $table";
     }
     my $sth = $dbh->prepare($sql);
     ### $sql

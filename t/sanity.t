@@ -119,10 +119,11 @@ GET /=/model/Bookmark/id/5.js
 GET /=/model/Bookmark/url.js
 --- response
 [
-    {"url":"http://www.baidu.com"},
+    {"url":"http://www.yahoo.cn"},
+    {"url":"http://www.yahoo.cn"},
     {"url":"http://www.google.cn"},
-    {"url":"http://www.perl.com"},
-    {"url":"http://www.yahoo.cn"}
+    {"url":"http://www.baidu.com"},
+    {"url":"http://www.perl.com"}
 ]
 
 
