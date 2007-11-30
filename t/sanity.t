@@ -84,3 +84,16 @@ POST /=/model/Bookmark.js
 {"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/2"}
 
 
+
+=== TEST 9: insert multiple records
+--- request
+POST /=/model/Bookmark.js
+[
+    { title: 'Google搜索', url: 'http://www.google.cn' },
+    { title: 'Baidu Search', url: 'http://www.baidu.com' },
+    { title: 'Perl.com', url: 'http://www.perl.com' }
+]
+--- response
+{"success":1,"rows_affected":3,"last_row":"/=/model/Bookmark/id/5"}
+
+

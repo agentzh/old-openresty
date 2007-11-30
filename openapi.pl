@@ -150,7 +150,7 @@ while (my $query = new CGI::Fast) {
             OpenAPI->set_formatter($ext);
             my $res;
             eval {
-                $res = OpenAPI->insert_data($model, $data);
+                $res = OpenAPI->insert_records($model, $data);
             };
             if ($@) {
                 print OpenAPI->emit_error($@), "\n";

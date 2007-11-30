@@ -280,7 +280,7 @@ sub selectall_hashref {
     return $dbh->selectall_hashref(@_);
 }
 
-sub insert_data {
+sub insert_records {
     my ($self, $model, $data) = @_;
     $data = $Importer->($data);
     if (!ref $data) {
@@ -288,27 +288,44 @@ sub insert_data {
     }
     ## Data: $data
     my $table = lc(PL_N($model));
+    my $cols = $self->get_model_col_names($model);
+    my $flds = join(",", @$cols);
+    my $place_holders = join(",", map { "?" } @$cols);
+    my $sth = $dbh->prepare("insert into $table ($flds) values ($place_holders)");
+
     if (ref $data eq 'HASH') { # record found
-        my $cols = $self->get_model_col_names($model);
-        my $flds = join(",", @$cols);
-        my $place_holders = join(",", map { "?" } @$cols);
-        my $sth = $dbh->prepare("insert into $table ($flds) values ($place_holders)");
-        my @vals;
-        for my $col (@$cols) {
-            push @vals, delete $data->{$col};
-        }
-        if (%$data) {
-            die "Unknown columns ", join(", ", keys %$data), "\n";
-        }
-        my $num = $sth->execute(@vals);
+        my $num = insert_record($sth, $data, $cols, 1);
+        #...
         my $last_id = $dbh->last_insert_id(undef, undef, undef, undef, { sequence => $table . '_id_seq' });
         return { rows_affected => $num, last_row => "/=/model/$model/id/$last_id", success => $num?1:0 };
     } elsif (ref $data eq 'ARRAY') {
-        while (my ($key, $val) = each %$data) {
+        my $i = 0;
+        my $rows_affected = 0;
+        for my $row_data (@$data) {
+            if (!ref $row_data || ref $row_data ne 'HASH') {
+                die "Malformed row data found in $i: Hash expected.\n";
+            }
+            $rows_affected += insert_record($sth, $row_data, $cols, $i);
+            $i++;
         }
+        my $last_id = $dbh->last_insert_id(undef, undef, undef, undef, { sequence => $table . '_id_seq' });
+        return { rows_affected => $rows_affected, last_row => "/=/model/$model/id/$last_id", success => $rows_affected?1:0 };
     } else {
         die "Malformed data: Hash or Array expected.\n";
     }
+}
+
+sub insert_record {
+    my ($sth, $row_data, $cols, $row_num) = @_;
+    my @vals;
+    for my $col (@$cols) {
+        push @vals, delete $row_data->{$col};
+    }
+    if (%$row_data) {
+        die "Unknown column found in row $row_num: ",
+            join(", ", keys %$row_data), "\n";
+    }
+    return 0 + $sth->execute(@vals);
 }
 
 1;
