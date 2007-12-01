@@ -115,7 +115,7 @@ GET /=/model/Bookmark/id/5.js
 
 === TEST 12: read urls of all the records
 --- request
-GET /=/model/Bookmark/url.js
+GET /=/model/Bookmark/url/*.js
 --- response
 [
     {"url":"http://www.yahoo.cn"},
