@@ -7,8 +7,9 @@ use Smart::Comments;
 use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
-use Lingua::EN::Inflect qw(PL_N ORD);
+use Lingua::EN::Inflect qw( ORD);
 use List::Util qw(first);
+use Params::Util qw(_HASH _ARRAY _SCALAR);
 
 my %ext2dumper = (
     '.yml' => \&YAML::Syck::Dump,
@@ -83,7 +84,7 @@ sub get_model_cols {
     if (!$self->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
-    my $table = lc(PL_N($model));
+    my $table = lc($model);
     my $list = $self->selectall_arrayref(<<_EOC_, { Slice => {} });
 select name, type, label
 from _columns
@@ -99,7 +100,7 @@ sub get_model_col_names {
     if (!$self->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
-    my $table = lc(PL_N($model));
+    my $table = lc($model);
     my $list = $self->selectall_arrayref(<<_EOC_);
 select name
 from _columns
@@ -161,7 +162,7 @@ sub new_model {
     if ($model !~ /^[A-Z]\w*$/) {
         die "Invalid model name: \"$model\"\n";
     }
-    my $table = lc(PL_N($model));
+    my $table = lc($model);
     ### Table: $table
     my $description = $data->{description} or
         die "No 'description' specified for model \"$model\".\n";
@@ -301,7 +302,7 @@ sub insert_records {
         die "Malformed data: Hash or Array expected\n";
     }
     ## Data: $data
-    my $table = lc(PL_N($model));
+    my $table = lc($model);
     my $cols = $self->get_model_col_names($model);
     my $flds = join(",", @$cols);
     my $place_holders = join(",", map { "?" } @$cols);
@@ -345,7 +346,7 @@ sub insert_record {
 
 sub select_records {
     my ($self, $model, $user_col, $val) = @_;
-    my $table = lc(PL_N($model));
+    my $table = lc($model);
     my $cols = $self->get_model_col_names($model);
     if ($user_col ne 'id') {
         my $found = 0;
@@ -372,7 +373,7 @@ sub select_records {
 
 sub delete_records {
     my ($self, $model, $user_col, $val) = @_;
-    my $table = lc(PL_N($model));
+    my $table = lc($model);
     my $cols = $self->get_model_col_names($model);
     if ($user_col ne 'id') {
         my $found = 0;
@@ -383,7 +384,7 @@ sub delete_records {
     }
     #my $flds = join(",", @$cols);
     my $sql;
-    if (defined $val) { 
+    if (defined $val) {
         $sql = "delete from $table where $user_col=?";
     } else {
         $sql = "delete from $table";
@@ -397,7 +398,7 @@ sub delete_records {
 
 sub update_records {
     my ($self, $model, $user_col, $val, $data) = @_;
-    my $table = lc(PL_N($model));
+    my $table = lc($model);
     my $cols = $self->get_model_col_names($model);
     if ($user_col ne 'id') {
         my $found = 0;
@@ -434,12 +435,13 @@ sub update_records {
     my $retval = $sth->execute(@vals) + 0;
     return {success => $retval ? 1 : 0,rows_affected => $retval};
 }
+
 sub select_all_records {
     my ($self, $model) = @_;
     if (!$self->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
-    my $table = lc(PL_N($model));
+    my $table = lc($model);
     my $list = $self->selectall_arrayref("select * from $table", { Slice => {} });
     if (!$list or !ref $list) { return []; }
     return $list;
@@ -452,6 +454,45 @@ sub get_putdata {
         &CGI::read_from_client(undef, \*STDIN, \$putData, $contentLength, 0);
         #$ENV{'REQUEST_METHOD'} = 'GET';
     }
+}
+
+sub _IDENT {
+    (defined $_[0] && $_[0] =~ /^[A-Za-z]\w*$/) ? $_[0] : undef;
+}
+
+sub alter_model {
+    my $self = $_[0];
+    my $model = _IDENT($_[1]) or die "Invalid model name \"$_[1]\".\n";
+    my $data = _HASH($_[2]) or die "HASH expected in the PUT content.\n";
+    my $table = lc($model);
+    if (!$self->has_model($model)) {
+        die "Model \"$model\" not found.\n";
+    }
+
+    my $sql;
+    my $new_model = $model;
+    if ($new_model = delete $data->{name}) {
+        _IDENT($new_model) or die "Invalid model name \"$new_model\"\n";
+        if ($self->has_model($new_model)) {
+            die "Model \"$new_model\" already exists.\n";
+        }
+        my $new_table = lc($new_model);
+        $sql .=
+            "update _models set table_name='$new_table', name='$new_model' where name='$model';\n" .
+            "update _columns set table_name='$new_table' where table_name='$table';\n" .
+            "alter table $table rename to $new_table;\n";
+    }
+    if (my $desc = delete $data->{description}) {
+        _STRING($desc) or die "Model descriptons must be strings.\n";
+        $sql .= "update _models set description='$desc' where table='$new_model';\n"
+    }
+    if (%$data) {
+        die "Unknown fields ", join(", ", keys %$data), "\n";
+    }
+    ### $sql
+    my $retval = $dbh->do($sql);
+    ### $retval
+    return {success => 1};
 }
 
 1;

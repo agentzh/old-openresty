@@ -27,6 +27,10 @@ sub do_request ($$$$) {
     $req->header('Accept', '*/*');
     $req->url($url);
     if ($body) {
+        if ($method eq 'GET' or $method eq 'HEAD') {
+            die "HTTP 1.1 $method request should not have a content body: $body";
+        }
+
         $req->content($body);
     }
     return $ua->request($req);

@@ -192,3 +192,30 @@ GET /=/model/Bookmark/id/3.js
 --- response
 [{"url":"http://www.google.cn","title":"Blah blah blah","id":"3"}]
 
+
+
+=== TEST 20: Change the name of the model
+--- request
+PUT /=/model/Bookmark.js
+{ name: "MyFavorites" }
+--- response
+{"success":1}
+
+
+=== TEST 21: Check the new model
+--- request
+GET /=/model/MyFavorites.js
+--- response
+[
+    {"name":"id","label":"ID","type":"serial"},
+    {"name":"title","label":"标题","type":"text"},
+    {"name":"url","label":"网址","type":"text"}
+]
+
+
+=== TEST 2: Get model list
+--- request
+GET /=/model.js
+--- response
+[{"src":"/=/model/MyFavorites","name":"MyFavorites","description":"我的书签"}]
+

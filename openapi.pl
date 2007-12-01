@@ -196,10 +196,10 @@ while (my $query = new CGI::Fast) {
             print OpenAPI->emit_error("No POST content specified."), "\n";
             next;
         }
-        $data = OpenAPI->parse_data($data);
         if ($url =~ m{^/=/model/(\w+)($ext)?$}) {
             my ($model, $ext) = ($1, $2);
             OpenAPI->set_formatter($ext);
+            $data = OpenAPI->parse_data($data);
             $data->{name} = $model;
             my $res;
             eval {
@@ -213,6 +213,7 @@ while (my $query = new CGI::Fast) {
         } elsif ($url =~ m{^/=/model/(\w+)/\*/\*($ext)?$}) {
             my ($model, $ext) = ($1, $2);
             OpenAPI->set_formatter($ext);
+            $data = OpenAPI->parse_data($data);
             my $res;
             eval {
                 $res = OpenAPI->insert_records($model, $data);
@@ -237,10 +238,10 @@ while (my $query = new CGI::Fast) {
             print OpenAPI->emit_error("No PUT content specified."), "\n";
             next;
         }
-        $data = OpenAPI->parse_data($data);
         if ($url =~ m{^/=/model/(\w+)/(\w+)/(.+?)($ext)?$}) {
             my ($model, $column, $value, $ext) = ($1, $2, $3, $4);
             OpenAPI->set_formatter($ext);
+            $data = OpenAPI->parse_data($data);
             #### Updating selected records: $url
             my $res;
             eval {
@@ -251,6 +252,20 @@ while (my $query = new CGI::Fast) {
                 next;
             }
             ### $res
+            print OpenAPI->emit_data($res), "\n";
+        }
+        elsif ($url =~ m{^/=/model/([^/]+?)($ext)?$}) {
+            my ($model, $ext) = ($1, $2);
+            OpenAPI->set_formatter($ext);
+            $data = OpenAPI->parse_data($data);
+            my $res;
+            eval {
+                $res = OpenAPI->alter_model($model, $data);
+            };
+            if ($@) {
+                print OpenAPI->emit_error($@), "\n";
+                next;
+            }
             print OpenAPI->emit_data($res), "\n";
         }
     }
