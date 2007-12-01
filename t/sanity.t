@@ -150,3 +150,20 @@ GET /=/model/Bookmark/*/*.js
     {"url":"http://www.perl.com","title":"Perl.com","id":"5"}
 ]
 
+
+
+=== TEST 15: delete a record
+--- request
+DELETE /=/model/Bookmark/id/3.js
+--- response
+{"success":1,"rows_affected":1}
+
+
+
+=== TEST 16: check the record just deleted
+--- request
+GET /=/model/Bookmark/id/3.js
+--- response
+[]
+
+

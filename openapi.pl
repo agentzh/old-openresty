@@ -169,6 +169,22 @@ while (my $query = new CGI::Fast) {
                 next;
             }
             print OpenAPI->emit_success(), "\n";
+         } elsif ($url =~ m{^/=/model/(\w+)/(\w+)/(.+?)($ext)?$}) {
+            my ($model, $column, $value, $ext) = ($1, $2, $3, $4);
+            OpenAPI->set_formatter($ext);
+            #### Showing selected records: $url
+            my $res;
+            eval {
+                $res = OpenAPI->delete_records($model, $column, $value);
+            };
+            if ($@) {
+                print OpenAPI->emit_error($@), "\n";
+                next;
+            }
+            ### $res
+            print OpenAPI->emit_data($res), "\n";
+        } else {
+            print OpenAPI->emit_error("Operation unsupported."), "\n";
         }
     } elsif ($method eq 'POST') {
         ### POST method detected: $url

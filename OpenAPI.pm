@@ -365,6 +365,27 @@ sub select_records {
     return $res;
 }
 
+sub delete_records {
+    my ($self, $model, $user_col, $val) = @_;
+    my $table = lc(PL_N($model));
+    my $cols = $self->get_model_col_names($model);
+    my $found = 0;
+    for my $col (@$cols) {
+        if ($col eq $user_col) { $found = 1; last; }
+    }
+    #my $flds = join(",", @$cols);
+    my $sql;
+    if (defined $val) { 
+        $sql = "delete from $table where $user_col=?";
+    } else {
+        $sql = "delete from $table";
+    }
+    my $sth = $dbh->prepare($sql);
+    ### $sql
+    ### $val
+    my $retval = $sth->execute(defined $val ? $val : ());
+    return {success => 1,rows_affected => $retval+0};
+}
 sub select_all_records {
     my ($self, $model) = @_;
     if (!$self->has_model($model)) {
