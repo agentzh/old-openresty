@@ -1,3 +1,5 @@
+First of all, please run "perl Makefile.PL" to check missing dependencies.
+
 To run "make test", you need to have lighttpd and postgres installed.
 Also you need to create an empty database named "test" and also make user
 'agentzh' a Pg login account (with the password 'agentzh').
@@ -19,30 +21,4 @@ fastcgi.server = (
         )
     )
 )
-
-One has to fix the PUTDATA support in CGI 3.29 by applying the following patch:
-
---- CGI.pm      2007-12-01 20:51:57.000000000 +0800
-+++ /usr/local/share/perl/5.8.8/CGI.pm  2007-04-17 00:58:46.000000000 +0800
-@@ -641,19 +641,13 @@
-                  last METHOD;
-              }
-
--             if ($meth eq 'POST' or $meth eq 'PUT') {
-+             if ($meth eq 'POST') {
-                  $self->read_from_client(\$query_string,$content_length,0)
-                      if $content_length > 0;
-                  # Some people want to have their cake and eat it too!
-                  # Uncomment this line to have the contents of the query string
-                  # APPENDED to the POST data.
-                  # $query_string .= (length($query_string) ? '&' : '') . $ENV{'QUERY_STRING'} if defined $ENV{'QUERY_STRING'};
--                   if ($meth eq 'PUT') {
--                       my $param = 'PUTDATA';
--                       $self->{PUTDATA} = $query_string;
--                       #push (@{$self->{$param}}, $query_string);
--                   }
--
-                  last METHOD;
-              }
-
 
