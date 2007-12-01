@@ -9,7 +9,7 @@ use JSON::Syck ();
 use Data::Dumper ();
 use Lingua::EN::Inflect qw( ORD);
 use List::Util qw(first);
-use Params::Util qw(_HASH _ARRAY _SCALAR);
+use Params::Util qw(_HASH _STRING _ARRAY _SCALAR);
 
 my %ext2dumper = (
     '.yml' => \&YAML::Syck::Dump,
@@ -486,7 +486,7 @@ sub alter_model {
     }
     if (my $desc = delete $data->{description}) {
         _STRING($desc) or die "Model descriptons must be strings.\n";
-        $sql .= "update _models set description='$desc' where table='$new_model';\n"
+        $sql .= "update _models set description='$desc' where name='$new_model';\n"
     }
     if (%$data) {
         die "Unknown fields ", join(", ", keys %$data), "\n";

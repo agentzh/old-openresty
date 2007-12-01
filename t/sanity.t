@@ -202,7 +202,7 @@ GET /=/model/Bookmark/id/3.js
 === TEST 20: Change the name of the model
 --- request
 PUT /=/model/Bookmark.js
-{ name: "MyFavorites" }
+{ name: "MyFavorites", description: "我的最爱" }
 --- response
 {"success":1}
 
@@ -220,7 +220,7 @@ GET /=/model/MyFavorites.js
     {"name":"url","label":"网址","type":"text"}
    ],
   "name":"MyFavorites",
-  "description":"我的书签"
+  "description":"我的最爱"
 }
 
 
@@ -229,5 +229,5 @@ GET /=/model/MyFavorites.js
 --- request
 GET /=/model.js
 --- response
-[{"src":"/=/model/MyFavorites","name":"MyFavorites","description":"我的书签"}]
+[{"src":"/=/model/MyFavorites","name":"MyFavorites","description":"我的最爱"}]
 
