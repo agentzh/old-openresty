@@ -154,7 +154,7 @@ GET /=/model/Bookmark/*/*.js
 
 === TEST 15: delete a record
 --- request
-DELETE /=/model/Bookmark/id/3.js
+DELETE /=/model/Bookmark/id/2.js
 --- response
 {"success":1,"rows_affected":1}
 
@@ -162,16 +162,33 @@ DELETE /=/model/Bookmark/id/3.js
 
 === TEST 16: check the record just deleted
 --- request
-GET /=/model/Bookmark/id/3.js
+GET /=/model/Bookmark/id/2.js
 --- response
 []
 
 
-=== TEST 17: update a record
+
+=== TEST 17: update a nonexistent record
+--- request
+PUT /=/model/Bookmark/id/2.js
+{ title: "Blah blah blah" }
+--- response
+{"success":0,"rows_affected":0}
+
+
+
+=== TEST 18: update an existent record
 --- request
 PUT /=/model/Bookmark/id/3.js
-{ title: "Google Search" }
+{ title: "Blah blah blah" }
 --- response
-dfsdkfdskj
---- SKIP
+{"success":1,"rows_affected":1}
+
+
+
+=== TEST 19: check if the record is indeed changed
+--- request
+GET /=/model/Bookmark/id/3.js
+--- response
+[{"url":"http://www.google.cn","title":"Blah blah blah","id":"3"}]
 

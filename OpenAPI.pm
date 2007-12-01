@@ -430,9 +430,9 @@ sub update_records {
     my $sth = $dbh->prepare($sql);
     push @vals, $val if defined $val;
     ### $sql
-    ### $val
-    my $retval = $sth->execute(@vals);
-    return {success => 1,rows_affected => $retval+0};
+    ### @vals
+    my $retval = $sth->execute(@vals) + 0;
+    return {success => $retval ? 1 : 0,rows_affected => $retval};
 }
 sub select_all_records {
     my ($self, $model) = @_;
