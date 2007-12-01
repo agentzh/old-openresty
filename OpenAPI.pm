@@ -85,14 +85,16 @@ sub get_model_cols {
         die "Model \"$model\" not found.\n";
     }
     my $table = lc($model);
-    my $list = $self->selectall_arrayref(<<_EOC_, { Slice => {} });
+    my $list = $self->selectall_arrayref("select description from _models where name='$model'");
+    my $desc = $list->[0][0];
+    $list = $self->selectall_arrayref(<<_EOC_, { Slice => {} });
 select name, type, label
 from _columns
 where table_name='$table'
 _EOC_
     if (!$list or !ref $list) { $list = []; }
     unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
-    return $list;
+    return { description => $desc, name => $model, columns => $list };
 }
 
 sub get_model_col_names {

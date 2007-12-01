@@ -50,11 +50,16 @@ GET /=/model.js
 --- request
 GET /=/model/Bookmark.js
 --- response
-[
+{
+  "columns":
+   [
     {"name":"id","label":"ID","type":"serial"},
     {"name":"title","label":"标题","type":"text"},
     {"name":"url","label":"网址","type":"text"}
-]
+   ],
+  "name":"Bookmark",
+  "description":"我的书签"
+}
 
 
 
@@ -202,18 +207,25 @@ PUT /=/model/Bookmark.js
 {"success":1}
 
 
+
 === TEST 21: Check the new model
 --- request
 GET /=/model/MyFavorites.js
 --- response
-[
+{
+  "columns":
+   [
     {"name":"id","label":"ID","type":"serial"},
     {"name":"title","label":"标题","type":"text"},
     {"name":"url","label":"网址","type":"text"}
-]
+   ],
+  "name":"MyFavorites",
+  "description":"我的书签"
+}
 
 
-=== TEST 2: Get model list
+
+=== TEST 22: Get model list
 --- request
 GET /=/model.js
 --- response
