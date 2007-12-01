@@ -1,0 +1,20 @@
+use strict;
+use inc::Module::Install;
+
+name                ('OpenAPI');
+license             ('perl');
+author              ('Agent Zhang <agentzh@yahoo.cn>');
+perl_version        ('5.006001');
+all_from            ('OpenAPI.pm');
+
+requires            ('CGI' => '3.31');
+requires            ('YAML::Syck' => '0.99');
+requires            ('Lingua::EN::Inflect' => '1.89');
+requires            ('Smart::Comments');
+requires            ('List::Util');
+requires            ('DBD::Pg' => '1.49');
+requires            ('DBI' => '1.57');
+
+auto_install();
+#WriteAll();
+

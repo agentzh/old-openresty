@@ -167,3 +167,11 @@ GET /=/model/Bookmark/id/3.js
 []
 
 
+=== TEST 17: update a record
+--- request
+PUT /=/model/Bookmark/id/3.js
+{ title: "Google Search" }
+--- response
+dfsdkfdskj
+--- SKIP
+

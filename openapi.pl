@@ -22,7 +22,7 @@ use Smart::Comments;
 #use Perl6::Say;
 
 $CGI::POST_MAX = 1024 * 1000;  # max 1000K posts
-$CGI::DISABLE_UPLOADS = 1;  # no uploads
+#$CGI::DISABLE_UPLOADS = 1;  # no uploads
 my $LastError;
 
 # XXX Excpetion not caputred...when database 'test' not created.
@@ -44,6 +44,7 @@ while (my $query = new CGI::Fast) {
     #print "charset: ", url_param("charset"), "\n";
     if ($LastError) {
         print OpenAPI->emit_error($LastError), "\n";
+        undef $LastError;
     }
     my $data;
     ### Content-type: content_type()
@@ -191,8 +192,9 @@ while (my $query = new CGI::Fast) {
         # XXX check for content-type...
         $data = param('POSTDATA');
         ### $data
-        if (!$data) {
+        if (!defined $data) {
             print OpenAPI->emit_error("No POST content specified."), "\n";
+            next;
         }
         $data = OpenAPI->parse_data($data);
         if ($url =~ m{^/=/model/(\w+)($ext)?$}) {
@@ -224,6 +226,33 @@ while (my $query = new CGI::Fast) {
         ### POST data: $data
     } elsif ($method eq 'PUT') {
         ### PUT method detected: $url
+        $data = $query->param('PUTDATA');
+        #print $data;
+        #next;
+        #warn Dumper($query);
+        #warn $CGI::VERSION;
+        ### $data
+        #print $data;
+        if (!$data) {
+            print OpenAPI->emit_error("No PUT content specified."), "\n";
+            next;
+        }
+        $data = OpenAPI->parse_data($data);
+        if ($url =~ m{^/=/model/(\w+)/(\w+)/(.+?)($ext)?$}) {
+            my ($model, $column, $value, $ext) = ($1, $2, $3, $4);
+            OpenAPI->set_formatter($ext);
+            #### Updating selected records: $url
+            my $res;
+            eval {
+                $res = OpenAPI->update_records($model, $column, $value, $data);
+            };
+            if ($@) {
+                print OpenAPI->emit_error($@), "\n";
+                next;
+            }
+            ### $res
+            print OpenAPI->emit_data($res), "\n";
+        }
     }
     #print Dumper($query);
     #print Dumper(\%ENV);

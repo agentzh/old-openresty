@@ -26,6 +26,8 @@ my %ext2importer = (
 
 
 our ($dbh, $Dumper, $Importer);
+$Dumper = \&JSON::Syck::Dump;
+$Importer = \&JSON::Syck::Load;
 
 # XXX more data types...
 our %to_native_type = (
@@ -345,9 +347,12 @@ sub select_records {
     my ($self, $model, $user_col, $val) = @_;
     my $table = lc(PL_N($model));
     my $cols = $self->get_model_col_names($model);
-    my $found = 0;
-    for my $col (@$cols) {
-        if ($col eq $user_col) { $found = 1; last; }
+    if ($user_col ne 'id') {
+        my $found = 0;
+        for my $col (@$cols) {
+            if ($col eq $user_col) { $found = 1; last; }
+        }
+        if (!$found) { die "Column $user_col not available.\n"; }
     }
     my $flds = join(",", @$cols);
     my $sql;
@@ -369,9 +374,12 @@ sub delete_records {
     my ($self, $model, $user_col, $val) = @_;
     my $table = lc(PL_N($model));
     my $cols = $self->get_model_col_names($model);
-    my $found = 0;
-    for my $col (@$cols) {
-        if ($col eq $user_col) { $found = 1; last; }
+    if ($user_col ne 'id') {
+        my $found = 0;
+        for my $col (@$cols) {
+            if ($col eq $user_col) { $found = 1; last; }
+        }
+        if (!$found) { die "Column $user_col not available.\n"; }
     }
     #my $flds = join(",", @$cols);
     my $sql;
@@ -386,6 +394,46 @@ sub delete_records {
     my $retval = $sth->execute(defined $val ? $val : ());
     return {success => 1,rows_affected => $retval+0};
 }
+
+sub update_records {
+    my ($self, $model, $user_col, $val, $data) = @_;
+    my $table = lc(PL_N($model));
+    my $cols = $self->get_model_col_names($model);
+    if ($user_col ne 'id') {
+        my $found = 0;
+        for my $col (@$cols) {
+            if ($col eq $user_col) { $found = 1; last; }
+        }
+        #my $flds = join(",", @$cols);
+        if (!$found) { die "Column $user_col not available.\n"; }
+    }
+    if (!ref $data || ref $data ne 'HASH') {
+        die "HASH data expected in the content body.\n";
+    }
+    my (@inner_sql, @vals);
+    while (my ($key, $val) = each %$data) {
+        my $col = lc($key);
+        if ($col eq 'id') {
+            next;  # XXX maybe issue a warning?
+        }
+        push @inner_sql, "$key=?";
+        push @vals, $val;
+    }
+
+    my $sql;
+    local $" = ",";
+    if (defined $val) {
+        $sql = "update $table set @inner_sql where $user_col=?";
+    } else {
+        $sql = "update $table set @inner_sql";
+    }
+    my $sth = $dbh->prepare($sql);
+    push @vals, $val if defined $val;
+    ### $sql
+    ### $val
+    my $retval = $sth->execute(@vals);
+    return {success => 1,rows_affected => $retval+0};
+}
 sub select_all_records {
     my ($self, $model) = @_;
     if (!$self->has_model($model)) {
@@ -395,6 +443,15 @@ sub select_all_records {
     my $list = $self->selectall_arrayref("select * from $table", { Slice => {} });
     if (!$list or !ref $list) { return []; }
     return $list;
+}
+
+sub get_putdata {
+    my $self = shift;
+    my $putData = shift;
+    if (my $contentLength = $ENV{'CONTENT_LENGTH'}) {
+        &CGI::read_from_client(undef, \*STDIN, \$putData, $contentLength, 0);
+        #$ENV{'REQUEST_METHOD'} = 'GET';
+    }
 }
 
 1;
