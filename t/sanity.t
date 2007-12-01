@@ -24,9 +24,8 @@ GET /=/model.js
 
 === TEST 3: Create a model
 --- request
-POST /=/model.js
+POST /=/model/Bookmark.js
 {
-    name: "Bookmark",
     description: "我的书签",
     columns: [
         { name: "id", type: "serial", label: "ID" },
@@ -69,7 +68,7 @@ GET /=/model/Foo.js
 
 === TEST 7: insert a single record
 --- request
-POST /=/model/Bookmark.js
+POST /=/model/Bookmark/*/*.js
 { title: "Yahoo Search", url: "http://www.yahoo.cn" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/1"}
@@ -78,7 +77,7 @@ POST /=/model/Bookmark.js
 
 === TEST 8: insert another record
 --- request
-POST /=/model/Bookmark.js
+POST /=/model/Bookmark/*/*.js
 { title: "Yahoo Search", url: "http://www.yahoo.cn" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/2"}
@@ -87,7 +86,7 @@ POST /=/model/Bookmark.js
 
 === TEST 9: insert multiple records at a time
 --- request
-POST /=/model/Bookmark.js
+POST /=/model/Bookmark/*/*.js
 [
     { title: "Google搜索", url: "http://www.google.cn" },
     { url: "http://www.baidu.com" },
@@ -141,7 +140,7 @@ GET /=/model/Bookmark/url/http://www.yahoo.cn.js
 
 === TEST 14: read all records
 --- request
-GET /=/model/Bookmark/*.js
+GET /=/model/Bookmark/*/*.js
 --- response
 [
     {"url":"http://www.yahoo.cn","title":"Yahoo Search","id":"1"},
@@ -150,5 +149,4 @@ GET /=/model/Bookmark/*.js
     {"url":"http://www.baidu.com","title":null,"id":"4"},
     {"url":"http://www.perl.com","title":"Perl.com","id":"5"}
 ]
-
 

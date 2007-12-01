@@ -62,6 +62,7 @@ while (my $query = new CGI::Fast) {
         OpenAPI->do("SET search_path TO $user,public");
     };
     if ($@) { print OpenAPI->emit_error($@), "\n"; next; }
+    $url =~ s/\%2A/*/g;
     my $method = $ENV{'REQUEST_METHOD'};
     if ($method eq 'GET') {
         ### GET method detected: $url
@@ -94,7 +95,7 @@ while (my $query = new CGI::Fast) {
             }
             ### $res
             print OpenAPI->emit_data($res), "\n";
-        } elsif ($url =~ m{^/=/model/(\w+)/\%2A($ext)?$}) {
+        } elsif ($url =~ m{^/=/model/(\w+)/\*/\*($ext)?$}) {
             my ($model, $ext) = ($1, $2);
             OpenAPI->set_formatter($ext);
             ### Showing all the records: $url
@@ -175,10 +176,13 @@ while (my $query = new CGI::Fast) {
         $data = param('POSTDATA');
         ### $data
         if (!$data) {
-            print OpenAPI->emit_error("No model specified."), "\n";
+            print OpenAPI->emit_error("No POST content specified."), "\n";
         }
-        if ($url =~ m{^/=/model($ext)?$}) {
-            OpenAPI->set_formatter($1);
+        $data = OpenAPI->parse_data($data);
+        if ($url =~ m{^/=/model/(\w+)($ext)?$}) {
+            my ($model, $ext) = ($1, $2);
+            OpenAPI->set_formatter($ext);
+            $data->{name} = $model;
             my $res;
             eval {
                 $res = OpenAPI->new_model($data);
@@ -188,7 +192,7 @@ while (my $query = new CGI::Fast) {
                 next;
             }
             print OpenAPI->emit_data($res), "\n";
-        } elsif ($url =~ m{^/=/model/(\w+)($ext)?$}) {
+        } elsif ($url =~ m{^/=/model/(\w+)/\*/\*($ext)?$}) {
             my ($model, $ext) = ($1, $2);
             OpenAPI->set_formatter($ext);
             my $res;

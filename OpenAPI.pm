@@ -39,6 +39,14 @@ our %to_native_type = (
     double => 'double precision',
 );
 
+sub parse_data {
+    shift;
+    if (!$Importer) {
+        $Importer = \&JSON::Syck::Load;
+    }
+    return $Importer->($_[0]);
+}
+
 sub set_formatter {
     my ($self, $ext) = @_;
     $ext ||= '.yaml';
@@ -143,7 +151,6 @@ _EOC_
 
 sub new_model {
     my ($self, $data) = @_;
-    $data = $Importer->($data);
     my $model = $data->{name} or
         die "No 'name' field found for the new model\n";
     if (length($model) >= 32) {
@@ -288,7 +295,6 @@ sub selectall_hashref {
 
 sub insert_records {
     my ($self, $model, $data) = @_;
-    $data = $Importer->($data);
     if (!ref $data) {
         die "Malformed data: Hash or Array expected\n";
     }
