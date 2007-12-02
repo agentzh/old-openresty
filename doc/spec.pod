@@ -12,7 +12,7 @@ Agent Zhang (章亦春) <agentzh@yahoo.cn>
 
     CREATED:       Nov 19, 2007
     LAST MODIFIED: Dec 3, 2007
-    VERSION:       0.02
+    VERSION:       0.03
 
 =head1 DESCRIPTION
 
@@ -169,7 +169,7 @@ OpenAPI 支持所谓的“角色”概念。一个 OpenAPI 用户在注册时可
 
 一个例子是：
 
-    POST /=/model/Bookmark.json
+    POST /=/model/Bookmark
 
 I<POST body>
 
@@ -200,7 +200,7 @@ I<POST body>
 
 默认情况下，URL 及请求数据中的非 ASCII 字符都按 UTF-8 编码处理。如若需要使用其他编码，如 GBK, Big5, 和 Latin1 的话，需要显式地通过 C<charset> 参数指定，例如：
 
-    POST /=/model/Bookmark.json?charset=GBK
+    POST /=/model/Bookmark?charset=GBK
 
 任何情况下，URL 和请求数据中的编码必须一致，比如必须同为 UTF-8，或者同为 GBK.
 
@@ -220,7 +220,7 @@ I<POST body>
 
 可以通过下面的接口修改已有模型的名字：
 
-    POST /=/model/<old_name>.json
+    POST /=/model/<old_name>
     { name: "<new_name" }
 
 一个例子是：
@@ -236,27 +236,49 @@ I<POST body>
 
 可以通过下面的接口修改已有模型的描述：
 
-    POST /=/model/<model_name>.json
+    POST /=/model/<model_name>
     { descripton: "<new_description" }
 
 修改模型的名字和描述可以放在单次 HTTP 请求中，例如下面这个例子：
 
-    POST /=/model/Bookmark.json
+    POST /=/model/Bookmark
     { name: "MyBookmark", description: "这可是我的书签哦！" }
 
 =item Change Model Columns
 
 可以通过下面的接口修改已有模型的某一列的名字，类型，或标签：
 
-    POST /=/model/Bookmark/title.json
+    POST /=/model/Bookmark/title
     { name: "bookmark_name", type: "varchar(20)", label: "书签名" }
 
 一次可以只修改其中的一个或者两个属性。例如：
 
-    POST /=/model/Bookmark/title.json
+    POST /=/model/Bookmark/title
     { name: "bookmark_name", label: "书签名" }
 
 如果我们并不想修改 title 列的类型(type)的话。
+
+=item Add Model Columns
+
+可以通过下面的接口添加模型的列：
+
+    POST /=/model/<model_name>/<new_column_name>
+    { type: "<type>", label: "<label>" }
+
+一个例子是：
+
+    POST /=/model/Bookmark/comment
+    { type: "text", label: "书签评论" }
+
+=item Delete Model Columns
+
+可以通过下面的接口删除模型的列：
+
+    DELETE /=/model/<model_name>/<column_name>
+
+一个例子是：
+
+    DELETE /=/model/Bookmark/comment
 
 =back
 
@@ -272,12 +294,12 @@ I<POST body>
 
 一个 JSON 格式的例子为：
 
-    GET /=/model.json
+    GET /=/model
 
     [
-        { description: "My favorite bookmark", name: "Bookmark", url: "/=/model/Bookmark.json", writable: 1, readable: 1 },
-        { description: "My favorite music", type: "model", name: "Music", url: "/=/model/Music.json", writable: 1, readable: 1 },
-        { description: "My frequently accessed blog", name: "Blog", url: "/=/model/Blog.json", writable: 1, readable: 1 },
+        { description: "My favorite bookmark", name: "Bookmark", src: "/=/model/Bookmark", writable: 1, readable: 1 },
+        { description: "My favorite music", type: "model", name: "Music", src: "/=/model/Music", writable: 1, readable: 1 },
+        { description: "My frequently accessed blog", name: "Blog", src: "/=/model/Blog", writable: 1, readable: 1 },
     ]
 
 有关结果格式的讨论，请见 L</DATA FORMAT> 一节.
@@ -298,17 +320,17 @@ I<POST body>
 
 一个 JSON 的例子如下：
 
-    GET /=/model/Bookmark.json
+    GET /=/model/Bookmark
 
     {
       name: "Bookmark",
       description: "My favorite bookmark",
       columns:
         [
-          { name: "id", type: "serial", url: "/=/model/Bookmark/id.json", writable: 1, readable: 1 },
-          { name: "title", type: "string", url: "/=/model/Bookmark/string.json", writable: 1, readable: 1 },
-          { name: "url", type: "string", url: "/=/model/Bookmark/url.json", writable: 1, readable: 1 },
-          { name: "description", type: "string", url: "/=/model/Bookmark/description.json", writable: 1, readable: 1 },
+          { name: "id", type: "serial", src: "/=/model/Bookmark/id", writable: 1, readable: 1 },
+          { name: "title", type: "string", src: "/=/model/Bookmark/string", writable: 1, readable: 1 },
+          { name: "url", type: "string", src: "/=/model/Bookmark/url", writable: 1, readable: 1 },
+          { name: "description", type: "string", src: "/=/model/Bookmark/description", writable: 1, readable: 1 },
         ]
     }
 
@@ -353,7 +375,7 @@ I<POST body>
 
 对于超过 10 条的返回结果，API 总是返回前十条。翻页功能可通过 page 参数来控制，例如
 
-    GET /=/model/Bookmark/title/*.json?page=2
+    GET /=/model/Bookmark/title/*?page=2
 
     [
         { title: "XUL::App - Jifty way of doing XUL" },
@@ -374,7 +396,7 @@ I<POST body>
 
 一个具体的体子是：
 
-    GET /=/model/Bookmark/id/1.json
+    GET /=/model/Bookmark/id/1
 
 相当于
 
@@ -392,7 +414,7 @@ I<POST body>
 
 下面是一个例子：
 
-    GET /=/model/Bookmark/title/Yahoo%.json?op=like
+    GET /=/model/Bookmark/title/Yahoo%?op=like
 
 近似于
 
@@ -421,7 +443,7 @@ I<POST body>
 
 该命令用于向指定模型上传若干新记录。一个例子是：
 
-    POST /=/model/Bookmark.json
+    POST /=/model/Bookmark
 
 I<POST body>
 
@@ -445,7 +467,7 @@ I<Output>
 
 一个例子是：
 
-    PUT /=/model/Bookmark/url/yahoo.json?op=like
+    PUT /=/model/Bookmark/url/yahoo?op=like
 
 I<POST body>
 
@@ -465,7 +487,7 @@ I<POST body>
 
 一个例子是：
 
-    DELETE /=/model/Bookmark/url/yahoo.json?op=like
+    DELETE /=/model/Bookmark/url/yahoo?op=like
 
 对应的伪 SQL 为：
 
@@ -503,7 +525,7 @@ miniSQL 将不支持嵌套语句，比如嵌套型 select 语句.
 
 示例：
 
-    POST /=/action.json
+    POST /=/action
 
 I<POST body>
 
@@ -526,7 +548,7 @@ I<POST body>
 
 示例：
 
-    GET /=/action/WebSearch.json
+    GET /=/action/WebSearch
 
 
 =head3 Call Actions
@@ -535,7 +557,7 @@ I<POST body>
 
 以指定的参数调用 actions. 示例：
 
-    GET /=/action/WebSearch/query/Hello,world.json
+    GET /=/action/WebSearch/query/Hello,world
     [
         { title: "Hello world program - Wikipedia, the free encyclopedia", url: "en.wikipedia.org/wiki/Hello_world_program", summary: "..." },
         { title: "Helloworld.com", url: "www.helloworld.com/", summary: "..." },
@@ -569,12 +591,12 @@ I<POST body>
 
 =item WebSearch
 
-    GET /=/action/WebSearch.json
+    GET /=/action/WebSearch
     [
         { name: "query", type: "string" }
     ]
 
-    GET /=/action/WebSearch/query/Hello,world.json
+    GET /=/action/WebSearch/query/Hello,world
     [
         { title: "Hello world program - Wikipedia, the free encyclopedia", url: "en.wikipedia.org/wiki/Hello_world_program", summary: "..." },
         { title: "Helloworld.com", url: "www.helloworld.com/", summary: "..." },
@@ -599,15 +621,15 @@ XXX needs work...
 支持的格式后缀为 C<.json>, C<.xml>, 和 C<.yaml>. 它们分别对应 JSON 格式，XML/RDF 格式，和 YAML 格式。
 它们的别名为 C<.js>, C<.rdf>, 和 C<.yml>.
 
-当后缀名未指定时，缺省为 C<.xml>。
+当后缀名未指定时，缺省为 C<.json>。
 
 在绝大多数情况下，服务器返回的都为列表型数据。当数据量较大，出现分页的时候，列表数据的最后一个元素总为一特殊的结构：
 
-    { type: "meta", next: "/=/url/to/the/next/page" 
+    { name: "_nextpage", src: "/=/url/to/the/next/page" }
 
 一个例子是：
 
-    GET /=/model/Bookmark/id.json?page=2
+    GET /=/model/Bookmark/id/*?page=2
 
     [
         { id: 11 },
@@ -615,7 +637,7 @@ XXX needs work...
         { id: 13 },
         ...
         { id: 20 },
-        { type: "meta", next: "/=/model/Bookmark/id.json?page=3" }
+        { type: "meta", next: "/=/model/Bookmark/idpage=3" }
     ]
 
 =head2 Parameters
