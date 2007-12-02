@@ -204,6 +204,8 @@ I<POST body>
 
 任何情况下，URL 和请求数据中的编码必须一致，比如必须同为 UTF-8，或者同为 GBK.
 
+具体的实现会对一个 Model 所含的字段数目和类型进行约束。
+
 当模型已存在时，服务器返回出错信息，例如：
 
     { success: 0, error:"Model \"Bookmark\" already exists." }
@@ -262,11 +264,31 @@ I<POST body>
         ]
     }
 
-具体的实现会对一个 Model 所含的字段数目和类型进行约束。
+=head3 Delete Models
+
+=over
+
+=item 删除指定的 Model
+
+    DELETE /=/model/<model name>
+
+该命令将删除名为 <model_name> 的模型。
+
+在功能上相当于下面这条 SQL 语句：
+
+    drop table <model name>
+
+=item 删除所有的 Model
+
+    DELETE /=/model
+
+=head3 Read records
 
 =item 显示指定字段的记录列表
 
-    GET /=/model/<model name>/<column name>
+    GET /=/model/<model name>/<column name>/*
+
+这里的星号 C<*> 是“通配符”(wildcard).
 
 逻辑上相当于下面这行 SQL 语句：
 
@@ -277,7 +299,7 @@ I<POST body>
 
 对于超过 10 条的返回结果，API 总是返回前十条。翻页功能可通过 page 参数来控制，例如
 
-    GET /=/model/Bookmark/title.json?page=2
+    GET /=/model/Bookmark/title/*.json?page=2
 
     [
         { title: "XUL::App - Jifty way of doing XUL" },
@@ -335,7 +357,7 @@ I<POST body>
 
 更高级的检索需求 (比如 table join 和 group by) 应由 C</=/action/ModelSearch> 来完成.
 
-=head3 Update Models
+=head3 Manipulate Records
 
 =over
 
@@ -357,7 +379,7 @@ I<POST body>
 
 I<Output>
 
-    XXX report success or so
+    { success: 1, rows_affected: 3, last_row: "/=/model/Bookmark/id/3" }
 
 具体的实现会对一次插入的记录数目进行限制。
 
@@ -397,16 +419,6 @@ I<POST body>
     where url like "yahoo"
 
 =back
-
-=head3 Delete Models
-
-    DELETE /=/model/<model name>
-
-该命令将删除名为 <model_name> 的模型。
-
-在功能上相当于下面这条 SQL 语句：
-
-    drop table <model name>
 
 =head3 Namespace and Databases
 
