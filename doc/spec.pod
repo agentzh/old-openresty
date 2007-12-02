@@ -518,6 +518,8 @@ I<POST body>
 
 =back
 
+=head2 Roles
+
 =head2 Administration
 
     GET/POST/DELETE /=/admin/...
@@ -600,8 +602,6 @@ XXX needs work...
 注：以明文方式传递用户名和密码在安全性较高的场合是不允许使用的。
 
 =back
-
-=head1 ROLES
 
 =head1 ERROR HANDLING
 
