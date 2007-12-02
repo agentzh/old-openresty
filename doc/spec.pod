@@ -172,17 +172,25 @@ I<POST body>
 
 请求的 POST 内容中可以不指定模型的 name 属性，因为它已经出现在了请求的 URL 中，如这里的 "Bookmark". 如果用户在 JSON 数据中也指定了 C<name>，则
 
-当模型已存在时，服务器返回出错信息，详情请见 L</ERROR HANDLING> 一节。
-
 模型名必须以字母开头，后跟若干字母，下划线或数字。推荐模型名总以大写字母开头，比如 C<Bookmark>, C<MyMusic> 等等。
 
 列名必须以字母开头，后跟若干字母，下划线或数字，与模型名的命名规则相似。但不同的是，推荐列名总是由小写字母开头，例如 C<book_name>, C<gender>, 等等。
+
+虽然服务器会存储模型名和列名的大小字，但是内部处理时是不区分大小写的。所以并不允许 C<Bookmark> 和 C<bookmark> 这两个 Model 同时存在。
+
+任何模型都将拥有一个默认列，名为 C<id>，用于在一个模型中唯一地标识某一条数据记录（或者说数据行）。若用户自己在模型中指定了 C<id> 列，则服务器会将之忽略，并将给出一条警告信息。
 
 默认情况下，URL 及请求数据中的非 ASCII 字符都按 UTF-8 编码处理。如若需要使用其他编码，如 GBK, Big5, 和 Latin1 的话，需要显式地通过 C<charset> 参数指定，例如：
 
     POST /=/model/Bookmark.json?charset=GBK
 
 任何情况下，URL 和请求数据中的编码必须一致，比如必须同为 UTF-8，或者同为 GBK.
+
+当模型已存在时，服务器返回出错信息，例如：
+
+    { success: 0, error:"Model \"Bookmark\" already exists." }
+
+详情请见 L</ERROR HANDLING> 一节。
 
 =head3 Read Models
 
