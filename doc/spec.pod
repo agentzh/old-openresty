@@ -135,15 +135,24 @@ L<http://openid.net/>
 模型是一种抽象的数据库表格。它可以映射到数据库的物理表，亦可以映射到虚拟的存储结构，如果电子信箱的 inbox.
 模型按创建者，可以分为内置和用户自定义两种类型。模型拥有自己细化的权限模型，如可写权限分配，以及可读权限分配。
 
+所有与 Model 相关的接口，其 URL 都满足下列几种形式：
+
+
+    /=/model                                            操纵模型列表
+    /=/model/<model_name>                               操纵指定的模型，名为 <model_name>
+    /=/model/<model_name>/<column_name>                 操纵指定模型 <model_name> 的指定列<column_name>
+    /=/model/<model_name>/<column_name>/<column_value>  操纵指定模型<model_name>中的数据记录，
+                                                        并由 <column_name> 和 <column_value> 来定位
+
 =head3 Create Models
 
-    POST /=/model
+    POST /=/model/MyNewModel
 
 新创建的 Model 的 schema 在 POST 的 content body 中通过对应格式( 比如 JSON )的 schema 说明.
 
 一个例子是：
 
-    POST /=/model.json
+    POST /=/model/Bookmark.json
 
 I<POST body>
 
@@ -160,6 +169,8 @@ I<POST body>
 一次 POST 请求只能指定创建单个 Model. Model 的声明包含两部分，一是模型名，即 C<name> 字段，一是列声明，即 C<columns> 字段。
 
 每个模型必须提供一个非空的 description 属性，同时模型各列的定义必须包含 label 这一属性，而且必须为非空。
+
+请求的 POST 内容中可以不指定模型的 name 属性，因为它已经出现在了请求的 URL 中，如这里的 "Bookmark". 如果用户在 JSON 数据中也指定了 C<name>，则
 
 当模型已存在时，服务器返回出错信息，详情请见 L</ERROR HANDLING> 一节。
 

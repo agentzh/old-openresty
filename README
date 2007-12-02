@@ -1,10 +1,16 @@
 First of all, please run "perl Makefile.PL" to check missing dependencies.
 
-To run "make test", you need to have lighttpd and postgres installed.
+To run "make test" or "make debug", you need to have lighttpd and postgres installed.
 Also you need to create an empty database named "test" and also make user
 'agentzh' a Pg login account (with the password 'agentzh').
 
 Sample lighttpd configuration:
+
+server.modules              = (
+            "mod_fastcgi",
+            ...
+  )
+
 
 # lighttpd.conf
 fastcgi.server = (
@@ -12,8 +18,7 @@ fastcgi.server = (
         "openapi" => (
             "socket"       => "/tmp/openapi.socket",
             "check-local"  => "disable",
-            "bin-path"     => "/path/to/openapi.pl",
-            #"bin-environment" => ( "JIFTY_COMMAND" => "fastcgi" ),
+            "bin-path"     => "/YOUR/PATH/TO/openapi.pl",
             "min-procs"    => 1,
             "max-procs"    => 5,
             "max-load-per-proc" => 1,
