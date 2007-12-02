@@ -6,13 +6,13 @@ Also you need to create an empty database named "test" and also make user
 
 Sample lighttpd configuration:
 
+# lighttpd.conf
+
 server.modules              = (
             "mod_fastcgi",
             ...
   )
 
-
-# lighttpd.conf
 fastcgi.server = (
     "" => (
         "openapi" => (

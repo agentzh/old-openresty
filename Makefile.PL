@@ -15,6 +15,10 @@ requires            ('List::Util');
 requires            ('DBD::Pg' => '1.49');
 requires            ('DBI' => '1.57');
 
+build_requires      ('Test::LongString' => 0.11);
+build_requires      ('Test::Base' => 0.54);
+build_requires      ('LWP::UserAgent');
+
 auto_install();
 #WriteAll();
 
