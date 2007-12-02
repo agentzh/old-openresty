@@ -136,9 +136,17 @@ OAuth 支持也应认真考虑：
 
 L<http://oauth.net/>
 
-还包括 OpenID 协议：
+=head3 角色登录
 
-L<http://openid.net/>
+OpenAPI 支持所谓的“角色”概念。一个 OpenAPI 用户在注册时可以定义若干个“角色”,每个“角色”的权限各不相同，而都可以单独登录，并拥有不同的密码。
+
+例如用户 Marry 可以拥有 C<admin>, C<reader>, C<user>, C<public> 等多种角色，每个角色都可以单独登录。当 Marry 的 C<reader> 角色登录时，使用的帐户名为 C<Marry.reader>. 事实上，C<Marry> 在作为帐户名使用时，就相当于以 C<Marry.admin> 角色登录，因为 C<admin> 角色拥有最高的权限。
+
+一个例子是：
+
+    GET /=/login/Marry.reader/myPassword
+
+有关角色的更多信息，请参见 L</Roles> 一节。
 
 =head2 Models
 
@@ -223,6 +231,9 @@ I<POST body>
     ]
 
 有关结果格式的讨论，请见 L</DATA FORMAT> 一节.
+
+
+这里的 C<writable> 和 C<readable> 属性标记了模型的读权限和写权限。读写权限是用户通过"角色" (Role) 来分配的。
 
 =item 显示指定模型的 schema
 
@@ -589,6 +600,8 @@ XXX needs work...
 注：以明文方式传递用户名和密码在安全性较高的场合是不允许使用的。
 
 =back
+
+=head1 ROLES
 
 =head1 ERROR HANDLING
 
