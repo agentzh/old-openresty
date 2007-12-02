@@ -11,8 +11,8 @@ Agent Zhang (章亦春) <agentzh@yahoo.cn>
 =head1 VERSION
 
     CREATED:       Nov 19, 2007
-    LAST MODIFIED: Nov 22, 2007
-    VERSION:       0.01
+    LAST MODIFIED: Dec 3, 2007
+    VERSION:       0.02
 
 =head1 DESCRIPTION
 
