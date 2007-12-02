@@ -137,7 +137,6 @@ L<http://openid.net/>
 
 所有与 Model 相关的接口，其 URL 都满足下列几种形式：
 
-
     /=/model                                            操纵模型列表
     /=/model/<model_name>                               操纵指定的模型，名为 <model_name>
     /=/model/<model_name>/<column_name>                 操纵指定模型 <model_name> 的指定列<column_name>
@@ -157,13 +156,14 @@ L<http://openid.net/>
 I<POST body>
 
     {
-        name: 'Bookmark',
-        description: 'My favorite bookmarks',
-        columns: [
-        { name: 'id',    type: 'serial', label: 'Bookmark ID' },
-        { name: 'url',   type: 'string', label: 'Bookmark URL' },
-        { name: 'title', type: 'string', label: 'Bookmark Title' },
-        { name: 'description', type: 'string', label: 'Bookmark Description' } ]
+        name: "Bookmark",
+        description: "我的书签",
+        columns:
+          [
+            { name: "url",   type: "string", label: "书签网址" },
+            { name: "title", type: "string", label: "书签标题" },
+            { name: "description", type: "string", label: "书签描述" }
+          ]
     }
 
 一次 POST 请求只能指定创建单个 Model. Model 的声明包含两部分，一是模型名，即 C<name> 字段，一是列声明，即 C<columns> 字段。
@@ -173,6 +173,16 @@ I<POST body>
 请求的 POST 内容中可以不指定模型的 name 属性，因为它已经出现在了请求的 URL 中，如这里的 "Bookmark". 如果用户在 JSON 数据中也指定了 C<name>，则
 
 当模型已存在时，服务器返回出错信息，详情请见 L</ERROR HANDLING> 一节。
+
+模型名必须以字母开头，后跟若干字母，下划线或数字。推荐模型名总以大写字母开头，比如 C<Bookmark>, C<MyMusic> 等等。
+
+列名必须以字母开头，后跟若干字母，下划线或数字，与模型名的命名规则相似。但不同的是，推荐列名总是由小写字母开头，例如 C<book_name>, C<gender>, 等等。
+
+默认情况下，URL 及请求数据中的非 ASCII 字符都按 UTF-8 编码处理。如若需要使用其他编码，如 GBK, Big5, 和 Latin1 的话，需要显式地通过 C<charset> 参数指定，例如：
+
+    POST /=/model/Bookmark.json?charset=GBK
+
+任何情况下，URL 和请求数据中的编码必须一致，比如必须同为 UTF-8，或者同为 GBK.
 
 =head3 Read Models
 
@@ -189,9 +199,9 @@ I<POST body>
     GET /=/model.json
 
     [
-        { description: 'My favorite bookmark', name: 'Bookmark', url: '/=/model/Bookmark.json', writable: 'true' },
-        { description: 'My favorite music', type: 'model', name: 'Music', url: '/=/model/Music.json', writable: true },
-        { description: 'My frequently accessed blog', name: 'Blog', url: '/=/model/Blog.json', writable: false },
+        { description: "My favorite bookmark", name: "Bookmark", url: "/=/model/Bookmark.json", writable: 1, readable: 1 },
+        { description: "My favorite music", type: "model", name: "Music", url: "/=/model/Music.json", writable: 1, readable: 1 },
+        { description: "My frequently accessed blog", name: "Blog", url: "/=/model/Blog.json", writable: 1, readable: 1 },
     ]
 
 有关结果格式的讨论，请见 L</DATA FORMAT> 一节.
@@ -211,12 +221,17 @@ I<POST body>
 
     GET /=/model/Bookmark.json
 
-    [
-        { name: 'id', type: 'serial', url: '/=/model/Bookmark/id.json', writable: false },
-        { name: 'title', type: 'string', url: '/=/model/Bookmark/string.json', writable: true },
-        { name: 'url', type: 'string', url: '/=/model/Bookmark/url.json', writable: false },
-        { name: 'description', type: 'string', url: '/=/model/Bookmark/description.json', writable: true },
-    ]
+    {
+      name: "Bookmark",
+      description: "My favorite bookmark",
+      columns:
+        [
+          { name: "id", type: "serial", url: "/=/model/Bookmark/id.json", writable: 1, readable: 1 },
+          { name: "title", type: "string", url: "/=/model/Bookmark/string.json", writable: 1, readable: 1 },
+          { name: "url", type: "string", url: "/=/model/Bookmark/url.json", writable: 1, readable: 1 },
+          { name: "description", type: "string", url: "/=/model/Bookmark/description.json", writable: 1, readable: 1 },
+        ]
+    }
 
 具体的实现会对一个 Model 所含的字段数目和类型进行约束。
 
@@ -236,9 +251,9 @@ I<POST body>
     GET /=/model/Bookmark/title.json?page=2
 
     [
-        { title: 'XUL::App - Jifty way of doing XUL' },
-        { title: '中文搜索 同时用三家引擎 searchall' },
-        { title: 'Revision 32: trunk/'},
+        { title: "XUL::App - Jifty way of doing XUL" },
+        { title: "中文搜索 同时用三家引擎 searchall" },
+        { title: "Revision 32: trunk/"},
     ]
 
 
@@ -265,7 +280,7 @@ I<POST body>
 服务器返回的结果类似于：
 
     [
-        { id: 1, title: "Revision 34: /trunk", url: 'http://svn.openfoundry.com/xulapp/trunk', description: '' }
+        { id: 1, title: "Revision 34: /trunk", url: "http://svn.openfoundry.com/xulapp/trunk", description: "" }
     ]
 
 如果不希望用 C<=> 执行精确匹配的话，可以通过指定 C<op> 选项来指定其他运算符，比如 C<like>, C<< > >>, 和 C<< < >>.
@@ -278,13 +293,13 @@ I<POST body>
 
     select *
     from bookmarks
-    where title like 'Yahoo%'
+    where title like "Yahoo%"
 
 典型的返回结果如下：
 
     [
-        { id: 56, title: "Yahoo News", url: 'http://news.yahoo.com', description: '美国雅虎网站' },
-        { id: 57, title: "Yahoo中国", url: 'http://cn.yahoo.com', description: '阿里巴巴中国雅虎首页' }
+        { id: 56, title: "Yahoo News", url: "http://news.yahoo.com", description: "美国雅虎网站" },
+        { id: 57, title: "Yahoo中国", url: "http://cn.yahoo.com", description: "阿里巴巴中国雅虎首页" }
     ]
 
 =back
@@ -306,9 +321,9 @@ I<POST body>
 I<POST body>
 
     [
-        { title: "Yahoo News", url: 'http://news.yahoo.com', description: '美国雅虎网站' },
-        { title: "Yahoo中国", url: 'http://cn.yahoo.com', description: '阿里巴巴中国雅虎首页' },
-        { title: "Revision: /trunk", url: 'http://svn.openfoundry.org/xulapp/trunk', description: '我的 XUL::App 项目' }
+        { title: "Yahoo News", url: "http://news.yahoo.com", description: "美国雅虎网站" },
+        { title: "Yahoo中国", url: "http://cn.yahoo.com", description: "阿里巴巴中国雅虎首页" },
+        { title: "Revision: /trunk", url: "http://svn.openfoundry.org/xulapp/trunk", description: "我的 XUL::App 项目" }
     ]
 
 I<Output>
@@ -329,13 +344,13 @@ I<Output>
 
 I<POST body>
 
-    { title: 'My Yahoo Home', description: 'As title' }
+    { title: "My Yahoo Home", description: "As title" }
 
 对应的伪 SQL 为：
 
     update bookmarks
     set title = "My Yahoo Home", description = "As title"
-    where url like 'yahoo'
+    where url like "yahoo"
 
 [猜想：PUT 请求亦可专用于上传二进制的多媒体数据。]
 
@@ -350,7 +365,7 @@ I<POST body>
 对应的伪 SQL 为：
 
     delete from bookmarks
-    where url like 'yahoo'
+    where url like "yahoo"
 
 =back
 
@@ -399,12 +414,12 @@ I<POST body>
 
     [
       {
-        name: 'My SVN bookmarks',
-        body: "select * from Bookmark where url like '%svn.%' or description like '%SVN%'"
+        name: "My SVN bookmarks",
+        body: "select * from Bookmark where url like "%svn.%" or description like "%SVN%""
       },
       {
-        name: 'My Yahoo bookmarks',
-        body: "select * from Bookmark where url like '%yahoo%' and title like '%yahoo%'"
+        name: "My Yahoo bookmarks",
+        body: "select * from Bookmark where url like "%yahoo%" and title like "%yahoo%""
       }
     ]
 
@@ -427,9 +442,9 @@ I<POST body>
 
     GET /=/action/WebSearch/query/Hello,world.json
     [
-        { title: 'Hello world program - Wikipedia, the free encyclopedia', url: 'en.wikipedia.org/wiki/Hello_world_program', summary: '...' },
-        { title: 'Helloworld.com', url: 'www.helloworld.com/', summary: '...' },
-        { title: '...', url: '...', summary: '...' },
+        { title: "Hello world program - Wikipedia, the free encyclopedia", url: "en.wikipedia.org/wiki/Hello_world_program", summary: "..." },
+        { title: "Helloworld.com", url: "www.helloworld.com/", summary: "..." },
+        { title: "...", url: "...", summary: "..." },
         ...
     ]
 
@@ -461,14 +476,14 @@ I<POST body>
 
     GET /=/action/WebSearch.json
     [
-        { name: 'query', type: 'string' }
+        { name: "query", type: "string" }
     ]
 
     GET /=/action/WebSearch/query/Hello,world.json
     [
-        { title: 'Hello world program - Wikipedia, the free encyclopedia', url: 'en.wikipedia.org/wiki/Hello_world_program', summary: '...' },
-        { title: 'Helloworld.com', url: 'www.helloworld.com/', summary: '...' },
-        { title: '...', url: '...', summary: '...' },
+        { title: "Hello world program - Wikipedia, the free encyclopedia", url: "en.wikipedia.org/wiki/Hello_world_program", summary: "..." },
+        { title: "Helloworld.com", url: "www.helloworld.com/", summary: "..." },
+        { title: "...", url: "...", summary: "..." },
         ...
     ]
 
@@ -491,7 +506,7 @@ XXX needs work...
 
 在绝大多数情况下，服务器返回的都为列表型数据。当数据量较大，出现分页的时候，列表数据的最后一个元素总为一特殊的结构：
 
-    { type: 'meta', next: '/=/url/to/the/next/page' 
+    { type: "meta", next: "/=/url/to/the/next/page" 
 
 一个例子是：
 
@@ -503,7 +518,7 @@ XXX needs work...
         { id: 13 },
         ...
         { id: 20 },
-        { type: 'meta', next: '/=/model/Bookmark/id.json?page=3' }
+        { type: "meta", next: "/=/model/Bookmark/id.json?page=3" }
     ]
 
 =head2 Parameters
@@ -538,7 +553,7 @@ XXX needs work...
 
     select *
     from bookmarks
-    where title like 'Yahoo'
+    where title like "Yahoo"
     order by title, url
 
 =item user
@@ -571,25 +586,25 @@ miniSQL 语言是标准 SQL 一个核心子集. 其基本语法如下：
              | update_stmt
              | delete_stmt
 
-    select_stmt: 'select' pattern_list 'from' models postfix_clause_list
-               | 'select' pattern_list 'from' models
+    select_stmt: "select" pattern_list "from" models postfix_clause_list
+               | "select" pattern_list "from" models
 
-    pattern_list: pattern ',' pattern_list
+    pattern_list: pattern "," pattern_list
                 | pattern
 
     pattern: aggregate alias
            | aggregate
            | column
 
-    aggregate: func '(' column ')'
-    func: 'max'
-        | 'min'
-        | 'count'
-        | 'sum'
+    aggregate: func "(" column ")"
+    func: "max"
+        | "min"
+        | "count"
+        | "sum"
 
     column: qualified_symbol
           | symbol
-    qualified_symbol: symbol '.' symbol
+    qualified_symbol: symbol "." symbol
     symbol: /[A-Za-z]+/
 
     alias: symbol
@@ -601,24 +616,24 @@ miniSQL 语言是标准 SQL 一个核心子集. 其基本语法如下：
                   | group_by_clause
                   | order_by_clause
 
-    where_clause: 'where' conditon
+    where_clause: "where" conditon
 
     condition: disjunction
-    disjunction: conjunction 'or' disjuntion
+    disjunction: conjunction "or" disjuntion
                | conjunction
-    conjunction: comparison 'and' conjunction
+    conjunction: comparison "and" conjunction
                | comparison
     comparison: column operator literal
               | column operator column
-              | '(' condition ')'
+              | "(" condition ")"
 
-    operator: '>'
-            | '>='
-            | '<'
-            | '<='
-            | '<>'
-            | '='
-            | 'like'
+    operator: ">"
+            | ">="
+            | "<"
+            | "<="
+            | "<>"
+            | "="
+            | "like"
 
     literal: string
            | integer
@@ -626,36 +641,36 @@ miniSQL 语言是标准 SQL 一个核心子集. 其基本语法如下：
           | "'" symbol "'"
     integer: /\d+/
 
-    group_by_clause: 'group by' column_list
+    group_by_clause: "group by" column_list
 
-    column_list: column ',' column_list
+    column_list: column "," column_list
                | column
 
-    order_by_clause: 'order by' column_list
+    order_by_clause: "order by" column_list
 
-    delete_stmt: 'delete' 'from' symbol where_clause
-    update_stmt: 'update' symbol set_clause where_clause
-               | 'update' symbol set_clause
+    delete_stmt: "delete" "from" symbol where_clause
+    update_stmt: "update" symbol set_clause where_clause
+               | "update" symbol set_clause
 
-    set_clause: 'set' symbol '=' literal
+    set_clause: "set" symbol "=" literal
 
 =begin comment
 
 => \&show_item_field;
-on GET    '/=/model/*/*/*'      => \&show_item;
-on GET    '/=/model/*/*'        => \&list_model_items;
-on GET    '/=/model/*'          => \&list_model_columns;
-on GET    '/=/model'            => \&list_models;
+on GET    "/=/model/*/*/*"      => \&show_item;
+on GET    "/=/model/*/*"        => \&list_model_items;
+on GET    "/=/model/*"          => \&list_model_columns;
+on GET    "/=/model"            => \&list_models;
 
-on POST   '/=/model/*'          => \&create_item;
-on PUT    '/=/model/*/*/*'      => \&replace_item;
-on DELETE '/=/model/*/*/*'      => \&delete_item;
+on POST   "/=/model/*"          => \&create_item;
+on PUT    "/=/model/*/*/*"      => \&replace_item;
+on DELETE "/=/model/*/*/*"      => \&delete_item;
 
-on GET    '/=/action/*'         => \&list_action_params;
-on GET    '/=/action'           => \&list_actions;
-on POST   '/=/action/*'         => \&run_action;
+on GET    "/=/action/*"         => \&list_action_params;
+on GET    "/=/action"           => \&list_actions;
+on POST   "/=/action/*"         => \&run_action;
 
-on GET    '/=/help'             => \&show_help;
+on GET    "/=/help"             => \&show_help;
 
 =end comment
 
