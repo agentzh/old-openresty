@@ -106,7 +106,7 @@ API 应支持自省能力。用户可以通过 API 获得有关 Models, Actions,
 
 此种方法使用简单，尤其对于 wget, curl 这样的工具友好。缺点是安全性不高。
 
-一种可能的方式是： GET /=/login?user=foo&password=bar
+一种可能的方式是： GET /=/login/<user_name>/<password>
 
 =item 2.
 
@@ -114,7 +114,17 @@ API 应支持自省能力。用户可以通过 API 获得有关 Models, Actions,
 
 此种方法使用复杂，需要握手过程，以及加密库的支持。
 
-POST 请求的内容需要经过加密处理。
+POST 请求的内容需要经过加密处理。比如：
+
+    POST /=/login/<user_name>
+
+I<POST body>
+
+    adsfkwk3223df23245rt3423dfds2d
+
+这里的 C<POST body> 中存放着经过加密的密码.
+
+XXX 具体的加密算法
 
 =back
 
