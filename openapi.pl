@@ -79,6 +79,9 @@ while (my $query = new CGI::Fast) {
             }
         }
     }
+    if ($method eq 'GET' and $url =~ s{^/=/delete/}{/=/}) {
+        $method = 'DELETE';
+    }
     if ($method eq 'GET') {
         ### GET method detected: $url
         if ($url =~ m{^/=/model($ext)?$}) {
