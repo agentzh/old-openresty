@@ -110,7 +110,7 @@ C<update> 和 C<alter> 语句.
 
 =head2 The leading C</=/>
 
-为使我们的 API 能够在 URL 上复用已有的域名，如 www.yahoo.cn，同时避免污染已有的 URL 名字空间，所有的 URL 都以 /=/
+为使我们的 API 能够在 URL 上复用已有的域名，如 C<www.yahoo.cn>，同时避免污染已有的 URL 名字空间，所有的 URL 都以 /=/
 起始。
 
 如果域名不存在与常规网页 URL 冲突的风险，前导 C</=/> 可省略，或替换为其他形式，比如 C</webservice/> 或者 C</~/> 之类。
