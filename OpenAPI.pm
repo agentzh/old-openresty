@@ -10,6 +10,9 @@ use Data::Dumper ();
 use Lingua::EN::Inflect qw( ORD);
 use List::Util qw(first);
 use Params::Util qw(_HASH _STRING _ARRAY _SCALAR);
+use Encode qw(encode decode);
+
+$YAML::Syck::ImplicitUnicode = 1;
 
 my %ext2dumper = (
     '.yml' => \&YAML::Syck::Dump,
@@ -25,7 +28,7 @@ my %ext2importer = (
     '.json' => \&JSON::Syck::Load,
 );
 
-
+my $Ext = qr/\.(?:js|json|xml|yaml|yml)/;
 our ($dbh, $Dumper, $Importer);
 $Dumper = \&JSON::Syck::Dump;
 $Importer = \&JSON::Syck::Load;
@@ -50,9 +53,52 @@ sub parse_data {
     return $Importer->($_[0]);
 }
 
+sub new {
+    my ($class, $rurl, $cgi) = @_;
+    my $charset = $cgi->url_param('charset') || 'UTF-8';
+    my $url = $$rurl;
+    $url =~ s{/+$}{}g;
+    $url = decode($charset, $url);
+    if ($url =~ s/$Ext$//) {
+        my $ext = $&;
+        # XXX obsolete
+        $class->set_formatter($ext);
+    }
+    return bless {
+        _cgi => $cgi,
+        _url => $$url,
+        _charset => $charset,
+        _error => '',
+        _data => undef,
+        _warning => '',
+    }, $class;
+}
+
+sub error {
+    $_[0]->{_error} .= $_[1] . "\n";
+}
+
+sub data {
+    $_[0]->{_data} = $_[1] . "\n";
+}
+
+sub response {
+    my $self = shift;
+    my $charset = $self->{_charset};
+    print header(-type => "text/plain; charset=$charset");
+    my $str = '';
+    if ($self->{_error}) {
+        $str = $self->emit_error($self->{_error});
+    } elsif ($self->{_data}) {
+        $str = $self->emit_data($self->{_data});
+    }
+    $str = decode($charset, $str);
+    print "$str\n";
+}
+
 sub set_formatter {
     my ($self, $ext) = @_;
-    $ext ||= '.yaml';
+    $ext ||= '.json';
     $Dumper = $ext2dumper{$ext};
     $Importer = $ext2importer{$ext};
 }

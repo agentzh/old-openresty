@@ -199,7 +199,24 @@ GET /=/model/Bookmark/id/3.js
 
 
 
-=== TEST 20: Change the name of the model
+=== TEST 20: update an existent record using POST
+--- request
+POST /=/put/model/Bookmark/id/3.js
+{ title: "Howdy!" }
+--- response
+{"success":1,"rows_affected":1}
+
+
+
+=== TEST 21: check if the record is indeed changed
+--- request
+GET /=/model/Bookmark/id/3.js
+--- response
+[{"url":"http://www.google.cn","title":"Howdy!","id":"3"}]
+
+
+
+=== TEST 22: Change the name of the model
 --- request
 PUT /=/model/Bookmark.js
 { name: "MyFavorites", description: "我的最爱" }
@@ -208,7 +225,7 @@ PUT /=/model/Bookmark.js
 
 
 
-=== TEST 21: Check the new model
+=== TEST 23: Check the new model
 --- request
 GET /=/model/MyFavorites.js
 --- response
@@ -225,7 +242,7 @@ GET /=/model/MyFavorites.js
 
 
 
-=== TEST 22: Get model list
+=== TEST 24: Get model list
 --- request
 GET /=/model.js
 --- response

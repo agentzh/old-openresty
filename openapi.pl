@@ -37,7 +37,8 @@ my $ext = qr/\.(?:js|json|xml|yaml|yml)/;
 my $COUNTER = 0;
 while (my $query = new CGI::Fast) {
     my $url  = url(-absolute=>1);
-    print header(-type => 'text/plain');
+    print header(-type => 'text/plain; charset=UTF-8');
+    $url =~ s/\/+$//g;
     #print "URL: $url\n";
     #print "page: ", url_param("page"), "\n";
     #warn "Hello!";
@@ -48,7 +49,7 @@ while (my $query = new CGI::Fast) {
     }
     my $data;
     ### Content-type: content_type()
-    my $user = 'test';
+    my $user = 'tester';
     eval {
         #OpenAPI->drop_user($user);
     };
@@ -60,11 +61,24 @@ while (my $query = new CGI::Fast) {
         OpenAPI->new_user($user);
     };
     eval {
-        OpenAPI->do("SET search_path TO $user,public");
+        OpenAPI->do("set search_path to $user");
     };
     if ($@) { print OpenAPI->emit_error($@), "\n"; next; }
     $url =~ s/\%2A/*/g;
     my $method = $ENV{'REQUEST_METHOD'};
+
+    if ($method eq 'POST' and $url =~ s{^/=/put/}{/=/}) {
+        $method = 'PUT';
+        $data = param('POSTDATA');
+        ### $data
+        if (!defined $data) {
+            $data = param('data');
+            if (!defined $data) {
+                print OpenAPI->emit_error("No POST content specified."), "\n";
+                next;
+            }
+        }
+    }
     if ($method eq 'GET') {
         ### GET method detected: $url
         if ($url =~ m{^/=/model($ext)?$}) {
@@ -193,8 +207,11 @@ while (my $query = new CGI::Fast) {
         $data = param('POSTDATA');
         ### $data
         if (!defined $data) {
-            print OpenAPI->emit_error("No POST content specified."), "\n";
-            next;
+            $data = param('data');
+            if (!defined $data) {
+                print OpenAPI->emit_error("No POST content specified."), "\n";
+                next;
+            }
         }
         if ($url =~ m{^/=/model/(\w+)($ext)?$}) {
             my ($model, $ext) = ($1, $2);
@@ -227,7 +244,9 @@ while (my $query = new CGI::Fast) {
         ### POST data: $data
     } elsif ($method eq 'PUT') {
         ### PUT method detected: $url
-        $data = $query->param('PUTDATA');
+        if (!$data) {
+            $data = $query->param('PUTDATA');
+        }
         #print $data;
         #next;
         #warn Dumper($query);
