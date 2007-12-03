@@ -10,7 +10,7 @@ use Data::Dumper ();
 use Lingua::EN::Inflect qw( ORD);
 use List::Util qw(first);
 use Params::Util qw(_HASH _STRING _ARRAY _SCALAR);
-use Encode qw(encode decode);
+use Encode qw(from_to encode decode);
 
 $YAML::Syck::ImplicitUnicode = 1;
 
@@ -58,19 +58,51 @@ sub new {
     my $charset = $cgi->url_param('charset') || 'UTF-8';
     my $url = $$rurl;
     $url =~ s{/+$}{}g;
-    $url = decode($charset, $url);
+    $url =~ s/\%2A/*/g;
+    from_to($url, $charset, 'UTF-8');
     if ($url =~ s/$Ext$//) {
         my $ext = $&;
         # XXX obsolete
         $class->set_formatter($ext);
     }
+    my $http_meth = $ENV{'REQUEST_METHOD'};
+    my $req_data;
+    if ($http_meth eq 'POST') {
+        $req_data = $cgi->param('POSTDATA');
+        ### $req_data
+        if (!defined $req_data) {
+            $req_data = $cgi->param('data') or
+                die "No POST content specified.\n";
+        }
+    }
+    elsif ($http_meth eq 'PUT') {
+        $req_data = $cgi->param('PUTDATA');
+        ### $req_data
+        if (!defined $req_data) {
+            $req_data = $cgi->param('data') or
+                die "No PUT content specified.\n";
+        }
+    }
+    ### $url
+    if ($http_meth eq 'POST' and $url =~ s{^=/put/}{=/}) {
+        $http_meth = 'PUT';
+    }
+    $$rurl = $url;
+
+    if ($req_data) {
+        from_to($req_data, $charset, 'UTF-8');
+        $req_data = OpenAPI->parse_data($req_data);
+    }
+
     return bless {
         _cgi => $cgi,
-        _url => $$url,
+        _url => $url,
         _charset => $charset,
         _error => '',
         _data => undef,
         _warning => '',
+        _method => $http_meth,
+        _req_data => $req_data,
     }, $class;
 }
 
@@ -79,21 +111,110 @@ sub error {
 }
 
 sub data {
-    $_[0]->{_data} = $_[1] . "\n";
+    $_[0]->{_data} = $_[1];
 }
 
 sub response {
     my $self = shift;
     my $charset = $self->{_charset};
-    print header(-type => "text/plain; charset=$charset");
+    print $self->{_cgi}->header(-type => "text/plain; charset=$charset");
     my $str = '';
     if ($self->{_error}) {
         $str = $self->emit_error($self->{_error});
     } elsif ($self->{_data}) {
         $str = $self->emit_data($self->{_data});
     }
-    $str = decode($charset, $str);
+    from_to($str, 'UTF-8', $charset);
     print "$str\n";
+}
+
+sub DELETE_model_list {
+    my ($self, $bits) = @_;
+    my $user = 'tester';
+    my $res = OpenAPI->get_tables();
+    if (!$res) {
+        return { success => 1 };
+    }; # no-op
+    my @tables = map { @$_ } @$res;
+    #$tables = $tables->[0];
+    ### tables: @tables
+    for my $table (@tables) {
+        OpenAPI->drop_table($table);
+    }
+    return { success => 1 };
+}
+
+sub GET_model_list {
+    my ($self, $bits) = @_;
+    my $models = OpenAPI->get_models;
+    $models ||= [];
+    ### $models
+    map { $_->{src} = "/=/model/$_->{name}" } @$models;
+    $models;
+}
+
+sub GET_model {
+    my ($self, $bits) = @_;
+    my $model = $bits->[1];
+    return OpenAPI->get_model_cols($model);
+}
+
+sub POST_model {
+    my ($self, $bits) = @_;
+    my $data = $self->{_req_data};
+    my $model = $bits->[1];
+    ### $model
+    $data->{name} = $model;
+    return OpenAPI->new_model($data);
+}
+
+sub POST_model_row {
+    my ($self, $bits) = @_;
+    my $data = $self->{_req_data};
+    my $model = $bits->[1];
+    return OpenAPI->insert_records($model, $data);
+}
+
+sub GET_model_row {
+    my ($self, $bits) = @_;
+    my $model  = $bits->[1];
+    my $column = $bits->[2];
+    my $value  = $bits->[3];
+    if ($column ne '*' and $value ne '*') {
+        return OpenAPI->select_records($model, $column, $value);
+    }
+    if ($column ne '*' and $value eq '*') {
+        return OpenAPI->select_records($model, $column);
+    }
+    if ($column eq '*' and $value eq '*') {
+        return OpenAPI->select_all_records($model);
+    } else {
+        return { success => 0, error => "Unsupported operation." };
+    }
+}
+
+sub DELETE_model_row {
+    my ($self, $bits) = @_;
+    my $model  = $bits->[1];
+    my $column = $bits->[2];
+    my $value  = $bits->[3];
+    return OpenAPI->delete_records($model, $column, $value);
+}
+
+sub PUT_model_row {
+    my ($self, $bits) = @_;
+    my $model  = $bits->[1];
+    my $column = $bits->[2];
+    my $value  = $bits->[3];
+    my $data = $self->{_req_data};
+    return OpenAPI->update_records($model, $column, $value, $data);
+}
+
+sub PUT_model {
+    my ($self, $bits) = @_;
+    my $model = $bits->[1];
+    my $data = $self->{_req_data};
+    return OpenAPI->alter_model($model, $data);
 }
 
 sub set_formatter {
