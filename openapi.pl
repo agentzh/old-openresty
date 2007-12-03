@@ -7,7 +7,7 @@ use FindBin;
 use lib "$FindBin::Bin";
 use OpenAPI;
 #use Web::Scraper;
-use CGI::Fast qw(:standard);
+use CGI::Fast ();
 use Data::Dumper;
 #use XML::Simple qw(:strict);
 use FindBin;
@@ -33,7 +33,7 @@ my @ModelDispatcher = qw(
 
 my $ext = qr/\.(?:js|json|xml|yaml|yml)/;
 while (my $cgi = new CGI::Fast) {
-    my $url  = url(-absolute=>1);
+    my $url  = $cgi->url(-absolute=>1);
     $url =~ s{^/+}{}g;
     #print header(-type => 'text/plain; charset=UTF-8');
 
