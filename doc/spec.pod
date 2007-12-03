@@ -72,6 +72,38 @@ API 应支持自省能力。用户可以通过 API 获得有关 Models, Actions,
 
 在本文中，除非特别说明，将总是假设使用 C<http://> 模式。
 
+=head1 HTTP METHODS
+
+本接口使用下列 HTTP 1.1 方法:
+
+=over
+
+=item GET
+
+一般用于查询和读取操作，类似 SQL 语言中的 C<select> 语句。
+
+=item POST
+
+一般用于新建对象和插入数据，类似 SQL 语言中的 C<create> 语句和
+C<insert into> 语句.
+
+=item PUT
+
+一般用于修改对象的属性和已有的数据记录。类似 SQL 语言中的
+C<update> 和 C<alter> 语句.
+
+=item DELETE
+
+一般用于删除对象和已有的数据记录. 类似 SQL 语言中的 C<delete>
+和 C<drop> 语句。
+
+=item HEAD
+
+与 C<GET> 相近，但对于返回列表型数据的读取操作而言，
+仅返回第一个列表项。类似 SQL 语言中的 C<select top 1>.
+
+=back
+
 =head1 URL SYNTAX
 
 所有的 URL 都是大小写敏感的。
