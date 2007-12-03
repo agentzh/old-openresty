@@ -66,6 +66,8 @@ while (my $cgi = new CGI::Fast) {
     my $fst = shift @bits;
     if ($fst ne '=') {
         $openapi->error("URLs must be led by '='.");
+        $openapi->response();
+        next;
     }
 
     # XXX this part is lame...
