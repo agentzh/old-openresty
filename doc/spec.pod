@@ -220,12 +220,12 @@ I<POST body>
 
 可以通过下面的接口修改已有模型的名字：
 
-    POST /=/model/<old_name>
+    PUT /=/model/<old_name>
     { name: "<new_name" }
 
 一个例子是：
 
-    POST /=/model/Bookmark
+    PUT /=/model/Bookmark
     { name: 'MyBookmark' }
 
 如果新的模型名与已存在的另一个 Model 同名，则服务器会报错，例如：
@@ -236,24 +236,24 @@ I<POST body>
 
 可以通过下面的接口修改已有模型的描述：
 
-    POST /=/model/<model_name>
+    PUT /=/model/<model_name>
     { descripton: "<new_description" }
 
 修改模型的名字和描述可以放在单次 HTTP 请求中，例如下面这个例子：
 
-    POST /=/model/Bookmark
+    PUT /=/model/Bookmark
     { name: "MyBookmark", description: "这可是我的书签哦！" }
 
 =item Change Model Columns
 
 可以通过下面的接口修改已有模型的某一列的名字，类型，或标签：
 
-    POST /=/model/Bookmark/title
+    PUT /=/model/Bookmark/title
     { name: "bookmark_name", type: "varchar(20)", label: "书签名" }
 
 一次可以只修改其中的一个或者两个属性。例如：
 
-    POST /=/model/Bookmark/title
+    PUT /=/model/Bookmark/title
     { name: "bookmark_name", label: "书签名" }
 
 如果我们并不想修改 title 列的类型(type)的话。
