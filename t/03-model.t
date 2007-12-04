@@ -13,6 +13,7 @@ DELETE /=/model.js
 {"success":1}
 
 
+
 === TEST 2: Create a new model
 --- request
 POST /=/model/Human
@@ -23,7 +24,9 @@ POST /=/model/Human
 --- response
 {"success":1}
 
-=== TEST 2: Create a model with the same name
+
+
+=== TEST 3: Create a model with the same name
 --- request
 POST /=/model/Human
 { description:"人类",
@@ -34,7 +37,8 @@ POST /=/model/Human
 {"success":0,"error":"Model \"Human\" already exists."}
 
 
-=== TEST 3: Create another model
+
+=== TEST 4: Create another model
 --- request
 POST /=/model/Cat
 { description:"猫",
