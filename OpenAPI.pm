@@ -4,28 +4,30 @@ use strict;
 use warnings;
 
 use Smart::Comments;
-use YAML::XS ();
+use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
 use Lingua::EN::Inflect qw( ORD);
 use List::Util qw(first);
 use Params::Util qw(_HASH _STRING _ARRAY _SCALAR);
 use Encode qw(from_to encode decode);
+#use encoding "utf8";
 
-#$YAML::ImplicitUnicode = 1;
-#$YAML::ImplicitBinary = 1;
-#$YAML::SingleQuote = 1;
+BEGIN {
+$YAML::Syck::ImplicitUnicode = 1;
+}
+#$YAML::Syck::ImplicitBinary = 1;
 
 my %ext2dumper = (
-    '.yml' => \&YAML::XS::Dump,
-    '.yaml' => \&YAML::XS::Dump,
+    '.yml' => \&YAML::Syck::Dump,
+    '.yaml' => \&YAML::Syck::Dump,
     '.js' => \&JSON::Syck::Dump,
     '.json' => \&JSON::Syck::Dump,
 );
 
 my %ext2importer = (
-    '.yml' => \&YAML::XS::Load,
-    '.yaml' => \&YAML::XS::Load,
+    '.yml' => \&YAML::Syck::Load,
+    '.yaml' => \&YAML::Syck::Load,
     '.js' => \&JSON::Syck::Load,
     '.json' => \&JSON::Syck::Load,
 );
@@ -126,8 +128,12 @@ sub response {
     } elsif ($self->{_data}) {
         $str = $self->emit_data($self->{_data});
     }
-    from_to($str, 'UTF-8', $charset);
-    print "$str\n";
+    #die $charset;
+    #eval {
+    #XXX who it does not work?
+        #$str = encode($charset, $str);
+        #};  warn $@ if $@;
+    print $str, "\n";
 }
 
 sub DELETE_model_list {
@@ -228,7 +234,7 @@ sub set_formatter {
 
 sub connect {
     shift;
-    $dbh =  DBI->connect("dbi:Pg:dbname=test", "agentzh", "agentzh", {AutoCommit => 1, RaiseError => 1});
+    $dbh =  DBI->connect("dbi:Pg:dbname=test", "agentzh", "agentzh", {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1});
 }
 
 sub get_tables {
