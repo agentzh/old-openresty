@@ -9,7 +9,7 @@ use Test::LongString;
 our @EXPORT = qw(init run_tests run_test);
 
 my $ua = LWP::UserAgent->new;
-my $host = $ENV{REMOTE_OPENAPI} || 'http://localhost';
+my $host = $ENV{'REMOTE_OPENAPI'} || 'http://localhost';
 $host = "http://$host" if $host !~ m{^http://};
 
 sub init {
