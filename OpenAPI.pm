@@ -10,7 +10,7 @@ use Data::Dumper ();
 use Lingua::EN::Inflect qw( ORD);
 use List::Util qw(first);
 use Params::Util qw(_HASH _STRING _ARRAY _SCALAR);
-use Encode qw(from_to encode decode);
+use Encode qw(decode_utf8 from_to encode decode);
 #use encoding "utf8";
 
 #$YAML::Syck::ImplicitBinary = 1;
@@ -88,6 +88,8 @@ sub new {
     ### $url
     if ($http_meth eq 'POST' and $url =~ s{^=/put/}{=/}) {
         $http_meth = 'PUT';
+    } elsif ($http_meth =~ /^GET|POST$/ and $url =~ s{^=/delete/}{=/}) {
+        $http_meth = 'DELETE';
     }
     $$rurl = $url;
 
@@ -130,8 +132,8 @@ sub response {
     #die $charset;
     # XXX if $charset is 'UTF-8' then don't bother decoding and encoding...
     eval {
-        $str = decode_utf8($str);
-        from_to($str, 'UTF-8', $charset);
+        #$str = decode_utf8($str);
+        #from_to($str, 'UTF-8', $charset);
     };  warn $@ if $@;
     if (my $var = $self->{_var}) {
         $str = "var $self->{_var}=$str;";

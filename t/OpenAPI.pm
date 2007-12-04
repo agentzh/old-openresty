@@ -33,6 +33,8 @@ sub do_request ($$$$) {
         }
 
         $req->content($body);
+    } elsif ($method eq 'POST' or $method eq 'PUT') {
+        $req->header('Content-Length' => 0);
     }
     return $ua->request($req);
 }

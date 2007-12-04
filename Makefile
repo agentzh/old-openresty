@@ -17,3 +17,12 @@ debug:
 	$(CMDS)
 	cat /var/log/lighttpd/error.log | egrep -v '^$$'
 
+%.t: force
+	sudo echo > /var/log/lighttpd/error.log
+	perl -c openapi.pl
+	sudo /etc/init.d/lighttpd restart
+	-time prove -Ilib $@ 
+	cat /var/log/lighttpd/error.log | egrep -v '^$$'
+
+force:
+

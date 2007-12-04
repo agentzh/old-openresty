@@ -91,7 +91,7 @@ while (my $cgi = new CGI::Fast) {
     if ($@) { print OpenAPI->emit_error($@), "\n"; next; }
 
     my $http_meth = $openapi->{_method};
-    if ($bits[0] =~ /^model\b/i) {
+    if ($bits[0] eq 'model') {
         my $meth = $http_meth . '_' . $ModelDispatcher[$#bits];
         ### $meth
         my $data;
