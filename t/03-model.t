@@ -64,7 +64,20 @@ POST /=/model/Blah
 
 
 
-=== TEST 6: Create another model
+=== TEST 6: No label specified for column
+--- request
+POST /=/model/Blah
+{
+  description:"人类",
+  columns:
+    [ { name: "gender" } ]
+}
+--- response
+{"success":0,"error":"No 'label' specified for column \"gender\" in model \"Blah\"."}
+
+
+
+=== TEST 7: Create another model
 --- request
 POST /=/model/Cat
 { description:"猫",
