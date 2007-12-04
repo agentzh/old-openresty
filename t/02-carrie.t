@@ -82,4 +82,4 @@ POST /=/delete/model/Carrie/id/1.js
 --- request
 GET /=/delete/model/Carrie/id/2.js
 --- response
-{"success":1,"rows-affected":1}
+{"success":1,"rows_affected":1}
