@@ -119,6 +119,10 @@ sub data {
     $_[0]->{_data} = $_[1];
 }
 
+sub warning {
+    $_[0]->{_warning} = $_[1];
+}
+
 sub response {
     my $self = shift;
     my $charset = $self->{_charset};
@@ -127,7 +131,11 @@ sub response {
     if ($self->{_error}) {
         $str = $self->emit_error($self->{_error});
     } elsif ($self->{_data}) {
-        $str = $self->emit_data($self->{_data});
+        my $data = $self->{_data};
+        if ($self->{_warning}) {
+            $data->{warning} = $self->{_warning};
+        }
+        $str = $self->emit_data($data);
     }
     #die $charset;
     # XXX if $charset is 'UTF-8' then don't bother decoding and encoding...
@@ -177,6 +185,10 @@ sub POST_model {
     my $data = $self->{_req_data};
     my $model = $bits->[1];
     ### $model
+    my $name;
+    if ($name = $data->{name} and $name ne $model) {
+        $self->warning("name \"$name\" in POST content ignored.");
+    }
     $data->{name} = $model;
     return OpenAPI->new_model($data);
 }

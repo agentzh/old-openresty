@@ -38,7 +38,21 @@ POST /=/model/Human
 
 
 
-=== TEST 4: Create another model
+=== TEST 4: Create a model with 'name' specified
+--- request
+POST /=/model/Foo
+{
+  name: "Blah",
+  description:"人类",
+  columns:
+    [ { name: "gender", label: "性别" } ]
+}
+--- response
+{"success":1,"warning":"name \"Blah\" in POST content ignored."}
+
+
+
+=== TEST 5: Create another model
 --- request
 POST /=/model/Cat
 { description:"猫",
