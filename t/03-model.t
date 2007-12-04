@@ -52,7 +52,19 @@ POST /=/model/Foo
 
 
 
-=== TEST 5: Create another model
+=== TEST 5: No description specified
+--- request
+POST /=/model/Blah
+{
+  columns:
+    [ { name: "gender", label: "性别" } ]
+}
+--- response
+{"success":0,"error":"No 'description' specified for model \"Blah\"."}
+
+
+
+=== TEST 6: Create another model
 --- request
 POST /=/model/Cat
 { description:"猫",
