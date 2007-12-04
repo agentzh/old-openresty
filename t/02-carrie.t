@@ -69,3 +69,10 @@ GET /=/model/Carrie/*/*.js?var=hello
 --- response
 var hello=[{"url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},{"url":"http://zhangxiaojue.cn","title":"second","id":"2"}];
 
+
+
+=== TEST 8: delete a record
+--- request
+POST /=/delete/model/Carrie/id/1.js
+--- response
+{ "success":1,"rows_affected":1}
