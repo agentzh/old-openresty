@@ -133,7 +133,7 @@ sub response {
     # XXX if $charset is 'UTF-8' then don't bother decoding and encoding...
     eval {
         #$str = decode_utf8($str);
-        #from_to($str, 'UTF-8', $charset);
+        from_to($str, 'UTF-8', $charset);
     };  warn $@ if $@;
     if (my $var = $self->{_var}) {
         $str = "var $self->{_var}=$str;";
