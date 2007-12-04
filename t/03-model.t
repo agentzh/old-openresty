@@ -101,7 +101,18 @@ POST /=/model/Blah
 
 
 
-=== TEST 9: Create another model
+=== TEST 9: columns slot is not specified
+--- request
+POST /=/model/Blah
+{
+  description:"人类"
+}
+--- response
+{"success":0,"error":"No 'columns' specified for model \"Blah\"."}
+
+
+
+=== TEST 10: Create another model
 --- request
 POST /=/model/Cat
 { description:"猫",
