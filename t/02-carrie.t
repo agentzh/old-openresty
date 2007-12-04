@@ -71,9 +71,15 @@ var hello=[{"url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},{"u
 
 
 
-=== TEST 8: delete a record
+=== TEST 8: delete a record use "post" (incorrect way)
 --- request
 POST /=/delete/model/Carrie/id/1.js
 --- response
 {"success":1,"rows_affected":1}
 
+
+=== TEST 9: delete a record in correct way
+--- request
+GET /=/delete/model/Carrie/id/2.js
+--- response
+{"success":1,"rows-affected":1}
