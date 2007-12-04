@@ -37,18 +37,19 @@ while (my $cgi = new CGI::Fast) {
     $url =~ s{^/+}{}g;
     #print header(-type => 'text/plain; charset=UTF-8');
 
-    my $openapi;
+    my $openapi = OpenAPI->new;
+    if ($DBFatal) {
+        $openapi->error($DBFatal);
+        $openapi->response();
+        next;
+    }
+
     eval {
-        $openapi = OpenAPI->new(\$url, $cgi);
-        if ($DBFatal) {
-            $openapi->error($DBFatal);
-            $openapi->response();
-            next;
-        }
+        $openapi->init_self(\$url, $cgi);
     };
     if ($@) {
         ### Exception in new: $@
-        OpenAPI->error("Syntax error in JSON: $@");
+        $openapi->error($@);
         $openapi->response();
         next;
     }
@@ -83,14 +84,23 @@ while (my $cgi = new CGI::Fast) {
         ### Found user: $user
     } else {
         ### Creating new user: $user
-        OpenAPI->new_user($user);
+        $openapi->new_user($user);
     };
     eval {
-        OpenAPI->do("set search_path to $user");
+        $openapi->do("set search_path to $user");
     };
-    if ($@) { print OpenAPI->emit_error($@), "\n"; next; }
+    if ($@) {
+        $openapi->error($@);
+        $openapi->response();
+        next;
+    }
 
-    my $http_meth = $openapi->{_method};
+    my $http_meth = $openapi->{'_http_method'};
+    if (!$http_meth) {
+        $openapi->error("HTTP method not detected.");
+        $openapi->response();
+        next;
+    }
     if ($bits[0] eq 'model') {
         my $meth = $http_meth . '_' . $ModelDispatcher[$#bits];
         ### $meth

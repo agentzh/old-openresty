@@ -90,7 +90,18 @@ POST /=/model/Blah
 
 
 
-=== TEST 8: Create another model
+=== TEST 8: columns slot is not specified
+--- request
+POST /=/model/Blah
+{
+  description:"人类",
+}
+--- response
+{"success":0,"error":"Syntax error found in the JSON input: line 3, column 1."}
+
+
+
+=== TEST 9: Create another model
 --- request
 POST /=/model/Cat
 { description:"猫",

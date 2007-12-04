@@ -11,6 +11,7 @@ use Lingua::EN::Inflect qw( ORD);
 use List::Util qw(first);
 use Params::Util qw(_HASH _STRING _ARRAY _SCALAR);
 use Encode qw(decode_utf8 from_to encode decode);
+use Data::Dumper;
 #use encoding "utf8";
 
 #$YAML::Syck::ImplicitBinary = 1;
@@ -55,19 +56,37 @@ sub parse_data {
 }
 
 sub new {
-    my ($class, $rurl, $cgi) = @_;
+    return bless {}, $_[0];
+}
+
+sub init_self {
+    my ($self, $rurl, $cgi) = @_;
+    my $class = ref $self;
+
+    $self->{'_cgi'} = $cgi;
     my $charset = $cgi->url_param('charset') || 'UTF-8';
+    $self->{'_charset'} = $charset;
+
     my $var = $cgi->url_param('var');
+    $self->{'_var'} = $var;
+
+    my $http_meth = $ENV{'REQUEST_METHOD'};
+    #$self->{'_method'} = $http_meth;
+
+    #die "#XXXX !!!! $http_meth", Dumper($self);
+
     my $url = $$rurl;
+    eval {
+        from_to($url, $charset, 'UTF-8');
+    };
+
     $url =~ s{/+$}{}g;
     $url =~ s/\%2A/*/g;
-    from_to($url, $charset, 'UTF-8');
     if ($url =~ s/$Ext$//) {
         my $ext = $&;
         # XXX obsolete
-        $class->set_formatter($ext);
+        $self->set_formatter($ext);
     }
-    my $http_meth = $ENV{'REQUEST_METHOD'};
     my $req_data;
     if ($http_meth eq 'POST') {
         $req_data = $cgi->param('POSTDATA');
@@ -92,26 +111,19 @@ sub new {
         $http_meth = 'DELETE';
     }
     $$rurl = $url;
+    $self->{'_url'} = $url;
+    $self->{'_http_method'} = $http_meth;
 
     if ($req_data) {
         from_to($req_data, $charset, 'UTF-8');
         $req_data = OpenAPI->parse_data($req_data);
     }
 
-    return bless {
-        _cgi => $cgi,
-        _var => $var,
-        _url => $url,
-        _charset => $charset,
-        _error => '',
-        _data => undef,
-        _warning => '',
-        _method => $http_meth,
-        _req_data => $req_data,
-    }, $class;
+    $self->{_req_data} = $req_data;
 }
 
 sub error {
+    $_[1] =~ s/^Syck parser \(line (\d+), column (\d+)\): syntax error at .+/Syntax error found in the JSON input: line $1, column $2./;
     $_[0]->{_error} .= $_[1] . "\n";
 }
 
@@ -151,7 +163,6 @@ sub response {
 
 sub DELETE_model_list {
     my ($self, $bits) = @_;
-    my $user = 'tester';
     my $res = OpenAPI->get_tables();
     if (!$res) {
         return { success => 1 };
