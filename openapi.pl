@@ -47,7 +47,9 @@ while (my $cgi = new CGI::Fast) {
         }
     };
     if ($@) {
-        print OpenAPI->emit_error($@), "\n";
+        ### Exception in new: $@
+        OpenAPI->error("Syntax error in JSON: $@");
+        $openapi->response();
         next;
     }
 
@@ -58,6 +60,7 @@ while (my $cgi = new CGI::Fast) {
 
     my @bits = split /\//, $url, 5;
     if (!@bits) {
+        ### Unknown URL: $url
         $openapi->error("Unknown URL: $url");
         $openapi->response();
         next;

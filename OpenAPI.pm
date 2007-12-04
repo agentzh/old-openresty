@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Smart::Comments;
-use YAML::Syck ();
+use YAML::XS ();
 use JSON::Syck ();
 use Data::Dumper ();
 use Lingua::EN::Inflect qw( ORD);
@@ -12,18 +12,20 @@ use List::Util qw(first);
 use Params::Util qw(_HASH _STRING _ARRAY _SCALAR);
 use Encode qw(from_to encode decode);
 
-$YAML::Syck::ImplicitUnicode = 1;
+#$YAML::ImplicitUnicode = 1;
+#$YAML::ImplicitBinary = 1;
+#$YAML::SingleQuote = 1;
 
 my %ext2dumper = (
-    '.yml' => \&YAML::Syck::Dump,
-    '.yaml' => \&YAML::Syck::Dump,
+    '.yml' => \&YAML::XS::Dump,
+    '.yaml' => \&YAML::XS::Dump,
     '.js' => \&JSON::Syck::Dump,
     '.json' => \&JSON::Syck::Dump,
 );
 
 my %ext2importer = (
-    '.yml' => \&YAML::Syck::Load,
-    '.yaml' => \&YAML::Syck::Load,
+    '.yml' => \&YAML::XS::Load,
+    '.yaml' => \&YAML::XS::Load,
     '.js' => \&JSON::Syck::Load,
     '.json' => \&JSON::Syck::Load,
 );
