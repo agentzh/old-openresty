@@ -13,9 +13,6 @@ use Params::Util qw(_HASH _STRING _ARRAY _SCALAR);
 use Encode qw(from_to encode decode);
 #use encoding "utf8";
 
-BEGIN {
-$YAML::Syck::ImplicitUnicode = 1;
-}
 #$YAML::Syck::ImplicitBinary = 1;
 
 my %ext2dumper = (
@@ -131,10 +128,10 @@ sub response {
         $str = $self->emit_data($self->{_data});
     }
     #die $charset;
-    #eval {
-    #XXX who it does not work?
-        #$str = encode($charset, $str);
-        #};  warn $@ if $@;
+    eval {
+        $str = decode_utf8($str);
+        from_to($str, 'UTF-8', $charset);
+    };  warn $@ if $@;
     if (my $var = $self->{_var}) {
         $str = "var $self->{_var}=$str;";
     }
