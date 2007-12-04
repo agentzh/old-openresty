@@ -52,12 +52,15 @@ GET /=/model/Carrie/url/http://www.carriezh.cn/.js
 --- response
 [{"url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}]
 
+
+
 === TEST 6: insert another record
 --- request
 POST /=/model/Carrie/*/*.js
 { title:'second',url:"http://zhangxiaojue.cn"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/2"}
+
 
 
 === TEST 7: find out two record assign to var hello
