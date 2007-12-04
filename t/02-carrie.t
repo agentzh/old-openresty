@@ -91,7 +91,7 @@ POST /=/model/Carrie/*/*.js
 { title:'second',url:"http://zhangxiaojue.cn"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/3"}
- 
+
 
 === TEST 11: delete all the record
 --- request
