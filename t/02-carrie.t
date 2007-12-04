@@ -71,7 +71,7 @@ var hello=[{"url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},{"u
 
 
 
-=== TEST 8: delete a record use "post" (incorrect way)
+=== TEST 8: delete a record use "post" 
 --- request
 POST /=/delete/model/Carrie/id/1.js
 --- response
@@ -81,5 +81,20 @@ POST /=/delete/model/Carrie/id/1.js
 === TEST 9: delete a record in correct way
 --- request
 GET /=/delete/model/Carrie/id/2.js
+--- response
+{"success":1,"rows_affected":1}
+
+
+=== TEST 10: insert another record
+--- request
+POST /=/model/Carrie/*/*.js
+{ title:'second',url:"http://zhangxiaojue.cn"}
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/3"}
+ 
+
+=== TEST 11: delete all the record
+--- request
+GET /=/delete/model/Carrie/*/*.js
 --- response
 {"success":1,"rows_affected":1}
