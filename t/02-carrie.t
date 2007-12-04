@@ -64,4 +64,5 @@ POST /=/model/Carrie/*/*.js
 --- request
 GET /=/model/Carrie/*/*.js?var=hello
 --- response
-var hello=[{"url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},{"url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
+var hello=[{"url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},{"url":"http://zhangxiaojue.cn","title":"second","id":"2"}];
+

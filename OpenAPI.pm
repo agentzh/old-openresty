@@ -60,6 +60,7 @@ sub parse_data {
 sub new {
     my ($class, $rurl, $cgi) = @_;
     my $charset = $cgi->url_param('charset') || 'UTF-8';
+    my $var = $cgi->url_param('var');
     my $url = $$rurl;
     $url =~ s{/+$}{}g;
     $url =~ s/\%2A/*/g;
@@ -100,6 +101,7 @@ sub new {
 
     return bless {
         _cgi => $cgi,
+        _var => $var,
         _url => $url,
         _charset => $charset,
         _error => '',
@@ -133,6 +135,9 @@ sub response {
     #XXX who it does not work?
         #$str = encode($charset, $str);
         #};  warn $@ if $@;
+    if (my $var = $self->{_var}) {
+        $str = "var $self->{_var}=$str;";
+    }
     print $str, "\n";
 }
 
