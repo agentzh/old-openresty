@@ -128,6 +128,7 @@ sub response {
         $str = $self->emit_data($self->{_data});
     }
     #die $charset;
+    # XXX if $charset is 'UTF-8' then don't bother decoding and encoding...
     eval {
         $str = decode_utf8($str);
         from_to($str, 'UTF-8', $charset);
