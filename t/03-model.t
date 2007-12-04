@@ -77,7 +77,20 @@ POST /=/model/Blah
 
 
 
-=== TEST 7: Create another model
+=== TEST 7: No column specified for the model
+--- request
+POST /=/model/Blah
+{
+  description:"人类",
+  columns:
+    []
+}
+--- response
+{"success":0,"error":"No 'columns' specified for model \"Blah\"."}
+
+
+
+=== TEST 8: Create another model
 --- request
 POST /=/model/Cat
 { description:"猫",
