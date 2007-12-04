@@ -211,6 +211,10 @@ sub DELETE_model_row {
     my $model  = $bits->[1];
     my $column = $bits->[2];
     my $value  = $bits->[3];
+    if ($column eq '*' and $value eq '*') {
+        return OpenAPI->delete_all_records($model);
+    }
+
     return OpenAPI->delete_records($model, $column, $value);
 }
 
@@ -358,7 +362,7 @@ sub new_model {
     }
     my $i = 1;
     if ($self->has_model($model)) {
-        die "Model $model already exists.\n";
+        die "Model \"$model\" already exists.\n";
     }
     my $sql .= <<_EOC_;
 insert into _models (name, table_name, description)
@@ -553,8 +557,21 @@ sub select_records {
     return $res;
 }
 
+sub delete_all_records {
+    my ($self, $model) = @_;
+    if (!$self->has_model($model)) {
+        die "Model \"$model\" not found.\n";
+    }
+    my $table = lc($model);
+    my $retval = $dbh->do("delete from $table");
+    return {success => 1,rows_affected => $retval+0};
+}
+
 sub delete_records {
     my ($self, $model, $user_col, $val) = @_;
+    if (!$self->has_model($model)) {
+        die "Model \"$model\" not found.\n";
+    }
     my $table = lc($model);
     my $cols = $self->get_model_col_names($model);
     if ($user_col ne 'id') {
