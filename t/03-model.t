@@ -167,3 +167,13 @@ POST /=/model/Tiger
 --- response
 {"success":0,"error":"Invalid 'columns' list in model schema."}
 
+
+
+=== TEST 15: invalid 'description' slot value in the schema
+--- request
+POST /=/model/Tiger
+{ description: ["hello"] }
+--- response
+{"success":0,"error":"Invalid 'description' value in model schema."}
+
+

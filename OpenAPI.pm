@@ -376,6 +376,8 @@ sub new_model {
     ### Table: $table
     my $description = $data->{description} or
         die "No 'description' specified for model \"$model\".\n";
+    die "Invalid 'description' value in model schema.\n"
+        unless _STRING($description);
     # XXX Should we allow 0 column table here?
     if (!ref $data) {
         die "Malformed data. Hash expected.\n";
