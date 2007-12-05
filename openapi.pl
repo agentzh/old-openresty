@@ -11,7 +11,6 @@ use CGI::Fast ();
 use Data::Dumper;
 #use XML::Simple qw(:strict);
 use FindBin;
-use DBI;
 use Smart::Comments;
 #use Perl6::Say;
 

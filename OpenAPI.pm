@@ -12,6 +12,7 @@ use List::Util qw(first);
 use Params::Util qw(_HASH _STRING _ARRAY0 _SCALAR);
 use Encode qw(decode_utf8 from_to encode decode);
 use Data::Dumper;
+use DBI;
 #use encoding "utf8";
 
 #$YAML::Syck::ImplicitBinary = 1;
@@ -209,7 +210,7 @@ sub POST_model {
 sub GET_model_column {
     my ($self, $bits) = @_;
     my $model = $bits->[1];
-    my $col = lc($bits->[2]);
+    my $col = $bits->[2];
     ### $model
     ### $col
     my $table_name = lc($model);
@@ -224,7 +225,7 @@ sub GET_model_column {
 sub POST_model_column {
     my ($self, $bits) = @_;
     my $model = $bits->[1];
-    my $col = lc($bits->[2]);
+    my $col = $bits->[2];
     my $data = $self->{_req_data};
     my $table_name = lc($model);
 
@@ -232,7 +233,7 @@ sub POST_model_column {
 
     # discard 'id' column
     if ($col eq 'id') {
-        die "Column id is reserved";
+        die "Column id is reserved.";
     }
     # type defaults to 'text' if not specified.
     my $type = $data->{type} || 'text';
@@ -252,6 +253,58 @@ sub POST_model_column {
     ");
     my $res = $sth->execute($col, $label, $type, $ntype, $table_name);
     return { success => 1, src => "/=/model/$model/$col" };
+}
+
+sub PUT_model_column {
+    my ($self, $bits) = @_;
+    my $model = $bits->[1];
+    my $col = $bits->[2];
+    my $data = _HASH($self->{_req_data}) or die "column spec must be a HASH.\n";
+    my $table_name = lc($model);
+
+    # discard 'id' column
+    if ($col eq 'id') {
+        die "Column id is reserved.";
+    }
+    # type defaults to 'text' if not specified.
+    my $sql;
+    my $new_col = _IDENT($data->{name}) or die "Bad column name: ",
+        $Dumper->($data->{name}), "\n";
+
+    my $meta_sql = "update _columns set ";
+    if ($new_col) {
+        #$new_col = $new_col);
+        $meta_sql .= 'name=' . $dbh->quote($new_col);
+        $sql .= "alter table $table_name rename column $col to $new_col;\n";
+    }
+    my $type = $data->{type};
+    my $ntype;
+    if ($type) {
+        $ntype = $to_native_type{$type};
+        if (!$ntype) {
+            die "Bad column type: $type\n",
+                "\tOnly the following types are available: ",
+                join(", ", sort keys %to_native_type), "\n";
+        }
+        $meta_sql .= ',' if $meta_sql;
+        $meta_sql .= "type=" . $dbh->quote($type) . ",native_type=".
+            $dbh->quote($ntype);;
+    }
+    my $label = $data->{label};
+    if ($label) {
+        if ($meta_sql) { $meta_sql .= ","; }
+        $meta_sql .= "label=" . $dbh->quote($label);
+    }
+    $meta_sql .= " where table_name=" .
+            $dbh->quote($table_name) .
+            "and name=" .
+            $dbh->quote($col) .
+            ";\n";
+    ### $sql
+    ### $meta_sql
+    my $res = $dbh->do($sql . $meta_sql);
+    ### $res
+    return { success => 1 };
 }
 
 # alter table $table_name rename column $col TO city;
@@ -455,7 +508,7 @@ _EOC_
         if (length($name) >= 32) {
             die "Column name too long: $name\n";
         }
-        $name = lc($name);
+        #$name = $name;
         # discard 'id' column
         if ($name eq 'id') {
             $found_id = 1;
@@ -688,7 +741,7 @@ sub update_records {
     }
     my (@inner_sql, @vals);
     while (my ($key, $val) = each %$data) {
-        my $col = lc($key);
+        my $col = $key;
         if ($col eq 'id') {
             next;  # XXX maybe issue a warning?
         }

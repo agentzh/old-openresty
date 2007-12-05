@@ -39,7 +39,7 @@ POST /=/model/laser
 --- request
 GET /=/model/laser/A
 --- response
-{"name":"a","label":"A","type":"text"}
+{"name":"A","label":"A","type":"text"}
 
 
 
@@ -48,15 +48,14 @@ GET /=/model/laser/A
 POST /=/model/laser/B
 {type:"integer",label:"b"}
 --- response
-{"success":1,"src":"/=/model/laser/b"}
-
+{"success":1,"src":"/=/model/laser/B"}
 
 
 === TEST 5: Check the newly-added column
 --- request
-GET /=/model/laser/b
+GET /=/model/laser/B
 --- response
-{"name":"b","label":"b","type":"integer"}
+{"name":"B","label":"b","type":"integer"}
 
 
 
@@ -68,18 +67,19 @@ GET /=/model/laser
     "columns":
         [
           {"name":"id","label":"ID","type":"serial"},
-          {"name":"a","label":"A","type":"text"},
-          {"name":"b","label":"b","type":"integer"}
+          {"name":"A","label":"A","type":"text"},
+          {"name":"B","label":"b","type":"integer"}
         ],
     "name":"laser",
     "description":"test model"
 }
 
+--- LAST
 
 
 === TEST 7: Add one column twice
 --- request
-POST /=/model/laser/B
+POST /=/model/laser/b
 {type:"integer",label:"b"}
 --- response
 {"success":0,"error":"column \"b\" of relation \"laser\" already exists"}
@@ -87,6 +87,17 @@ POST /=/model/laser/B
 
 
 === TEST 8: Rename the column
+--- request
+PUT /=/model/laser/b
+{"name":"C"}
+--- response
+{"success":1}
+
+=== TEST 9: Check the new column
+--- request
+GET /=/model/laser/C
+--- response
+
 
 
 
