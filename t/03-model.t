@@ -2,6 +2,8 @@ use t::OpenAPI;
 
 =pod
 
+This test file tests URLs in the forms /=/model and /=/model/XXX
+
 XXX [TODO]
 
 * invalid column type in the model schema
