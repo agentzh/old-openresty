@@ -20,16 +20,20 @@ DELETE /=/model.js
 
 
 
-=== TEST 2: Create a model
+=== TEST 2: create a model
 --- request
 POST /=/model/laser
+{ description: "test model", columns: [{ name:"A",label:"A" }] }
 --- response
 {"success":1}
 
 
 
 === TEST 3: Check one column
-
+--- request
+GET /=/model/laser/A
+--- response
+{"name":"a","label":"A","type":"text"}
 
 
 === TEST 4: Add a new column

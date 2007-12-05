@@ -195,7 +195,15 @@ POST /=/model/Tiger
 
 
 
-=== TEST 19: invalid columns in the model schema
+=== TEST 19: Create a model w/o POST content
+--- request
+POST /=/model/laser
+--- response
+{"success":0,"error":"The model schema must be a HASH."}
+
+
+
+=== TEST 20: invalid columns in the model schema
 --- request
 POST /=/model/Tiger
 { description: "Tiger", columns: 32 }
@@ -204,7 +212,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 20: invalid 'description' slot value in the schema
+=== TEST 21: invalid 'description' slot value in the schema
 --- request
 POST /=/model/Tiger
 { description: ["hello"] }
@@ -213,7 +221,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 21: invalid model column name in schema
+=== TEST 22: invalid model column name in schema
 --- request
 POST /=/model/Tiger
 { description: "Tiger", columns:
@@ -224,7 +232,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 22: model column name too long
+=== TEST 23: model column name too long
 --- request
 POST /=/model/Tiger
 { description: "Tiger", columns:
@@ -235,7 +243,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 23: model column name JUST NOT too long
+=== TEST 24: model column name JUST NOT too long
 --- request
 POST /=/model/Tiger
 { description: "Tiger", columns:
@@ -246,7 +254,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 24: model name too long
+=== TEST 25: model name too long
 --- request
 POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ123456
 { description: "Bad model" }
@@ -255,7 +263,7 @@ POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ123456
 
 
 
-=== TEST 25: model name JUST NOT too long
+=== TEST 26: model name JUST NOT too long
 --- request
 POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ12345
 { description: "Bad model" }

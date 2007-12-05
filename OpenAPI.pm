@@ -205,6 +205,21 @@ sub POST_model {
     return $self->new_model($data);
 }
 
+sub GET_model_column {
+    my ($self, $bits) = @_;
+    my $model = $bits->[1];
+    my $col = lc($bits->[2]);
+    ### $model
+    ### $col
+    my $table_name = lc($model);
+    my $res = $self->selectall_arrayref("select name, type, label from _columns where table_name='$table_name' and name='$col'", { Slice => {} });
+    if (!$res or !@$res) {
+        die "Column '$col' not found.\n";
+    }
+    ### $res
+    return $res->[0];
+}
+
 sub POST_model_row {
     my ($self, $bits) = @_;
     my $data = $self->{_req_data};
@@ -366,9 +381,6 @@ sub new_model {
     my ($self, $data) = @_;
     my $model = $data->{name} or
         die "No 'name' field found for the new model\n";
-    if ($model !~ /^[A-Z]\w*$/) {
-        die "Invalid model name: \"$model\"\n";
-    }
     my $table = lc($model);
     ### Table: $table
     my $description = $data->{description} or
@@ -725,6 +737,8 @@ sub alter_model {
 
 sub global_check {
     my ($self, $rbits) = @_;
+    ### Check model existence and column existence here...
+    ### if method is not POST...
     if (@$rbits >= 2) {
         my $model = $rbits->[1];
         _IDENT($model) or die "Bad model name: $model\n";
