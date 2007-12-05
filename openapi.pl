@@ -112,7 +112,7 @@ while (my $cgi = new CGI::Fast) {
         }
         my $data;
         eval {
-            $openapi->global_check(\@bits);
+            $openapi->global_model_check(\@bits, $http_meth);
             $data = $openapi->$meth(\@bits);
         };
         if ($@) { $openapi->error($@); }

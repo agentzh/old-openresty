@@ -304,7 +304,7 @@ sub PUT_model_column {
     ### $meta_sql
     my $res = $dbh->do($sql . $meta_sql);
     ### $res
-    return { success => 1 };
+    return { success => $res ? 1 : 0 };
 }
 
 # alter table $table_name rename column $col TO city;
@@ -558,6 +558,23 @@ _EOC_
     return $retval + 0;
 }
 
+sub has_model_col {
+    my ($self, $model, $col) = @_;
+    my $table_name = lc($model);
+    ### has model col (model):  $model
+    ### has model col (col): $col
+    return 1 if $col eq 'id';
+    my $res;
+    eval {
+        $res = $self->do(<<"_EOC_");
+select name
+from _columns
+where table_name='$table_name' and name='$col'
+limit 1
+_EOC_
+    };
+    return $res + 0;
+}
 sub drop_table {
     my ($self, $table) = @_;
     $self->do(<<_EOC_);
@@ -823,12 +840,13 @@ sub alter_model {
     return {success => 1};
 }
 
-sub global_check {
-    my ($self, $rbits) = @_;
+sub global_model_check {
+    my ($self, $rbits, $meth) = @_;
     ### Check model existence and column existence here...
     ### if method is not POST...
+    my ($model, $col);
     if (@$rbits >= 2) {
-        my $model = $rbits->[1];
+        $model = $rbits->[1];
         _IDENT($model) or die "Bad model name: ", $Dumper->($model), "\n";
         if (length($model) >= 32) {
             die "Model name too long: $model\n";
@@ -836,8 +854,23 @@ sub global_check {
     }
     if (@$rbits >= 3) {
         # XXX check column name here...
-        my $col = $rbits->[2];
-        _IDENT($col) or $col eq '*' or die "Bad column name: ", $Dumper->($col), "\n";
+        $col = $rbits->[2];
+        (_IDENT($col) || $col eq '*') or die "Bad column name: ", $Dumper->($col), "\n";
+    }
+    if ($meth ne 'POST') {
+        ### Testing...
+        if ($model) {
+            if (!$self->has_model($model)) {
+                die "Model \"$model\" not found.\n";
+            }
+        }
+        if ($col and $col ne '*') {
+            ### Testing 2...
+            if (! $self->has_model_col($model, $col)) {
+                ### Dying...
+                die "Column '$col' not found.\n";
+            }
+        }
     }
 }
 
