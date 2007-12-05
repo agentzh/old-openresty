@@ -52,8 +52,25 @@ POST /=/model/laser/B
 
 
 === TEST 5: Check the newly-added column
+--- request
+GET /=/model/laser/b
+--- response
+{"name":"b","label":"b","type":"integer"}
 
-
+=== TEST 6: Check the whole schema
+--- request
+GET /=/model/laser
+--- response
+{
+    "columns":
+        [
+          {"name":"id","label":"ID","type":"serial"},
+          {"name":"a","label":"A","type":"text"},
+          {"name":"b","label":"b","type":"integer"}
+        ],
+    "name":"laser",
+    "description":"test model"
+}
 
 === TEST 6: Rename the column
 
