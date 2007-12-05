@@ -186,3 +186,12 @@ POST /=/model/Tiger
 --- response
 {"success":0,"error":"Bad column name: [32]"}
 
+=== TEST 16: model column name too long
+--- request
+POST /=/model/Tiger
+{ description: "Tiger", columns:
+    [ { name:"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", label:"bad col" } ]
+}
+--- response
+{"success":0,"error":"Column name too long: ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"}
+
