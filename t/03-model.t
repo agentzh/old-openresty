@@ -6,11 +6,12 @@ This test file tests URLs in the forms /=/model and /=/model/xxx
 
 XXX [TODO]
 
-* invalid column type in the model schema
-* invalid column label in the model schema
-* unrecoginzed keys in model's { ... }
-* unrecoginzied keys in model column's { ... }
-* Too many columns...
+* Invalid column type in the model schema
+* Invalid column label in the model schema
+* Unrecoginzed keys in model's { ... }
+* Unrecoginzied keys in model column's { ... }
+* Too many columns
+* Chinese characters in model names which also mach /\w/
 
 =cut
 
