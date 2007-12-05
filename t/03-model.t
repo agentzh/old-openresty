@@ -122,4 +122,3 @@ POST /=/model/Cat
 --- response
 {"success":1}
 
-
