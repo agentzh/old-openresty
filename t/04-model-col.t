@@ -22,7 +22,9 @@ DELETE /=/model.js
 
 === TEST 2: Create a model
 --- request
+POST /=/model/laser
 --- response
+{"success":1}
 
 
 
