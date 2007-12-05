@@ -4,6 +4,12 @@ use t::OpenAPI 'no_plan';
 
 This test file tests URLs in the form /=/model/xxx/xxx
 
+TODO
+* Post an existing column
+* Post an id column
+* Post a column w/o label
+* Bad column type in posting a new column
+
 =cut
 
 #plan tests => 2 * blocks();
@@ -37,6 +43,11 @@ GET /=/model/laser/A
 
 
 === TEST 4: Add a new column
+--- request
+POST /=/model/laser/B
+{type:"integer",label:"b"}
+--- response
+{"success":1,"src":"/=/model/laser/b"}
 
 
 

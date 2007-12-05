@@ -102,8 +102,15 @@ while (my $cgi = new CGI::Fast) {
         next;
     }
     if ($bits[0] eq 'model') {
-        my $meth = $http_meth . '_' . $ModelDispatcher[$#bits];
+        my $object = $ModelDispatcher[$#bits];
+        my $meth = $http_meth . '_' . $object;
         ### $meth
+        if (!$openapi->can($meth)) {
+            $object =~ s/_/ /g;
+            $openapi->error("HTTP $http_meth method not supported for $object.");
+            $openapi->response();
+            next;
+        }
         my $data;
         eval {
             $openapi->global_check(\@bits);

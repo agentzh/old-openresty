@@ -220,6 +220,40 @@ sub GET_model_column {
     return $res->[0];
 }
 
+sub POST_model_column {
+    my ($self, $bits) = @_;
+    my $model = $bits->[1];
+    my $col = lc($bits->[2]);
+    my $data = $self->{_req_data};
+    my $table_name = lc($model);
+
+    $data = _HASH($data) or die "column spec must be a HASH.\n";
+
+    # discard 'id' column
+    if ($col eq 'id') {
+        die "Column id is reserved";
+    }
+    # type defaults to 'text' if not specified.
+    my $type = $data->{type} || 'text';
+    my $label = $data->{label} or
+        die "No 'label' specified for column \"$col\" in model \"$model\".\n";
+    my $ntype = $to_native_type{$type};
+    if (!$ntype) {
+        die "Bad column type: $type\n",
+            "\tOnly the following types are available: ",
+            join(", ", sort keys %to_native_type), "\n";
+    }
+
+    my $sth = $dbh->prepare("
+        alter table $table_name add column $col $ntype;
+        insert into _columns (name, label, type, native_type, table_name) values
+            (?, ?, ?, ?, ?)
+    ");
+    my $res = $sth->execute($col, $label, $type, $ntype, $table_name);
+    return { success => 1, src => "/=/model/$model/$col" };
+}
+
+# alter table $table_name rename column $col TO city;
 sub POST_model_row {
     my ($self, $bits) = @_;
     my $data = $self->{_req_data};
