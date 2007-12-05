@@ -513,11 +513,11 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
 =item 插入记录
 
-    POST /=/model/<model name>
+    POST /=/model/<model name>/*/*
 
 该命令用于向指定模型上传若干新记录。一个例子是：
 
-    POST /=/model/Bookmark
+    POST /=/model/Bookmark/*/*
 
 I<POST body>
 
