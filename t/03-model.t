@@ -1,8 +1,8 @@
-use t::OpenAPI;
+use t::OpenAPI 'no_plan';
 
 =pod
 
-This test file tests URLs in the forms /=/model and /=/model/XXX
+This test file tests URLs in the forms /=/model and /=/model/xxx
 
 XXX [TODO]
 
@@ -14,7 +14,7 @@ XXX [TODO]
 
 =cut
 
-plan tests => 2 * blocks();
+#plan tests => 2 * blocks();
 
 run_tests;
 
@@ -165,7 +165,27 @@ GET /=/model
 
 
 
-=== TEST 13: Post model as a list
+=== TEST 13: Delete a model with a bad name
+
+
+
+=== TEST 14: Delete a non-existent model
+
+
+
+=== TEST 15: Delete a specified model
+
+
+
+=== TEST 16: Delete all the models
+
+
+
+=== TEST 17: Check the model list again (should be empty now)
+
+
+
+=== TEST 18: Post model as a list
 --- request
 POST /=/model/Tiger
 [{ description: "Tiger" }]
@@ -174,7 +194,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 14: invalid columns in the model schema
+=== TEST 19: invalid columns in the model schema
 --- request
 POST /=/model/Tiger
 { description: "Tiger", columns: 32 }
@@ -183,7 +203,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 15: invalid 'description' slot value in the schema
+=== TEST 20: invalid 'description' slot value in the schema
 --- request
 POST /=/model/Tiger
 { description: ["hello"] }
@@ -192,7 +212,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 16: invalid model column name in schema
+=== TEST 21: invalid model column name in schema
 --- request
 POST /=/model/Tiger
 { description: "Tiger", columns:
@@ -203,7 +223,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 17: model column name too long
+=== TEST 22: model column name too long
 --- request
 POST /=/model/Tiger
 { description: "Tiger", columns:
@@ -214,7 +234,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 18: model column name JUST NOT too long
+=== TEST 23: model column name JUST NOT too long
 --- request
 POST /=/model/Tiger
 { description: "Tiger", columns:
@@ -225,7 +245,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 19: model name too long
+=== TEST 24: model name too long
 --- request
 POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ123456
 { description: "Bad model" }
@@ -234,7 +254,7 @@ POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ123456
 
 
 
-=== TEST 20: model name JUST NOT too long
+=== TEST 25: model name JUST NOT too long
 --- request
 POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ12345
 { description: "Bad model" }

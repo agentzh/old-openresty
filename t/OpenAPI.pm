@@ -50,6 +50,10 @@ sub run_test ($) {
     my $block = shift;
     my $name = $block->name;
     my $request = $block->request;
+    if (!$request) {
+        warn "No request section found in $name\n";
+        return;
+    }
     my $type = $block->request_type;
     if ($request =~ /^(GET|POST|HEAD|PUT|DELETE)\s+(\S+)\s*\n(.*)/s) {
         my ($method, $url, $body) = ($1, $2, $3);
