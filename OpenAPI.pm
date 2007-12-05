@@ -376,7 +376,7 @@ sub new_model {
     ### Table: $table
     my $description = $data->{description} or
         die "No 'description' specified for model \"$model\".\n";
-    die "Invalid 'description' value in model schema.\n"
+    die "Bad 'description' value: ", $Dumper->($description), "\n"
         unless _STRING($description);
     # XXX Should we allow 0 column table here?
     if (!ref $data) {
@@ -384,7 +384,7 @@ sub new_model {
     }
     my $columns = $data->{columns};
     if ($columns && !_ARRAY0($columns)) {
-        die "Invalid 'columns' list in model schema.\n";
+        die "Invalid 'columns' value: ", $Dumper->($columns), "\n";
     } elsif (!$columns) {
         $self->warning("No 'columns' specified for model \"$model\".");
         $columns = [];
@@ -407,8 +407,9 @@ _EOC_
     for my $col (@$columns) {
         my $name = $col->{name} or
             die "No 'name' specified for the " . ORD($i) . " column.\n";
+        _STRING($name) or die "Bad column name: ", $Dumper->($name), "\n";
         if (length($name) >= 32) {
-            die "Column name \"$name\" is too long.\n";
+            die "Column name is too long: $name\n";
         }
         $name = lc($name);
         # discard 'id' column

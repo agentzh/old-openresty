@@ -165,7 +165,7 @@ POST /=/model/Tiger
 POST /=/model/Tiger
 { description: "Tiger", columns: 32 }
 --- response
-{"success":0,"error":"Invalid 'columns' list in model schema."}
+{"success":0,"error":"Invalid 'columns' value: 32"}
 
 
 
@@ -174,6 +174,15 @@ POST /=/model/Tiger
 POST /=/model/Tiger
 { description: ["hello"] }
 --- response
-{"success":0,"error":"Invalid 'description' value in model schema."}
+{"success":0,"error":"Bad 'description' value: [\"hello\"]"}
 
+
+=== TEST 16: invalid model column name in schema
+--- request
+POST /=/model/Tiger
+{ description: "Tiger", columns:
+    [ { name:[32], label:"bad col" } ]
+}
+--- response
+{"success":0,"error":"Bad column name: [32]"}
 
