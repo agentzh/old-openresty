@@ -105,7 +105,9 @@ while (my $cgi = new CGI::Fast) {
         my $meth = $http_meth . '_' . $ModelDispatcher[$#bits];
         ### $meth
         my $data;
-        eval { $data = $openapi->$meth(\@bits); };
+        eval {
+            $openapi->global_check(\@bits);
+            $data = $openapi->$meth(\@bits); };
         if ($@) { $openapi->error($@); }
         else { $openapi->data($data); }
     }

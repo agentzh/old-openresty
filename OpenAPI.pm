@@ -366,9 +366,6 @@ sub new_model {
     my ($self, $data) = @_;
     my $model = $data->{name} or
         die "No 'name' field found for the new model\n";
-    if (length($model) >= 32) {
-        die "Model name \"$model\" is too long.\n";
-    }
     if ($model !~ /^[A-Z]\w*$/) {
         die "Invalid model name: \"$model\"\n";
     }
@@ -409,7 +406,7 @@ _EOC_
             die "No 'name' specified for the " . ORD($i) . " column.\n";
         _STRING($name) or die "Bad column name: ", $Dumper->($name), "\n";
         if (length($name) >= 32) {
-            die "Column name is too long: $name\n";
+            die "Column name too long: $name\n";
         }
         $name = lc($name);
         # discard 'id' column
@@ -724,6 +721,20 @@ sub alter_model {
     my $retval = $dbh->do($sql);
     ### $retval
     return {success => 1};
+}
+
+sub global_check {
+    my ($self, $rbits) = @_;
+    if (@$rbits >= 2) {
+        my $model = $rbits->[1];
+        _IDENT($model) or die "Bad model name: $model\n";
+        if (length($model) >= 32) {
+            die "Model name too long: $model\n";
+        }
+    }
+    if (@$rbits >= 3) {
+        # XXX check column name here...
+    }
 }
 
 1;

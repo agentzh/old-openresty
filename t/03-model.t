@@ -177,6 +177,7 @@ POST /=/model/Tiger
 {"success":0,"error":"Bad 'description' value: [\"hello\"]"}
 
 
+
 === TEST 16: invalid model column name in schema
 --- request
 POST /=/model/Tiger
@@ -186,12 +187,43 @@ POST /=/model/Tiger
 --- response
 {"success":0,"error":"Bad column name: [32]"}
 
-=== TEST 16: model column name too long
+
+
+=== TEST 17: model column name too long
 --- request
 POST /=/model/Tiger
 { description: "Tiger", columns:
-    [ { name:"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", label:"bad col" } ]
+    [ { name:"dddddddddddddddddddddddddddddddd", label:"hiya" } ]
 }
 --- response
-{"success":0,"error":"Column name too long: ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"}
+{"success":0,"error":"Column name too long: dddddddddddddddddddddddddddddddd"}
+
+
+
+=== TEST 18: model column name JUST NOT too long
+--- request
+POST /=/model/Tiger
+{ description: "Tiger", columns:
+    [ { name:"ddddddddddddddddddddddddddddddd", label:"hiya" } ]
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 19: model name too long
+--- request
+POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ123456
+{ description: "Bad model" }
+--- response
+{"success":0,"error":"Model name too long: ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"}
+
+
+
+=== TEST 20: model name JUST NOT too long
+--- request
+POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ12345
+{ description: "Bad model" }
+--- response
+{"success":1,"warning":"No 'columns' specified for model \"ABCDEFGHIJKLMNOPQRSTUVWXYZ12345\"."}
 
