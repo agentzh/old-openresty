@@ -90,7 +90,20 @@ POST /=/model/Blah
 
 
 
-=== TEST 8: Syntax error in JSON data
+=== TEST 8: Check the model (we have the preserved 'id' column :)
+--- request
+GET /=/model/Blah
+--- response
+{
+  "columns":
+     [{"name":"id","label":"ID","type":"serial"}],
+  "name":"Blah",
+  "description":"Blah"
+}
+
+
+
+=== TEST 9: Syntax error in JSON data
 --- request
 POST /=/model/Baz
 {
@@ -101,7 +114,7 @@ POST /=/model/Baz
 
 
 
-=== TEST 9: columns slot is not specified
+=== TEST 10: columns slot is not specified
 --- request
 POST /=/model/Baz
 {
@@ -112,7 +125,20 @@ POST /=/model/Baz
 
 
 
-=== TEST 10: Check the model list again
+=== TEST 11: Check the model (we still have the preserved 'id' column :)
+--- request
+GET /=/model/Baz
+--- response
+{
+  "columns":
+     [{"name":"id","label":"ID","type":"serial"}],
+  "name":"Baz",
+  "description":"BAZ"
+}
+
+
+
+=== TEST 12: Check the model list again
 --- request
 GET /=/model
 --- response
