@@ -1,0 +1,70 @@
+use t::OpenAPI 'no_plan';
+
+=pod
+
+This test file tests URLs in the form /=/model/xxx/xxx
+
+=cut
+
+#plan tests => 2 * blocks();
+
+run_tests;
+
+__DATA__
+
+=== TEST 1: Delete existing models
+--- request
+DELETE /=/model.js
+--- response
+{"success":1}
+
+
+
+=== TEST 2: Create a model
+--- request
+--- response
+
+
+
+=== TEST 3: Check one column
+
+
+
+=== TEST 4: Add a new column
+
+
+
+=== TEST 5: Check the newly-added column
+
+
+
+=== TEST 6: Rename the column
+
+
+
+=== TEST 7: Check the renamed column
+
+
+
+=== TEST 8: Update the column type
+
+
+
+=== TEST 9: Check the column with a new type
+
+
+
+=== TEST 10: Update the column label
+
+
+
+=== TEST 11: Check the column with a new label
+
+
+
+=== TEST 12: Remove the column
+
+
+
+=== TEST 13: Access the nonexistent column
+
