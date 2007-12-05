@@ -1,0 +1,93 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="dojo.js" djConfig="isDebug: true, parseOnLoad: true">
+</script>
+<script type="text/javascript">
+ djConfig = { isDebug: false };
+</script>
+<script type="text/javascript">
+        dojo.require("dojo.io.script");
+        dojo.require("dojo.io.iframe");
+</script>
+<script>
+function init(){
+var td = dojo.io.script.get({
+        url: "http://10.62.136.86/=/model/CComments/posturl/"+document.URL+".js?user=carrie&var=comments",
+        //handleAs: "text/javascript",
+        handleAs: "json",
+	checkString:"comments",
+       preventCache: true,
+});
+td.addCallback(function(){drawComments(comments);});
+
+}
+
+dojo.addOnLoad(init);
+
+function drawComments(objs){
+	for(obj in objs)
+	{
+		var comment = objs[obj];
+		var ul = dojo.byId('review');
+		ul.innerHTML += "<li>" + comment['title'] + "<br>" + comment['owner'] + "<br>" + comment['content'] + "</li>";
+	}
+}
+
+
+function submitFunc(){
+var c = dojo.byId("CCcontent").value;
+
+var params = new Array();
+params[0] = 'title:"' + dojo.byId("CCtitle").value + '"';
+params[1] = 'owner:"' + dojo.byId("CCuser").value + '"';
+params[2] = 'content:"' + c.replace('\n','<br>') + '"';
+params[3] = 'posturl:"' + document.URL + '"';
+params[4] = 'host:"' + document.location.host+ '"';
+params[5] = 'parentid:0';
+var str = '';
+for(var i=0;i<params.length;i++)
+{
+	if(str != '') str+=",";
+	str += params[i];
+}
+ 
+dojo.io.iframe.send({
+    form: dojo.byId("myform"),
+    url: "http://10.62.136.86/=/model/CComments/*/*.js?user=carrie",
+    content: {data:"{"+str+"}"},
+    preventCache: true,
+    handlAs: 'json',
+});
+	
+window.location.reload(); 
+return false;
+}
+</script>
+
+</head>
+<body>
+<form method="post" id="myform"></form>
+<form method="" action="" onsubmit='submitFunc();return false;'>
+<div class="roundlb">
+        <p> 
+                <label for="CCtitle">标题：</label>
+                <input type="text" class="inpt" name="CCtitle" id="CCtitle"/>
+        </p><p>
+                <label for="CCuser">留言者：</label>
+                <input type="text" class="inpt" name="CCuser" id="CCuser"/>
+        </p><p>
+                <label for="CCcontent">内容：</label>
+                <textarea class="inpt" rows="4" cols="40" name="CCcontent" id="CCcontent"></textarea>
+        </p><p class="roundrb">
+                <input type="submit" class="btn" value="提交"/>
+        </p>
+</div>
+<input id="CCpost_url" type="hidden" name="CCpost_url" value=""/>
+<input id="CChost" type="hidden" name="CChost" value=""/>
+<input id="CCpid" type="hidden" value="0" name="CCpid"/>
+</form>
+<ul id="review">
+</ul>
+</body>
+</html>
