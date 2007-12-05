@@ -270,3 +270,11 @@ POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ12345
 --- response
 {"success":1,"warning":"No 'columns' specified for model \"ABCDEFGHIJKLMNOPQRSTUVWXYZ12345\"."}
 
+
+
+=== TEST 27: Unrecoginzed keys in model's block (POST)
+--- request
+POST /=/model/TTT
+{ \xFF\xFE: 'keys named \xFF\xFE' }
+--- response
+{"success":0,"error":"Unrecoginzed keys '\xFF\xFE' in model TTT\'s block"}
