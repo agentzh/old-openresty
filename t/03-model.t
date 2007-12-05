@@ -81,20 +81,20 @@ POST /=/model/Blah
 --- request
 POST /=/model/Blah
 {
-  description:"人类",
+  description:"Blah",
   columns:
     []
 }
 --- response
-{"success":0,"error":"No 'columns' specified for model \"Blah\"."}
+{"success":1,"warning":"'columns' empty for model \"Blah\"."}
 
 
 
-=== TEST 8: columns slot is not specified
+=== TEST 8: Syntax error in JSON data
 --- request
-POST /=/model/Blah
+POST /=/model/Baz
 {
-  description:"人类",
+  description:"BAZ",
 }
 --- response
 {"success":0,"error":"Syntax error found in the JSON input: line 3, column 1."}
@@ -103,34 +103,23 @@ POST /=/model/Blah
 
 === TEST 9: columns slot is not specified
 --- request
-POST /=/model/Blah
+POST /=/model/Baz
 {
-  description:"人类"
+  description:"BAZ"
 }
 --- response
-{"success":0,"error":"No 'columns' specified for model \"Blah\"."}
+{"success":1,"warning":"No 'columns' specified for model \"Baz\"."}
 
 
 
-=== TEST 10: Create another model
---- request
-POST /=/model/Cat
-{ description:"猫",
-  columns:
-    [ { name: "sex", label: "性别" } ]
-}
---- response
-{"success":1}
-
-
-
-=== TEST 11: Check the model list again
+=== TEST 10: Check the model list again
 --- request
 GET /=/model
 --- response
 [
     {"src":"/=/model/Human","name":"Human","description":"人类"},
     {"src":"/=/model/Foo","name":"Foo","description":"人类"},
-    {"src":"/=/model/Cat","name":"Cat","description":"猫"}
+    {"src":"/=/model/Blah","name":"Blah","description":"Blah"},
+    {"src":"/=/model/Baz","name":"Baz","description":"BAZ"}
 ]
 

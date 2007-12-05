@@ -116,7 +116,7 @@ sub init_self {
 
     if ($req_data) {
         from_to($req_data, $charset, 'UTF-8');
-        $req_data = OpenAPI->parse_data($req_data);
+        $req_data = $self->parse_data($req_data);
     }
 
     $self->{_req_data} = $req_data;
@@ -163,7 +163,7 @@ sub response {
 
 sub DELETE_model_list {
     my ($self, $bits) = @_;
-    my $res = OpenAPI->get_tables();
+    my $res = $self->get_tables();
     if (!$res) {
         return { success => 1 };
     }; # no-op
@@ -171,14 +171,14 @@ sub DELETE_model_list {
     #$tables = $tables->[0];
     ### tables: @tables
     for my $table (@tables) {
-        OpenAPI->drop_table($table);
+        $self->drop_table($table);
     }
     return { success => 1 };
 }
 
 sub GET_model_list {
     my ($self, $bits) = @_;
-    my $models = OpenAPI->get_models;
+    my $models = $self->get_models;
     $models ||= [];
     ### $models
     map { $_->{src} = "/=/model/$_->{name}" } @$models;
@@ -188,7 +188,7 @@ sub GET_model_list {
 sub GET_model {
     my ($self, $bits) = @_;
     my $model = $bits->[1];
-    return OpenAPI->get_model_cols($model);
+    return $self->get_model_cols($model);
 }
 
 sub POST_model {
@@ -201,14 +201,14 @@ sub POST_model {
         $self->warning("name \"$name\" in POST content ignored.");
     }
     $data->{name} = $model;
-    return OpenAPI->new_model($data);
+    return $self->new_model($data);
 }
 
 sub POST_model_row {
     my ($self, $bits) = @_;
     my $data = $self->{_req_data};
     my $model = $bits->[1];
-    return OpenAPI->insert_records($model, $data);
+    return $self->insert_records($model, $data);
 }
 
 sub GET_model_row {
@@ -217,13 +217,13 @@ sub GET_model_row {
     my $column = $bits->[2];
     my $value  = $bits->[3];
     if ($column ne '*' and $value ne '*') {
-        return OpenAPI->select_records($model, $column, $value);
+        return $self->select_records($model, $column, $value);
     }
     if ($column ne '*' and $value eq '*') {
-        return OpenAPI->select_records($model, $column);
+        return $self->select_records($model, $column);
     }
     if ($column eq '*' and $value eq '*') {
-        return OpenAPI->select_all_records($model);
+        return $self->select_all_records($model);
     } else {
         return { success => 0, error => "Unsupported operation." };
     }
@@ -235,10 +235,10 @@ sub DELETE_model_row {
     my $column = $bits->[2];
     my $value  = $bits->[3];
     if ($column eq '*' and $value eq '*') {
-        return OpenAPI->delete_all_records($model);
+        return $self->delete_all_records($model);
     }
 
-    return OpenAPI->delete_records($model, $column, $value);
+    return $self->delete_records($model, $column, $value);
 }
 
 sub PUT_model_row {
@@ -247,14 +247,14 @@ sub PUT_model_row {
     my $column = $bits->[2];
     my $value  = $bits->[3];
     my $data = $self->{_req_data};
-    return OpenAPI->update_records($model, $column, $value, $data);
+    return $self->update_records($model, $column, $value, $data);
 }
 
 sub PUT_model {
     my ($self, $bits) = @_;
     my $model = $bits->[1];
     my $data = $self->{_req_data};
-    return OpenAPI->alter_model($model, $data);
+    return $self->alter_model($model, $data);
 }
 
 sub set_formatter {
@@ -380,8 +380,11 @@ sub new_model {
         die "Malformed data. Hash expected.\n";
     }
     my $columns = $data->{columns};
-    if (!$columns or !@$columns) {
-        die "No 'columns' specified for model \"$model\".\n";
+    if (!$columns) {
+        $self->warning("No 'columns' specified for model \"$model\".");
+        $columns = [];
+    } elsif (!@$columns) {
+        $self->warning("'columns' empty for model \"$model\".");
     }
     my $i = 1;
     if ($self->has_model($model)) {

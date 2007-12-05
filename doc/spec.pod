@@ -218,9 +218,15 @@ I<POST body>
 
 一次 POST 请求只能指定创建单个 Model. Model 的声明包含两部分，一是模型名，即 C<name> 字段，一是列声明，即 C<columns> 字段。
 
-每个模型必须提供一个非空的 description 属性，同时模型各列的定义必须包含 label 这一属性，而且必须为非空。
+C<columns> 字段可以为一空数组，或者完全省略，此时模型中没有任何可用列。用户可以稍后通过 POST /=/model/<model name>/<column name> 来添加新列。
 
-请求的 POST 内容中可以不指定模型的 name 属性，因为它已经出现在了请求的 URL 中，如这里的 "Bookmark". 如果用户在 JSON 数据中也指定了 C<name>，则
+当 C<columns> 字段为空时，服务器会返回一条警告信息，例如：
+
+    {"success":1,"warning":"No 'columns' specified for model \"Foo\"."}
+
+每个模型必须提供一个非空的 C<description> 属性，同时模型各列的定义必须包含 C<label> 这一属性，而且必须为非空。
+
+请求的 POST 内容中可以不指定模型的 C<name> 属性，因为它已经出现在了请求的 URL 中，如这里的 "Bookmark". 如果用户在 JSON 数据中也指定了 C<name>，则
 
 模型名必须以字母开头，后跟若干字母，下划线或数字。推荐模型名总以大写字母开头，比如 C<Bookmark>, C<MyMusic> 等等。
 
