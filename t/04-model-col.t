@@ -42,6 +42,7 @@ GET /=/model/laser/A
 {"name":"a","label":"A","type":"text"}
 
 
+
 === TEST 4: Add a new column
 --- request
 POST /=/model/laser/B
@@ -56,6 +57,8 @@ POST /=/model/laser/B
 GET /=/model/laser/b
 --- response
 {"name":"b","label":"b","type":"integer"}
+
+
 
 === TEST 6: Check the whole schema
 --- request
@@ -72,33 +75,44 @@ GET /=/model/laser
     "description":"test model"
 }
 
-=== TEST 6: Rename the column
+
+
+=== TEST 7: Add one column twice
+--- request
+POST /=/model/laser/B
+{type:"integer",label:"b"}
+--- response
+{"success":0,"error":"column \"b\" of relation \"laser\" already exists"}
 
 
 
-=== TEST 7: Check the renamed column
+=== TEST 8: Rename the column
 
 
 
-=== TEST 8: Update the column type
+=== TEST 9: Check the renamed column
 
 
 
-=== TEST 9: Check the column with a new type
+=== TEST 10: Update the column type
 
 
 
-=== TEST 10: Update the column label
+=== TEST 11: Check the column with a new type
 
 
 
-=== TEST 11: Check the column with a new label
+=== TEST 12: Update the column label
 
 
 
-=== TEST 12: Remove the column
+=== TEST 13: Check the column with a new label
 
 
 
-=== TEST 13: Access the nonexistent column
+=== TEST 14: Remove the column
+
+
+
+=== TEST 15: Access the nonexistent column
 

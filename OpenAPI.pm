@@ -124,6 +124,7 @@ sub init_self {
 
 sub error {
     $_[1] =~ s/^Syck parser \(line (\d+), column (\d+)\): syntax error at .+/Syntax error found in the JSON input: line $1, column $2./;
+    $_[1] =~ s/^DBD::Pg::st execute failed:\s+ERROR:\s+//;
     $_[0]->{_error} .= $_[1] . "\n";
 }
 
@@ -775,13 +776,15 @@ sub global_check {
     ### if method is not POST...
     if (@$rbits >= 2) {
         my $model = $rbits->[1];
-        _IDENT($model) or die "Bad model name: $model\n";
+        _IDENT($model) or die "Bad model name: ", $Dumper->($model), "\n";
         if (length($model) >= 32) {
             die "Model name too long: $model\n";
         }
     }
     if (@$rbits >= 3) {
         # XXX check column name here...
+        my $col = $rbits->[2];
+        _IDENT($col) or $col eq '*' or die "Bad column name: ", $Dumper->($col), "\n";
     }
 }
 
