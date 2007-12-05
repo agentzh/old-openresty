@@ -122,3 +122,15 @@ POST /=/model/Cat
 --- response
 {"success":1}
 
+
+
+=== TEST 11: Check the model list again
+--- request
+GET /=/model
+--- response
+[
+    {"src":"/=/model/Human","name":"Human","description":"人类"},
+    {"src":"/=/model/Foo","name":"Foo","description":"人类"},
+    {"src":"/=/model/Cat","name":"Cat","description":"猫"}
+]
+
