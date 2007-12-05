@@ -1,5 +1,17 @@
 use t::OpenAPI;
 
+=pod
+
+XXX [TODO]
+
+* invalid column type in the model schema
+* invalid column label in the model schema
+* unrecoginzed keys in model's { ... }
+* unrecoginzied keys in model column's { ... }
+* Too many columns...
+
+=cut
+
 plan tests => 2 * blocks();
 
 run_tests;
