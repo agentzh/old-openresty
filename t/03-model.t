@@ -149,3 +149,21 @@ GET /=/model
     {"src":"/=/model/Baz","name":"Baz","description":"BAZ"}
 ]
 
+
+
+=== TEST 13: Post model as a list
+--- request
+POST /=/model/Tiger
+[{ description: "Tiger" }]
+--- response
+{"success":0,"error":"The model schema must be a HASH."}
+
+
+
+=== TEST 14: invalid columns in the model schema
+--- request
+POST /=/model/Tiger
+{ description: "Tiger", columns: 32 }
+--- response
+{"success":0,"error":"Invalid 'columns' list in model schema."}
+

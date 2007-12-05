@@ -9,7 +9,7 @@ use JSON::Syck ();
 use Data::Dumper ();
 use Lingua::EN::Inflect qw( ORD);
 use List::Util qw(first);
-use Params::Util qw(_HASH _STRING _ARRAY _SCALAR);
+use Params::Util qw(_HASH _STRING _ARRAY0 _SCALAR);
 use Encode qw(decode_utf8 from_to encode decode);
 use Data::Dumper;
 #use encoding "utf8";
@@ -193,7 +193,8 @@ sub GET_model {
 
 sub POST_model {
     my ($self, $bits) = @_;
-    my $data = $self->{_req_data};
+    my $data = _HASH($self->{_req_data}) or
+        die "The model schema must be a HASH.\n";
     my $model = $bits->[1];
     ### $model
     my $name;
@@ -380,7 +381,9 @@ sub new_model {
         die "Malformed data. Hash expected.\n";
     }
     my $columns = $data->{columns};
-    if (!$columns) {
+    if ($columns && !_ARRAY0($columns)) {
+        die "Invalid 'columns' list in model schema.\n";
+    } elsif (!$columns) {
         $self->warning("No 'columns' specified for model \"$model\".");
         $columns = [];
     } elsif (!@$columns) {
