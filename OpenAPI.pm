@@ -469,11 +469,11 @@ _EOC_
 
 sub new_model {
     my ($self, $data) = @_;
-    my $model = $data->{name} or
+    my $model = delete $data->{name} or
         die "No 'name' field found for the new model\n";
     my $table = lc($model);
     ### Table: $table
-    my $description = $data->{description} or
+    my $description = delete $data->{description} or
         die "No 'description' specified for model \"$model\".\n";
     die "Bad 'description' value: ", $Dumper->($description), "\n"
         unless _STRING($description);
@@ -481,7 +481,7 @@ sub new_model {
     if (!ref $data) {
         die "Malformed data. Hash expected.\n";
     }
-    my $columns = $data->{columns};
+    my $columns = delete $data->{columns};
     if ($columns && !_ARRAY0($columns)) {
         die "Invalid 'columns' value: ", $Dumper->($columns), "\n";
     } elsif (!$columns) {
@@ -489,6 +489,10 @@ sub new_model {
         $columns = [];
     } elsif (!@$columns) {
         $self->warning("'columns' empty for model \"$model\".");
+    }
+    if (%$data) {
+        die "Unrecognized keys in model schema: ",
+            join(", ", keys %$data), "\n";
     }
     my $i = 1;
     if ($self->has_model($model)) {

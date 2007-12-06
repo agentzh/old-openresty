@@ -1,6 +1,6 @@
 use t::OpenAPI;
 
-plan tests => 2 * blocks();
+plan tests => 3 * blocks();
 
 run_tests;
 
