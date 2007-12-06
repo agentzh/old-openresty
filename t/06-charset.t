@@ -97,14 +97,3 @@ GET /=/model/Foo/~/~.js?charset=Big5
 --- response
 [{"bar":"廣告服務","id":"1"}]
 
-
-
-=== TEST 10: Insert records in Big5
---- charset: Big5
---- request
-POST /=/model/Foo/~/~?charset=Big5
-{ "bar": "廣告服務" }
---- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/Foo/id/1"}
---- ONLY
-
