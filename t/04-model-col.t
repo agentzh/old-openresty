@@ -190,7 +190,7 @@ GET /=/model/laser
       "description":"test model"
 }
 === TEST 19: Remove the column
-----request
+---- request
 DELETE /=/model/laser/C
 --- response
 {"success":1}
