@@ -5,6 +5,7 @@ use Test::Base -Base;
 #use Smart::Comments;
 use LWP::UserAgent;
 use Test::LongString;
+use Encode 'from_to';
 
 our @EXPORT = qw(init run_tests run_test);
 
@@ -54,6 +55,7 @@ sub run_test ($) {
         warn "No request section found in $name\n";
         return;
     }
+    my $charset = $block->charset || 'UTF-8';
     my $type = $block->request_type;
     if ($request =~ /^(GET|POST|HEAD|PUT|DELETE)\s+(\S+)\s*\n(.*)/s) {
         my ($method, $url, $body) = ($1, $2, $3);
@@ -61,7 +63,10 @@ sub run_test ($) {
         ### $url
         ### $body
         ### $host
-        my $res = do_request($method, $host.$url, $body, $type);
+        $url = $host.$url;
+        from_to($url, 'UTF-8', $charset) unless $charset eq 'UTF-8';
+        from_to($body, 'UTF-8', $charset) unless $charset eq 'UTF-8';
+        my $res = do_request($method, $url, $body, $type);
         ok $res->is_success, "request returns OK - $name";
         (my $expected_res = $block->response) =~ s/\n[ \t]*([^\n\s])/$1/sg;
         if ($expected_res) {
@@ -69,6 +74,7 @@ sub run_test ($) {
         } else {
             is $res->content, $expected_res, "response content OK - $name";
         }
+        like $res->header('Content-Type'), qr/\Q; charset=$charset\E$/, 'charset okay';
     } else {
         my ($firstline) = ($request =~ /^([^\n]*)/s);
         die "Invalid request head: \"$firstline\" in $name\n";
