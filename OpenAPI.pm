@@ -309,6 +309,21 @@ sub PUT_model_column {
     return { success => $res ? 1 : 0 };
 }
 
+sub DELETE_model_column {
+    my ($self, $bits) = @_;
+    my $model = $bits->[1];
+    my $col = $bits->[2];
+    my $table_name = lc($model);
+
+    # discard 'id' column
+    if ($col eq 'id') {
+        die "Column id is reserved.";
+    }
+    my $sql = "delete from _columns where table_name='$table_name' and name='$col'; alter table $table_name drop column $col restrict;";
+    my $res = $dbh->do($sql);
+    return { success => $res ? 1:0 };
+}
+
 # alter table $table_name rename column $col TO city;
 sub POST_model_row {
     my ($self, $bits) = @_;
