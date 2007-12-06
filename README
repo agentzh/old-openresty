@@ -26,5 +26,9 @@ fastcgi.server = (
         )
     )
 )
+
+# Also make sure the following line is commented out:
+# url.access-deny            = ( "~", ".inc" )
+
 # END
 

@@ -14,8 +14,8 @@ DELETE /=/model
 
 
 === TEST 2: It hangs or report error
---- charset: Big5
 --- request
 GET /=/model/Foo/~/~
 --- response
+{"success":0,"error":"Model \"Foo\" not found."}
 
