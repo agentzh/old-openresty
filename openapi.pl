@@ -32,10 +32,10 @@ my @ModelDispatcher = qw(
 
 my $ext = qr/\.(?:js|json|xml|yaml|yml)/;
 while (my $cgi = new CGI::Fast) {
-    #next;
     my $url  = $cgi->url(-absolute=>1);
     $url =~ s{^/+}{}g;
     #print header(-type => 'text/plain; charset=UTF-8');
+    #die $url;
 
     my $openapi = OpenAPI->new;
     if ($DBFatal) {
