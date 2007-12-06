@@ -206,6 +206,30 @@ DELETE /=/model/laser/C
 
 
 
+=== TEST 20: Check the schema again
+--- request
+GET /=/model/laser
+
+--- response
+{
+    "columns":
+      [
+        {"name":"id","label":"ID","type":"serial"},
+        {"name":"A","label":"A","type":"text"}
+      ],
+      "name":"laser",
+      "description":"test model"
+}
+
+
+
+=== TEST 21: Remove the column
+--- request
+DELETE /=/model/laser/C
+--- response
+{"success":0,"error":"Column 'C' not found."}
+
+
 === TEST 22: Access the nonexistent column
 --- request
 GET /=/model/laser/C
