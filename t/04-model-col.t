@@ -156,20 +156,53 @@ PUT /=/model/laser/C
 
 
 === TEST 15: Check the column with a new type
-
-
+--- request
+GET /=/model/laser/C
+--- response
+{"name":"C","label":"b","type":"real"}
 
 === TEST 16: Update the column label
-
+--- request
+PUT /=/model/laser/C
+{"label":"c"}
+--- response
+{"success":1}
 
 
 === TEST 17: Check the column with a new label
+--- request
+GET /=/model/laser/C
+--- response
+{"name":"C","label":"c","type":"real"}
+
+=== TEST 18: Check the schema again
+--- request
+GET /=/model/laser
+--- response
+{
+    "columns":
+      [
+        {"name":"id","label":"ID","type":"serial"},
+        {"name":"A","label":"A","type":"text"},
+        {"name":"C","label":"c","type":"real"}
+      ],
+      "name":"laser",
+      "description":"test model"
+}
+=== TEST 19: Remove the column
+DELETE /=/model/laser/C
+--- response
+{"success":1}
 
 
+=== TEST 20: Access the nonexistent column
+--- request
+GET /=/model/laser/C
+--- response
+{"success":0,"error":"Column 'C' not found."}
 
-=== TEST 18: Remove the column
-
-
-
-=== TEST 19: Access the nonexistent column
-
+== TEST 21 : delete the nonexistent column
+--- request
+DELETE /=/model/laser/C
+--- response
+{"success":0,"error":"Column 'C' not found."}
