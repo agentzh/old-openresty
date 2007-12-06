@@ -137,7 +137,7 @@ GET /=/model/laser/B
 
 
 
-=== TEST 13: Update the column type
+=== TEST 13: Try to rename a nonexistent column
 --- request
 PUT /=/model/laser/B
 {"name":"C"}
@@ -146,21 +146,30 @@ PUT /=/model/laser/B
 
 
 
-=== TEST 14: Check the column with a new type
+=== TEST 14: Try updating type
+--- request
+PUT /=/model/laser/C
+{type:"real"}
+--- response
+{"success":1}
 
 
 
-=== TEST 15: Update the column label
+=== TEST 15: Check the column with a new type
 
 
 
-=== TEST 16: Check the column with a new label
+=== TEST 16: Update the column label
 
 
 
-=== TEST 17: Remove the column
+=== TEST 17: Check the column with a new label
 
 
 
-=== TEST 18: Access the nonexistent column
+=== TEST 18: Remove the column
+
+
+
+=== TEST 19: Access the nonexistent column
 

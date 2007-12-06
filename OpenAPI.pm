@@ -267,12 +267,13 @@ sub PUT_model_column {
         die "Column id is reserved.";
     }
     # type defaults to 'text' if not specified.
-    my $sql;
-    my $new_col = _IDENT($data->{name}) or die "Bad column name: ",
-        $Dumper->($data->{name}), "\n";
-
-    my $meta_sql = "update _columns set ";
+    my $sql = '';
+    my $new_col = $data->{name};
+    my $meta_sql;
     if ($new_col) {
+        _IDENT($new_col) or die "Bad column name: ",
+                $Dumper->($new_col), "\n";
+
         #$new_col = $new_col);
         $meta_sql .= 'name=' . $dbh->quote($new_col);
         $sql .= "alter table $table_name rename column $col to $new_col;\n";
@@ -289,15 +290,16 @@ sub PUT_model_column {
         $meta_sql .= ',' if $meta_sql;
         $meta_sql .= "type=" . $dbh->quote($type) . ",native_type=".
             $dbh->quote($ntype);;
+        $sql .= "alter table $table_name alter column $col type $ntype;\n",
     }
     my $label = $data->{label};
     if ($label) {
         if ($meta_sql) { $meta_sql .= ","; }
         $meta_sql .= "label=" . $dbh->quote($label);
     }
-    $meta_sql .= " where table_name=" .
+    $meta_sql = "update _columns set $meta_sql where table_name=" .
             $dbh->quote($table_name) .
-            "and name=" .
+            " and name=" .
             $dbh->quote($col) .
             ";\n";
     ### $sql
