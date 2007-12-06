@@ -69,3 +69,12 @@ GET /=/model/Foo?charset=big5
     ],
     "name":"Foo","description":"你好么？"}
 
+
+
+=== TEST 7: Check the data in latin1
+--- charset: latin-1
+--- request
+GET /=/model/Foo/bar?charset=latin-1
+--- response
+{"name":"bar","label":"??","type":"text"}
+
