@@ -32,10 +32,36 @@ POST /=/model/Foo?charset=GBK
 
 
 
-=== TEST 4: Check the data
+=== TEST 4: Check the data in GB2312
 --- charset: GB2312
 --- request
 GET /=/model/Foo?charset=GB2312
+--- response
+{"columns":[
+    {"name":"id","label":"ID","type":"serial"},
+    {"name":"bar","label":"嘿嘿","type":"text"}
+    ],
+    "name":"Foo","description":"你好么？"}
+
+
+
+=== TEST 5: Check the data in utf8
+--- charset: utf8
+--- request
+GET /=/model/Foo?charset=utf8
+--- response
+{"columns":[
+    {"name":"id","label":"ID","type":"serial"},
+    {"name":"bar","label":"嘿嘿","type":"text"}
+    ],
+    "name":"Foo","description":"你好么？"}
+
+
+
+=== TEST 6: Check the data in big5
+--- charset: big5
+--- request
+GET /=/model/Foo?charset=big5
 --- response
 {"columns":[
     {"name":"id","label":"ID","type":"serial"},
