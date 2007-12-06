@@ -464,12 +464,12 @@ sub new_user {
     my $user = shift;
     eval {
         $self->do(<<"_EOC_");
-create schema $user
+    create schema $user; 
     create table _models (
         name text primary key,
         table_name text unique,
         description text
-    )
+    );
     create table _columns (
         id serial primary key,
         name text,
