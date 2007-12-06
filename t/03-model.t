@@ -275,7 +275,6 @@ POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ12345
 === TEST 27: Unrecoginzed keys in model's block (POST)
 --- request
 POST /=/model/TTT
-{ \xFF\xFE: 'keys named \xFF\xFE', description:"blah" }
+{ \xFF\xFE: 'keys named \xFF\xFE' }
 --- response
-{"success":0,"error":"Unrecognized keys in model schema: \\xFF\\xFE"}
-
+{"success":0,"error":"Unrecoginzed keys '\xFF\xFE' in model TTT\'s block"}
