@@ -209,7 +209,6 @@ DELETE /=/model/laser/C
 === TEST 20: Check the schema again
 --- request
 GET /=/model/laser
-
 --- response
 {
     "columns":
