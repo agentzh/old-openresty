@@ -211,7 +211,9 @@ GET /=/model/laser/C
 --- response
 {"success":0,"error":"Column 'C' not found."}
 
-== TEST 21 : delete the nonexistent column
+
+
+=== TEST 23 : delete the nonexistent column
 --- request
 DELETE /=/model/laser/C
 --- response
