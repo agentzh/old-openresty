@@ -412,9 +412,9 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
 =item 显示指定字段的记录列表
 
-    GET /=/model/<model name>/<column name>/*
+    GET /=/model/<model name>/<column name>/~
 
-这里的星号 C<*> 是“通配符”(wildcard).
+这里的星号 C<~> 是“通配符”(wildcard).
 
 逻辑上相当于下面这行 SQL 语句：
 
@@ -425,7 +425,7 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
 对于超过 10 条的返回结果，API 总是返回前十条。翻页功能可通过 page 参数来控制，例如
 
-    GET /=/model/Bookmark/title/*?page=2
+    GET /=/model/Bookmark/title/~?page=2
 
     [
         { title: "XUL::App - Jifty way of doing XUL" },
@@ -503,7 +503,7 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
 可以使用通配符 C<*> 来表示没有上限或下限，例如：
 
-    GET /=/model/Person/height/1.86..*?extended=1
+    GET /=/model/Person/height/1.86..~?extended=1
 
 表示选取身高在 1.86 以上的 Persion，相当于下面这句 SQL:
 
@@ -513,7 +513,7 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
 如果要选取身高小于 1.65 的人，则可以这么写：
 
-    GET /=/model/Person/height/*..1.65?extended=1
+    GET /=/model/Person/height/~..1.65?extended=1
 
 =back
 
@@ -525,11 +525,11 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
 =item 插入记录
 
-    POST /=/model/<model name>/*/*
+    POST /=/model/<model name>/~/~
 
 该命令用于向指定模型上传若干新记录。一个例子是：
 
-    POST /=/model/Bookmark/*/*
+    POST /=/model/Bookmark/~/~
 
 I<POST body>
 
@@ -715,7 +715,7 @@ XXX needs work...
 
 一个例子是：
 
-    GET /=/model/Bookmark/id/*?page=2
+    GET /=/model/Bookmark/id/~?page=2
 
     [
         { id: 11 },

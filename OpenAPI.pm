@@ -82,7 +82,7 @@ sub init_self {
     };
 
     $url =~ s{/+$}{}g;
-    $url =~ s/\%2A/*/g;
+    #$url =~ s/\%2A/*/g;
     if ($url =~ s/$Ext$//) {
         my $ext = $&;
         # XXX obsolete
@@ -322,13 +322,13 @@ sub GET_model_row {
     my $model  = $bits->[1];
     my $column = $bits->[2];
     my $value  = $bits->[3];
-    if ($column ne '*' and $value ne '*') {
+    if ($column ne '~' and $value ne '~') {
         return $self->select_records($model, $column, $value);
     }
-    if ($column ne '*' and $value eq '*') {
+    if ($column ne '~' and $value eq '~') {
         return $self->select_records($model, $column);
     }
-    if ($column eq '*' and $value eq '*') {
+    if ($column eq '~' and $value eq '~') {
         return $self->select_all_records($model);
     } else {
         return { success => 0, error => "Unsupported operation." };
@@ -340,7 +340,7 @@ sub DELETE_model_row {
     my $model  = $bits->[1];
     my $column = $bits->[2];
     my $value  = $bits->[3];
-    if ($column eq '*' and $value eq '*') {
+    if ($column eq '~' and $value eq '~') {
         return $self->delete_all_records($model);
     }
 
@@ -857,7 +857,7 @@ sub global_model_check {
     if (@$rbits >= 3) {
         # XXX check column name here...
         $col = $rbits->[2];
-        (_IDENT($col) || $col eq '*') or die "Bad column name: ", $Dumper->($col), "\n";
+        (_IDENT($col) || $col eq '~') or die "Bad column name: ", $Dumper->($col), "\n";
     }
     if ($meth ne 'POST') {
         ### Testing...
@@ -866,7 +866,7 @@ sub global_model_check {
                 die "Model \"$model\" not found.\n";
             }
         }
-        if ($col and $col ne '*') {
+        if ($col and $col ne '~') {
             ### Testing 2...
             if (! $self->has_model_col($model, $col)) {
                 ### Dying...
