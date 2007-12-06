@@ -70,6 +70,7 @@ sub run_test ($) {
         ok $res->is_success, "request returns OK - $name";
         (my $expected_res = $block->response) =~ s/\n[ \t]*([^\n\s])/$1/sg;
         if ($expected_res) {
+            from_to($expected_res, 'UTF-8', $charset) unless $charset eq 'UTF-8';
             is_string $res->content, $expected_res, "response content OK - $name";
         } else {
             is $res->content, $expected_res, "response content OK - $name";
