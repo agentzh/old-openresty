@@ -205,7 +205,7 @@ DELETE /=/model/laser/C
 
 
 
-=== TEST 20: Access the nonexistent column
+=== TEST 22: Access the nonexistent column
 --- request
 GET /=/model/laser/C
 --- response
