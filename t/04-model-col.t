@@ -198,7 +198,24 @@ GET /=/model/laser
 
 
 
-=== TEST 19: Remove the column
+=== TEST 19: Insert a record
+--- request
+POST /=/model/laser/~/~
+{ C: 3.14159 }
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/laser/id/1"}
+
+
+
+=== TEST 20: Check the newly-added record
+--- request
+GET /=/model/laser/id/1
+--- response
+[{"c":"3.14159","a":null,"id":"1"}]
+
+
+
+=== TEST 21: Remove the column
 --- request
 DELETE /=/model/laser/C
 --- response
@@ -206,7 +223,7 @@ DELETE /=/model/laser/C
 
 
 
-=== TEST 20: Check the schema again
+=== TEST 22: Check the schema again
 --- request
 GET /=/model/laser
 --- response
@@ -222,7 +239,7 @@ GET /=/model/laser
 
 
 
-=== TEST 21: Remove the column
+=== TEST 23: Remove the column
 --- request
 DELETE /=/model/laser/C
 --- response
@@ -230,7 +247,7 @@ DELETE /=/model/laser/C
 
 
 
-=== TEST 22: Access the nonexistent column
+=== TEST 24: Access the nonexistent column
 --- request
 GET /=/model/laser/C
 --- response
@@ -238,7 +255,7 @@ GET /=/model/laser/C
 
 
 
-=== TEST 23 : delete the nonexistent column
+=== TEST 25 : delete the nonexistent column
 --- request
 DELETE /=/model/laser/C
 --- response
