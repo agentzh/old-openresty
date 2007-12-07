@@ -43,7 +43,6 @@ while (my $cgi = new CGI::Fast) {
     $url =~ s{^/+}{}g;
     ### Old URL: $url
     ### URL Prefox: $url_prefix
-    ### %ENV
     #print header(-type => 'text/plain; charset=UTF-8');
     #die $url;
 

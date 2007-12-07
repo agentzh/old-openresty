@@ -7,7 +7,7 @@ use overload '""' => sub { $_[0]->generate };
 sub new {
     my $class = shift;
     bless {
-        select => [],
+        select => [@_],
         from => [],
         where => [],
         limit => undef,

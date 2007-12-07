@@ -13,6 +13,7 @@ use Params::Util qw(_HASH _STRING _ARRAY0 _SCALAR);
 use Encode qw(decode_utf8 from_to encode decode);
 use Data::Dumper;
 use DBI;
+use SQL::Select;
 #use encoding "utf8";
 
 #$YAML::Syck::ImplicitBinary = 1;
@@ -35,6 +36,10 @@ my $Ext = qr/\.(?:js|json|xml|yaml|yml)/;
 our ($dbh, $Dumper, $Importer);
 $Dumper = \&JSON::Syck::Dump;
 $Importer = \&JSON::Syck::Load;
+
+sub Q ($) {
+    $dbh->quote($_[0]);
+}
 
 # XXX more data types...
 our %to_native_type = (
@@ -217,7 +222,11 @@ sub GET_model_column {
     ### $model
     ### $col
     my $table_name = lc($model);
-    my $res = $self->selectall_arrayref("select name, type, label from _columns where table_name='$table_name' and name='$col'", { Slice => {} });
+    my $select = SQL::Select->new( qw< name type label > )
+                            ->from( '_columns' )
+                            ->where( 'table_name', '=', Q($table_name) )
+                            ->where( 'name', '=', Q($col) );
+    my $res = $self->selectall_arrayref("$select", { Slice => {} });
     if (!$res or !@$res) {
         die "Column '$col' not found.\n";
     }
@@ -900,6 +909,7 @@ sub global_model_check {
         }
     }
 }
+
 
 1;
 
