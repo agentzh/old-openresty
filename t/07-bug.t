@@ -26,4 +26,5 @@ GET /=/model/Foo/~/~
 GET /blah
 --- response
 {"success":0,"error":"URLs must be led by '='."}
+--- SKIP
 
