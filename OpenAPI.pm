@@ -162,6 +162,7 @@ sub response {
     if (my $var = $self->{_var} and $Dumper eq \&JSON::Syck::Dump) {
         $str = "var $self->{_var}=$str;";
     }
+    $str =~ s/\n+$//s;
     print $str, "\n";
 }
 

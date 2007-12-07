@@ -71,7 +71,23 @@ var hello=[{"url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},{"u
 
 
 
-=== TEST 8: delete a record use "post" 
+=== TEST 8: the var url param only applies to JSON format
+--- request
+GET /=/model/Carrie/~/~.yml?var=hello
+--- format: YAML
+--- response
+--- 
+- 
+  id: 1
+  title: hello carrie
+  url: http://www.carriezh.cn/
+- 
+  id: 2
+  title: second
+  url: http://zhangxiaojue.cn
+
+
+=== TEST 9: delete a record use "post" 
 --- request
 POST /=/delete/model/Carrie/id/1.js
 --- response
@@ -79,7 +95,7 @@ POST /=/delete/model/Carrie/id/1.js
 
 
 
-=== TEST 9: delete a record in correct way
+=== TEST 10: delete a record in correct way
 --- request
 GET /=/delete/model/Carrie/id/2.js
 --- response
@@ -87,7 +103,7 @@ GET /=/delete/model/Carrie/id/2.js
 
 
 
-=== TEST 10: insert another record
+=== TEST 11: insert another record
 --- request
 POST /=/model/Carrie/~/~.js
 { title:'second',url:"http://zhangxiaojue.cn"}
@@ -96,7 +112,7 @@ POST /=/model/Carrie/~/~.js
 
 
 
-=== TEST 11: delete all the record
+=== TEST 12: delete all the record
 --- request
 GET /=/delete/model/Carrie/~/~.js
 --- response
