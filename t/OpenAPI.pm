@@ -92,7 +92,7 @@ END {
     use YAML::Syck;
     use Hash::Merge 'merge';
     #use Data::Dumper;
-    warn scalar $timer->reports;
+    #warn scalar $timer->reports;
     my $file = "t/cur-timer.dat";
     my $cur_data = $timer->data;
     if (!$cur_data) {
