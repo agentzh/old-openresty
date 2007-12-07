@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use FindBin;
-use lib "$FindBin::Bin";
+use lib "$FindBin::Bin/lib";
 use OpenAPI;
 #use Web::Scraper;
 use CGI::Fast ();
