@@ -16,10 +16,10 @@ requires            ('DBD::Pg' => '1.49');
 requires            ('DBI' => '1.57');
 requires            ('Params::Util' => '0.22');
 
-build_requires      ('Benchmark::Timer');
 build_requires      ('Test::LongString' => 0.11);
 build_requires      ('Test::Base' => 0.54);
 build_requires      ('LWP::UserAgent');
+build_requires      ('Benchmark::Timer');
 build_requires      ('Hash::Merge');
 
 auto_install();

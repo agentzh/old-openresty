@@ -126,6 +126,7 @@ sub init_self {
 sub error {
     $_[1] =~ s/^Syck parser \(line (\d+), column (\d+)\): syntax error at .+/Syntax error found in the JSON input: line $1, column $2./;
     $_[1] =~ s/^DBD::Pg::st execute failed:\s+ERROR:\s+//;
+    $_[1] =~ s/^DBD::Pg::db do failed:\s+ERROR:\s+//;
     $_[0]->{_error} .= $_[1] . "\n";
 }
 
@@ -277,6 +278,9 @@ sub PUT_model_column {
         #$new_col = $new_col);
         $meta_sql .= 'name=' . $dbh->quote($new_col);
         $sql .= "alter table $table_name rename column $col to $new_col;\n";
+        #$col = $new_col;
+    } else {
+        $new_col = $col;
     }
     my $type = $data->{type};
     my $ntype;
@@ -290,7 +294,7 @@ sub PUT_model_column {
         $meta_sql .= ',' if $meta_sql;
         $meta_sql .= "type=" . $dbh->quote($type) . ",native_type=".
             $dbh->quote($ntype);;
-        $sql .= "alter table $table_name alter column $col type $ntype;\n",
+        $sql .= "alter table $table_name alter column $new_col type $ntype;\n",
     }
     my $label = $data->{label};
     if ($label) {

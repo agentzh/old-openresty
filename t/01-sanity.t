@@ -242,7 +242,16 @@ GET /=/model/MyFavorites.js
 
 
 
-=== TEST 24: Get model list
+=== TEST 24: Change the name and type of title
+--- request
+PUT /=/model/MyFavorites/title
+{ name: "count", type: "integer" }
+--- response
+{"success":0,"error":"column \"count\" cannot be cast to type \"pg_catalog.int4\""}
+
+
+
+=== TEST 25: Get model list
 --- request
 GET /=/model.js
 --- response
