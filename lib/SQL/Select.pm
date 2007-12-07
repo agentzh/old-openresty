@@ -2,6 +2,7 @@ package SQL::Select;
 
 use strict;
 use warnings;
+use overload '""' => sub { $_[0]->generate };
 
 sub new {
     my $class = shift;

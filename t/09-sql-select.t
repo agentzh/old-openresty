@@ -16,6 +16,11 @@ select name,type,label
 from _columns;
 _EOC_
 
+is "$select", <<_EOC_;
+select name,type,label
+from _columns;
+_EOC_
+
 $select->where("table_name", '=', _Q('blah'));
 
 is $select->generate, <<_EOC_;
