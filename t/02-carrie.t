@@ -87,7 +87,7 @@ GET /=/model/Carrie/~/~.yml?var=hello
   url: http://zhangxiaojue.cn
 
 
-=== TEST 9: delete a record use "post" 
+=== TEST 9: delete a record use "post"
 --- request
 POST /=/delete/model/Carrie/id/1.js
 --- response
