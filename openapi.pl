@@ -11,7 +11,7 @@ use CGI::Fast ();
 use Data::Dumper;
 #use XML::Simple qw(:strict);
 use FindBin;
-use Smart::Comments;
+#use Smart::Comments;
 #use Perl6::Say;
 
 $CGI::POST_MAX = 1024 * 1000;  # max 1000K posts
@@ -30,12 +30,22 @@ my @ModelDispatcher = qw(
     model_list model model_column model_row
 );
 
+my $url_prefix = $ENV{OPENAPI_URL_PREFIX};
+if ($url_prefix) {
+    $url_prefix =~ s{^/+|/+$}{}g;
+}
+
 my $ext = qr/\.(?:js|json|xml|yaml|yml)/;
 while (my $cgi = new CGI::Fast) {
     my $url  = $cgi->url(-absolute=>1);
     $url =~ s{^/+}{}g;
+    ### Old URL: $url
+    ### URL Prefox: $url_prefix
     #print header(-type => 'text/plain; charset=UTF-8');
     #die $url;
+
+    $url =~ s{^\Q$url_prefix\E/+}{}g if $url_prefix;
+    ### New URL: $url
 
     my $openapi = OpenAPI->new;
     if ($DBFatal) {
