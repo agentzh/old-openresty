@@ -14,7 +14,7 @@ server.modules              = (
   )
 
 fastcgi.server = (
-    "" => (
+    "/=" => (
         "openapi" => (
             "socket"       => "/tmp/openapi.socket",
             "check-local"  => "disable",
