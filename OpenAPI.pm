@@ -124,10 +124,11 @@ sub init_self {
 }
 
 sub error {
-    $_[1] =~ s/^Syck parser \(line (\d+), column (\d+)\): syntax error at .+/Syntax error found in the JSON input: line $1, column $2./;
-    $_[1] =~ s/^DBD::Pg::st execute failed:\s+ERROR:\s+//;
-    $_[1] =~ s/^DBD::Pg::db do failed:\s+ERROR:\s+//;
-    $_[0]->{_error} .= $_[1] . "\n";
+    my ($self, $s) = @_;
+    $s =~ s/^Syck parser \(line (\d+), column (\d+)\): syntax error at .+/Syntax error found in the JSON input: line $1, column $2./;
+    $s =~ s/^DBD::Pg::st execute failed:\s+ERROR:\s+//;
+    $s =~ s/^DBD::Pg::db do failed:\s+ERROR:\s+//;
+    $self->{_error} .= $s . "\n";
 }
 
 sub data {

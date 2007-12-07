@@ -19,3 +19,11 @@ GET /=/model/Foo/~/~
 --- response
 {"success":0,"error":"Model \"Foo\" not found."}
 
+
+
+=== TEST 3: It hangs or report error
+--- request
+GET /blah
+--- response
+{"success":0,"error":"URLs must be led by '='."}
+
