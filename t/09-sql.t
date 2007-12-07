@@ -33,3 +33,15 @@ where table_name='blah'
 order by foo;
 _EOC_
 
+$select = SQL::Select->new;
+$select->select( qw<name type label> )
+       ->from( '_columns' )->limit(5)->offset(29);
+is $select->generate, <<_EOC_;
+select name,type,label
+from _columns
+limit 5
+offset 29;
+_EOC_
+
+
+

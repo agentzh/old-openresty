@@ -60,6 +60,10 @@ from @{ $self->{from} }";
     if ($where) { $sql .= "\nwhere $where" }
     my $order_by = $self->{order_by};
     if ($order_by) { $sql .= "\norder by $order_by"; }
+    my $limit = $self->{limit};
+    if ($limit) { $sql .= "\nlimit $limit"; }
+    my $offset = $self->{offset};
+    if ($offset) { $sql .= "\noffset $offset"; }
     return $sql . ";\n";
 }
 
