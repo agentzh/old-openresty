@@ -159,7 +159,7 @@ sub response {
         #$str = decode_utf8($str);
         from_to($str, 'UTF-8', $charset);
     };  warn $@ if $@;
-    if (my $var = $self->{_var}) {
+    if (my $var = $self->{_var} and $Dumper eq \&JSON::Syck::Dump) {
         $str = "var $self->{_var}=$str;";
     }
     print $str, "\n";
