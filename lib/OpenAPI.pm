@@ -444,11 +444,10 @@ sub get_model_col_names {
         die "Model \"$model\" not found.\n";
     }
     my $table = lc($model);
-    my $list = $self->selectall_arrayref(<<_EOC_);
-select name
-from _columns
-where table_name='$table'
-_EOC_
+    my $select = SQL::Select->new('name')
+        ->from('_columns')
+        ->where('table_name', '=', Q($table));
+    my $list = $self->selectall_arrayref("$select");
     if (!$list or !ref $list) { return []; }
     return [map { @$_ } @$list];
 }
