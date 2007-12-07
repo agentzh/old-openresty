@@ -57,7 +57,7 @@ sub generate {
     $sql .= "select @{ $self->{select} }
 from @{ $self->{from} }";
     my @where = @{ $self->{where} };
-    my $where = join ' and ', map { join('', @$_) } @where;
+    my $where = join ' and ', map { join(' ', @$_) } @where;
     if ($where) { $sql .= "\nwhere $where" }
     my $order_by = $self->{order_by};
     if ($order_by) { $sql .= "\norder by $order_by"; }
