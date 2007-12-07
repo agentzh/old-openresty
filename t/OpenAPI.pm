@@ -9,6 +9,9 @@ use Encode 'from_to';
 
 our @EXPORT = qw(init run_tests run_test);
 
+use Benchmark::Timer;
+my $timer = Benchmark::Timer->new();
+
 my $ua = LWP::UserAgent->new;
 my $host = $ENV{'REMOTE_OPENAPI'} || 'http://localhost';
 $host = "http://$host" if $host !~ m{^http://};
@@ -37,7 +40,10 @@ sub do_request ($$$$) {
     } elsif ($method eq 'POST' or $method eq 'PUT') {
         $req->header('Content-Length' => 0);
     }
-    return $ua->request($req);
+    $timer->start($method);
+    my $res = $ua->request($req);
+    $timer->stop($method);
+    return $res;
 }
 
 
@@ -80,6 +86,25 @@ sub run_test ($) {
         my ($firstline) = ($request =~ /^([^\n]*)/s);
         die "Invalid request head: \"$firstline\" in $name\n";
     }
+}
+
+END {
+    use YAML::Syck;
+    use Hash::Merge 'merge';
+    #use Data::Dumper;
+    warn scalar $timer->reports;
+    my $file = "t/cur-timer.dat";
+    my $cur_data = $timer->data;
+    if (!$cur_data) {
+        return;
+    }
+    $cur_data = { @$cur_data };
+    #warn Dumper($cur_data);
+    if (-f $file) {
+        my $last_data = LoadFile($file);
+        $cur_data = merge($cur_data, $last_data);
+    }
+    DumpFile($file, $cur_data);
 }
 
 1;

@@ -1,7 +1,9 @@
 define CMDS
     perl -c openapi.pl
     sudo /etc/init.d/lighttpd restart
+    rm t/cur-timer.dat
     -time prove -Ilib -r t
+    t/perf
 endef
 
 all: doc/spec.html
