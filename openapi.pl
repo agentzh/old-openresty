@@ -11,7 +11,7 @@ use CGI::Fast ();
 use Data::Dumper;
 #use XML::Simple qw(:strict);
 use FindBin;
-#use Smart::Comments;
+use Smart::Comments;
 #use Perl6::Say;
 
 $CGI::POST_MAX = 1024 * 1000;  # max 1000K posts
@@ -37,10 +37,13 @@ if ($url_prefix) {
 
 my $ext = qr/\.(?:js|json|xml|yaml|yml)/;
 while (my $cgi = new CGI::Fast) {
-    my $url  = $cgi->url(-absolute=>1);
+    #my $url  = $ENV{REQUEST_URI};
+    #$url =~ s/\?.*//g;
+    my $url = $cgi->url(-absolute=>1,-path_info=>1);
     $url =~ s{^/+}{}g;
     ### Old URL: $url
     ### URL Prefox: $url_prefix
+    ### %ENV
     #print header(-type => 'text/plain; charset=UTF-8');
     #die $url;
 
