@@ -45,7 +45,7 @@ while (my $cgi = new CGI::Fast) {
     }
 
     eval {
-        $openapi->init_self(\$url, $cgi);
+        $openapi->init(\$url, $cgi);
     };
     if ($@) {
         ### Exception in new: $@

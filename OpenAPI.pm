@@ -60,7 +60,7 @@ sub new {
     return bless {}, $_[0];
 }
 
-sub init_self {
+sub init {
     my ($self, $rurl, $cgi) = @_;
     my $class = ref $self;
 
