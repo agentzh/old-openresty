@@ -408,18 +408,14 @@ sub connect {
 sub get_tables {
     #my ($self, $user) = @_;
     my $self = shift;
-    return $self->selectall_arrayref(<<_EOC_);
-select table_name
-from _models
-_EOC_
+    my $select = SQL::Select->new('table_name')->from('_models');
+    return $self->selectall_arrayref("$select");
 }
 
 sub get_models {
     my $self = shift;
-    return $self->selectall_arrayref(<<_EOC_, { Slice => {} });
-select name, description
-from _models
-_EOC_
+    my $select = SQL::Select->new('name','description')->from('_models');
+    return $self->selectall_arrayref("$select", { Slice => {} });
 }
 
 sub get_model_cols {
@@ -428,13 +424,15 @@ sub get_model_cols {
         die "Model \"$model\" not found.\n";
     }
     my $table = lc($model);
-    my $list = $self->selectall_arrayref("select description from _models where name='$model'");
+    my $select = SQL::Select->new('description')
+        ->from('_models')
+        ->where('name', '=', Q($model));
+    my $list = $self->selectall_arrayref("$select");
     my $desc = $list->[0][0];
-    $list = $self->selectall_arrayref(<<_EOC_, { Slice => {} });
-select name, type, label
-from _columns
-where table_name='$table'
-_EOC_
+    $select->reset('name', 'type', 'label')
+           ->from('_columns')
+           ->where('table_name', '=', Q($table));
+    $list = $self->selectall_arrayref("$select", { Slice => {} });
     if (!$list or !ref $list) { $list = []; }
     unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
     return { description => $desc, name => $model, columns => $list };

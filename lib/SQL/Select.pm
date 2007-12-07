@@ -5,7 +5,7 @@ use warnings;
 use overload '""' => sub { $_[0]->generate };
 
 sub new {
-    my $class = shift;
+    my $class = ref $_[0] ? ref shift : shift;
     bless {
         select => [@_],
         from => [],
@@ -14,6 +14,12 @@ sub new {
         offset => undef,
         order_by => undef,
     }, $class;
+}
+
+sub reset {
+    my $self = shift;
+    %$self = %{ $self->new(@_) };
+    $self;
 }
 
 sub select {
