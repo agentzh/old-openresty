@@ -720,18 +720,17 @@ sub select_records {
         }
         if (!$found) { die "Column $user_col not available.\n"; }
     }
-    my $flds = join(",", @$cols);
-    my $sql;
-    if (defined $val) { 
-        $sql = "select id,$flds from $table where $user_col=?";
+    my $select = SQL::Select->new;
+    $select->from($table);
+    if (defined $val) {
+        $select->select('id', @$cols)
+               ->where($user_col => '=' => Q($val));
     } else {
-        $sql = "select $user_col from $table";
+        $select->select($user_col);
     }
-    my $sth = $dbh->prepare($sql);
     ### $sql
     ### $val
-    $sth->execute(defined $val ? $val : ());
-    my $res = $sth->fetchall_arrayref({});
+    my $res = $self->selectall_arrayref("$select", { Slice => {} });
     if (!$res and !ref $res) { return []; }
     return $res;
 }
@@ -820,7 +819,8 @@ sub select_all_records {
         die "Model \"$model\" not found.\n";
     }
     my $table = lc($model);
-    my $list = $self->selectall_arrayref("select * from $table", { Slice => {} });
+    my $select = SQL::Select->new('*')->from($table);
+    my $list = $self->selectall_arrayref("$select", { Slice => {} });
     if (!$list or !ref $list) { return []; }
     return $list;
 }
