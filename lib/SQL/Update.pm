@@ -27,7 +27,7 @@ sub set {
 sub generate {
     my $self = shift;
     my $sql;
-    local $" = ',';
+    local $" = ', ';
     $sql .= "update $self->{update}
 set @{ $self->{set} }";
     my @where = @{ $self->{where} };

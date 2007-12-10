@@ -21,18 +21,18 @@ update models
 set abc = "howdy";
 _EOC_
 
-$update->where("table_name", '=', _Q('blah'));
+$update->where("table_name", '=', _Q('blah'))->set(foo => 'bar');
 
 is $update->generate, <<_EOC_;
 update models
-set abc = "howdy"
+set abc = "howdy", foo = bar
 where table_name = 'blah';
 _EOC_
 
 $update->where("Foo", '>', 'bar');
 is "$update", <<'_EOC_';
 update models
-set abc = "howdy"
+set abc = "howdy", foo = bar
 where table_name = 'blah' and Foo > bar;
 _EOC_
 

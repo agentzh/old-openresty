@@ -14,6 +14,7 @@ use Encode qw(decode_utf8 from_to encode decode);
 use Data::Dumper;
 use DBI;
 use SQL::Select;
+use SQL::Update;
 #use encoding "utf8";
 
 #$YAML::Syck::ImplicitBinary = 1;
@@ -279,15 +280,15 @@ sub PUT_model_column {
         die "Column id is reserved.";
     }
     # type defaults to 'text' if not specified.
-    my $sql = '';
+    my $sql;
     my $new_col = $data->{name};
-    my $meta_sql;
+    my $update_meta = SQL::Update->new('_columns');
     if ($new_col) {
         _IDENT($new_col) or die "Bad column name: ",
                 $Dumper->($new_col), "\n";
 
         #$new_col = $new_col);
-        $meta_sql .= 'name=' . $dbh->quote($new_col);
+        $update_meta->set(name => Q($new_col));
         $sql .= "alter table $table_name rename column $col to $new_col;\n";
         #$col = $new_col;
     } else {
@@ -302,24 +303,18 @@ sub PUT_model_column {
                 "\tOnly the following types are available: ",
                 join(", ", sort keys %to_native_type), "\n";
         }
-        $meta_sql .= ',' if $meta_sql;
-        $meta_sql .= "type=" . $dbh->quote($type) . ",native_type=".
-            $dbh->quote($ntype);;
+        $update_meta->set(type => Q($type))
+            ->set(native_type => Q($ntype));
         $sql .= "alter table $table_name alter column $new_col type $ntype;\n",
     }
     my $label = $data->{label};
     if ($label) {
-        if ($meta_sql) { $meta_sql .= ","; }
-        $meta_sql .= "label=" . $dbh->quote($label);
+        $update_meta->set(label => Q($label));
     }
-    $meta_sql = "update _columns set $meta_sql where table_name=" .
-            $dbh->quote($table_name) .
-            " and name=" .
-            $dbh->quote($col) .
-            ";\n";
+    $update_meta->where(table_name => Q($table_name))
+        ->where(name => Q($col));
     ### $sql
-    ### $meta_sql
-    my $res = $dbh->do($sql . $meta_sql);
+    my $res = $dbh->do($sql . $update_meta);
     ### $res
     return { success => $res ? 1 : 0 };
 }
@@ -762,14 +757,13 @@ sub delete_records {
     #my $flds = join(",", @$cols);
     my $sql;
     if (defined $val) {
-        $sql = "delete from $table where $user_col=?";
+        $sql = "delete from $table where $user_col=" . Q($val);
     } else {
         $sql = "delete from $table";
     }
-    my $sth = $dbh->prepare($sql);
     ### $sql
     ### $val
-    my $retval = $sth->execute(defined $val ? $val : ());
+    my $retval = $dbh->do($sql);
     return {success => 1,rows_affected => $retval+0};
 }
 
@@ -788,28 +782,19 @@ sub update_records {
     if (!ref $data || ref $data ne 'HASH') {
         die "HASH data expected in the content body.\n";
     }
-    my (@inner_sql, @vals);
+    my $update = SQL::Update->new($table);
     while (my ($key, $val) = each %$data) {
         my $col = $key;
         if ($col eq 'id') {
             next;  # XXX maybe issue a warning?
         }
-        push @inner_sql, "$key=?";
-        push @vals, $val;
+        $update->set($col => Q($val));
     }
 
-    my $sql;
-    local $" = ",";
     if (defined $val) {
-        $sql = "update $table set @inner_sql where $user_col=?";
-    } else {
-        $sql = "update $table set @inner_sql";
+        $update->where($user_col => $val);
     }
-    my $sth = $dbh->prepare($sql);
-    push @vals, $val if defined $val;
-    ### $sql
-    ### @vals
-    my $retval = $sth->execute(@vals) + 0;
+    my $retval = $dbh->do("$update") + 0;
     return {success => $retval ? 1 : 0,rows_affected => $retval};
 }
 
