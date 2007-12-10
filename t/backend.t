@@ -4,7 +4,7 @@ use Test::More tests => 3;
 use OpenAPI;
 
 OpenAPI->connect();
-ok $OpenAPI::dbh, "database handle okay";
+ok $OpenAPI::Backend, "database handle okay";
 eval {
     OpenAPI->drop_user("agentzh");
 };

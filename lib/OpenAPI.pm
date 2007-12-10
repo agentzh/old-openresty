@@ -16,9 +16,12 @@ use DBI;
 use SQL::Select;
 use SQL::Update;
 use SQL::Insert;
+use OpenAPI::Backend::Pg;
 #use encoding "utf8";
 
 #$YAML::Syck::ImplicitBinary = 1;
+
+our $Backend;
 
 my %ext2dumper = (
     '.yml' => \&YAML::Syck::Dump,
@@ -35,23 +38,15 @@ my %ext2importer = (
 );
 
 my $Ext = qr/\.(?:js|json|xml|yaml|yml)/;
-our ($dbh, $Dumper, $Importer);
+our ($Dumper, $Importer);
 $Dumper = \&JSON::Syck::Dump;
 $Importer = \&JSON::Syck::Load;
 
 sub Q (@) {
     if (@_ == 1) {
-        return $dbh->quote($_[0]);
+        return $Backend->quote($_[0]);
     } else {
-        return map { $dbh->quote($_) } @_;
-    }
-}
-
-sub QI (@) {
-    if (@_ == 1) {
-        return $dbh->quote_identifier($_[0]);
-    } else {
-        return map { $dbh->quote_identifier($_) } @_;
+        return map { $Backend->quote($_) } @_;
     }
 }
 
@@ -240,7 +235,7 @@ sub GET_model_column {
                             ->from( '_columns' )
                             ->where( table_name => Q($table_name) )
                             ->where( name => Q($col) );
-    my $res = $self->selectall_arrayref("$select", { Slice => {} });
+    my $res = $Backend->select("$select", { use_hash => 1 });
     if (!$res or !@$res) {
         die "Column '$col' not found.\n";
     }
@@ -276,7 +271,7 @@ sub POST_model_column {
         ->cols(qw< name label type native_type table_name >)
         ->values( Q($col, $label, $type, $ntype, $table_name) );
     my $sql = "alter table $table_name add column $col $ntype;\n";
-    my $res = $dbh->do($sql . "$insert");
+    my $res = $Backend->do($sql . "$insert");
     return { success => 1, src => "/=/model/$model/$col" };
 }
 
@@ -326,7 +321,7 @@ sub PUT_model_column {
     $update_meta->where(table_name => Q($table_name))
         ->where(name => Q($col));
     ### $sql
-    my $res = $dbh->do($sql . $update_meta);
+    my $res = $Backend->do($sql . $update_meta);
     ### $res
     return { success => $res ? 1 : 0 };
 }
@@ -342,7 +337,7 @@ sub DELETE_model_column {
         die "Column id is reserved.";
     }
     my $sql = "delete from _columns where table_name='$table_name' and name='$col'; alter table $table_name drop column $col restrict;";
-    my $res = $dbh->do($sql);
+    my $res = $Backend->do($sql);
     return { success => $res ? 1:0 };
 }
 
@@ -409,20 +404,21 @@ sub set_formatter {
 
 sub connect {
     shift;
-    $dbh =  DBI->connect("dbi:Pg:dbname=test", "agentzh", "agentzh", {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1});
+    # XXX Should use OpenAPI::Backend uniformly
+    $Backend = OpenAPI::Backend::Pg->new;
 }
 
 sub get_tables {
     #my ($self, $user) = @_;
     my $self = shift;
     my $select = SQL::Select->new('table_name')->from('_models');
-    return $self->selectall_arrayref("$select");
+    return $Backend->select("$select");
 }
 
 sub get_models {
     my $self = shift;
     my $select = SQL::Select->new('name','description')->from('_models');
-    return $self->selectall_arrayref("$select", { Slice => {} });
+    return $Backend->select("$select", { use_hash => 1 });
 }
 
 sub get_model_cols {
@@ -434,12 +430,12 @@ sub get_model_cols {
     my $select = SQL::Select->new('description')
         ->from('_models')
         ->where(name => Q($model));
-    my $list = $self->selectall_arrayref("$select");
+    my $list = $Backend->select("$select");
     my $desc = $list->[0][0];
     $select->reset('name', 'type', 'label')
            ->from('_columns')
            ->where(table_name => Q($table));
-    $list = $self->selectall_arrayref("$select", { Slice => {} });
+    $list = $Backend->select("$select", { use_hash => 1 });
     if (!$list or !ref $list) { $list = []; }
     unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
     return { description => $desc, name => $model, columns => $list };
@@ -454,7 +450,7 @@ sub get_model_col_names {
     my $select = SQL::Select->new('name')
         ->from('_columns')
         ->where(table_name => Q($table));
-    my $list = $self->selectall_arrayref("$select");
+    my $list = $Backend->select("$select");
     if (!$list or !ref $list) { return []; }
     return [map { @$_ } @$list];
 }
@@ -634,14 +630,6 @@ drop schema $user cascade
 _EOC_
 }
 
-sub do {
-    shift;
-    if (!$dbh) {
-        die "No database handler found;";
-    }
-    return $dbh->do(@_);
-}
-
 sub emit_success {
     my $self = shift;
     return $self->emit_data( { success => 1 } );
@@ -654,20 +642,12 @@ sub emit_error {
     return $self->emit_data( { success => 0, error => $msg } );
 }
 
-sub selectall_arrayref {
-    my $self = shift;
-    if (!$dbh) {
-        die "No database handler found.\n";
-    }
-    return $dbh->selectall_arrayref(@_);
-}
-
 sub selectall_hashref {
     my $self = shift;
-    if (!$dbh) {
+    if (!$Backend) {
         die "No database handler found.\n";
     }
-    return $dbh->selectall_hashref(@_);
+    return $Backend->selectall_hashref(@_);
 }
 
 sub insert_records {
@@ -685,7 +665,7 @@ sub insert_records {
         ### Row inserted: $data
         my $num = insert_record($insert, $data, $cols, 1);
         #...
-        my $last_id = $dbh->last_insert_id(undef, undef, undef, undef, { sequence => $table . '_id_seq' });
+        my $last_id = $Backend->last_insert_id($table);
         return { rows_affected => $num, last_row => "/=/model/$model/id/$last_id", success => $num?1:0 };
     } elsif (ref $data eq 'ARRAY') {
         my $i = 0;
@@ -697,7 +677,7 @@ sub insert_records {
             $rows_affected += insert_record($insert, $row_data, $cols, $i);
             $i++;
         }
-        my $last_id = $dbh->last_insert_id(undef, undef, undef, undef, { sequence => $table . '_id_seq' });
+        my $last_id = $Backend->last_insert_id($table);
         return { rows_affected => $rows_affected, last_row => "/=/model/$model/id/$last_id", success => $rows_affected?1:0 };
     } else {
         die "Malformed data: Hash or Array expected.\n";
@@ -715,7 +695,7 @@ sub insert_record {
             join(", ", keys %$row_data), "\n";
     }
     my $sql = $insert->clone->values(Q(@vals));
-    return $dbh->do($sql);
+    return $Backend->do($sql);
 }
 
 sub select_records {
@@ -739,7 +719,7 @@ sub select_records {
     }
     ### $sql
     ### $val
-    my $res = $self->selectall_arrayref("$select", { Slice => {} });
+    my $res = $Backend->select("$select", { use_hash => 1 });
     if (!$res and !ref $res) { return []; }
     return $res;
 }
@@ -750,7 +730,7 @@ sub delete_all_records {
         die "Model \"$model\" not found.\n";
     }
     my $table = lc($model);
-    my $retval = $dbh->do("delete from $table");
+    my $retval = $Backend->do("delete from $table");
     return {success => 1,rows_affected => $retval+0};
 }
 
@@ -777,7 +757,7 @@ sub delete_records {
     }
     ### $sql
     ### $val
-    my $retval = $dbh->do($sql);
+    my $retval = $Backend->do($sql);
     return {success => 1,rows_affected => $retval+0};
 }
 
@@ -808,7 +788,7 @@ sub update_records {
     if (defined $val) {
         $update->where($user_col => $val);
     }
-    my $retval = $dbh->do("$update") + 0;
+    my $retval = $Backend->do("$update") + 0;
     return {success => $retval ? 1 : 0,rows_affected => $retval};
 }
 
@@ -819,7 +799,7 @@ sub select_all_records {
     }
     my $table = lc($model);
     my $select = SQL::Select->new('*')->from($table);
-    my $list = $self->selectall_arrayref("$select", { Slice => {} });
+    my $list = $Backend->select("$select", { use_hash => 1 });
     if (!$list or !ref $list) { return []; }
     return $list;
 }
@@ -867,7 +847,7 @@ sub alter_model {
         die "Unknown fields ", join(", ", keys %$data), "\n";
     }
     ### $sql
-    my $retval = $dbh->do($sql);
+    my $retval = $Backend->do($sql);
     ### $retval
     return {success => 1};
 }
@@ -906,6 +886,20 @@ sub global_model_check {
     }
 }
 
+sub set_user {
+    my $user = pop;
+    $Backend->set_user($user);
+}
+
+sub do {
+    my $self = shift;
+    $Backend->do(@_);
+}
+
+sub select {
+    my $self = shift;
+    $Backend->select(@_);
+}
 
 1;
 

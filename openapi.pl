@@ -90,6 +90,7 @@ while (my $cgi = new CGI::Fast) {
     my $user = $cgi->url_param('user') || 'test';
     eval {
         #OpenAPI->drop_user($user);
+        OpenAPI->set_user($user);
     };
     if ($@) { warn $@; }
     if (my $retval = OpenAPI->has_user($user)) {
@@ -99,7 +100,6 @@ while (my $cgi = new CGI::Fast) {
         $openapi->new_user($user);
     };
     eval {
-        $openapi->do("set search_path to $user");
     };
     if ($@) {
         $openapi->error($@);
