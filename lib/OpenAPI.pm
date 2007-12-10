@@ -460,13 +460,13 @@ sub emit_data {
 sub has_user {
     my ($self, $user) = @_;
     my $retval;
+    # XXX should query _users instead:
+    my $select = SQL::Select->new('nspname')
+        ->from('pg_namespace')
+        ->where(nspname => '=' => Q($user))
+        ->limit(1);
     eval {
-        $retval = $self->do(<<"_EOC_");
-select nspname
-from pg_namespace
-where nspname='$user'
-limit 1
-_EOC_
+        $retval = $self->do("$select");
     };
     return $retval + 0;
 }
@@ -580,13 +580,12 @@ _EOC_
 sub has_model {
     my ($self, $model) = @_;
     my $retval;
+    my $select = SQL::Select->new('name')
+        ->from('_models')
+        ->where(name => '=' => Q($model))
+        ->limit(1);
     eval {
-        $retval = $self->do(<<"_EOC_");
-select name
-from _models
-where name='$model'
-limit 1
-_EOC_
+        $retval = $self->do("$select");
     };
     return $retval + 0;
 }
@@ -598,16 +597,17 @@ sub has_model_col {
     ### has model col (col): $col
     return 1 if $col eq 'id';
     my $res;
+    my $select = SQL::Select->new('name')
+        ->from('_columns')
+        ->where(table_name => '=' => Q($table_name))
+        ->where(name => '=' => Q($col))
+        ->limit(1);
     eval {
-        $res = $self->do(<<"_EOC_");
-select name
-from _columns
-where table_name='$table_name' and name='$col'
-limit 1
-_EOC_
+        $res = $self->do("$select");
     };
     return $res + 0;
 }
+
 sub drop_table {
     my ($self, $table) = @_;
     $self->do(<<_EOC_);
