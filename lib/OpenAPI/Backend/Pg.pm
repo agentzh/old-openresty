@@ -16,6 +16,33 @@ sub new {
     }, $class;
 }
 
+sub select {
+    my ($self, $sql, $opts) = @_;
+    $opts ||= {};
+    my $dbh = $self->{dbh};
+    return $dbh->selectall_arrayref(
+        $sql,
+        $opts->{use_hash} ? {Slice=>{}} : ()
+    );
+}
+
+sub do {
+    my ($self, $sql) = @_;
+    $self->{dbh}->do($sql);
+}
+
+sub quote {
+    my ($self, $val) = @_;
+    return $self->{dbh}->quote($val);
+}
+
+sub last_insert_id {
+    my ($self, $table) = @_;
+    #die "Found table!!! $table";
+    my $res = $self->select("select currval('${table}_id_seq')");
+    if ($res && @$res) { return $res->[0][0]; }
+}
+
 sub has_user {
     my ($self, $user) = @_;
     my $select = SQL::Select->new('nspname')
@@ -34,23 +61,6 @@ sub set_user {
     my ($self, $user) = @_;
     $self->{dbh}->do("set search_path to $user");
     $self->{user} = $user;
-}
-
-sub select {
-    my ($self, $sql, $opts) = @_;
-    $opts ||= {};
-    my $dbh = $self->{dbh};
-    return $dbh->selectall_arrayref(
-        $sql,
-        $opts->{use_hash} ? {Slice=>{}} : ()
-    );
-}
-
-sub last_insert_id {
-    my ($self, $table) = @_;
-    #die "Found table!!! $table";
-    my $res = $self->select("select currval('${table}_id_seq')");
-    if ($res && @$res) { return $res->[0][0]; }
 }
 
 sub add_user {
@@ -80,16 +90,6 @@ sub drop_user {
     $self->do(<<"_EOC_");
 drop schema $user cascade
 _EOC_
-}
-
-sub do {
-    my ($self, $sql) = @_;
-    $self->{dbh}->do($sql);
-}
-
-sub quote {
-    my ($self, $val) = @_;
-    return $self->{dbh}->quote($val);
 }
 
 1;
