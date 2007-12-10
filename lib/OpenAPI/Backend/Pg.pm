@@ -6,7 +6,11 @@ use DBI;
 
 sub new {
     my $class = shift;
-    my $dbh = DBI->connect("dbi:Pg:dbname=test", "agentzh", "agentzh", {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1});
+    my $dbh = DBI->connect(
+        "dbi:Pg:dbname=test",
+        "agentzh", "agentzh",
+        {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1}
+    );
     return bless {
         dbh => $dbh
     }, $class;
