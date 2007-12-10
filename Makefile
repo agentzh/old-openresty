@@ -1,5 +1,6 @@
 define CMDS
     perl -c openapi.pl
+    -sudo killall lighttpd
     sudo /etc/init.d/lighttpd restart
     rm  -f t/cur-timer.dat
     -time prove -Ilib -r t

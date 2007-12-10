@@ -20,13 +20,13 @@ sub insert {
 
 sub cols {
     my $self = shift;
-    push @{ $self->{cols} }, $_[0];
+    push @{ $self->{cols} }, @_;
     $self;
 }
 
 sub values {
     my $self = shift;
-    push @{ $self->{values} }, $_[0];
+    push @{ $self->{values} }, @_;
     $self;
 }
 
@@ -36,10 +36,10 @@ sub generate {
     local $" = ', ';
     $sql .= "insert into $self->{table}";
     my $cols = $self->{cols};
-    if ($cols) {
+    if ($cols and @$cols) {
         $sql .= " (@$cols)";
     }
-    $sql .= " (@{ $self->{values} })";
+    $sql .= " values (@{ $self->{values} })";
     return $sql . ";\n";
 }
 

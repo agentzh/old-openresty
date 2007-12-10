@@ -15,6 +15,7 @@ use Data::Dumper;
 use DBI;
 use SQL::Select;
 use SQL::Update;
+use SQL::Insert;
 #use encoding "utf8";
 
 #$YAML::Syck::ImplicitBinary = 1;
@@ -38,8 +39,20 @@ our ($dbh, $Dumper, $Importer);
 $Dumper = \&JSON::Syck::Dump;
 $Importer = \&JSON::Syck::Load;
 
-sub Q ($) {
-    $dbh->quote($_[0]);
+sub Q (@) {
+    if (@_ == 1) {
+        return $dbh->quote($_[0]);
+    } else {
+        return map { $dbh->quote($_) } @_;
+    }
+}
+
+sub QI (@) {
+    if (@_ == 1) {
+        return $dbh->quote_identifier($_[0]);
+    } else {
+        return map { $dbh->quote_identifier($_) } @_;
+    }
 }
 
 # XXX more data types...
@@ -259,12 +272,11 @@ sub POST_model_column {
             join(", ", sort keys %to_native_type), "\n";
     }
 
-    my $sth = $dbh->prepare("
-        alter table $table_name add column $col $ntype;
-        insert into _columns (name, label, type, native_type, table_name) values
-            (?, ?, ?, ?, ?)
-    ");
-    my $res = $sth->execute($col, $label, $type, $ntype, $table_name);
+    my $insert = SQL::Insert->new('_columns')
+        ->cols(qw< name label type native_type table_name >)
+        ->values( Q($col, $label, $type, $ntype, $table_name) );
+    my $sql = "alter table $table_name add column $col $ntype;\n";
+    my $res = $dbh->do($sql . "$insert");
     return { success => 1, src => "/=/model/$model/$col" };
 }
 
@@ -520,14 +532,16 @@ sub new_model {
     if ($self->has_model($model)) {
         die "Model \"$model\" already exists.\n";
     }
-    my $sql .= <<_EOC_;
-insert into _models (name, table_name, description)
-values ('$model', '$table', '$description');
+    my $insert = SQL::Insert->new('_models')
+        ->cols(qw< name table_name description >)
+        ->values( Q($model, $table, $description) );
 
-_EOC_
-    my $sth = $dbh->prepare("insert into _columns (name, type, native_type, label, table_name) values (?, ?, ?, ?, ?)");
+    my $sql = "$insert";
+    $insert->reset('_columns')
+        ->cols(qw< name type native_type label table_name >);
     $sql .=
         "create table $table (\n\tid serial primary key";
+    my $sql2;
     my $found_id = undef;
     for my $col (@$columns) {
         my $name = $col->{name} or
@@ -553,7 +567,7 @@ _EOC_
                 join(", ", sort keys %to_native_type), "\n";
         }
         $sql .= ",\n\t$name $ntype";
-        $sth->execute($name, $type, $ntype, $label, $table);
+        $sql2 .= $insert->clone->values(Q($name, $type, $ntype, $label, $table));
         $i++;
     }
     $sql .= "\n)";
@@ -561,7 +575,7 @@ _EOC_
     #register_table($table);
     #register_columns
     eval {
-        $self->do($sql);
+        $self->do($sql2 . $sql);
     };
     if ($@) {
         die "Failed to create model \"$model\": $@\n";
@@ -664,13 +678,12 @@ sub insert_records {
     ## Data: $data
     my $table = lc($model);
     my $cols = $self->get_model_col_names($model);
-    my $flds = join(",", @$cols);
-    my $place_holders = join(",", map { "?" } @$cols);
-    my $sth = $dbh->prepare("insert into $table ($flds) values ($place_holders)");
+    my $sql;
+    my $insert = SQL::Insert->new($table)->cols(@$cols);
 
     if (ref $data eq 'HASH') { # record found
         ### Row inserted: $data
-        my $num = insert_record($sth, $data, $cols, 1);
+        my $num = insert_record($insert, $data, $cols, 1);
         #...
         my $last_id = $dbh->last_insert_id(undef, undef, undef, undef, { sequence => $table . '_id_seq' });
         return { rows_affected => $num, last_row => "/=/model/$model/id/$last_id", success => $num?1:0 };
@@ -681,7 +694,7 @@ sub insert_records {
             if (!ref $row_data || ref $row_data ne 'HASH') {
                 die "Malformed row data found in $i: Hash expected.\n";
             }
-            $rows_affected += insert_record($sth, $row_data, $cols, $i);
+            $rows_affected += insert_record($insert, $row_data, $cols, $i);
             $i++;
         }
         my $last_id = $dbh->last_insert_id(undef, undef, undef, undef, { sequence => $table . '_id_seq' });
@@ -692,7 +705,7 @@ sub insert_records {
 }
 
 sub insert_record {
-    my ($sth, $row_data, $cols, $row_num) = @_;
+    my ($insert, $row_data, $cols, $row_num) = @_;
     my @vals;
     for my $col (@$cols) {
         push @vals, delete $row_data->{$col};
@@ -701,7 +714,8 @@ sub insert_record {
         die "Unknown column found in row $row_num: ",
             join(", ", keys %$row_data), "\n";
     }
-    return 0 + $sth->execute(@vals);
+    my $sql = $insert->clone->values(Q(@vals));
+    return $dbh->do($sql);
 }
 
 sub select_records {
