@@ -7,7 +7,7 @@ use warnings;
 use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
-use Lingua::EN::Inflect qw( ORD);
+use Lingua::EN::Inflect qw(PL ORD);
 use List::Util qw(first);
 use Params::Util qw(_HASH _STRING _ARRAY0 _SCALAR);
 use Encode qw(decode_utf8 from_to encode decode);
@@ -143,6 +143,7 @@ sub error {
     $s =~ s/^DBD::Pg::st execute failed:\s+ERROR:\s+//;
     $s =~ s/^DBD::Pg::db do failed:\s+ERROR:\s+//;
     $self->{_error} .= $s . "\n";
+### $self->{_error}
 }
 
 sub data {
@@ -494,8 +495,9 @@ sub new_model {
         $self->warning("'columns' empty for model \"$model\".");
     }
     if (%$data) {
-        die "Unrecognized keys in model schema: ",
-            join(", ", keys %$data), "\n";
+	my @key = (keys %$data);
+        die "Unrecognized ",PL("key",scalar @key)," in model schema 'TTT': ",
+            join(", ", @key),"\n";
     }
     my $i = 1;
     if ($self->has_model($model)) {

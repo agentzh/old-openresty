@@ -19,7 +19,7 @@ $host = "http://$host" if $host !~ m{^http://};
 sub init {
     my $res = do_request('DELETE', $host . '/=/model');
     ok $res->is_success, 'DELETE /=/model failed';
-    is $res->content, '', 'no error msg';
+    is_string $res->content, '', 'no error msg';
 }
 
 #init();
@@ -81,9 +81,9 @@ sub run_test ($) {
         }
         if ($expected_res) {
             from_to($expected_res, 'UTF-8', $charset) unless $charset eq 'UTF-8';
-            is $res->content, $expected_res, "response content OK - $name";
+            is_string $res->content, $expected_res, "response content OK - $name";
         } else {
-            is $res->content, $expected_res, "response content OK - $name";
+            is_string $res->content, $expected_res, "response content OK - $name";
         }
         like $res->header('Content-Type'), qr/\Q; charset=$charset\E$/, 'charset okay';
     } else {

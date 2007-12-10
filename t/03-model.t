@@ -272,9 +272,18 @@ POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ12345
 
 
 
-=== TEST 27: Unrecoginzed keys in model's block (POST)
+=== TEST 27: Unrecoginzed key in model's block (POST)
 --- request
 POST /=/model/TTT
-{ \xFF\xFE: 'keys named \xFF\xFE', description: "bad" }
+{ \xFF\xFE: 'key named \xFF\xFE', description: "bad" }
 --- response
-{"success":0,"error":"Unrecoginzed keys '\xFF\xFE' in model TTT\'s block"}
+{"success":0,"error":"Unrecoginzed key in model schema 'TTT': \\xFF\\xFE"}
+
+
+
+=== TEST 28: Unrecoginzed keys in model's block (POST)
+--- request
+POST /=/model/TTT
+{ \xFF\xFE: 'key named \xFF\xFE', \xFF\xFF: 'key named \xFF\xFF', description: "bad" }
+--- response
+{"success":0,"error":"Unrecoginzed keys in model schema 'TTT': \\xFF\\xFE, \\xFF\\xFF"}
