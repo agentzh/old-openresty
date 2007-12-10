@@ -1,0 +1,57 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+
+use YAML::Syck;
+use File::Copy;
+use List::Util 'sum';
+
+my $cur_file = 't/cur-timer.dat';
+my $hist_file = 't/last-timer.dat';
+
+my $cmd = shift || '';
+if ($cmd && $cmd ne 'update_hist') {
+    die "Command $cmd not recognized.\n";
+}
+
+if (!-f $cur_file) {
+    die "No $cur_file found. run 'make test' first?\n";
+}
+if ($cmd eq 'update_hist' or !-f $hist_file) {
+    copy($cur_file, $hist_file);
+}
+my $cur_data = LoadFile($cur_file);
+my $hist_data = LoadFile($hist_file);
+
+sub faster ($$);
+sub mean (@);
+
+while (my ($key, $val) =  each %$cur_data) {
+    my $len = @$val;
+    my $mean = mean(@$val);
+    my $hist_val = $hist_data->{$key};
+    my $hist_mean = mean(@$hist_val);
+    my $percent = faster($mean, $hist_mean);
+    my $arrow;
+    if ($percent > 0) { $arrow = "FASTER++" }
+    elsif ($percent < 0) { $arrow = "SLOWER--" }
+    else { $arrow = "" }
+    if ($mean < 1) {
+        $mean = sprintf("%.02d ms", $mean * 1000);
+    } else {
+        $mean = sprintf("%.02d s", $mean);
+    }
+    $mean =~ s/^0+//g;
+    print "$key: $mean ($len trials) $percent\% $arrow\n";
+}
+
+sub faster ($$) {
+    my ($new, $old) = @_;
+    my $delta = 1/$new - 1/$old;
+    int ($delta / (1/$old) * 100);
+}
+
+sub mean (@) {
+    my $sum = sum(@_);
+    $sum/@_;
+}
