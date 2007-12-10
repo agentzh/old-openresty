@@ -2,7 +2,7 @@ use lib 'lib';
 use strict;
 use warnings;
 
-use Test::More 'no_plan';
+use Test::More tests => 7;
 BEGIN { use_ok('SQL::Select'); }
 
 sub _Q { "'$_[0]'" }
@@ -38,11 +38,11 @@ where table_name = 'blah'
 order by foo;
 _EOC_
 
-$select->where("Foo", '>', 'bar');
+$select->where("Foo", '>', 'bar')->where('Bar' => '3');
 is "$select", <<'_EOC_';
 select name,type,label
 from _columns
-where table_name = 'blah' and Foo > bar
+where table_name = 'blah' and Foo > bar and Bar = 3
 order by foo;
 _EOC_
 

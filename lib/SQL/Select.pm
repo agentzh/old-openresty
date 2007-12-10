@@ -2,7 +2,7 @@ package SQL::Select;
 
 use strict;
 use warnings;
-use overload '""' => sub { $_[0]->generate };
+use base 'SQL::Statement';
 
 sub new {
     my $class = ref $_[0] ? ref shift : shift;
@@ -16,21 +16,9 @@ sub new {
     }, $class;
 }
 
-sub reset {
-    my $self = shift;
-    %$self = %{ $self->new(@_) };
-    $self;
-}
-
 sub select {
     my $self = shift;
     push @{ $self->{select} }, @_;
-    $self;
-}
-
-sub where {
-    my $self = shift;
-    push @{ $self->{where} }, [@_];
     $self;
 }
 
