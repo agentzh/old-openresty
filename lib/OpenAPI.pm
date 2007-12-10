@@ -224,8 +224,8 @@ sub GET_model_column {
     my $table_name = lc($model);
     my $select = SQL::Select->new( qw< name type label > )
                             ->from( '_columns' )
-                            ->where( 'table_name', '=', Q($table_name) )
-                            ->where( 'name', '=', Q($col) );
+                            ->where( table_name => Q($table_name) )
+                            ->where( name => Q($col) );
     my $res = $self->selectall_arrayref("$select", { Slice => {} });
     if (!$res or !@$res) {
         die "Column '$col' not found.\n";
@@ -426,12 +426,12 @@ sub get_model_cols {
     my $table = lc($model);
     my $select = SQL::Select->new('description')
         ->from('_models')
-        ->where('name', '=', Q($model));
+        ->where(name => Q($model));
     my $list = $self->selectall_arrayref("$select");
     my $desc = $list->[0][0];
     $select->reset('name', 'type', 'label')
            ->from('_columns')
-           ->where('table_name', '=', Q($table));
+           ->where(table_name => Q($table));
     $list = $self->selectall_arrayref("$select", { Slice => {} });
     if (!$list or !ref $list) { $list = []; }
     unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
@@ -446,7 +446,7 @@ sub get_model_col_names {
     my $table = lc($model);
     my $select = SQL::Select->new('name')
         ->from('_columns')
-        ->where('table_name', '=', Q($table));
+        ->where(table_name => Q($table));
     my $list = $self->selectall_arrayref("$select");
     if (!$list or !ref $list) { return []; }
     return [map { @$_ } @$list];
@@ -463,7 +463,7 @@ sub has_user {
     # XXX should query _users instead:
     my $select = SQL::Select->new('nspname')
         ->from('pg_namespace')
-        ->where(nspname => '=' => Q($user))
+        ->where(nspname => Q($user))
         ->limit(1);
     eval {
         $retval = $self->do("$select");
@@ -582,7 +582,7 @@ sub has_model {
     my $retval;
     my $select = SQL::Select->new('name')
         ->from('_models')
-        ->where(name => '=' => Q($model))
+        ->where(name => Q($model))
         ->limit(1);
     eval {
         $retval = $self->do("$select");
@@ -599,8 +599,8 @@ sub has_model_col {
     my $res;
     my $select = SQL::Select->new('name')
         ->from('_columns')
-        ->where(table_name => '=' => Q($table_name))
-        ->where(name => '=' => Q($col))
+        ->where(table_name => Q($table_name))
+        ->where(name => Q($col))
         ->limit(1);
     eval {
         $res = $self->do("$select");
@@ -724,7 +724,7 @@ sub select_records {
     $select->from($table);
     if (defined $val) {
         $select->select('id', @$cols)
-               ->where($user_col => '=' => Q($val));
+               ->where($user_col => Q($val));
     } else {
         $select->select($user_col);
     }
