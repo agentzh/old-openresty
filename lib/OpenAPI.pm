@@ -462,39 +462,12 @@ sub emit_data {
 
 sub has_user {
     my ($self, $user) = @_;
-    my $retval;
-    # XXX should query _users instead:
-    my $select = SQL::Select->new('nspname')
-        ->from('pg_namespace')
-        ->where(nspname => Q($user))
-        ->limit(1);
-    eval {
-        $retval = $self->do("$select");
-    };
-    return $retval + 0;
+    return $Backend->has_user($user);
 }
 
-sub new_user {
-    my $self = shift;
-    my $user = shift;
-    eval {
-        $self->do(<<"_EOC_");
-    create schema $user; 
-    create table _models (
-        name text primary key,
-        table_name text unique,
-        description text
-    );
-    create table _columns (
-        id serial primary key,
-        name text,
-        type text,
-        table_name text,
-        native_type varchar(20),
-        label text
-    );
-_EOC_
-    };
+sub add_user {
+    my ($self, $user) = @_;
+    $Backend->add_user($user);
 }
 
 sub new_model {
@@ -623,11 +596,8 @@ _EOC_
 }
 
 sub drop_user {
-    my $self = shift;
-    my $user = shift;
-    $self->do(<<"_EOC_");
-drop schema $user cascade
-_EOC_
+    my ($self, $user) = @_;
+    $Backend->drop_user($user);
 }
 
 sub emit_success {

@@ -53,6 +53,30 @@ while (my $cgi = new CGI::Fast) {
     if ($DBFatal) {
         $openapi->error($DBFatal);
         $openapi->response();
+    }
+
+    # XXX this part is lame...
+    my $user = $cgi->url_param('user') || 'jianingy';
+    eval {
+        #OpenAPI->drop_user($user);
+    };
+    if ($@) { warn $@; }
+    if (my $retval = OpenAPI->has_user($user)) {
+        ### Found user: $user
+    } else {
+        ### Creating new user: $user
+        eval {
+            $openapi->add_user($user);
+        };
+        if ($@) {  warn $@; }
+    }
+
+    eval {
+        OpenAPI->set_user($user);
+    };
+    if ($@) {
+        $openapi->error($@);
+        $openapi->response();
         next;
     }
 
@@ -86,26 +110,6 @@ while (my $cgi = new CGI::Fast) {
         next;
     }
 
-    # XXX this part is lame...
-    my $user = $cgi->url_param('user') || 'test';
-    eval {
-        #OpenAPI->drop_user($user);
-        OpenAPI->set_user($user);
-    };
-    if ($@) { warn $@; }
-    if (my $retval = OpenAPI->has_user($user)) {
-        ### Found user: $user
-    } else {
-        ### Creating new user: $user
-        $openapi->new_user($user);
-    };
-    eval {
-    };
-    if ($@) {
-        $openapi->error($@);
-        $openapi->response();
-        next;
-    }
 
     my $http_meth = $openapi->{'_http_method'};
     if (!$http_meth) {
