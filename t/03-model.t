@@ -277,7 +277,7 @@ POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ12345
 POST /=/model/TTT
 { \xFF\xFE: 'key named \xFF\xFE', description: "bad" }
 --- response
-{"success":0,"error":"Unrecoginzed key in model schema 'TTT': \\xFF\\xFE"}
+{"success":0,"error":"Unrecognized key in model schema 'TTT': \\xFF\\xFE"}
 
 
 
@@ -286,4 +286,4 @@ POST /=/model/TTT
 POST /=/model/TTT
 { \xFF\xFE: 'key named \xFF\xFE', \xFF\xFF: 'key named \xFF\xFF', description: "bad" }
 --- response
-{"success":0,"error":"Unrecoginzed keys in model schema 'TTT': \\xFF\\xFE, \\xFF\\xFF"}
+{"success":0,"error":"Unrecognized keys in model schema 'TTT': \\xFF\\xFE, \\xFF\\xFF"}

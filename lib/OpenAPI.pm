@@ -495,7 +495,7 @@ sub new_model {
         $self->warning("'columns' empty for model \"$model\".");
     }
     if (%$data) {
-	my @key = (keys %$data);
+	my @key = sort(keys %$data);
         die "Unrecognized ",PL("key",scalar @key)," in model schema 'TTT': ",
             join(", ", @key),"\n";
     }
