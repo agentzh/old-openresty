@@ -157,7 +157,8 @@ sub warning {
 sub response {
     my $self = shift;
     my $charset = $self->{_charset};
-    print $self->{_cgi}->header(-type => "text/plain; charset=$charset");
+    my $cgi = $self->{_cgi};
+    print $cgi->header(-type => "text/plain; charset=$charset");
     my $str = '';
     if ($self->{_error}) {
         $str = $self->emit_error($self->{_error});
