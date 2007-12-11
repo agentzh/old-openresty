@@ -9,9 +9,14 @@ ok $OpenAPI::Backend, "database handle okay";
 eval {
     OpenAPI->drop_user("agentzh");
 };
-OpenAPI->add_user("agentzh");
-my $res = OpenAPI->do("drop table agentzh._models;");
-ok $res, 'drop _models okay';
-OpenAPI->drop_user("agentzh");
-ok 1, 'done and done';
+
+my $res=OpenAPI->add_user("agentzh");
+ok $res, "user was added sucessful!";
+
+$res=OpenAPI->has_user("agentzh");
+ok $res, "user has registered!";
+
+
+
+
 

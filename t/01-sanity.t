@@ -73,7 +73,7 @@ GET /=/model/Foo.js
 
 === TEST 7: insert a single record
 --- request
-POST /=/model/Bookmark/~/~.js
+POST /=/model/Bookmark/~/~
 { title: "Yahoo Search", url: "http://www.yahoo.cn" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/1"}
