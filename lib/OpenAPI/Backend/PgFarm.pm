@@ -5,6 +5,9 @@ use warnings;
 use DBI;
 
 sub new {
+    #
+    # todo: change it to use params
+    #
     my $class = shift;
     my $dbh = DBI->connect(
         "dbi:Pg:dbname=test",
@@ -19,6 +22,7 @@ sub new {
 sub select {
     my ($self, $sql, $opts) = @_;
     $opts ||= {};
+    my $sql_cmd = "select * from xquery('$self->{user}', '$sql')";
     my $dbh = $self->{dbh};
     return $dbh->selectall_arrayref(
         $sql,
@@ -28,7 +32,14 @@ sub select {
 
 sub do {
     my ($self, $sql) = @_;
+    my $sql_cmd = "select * from doe('$self->{user}', '$sql')";
     $self->{dbh}->do($sql);
+}
+
+sub __do{
+    my ($self,$sql) = @_;
+    
+    $self->{dbh}->do{$sql};
 }
 
 sub quote {
@@ -65,22 +76,9 @@ sub set_user {
 
 sub add_user {
     my ($self, $user) = @_;
-    my $retval = $self->do(<<"_EOC_");
-    create schema $user;
-    create table $user._models (
-        name text primary key,
-        table_name text unique,
-        description text
-    );
-    create table $user._columns (
-        id serial primary key,
-        name text,
-        type text,
-        table_name text,
-        native_type varchar(20),
-        label text
-    );
-_EOC_
+    
+    my $sql_cmd = "select register('$user', 'add', '')";
+    $self->{dbh}->do($sql_cmd);
     $retval += 0;
     return $retval;
 }
