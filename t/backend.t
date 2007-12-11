@@ -4,7 +4,7 @@ use lib 'lib';
 use Test::More tests => 3;
 use OpenAPI;
 
-OpenAPI->connect();
+OpenAPI->connect('Pg');
 ok $OpenAPI::Backend, "database handle okay";
 eval {
     OpenAPI->drop_user("agentzh");

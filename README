@@ -19,7 +19,7 @@ fastcgi.server = (
             "socket"       => "/tmp/openapi.socket",
             "check-local"  => "disable",
             "bin-path"     => "/PATH/TO/YOUR/bin/openapi.pl",
-            #"bin-environment" => ( "OPENAPI_URL_PREFIX" => "/openapi" ),
+            "bin-environment" => ( "OPENAPI_BACKEND" => "Pg", "OPENAPI_URL_PREFIX" => "" ),
             "min-procs"    => 1,
             "max-procs"    => 5,
             "max-load-per-proc" => 1,

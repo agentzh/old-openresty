@@ -16,7 +16,7 @@ use DBI;
 use SQL::Select;
 use SQL::Update;
 use SQL::Insert;
-use OpenAPI::Backend::Pg;
+use OpenAPI::Backend;
 #use encoding "utf8";
 
 #$YAML::Syck::ImplicitBinary = 1;
@@ -71,14 +71,15 @@ sub parse_data {
 }
 
 sub new {
-    return bless {}, $_[0];
+    my ($class, $cgi) = @_;
+    return bless { _cgi => $cgi, _charset => 'UTF-8' }, $class;
 }
 
 sub init {
-    my ($self, $rurl, $cgi) = @_;
+    my ($self, $rurl) = @_;
     my $class = ref $self;
+    my $cgi = $self->{_cgi};
 
-    $self->{'_cgi'} = $cgi;
     my $charset = $cgi->url_param('charset') || 'UTF-8';
     $self->{'_charset'} = $charset;
 
@@ -406,8 +407,8 @@ sub set_formatter {
 
 sub connect {
     shift;
-    # XXX Should use OpenAPI::Backend uniformly
-    $Backend = OpenAPI::Backend::Pg->new;
+    my $backend = shift; 
+    $Backend = OpenAPI::Backend->new($backend);
 }
 
 sub get_tables {

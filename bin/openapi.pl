@@ -19,8 +19,9 @@ $CGI::POST_MAX = 1024 * 1000;  # max 1000K posts
 my $DBFatal;
 
 # XXX Excpetion not caputred...when database 'test' not created.
+my $backend = $ENV{OPENAPI_BACKEND} || 'Pg';
 eval {
-    OpenAPI->connect();
+    OpenAPI->connect($backend);
 };
 if ($@) {
     $DBFatal = $@;
@@ -49,7 +50,7 @@ while (my $cgi = new CGI::Fast) {
     $url =~ s{^\Q$url_prefix\E/+}{}g if $url_prefix;
     ### New URL: $url
 
-    my $openapi = OpenAPI->new;
+    my $openapi = OpenAPI->new($cgi);
     if ($DBFatal) {
         $openapi->error($DBFatal);
         $openapi->response();
@@ -81,7 +82,7 @@ while (my $cgi = new CGI::Fast) {
     }
 
     eval {
-        $openapi->init(\$url, $cgi);
+        $openapi->init(\$url);
     };
     if ($@) {
         ### Exception in new: $@
