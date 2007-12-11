@@ -1,10 +1,10 @@
 define CMDS
-    perl -c openapi.pl
+    perl -c bin/openapi.pl
     -sudo killall lighttpd
     sudo /etc/init.d/lighttpd restart
     rm  -f t/cur-timer.dat
     -time prove -Ilib -r t
-    t/perf
+    bin/perf
 endef
 
 all: doc/spec.html
@@ -22,7 +22,7 @@ debug:
 
 %.t: force
 	sudo echo > /var/log/lighttpd/error.log
-	perl -c openapi.pl
+	perl -c bin/openapi.pl
 	sudo /etc/init.d/lighttpd restart
 	-time prove -Ilib $@ 
 	cat /var/log/lighttpd/error.log | egrep -v '^$$'
