@@ -81,7 +81,7 @@ sub add_user {
         label text
     );
 _EOC_
-    $retval += 0;
+    #$retval += 0;
     return $retval;
 }
 

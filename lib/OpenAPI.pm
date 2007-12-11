@@ -97,7 +97,7 @@ sub init {
     };
 
     $url =~ s{/+$}{}g;
-    #$url =~ s/\%2A/*/g;
+    $url =~ s/\%2A/*/g;
     if ($url =~ s/$Ext$//) {
         my $ext = $&;
         # XXX obsolete
