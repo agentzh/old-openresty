@@ -1,4 +1,4 @@
-package OpenAPI::Backend::Pg;
+package OpenAPI::Backend::PgFarm;
 
 use strict;
 use warnings;
