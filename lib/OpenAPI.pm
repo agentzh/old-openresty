@@ -639,7 +639,7 @@ sub insert_records {
         ### Row inserted: $data
         my $num = insert_record($insert, $data, $cols, 1);
         #...
-        my $last_id = $Backend->last_insert_id($table);
+        my $last_id = $self->last_insert_id($table);
         return { rows_affected => $num, last_row => "/=/model/$model/id/$last_id", success => $num?1:0 };
     } elsif (ref $data eq 'ARRAY') {
         my $i = 0;
@@ -651,7 +651,7 @@ sub insert_records {
             $rows_affected += insert_record($insert, $row_data, $cols, $i);
             $i++;
         }
-        my $last_id = $Backend->last_insert_id($table);
+        my $last_id = $self->last_insert_id($table);
         return { rows_affected => $rows_affected, last_row => "/=/model/$model/id/$last_id", success => $rows_affected?1:0 };
     } else {
         die "Malformed data: Hash or Array expected.\n";
@@ -873,6 +873,11 @@ sub do {
 sub select {
     my $self = shift;
     $Backend->select(@_);
+}
+
+sub last_insert_id {
+	my $self = shift;
+	$Backend->last_insert_id(@_);
 }
 
 1;

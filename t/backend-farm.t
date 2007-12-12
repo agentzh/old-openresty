@@ -9,7 +9,7 @@ OpenAPI->connect('PgFarm');
 ok $OpenAPI::Backend, "database handle okay";
 eval {
 	OpenAPI->set_user("agentzh");
-	OpenAPI->do("drop table test cascade");
+#	OpenAPI->do("drop table test cascade");
     OpenAPI->drop_user("agentzh");
 };
 
