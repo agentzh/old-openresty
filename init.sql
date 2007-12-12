@@ -1,4 +1,3 @@
-\set ECHO off
 drop schema if exists _register;
 create schema _register;
 create or replace view _register.tables(id, name, "user", description) as select s.oid, s.relname, s.nspname, t.description from (select p.oid, p.relname, q.nspname from pg_class p, pg_namespace q where p.relkind = 'r' and p.relnamespace = q.oid and q.nspname != 'pg_catalog') s left join pg_description t on (s.oid = t.objoid and t.objsubid = 0);
