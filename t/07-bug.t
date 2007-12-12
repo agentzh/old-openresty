@@ -1,5 +1,15 @@
 use t::OpenAPI 'no_plan';
 
+=pod
+
+TODO
+
+* Test model descriptions with ':' in them
+* Test model column descriptions with ':' in them
+* Test special chars in column values, ie. ", ', @, \, (, ), and --.
+
+=cut
+
 run_tests;
 
 __DATA__

@@ -60,6 +60,9 @@ while (my $cgi = new CGI::Fast) {
     my $user = $cgi->url_param('user') || 'yuting';
     eval {
         #OpenAPI->drop_user($user);
+        #OpenAPI->drop_user('_register');
+        #OpenAPI->drop_user('public');
+        #OpenAPI->add_user('public');
     };
     if ($@) { warn $@; }
     if (my $retval = OpenAPI->has_user($user)) {

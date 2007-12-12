@@ -40,7 +40,7 @@ POST /=/model/laser
 --- request
 GET /=/model/laser/A
 --- response
-{"name":"A","label":"A","type":"text"}
+{"name":"a","label":"A","type":"text"}
 
 
 
@@ -49,15 +49,14 @@ GET /=/model/laser/A
 POST /=/model/laser/B
 {type:"integer",label:"b"}
 --- response
-{"success":1,"src":"/=/model/laser/B"}
-
+{"success":1,"src":"/=/model/laser/b"}
 
 
 === TEST 5: Check the newly-added column
 --- request
 GET /=/model/laser/B
 --- response
-{"name":"B","label":"b","type":"integer"}
+{"name":"b","label":"b","type":"integer"}
 
 
 
@@ -69,8 +68,8 @@ GET /=/model/laser
     "columns":
         [
           {"name":"id","label":"ID","type":"serial"},
-          {"name":"A","label":"A","type":"text"},
-          {"name":"B","label":"b","type":"integer"}
+          {"name":"a","label":"A","type":"text"},
+          {"name":"b","label":"b","type":"integer"}
         ],
     "name":"laser",
     "description":"test model"
@@ -83,7 +82,7 @@ GET /=/model/laser
 POST /=/model/laser/B
 {type:"integer",label:"b"}
 --- response
-{"success":0,"error":"Column 'B' already exists in model 'laser'."}
+{"success":0,"error":"Column 'b' already exists in model 'laser'."}
 
 
 
@@ -113,8 +112,8 @@ GET /=/model/laser
     "columns":
       [
         {"name":"id","label":"ID","type":"serial"},
-        {"name":"A","label":"A","type":"text"},
-        {"name":"C","label":"b","type":"integer"}
+        {"name":"a","label":"A","type":"text"},
+        {"name":"c","label":"b","type":"integer"}
       ],
       "name":"laser",
       "description":"test model"
@@ -126,7 +125,7 @@ GET /=/model/laser
 --- request
 GET /=/model/laser/C
 --- response
-{"name":"C","label":"b","type":"integer"}
+{"name":"c","label":"b","type":"integer"}
 
 
 
@@ -134,7 +133,7 @@ GET /=/model/laser/C
 --- request
 GET /=/model/laser/B
 --- response
-{"success":0,"error":"Column 'B' not found."}
+{"success":0,"error":"Column 'b' not found."}
 
 
 
@@ -143,7 +142,7 @@ GET /=/model/laser/B
 PUT /=/model/laser/B
 {"name":"C"}
 --- response
-{"success":0,"error":"Column 'B' not found."}
+{"success":0,"error":"Column 'b' not found."}
 
 
 
@@ -160,7 +159,7 @@ PUT /=/model/laser/C
 --- request
 GET /=/model/laser/C
 --- response
-{"name":"C","label":"b","type":"integer"}
+{"name":"c","label":"b","type":"integer"}
 
 
 
@@ -177,7 +176,7 @@ PUT /=/model/laser/C
 --- request
 GET /=/model/laser/C
 --- response
-{"name":"C","label":"c","type":"integer"}
+{"name":"c","label":"c","type":"integer"}
 
 
 
@@ -189,8 +188,8 @@ GET /=/model/laser
     "columns":
       [
         {"name":"id","label":"ID","type":"serial"},
-        {"name":"A","label":"A","type":"text"},
-        {"name":"C","label":"c","type":"integer"}
+        {"name":"a","label":"A","type":"text"},
+        {"name":"c","label":"c","type":"integer"}
       ],
       "name":"laser",
       "description":"test model"
@@ -231,7 +230,7 @@ GET /=/model/laser
     "columns":
       [
         {"name":"id","label":"ID","type":"serial"},
-        {"name":"A","label":"A","type":"text"}
+        {"name":"a","label":"A","type":"text"}
       ],
       "name":"laser",
       "description":"test model"
@@ -243,7 +242,7 @@ GET /=/model/laser
 --- request
 DELETE /=/model/laser/C
 --- response
-{"success":0,"error":"Column 'C' not found."}
+{"success":0,"error":"Column 'c' not found."}
 
 
 
@@ -251,7 +250,7 @@ DELETE /=/model/laser/C
 --- request
 GET /=/model/laser/C
 --- response
-{"success":0,"error":"Column 'C' not found."}
+{"success":0,"error":"Column 'c' not found."}
 
 
 
@@ -259,5 +258,5 @@ GET /=/model/laser/C
 --- request
 DELETE /=/model/laser/C
 --- response
-{"success":0,"error":"Column 'C' not found."}
+{"success":0,"error":"Column 'c' not found."}
 
