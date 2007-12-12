@@ -1,4 +1,4 @@
-use t::OpenAPI 'no_plan';
+use t::OpenAPI;
 
 =pod
 
@@ -13,7 +13,7 @@ TODO
 
 =cut
 
-#plan tests => 2 * blocks();
+plan tests => 3 * blocks();
 
 run_tests;
 
@@ -83,7 +83,7 @@ GET /=/model/laser
 POST /=/model/laser/B
 {type:"integer",label:"b"}
 --- response
-{"success":0,"error":"column \"b\" of relation \"laser\" already exists"}
+{"success":0,"error":"Column 'B' already exists in model 'laser'."}
 
 
 
@@ -92,7 +92,7 @@ POST /=/model/laser/B
 POST /=/model/laser/b
 {type:"integer",label:"b"}
 --- response
-{"success":0,"error":"column \"b\" of relation \"laser\" already exists"}
+{"success":0,"error":"Column 'b' already exists in model 'laser'."}
 
 
 
@@ -152,7 +152,7 @@ PUT /=/model/laser/B
 PUT /=/model/laser/C
 {type:"real"}
 --- response
-{"success":1}
+{"success":0,"error":"Changing column type is not supported."}
 
 
 
@@ -160,7 +160,7 @@ PUT /=/model/laser/C
 --- request
 GET /=/model/laser/C
 --- response
-{"name":"C","label":"b","type":"real"}
+{"name":"C","label":"b","type":"integer"}
 
 
 
@@ -177,7 +177,7 @@ PUT /=/model/laser/C
 --- request
 GET /=/model/laser/C
 --- response
-{"name":"C","label":"c","type":"real"}
+{"name":"C","label":"c","type":"integer"}
 
 
 
@@ -190,7 +190,7 @@ GET /=/model/laser
       [
         {"name":"id","label":"ID","type":"serial"},
         {"name":"A","label":"A","type":"text"},
-        {"name":"C","label":"c","type":"real"}
+        {"name":"C","label":"c","type":"integer"}
       ],
       "name":"laser",
       "description":"test model"
@@ -204,7 +204,7 @@ POST /=/model/laser/~/~
 { C: 3.14159 }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/laser/id/1"}
-
+--- SKIP
 
 
 === TEST 20: Check the newly-added record
@@ -212,7 +212,7 @@ POST /=/model/laser/~/~
 GET /=/model/laser/id/1
 --- response
 [{"c":"3.14159","a":null,"id":"1"}]
-
+--- SKIP
 
 
 === TEST 21: Remove the column

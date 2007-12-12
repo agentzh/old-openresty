@@ -2,12 +2,13 @@ package OpenAPI::Backend::PgFarm;
 
 use strict;
 use warnings;
-use Smart::Comments;
+#use Smart::Comments;
 use DBI;
+use JSON::Syck 'Load';
 
 sub new {
     #
-    # todo: change it to use params
+    # XXX todo: change it to use params
     #
     my $class = shift;
     my $dbh = DBI->connect(
@@ -23,20 +24,25 @@ sub new {
 sub select {
     my ($self, $sql, $opts) = @_;
     $opts ||= {};
-	$sql = $self->quote($sql);
-    my $sql_cmd = "select * from xquery('$self->{user}', $sql)";
+    my $type = $opts->{use_hash} ? 1 : 0;
+    $sql = $self->quote($sql);
+    #warn "==================> $sql\n";
+    my $sql_cmd = "select xquery('$self->{user}', $sql, $type)";
+    #warn "------------------> $sql_cmd";
     my $dbh = $self->{dbh};
-    return $dbh->selectall_arrayref(
-        $sql,
-        $opts->{use_hash} ? {Slice=>{}} : ()
-    );
+    my $res = $dbh->selectall_arrayref($sql_cmd);
+    ### JSON: $res->[0][0]
+    $res = Load($res->[0][0]);
+    return $res;
 }
 
 sub do {
     my ($self, $sql) = @_;
-	$sql=$self->quote($sql);
-    my $sql_cmd = "select doe('$self->{user}', $sql)";
-    $self->{dbh}->do($sql_cmd);
+    $sql=$self->quote($sql);
+    my $sql_cmd = "select xdo('$self->{user}', $sql)";
+    my $res = $self->{dbh}->selectall_arrayref($sql_cmd);
+    ### $res
+    return $res->[0][0]+0;
 }
 
 sub quote {
@@ -47,14 +53,15 @@ sub quote {
 sub last_insert_id {
     my ($self, $table) = @_;
     #die "Found table!!! $table";
-
-	my $sql = "select * from xquery('$self->{user}','select currval(''''${table}_id_seq'''')')";
-    my $dbh = $self->{dbh};
-    return $dbh->selectall_arrayref($sql);
+    #my $sql = "select xquery('$self->{user}',')', 0)";
+    #my $dbh = $self->{dbh};
+    my $sql = "select max(id) from ${table}";
+    my $res = $self->select($sql);
+    return $res->[0][0];
 }
 
 sub has_user {
-	my ($self,$user,$opts) = @_;
+    my ($self,$user,$opts) = @_;
     my $res = $self->{dbh}->selectall_arrayref(
         "select registered('$user','')",
         $opts->{use_hash} ? {Slice=>{}} : ()
@@ -72,17 +79,35 @@ sub add_user {
     my $retval = $self->{dbh}->do(<<"_EOC_");
     SELECT useradd('$user','');
 _EOC_
-    $retval += 0;
-    return $retval;
+    $self->set_user($user);
+    $retval = $self->do(<<"_EOC_");
+    --create schema $user;
+    create table $user._models (
+        name text primary key,
+        table_name text unique,
+        description text
+    );
+    create table $user._columns (
+        id serial primary key,
+        name text,
+        type text,
+        table_name text,
+        native_type varchar(20),
+        label text
+    );
+_EOC_
+
+    #$retval += 0;
+    return $retval >= 0;
 }
 
 sub drop_user {
     my ($self, $user) = @_;
-    my $retval=$self->{dbh}->do(<<"_EOC_");
+    my $retval = $self->{dbh}->do(<<"_EOC_");
     SELECT userdel('$user','');
 _EOC_
-	$retval += 0;
-	return $retval;
+    $retval += 0;
+    return $retval;
 }
 
 1;

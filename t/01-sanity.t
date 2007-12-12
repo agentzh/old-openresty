@@ -247,7 +247,7 @@ GET /=/model/MyFavorites.js
 PUT /=/model/MyFavorites/title
 { name: "count", type: "integer" }
 --- response
-{"success":0,"error":"column \"count\" cannot be cast to type \"pg_catalog.int4\""}
+{"success":0,"error":"Changing column type is not supported."}
 
 
 

@@ -142,7 +142,7 @@ sub error {
     my ($self, $s) = @_;
     $s =~ s/^Syck parser \(line (\d+), column (\d+)\): syntax error at .+/Syntax error found in the JSON input: line $1, column $2./;
     $s =~ s/^DBD::Pg::st execute failed:\s+ERROR:\s+//;
-    $s =~ s/^DBD::Pg::db do failed:\s+ERROR:\s+//;
+    #$s =~ s/^DBD::Pg::db do failed:\s.*?ERROR:\s+//;
     $self->{_error} .= $s . "\n";
 ### $self->{_error}
 }
@@ -259,6 +259,11 @@ sub POST_model_column {
     if ($col eq 'id') {
         die "Column id is reserved.";
     }
+    my $cols = $self->get_model_col_names($model);
+    my $fst = first { lc($col) eq lc($_) } @$cols;
+    if (defined $fst) {
+        die "Column '$col' already exists in model '$model'.\n";
+    }
     # type defaults to 'text' if not specified.
     my $type = $data->{type} || 'text';
     my $label = $data->{label} or
@@ -307,6 +312,7 @@ sub PUT_model_column {
     my $type = $data->{type};
     my $ntype;
     if ($type) {
+        die "Changing column type is not supported.\n";
         $ntype = $to_native_type{$type};
         if (!$ntype) {
             die "Bad column type: $type\n",
@@ -341,7 +347,7 @@ sub DELETE_model_column {
     }
     my $sql = "delete from _columns where table_name='$table_name' and name='$col'; alter table $table_name drop column $col restrict;";
     my $res = $Backend->do($sql);
-    return { success => $res ? 1:0 };
+    return { success => $res > -1? 1:0 };
 }
 
 # alter table $table_name rename column $col TO city;

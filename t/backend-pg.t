@@ -7,7 +7,7 @@ use OpenAPI;
 use Data::Dumper;
 use subs 'dump';
 
-OpenAPI->connect('PgFarm');
+OpenAPI->connect('Pg');
 ok $OpenAPI::Backend, "database handle okay";
 eval {
 #    OpenAPI->do("drop table test cascade");

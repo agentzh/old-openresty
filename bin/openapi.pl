@@ -57,7 +57,7 @@ while (my $cgi = new CGI::Fast) {
     }
 
     # XXX this part is lame...
-    my $user = $cgi->url_param('user') || 'jianingy';
+    my $user = $cgi->url_param('user') || 'yuting';
     eval {
         #OpenAPI->drop_user($user);
     };
