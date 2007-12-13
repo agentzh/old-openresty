@@ -3,69 +3,69 @@ use warnings;
 
 use lib 'lib';
 use Test::More 'no_plan';
-use OpenAPI;
+use OpenAPI::Backend::Pg;
 use Data::Dumper;
 use subs 'dump';
 
-OpenAPI->connect('Pg');
-ok $OpenAPI::Backend, "database handle okay";
-eval {
-#    OpenAPI->do("drop table test cascade");
-    OpenAPI->drop_user("yuting");
-};
+my $backend = OpenAPI::Backend::Pg->new({ RaiseError => 0 });
+ok $backend, "database handle okay";
+if ($backend->has_user("agentz")) {
+#    $backend->do("drop table test cascade");
+    $backend->drop_user("agentz");
+}
 
-my $res = OpenAPI->add_user("yuting");
+my $res = $backend->add_user("agentz");
 cmp_ok $res, '>', -1, "user added okay";
 
-OpenAPI->set_user("yuting");
+$backend->set_user("agentz");
 
-$res = OpenAPI->has_user("yuting");
+$res = $backend->has_user("agentz");
 ok $res, "user has registered!";
 
-$res = OpenAPI->set_user("yuting");
+$res = $backend->set_user("agentz");
 #ok $res, "user switched";
 
-$res = OpenAPI->do("create table test (id serial, body text)");
+$res = $backend->do("create table test (id serial, body text)");
 #ok $res, "table created";
 cmp_ok $res, '>', -1;
 
-$res = OpenAPI->do("insert into test (body) values ('hello world')");
+$res = $backend->do("insert into test (body) values ('hello world')");
 #ok $res, "insert a record";
 is $res, '1', 'rows affected';
 
-$res = OpenAPI->last_insert_id("test");
+$res = $backend->last_insert_id("test");
 ok $res, "get last insert id";
 is $res, 1, "last id okay";
 
 $Data::Dumper::Sortkeys = 1;
 $Data::Dumper::Indent = 0;
-$res = OpenAPI->select('select * from test');
+$res = $backend->select('select * from test');
 is dump($res), "[['1','hello world']];";
 
-$res = OpenAPI->select('select * from test', { use_hash => 1 });
+$res = $backend->select('select * from test', { use_hash => 1 });
 is dump($res), "[{'body' => 'hello world','id' => '1'}];";
 
-$res = OpenAPI->do("insert into test (body) values ('hello world');\ninsert into test (body) values ('blah');");
+$res = $backend->do("insert into test (body) values ('hello world');\ninsert into test (body) values ('blah');");
 ok $res, "insert 2 records";
 is $res, '1', 'rows affected';
 
-$res = OpenAPI->do("update test set body=body||'aaa';");
+$res = $backend->do("update test set body=body||'aaa';");
 ok $res, "insert 2 records";
 is $res, '3', 'rows affected';
 
-$res = OpenAPI->select('select * from test');
+$res = $backend->select('select * from test');
 is dump($res), "[['1','hello worldaaa'],['2','hello worldaaa'],['3','blahaaa']];";
 
-$res = OpenAPI->select('select * from test', {use_hash => 1});
+$res = $backend->select('select * from test', {use_hash => 1});
 is dump($res), "[{'body' => 'hello worldaaa','id' => '1'},{'body' => 'hello worldaaa','id' => '2'},{'body' => 'blahaaa','id' => '3'}];";
 
-$res = OpenAPI->do("insert into test (body) values (null);");
+$res = $backend->do("insert into test (body) values (null);");
 ok $res;
 
-$res = OpenAPI->select('select * from test', {use_hash => 1});
+$res = $backend->select('select * from test', {use_hash => 1});
 is dump($res), "[{'body' => 'hello worldaaa','id' => '1'},{'body' => 'hello worldaaa','id' => '2'},{'body' => 'blahaaa','id' => '3'},{'body' => undef,'id' => '4'}];";
 
-$res = OpenAPI->do("drop table test cascade");
+$res = $backend->do("drop table test cascade");
 is $res+0, '0', "table dropped";
 
 sub dump {

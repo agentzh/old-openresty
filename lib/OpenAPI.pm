@@ -120,12 +120,13 @@ sub init {
                 die "No PUT content specified.\n";
         }
     }
-    ### $url
+    ### OpenAPI->new url 1: $url
     if ($http_meth eq 'POST' and $url =~ s{^=/put/}{=/}) {
         $http_meth = 'PUT';
     } elsif ($http_meth =~ /^GET|POST$/ and $url =~ s{^=/delete/}{=/}) {
         $http_meth = 'DELETE';
     }
+    ### OpenAPI->new url 2: $url
     $$rurl = $url;
     $self->{'_url'} = $url;
     $self->{'_http_method'} = $http_meth;
@@ -225,6 +226,15 @@ sub POST_model {
     }
     $data->{name} = $model;
     return $self->new_model($data);
+}
+
+sub DELETE_model {
+    my ($self, $bits) = @_;
+    my $model = $bits->[1];
+    my $table = lc($model);
+    #$tables = $tables->[0];
+    $self->drop_table($table);
+    return { success => 1 };
 }
 
 sub GET_model_column {

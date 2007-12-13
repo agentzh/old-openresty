@@ -11,7 +11,7 @@ use CGI::Fast ();
 use Data::Dumper;
 #use XML::Simple qw(:strict);
 use FindBin;
-#use Smart::Comments;
+use Smart::Comments;
 #use Perl6::Say;
 
 $CGI::POST_MAX = 1024 * 1000;  # max 1000K posts
@@ -58,6 +58,7 @@ while (my $cgi = new CGI::Fast) {
 
     # XXX this part is lame...
     my $user = $cgi->url_param('user') || 'peee';
+    ### $user
     eval {
         #OpenAPI->drop_user($user);
     };
@@ -135,6 +136,8 @@ while (my $cgi = new CGI::Fast) {
         };
         if ($@) { $openapi->error($@); }
         else { $openapi->data($data); }
+    } else {
+        $openapi->error("Unknown URL catagory: $bits[0]");
     }
 
     $openapi->response();

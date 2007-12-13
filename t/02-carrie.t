@@ -87,6 +87,7 @@ GET /=/model/Carrie/~/~.yml?var=hello
   url: http://zhangxiaojue.cn
 
 
+
 === TEST 9: delete a record use "post"
 --- request
 POST /=/delete/model/Carrie/id/1.js
@@ -118,11 +119,14 @@ GET /=/delete/model/Carrie/~/~
 --- response
 {"success":1,"rows_affected":1}
 
+
+
 === TEST 13: see delete result 
 --- request
 GET /=/model/Carrie/~/~
 --- response
 []
+
 
 
 === TEST 14: Delete model
@@ -132,11 +136,13 @@ GET /=/delete/model/Carrie
 {"success":1}
 
 
+
 === TEST 15: Delete model with user info
 --- request
 DELETE /=/model?user=tester2
 --- response
 {"success":1}
+
 
 
 === TEST 16: Create model with user info
@@ -153,6 +159,7 @@ POST /=/model/Test2?user=tester2
 {"success":1}
 
 
+
 === TEST 17: insert another record
 --- request
 POST /=/model/Test2/~/~?user=tester2
@@ -161,9 +168,10 @@ POST /=/model/Test2/~/~?user=tester2
 {"success":1,"rows_affected":1,"last_row":"/=/model/Test2/id/1"}
 
 
+
 === TEST 18: delete all records with user info
 --- request
 GET /=/delete/Test2/~/~?user=tester2
 --- response
-{"success":1,"rows_affected":1}
+{"success":0,"error":"Unknown URL catagory: Test2"}
 

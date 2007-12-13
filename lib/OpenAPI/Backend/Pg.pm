@@ -3,13 +3,15 @@ package OpenAPI::Backend::Pg;
 use strict;
 use warnings;
 use DBI;
+use SQL::Select;
 
 sub new {
     my $class = shift;
+    my $opts = shift || {};
     my $dbh = DBI->connect(
         "dbi:Pg:dbname=test",
         "agentzh", "agentzh",
-        {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1}
+        {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts}
     );
     return bless {
         dbh => $dbh

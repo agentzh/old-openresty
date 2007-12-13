@@ -122,7 +122,6 @@ _EOC_
 sub drop_user {
     my ($self, $user) = @_;
     my $retval = $self->{dbh}->do(<<"_EOC_");
-    -- select xdo('$user', 'drop schema $user cascade;');
     SELECT userdel('$user','');
 _EOC_
     $retval += 0;
