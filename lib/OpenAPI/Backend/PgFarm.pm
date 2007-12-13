@@ -110,8 +110,8 @@ _EOC_
         writeable boolean,
         manageable boolean
 			      );
-    create unique index $user.$user__models_name_idx on $user._models using btree (name);
-    create unique index $user.$user__roles_name_idx on $user._roles using btree(name);
+    create unique index $user.${user}__models_name_idx on $user._models using btree (name);
+    create unique index $user.${user}__roles_name_idx on $user._roles using btree(name);
 _EOC_
 
     #$retval += 0;
