@@ -93,7 +93,7 @@ sub add_user {
         parentRole integer default 0, -- a column reference to $user._roles itself. 0 means no parent
         password text not null,
 	obj integer not null, -- a column reference to $user._columns or $user._models
-        accessable boolean,
+        visible boolean,
 	readable boolean,
         writeable boolean,
         manageable boolean
