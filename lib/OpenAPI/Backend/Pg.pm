@@ -72,33 +72,31 @@ sub add_user {
 
     create table $user._models (
 	id serial primary key,
-        name text,
-        table_name text unique,
+        name text unique not null,
+        table_name text unique not null,
         description text
     );
 
     create table $user._columns (
         id serial primary key,
-        name text,
-        type text,
-        table_name text,
-        native_type varchar(20),
+        name text unique not null,
+        type text not null,
+        table_name text unique not null,
+        native_type varchar(20) default 'text',
         label text
     );
 
     create table $user._roles(
 	id serial primary key,
-	name text,
-        parentRole integer default 0, -- a column reference to $user._roles itself.
-        password text,
-	obj integer, -- a column reference to $user._columns or $user._models
+	name text unique not null,
+        parentRole integer default 0, -- a column reference to $user._roles itself. 0 means no parent
+        password text not null,
+	obj integer not null, -- a column reference to $user._columns or $user._models
         accessable boolean,
 	readable boolean,
         writeable boolean,
         manageable boolean
 			      );
-    create unique index ${user}__models_name_idx on $user._models using btree (name);
-    create unique index ${user}__roles_name_idx on $user._roles using btree(name);
 _EOC_
     #$retval += 0;
     return $retval;

@@ -85,34 +85,32 @@ _EOC_
     
     create table $user._models (
 	id serial primary key,
-        name text,
-        table_name text unique,
+        name text unique not null,
+        table_name text unique not null,
         description text
     );
 
 
     create table $user._columns (
         id serial primary key,
-        name text,
-        type text,
-        table_name text,
+        name text unique not null,
+        type text not null default 'text',
+        table_name text unique not null,
         native_type varchar(20),
         label text
     );
 
     create table $user._roles(
 	id serial primary key,
-	name text,
+	name text unique not null,
         parentRole integer default 0, -- a column reference to $user._roles itself.
-        password text,
+        password text not null,
 	obj integer, -- a column reference to $user._columns or $user._models
         accessable boolean,
 	readable boolean,
         writeable boolean,
         manageable boolean
 			      );
-    create unique index ${user}__models_name_idx on $user._models using btree (name);
-    create unique index ${user}__roles_name_idx on $user._roles using btree(name);
 _EOC_
 
     #$retval += 0;
