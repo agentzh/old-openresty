@@ -89,7 +89,6 @@ _EOC_
         description text
     );
 
-    create unique index $user.$user__models_name_idx on $user._models using btree (name);
 
     create table $user._columns (
         id serial primary key,
@@ -99,6 +98,7 @@ _EOC_
         native_type varchar(20),
         label text
     );
+
     create table $user._roles(
 	id serial primary key,
 	name text,
@@ -110,6 +110,7 @@ _EOC_
         writeable boolean,
         manageable boolean
 			      );
+    create unique index $user.$user__models_name_idx on $user._models using btree (name);
     create unique index $user.$user__roles_name_idx on $user._roles using btree(name);
 _EOC_
 
