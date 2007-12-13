@@ -82,6 +82,7 @@ _EOC_
     $self->set_user($user);
     $retval = $self->do(<<"_EOC_");
     --create schema $user;
+    
     create table $user._models (
 	id serial primary key,
         name text,
@@ -110,8 +111,8 @@ _EOC_
         writeable boolean,
         manageable boolean
 			      );
-    create unique index $user.${user}__models_name_idx on $user._models using btree (name);
-    create unique index $user.${user}__roles_name_idx on $user._roles using btree(name);
+    create unique index ${user}__models_name_idx on $user._models using btree (name);
+    create unique index ${user}__roles_name_idx on $user._roles using btree(name);
 _EOC_
 
     #$retval += 0;

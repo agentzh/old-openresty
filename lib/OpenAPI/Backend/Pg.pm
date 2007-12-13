@@ -67,6 +67,7 @@ sub add_user {
     my ($self, $user) = @_;
     my $retval = $self->do(<<"_EOC_");
     create schema $user;
+    set search_path to $user;
 
     create table $user._models (
 	id serial primary key,
@@ -95,8 +96,8 @@ sub add_user {
         writeable boolean,
         manageable boolean
 			      );
-    create unique index $user.${user}__models_name_idx on $user._models using btree (name);
-    create unique index $user.${user}__roles_name_idx on $user._roles using btree(name);
+    create unique index ${user}__models_name_idx on $user._models using btree (name);
+    create unique index ${user}__roles_name_idx on $user._roles using btree(name);
 _EOC_
     #$retval += 0;
     return $retval;
