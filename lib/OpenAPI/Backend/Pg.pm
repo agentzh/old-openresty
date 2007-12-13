@@ -67,11 +67,14 @@ sub add_user {
     my ($self, $user) = @_;
     my $retval = $self->do(<<"_EOC_");
     create schema $user;
+
     create table $user._models (
+	id serial primary key,
         name text primary key,
         table_name text unique,
         description text
     );
+
     create table $user._columns (
         id serial primary key,
         name text,
@@ -80,6 +83,20 @@ sub add_user {
         native_type varchar(20),
         label text
     );
+
+    create table $user._roles(
+	id serial primary key,
+	name text,
+        parentRole integer default 0, -- a column reference to $user._roles itself.
+        password text,
+	obj integer, -- a column reference to $user._columns or $user._models
+        accessable boolean,
+	readable boolean,
+        writeable boolean,
+        manageable boolean
+			      );
+    create unique index $user.$user__models_name_idx on $user._models using btree (name);
+    create unique index $user.$user__roles_name_idx on $user._roles using btree(name);
 _EOC_
     #$retval += 0;
     return $retval;
