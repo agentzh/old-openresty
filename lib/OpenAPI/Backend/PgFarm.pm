@@ -11,10 +11,11 @@ sub new {
     # XXX todo: change it to use params
     #
     my $class = shift;
+    my $opts = shift || {};
     my $dbh = DBI->connect(
         "dbi:Pg:dbname=proxy host=os901000.inktomisearch.com",
         "searcher", "",
-        {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1}
+        {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts}
     );
     return bless {
         dbh => $dbh
@@ -121,6 +122,7 @@ _EOC_
 sub drop_user {
     my ($self, $user) = @_;
     my $retval = $self->{dbh}->do(<<"_EOC_");
+    -- select xdo('$user', 'drop schema $user cascade;');
     SELECT userdel('$user','');
 _EOC_
     $retval += 0;

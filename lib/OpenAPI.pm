@@ -3,7 +3,7 @@ package OpenAPI;
 use strict;
 use warnings;
 
-#use Smart::Comments;
+use Smart::Comments;
 use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
@@ -697,7 +697,6 @@ sub select_records {
     } else {
         $select->select($user_col);
     }
-    ### $sql
     ### $val
     my $res = $Backend->select("$select", { use_hash => 1 });
     if (!$res and !ref $res) { return []; }
@@ -836,6 +835,8 @@ sub global_model_check {
     my ($self, $rbits, $meth) = @_;
     ### Check model existence and column existence here...
     ### if method is not POST...
+    ### method: $meth
+    ### URL bits: $rbits
     my ($model, $col);
     if (@$rbits >= 2) {
         $model = $rbits->[1];
