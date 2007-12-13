@@ -93,11 +93,12 @@ _EOC_
 
     create table $user._columns (
         id serial primary key,
-        name text unique not null,
+        name text not null,
         type text not null default 'text',
-        table_name text unique not null,
+        table_name text not null,
         native_type varchar(20),
-        label text
+        label text,
+	unique(table_name, name)
     );
 
     create table $user._roles(
