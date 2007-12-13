@@ -114,7 +114,56 @@ POST /=/model/Carrie/~/~.js
 
 === TEST 12: delete all the record
 --- request
-GET /=/delete/model/Carrie/~/~.js
+GET /=/delete/model/Carrie/~/~
+--- response
+{"success":1,"rows_affected":1}
+
+=== TEST 13: see delete result 
+--- request
+GET /=/model/Carrie/~/~
+--- response
+[]
+
+
+=== TEST 14: Delete model
+--- request
+GET /=/delete/model/Carrie
+--- response
+{"success":1}
+
+
+=== TEST 15: Delete model with user info
+--- request
+DELETE /=/model?user=tester2
+--- response
+{"success":1}
+
+
+=== TEST 16: Create model with user info
+--- request
+POST /=/model/Test2?user=tester2
+{
+    description: "我的书签",
+    columns: [
+        { name: "title", label: "标题" },
+        { name: "url", label: "网址" }
+    ]
+}
+--- response
+{"success":1}
+
+
+=== TEST 17: insert another record
+--- request
+POST /=/model/Test2/~/~?user=tester2
+{ title:'second',url:"http://zhangxiaojue.cn"}
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/Test2/id/1"}
+
+
+=== TEST 18: delete all records with user info
+--- request
+GET /=/delete/Test2/~/~?user=tester2
 --- response
 {"success":1,"rows_affected":1}
 
