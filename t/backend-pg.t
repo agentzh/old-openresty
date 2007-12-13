@@ -65,14 +65,6 @@ ok $res;
 $res = OpenAPI->select('select * from test', {use_hash => 1});
 is dump($res), "[{'body' => 'hello worldaaa','id' => '1'},{'body' => 'hello worldaaa','id' => '2'},{'body' => 'blahaaa','id' => '3'},{'body' => undef,'id' => '4'}];";
 
-$res = OpenAPI->do("select public.xcomment('yuting', 'test', 'Hello')");
-$res = OpenAPI->select("select description from _register.tables where \"user\"='yuting' and name='test';");
-is dump($res), "[['Hello']];";
-
-$res = OpenAPI->do("select public.xuncomment('yuting', 'test')");
-$res = OpenAPI->select("select description from _register.tables where \"user\"='yuting' and name='test';");
-is dump($res), "[[undef]];";
-
 $res = OpenAPI->do("drop table test cascade");
 is $res+0, '0', "table dropped";
 

@@ -193,7 +193,6 @@ sub DELETE_model_list {
     #$tables = $tables->[0];
     ### tables: @tables
     for my $table (@tables) {
-        ### removing table: $table
         $self->drop_table($table);
     }
     return { success => 1 };
@@ -231,13 +230,13 @@ sub POST_model {
 sub GET_model_column {
     my ($self, $bits) = @_;
     my $model = $bits->[1];
-    my $col = lc($bits->[2]);
+    my $col = $bits->[2];
     ### $model
     ### $col
     my $table_name = lc($model);
     my $select = SQL::Select->new( qw< name type label > )
-                            ->from( '_register.columns' )
-                            ->where( '"owner"' => Q($table_name) )
+                            ->from( '_columns' )
+                            ->where( table_name => Q($table_name) )
                             ->where( name => Q($col) );
     my $res = $Backend->select("$select", { use_hash => 1 });
     if (!$res or !@$res) {
@@ -250,7 +249,7 @@ sub GET_model_column {
 sub POST_model_column {
     my ($self, $bits) = @_;
     my $model = $bits->[1];
-    my $col = lc($bits->[2]);
+    my $col = $bits->[2];
     my $data = $self->{_req_data};
     my $table_name = lc($model);
 
@@ -276,17 +275,18 @@ sub POST_model_column {
             join(", ", sort keys %to_native_type), "\n";
     }
 
-    my $sql =
-        "alter table $table_name add column $col $ntype;\n".
-        $self->sql_set_col_label($table_name => $col => $label);
-    my $res = $Backend->do($sql);
+    my $insert = SQL::Insert->new('_columns')
+        ->cols(qw< name label type native_type table_name >)
+        ->values( Q($col, $label, $type, $ntype, $table_name) );
+    my $sql = "alter table $table_name add column $col $ntype;\n";
+    my $res = $Backend->do($sql . "$insert");
     return { success => 1, src => "/=/model/$model/$col" };
 }
 
 sub PUT_model_column {
     my ($self, $bits) = @_;
     my $model = $bits->[1];
-    my $col = lc($bits->[2]);
+    my $col = $bits->[2];
     my $data = _HASH($self->{_req_data}) or die "column spec must be a HASH.\n";
     my $table_name = lc($model);
 
@@ -297,11 +297,13 @@ sub PUT_model_column {
     # type defaults to 'text' if not specified.
     my $sql;
     my $new_col = $data->{name};
+    my $update_meta = SQL::Update->new('_columns');
     if ($new_col) {
         _IDENT($new_col) or die "Bad column name: ",
                 $Dumper->($new_col), "\n";
 
         #$new_col = $new_col);
+        $update_meta->set(name => Q($new_col));
         $sql .= "alter table $table_name rename column $col to $new_col;\n";
         #$col = $new_col;
     } else {
@@ -317,42 +319,20 @@ sub PUT_model_column {
                 "\tOnly the following types are available: ",
                 join(", ", sort keys %to_native_type), "\n";
         }
+        $update_meta->set(type => Q($type))
+            ->set(native_type => Q($ntype));
         $sql .= "alter table $table_name alter column $new_col type $ntype;\n",
     }
     my $label = $data->{label};
     if ($label) {
-        $sql .= $self->sql_set_col_label($table_name => $col => $label);
+        $update_meta->set(label => Q($label));
     }
+    $update_meta->where(table_name => Q($table_name))
+        ->where(name => Q($col));
     ### $sql
-    my $res = $Backend->do($sql);
+    my $res = $Backend->do($sql . $update_meta);
     ### $res
     return { success => $res ? 1 : 0 };
-}
-
-sub sql_set_col_label {
-    my ($self, $table, $col, $label) = @_;
-    my $user = $self->user;
-    $label = Q($label);
-    return "select public.xcomment('$user', '$table', '$col', $label);\n";
-}
-
-sub sql_set_table_desc {
-    my ($self, $table, $desc) = @_;
-    my $user = $self->user;
-    $desc = Q($desc);
-    return "select public.xcomment('$user', '$table', $desc);\n";
-}
-
-sub sql_del_col_label {
-    my ($self, $table, $col) = @_;
-    my $user = $self->user;
-    return "select public.xuncomment('$user', '$table', '$col');\n";
-}
-
-sub sql_del_table_desc {
-    my ($self, $table) = @_;
-    my $user = $self->user;
-    return "select public.xuncomment('$user', '$table');\n";
 }
 
 sub DELETE_model_column {
@@ -365,8 +345,7 @@ sub DELETE_model_column {
     if ($col eq 'id') {
         die "Column id is reserved.";
     }
-    my $sql = "alter table $table_name drop column $col restrict;\n".
-        $self->sql_del_col_label($table_name => $col);
+    my $sql = "delete from _columns where table_name='$table_name' and name='$col'; alter table $table_name drop column $col restrict;";
     my $res = $Backend->do($sql);
     return { success => $res > -1? 1:0 };
 }
@@ -441,33 +420,14 @@ sub connect {
 sub get_tables {
     #my ($self, $user) = @_;
     my $self = shift;
-    my $select = SQL::Select->new('name')
-        ->from('_register.tables')
-        ->where('"user"' => Q($self->user));
-    #die "$select";
-    my $res = $Backend->select("$select");
-    ### get_tables: $res
-    #use YAML::Syck;
-    #die Dump($res);
-    return $res;
-}
-
-sub user {
-    $Backend->{user};
+    my $select = SQL::Select->new('table_name')->from('_models');
+    return $Backend->select("$select");
 }
 
 sub get_models {
     my $self = shift;
-    my $select = SQL::Select->new('description')->from('_register.tables')->where('"user"' => Q($self->user))->where(description => 'is' => 'not null');
-    ### get_models SQL: "$select"
-    my $res = $Backend->select("$select");
-    ### get_models: $res
-    my @retval;
-    for my $r (@$res) {
-        my ($name, $desc) = split ':', $r->[0], 2;
-        push @retval, { name => $name, description => $desc };
-    }
-    return \@retval;
+    my $select = SQL::Select->new('name','description')->from('_models');
+    return $Backend->select("$select", { use_hash => 1 });
 }
 
 sub get_model_cols {
@@ -477,17 +437,13 @@ sub get_model_cols {
     }
     my $table = lc($model);
     my $select = SQL::Select->new('description')
-        ->from('_register.tables')
-        ->where(name => Q($table))
-        ->where('"user"' => Q($self->user));
+        ->from('_models')
+        ->where(name => Q($model));
     my $list = $Backend->select("$select");
-    ### get_model_cols: $list
     my $desc = $list->[0][0];
-    ($model, $desc) = split ':', $desc, 2;
     $select->reset('name', 'type', 'label')
-           ->from('_register.columns')
-           ->where('"owner"' => Q($table))
-           ->where(label => 'is' => 'not null');
+           ->from('_columns')
+           ->where(table_name => Q($table));
     $list = $Backend->select("$select", { use_hash => 1 });
     if (!$list or !ref $list) { $list = []; }
     unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
@@ -501,9 +457,8 @@ sub get_model_col_names {
     }
     my $table = lc($model);
     my $select = SQL::Select->new('name')
-        ->from('_register.columns')
-        ->where('"owner"' => Q($table))
-        ->where(label => 'is' => 'not null');
+        ->from('_columns')
+        ->where(table_name => Q($table));
     my $list = $Backend->select("$select");
     if (!$list or !ref $list) { return []; }
     return [map { @$_ } @$list];
@@ -556,11 +511,16 @@ sub new_model {
     if ($self->has_model($model)) {
         die "Model \"$model\" already exists.\n";
     }
+    my $insert = SQL::Insert->new('_models')
+        ->cols(qw< name table_name description >)
+        ->values( Q($model, $table, $description) );
 
-    my $sql =
+    my $sql = "$insert";
+    $insert->reset('_columns')
+        ->cols(qw< name type native_type label table_name >);
+    $sql .=
         "create table $table (\n\tid serial primary key";
     my $sql2;
-    my $user = $self->user;
     my $found_id = undef;
     for my $col (@$columns) {
         my $name = $col->{name} or
@@ -569,7 +529,7 @@ sub new_model {
         if (length($name) >= 32) {
             die "Column name too long: $name\n";
         }
-        $name = lc($name);
+        #$name = $name;
         # discard 'id' column
         if ($name eq 'id') {
             $found_id = 1;
@@ -586,19 +546,15 @@ sub new_model {
                 join(", ", sort keys %to_native_type), "\n";
         }
         $sql .= ",\n\t$name $ntype";
-        $sql2 .= $self->sql_set_col_label($table => lc($name) => $label);
-            #$insert->clone->values(Q($name, $type, $ntype, $label, $table));
+        $sql2 .= $insert->clone->values(Q($name, $type, $ntype, $label, $table));
         $i++;
     }
-    $sql .= "\n);\n".
-        $self->sql_set_table_desc($table => "$model:$description");
-    #die $sql;
+    $sql .= "\n)";
+    ### $sql
     #register_table($table);
     #register_columns
-    $sql .= $sql2;
-    ### new_model: $sql
     eval {
-        $self->do($sql);
+        $self->do($sql2 . $sql);
     };
     if ($@) {
         die "Failed to create model \"$model\": $@\n";
@@ -612,21 +568,14 @@ sub new_model {
 sub has_model {
     my ($self, $model) = @_;
     my $retval;
-    my $table = lc($model);
-    my $user = $self->user;
     my $select = SQL::Select->new('name')
-        ->from('_register.tables')
-        ->where(name => Q($table))
-        ->where('"user"' => Q($user))
-        ->where(description => 'is' => 'not null')
+        ->from('_models')
+        ->where(name => Q($model))
         ->limit(1);
-    ### has_model SQL: "$select"
     eval {
-        $retval = $self->select("$select");
+        $retval = $self->do("$select");
     };
-    ### has_model: $retval
-    #die JSON::Syck::Dump($retval);
-    return scalar(@$retval);
+    return $retval + 0;
 }
 
 sub has_model_col {
@@ -634,34 +583,26 @@ sub has_model_col {
     my $table_name = lc($model);
     ### has model col (model):  $model
     ### has model col (col): $col
-    $col = lc($col);
     return 1 if $col eq 'id';
     my $res;
     my $select = SQL::Select->new('name')
-        ->from('_register.columns')
-        ->where('"owner"' => Q($table_name))
+        ->from('_columns')
+        ->where(table_name => Q($table_name))
         ->where(name => Q($col))
-        ->where(label => 'is' => 'not null')
         ->limit(1);
-    ### has_model_col SQL: "$select"
     eval {
-        $res = $self->select("$select");
+        $res = $self->do("$select");
     };
-    ### has_model_col: $res
-    return scalar(@$res);
+    return $res + 0;
 }
 
 sub drop_table {
     my ($self, $table) = @_;
-    #my $user = $self->user;
-    $table = lc($table);
-    ### Dropping table...
-    #die "uncomment: $res";
-    my $sql = "drop table $table;\n".
-        $self->sql_del_table_desc($table);
-    #die $sql;
-    $self->do($sql);
-    #my $res = $self->do("select public.xuncomment('$user', '$table');");
+    $self->do(<<_EOC_);
+drop table $table;
+delete from _models where table_name='$table';
+delete from _columns where table_name='$table';
+_EOC_
 }
 
 sub drop_user {
@@ -741,7 +682,6 @@ sub select_records {
     my ($self, $model, $user_col, $val) = @_;
     my $table = lc($model);
     my $cols = $self->get_model_col_names($model);
-    $user_col = lc($user_col);
     if ($user_col ne 'id') {
         my $found = 0;
         for my $col (@$cols) {
@@ -757,7 +697,6 @@ sub select_records {
     } else {
         $select->select($user_col);
     }
-    my $sql = "$select";
     ### $sql
     ### $val
     my $res = $Backend->select("$select", { use_hash => 1 });
@@ -876,13 +815,13 @@ sub alter_model {
         }
         my $new_table = lc($new_model);
         $sql .=
+            "update _models set table_name='$new_table', name='$new_model' where name='$model';\n" .
+            "update _columns set table_name='$new_table' where table_name='$table';\n" .
             "alter table $table rename to $new_table;\n";
     }
-    my $user = $self->user;
     if (my $desc = delete $data->{description}) {
-        my $table = lc($new_model);
         _STRING($desc) or die "Model descriptons must be strings.\n";
-        $sql .= $self->sql_set_table_desc($table => "$new_model:$desc");
+        $sql .= "update _models set description='$desc' where name='$new_model';\n"
     }
     if (%$data) {
         die "Unknown fields ", join(", ", keys %$data), "\n";
@@ -919,7 +858,6 @@ sub global_model_check {
         }
         if ($col and $col ne '~') {
             ### Testing 2...
-            $col = lc($col);
             if (! $self->has_model_col($model, $col)) {
                 ### Dying...
                 die "Column '$col' not found.\n";

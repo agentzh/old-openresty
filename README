@@ -4,10 +4,6 @@ To run "make test" or "make debug", you need to have lighttpd and postgres insta
 Also you need to create an empty database named "test" and also make user
 'agentzh' a Pg login account (with the password 'agentzh').
 
-The 'agentzh' role should be a super user. And it's required to issue the following command:
-
-   test=# create language plpgsql;
-
 Sample lighttpd configuration:
 
 # lighttpd.conf

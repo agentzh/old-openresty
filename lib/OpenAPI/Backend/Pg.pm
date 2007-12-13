@@ -2,10 +2,7 @@ package OpenAPI::Backend::Pg;
 
 use strict;
 use warnings;
-
-use FindBin;
 use DBI;
-use File::Slurp 'read_file';
 
 sub new {
     my $class = shift;
@@ -14,14 +11,9 @@ sub new {
         "agentzh", "agentzh",
         {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1}
     );
-    my $self = bless {
+    return bless {
         dbh => $dbh
     }, $class;
-    #unless ($self->has_user('_register')) {
-        my $sql = read_file($FindBin::Bin . '/../init.sql');
-        $dbh->do($sql);
-    #}
-    return $self;
 }
 
 sub select {
@@ -75,6 +67,19 @@ sub add_user {
     my ($self, $user) = @_;
     my $retval = $self->do(<<"_EOC_");
     create schema $user;
+    create table $user._models (
+        name text primary key,
+        table_name text unique,
+        description text
+    );
+    create table $user._columns (
+        id serial primary key,
+        name text,
+        type text,
+        table_name text,
+        native_type varchar(20),
+        label text
+    );
 _EOC_
     #$retval += 0;
     return $retval;
