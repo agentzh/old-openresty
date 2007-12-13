@@ -171,6 +171,14 @@ POST /=/model/Test2/~/~?user=tester2
 
 === TEST 18: delete all records with user info
 --- request
+GET /=/delete/model/Test2/~/~?user=tester2
+--- response
+{"success":1,"rows_affected":1}
+
+
+
+=== TEST 19: delete all records with user info (the wrong way)
+--- request
 GET /=/delete/Test2/~/~?user=tester2
 --- response
 {"success":0,"error":"Unknown URL catagory: Test2"}
