@@ -65,13 +65,14 @@ sub set_user {
 
 sub add_user {
     my ($self, $user) = @_;
+
     my $retval = $self->do(<<"_EOC_");
     create schema $user;
     set search_path to $user;
 
     create table $user._models (
 	id serial primary key,
-        name text primary key,
+        name text,
         table_name text unique,
         description text
     );
