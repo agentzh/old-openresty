@@ -50,7 +50,15 @@ POST /=/model/Foo/~/~
 --- request
 GET /=/model/Foo/~/~
 --- response
-[{"name":"Marry","id":"1","age":"21"},{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"3","age":"15"},{"name":"Henry","id":"4","age":"19"},{"name":"Henry","id":"5","age":"23"},{"name":"Larry","id":"6","age":"59"},{"name":"Audrey","id":"7","age":"17"}]
+[
+    {"name":"Marry","id":"1","age":"21"},
+    {"name":"Bob","id":"2","age":"32"},
+    {"name":"Bob","id":"3","age":"15"},
+    {"name":"Henry","id":"4","age":"19"},
+    {"name":"Henry","id":"5","age":"23"},
+    {"name":"Larry","id":"6","age":"59"},
+    {"name":"Audrey","id":"7","age":"17"}
+]
 
 
 
@@ -58,7 +66,15 @@ GET /=/model/Foo/~/~
 --- request
 GET /=/model/Foo/~/~?order_by=name
 --- response
-[{"name":"Audrey","id":"7","age":"17"},{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"3","age":"15"},{"name":"Henry","id":"4","age":"19"},{"name":"Henry","id":"5","age":"23"},{"name":"Larry","id":"6","age":"59"},{"name":"Marry","id":"1","age":"21"}]
+[
+    {"name":"Audrey","id":"7","age":"17"},
+    {"name":"Bob","id":"2","age":"32"},
+    {"name":"Bob","id":"3","age":"15"},
+    {"name":"Henry","id":"4","age":"19"},
+    {"name":"Henry","id":"5","age":"23"},
+    {"name":"Larry","id":"6","age":"59"},
+    {"name":"Marry","id":"1","age":"21"}
+]
 
 
 
@@ -66,7 +82,15 @@ GET /=/model/Foo/~/~?order_by=name
 --- request
 GET /=/model/Foo/~/~?order_by=name:desc
 --- response
-[{"name":"Marry","id":"1","age":"21"},{"name":"Larry","id":"6","age":"59"},{"name":"Henry","id":"4","age":"19"},{"name":"Henry","id":"5","age":"23"},{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"3","age":"15"},{"name":"Audrey","id":"7","age":"17"}]
+[
+    {"name":"Marry","id":"1","age":"21"},
+    {"name":"Larry","id":"6","age":"59"},
+    {"name":"Henry","id":"4","age":"19"},
+    {"name":"Henry","id":"5","age":"23"},
+    {"name":"Bob","id":"2","age":"32"},
+    {"name":"Bob","id":"3","age":"15"},
+    {"name":"Audrey","id":"7","age":"17"}
+]
 
 
 
@@ -74,7 +98,15 @@ GET /=/model/Foo/~/~?order_by=name:desc
 --- request
 GET /=/model/Foo/~/~?order_by=age
 --- response
-[{"name":"Bob","id":"3","age":"15"},{"name":"Audrey","id":"7","age":"17"},{"name":"Henry","id":"4","age":"19"},{"name":"Marry","id":"1","age":"21"},{"name":"Henry","id":"5","age":"23"},{"name":"Bob","id":"2","age":"32"},{"name":"Larry","id":"6","age":"59"}]
+[
+    {"name":"Bob","id":"3","age":"15"},
+    {"name":"Audrey","id":"7","age":"17"},
+    {"name":"Henry","id":"4","age":"19"},
+    {"name":"Marry","id":"1","age":"21"},
+    {"name":"Henry","id":"5","age":"23"},
+    {"name":"Bob","id":"2","age":"32"},
+    {"name":"Larry","id":"6","age":"59"}
+]
 
 
 
@@ -82,7 +114,15 @@ GET /=/model/Foo/~/~?order_by=age
 --- request
 GET /=/model/Foo/~/~?order_by=age:desc
 --- response
-[{"name":"Larry","id":"6","age":"59"},{"name":"Bob","id":"2","age":"32"},{"name":"Henry","id":"5","age":"23"},{"name":"Marry","id":"1","age":"21"},{"name":"Henry","id":"4","age":"19"},{"name":"Audrey","id":"7","age":"17"},{"name":"Bob","id":"3","age":"15"}]
+[
+    {"name":"Larry","id":"6","age":"59"},
+    {"name":"Bob","id":"2","age":"32"},
+    {"name":"Henry","id":"5","age":"23"},
+    {"name":"Marry","id":"1","age":"21"},
+    {"name":"Henry","id":"4","age":"19"},
+    {"name":"Audrey","id":"7","age":"17"},
+    {"name":"Bob","id":"3","age":"15"}
+]
 
 
 
@@ -90,7 +130,15 @@ GET /=/model/Foo/~/~?order_by=age:desc
 --- request
 GET /=/model/Foo/~/~?order_by=name:asc,age:desc
 --- response
-[{"name":"Audrey","id":"7","age":"17"},{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"3","age":"15"},{"name":"Henry","id":"5","age":"23"},{"name":"Henry","id":"4","age":"19"},{"name":"Larry","id":"6","age":"59"},{"name":"Marry","id":"1","age":"21"}]
+[
+    {"name":"Audrey","id":"7","age":"17"},
+    {"name":"Bob","id":"2","age":"32"},
+    {"name":"Bob","id":"3","age":"15"},
+    {"name":"Henry","id":"5","age":"23"},
+    {"name":"Henry","id":"4","age":"19"},
+    {"name":"Larry","id":"6","age":"59"},
+    {"name":"Marry","id":"1","age":"21"}
+]
 
 
 
@@ -98,7 +146,15 @@ GET /=/model/Foo/~/~?order_by=name:asc,age:desc
 --- request
 GET /=/model/Foo/~/~?order_by=name,age:desc
 --- response
-[{"name":"Audrey","id":"7","age":"17"},{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"3","age":"15"},{"name":"Henry","id":"5","age":"23"},{"name":"Henry","id":"4","age":"19"},{"name":"Larry","id":"6","age":"59"},{"name":"Marry","id":"1","age":"21"}]
+[
+    {"name":"Audrey","id":"7","age":"17"},
+    {"name":"Bob","id":"2","age":"32"},
+    {"name":"Bob","id":"3","age":"15"},
+    {"name":"Henry","id":"5","age":"23"},
+    {"name":"Henry","id":"4","age":"19"},
+    {"name":"Larry","id":"6","age":"59"},
+    {"name":"Marry","id":"1","age":"21"}
+]
 
 
 
@@ -106,15 +162,21 @@ GET /=/model/Foo/~/~?order_by=name,age:desc
 --- request
 GET /=/model/Foo/name/Bob?order_by=age
 --- response
-[{"name":"Bob","id":"3","age":"15"},{"name":"Bob","id":"2","age":"32"}]
+[
+    {"name":"Bob","id":"3","age":"15"},
+    {"name":"Bob","id":"2","age":"32"}
+]
 
 
 
-=== TEST 12: where name='Bob' order by age, desc
+=== TEST 12: where name='Bob' order by age desc
 --- request
 GET /=/model/Foo/name/Bob?order_by=age:desc
 --- response
-[{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"3","age":"15"}]
+[
+    {"name":"Bob","id":"2","age":"32"},
+    {"name":"Bob","id":"3","age":"15"}
+]
 
 
 
