@@ -3,7 +3,6 @@ use t::OpenAPI 'no_plan';
 use JSON::Syck 'Dump';
 use OpenAPI::Limits;
 use constant {
-    RECORD_LIMIT => 100,
     INSERT_LIMIT => 20,
     POST_LEN_LIMIT => 10_000,
     PUT_LEN_LIMIT => 10_000,
@@ -91,6 +90,9 @@ for ($COLUMN_LIMIT..$COLUMN_LIMIT + 2) {
     }
 }
 
+
+# We need a faster way to test $RECORD_LIMIT because it's normally huge...
+
 # insert limit test
 ## 1. delete the 'foo' model first
 $res = do_request('DELETE', $host.$url, undef, undef);
@@ -100,9 +102,9 @@ $body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
 $res = do_request('POST', $host.$url, $body, undef);
 ### $res_body
 
-## 3. insert RECORD_LIMIT - 1 records
-for (1..RECORD_LIMIT - 1) {
-    $body = '{title:'.(RECORD_LIMIT-1).'}';
+## 3. insert $RECORD_LIMIT - 1 records
+for (1..$RECORD_LIMIT - 1) {
+    $body = '{title:'.($RECORD_LIMIT-1).'}';
     ### $body
     $res = do_request('POST', $host.$url.'/~/~', $body, undef);
     ok $res->is_success, $COLUMN_LIMIT . ' OK';
@@ -111,21 +113,23 @@ for (1..RECORD_LIMIT - 1) {
 }
 
 ## 4. add 2 more records
-for (RECORD_LIMIT..RECORD_LIMIT + 1) {
-    $body = '{title:'.(RECORD_LIMIT-1).'}';
+for ($RECORD_LIMIT..$RECORD_LIMIT + 1) {
+    $body = '{title:'.($RECORD_LIMIT-1).'}';
 
     ### $body
     $res = do_request('POST', $host.$url.'/~/~', $body, undef);
-    ok $res->is_success, RECORD_LIMIT . ' OK';
+    ok $res->is_success, $RECORD_LIMIT . ' OK';
     my $res_body = $res->content;
     ### $res_body
-    if ($_ <= RECORD_LIMIT) {
+    if ($_ <= $RECORD_LIMIT) {
         is $res_body, '{"success":1,"rows_affected":1,"last_row":"/=/model/foos/id/100"}'."\n", "Model record limit test ".$_;
     } else {
-        is $res_body, '{"success":0,"error":"Exceeded model record count limit."}'."\n", "Model record limit test ".$_;
+        is $res_body, '{"success":0,"error":"Exceeded model row count limit: '.$RECORD_LIMIT.'."}'."\n", "Model record limit test ".$_;
     }
 }
 
 $res = do_request('DELETE', $host.'/=/model', undef, undef);
 ok $res->is_success, 'response OK';
+
+=cut
 

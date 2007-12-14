@@ -457,6 +457,11 @@ sub column_count {
     return $self->select("select count(*) from _columns")->[0][0];
 }
 
+sub row_count {
+    my ($self, $table) = @_;
+    return $self->select("select count(*) from $table")->[0][0];
+}
+
 sub get_models {
     my $self = shift;
     my $select = SQL::Select->new('name','description')->from('_models');
@@ -682,6 +687,9 @@ sub insert_records {
     }
     ## Data: $data
     my $table = lc($model);
+    if ($self->row_count($table) >= $RECORD_LIMIT) {
+        die "Exceeded model row count limit: $RECORD_LIMIT.\n";
+    }
     my $cols = $self->get_model_col_names($model);
     my $sql;
     my $insert = SQL::Insert->new($table)->cols(@$cols);

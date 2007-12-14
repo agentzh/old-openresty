@@ -16,9 +16,8 @@ our @EXPORT = qw(
 our $MODEL_LIMIT = 40;
 our $COLUMN_LIMIT = 40;
 our $INSERT_LIMIT = 20;
-our $RECORD_LIMIT = 10_000;
+our $RECORD_LIMIT = 100;
 our $POST_LEN_LIMIT = 10_000;
 our $PUT_LEN_LIMIT = 10_000;
 
 1;
-
