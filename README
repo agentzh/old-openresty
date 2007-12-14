@@ -1,11 +1,16 @@
 First of all, please run "perl Makefile.PL" to check missing dependencies:
 
-perl Makefile.PL
-make -f Makefile  # This will install missing dependencies
+    $ perl Makefile.PL
+    $ sudo make -f Makefile  # This will install missing dependencies
 
 To run "make test" or "make debug", you need to have lighttpd and postgres installed.
 Also you need to create an empty database named "test" and also make user
 'agentzh' a Pg login account (with the password 'agentzh').
+
+Also give read/write access to lighttpd's log file:
+
+    $ chmod 777 /var/log/lighttpd/error.log
+    $ chmod 777 /var/log/lighttpd
 
 Sample lighttpd configuration:
 
