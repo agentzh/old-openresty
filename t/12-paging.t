@@ -95,9 +95,38 @@ GET /=/model/Foo/~/~?offset=7
 
 
 
-=== TEST 8: offset = count
+=== TEST 8: offset > count
 --- request
 GET /=/model/Foo/~/~?offset=8
+--- response
+[]
+
+
+
+=== TEST 9: offset = 0 for normal select
+--- request
+GET /=/model/Foo/name/Bob?offset=0
+--- response
+[
+    {"name":"Bob","id":"2","age":"32"},
+    {"name":"Bob","id":"3","age":"15"}
+]
+
+
+
+=== TEST 10: offset = count - 1 for normal select
+--- request
+GET /=/model/Foo/name/Bob?offset=1
+--- response
+[
+    {"name":"Bob","id":"3","age":"15"}
+]
+
+
+
+=== TEST 11: offset = count for normal select
+--- request
+GET /=/model/Foo/name/Bob?offset=2
 --- response
 []
 
