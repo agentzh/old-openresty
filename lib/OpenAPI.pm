@@ -930,7 +930,13 @@ sub global_model_check {
         $col = $rbits->[2];
         (_IDENT($col) || $col eq '~') or die "Bad column name: ", $Dumper->($col), "\n";
     }
-    if ($meth ne 'POST') {
+    if ($meth eq 'POST') {
+        if (@$rbits >= 3) {
+            if (!$self->has_model($model)) {
+                die "Model \"$model\" not found.\n";
+            }
+        }
+    } else {
         ### Testing...
         if ($model) {
             if (!$self->has_model($model)) {
