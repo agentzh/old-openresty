@@ -546,7 +546,7 @@ sub new_model {
     }
 
     if (%$data) {
-	my @key = sort(keys %$data);
+    my @key = sort(keys %$data);
         die "Unrecognized ",PL("key",scalar @key)," in model schema 'TTT': ",
             join(", ", @key),"\n";
     }
@@ -746,16 +746,17 @@ sub select_records {
     }
     if (defined $order_by){
         die "No column found in order_by.\n" unless $order_by;
-		
-	my @sub_order_by = split(",", $order_by);
-	foreach my $item (@sub_order_by){
-	### $item
-	    my ($col, $dir) = split(":", $item);
-	    die "No column \"$col\" found in order_by.\n" unless $self->has_model_col($model,$col);
-	    die "wrong sorting direction! must be asc or desc" if (defined $dir && $dir !~ /^(asc|desc)$/i);
-	    
-	    (defined $dir) ? $select->order_by($col,$dir) : $select->order_by($col);
-	}
+        my @sub_order_by = split(",", $order_by);
+        if (!@sub_order_by and $order_by) {
+            die "Invalid order_by value: $order_by\n";
+        }
+        foreach my $item (@sub_order_by){
+            ### $item
+            my ($col, $dir) = split(":", $item, 2);
+            die "No column \"$col\" found in order_by.\n" unless $self->has_model_col($model,$col);
+            die "Invalid order_by direction: $dir\n" if (defined $dir && $dir !~ /^(asc|desc)$/i);
+            $select->order_by($col => $dir || ());
+        }
     }
     ### $val
     my $res = $Backend->select("$select", { use_hash => 1 });
@@ -776,14 +777,14 @@ sub select_all_records {
     my $select = SQL::Select->new('*')->from($table);
     if (defined $order_by){
         die "No column found in order_by.\n" unless $order_by;
-	my @sub_order_by = split(",", $order_by);
-	foreach my $item (@sub_order_by){
-	### $item
-	    my ($col, $dir) = split(":", $item);
-	    die "No column \"$col\" found in order_by.\n" unless $self->has_model_col($model,$col);
-	    die "wrong sorting direction! must be asc or desc" if (defined $dir && $dir !~ /^(asc|desc)$/i);
-	    (defined $dir) ? $select->order_by($col,$dir) : $select->order_by($col);
-	}
+    my @sub_order_by = split(",", $order_by);
+    foreach my $item (@sub_order_by){
+    ### $item
+        my ($col, $dir) = split(":", $item);
+        die "No column \"$col\" found in order_by.\n" unless $self->has_model_col($model,$col);
+        die "wrong sorting direction! must be asc or desc" if (defined $dir && $dir !~ /^(asc|desc)$/i);
+        (defined $dir) ? $select->order_by($col,$dir) : $select->order_by($col);
+    }
     }
     my $list = $Backend->select("$select", { use_hash => 1 });
     if (!$list or !ref $list) { return []; }
@@ -958,8 +959,8 @@ sub select {
 }
 
 sub last_insert_id {
-	my $self = shift;
-	$Backend->last_insert_id(@_);
+    my $self = shift;
+    $Backend->last_insert_id(@_);
 }
 
 1;

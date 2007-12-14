@@ -61,6 +61,7 @@ GET /=/model/Foo/~/~?order_by=name
 [{"name":"Audrey","id":"7","age":"17"},{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"3","age":"15"},{"name":"Henry","id":"4","age":"19"},{"name":"Henry","id":"5","age":"23"},{"name":"Larry","id":"6","age":"59"},{"name":"Marry","id":"1","age":"21"}]
 
 
+
 === TEST 6: Order by name (asc by default)
 --- request
 GET /=/model/Foo/~/~?order_by=name:desc
@@ -130,12 +131,28 @@ GET /=/model/Foo/name/Bob?order_by=null
 GET /=/model/Foo/name/Bob?order_by=
 --- response
 {"success":0,"error":"No column found in order_by."}
---- LAST
+
 
 
 === TEST 15: order by no columns
 --- request
 GET /=/model/Foo/name/Bob?order_by=,
 --- response
-{"success":0,"error":"No column found in order_by."}
+{"success":0,"error":"Invalid order_by value: ,"}
+
+
+
+=== TEST 16: order by no columns
+--- request
+GET /=/model/Foo/name/Bob?order_by=name:blah
+--- response
+{"success":0,"error":"Invalid order_by direction: blah"}
+
+
+
+=== TEST 17: order by no columns
+--- request
+GET /=/model/Foo/name/Bob?order_by=name:blah:foo
+--- response
+{"success":0,"error":"Invalid order_by direction: blah:foo"}
 
