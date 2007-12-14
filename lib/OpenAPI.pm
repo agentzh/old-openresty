@@ -512,7 +512,6 @@ sub add_user {
 sub new_model {
     my ($self, $data) = @_;
     my $num = $self->model_count;
-    if ($num > 
     ### $num
     my $model = delete $data->{name} or
         die "No 'name' field found for the new model\n";
