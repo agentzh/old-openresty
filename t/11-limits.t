@@ -13,7 +13,7 @@ my $host = $t::OpenAPI::host;
 my $res = do_request('DELETE', $host.'/=/model', undef, undef);
 ok $res->is_success, 'response OK';
 
-for (1..MODEL_LIMIT+1) {
+for (1..MODEL_LIMIT + 1) {
     my $model_name = 'Foo'.int rand(19999);
     my $url = '/=/model/'.$model_name;
     ### $url
@@ -30,7 +30,60 @@ for (1..MODEL_LIMIT+1) {
 }
 
 # column limit test
-#
+my $cols = '{name:"Foo1",label: "Foo1"}';
+for (2..COLUMN_LIMIT - 1) {
+    my $col_name = 'Foo'.$_;
+	$cols .= ",{name:\"".$col_name."\",label: \"".$col_name."\"}";
+}
+
+## 1. create a mode first (column number: COLUMN_LIMIT - 1)
+my $url = '/=/model/foos';
+my $body = "{description:\"blah\",columns:[".$cols."]}";
+$res = do_request('POST', $host.$url, $body, undef);
+
+my $cols_bak = $cols;
+
+
+## 2. step to exceed the column limit using add method
+for (COLUMN_LIMIT..COLUMN_LIMIT + 1) {
+    my $col_name = 'Foo'.$_;
+    
+    my $url_local = $url.'/'.$col_name;
+    $body = '{label:"'.$col_name.'"}';
+
+    $res = do_request('POST', $host.$url_local, $body, undef);
+    ok $res->is_success, COLUMN_LIMIT . ' OK';
+    my $res_body = $res->content;
+    ### $res_body
+    if ($_ <= COLUMN_LIMIT) {
+        is $res_body, '{"success":1,"src":"/=/model/foos/Foo10"}'."\n", "Model column limit test - add column FOO".$_;
+    } else {
+        is $res_body, '{"sucess":0,"error":"Exceeded model count column limit."}'."\n", "Model column limit test ".$_;
+    }
+}
+
+## 3. post a mode which number of columns is COLUMN_LIMIT 
+$cols = $cols_bak;
+for (COLUMN_LIMIT..COLUMN_LIMIT + 1) {
+    my $url = '/=/model/foos';
+    my $col_name = 'Foo'.$_;
+    $cols .= ",{name:\"".$col_name."\",label:\"".$col_name."\"}";
+
+    my $body = "{description:\"blah\",columns:[".$cols."]}";
+    ### $body
+
+    $res = do_request('DELETE', $host.$url, undef, undef);
+    $res = do_request('POST', $host.$url, $body, undef);
+    ok $res->is_success, COLUMN_LIMIT . ' OK';
+    my $res_body = $res->content;
+    ### $res_body
+    if ($_ <= COLUMN_LIMIT) {
+        is $res_body, '{"success":1}'."\n", "Model column limit test ".$_;
+    } else {
+        is $res_body, '{"sucess":0,"error":"Exceeded model count column limit."}'."\n", "Model column limit test ".$_;
+    }
+}
+
 # insert limit test
 #
 
