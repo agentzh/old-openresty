@@ -207,12 +207,14 @@ POST /=/model/laser/~/~
 --- SKIP
 
 
+
 === TEST 20: Check the newly-added record
 --- request
 GET /=/model/laser/id/1
 --- response
 [{"c":"3.14159","a":null,"id":"1"}]
 --- SKIP
+
 
 
 === TEST 21: Remove the column
