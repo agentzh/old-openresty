@@ -90,6 +90,7 @@ sub init {
     #
     my $order_by = $cgi->url_param('order_by');
     $self->{'_order_by'} = $order_by;
+    ### the obj var is: $self->{'_order_by'}
 
     my $http_meth = $ENV{'REQUEST_METHOD'};
     #$self->{'_method'} = $http_meth;
@@ -700,6 +701,7 @@ sub select_records {
     my ($self, $model, $user_col, $val) = @_;
     my $table = lc($model);
     my $cols = $self->get_model_col_names($model);
+    ### inside select_records: $self->{'_order_by'}
     my $order_by = $self->{'_order_by'};
     if ($user_col ne 'id') {
         my $found = 0;
@@ -720,9 +722,11 @@ sub select_records {
 	
 	my @sub_order_by = split(",", $order_by);
 	foreach my $item (@sub_order_by){
+	### $item
 	    my ($col, $dir) = split(":", $item);
+	    die "No column found in order_by." if ($col eq '');
 	    die "wrong sorting direction! must be asc or desc" if (defined $dir && $dir !~ /^(asc|desc)$/i);
-	    $select->order_by($col=>$dir);
+	    $select->order_by($col,$dir);
 	}
     }
     ### $val
@@ -801,11 +805,25 @@ sub update_records {
 
 sub select_all_records {
     my ($self, $model) = @_;
+    ### inside select_all_records: $self->{'_order_by'}
+    my $order_by = $self->{'_order_by'};
+
     if (!$self->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
+
     my $table = lc($model);
     my $select = SQL::Select->new('*')->from($table);
+    if (defined $order_by){
+	my @sub_order_by = split(",", $order_by);
+	foreach my $item (@sub_order_by){
+	### $item
+	    my ($col, $dir) = split(":", $item);
+	    die "No column found in order_by." if ($col eq '');
+	    die "wrong sorting direction! must be asc or desc" if (defined $dir && $dir !~ /^(asc|desc)$/i);
+	    $select->order_by($col,$dir);
+	}
+    }
     my $list = $Backend->select("$select", { use_hash => 1 });
     if (!$list or !ref $list) { return []; }
     return $list;

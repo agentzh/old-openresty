@@ -3,6 +3,7 @@ package SQL::Select;
 use strict;
 use warnings;
 use base 'SQL::Statement';
+#use Smart::Comments;
 
 sub new {
     my $class = ref $_[0] ? ref shift : shift;
@@ -48,17 +49,17 @@ sub generate {
     my $self = shift;
     my $sql;
     local $" = ', ';
-    $sql .= "select @{ $self->{select} }
-from @{ $self->{from} }";
+    $sql .= "select @{ $self->{select} } from @{ $self->{from} }";
     my @where = @{ $self->{where} };
     my $where = join ' and ', map { join(' ', @$_) } @where;
-    if ($where) { $sql .= "\nwhere $where" }
+    if ($where) { $sql .= " where $where" }
     my $order_by = $self->{order_by};
-    if (@$order_by) { $sql .= "\norder by @$order_by"; }
+    if (@$order_by) { $sql .= " order by @$order_by"; }
     my $limit = $self->{limit};
-    if ($limit) { $sql .= "\nlimit $limit"; }
+    if ($limit) { $sql .= " limit $limit"; }
     my $offset = $self->{offset};
-    if ($offset) { $sql .= "\noffset $offset"; }
+    if ($offset) { $sql .= " offset $offset"; }
+    ### $sql
     return $sql . ";\n";
 }
 

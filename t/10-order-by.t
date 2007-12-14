@@ -59,7 +59,7 @@ GET /=/model/Foo/~/~
 GET /=/model/Foo/~/~?order_by=name
 --- response
 [{"name":"Audrey","id":"7","age":"17"},{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"3","age":"15"},{"name":"Henry","id":"4","age":"19"},{"name":"Henry","id":"5","age":"23"},{"name":"Larry","id":"6","age":"59"},{"name":"Marry","id":"1","age":"21"}]
-
+--- LAST
 
 
 === TEST 6: Order by name (asc by default)
