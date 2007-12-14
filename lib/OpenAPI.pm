@@ -17,18 +17,10 @@ use SQL::Select;
 use SQL::Update;
 use SQL::Insert;
 use OpenAPI::Backend;
+use OpenAPI::Limits;
 #use encoding "utf8";
 
 #$YAML::Syck::ImplicitBinary = 1;
-use constant {
-    MODEL_LIMIT => 40,
-    COLUMN_LIMIT => 40,
-    RECORD_LIMIT => 100,
-    INSERT_LIMIT => 20,
-    POST_LEN_LIMIT => 10_000,
-    PUT_LEN_LIMIT => 10_000,
-};
-
 our $Backend;
 
 my %ext2dumper = (
@@ -277,6 +269,12 @@ sub POST_model_column {
     my $data = $self->{_req_data};
     my $table_name = lc($model);
 
+    my $num = $self->column_count;
+    ### Column count: $num
+    if ($num >= $COLUMN_LIMIT) {
+        die "Exceeded model column count limit: $COLUMN_LIMIT.\n";
+    }
+
     $data = _HASH($data) or die "column spec must be a HASH.\n";
 
     # discard 'id' column
@@ -454,6 +452,11 @@ sub model_count {
     return $self->select("select count(*) from _models")->[0][0];
 }
 
+sub column_count {
+    my $self = shift;
+    return $self->select("select count(*) from _columns")->[0][0];
+}
+
 sub get_models {
     my $self = shift;
     my $select = SQL::Select->new('name','description')->from('_models');
@@ -511,8 +514,11 @@ sub add_user {
 
 sub new_model {
     my ($self, $data) = @_;
-    my $num = $self->model_count;
-    ### $num
+    my $nmodels = $self->model_count;
+    if ($nmodels >= $MODEL_LIMIT) {
+        #warn "===================================> $num\n";
+        die "Exceeded model count limit $MODEL_LIMIT.\n";
+    }
     my $model = delete $data->{name} or
         die "No 'name' field found for the new model\n";
     my $table = lc($model);
@@ -523,7 +529,7 @@ sub new_model {
         unless _STRING($description);
     # XXX Should we allow 0 column table here?
     if (!ref $data) {
-        die "Malformed data. Hash expected.\n";
+        die "Malformed data. Hash or Array expected.\n";
     }
     my $columns = delete $data->{columns};
     if (_HASH($columns)) { $columns = [$columns] }
@@ -535,6 +541,10 @@ sub new_model {
     } elsif (!@$columns) {
         $self->warning("'columns' empty for model \"$model\".");
     }
+    if (@$columns > $COLUMN_LIMIT) {
+        die "Exceeded model column count limit: $COLUMN_LIMIT.\n";
+    }
+
     if (%$data) {
 	my @key = sort(keys %$data);
         die "Unrecognized ",PL("key",scalar @key)," in model schema 'TTT': ",
@@ -556,6 +566,7 @@ sub new_model {
     my $sql2;
     my $found_id = undef;
     for my $col (@$columns) {
+        _HASH($col) or die "Column definition must be a hash: ", $Dumper->($col), "\n";
         my $name = $col->{name} or
             die "No 'name' specified for the " . ORD($i) . " column.\n";
         _STRING($name) or die "Bad column name: ", $Dumper->($name), "\n";

@@ -287,3 +287,15 @@ POST /=/model/TTT
 { \xFF\xFE: 'key named \xFF\xFE', \xFF\xFF: 'key named \xFF\xFF', description: "bad" }
 --- response
 {"success":0,"error":"Unrecognized keys in model schema 'TTT': \\xFF\\xFE, \\xFF\\xFF"}
+
+
+
+=== TEST 29: when column def is bad
+--- request
+POST /=/model/Foo2
+{ description: 'blah',
+  columns: [ [1,2] ]
+}
+--- response
+{"success":0,"error":"Column definition must be a hash: [1,2]"}
+
