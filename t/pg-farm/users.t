@@ -40,17 +40,17 @@ for (my $i = 0 ; $i < TRIALS; $i ++) {
         $res = $backend->has_user($name);
         if (! $cnt{$res}) {$cnt{$res} = 0; }
         $cnt{$res} ++; 
-	    warn dump($name);
+	    #warn dump($name);
         push @userdb, $name;
     } else {
         warn "user $name is exist";
     } 
 }
 
-warn dump(\%cnt);
+#warn dump(\%cnt);
 is scalar(keys %cnt), NUM_OF_NODES, 'all of the nodes visited';
 while (my $b = pop @userdb) {
-    warn "$b...";
+    #warn "$b...";
     $res = $backend->drop_user($b);
 }
 
