@@ -723,12 +723,31 @@ sub insert_record {
     return $Backend->do($sql);
 }
 
+sub process_order_by {
+    my ($self, $select, $model) = @_;
+    my $order_by = $self->{'_order_by'};
+    if (defined $order_by){
+        die "No column found in order_by.\n" unless $order_by;
+        my @sub_order_by = split(",", $order_by);
+        if (!@sub_order_by and $order_by) {
+            die "Invalid order_by value: $order_by\n";
+        }
+        foreach my $item (@sub_order_by){
+            ### $item
+            my ($col, $dir) = split(":", $item, 2);
+            die "No column \"$col\" found in order_by.\n" unless $self->has_model_col($model, $col);
+            die "Invalid order_by direction: $dir\n" if (defined $dir && $dir !~ /^(asc|desc)$/i);
+            $select->order_by($col => $dir || ());
+        }
+    }
+
+}
+
 sub select_records {
     my ($self, $model, $user_col, $val) = @_;
     my $table = lc($model);
     my $cols = $self->get_model_col_names($model);
     ### inside select_records: $self->{'_order_by'}
-    my $order_by = $self->{'_order_by'};
     if ($user_col ne 'id') {
         my $found = 0;
         for my $col (@$cols) {
@@ -744,20 +763,7 @@ sub select_records {
     } else {
         $select->select($user_col);
     }
-    if (defined $order_by){
-        die "No column found in order_by.\n" unless $order_by;
-        my @sub_order_by = split(",", $order_by);
-        if (!@sub_order_by and $order_by) {
-            die "Invalid order_by value: $order_by\n";
-        }
-        foreach my $item (@sub_order_by){
-            ### $item
-            my ($col, $dir) = split(":", $item, 2);
-            die "No column \"$col\" found in order_by.\n" unless $self->has_model_col($model,$col);
-            die "Invalid order_by direction: $dir\n" if (defined $dir && $dir !~ /^(asc|desc)$/i);
-            $select->order_by($col => $dir || ());
-        }
-    }
+    $self->process_order_by($select, $model, $user_col);
     ### $val
     my $res = $Backend->select("$select", { use_hash => 1 });
     if (!$res and !ref $res) { return []; }
@@ -775,17 +781,7 @@ sub select_all_records {
 
     my $table = lc($model);
     my $select = SQL::Select->new('*')->from($table);
-    if (defined $order_by){
-        die "No column found in order_by.\n" unless $order_by;
-    my @sub_order_by = split(",", $order_by);
-    foreach my $item (@sub_order_by){
-    ### $item
-        my ($col, $dir) = split(":", $item);
-        die "No column \"$col\" found in order_by.\n" unless $self->has_model_col($model,$col);
-        die "wrong sorting direction! must be asc or desc" if (defined $dir && $dir !~ /^(asc|desc)$/i);
-        (defined $dir) ? $select->order_by($col,$dir) : $select->order_by($col);
-    }
-    }
+    $self->process_order_by($select, $model);
     my $list = $Backend->select("$select", { use_hash => 1 });
     if (!$list or !ref $list) { return []; }
     return $list;
