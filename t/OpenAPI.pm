@@ -7,13 +7,13 @@ use LWP::UserAgent;
 use Test::LongString;
 use Encode 'from_to';
 
-our @EXPORT = qw(init run_tests run_test);
+our @EXPORT = qw(init do_request run_tests run_test);
 
 use Benchmark::Timer;
 my $timer = Benchmark::Timer->new();
 
 my $ua = LWP::UserAgent->new;
-my $host = $ENV{'REMOTE_OPENAPI'} || 'http://localhost';
+our $host = $ENV{'REMOTE_OPENAPI'} || 'http://localhost';
 $host = "http://$host" if $host !~ m{^http://};
 
 sub init {

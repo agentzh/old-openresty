@@ -92,3 +92,19 @@ GET /=/model/Foo/~/~?order_by=name:asc,age:desc
 --- response
 [{"name":"Audrey","id":"7","age":"17"},{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"3","age":"15"},{"name":"Henry","id":"5","age":"23"},{"name":"Henry","id":"4","age":"19"},{"name":"Larry","id":"6","age":"59"},{"name":"Marry","id":"1","age":"21"}]
 
+
+
+=== TEST 10: where name='Bob' order by age
+--- request
+GET /=/model/Foo/name/Bob?order_by=age
+--- response
+[{"name":"Bob","id":"2","age":"15"},{"name":"Bob","id":"2","age":"32"}]
+
+
+
+=== TEST 11: where name='Bob' order by age, desc
+--- request
+GET /=/model/Foo/name/Bob?order_by=age
+--- response
+[{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"2","age":"15"}]
+
