@@ -85,6 +85,11 @@ sub init {
 
     my $var = $cgi->url_param('var');
     $self->{'_var'} = $var;
+    #
+    # get order by clause
+    #
+    my $order_by = $cgi->url_param('order_by');
+    $self->{'_order_by'} = $order_by;
 
     my $http_meth = $ENV{'REQUEST_METHOD'};
     #$self->{'_method'} = $http_meth;
@@ -373,6 +378,7 @@ sub GET_model_row {
     my $model  = $bits->[1];
     my $column = $bits->[2];
     my $value  = $bits->[3];
+    
     if ($column ne '~' and $value ne '~') {
         return $self->select_records($model, $column, $value);
     }
@@ -694,6 +700,7 @@ sub select_records {
     my ($self, $model, $user_col, $val) = @_;
     my $table = lc($model);
     my $cols = $self->get_model_col_names($model);
+    my $order_by = $self->{'_order_by'};
     if ($user_col ne 'id') {
         my $found = 0;
         for my $col (@$cols) {
@@ -708,6 +715,15 @@ sub select_records {
                ->where($user_col => Q($val));
     } else {
         $select->select($user_col);
+    }
+    if (defined $order_by){
+	
+	my @sub_order_by = split(",", $order_by);
+	foreach my $item (@sub_order_by){
+	    my ($col, $dir) = split(":", $item);
+	    die "wrong sorting direction! must be asc or desc" if (defined $dir && $dir !~ /^(asc|desc)$/i);
+	    $select->order_by($col=>$dir);
+	}
     }
     ### $val
     my $res = $Backend->select("$select", { use_hash => 1 });
