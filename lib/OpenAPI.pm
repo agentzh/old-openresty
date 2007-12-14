@@ -3,7 +3,7 @@ package OpenAPI;
 use strict;
 use warnings;
 
-use Smart::Comments;
+#use Smart::Comments;
 use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
@@ -742,7 +742,8 @@ sub select_records {
 	    my ($col, $dir) = split(":", $item);
 	    die "No column \"$col\" found in order_by.\n" unless $self->has_model_col($model,$col);
 	    die "wrong sorting direction! must be asc or desc" if (defined $dir && $dir !~ /^(asc|desc)$/i);
-	    $select->order_by($col,$dir);
+	    
+	    (defined $dir) ? $select->order_by($col,$dir) : $select->order_by($col);
 	}
     }
     ### $val
@@ -770,7 +771,7 @@ sub select_all_records {
 	    my ($col, $dir) = split(":", $item);
 	    die "No column \"$col\" found in order_by.\n" unless $self->has_model_col($model,$col);
 	    die "wrong sorting direction! must be asc or desc" if (defined $dir && $dir !~ /^(asc|desc)$/i);
-	    $select->order_by($col,$dir);
+	    (defined $dir) ? $select->order_by($col,$dir) : $select->order_by($col);
 	}
     }
     my $list = $Backend->select("$select", { use_hash => 1 });
