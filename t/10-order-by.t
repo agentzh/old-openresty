@@ -46,7 +46,7 @@ POST /=/model/Foo/~/~
 
 
 
-=== TEST 4: Order by Marry
+=== TEST 4: Order by name asc, age desc
 --- request
 GET /=/model/Foo/~/~?order_by=name:asc,age:desc
 --- response
