@@ -8,6 +8,7 @@ perl_version        ('5.006001');
 all_from            ('lib/OpenAPI.pm');
 
 requires            ('CGI' => '3.31');
+requires            ('FCGI');
 requires            ('YAML::Syck' => '0.99');
 requires            ('Lingua::EN::Inflect' => '1.89');
 requires            ('Smart::Comments');
