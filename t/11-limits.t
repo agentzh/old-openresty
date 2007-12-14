@@ -1,4 +1,4 @@
-use t::OpenAPI;
+use t::OpenAPI 'no_plan';
 #use Smart::Comments;
 use constant {
     MODEL_LIMIT => 10,
@@ -8,7 +8,6 @@ use constant {
     POST_LEN_LIMIT => 10_000,
     PUT_LEN_LIMIT => 10_000,
 };
-use Test::More 'no_plan';
 
 my $host = $t::OpenAPI::host;
 my $res = do_request('DELETE', $host.'/=/model', undef, undef);

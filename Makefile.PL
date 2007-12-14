@@ -24,5 +24,5 @@ build_requires      ('Benchmark::Timer');
 build_requires      ('Hash::Merge');
 
 auto_install();
-#WriteAll();
+WriteAll();
 
