@@ -12,7 +12,7 @@ sub new {
         where => [],
         limit => undef,
         offset => undef,
-        order_by => undef,
+        order_by => [],
     }, $class;
 }
 
@@ -40,21 +40,21 @@ sub offset {
 
 sub order_by {
     my $self = shift;
-    $self->{order_by} = join(" ", @_);
+    push @{ $self->{order_by} }, join(" ", @_);
     $self;
 }
 
 sub generate {
     my $self = shift;
     my $sql;
-    local $" = ',';
+    local $" = ', ';
     $sql .= "select @{ $self->{select} }
 from @{ $self->{from} }";
     my @where = @{ $self->{where} };
     my $where = join ' and ', map { join(' ', @$_) } @where;
     if ($where) { $sql .= "\nwhere $where" }
     my $order_by = $self->{order_by};
-    if ($order_by) { $sql .= "\norder by $order_by"; }
+    if (@$order_by) { $sql .= "\norder by @$order_by"; }
     my $limit = $self->{limit};
     if ($limit) { $sql .= "\nlimit $limit"; }
     my $offset = $self->{offset};
