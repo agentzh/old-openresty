@@ -53,7 +53,7 @@ POST /=/model/Bookmark.js
 
 
 
-=== TEST5: Create a model with illegal name
+=== TEST5: Create a model with illegal name, test 1st
 --- request
 POST /=/model/1_Bookmark.js
 {
@@ -68,7 +68,7 @@ POST /=/model/1_Bookmark.js
 {"success":0,"error":"Bad model name: \"1_Bookmark\""}
 
 
-=== TEST5: Create a model with illegal name
+=== TEST5: Create a model with illegal name, test 2nd
 --- request
 POST /=/model/_Bookmark.js
 {
@@ -84,7 +84,7 @@ POST /=/model/_Bookmark.js
 
 
 
-=== TEST5: Create a model with illegal name
+=== TEST5: Create a model with illegal name, test 3rd
 --- request
 POST /=/model/Bookmark.chen.js
 {
@@ -100,7 +100,7 @@ POST /=/model/Bookmark.chen.js
 
 
 
-=== TEST5: Create a model with illegal name
+=== TEST5: Create a model with illegal name, test 4th
 --- request
 POST /=/model/Bookmark-chen.js
 {
@@ -122,7 +122,6 @@ POST /=/model/Bookmark
 {
     description: "我的书签",
     columns: [
-        { name: "id", type: "serial", label: "ID" },
         { name: "title", label: "标题" },
         { name: "url", label: "网址" }
     ]
@@ -132,6 +131,7 @@ POST /=/model/Bookmark
 
 
 
+=== TEST6: Delete newly created model
 --- request
 DELETE /=/model/Bookmark
 --- response
@@ -145,7 +145,6 @@ POST /=/model/bookmark.js
 {
     description: "我的书签",
     columns: [
-        { name: "id", type: "serial", label: "ID" },
         { name: "title", label: "标题" },
         { name: "url", label: "网址" }
     ]
@@ -155,6 +154,7 @@ POST /=/model/bookmark.js
 
 
 
+=== TEST7: Delete newly created model with different capital case
 --- request
 DELETE /=/model/bookmark
 --- response
@@ -168,7 +168,7 @@ POST /=/model/Bookmark.js
 {
     description: "我的书签",
     columns: [
-        { name: "_id", type: "serial", label: "ID" },
+        { name: "_id", type: "serial", label: "ID" }
     ]
 }
 --- response
@@ -182,7 +182,7 @@ POST /=/model/Bookmark.js
 {
     description: "我的书签",
     columns: [
-        { name: "id.chen", type: "serial", label: "ID" },
+        { name: "id.chen", type: "serial", label: "ID" }
     ]
 }
 --- response
@@ -196,7 +196,7 @@ POST /=/model/bookmark.js
 {
     description: "我的书签",
     columns: [
-        { name: "1_id", type: "serial", label: "ID" },
+        { name: "1_id", type: "serial", label: "ID" }
     ]
 }
 --- response
@@ -210,7 +210,7 @@ POST /=/model/bookmark.js
 {
     description: "我的书签",
     columns: [
-        { name: "id-chen", type: "serial", label: "ID" },
+        { name: "id-chen", type: "serial", label: "ID" }
     ]
 }
 --- response
@@ -224,7 +224,7 @@ POST /=/model/bookmark.js
 {
     description: "我的书签",
     columns: [
-        { name: "ID", type: "serial", label: "ID" },
+        { name: "ID", type: "serial", label: "ID" }
     ]
 }
 --- response
@@ -232,26 +232,28 @@ POST /=/model/bookmark.js
 
 
 
+=== TEST9: Delete newly created model
 --- request
-DELETE /=/model/Bookmark
+DELETE /=/model/bookmark
 --- response
 {"success":1}
 
 
 
-=== TEST8: Create a model with such columns writing
+=== TEST10: Create a model with such columns writing
 --- request
-POST /=/model/bookmark.js
+POST /=/model/Bookmark.js
 {
     description: "我的书签",
-    columns: { name: "id_chen", type: "serial", label: "ID" },
+    columns: { name: "id_chen", type: "serial", label: "ID" }
 }
 --- response
 {"success":1}
  
 
 
+=== TEST10: Delete newly created model
 --- request
-DELETE /=/model/Bookmark
+DELETE /=/model/Bookmark.js
 --- response
 {"success":1}
