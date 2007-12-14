@@ -1,5 +1,12 @@
 use t::OpenAPI;
 
+=pod
+
+XXX TODO:
+* Add tests for model list and column list.
+
+=cut
+
 plan tests => 3 * blocks();
 
 run_tests;
