@@ -1,4 +1,7 @@
-First of all, please run "perl Makefile.PL" to check missing dependencies.
+First of all, please run "perl Makefile.PL" to check missing dependencies:
+
+perl Makefile.PL
+make -f Makefile  # This will install missing dependencies
 
 To run "make test" or "make debug", you need to have lighttpd and postgres installed.
 Also you need to create an empty database named "test" and also make user
