@@ -698,23 +698,6 @@ XXX needs work...
 
 当后缀名未指定时，缺省为 C<.json>。
 
-在绝大多数情况下，服务器返回的都为列表型数据。当数据量较大，出现分页的时候，列表数据的最后一个元素总为一特殊的结构：
-
-    { name: "_nextpage", src: "/=/url/to/the/next/page" }
-
-一个例子是：
-
-    GET /=/model/Bookmark/id/~?page=2
-
-    [
-        { id: 11 },
-        { id: 12 },
-        { id: 13 },
-        ...
-        { id: 20 },
-        { type: "meta", next: "/=/model/Bookmark/idpage=3" }
-    ]
-
 =head2 Parameters
 
 =over
@@ -726,16 +709,6 @@ XXX needs work...
 示例：
 
     GET /=/model/Bookmark/title/Yahoo?charset=GBK
-
-=item page
-
-用于指定页码，从 0 起始。缺省为 1.
-
-示例：
-
-    GET /=/model/Bookmark/title/Yahoo?page=4
-
-超出页码范围时，返回空列表.
 
 =item offset
 
