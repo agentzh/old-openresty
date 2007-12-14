@@ -5,7 +5,7 @@ name                ('OpenAPI');
 license             ('perl');
 author              ('Agent Zhang <agentzh@yahoo.cn>');
 perl_version        ('5.006001');
-all_from            ('OpenAPI.pm');
+all_from            ('lib/OpenAPI.pm');
 
 requires            ('CGI' => '3.31');
 requires            ('YAML::Syck' => '0.99');
