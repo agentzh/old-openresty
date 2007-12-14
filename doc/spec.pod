@@ -762,14 +762,16 @@ XXX needs work...
 
 指定排序项（可指定多个，以逗号分隔). 例如：
 
-    GET /=/model/Bookmark/title/Yahoo?op=like&order_by=title,url
+    GET /=/model/Bookmark/title/Yahoo?op=like&order_by=title:asc,url:desc
 
 在语义上近似于下面这条 SQL 语句：
 
     select *
     from bookmarks
     where title like "Yahoo"
-    order by title, url
+    order by title asc , url desc
+
+升降序的缺省是 SQL 标准的缺省：ASC。当字段中无冒号分隔的升降序声明的时候，就是升序。
 
 =item user
 
