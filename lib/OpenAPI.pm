@@ -3,7 +3,7 @@ package OpenAPI;
 use strict;
 use warnings;
 
-#use Smart::Comments;
+use Smart::Comments;
 use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
@@ -20,6 +20,14 @@ use OpenAPI::Backend;
 #use encoding "utf8";
 
 #$YAML::Syck::ImplicitBinary = 1;
+use constant {
+    MODEL_LIMIT => 40,
+    COLUMN_LIMIT => 40,
+    RECORD_LIMIT => 100,
+    INSERT_LIMIT => 20,
+    POST_LEN_LIMIT => 10_000,
+    PUT_LEN_LIMIT => 10_000,
+};
 
 our $Backend;
 
@@ -441,6 +449,11 @@ sub get_tables {
     return $Backend->select("$select");
 }
 
+sub model_count {
+    my $self = shift;
+    return $self->select("select count(*) from _models")->[0][0];
+}
+
 sub get_models {
     my $self = shift;
     my $select = SQL::Select->new('name','description')->from('_models');
@@ -498,6 +511,9 @@ sub add_user {
 
 sub new_model {
     my ($self, $data) = @_;
+    my $num = $self->model_count;
+    if ($num > 
+    ### $num
     my $model = delete $data->{name} or
         die "No 'name' field found for the new model\n";
     my $table = lc($model);

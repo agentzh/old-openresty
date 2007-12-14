@@ -1,8 +1,9 @@
 use t::OpenAPI 'no_plan';
 #use Smart::Comments;
+use JSON::Syck 'Dump';
 use constant {
-    MODEL_LIMIT => 10,
-    COLUMN_LIMIT => 10,
+    MODEL_LIMIT => 40,
+    COLUMN_LIMIT => 40,
     RECORD_LIMIT => 100,
     INSERT_LIMIT => 20,
     POST_LEN_LIMIT => 10_000,
@@ -30,15 +31,16 @@ for (1..MODEL_LIMIT + 1) {
 }
 
 # column limit test
+my @cols;
+my $data = { description => 'blah', columns => \@cols };
 my $cols = '{name:"Foo1",label: "Foo1"}';
-for (2..COLUMN_LIMIT - 1) {
-    my $col_name = 'Foo'.$_;
-	$cols .= ",{name:\"".$col_name."\",label: \"".$col_name."\"}";
+for (1..COLUMN_LIMIT - 1) {
+    push @cols, { name => "Foo$_", label => 'abc' };
 }
 
 ## 1. create a mode first (column number: COLUMN_LIMIT - 1)
 my $url = '/=/model/foos';
-my $body = "{description:\"blah\",columns:[".$cols."]}";
+my $body = Dump($data);
 $res = do_request('POST', $host.$url, $body, undef);
 
 my $cols_bak = $cols;
