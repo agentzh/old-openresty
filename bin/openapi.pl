@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 
+#use Smart::Comments;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use OpenAPI;
@@ -11,7 +12,6 @@ use CGI::Fast ();
 use Data::Dumper;
 #use XML::Simple qw(:strict);
 use FindBin;
-use Smart::Comments;
 #use Perl6::Say;
 
 $CGI::POST_MAX = 1024 * 1000;  # max 1000K posts

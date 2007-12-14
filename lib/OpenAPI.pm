@@ -3,7 +3,7 @@ package OpenAPI;
 use strict;
 use warnings;
 
-use Smart::Comments;
+#use Smart::Comments;
 use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
@@ -504,6 +504,7 @@ sub new_model {
         die "Malformed data. Hash expected.\n";
     }
     my $columns = delete $data->{columns};
+    if (_HASH($columns)) { $columns = [$columns] }
     if ($columns && !_ARRAY0($columns)) {
         die "Invalid 'columns' value: ", $Dumper->($columns), "\n";
     } elsif (!$columns) {
@@ -536,12 +537,13 @@ sub new_model {
         my $name = $col->{name} or
             die "No 'name' specified for the " . ORD($i) . " column.\n";
         _STRING($name) or die "Bad column name: ", $Dumper->($name), "\n";
+        _IDENT($name) or die "Bad column name: $name\n";
         if (length($name) >= 32) {
             die "Column name too long: $name\n";
         }
         #$name = $name;
         # discard 'id' column
-        if ($name eq 'id') {
+        if (lc($name) eq 'id') {
             $found_id = 1;
             next;
         }

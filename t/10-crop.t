@@ -16,9 +16,9 @@ DELETE /=/model.js
 
 === TEST 2: Delete non-existing models
 --- request
-GET /=/model.js
+DELETE /=/model/Blah.js
 --- response
-{"success":0}
+{"success":0,"error":"Model \"Blah\" not found."}
 
 
 
@@ -173,7 +173,7 @@ POST /=/model/Bookmark.js
     ]
 }
 --- response
-{"success":0}
+{"success":0,"error":"Bad column name: _id"}
 
 
 
@@ -187,7 +187,7 @@ POST /=/model/Bookmark.js
     ]
 }
 --- response
-{"success":0}
+{"success":0,"error":"Bad column name: id.chen"}
 
 
 
@@ -201,7 +201,7 @@ POST /=/model/bookmark.js
     ]
 }
 --- response
-{"success":0}
+{"success":0,"error":"Bad column name: 1_id"}
 
 
 
@@ -215,7 +215,7 @@ POST /=/model/bookmark.js
     ]
 }
 --- response
-{"success":0}
+{"success":0,"error":"Bad column name: id-chen"}
 
 
 
@@ -259,3 +259,4 @@ POST /=/model/Bookmark.js
 DELETE /=/model/Bookmark.js
 --- response
 {"success":1}
+
