@@ -59,14 +59,13 @@ GET /=/model/Foo/~/~
 GET /=/model/Foo/~/~?order_by=name
 --- response
 [{"name":"Audrey","id":"7","age":"17"},{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"3","age":"15"},{"name":"Henry","id":"4","age":"19"},{"name":"Henry","id":"5","age":"23"},{"name":"Larry","id":"6","age":"59"},{"name":"Marry","id":"1","age":"21"}]
---- LAST
 
 
 === TEST 6: Order by name (asc by default)
 --- request
 GET /=/model/Foo/~/~?order_by=name:desc
 --- response
-[{"name":"Marry","id":"1","age":"21"},{"name":"Larry","id":"6","age":"59"},{"name":"Henry","id":"5","age":"23"},{"name":"Henry","id":"4","age":"19"},{"name":"Bob","id":"3","age":"15"},{"name":"Bob","id":"2","age":"32"},{"name":"Audrey","id":"7","age":"17"}]
+[{"name":"Marry","id":"1","age":"21"},{"name":"Larry","id":"6","age":"59"},{"name":"Henry","id":"4","age":"19"},{"name":"Henry","id":"5","age":"23"},{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"3","age":"15"},{"name":"Audrey","id":"7","age":"17"}]
 
 
 
@@ -106,15 +105,15 @@ GET /=/model/Foo/~/~?order_by=name,age:desc
 --- request
 GET /=/model/Foo/name/Bob?order_by=age
 --- response
-[{"name":"Bob","id":"2","age":"15"},{"name":"Bob","id":"2","age":"32"}]
+[{"name":"Bob","id":"3","age":"15"},{"name":"Bob","id":"2","age":"32"}]
 
 
 
 === TEST 12: where name='Bob' order by age, desc
 --- request
-GET /=/model/Foo/name/Bob?order_by=age
+GET /=/model/Foo/name/Bob?order_by=age:desc
 --- response
-[{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"2","age":"15"}]
+[{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"3","age":"15"}]
 
 
 
@@ -122,7 +121,7 @@ GET /=/model/Foo/name/Bob?order_by=age
 --- request
 GET /=/model/Foo/name/Bob?order_by=null
 --- response
-{"success":0,"error":"Column \"null\" not found in order_by."}
+{"success":0,"error":"No column \"null\" found in order_by."}
 
 
 
@@ -131,7 +130,7 @@ GET /=/model/Foo/name/Bob?order_by=null
 GET /=/model/Foo/name/Bob?order_by=
 --- response
 {"success":0,"error":"No column found in order_by."}
-
+--- LAST
 
 
 === TEST 15: order by no columns

@@ -734,12 +734,13 @@ sub select_records {
         $select->select($user_col);
     }
     if (defined $order_by){
-	
+        die "No column found in order_by.\n" unless $order_by;
+		
 	my @sub_order_by = split(",", $order_by);
 	foreach my $item (@sub_order_by){
 	### $item
 	    my ($col, $dir) = split(":", $item);
-	    die "No column found in order_by." if ($col eq '');
+	    die "No column \"$col\" found in order_by.\n" unless $self->has_model_col($model,$col);
 	    die "wrong sorting direction! must be asc or desc" if (defined $dir && $dir !~ /^(asc|desc)$/i);
 	    $select->order_by($col,$dir);
 	}
@@ -748,6 +749,33 @@ sub select_records {
     my $res = $Backend->select("$select", { use_hash => 1 });
     if (!$res and !ref $res) { return []; }
     return $res;
+}
+
+sub select_all_records {
+    my ($self, $model) = @_;
+    my $order_by = $self->{'_order_by'};
+    ### inside select_all_records: $self->{'_order_by'}
+
+    if (!$self->has_model($model)) {
+        die "Model \"$model\" not found.\n";
+    }
+
+    my $table = lc($model);
+    my $select = SQL::Select->new('*')->from($table);
+    if (defined $order_by){
+        die "No column found in order_by.\n" unless $order_by;
+	my @sub_order_by = split(",", $order_by);
+	foreach my $item (@sub_order_by){
+	### $item
+	    my ($col, $dir) = split(":", $item);
+	    die "No column \"$col\" found in order_by.\n" unless $self->has_model_col($model,$col);
+	    die "wrong sorting direction! must be asc or desc" if (defined $dir && $dir !~ /^(asc|desc)$/i);
+	    $select->order_by($col,$dir);
+	}
+    }
+    my $list = $Backend->select("$select", { use_hash => 1 });
+    if (!$list or !ref $list) { return []; }
+    return $list;
 }
 
 sub delete_all_records {
@@ -816,32 +844,6 @@ sub update_records {
     }
     my $retval = $Backend->do("$update") + 0;
     return {success => $retval ? 1 : 0,rows_affected => $retval};
-}
-
-sub select_all_records {
-    my ($self, $model) = @_;
-    ### inside select_all_records: $self->{'_order_by'}
-    my $order_by = $self->{'_order_by'};
-
-    if (!$self->has_model($model)) {
-        die "Model \"$model\" not found.\n";
-    }
-
-    my $table = lc($model);
-    my $select = SQL::Select->new('*')->from($table);
-    if (defined $order_by){
-	my @sub_order_by = split(",", $order_by);
-	foreach my $item (@sub_order_by){
-	### $item
-	    my ($col, $dir) = split(":", $item);
-	    die "No column found in order_by." if ($col eq '');
-	    die "wrong sorting direction! must be asc or desc" if (defined $dir && $dir !~ /^(asc|desc)$/i);
-	    $select->order_by($col,$dir);
-	}
-    }
-    my $list = $Backend->select("$select", { use_hash => 1 });
-    if (!$list or !ref $list) { return []; }
-    return $list;
 }
 
 sub get_putdata {
