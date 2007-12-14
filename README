@@ -52,3 +52,11 @@ Or use prove to test a remote OpenAPI server, for example:
 where 10.62.136.86 is the IP (or hostname or URL) of your OpenAPI server
 being tested.
 
+To test the Pg cluster rather than the desktop Pg, replace the following line in your lighttpd.conf
+
+        "bin-environment" => ( "OPENAPI_BACKEND" => "Pg", "OPENAPI_URL_PREFIX" => "" ),
+
+with
+
+        "bin-environment" => ( "OPENAPI_BACKEND" => "PgFarm", "OPENAPI_URL_PREFIX" => "" ),
+
