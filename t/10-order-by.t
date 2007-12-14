@@ -126,7 +126,15 @@ GET /=/model/Foo/name/Bob?order_by=null
 
 
 
-=== TEST 14: order by an invalid column
+=== TEST 14: order by no columns
+--- request
+GET /=/model/Foo/name/Bob?order_by=
+--- response
+{"success":0,"error":"No column found in order_by."}
+
+
+
+=== TEST 15: order by no columns
 --- request
 GET /=/model/Foo/name/Bob?order_by=,
 --- response
