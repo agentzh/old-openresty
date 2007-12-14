@@ -37,7 +37,7 @@ POST /=/model/Bookmark.js
 
 
 
-=== TEST4: Create a model without column_label
+=== TEST 4: Create a model without column_label
 --- request
 POST /=/model/Bookmark.js
 {
@@ -53,7 +53,7 @@ POST /=/model/Bookmark.js
 
 
 
-=== TEST5: Create a model with illegal name, test 1st
+=== TEST 5: Create a model with illegal name, test 1st
 --- request
 POST /=/model/1_Bookmark.js
 {
@@ -68,7 +68,8 @@ POST /=/model/1_Bookmark.js
 {"success":0,"error":"Bad model name: \"1_Bookmark\""}
 
 
-=== TEST5: Create a model with illegal name, test 2nd
+
+=== TEST 6: Create a model with illegal name, test 2nd
 --- request
 POST /=/model/_Bookmark.js
 {
@@ -84,7 +85,7 @@ POST /=/model/_Bookmark.js
 
 
 
-=== TEST5: Create a model with illegal name, test 3rd
+=== TEST 7: Create a model with illegal name, test 3rd
 --- request
 POST /=/model/Bookmark.chen.js
 {
@@ -100,7 +101,7 @@ POST /=/model/Bookmark.chen.js
 
 
 
-=== TEST5: Create a model with illegal name, test 4th
+=== TEST 8: Create a model with illegal name, test 4th
 --- request
 POST /=/model/Bookmark-chen.js
 {
@@ -116,7 +117,7 @@ POST /=/model/Bookmark-chen.js
 
 
 
-=== TEST6: Create a model with name described in Manual
+=== TEST 9: Create a model with name described in Manual
 --- request
 POST /=/model/Bookmark
 {
@@ -131,7 +132,7 @@ POST /=/model/Bookmark
 
 
 
-=== TEST6: Delete newly created model
+=== TEST 10: Delete newly created model
 --- request
 DELETE /=/model/Bookmark
 --- response
@@ -139,7 +140,7 @@ DELETE /=/model/Bookmark
 
 
 
-=== TEST7: Create a model with name starting with lower case
+=== TEST 11: Create a model with name starting with lower case
 --- request
 POST /=/model/bookmark.js
 {
@@ -154,7 +155,7 @@ POST /=/model/bookmark.js
 
 
 
-=== TEST7: Delete newly created model with different capital case
+=== TEST 12: Delete newly created model with different capital case
 --- request
 DELETE /=/model/bookmark
 --- response
@@ -162,7 +163,7 @@ DELETE /=/model/bookmark
 
 
 
-=== TEST8: Create a model with illegal column name
+=== TEST 13: Create a model with illegal column name
 --- request
 POST /=/model/Bookmark.js
 {
@@ -176,7 +177,7 @@ POST /=/model/Bookmark.js
 
 
 
-=== TEST8: Create a model with illegal column name
+=== TEST 14: Create a model with illegal column name
 --- request
 POST /=/model/Bookmark.js
 {
@@ -190,7 +191,7 @@ POST /=/model/Bookmark.js
 
 
 
-=== TEST8: Create a model with illegal column name
+=== TEST 15: Create a model with illegal column name
 --- request
 POST /=/model/bookmark.js
 {
@@ -204,7 +205,7 @@ POST /=/model/bookmark.js
 
 
 
-=== TEST8: Create a model with illegal column name
+=== TEST 16: Create a model with illegal column name
 --- request
 POST /=/model/bookmark.js
 {
@@ -218,7 +219,7 @@ POST /=/model/bookmark.js
 
 
 
-=== TEST9: Create a model with column name starting with upper case
+=== TEST 17: Create a model with column name starting with upper case
 --- request
 POST /=/model/bookmark.js
 {
@@ -232,7 +233,7 @@ POST /=/model/bookmark.js
 
 
 
-=== TEST9: Delete newly created model
+=== TEST 18: Delete newly created model
 --- request
 DELETE /=/model/bookmark
 --- response
@@ -240,7 +241,7 @@ DELETE /=/model/bookmark
 
 
 
-=== TEST10: Create a model with such columns writing
+=== TEST 19: Create a model with such columns writing
 --- request
 POST /=/model/Bookmark.js
 {
@@ -252,7 +253,8 @@ POST /=/model/Bookmark.js
  
 
 
-=== TEST10: Delete newly created model
+
+=== TEST 20: Delete newly created model
 --- request
 DELETE /=/model/Bookmark.js
 --- response
