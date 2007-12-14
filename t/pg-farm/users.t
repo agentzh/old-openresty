@@ -14,31 +14,43 @@ use constant {
 
 my $backend = OpenAPI::Backend::PgFarm->new({ RaiseError => 0 });
 ok $backend, "database handle okay";
+
+=pod
 if ($backend->has_user("agentz")) {
     #    $backend->do("drop table test cascade");
     $backend->drop_user("agentz");
 }
+=cut
 
 my @userdb;
 my %cnt;
 my $res;
 for (my $i = 0 ; $i < TRIALS; $i ++) {
     my $name = sprintf "%s%d", "t_", int(rand()*10000);
-	
+
+=pod
     eval {
         $backend->drop_user($name);
     };
-    $res = $backend->add_user($name);
+=cut
+
     $res = $backend->has_user($name);
-    if (! $cnt{$res}) {$cnt{$res} = 0; }
-    $cnt{$res} ++; 
-	warn dump($name);
-    push @userdb, $name;
+    if (!defined $res) {
+        $res = $backend->add_user($name);
+        $res = $backend->has_user($name);
+        if (! $cnt{$res}) {$cnt{$res} = 0; }
+        $cnt{$res} ++; 
+	    warn dump($name);
+        push @userdb, $name;
+    } else {
+        warn "user $name is exist";
+    } 
 }
 
-#warn dump(\%cnt);
+warn dump(\%cnt);
 is scalar(keys %cnt), NUM_OF_NODES, 'all of the nodes visited';
 while (my $b = pop @userdb) {
+    warn "$b...";
     $res = $backend->drop_user($b);
 }
 
