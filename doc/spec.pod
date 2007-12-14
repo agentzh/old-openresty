@@ -748,6 +748,16 @@ XXX needs work...
 
 超出页码范围时，返回空列表.
 
+=item count
+
+用于指定每页的结果数，缺省为 10。最大值为 1000。
+
+示例：
+
+   GET /=/model/Postbook/body/People?count=20
+
+如果请求的 count 大于零小于10，则返回 10 条，如果请求的结果数大于 1000，则返回错误（待定）。
+
 =item order_by
 
 指定排序项（可指定多个，以逗号分隔). 例如：
