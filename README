@@ -41,3 +41,11 @@ fastcgi.server = (
 
 # END
 
+It's also possible to debug a simple .t file, for instance,
+
+    make t/01-sanity.t
+
+Or use prove to test a remote OpenAPI server:
+
+    REMOTE_OPENAPI=/url/to/your/server prove t/0*.t
+
