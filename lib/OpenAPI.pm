@@ -85,12 +85,7 @@ sub init {
 
     my $var = $cgi->url_param('var');
     $self->{'_var'} = $var;
-    #
-    # get order by clause
-    #
-    my $order_by = $cgi->url_param('order_by');
-    $self->{'_order_by'} = $order_by;
-    ### the obj var is: $self->{'_order_by'}
+
 
     my $http_meth = $ENV{'REQUEST_METHOD'};
     #$self->{'_method'} = $http_meth;
@@ -736,22 +731,51 @@ sub insert_record {
 
 sub process_order_by {
     my ($self, $select, $model) = @_;
-    my $order_by = $self->{'_order_by'};
-    if (defined $order_by){
-        die "No column found in order_by.\n" unless $order_by;
-        my @sub_order_by = split(",", $order_by);
-        if (!@sub_order_by and $order_by) {
-            die "Invalid order_by value: $order_by\n";
-        }
-        foreach my $item (@sub_order_by){
-            ### $item
-            my ($col, $dir) = split(":", $item, 2);
-            die "No column \"$col\" found in order_by.\n" unless $self->has_model_col($model, $col);
-            die "Invalid order_by direction: $dir\n" if (defined $dir && $dir !~ /^(asc|desc)$/i);
-            $select->order_by($col => $dir || ());
-        }
+    my $order_by = $self->{_cgi}->url_param('order_by');
+    return unless defined $order_by;
+    die "No column found in order_by.\n" if $order_by eq '';
+    my @sub_order_by = split ',', $order_by;
+    if (!@sub_order_by and $order_by) {
+        die "Invalid order_by value: $order_by\n";
     }
+    foreach my $item (@sub_order_by){
+        ### $item
+        my ($col, $dir) = split ':', $item, 2;
+        die "No column \"$col\" found in order_by.\n"
+            unless $self->has_model_col($model, $col);
+        $dir = lc($dir) if $dir;
+        die "Invalid order_by direction: $dir\n"
+            if $dir and $dir ne 'asc' and $dir ne 'desc';
+        $select->order_by($col => $dir || ());
+    }
+}
 
+sub process_offset {
+    my ($self, $select) = @_;
+    my $offset = $self->{_cgi}->url_param('offset');
+    return unless defined $offset;
+    $offset ||= 0;
+    if ($offset !~ /^\d+$/) {
+        die "Invalid value for offset: $offset\n";
+    }
+    $select->offset($offset);
+}
+
+sub process_limit {
+    my ($self, $select) = @_;
+    my $limit = $self->{_cgi}->url_param('limit');
+    if (!defined $limit) {
+        $select->limit($MAX_SELECT_LIMIT);
+        return;
+    }
+    $limit ||= 0;
+    if ($limit !~ /^\d+$/) {
+        die "Invalid value for the limit param: $limit\n";
+    }
+    if ($limit > $MAX_SELECT_LIMIT) {
+        die "Value too large for the limit param: $limit\n";
+    }
+    $select->limit($limit);
 }
 
 sub select_records {
@@ -775,6 +799,8 @@ sub select_records {
         $select->select($user_col);
     }
     $self->process_order_by($select, $model, $user_col);
+    $self->process_offset($select);
+    $self->process_limit($select);
     ### $val
     my $res = $Backend->select("$select", { use_hash => 1 });
     if (!$res and !ref $res) { return []; }
@@ -792,7 +818,11 @@ sub select_all_records {
 
     my $table = lc($model);
     my $select = SQL::Select->new('*')->from($table);
+
     $self->process_order_by($select, $model);
+    $self->process_offset($select);
+    $self->process_limit($select);
+
     my $list = $Backend->select("$select", { use_hash => 1 });
     if (!$list or !ref $list) { return []; }
     return $list;

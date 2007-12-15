@@ -158,7 +158,23 @@ GET /=/model/Foo/~/~?order_by=name,age:desc
 
 
 
-=== TEST 11: where name='Bob' order by age
+=== TEST 11: Order by name, age desc
+--- request
+GET /=/model/Foo/~/~?order_by=name,age:desc,id
+--- response
+[
+    {"name":"Audrey","id":"7","age":"17"},
+    {"name":"Bob","id":"2","age":"32"},
+    {"name":"Bob","id":"3","age":"15"},
+    {"name":"Henry","id":"5","age":"23"},
+    {"name":"Henry","id":"4","age":"19"},
+    {"name":"Larry","id":"6","age":"59"},
+    {"name":"Marry","id":"1","age":"21"}
+]
+
+
+
+=== TEST 12: where name='Bob' order by age
 --- request
 GET /=/model/Foo/name/Bob?order_by=age
 --- response
@@ -169,7 +185,7 @@ GET /=/model/Foo/name/Bob?order_by=age
 
 
 
-=== TEST 12: where name='Bob' order by age desc
+=== TEST 13: where name='Bob' order by age desc
 --- request
 GET /=/model/Foo/name/Bob?order_by=age:desc
 --- response
@@ -180,7 +196,7 @@ GET /=/model/Foo/name/Bob?order_by=age:desc
 
 
 
-=== TEST 13: order by an invalid column
+=== TEST 14: order by an invalid column
 --- request
 GET /=/model/Foo/name/Bob?order_by=null
 --- response
@@ -188,7 +204,7 @@ GET /=/model/Foo/name/Bob?order_by=null
 
 
 
-=== TEST 14: order by no columns
+=== TEST 15: order by no columns
 --- request
 GET /=/model/Foo/name/Bob?order_by=
 --- response
@@ -196,7 +212,7 @@ GET /=/model/Foo/name/Bob?order_by=
 
 
 
-=== TEST 15: order by no columns
+=== TEST 16: order by no columns
 --- request
 GET /=/model/Foo/name/Bob?order_by=,
 --- response
@@ -204,7 +220,7 @@ GET /=/model/Foo/name/Bob?order_by=,
 
 
 
-=== TEST 16: order by no columns
+=== TEST 17: order by no columns
 --- request
 GET /=/model/Foo/name/Bob?order_by=name:blah
 --- response
@@ -212,7 +228,7 @@ GET /=/model/Foo/name/Bob?order_by=name:blah
 
 
 
-=== TEST 17: order by no columns
+=== TEST 18: order by no columns
 --- request
 GET /=/model/Foo/name/Bob?order_by=name:blah:foo
 --- response
@@ -220,7 +236,7 @@ GET /=/model/Foo/name/Bob?order_by=name:blah:foo
 
 
 
-=== TEST 18: order by no columns
+=== TEST 19: order by no columns
 --- request
 GET /=/model/Foo/~/~?order_by=name:blah:foo
 --- response
@@ -228,10 +244,9 @@ GET /=/model/Foo/~/~?order_by=name:blah:foo
 
 
 
-=== TEST 19: bad column name
+=== TEST 20: bad column name
 --- request
 GET /=/model/Foo/~/~?order_by=foo--
 --- response
 {"success":0,"error":"Bad model column name: foo--"}
-
 
