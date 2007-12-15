@@ -226,3 +226,12 @@ GET /=/model/Foo/~/~?order_by=name:blah:foo
 --- response
 {"success":0,"error":"Invalid order_by direction: blah:foo"}
 
+
+
+=== TEST 19: bad column name
+--- request
+GET /=/model/Foo/~/~?order_by=foo--
+--- response
+{"success":0,"error":"Bad model column name: foo--"}
+
+

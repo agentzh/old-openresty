@@ -617,6 +617,7 @@ sub new_model {
 
 sub has_model {
     my ($self, $model) = @_;
+    _IDENT($model) or die "Bad model name: $model\n";
     my $retval;
     my $select = SQL::Select->new('name')
         ->from('_models')
@@ -630,6 +631,8 @@ sub has_model {
 
 sub has_model_col {
     my ($self, $model, $col) = @_;
+    _IDENT($model) or die "Bad model name: $model\n";
+    _IDENT($col) or die "Bad model column name: $col\n";
     my $table_name = lc($model);
     ### has model col (model):  $model
     ### has model col (col): $col
