@@ -56,7 +56,7 @@ sub generate {
     my $order_by = $self->{order_by};
     if (@$order_by) { $sql .= " order by @$order_by"; }
     my $limit = $self->{limit};
-    if ($limit) { $sql .= " limit $limit"; }
+    if (defined $limit) { $sql .= " limit $limit"; }
     my $offset = $self->{offset};
     if ($offset) { $sql .= " offset $offset"; }
     ### $sql

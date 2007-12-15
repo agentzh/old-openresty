@@ -143,7 +143,7 @@ GET /=/model/Foo/name/Bob?offset=2
 --- request
 GET /=/model/Foo/name/Bob?offset=-2
 --- response
-{"success":0,"error":"Invalid value for offset: -2"}
+{"success":0,"error":"Invalid value for the \"offset\" param: -2"}
 
 
 
@@ -159,5 +159,5 @@ GET /=/model/Foo/name/Bob?offset=
 --- request
 GET /=/model/Foo/name/Bob?offset=blah
 --- response
-{"success":0,"error":"Invalid value for offset: blah"}
+{"success":0,"error":"Invalid value for the \"offset\" param: blah"}
 

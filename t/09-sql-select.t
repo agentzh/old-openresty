@@ -43,8 +43,8 @@ select name, type, label from _columns limit 5 offset 29;
 _EOC_
 
 $select->reset( qw<name> )->from("users")
-       ->order_by( foo => 'asc' )->order_by( bar => 'desc' );
+       ->order_by( foo => 'asc' )->order_by( bar => 'desc' )->limit(0);
 is $select->generate, <<_EOC_;
-select name from users order by foo asc, bar desc;
+select name from users order by foo asc, bar desc limit 0;
 _EOC_
 

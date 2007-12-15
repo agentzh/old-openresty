@@ -756,17 +756,18 @@ sub process_offset {
     return unless defined $offset;
     $offset ||= 0;
     if ($offset !~ /^\d+$/) {
-        die "Invalid value for offset: $offset\n";
+        die "Invalid value for the \"offset\" param: $offset\n";
     }
     $select->offset($offset);
 }
 
 sub process_limit {
     my ($self, $select) = @_;
-    my $limit = $self->{_cgi}->url_param('count');
+    my $cgi = $self->{_cgi};
+    my $limit = $cgi->url_param('count');
     # limit is an alias for count
     if (!defined $limit) {
-        $limit = $self->{_cgi}->url_param('limit');
+        $limit = $cgi->url_param('limit');
     }
     if (!defined $limit) {
         $select->limit($MAX_SELECT_LIMIT);
@@ -774,7 +775,7 @@ sub process_limit {
     }
     $limit ||= 0;
     if ($limit !~ /^\d+$/) {
-        die "Invalid value for the limit param: $limit\n";
+        die "Invalid value for the \"count\" param: $limit\n";
     }
     if ($limit > $MAX_SELECT_LIMIT) {
         die "Value too large for the limit param: $limit\n";
@@ -814,7 +815,6 @@ sub select_records {
 sub select_all_records {
     my ($self, $model) = @_;
     my $order_by = $self->{'_order_by'};
-    ### inside select_all_records: $self->{'_order_by'}
 
     if (!$self->has_model($model)) {
         die "Model \"$model\" not found.\n";
@@ -826,6 +826,7 @@ sub select_all_records {
     $self->process_order_by($select, $model);
     $self->process_offset($select);
     $self->process_limit($select);
+    ### Select all records SQL: "$select"
 
     my $list = $Backend->select("$select", { use_hash => 1 });
     if (!$list or !ref $list) { return []; }
