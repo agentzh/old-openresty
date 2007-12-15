@@ -1,0 +1,14 @@
+TODO items for OpenAPI
+
+* Design and implement the login interface (i.e. /=/login/user/...)
+* Design and implement roles and ACL, /=/roles/...
+* Captcha support in the login interface.
+* Shortcut for row_count sub.
+  (laser++ said "select count(*)" is expensive in Pg.)
+* More tests for t/10-limits.t.
+  (i.e. INSERT_LIMIT, POST_LEN_LIMIT, PUT_LEN_LIMIT, and MAX_SELECT_LIMIT)
+* Tests for unknown HTTP methods (like TRACE, OPTIONS, and CONNECT).
+* Tests for common SQL injection patthers.
+* Review and polish the existing test suite (under t/)
+* Added Apache config directives to README.
+
