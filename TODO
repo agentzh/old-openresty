@@ -3,6 +3,8 @@ TODO items for OpenAPI
 * Design and implement the login interface (i.e. /=/login/user/...)
 * Design and implement roles and ACL, /=/roles/...
 * Captcha support in the login interface.
+* Work out the empty test cases in t/03-model.t
+* Work out the empty test cases in t/07-bug.t
 * Shortcut for row_count sub.
   (laser++ said "select count(*)" is expensive in Pg.)
 * More tests for t/10-limits.t.

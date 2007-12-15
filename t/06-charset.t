@@ -1,4 +1,6 @@
-use t::OpenAPI 'no_plan';
+use t::OpenAPI;
+
+plan tests => 3 * blocks();
 
 run_tests;
 
