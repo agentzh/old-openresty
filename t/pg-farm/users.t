@@ -1,3 +1,5 @@
+#!/usr/bin/env perl
+
 use strict;
 use warnings;
 
@@ -8,8 +10,8 @@ use Data::Dumper;
 use subs 'dump';
 
 use constant {
-    NUM_OF_NODES => 2,
-    TRIALS => 10,
+    NODE_COUNT => 2,
+    USER_COUNT => 10,
 };
 
 my $backend = OpenAPI::Backend::PgFarm->new({ RaiseError => 0 });
@@ -25,31 +27,31 @@ if ($backend->has_user("agentz")) {
 my @userdb;
 my %cnt;
 my $res;
-for (my $i = 0 ; $i < TRIALS; $i ++) {
-    my $name = sprintf "%s%d", "t_", int(rand()*10000);
+for (my $i = 0 ; $i < USER_COUNT; $i ++) {
+    my $name = "t_" . rand_str(15);
 
 =pod
+
     eval {
         $backend->drop_user($name);
     };
+
 =cut
 
-    $res = $backend->has_user($name);
-    if (!defined $res) {
-        $res = $backend->add_user($name);
-        $res = $backend->has_user($name);
-        if (! $cnt{$res}) {$cnt{$res} = 0; }
-        $cnt{$res} ++; 
-	    #warn dump($name);
-        push @userdb, $name;
-    } else {
-        warn "user $name is exist";
-    } 
+    my $res = $backend->has_user($name);
+    if ($res) {
+        $backend->drop_user($name);
+    }
+    $backend->add_user($name);
+    my $machine = $backend->has_user($name);
+    $cnt{$machine}++;
+    print STDERR "$name\@$machine  ";
+    push @userdb, $name;
 }
 
 #warn dump(\%cnt);
-is scalar(keys %cnt), NUM_OF_NODES, 'all of the nodes visited';
-while (my $b = pop @userdb) {
+is scalar(keys %cnt), NODE_COUNT, 'all nodes been visited';
+for my $b (@userdb) {
     #warn "$b...";
     $res = $backend->drop_user($b);
 }
@@ -60,3 +62,13 @@ sub dump {
     $s =~ s/^\$VAR1\s*=\s*//;
     $s
 }
+
+sub rand_str {
+    my $len = shift;
+    my $s;
+    for (1..$len) {
+        $s .= chr(ord('a')+rand(25));
+    }
+    $s;
+}
+

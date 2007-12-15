@@ -14,8 +14,8 @@ use Data::Dumper;
 use FindBin;
 #use Perl6::Say;
 
-$CGI::POST_MAX = 1024 * 1000;  # max 1000K posts
-#$CGI::DISABLE_UPLOADS = 1;  # no uploads
+$CGI::POST_MAX = 1024 * 100;  # max 100 K posts
+$CGI::DISABLE_UPLOADS = 1;  # no uploads
 my $DBFatal;
 
 # XXX Excpetion not caputred...when database 'test' not created.
