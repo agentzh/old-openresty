@@ -11,4 +11,6 @@ TODO items for OpenAPI
 * Tests for common SQL injection patthers.
 * Review and polish the existing test suite (under t/)
 * Added Apache config directives to README.
+* Hook laye++'s PCR-based miniSQL parser into OpenAPI.
+* Prerequiste groups in Makefile.PL.
 

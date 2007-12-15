@@ -177,7 +177,15 @@ GET /=/delete/model/Test2/~/~?user=tester2
 
 
 
-=== TEST 19: delete all records with user info (the wrong way)
+=== TEST 19: Check that the records have been indeed removed
+--- request
+GET /=/model/Test2/~/~?user=tester2
+--- response
+[]
+
+
+
+=== TEST 20: delete all records with user info (the wrong way)
 --- request
 GET /=/delete/Test2/~/~?user=tester2
 --- response
