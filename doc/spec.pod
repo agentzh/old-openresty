@@ -11,8 +11,8 @@ Agent Zhang (章亦春) <agentzh@yahoo.cn>
 =head1 VERSION
 
     CREATED:       Nov 19, 2007
-    LAST MODIFIED: Dec 14, 2007
-    VERSION:       0.04
+    LAST MODIFIED: Dec 15, 2007
+    VERSION:       0.05
 
 =head1 DESCRIPTION
 
@@ -718,15 +718,19 @@ XXX needs work...
 
 将返回第十一条及其以后的记录列表。C<offset> 多与 C<count> 选项一起使用，以实现分页功能。
 
+=item limit
+
 =item count
 
-该选项仅作用于 GET 请求返回列表的情形。它用于指定返回的条目数，缺省为 20。最大值为 1000。
+该选项仅作用于 GET 请求返回列表的情形。它用于指定返回的条目数，缺省为 500。最大值亦为 500。
 
 示例：
 
    GET /=/model/Postbook/body/People?count=20
 
-count 的取值须为小于上限 1000 的正整数，否则服务器将报错。
+count 的取值须为小于上限的正整数，否则服务器将报错。
+
+C<limit> 参数为 C<count> 的一个别名。
 
 =item order_by
 

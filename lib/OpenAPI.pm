@@ -763,7 +763,11 @@ sub process_offset {
 
 sub process_limit {
     my ($self, $select) = @_;
-    my $limit = $self->{_cgi}->url_param('limit');
+    my $limit = $self->{_cgi}->url_param('count');
+    # limit is an alias for count
+    if (!defined $limit) {
+        $limit = $self->{_cgi}->url_param('limit');
+    }
     if (!defined $limit) {
         $select->limit($MAX_SELECT_LIMIT);
         return;
