@@ -137,3 +137,27 @@ GET /=/model/Foo/name/Bob?offset=2
 --- response
 []
 
+
+
+=== TEST 12: negative offset
+--- request
+GET /=/model/Foo/name/Bob?offset=-2
+--- response
+{"success":0,"error":"Invalid value for offset: -2"}
+
+
+
+=== TEST 13: empty offset value
+--- request
+GET /=/model/Foo/name/Bob?offset=
+--- response
+[{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"3","age":"15"}]
+
+
+
+=== TEST 14: weird value
+--- request
+GET /=/model/Foo/name/Bob?offset=blah
+--- response
+{"success":0,"error":"Invalid value for offset: blah"}
+
