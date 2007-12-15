@@ -9,6 +9,7 @@ TODO items for OpenAPI
   (i.e. INSERT_LIMIT, POST_LEN_LIMIT, PUT_LEN_LIMIT, and MAX_SELECT_LIMIT)
 * Tests for unknown HTTP methods (like TRACE, OPTIONS, and CONNECT).
 * Tests for common SQL injection patthers.
+* Coverage testing for the test sutie.
 * Review and polish the existing test suite (under t/)
 * Added Apache config directives to README.
 * Hook laye++'s PCR-based miniSQL parser into OpenAPI.
