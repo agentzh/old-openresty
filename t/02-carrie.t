@@ -247,3 +247,20 @@ GET /=/model/Test2/~/~?user=tester2
 --- response
 [{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
 
+
+
+=== TEST 27: Update for adding 1 at the original record
+--- request
+POST /=/put/model/Test2/id/2?user=tester2
+{ num:num+1}
+--- response
+{"success":1,"rows_affected":1}
+
+
+
+=== TEST 28:read records
+--- request
+GET /=/model/Test2/~/~?user=tester2
+--- response
+[{"num":"2","url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
+
