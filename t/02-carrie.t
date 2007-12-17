@@ -220,4 +220,3 @@ GET /=/model/Test2/~/~?user=tester2
 --- response
 [{"url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
 
-

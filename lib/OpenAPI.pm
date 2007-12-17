@@ -704,6 +704,7 @@ sub insert_records {
         my $i = 0;
         my $rows_affected = 0;
         if (@$data > $INSERT_LIMIT) {
+            die "You can only insert $INSERT_LIMIT rows at a time.\n";
         }
         for my $row_data (@$data) {
             if (!ref $row_data || ref $row_data ne 'HASH') {

@@ -146,7 +146,7 @@ for ($INSERT_LIMIT..$INSERT_LIMIT + 1) {
     if ($_ <= $INSERT_LIMIT) {
         is $res_body, '{"success":1,"rows_affected":'.$_.',"last_row":"/=/model/foos/id/'.$_.'"}'."\n", "Model insert limit test - insert records number $_ once";
     } else {
-        is $res_body, '{"success":0,"error":"Exceeded model insert record count limit: '.$INSERT_LIMIT.'."}'."\n", "Model insert limit test ".$INSERT_LIMIT;
+        is $res_body, '{"success":0,"error":"You can only insert '.$INSERT_LIMIT.' rows at a time."}'."\n", "Model insert limit test ".$INSERT_LIMIT;
     }
 }
 
@@ -164,7 +164,7 @@ $res = do_request('POST', $host.$url.'/~/~', $body, undef);
 ok $res->is_success, $POST_LEN_LIMIT . ' OK';
 my $res_body = $res->content;
 ### $res_body
-is $res_body, '{"success":0,"error":"Exceeded model post length limit: '.$POST_LEN_LIMIT.'."}'."\n", "Model post limit test ".$POST_LEN_LIMIT;
+is $res_body, '{"success":0,"error":"Exceeded POST content length limit: '.$POST_LEN_LIMIT.'."}'."\n", "Model post limit test ".$POST_LEN_LIMIT;
 
 # put length limit test
 ## new a data exceed the post length limit
@@ -188,7 +188,7 @@ $res = do_request('PUT', $host.$url.'/id/1', $body, undef);
 ok $res->is_success, $POST_LEN_LIMIT . 'update OK';
 $res_body = $res->content;
 ### $res_body
-is $res_body, '{"success":0,"error":"Exceeded model put length limit: '.$PUT_LEN_LIMIT.'."}'."\n", "Model put limit test ".$PUT_LEN_LIMIT;
+is $res_body, '{"success":0,"error":"Exceeded PUT content length limit: '.$PUT_LEN_LIMIT.'."}'."\n", "Model put limit test ".$PUT_LEN_LIMIT;
 
 # max select records in a request
 ## delete the 'foo' model first, then create it
