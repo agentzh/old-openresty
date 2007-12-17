@@ -220,3 +220,28 @@ GET /=/model/Test2/~/~?user=tester2
 --- response
 [{"url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
 
+
+
+=== TEST 24: Add column
+--- request
+POST /=/model/Test2/num?user=tester2
+{ type:'integer',label:'num'}
+--- response
+{"success":1,"src":"/=/model/Test2/num"}
+
+
+=== TEST 25: Update records
+--- request
+POST /=/put/model/Test2/~/~?user=tester2
+{ num:1 }
+--- response
+{"success":1,"rows_affected":1}
+
+
+
+=== TEST 26: read records
+--- request
+GET /=/model/Test2/~/~?user=tester2
+--- response
+[{"num":null,"url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
+
