@@ -255,6 +255,7 @@ POST /=/put/model/Test2/id/2?user=tester2
 { num:num+1}
 --- response
 {"success":1,"rows_affected":1}
+--- SKIP
 
 
 
@@ -263,4 +264,5 @@ POST /=/put/model/Test2/id/2?user=tester2
 GET /=/model/Test2/~/~?user=tester2
 --- response
 [{"num":"2","url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
+--- SKIP
 
