@@ -191,3 +191,32 @@ GET /=/delete/Test2/~/~?user=tester2
 --- response
 {"success":0,"error":"Unknown URL catagory: Test2"}
 
+
+=== TEST 21: insert another record
+--- request
+POST /=/model/Test2/~/~?user=tester2
+{ title:'second',url:"http://zhangxiaojue.cn"}
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/Test2/id/2"}
+
+
+
+=== TEST 22: read record using yml
+--- request
+POST /=/model/Test2/~/~.yml?user=tester2
+--- response
+--- 
+- 
+  id: 2
+  title: second
+  url: http://zhangxiaojue.cn
+
+
+
+=== TEST 23: read record using json
+--- request
+POST /=/model/Test2/~/~?user=tester2
+--- response
+[{"url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
+
+
