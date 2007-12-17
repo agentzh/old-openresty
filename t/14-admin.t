@@ -55,3 +55,14 @@ POST /=/admin/select
     {"body":"Audrey Tang","id":"2"}
 ]
 
+
+
+=== TEST 6: drop tables
+--- request
+POST /=/admin/do
+"drop table if exists _books;
+drop table if exists _cats;"
+--- response
+{"success":1}
+
+
