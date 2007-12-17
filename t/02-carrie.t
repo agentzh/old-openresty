@@ -192,6 +192,7 @@ GET /=/delete/Test2/~/~?user=tester2
 {"success":0,"error":"Unknown URL catagory: Test2"}
 
 
+
 === TEST 21: insert another record
 --- request
 POST /=/model/Test2/~/~?user=tester2
@@ -230,6 +231,7 @@ POST /=/model/Test2/num?user=tester2
 {"success":1,"src":"/=/model/Test2/num"}
 
 
+
 === TEST 25: Update records
 --- request
 POST /=/put/model/Test2/~/~?user=tester2
@@ -243,5 +245,5 @@ POST /=/put/model/Test2/~/~?user=tester2
 --- request
 GET /=/model/Test2/~/~?user=tester2
 --- response
-[{"num":null,"url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
+[{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
 

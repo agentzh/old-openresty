@@ -879,7 +879,7 @@ sub update_records {
     my ($self, $model, $user_col, $val, $data) = @_;
     my $table = lc($model);
     my $cols = $self->get_model_col_names($model);
-    if ($user_col ne 'id') {
+    if ($user_col ne 'id' && $user_col ne '~') {
         my $found = 0;
         for my $col (@$cols) {
             if ($col eq $user_col) { $found = 1; last; }
@@ -899,7 +899,7 @@ sub update_records {
         $update->set($col => Q($val));
     }
 
-    if (defined $val) {
+    if (defined $val and $val ne '~') {
         $update->where($user_col => $val);
     }
     my $retval = $Backend->do("$update") + 0;
