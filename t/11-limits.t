@@ -1,18 +1,14 @@
 use t::OpenAPI 'no_plan';
+use lib 'lib';
 #use Smart::Comments;
 use JSON::Syck 'Dump';
 use OpenAPI::Limits;
-use constant {
-    INSERT_LIMIT => 20,
-    POST_LEN_LIMIT => 10_000,
-    PUT_LEN_LIMIT => 10_000,
-};
 
 my $host = $t::OpenAPI::host;
 my $res = do_request('DELETE', $host.'/=/model', undef, undef);
 ok $res->is_success, 'response OK';
 
-for (1..$MODEL_LIMIT + 2) {
+for (1..$MODEL_LIMIT + 1) {
     my $model_name = 'Foo'.$_;
     my $url = '/=/model/'.$model_name;
     ### $url
@@ -93,14 +89,14 @@ for ($COLUMN_LIMIT..$COLUMN_LIMIT + 2) {
 
 # We need a faster way to test $RECORD_LIMIT because it's normally huge...
 
-# insert limit test
+# record limit test
 ## 1. delete the 'foo' model first
 $res = do_request('DELETE', $host.$url, undef, undef);
 
 ## 2. create it
 $body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
 $res = do_request('POST', $host.$url, $body, undef);
-### $res_body
+### $res
 
 ## 3. insert $RECORD_LIMIT - 1 records
 for (1..$RECORD_LIMIT - 1) {
@@ -127,6 +123,97 @@ for ($RECORD_LIMIT..$RECORD_LIMIT + 1) {
         is $res_body, '{"success":0,"error":"Exceeded model row count limit: '.$RECORD_LIMIT.'."}'."\n", "Model record limit test ".$_;
     }
 }
+
+# insert limit test: the maximum records in a session
+for ($INSERT_LIMIT..$INSERT_LIMIT + 1) {
+
+    ## 1. delete the 'foo' model first, then create it
+    $res = do_request('DELETE', $host.$url, undef, undef);
+    $body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
+    $res = do_request('POST', $host.$url, $body, undef);
+    ok $res->is_success, 'Create model okay';
+
+    ## 2. insert some records in a session
+	my @recs;
+	for (1..$_) {
+        push @recs, { title => "Foo$_" };
+	}
+    $body = Dump(\@recs);
+    $res = do_request('POST', $host.$url.'/~/~', $body, undef);
+    ok $res->is_success, $INSERT_LIMIT . ' OK';
+    my $res_body = $res->content;
+    ### $res_body
+    if ($_ <= $INSERT_LIMIT) {
+        is $res_body, '{"success":1,"rows_affected":'.$_.',"last_row":"/=/model/foos/id/'.$_.'"}'."\n", "Model insert limit test - insert records number $_ once";
+    } else {
+        is $res_body, '{"success":0,"error":"Exceeded model insert record count limit: '.$INSERT_LIMIT.'."}'."\n", "Model insert limit test ".$INSERT_LIMIT;
+    }
+}
+
+# post length limit test
+## new a data exceed the post length limit
+$data = 'abc'x($POST_LEN_LIMIT/3 + 1);
+## delete the 'foo' model first, then create it
+$res = do_request('DELETE', $host.$url, undef, undef);
+$body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
+$res = do_request('POST', $host.$url, $body, undef);
+ok $res->is_success, 'Create model okay';
+
+$body = '{title:'.($data).'}';
+$res = do_request('POST', $host.$url.'/~/~', $body, undef);
+ok $res->is_success, $POST_LEN_LIMIT . ' OK';
+my $res_body = $res->content;
+### $res_body
+is $res_body, '{"success":0,"error":"Exceeded model post length limit: '.$POST_LEN_LIMIT.'."}'."\n", "Model post limit test ".$POST_LEN_LIMIT;
+
+# put length limit test
+## new a data exceed the post length limit
+$data = 'abc'x($POST_LEN_LIMIT/3 + 1);
+## delete the 'foo' model first, then create it
+$res = do_request('DELETE', $host.$url, undef, undef);
+$body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
+$res = do_request('POST', $host.$url, $body, undef);
+ok $res->is_success, $PUT_LEN_LIMIT .'init model okay';
+
+## insert a record
+$body = '{ title: "abc" }';
+$res = do_request('POST', $host.$url.'/~/~', $body, undef);
+ok $res->is_success, $PUT_LEN_LIMIT . 'insert a short record OK';
+$res_body = $res->content;
+### $res_body
+
+$data = 'abc'x($PUT_LEN_LIMIT/3 + 1);
+$body = '{title:'.($data).'}';
+$res = do_request('PUT', $host.$url.'/id/1', $body, undef);
+ok $res->is_success, $POST_LEN_LIMIT . 'update OK';
+$res_body = $res->content;
+### $res_body
+is $res_body, '{"success":0,"error":"Exceeded model put length limit: '.$PUT_LEN_LIMIT.'."}'."\n", "Model put limit test ".$PUT_LEN_LIMIT;
+
+# max select records in a request
+## delete the 'foo' model first, then create it
+$res = do_request('DELETE', $host.$url, undef, undef);
+$body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
+$res = do_request('POST', $host.$url, $body, undef);
+ok $res->is_success, 'Create model okay';
+
+## insert MAX_SELECT_LIMIT + 1 records
+my @recs;
+for (1..$MAX_SELECT_LIMIT + 1) {
+    push @recs, { title => "Foo$_" };
+}
+$body = Dump(\@recs);
+$res = do_request('POST', $host.$url.'/~/~', $body, undef);
+ok $res->is_success, $INSERT_LIMIT . ' OK';
+$res_body = $res->content;
+### $res_body
+
+## request MAX_SELECT_LIMIT + 1 records
+$res = do_request('GET', $host.$url.'/~/~?count='.($MAX_SELECT_LIMIT + 1), undef, undef);
+ok $res->is_success, 'select OK';
+$res_body = $res->content;
+### $res_body
+is $res_body, '{"success":0,"error":"Value too large for the limit param: '.($MAX_SELECT_LIMIT + 1).'"}'."\n", "Model select limit test ".$MAX_SELECT_LIMIT;
 
 $res = do_request('DELETE', $host.'/=/model', undef, undef);
 ok $res->is_success, 'response OK';
