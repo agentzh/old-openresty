@@ -113,6 +113,10 @@ sub init {
         if (!defined $req_data) {
             $req_data = $cgi->param('data') or
                 die "No POST content specified.\n";
+        } else {
+            if (length($req_data) > $POST_LEN_LIMIT) {
+                die "Exceeded POST content length limit: $POST_LEN_LIMIT\n";
+            }
         }
     }
     elsif ($http_meth eq 'PUT') {
@@ -121,6 +125,10 @@ sub init {
         if (!defined $req_data) {
             $req_data = $cgi->param('data') or
                 die "No PUT content specified.\n";
+        } else {
+            if (length($req_data) > $PUT_LEN_LIMIT) {
+                die "Exceeded PUT content length limit: $PUT_LEN_LIMIT\n";
+            }
         }
     }
     ### OpenAPI->new url 1: $url

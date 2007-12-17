@@ -10,11 +10,12 @@ use OpenAPI;
 #use Web::Scraper;
 use CGI::Fast ();
 use Data::Dumper;
+use OpenAPI::Limits;
 #use XML::Simple qw(:strict);
 use FindBin;
 #use Perl6::Say;
 
-$CGI::POST_MAX = 1024 * 100;  # max 100 K posts
+$CGI::POST_MAX = 100 * 1024;  # max 100 K posts
 $CGI::DISABLE_UPLOADS = 1;  # no uploads
 my $DBFatal;
 

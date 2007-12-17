@@ -152,27 +152,27 @@ for ($INSERT_LIMIT..$INSERT_LIMIT + 1) {
 
 # post length limit test
 ## new a data exceed the post length limit
-$data = 'abc'x($POST_LEN_LIMIT/3 + 1);
+$data = 'a' x ($POST_LEN_LIMIT + 1);
 ## delete the 'foo' model first, then create it
 $res = do_request('DELETE', $host.$url, undef, undef);
 $body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
-$res = do_request('POST', $host.$url, $body, undef);
+$res = do_request('POST', $host.$url, $data, undef);
 ok $res->is_success, 'Create model okay';
 
-$body = '{title:'.($data).'}';
+$body = $data;
 $res = do_request('POST', $host.$url.'/~/~', $body, undef);
 ok $res->is_success, $POST_LEN_LIMIT . ' OK';
 my $res_body = $res->content;
 ### $res_body
-is $res_body, '{"success":0,"error":"Exceeded POST content length limit: '.$POST_LEN_LIMIT.'."}'."\n", "Model post limit test ".$POST_LEN_LIMIT;
+is $res_body, '{"success":0,"error":"Exceeded POST content length limit: '.$POST_LEN_LIMIT.'"}'."\n", "Model post limit test ".$POST_LEN_LIMIT;
 
 # put length limit test
 ## new a data exceed the post length limit
-$data = 'abc'x($POST_LEN_LIMIT/3 + 1);
+$data = 'a' x ($PUT_LEN_LIMIT + 1);
 ## delete the 'foo' model first, then create it
 $res = do_request('DELETE', $host.$url, undef, undef);
 $body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
-$res = do_request('POST', $host.$url, $body, undef);
+$res = do_request('PUT', $host.$url, $body, undef);
 ok $res->is_success, $PUT_LEN_LIMIT .'init model okay';
 
 ## insert a record
@@ -182,13 +182,13 @@ ok $res->is_success, $PUT_LEN_LIMIT . 'insert a short record OK';
 $res_body = $res->content;
 ### $res_body
 
-$data = 'abc'x($PUT_LEN_LIMIT/3 + 1);
-$body = '{title:'.($data).'}';
-$res = do_request('PUT', $host.$url.'/id/1', $body, undef);
-ok $res->is_success, $POST_LEN_LIMIT . 'update OK';
+$data = 'a' x ($PUT_LEN_LIMIT + 1);
+#$body = '{title:'.($data).'}';
+$res = do_request('PUT', $host.$url.'/id/1', $data, undef);
+ok $res->is_success, $PUT_LEN_LIMIT . 'update OK';
 $res_body = $res->content;
 ### $res_body
-is $res_body, '{"success":0,"error":"Exceeded PUT content length limit: '.$PUT_LEN_LIMIT.'."}'."\n", "Model put limit test ".$PUT_LEN_LIMIT;
+is $res_body, '{"success":0,"error":"Exceeded PUT content length limit: '.$PUT_LEN_LIMIT.'"}'."\n", "Model put limit test ".$PUT_LEN_LIMIT;
 
 # max select records in a request
 ## delete the 'foo' model first, then create it
@@ -217,6 +217,4 @@ is $res_body, '{"success":0,"error":"Value too large for the limit param: '.($MA
 
 $res = do_request('DELETE', $host.'/=/model', undef, undef);
 ok $res->is_success, 'response OK';
-
-=cut
 
