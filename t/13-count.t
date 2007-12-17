@@ -151,7 +151,19 @@ GET /=/model/Foo/~/~?count=3&offset=2
 
 
 
-=== TEST 12: negative count
+=== TEST 12: limit and offset
+--- request
+GET /=/model/Foo/~/~?limit=3&offset=2
+--- response
+[
+    {"name":"Bob","id":"3","age":"15"},
+    {"name":"Henry","id":"4","age":"19"},
+    {"name":"Henry","id":"5","age":"23"}
+]
+
+
+
+=== TEST 13: negative count
 --- request
 GET /=/model/Foo/name/Bob?count=-2
 --- response
@@ -159,7 +171,7 @@ GET /=/model/Foo/name/Bob?count=-2
 
 
 
-=== TEST 13: empty count value
+=== TEST 14: empty count value
 --- request
 GET /=/model/Foo/name/Bob?count=
 --- response
@@ -167,7 +179,7 @@ GET /=/model/Foo/name/Bob?count=
 
 
 
-=== TEST 14: weird value
+=== TEST 15: weird value
 --- request
 GET /=/model/Foo/name/Bob?count=blah
 --- response
