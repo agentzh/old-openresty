@@ -12,18 +12,18 @@ Models
             { name:"", label:"", type:"" }
             ...
           ] }
-    PUT /=/model/MyModel            Change model info
+    PUT /=/model/MyModel            Alter the model MyModel
         { name:"", description:"" }
     DELETE /=/model/MyModel         Delete model MyModel
 
 Columns
 
     GET /=/model/MyModel/mycol      Read the info for MyModel's mycol
-    POST /=/model/MyModel/mycol     Add a new column named 
+    POST /=/model/MyModel/mycol     Add a new column named mycol
         { label:"", type:"" }
-    PUT /=/model/MyModel/mycol      Update the column info
+    PUT /=/model/MyModel/mycol      Alter the column mycol
         { name:"", type:"" }
-    DELETE /=/model/MyModel/mycol   Remove an existing column
+    DELETE /=/model/MyModel/mycol   Remove column mycol
 
 Rows
 
