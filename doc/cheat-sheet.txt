@@ -29,7 +29,7 @@ Rows
 
     GET /=/model/MyModel/id/3       Read the row with id 3
     POST /=/model/MyModel/~/~       Insert new rows
-        [ { col1:"", col2:"", ... } ]
+        [ { col1:"", col2:"", ... }, ... ]
     POST /=/model/MyModel/~/~       Insert a single new row
         { col1:"", col2:"", ... }
     PUT /=/model/MyModel/id/2       Update the row with id 2
