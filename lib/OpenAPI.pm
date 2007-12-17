@@ -1024,5 +1024,22 @@ sub last_insert_id {
     $Backend->last_insert_id(@_);
 }
 
+sub POST_admin_do {
+    my ($self, $bits) = @_;
+    my $sql = _STRING($self->{_req_data}) or
+        die "SQL literal must be a string.\n";
+    ### $sql
+    $self->do($sql);
+    return { success => 1 };
+}
+
+sub POST_admin_select {
+    my ($self, $bits) = @_;
+    my $sql = _STRING($self->{_req_data}) or
+        die "SQL literal must be a string.\n";
+    ### $sql
+    return $self->select($sql, { use_hash => 1 });
+}
+
 1;
 

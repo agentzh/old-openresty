@@ -137,6 +137,21 @@ while (my $cgi = new CGI::Fast) {
         };
         if ($@) { $openapi->error($@); }
         else { $openapi->data($data); }
+    } elsif ($bits[0] eq 'admin') { # XXX caution!!!
+        my $object = $bits[1];
+        my $meth = $http_meth . '_admin_' . $object;
+        if (!$openapi->can($meth)) {
+            $object =~ s/_/ /g;
+            $openapi->error("HTTP $http_meth method not supported for '$object'.");
+            $openapi->response();
+            next;
+        }
+        my $data;
+        eval {
+            $data = $openapi->$meth(\@bits);
+        };
+        if ($@) { $openapi->error($@); }
+        else { $openapi->data($data); }
     } else {
         $openapi->error("Unknown URL catagory: $bits[0]");
     }
