@@ -202,8 +202,9 @@ POST /=/model/Test2/~/~?user=tester2
 
 
 === TEST 22: read record using yml
+--- format: YAML
 --- request
-POST /=/model/Test2/~/~.yml?user=tester2
+GET /=/model/Test2/~/~.yml?user=tester2
 --- response
 --- 
 - 
@@ -215,7 +216,7 @@ POST /=/model/Test2/~/~.yml?user=tester2
 
 === TEST 23: read record using json
 --- request
-POST /=/model/Test2/~/~?user=tester2
+GET /=/model/Test2/~/~?user=tester2
 --- response
 [{"url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
 

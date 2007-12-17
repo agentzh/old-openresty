@@ -172,11 +172,12 @@ L<http://oauth.net/>
 
 OpenAPI 支持所谓的“角色”概念。一个 OpenAPI 用户在注册时可以定义若干个“角色”,每个“角色”的权限各不相同，而都可以单独登录，并拥有不同的密码。
 
-例如用户 Marry 可以拥有 C<admin>, C<reader>, C<user>, C<public> 等多种角色，每个角色都可以单独登录。当 Marry 的 C<reader> 角色登录时，使用的帐户名为 C<Marry.reader>. 事实上，C<Marry> 在作为帐户名使用时，就相当于以 C<Marry.admin> 角色登录，因为 C<admin> 角色拥有最高的权限。
+例如注册用户 marry 可以拥有 C<Admin>, C<Reader>, C<User> 等多种角色，
+每个角色都可以单独登录。当 marry 的 C<Reader> 角色登录时，使用的帐户名为 C<marry.Reader>. 事实上，C<marry> 在作为帐户名使用时，就相当于以 C<marry.User> 角色登录，因为 C<admin> 角色拥有最高的权限。
 
 一个例子是：
 
-    GET /=/login/Marry.reader/myPassword
+    GET /=/login/marry.Reader/myPassword
 
 有关角色的更多信息，请参见 L</Roles> 一节。
 
@@ -682,6 +683,80 @@ I<POST body>
 =back
 
 =head2 Roles
+
+OpenAPI 通过角色 (Role) 来实现子用户和权限分配功能。
+一个 OpenAPI 注册用户可以拥有多个角色，她可以通过 /=/role 这个 URL
+对她的角色进行管理，其中包括添加和删除角色，对角色权限进行分配，
+指定角色的登录方式（是通过口令，验证码图片，还是匿名）。
+
+在 OpenAPI 中，角色对象是一种特殊的 Model，/=/role 与 /=/model
+在接口上有许多相似之处。
+
+每一个角色实体都被视为一个规则 Model. 所有 Model 的查询，修改，
+和删除操作都同样适用于 Role.
+
+=head3 获取角色列表
+
+    GET /=/role
+
+服务器返回的是一个角色列表。每一个项目描述了对应角色的名称，描述，和 URL。
+例如：
+
+  [
+    { name: "Admin", description: "管理员", src: "/=/role/Admin" },
+    { name: "User", description: "普通用户", src: "/=/role/User" },
+    { name: "Anonymous", description: "匿名用户", src: "/=/role/Anonymous" },
+    { name: "Commenter", description: "评论用户", src: "/=/role/Commenter" }
+  ]
+
+其中 Admin, User, 和 Anonymous 这三个角色是 OpenAPI 用户在注册时
+自动分配的，而且不能删除。用户直接使用用户名，比如 marry 登录时，
+相当于使用 marry.User 帐户来登录。本文档中表的删除和修改操作都需要以
+Admin 角色的权限。User 默认是没具有这些权限的。
+
+=head3 获取角色信息
+
+    GET /=/role/<role name>
+
+返回一个哈希结构，其中包括角色名，角色描述，父亲角色，登录方式，等等字段。
+一个典型的例子是：
+
+    GET /=/role/Admin
+    {
+        name: "Admin",
+        description: "管理员",
+        inherits: "User",
+        columns: [
+            { name: "method", label: "HTTP方法"},
+            { name: "resource", lable: "资源名" }
+        ]
+    }
+
+=head3 读取权限规则
+
+    GET /=/role/<role name>/<column>/<value>
+
+C<< <column> >> 和 C<< <value> >> 的含义与 Model 的 URL 记法中的一致。
+
+例如当二者同时为 C<~> 时返回所有的权限规则：
+
+    GET /=/role/Commenter/~/~
+    [
+        { method: "POST", resource: "/=/model/Comment/~/~" }
+    ]
+
+权限规则总是由两个属性构成，一是 C<method>，用于指定允许的 HTTP 方法。
+一是 C<resource>，用于指定允许操纵的资源（或 URI）。
+
+=head3 添加权限规则
+
+    POST /=/role/<role name>/~/~
+
+I<POST content>
+
+    [ rule1, rule2, ... ]
+
+
 
 =head2 Administration
 

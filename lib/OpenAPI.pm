@@ -103,6 +103,8 @@ sub init {
         my $ext = $&;
         # XXX obsolete
         $self->set_formatter($ext);
+    } else {
+        $self->set_formatter;
     }
     my $req_data;
     if ($http_meth eq 'POST') {
@@ -701,6 +703,8 @@ sub insert_records {
     } elsif (ref $data eq 'ARRAY') {
         my $i = 0;
         my $rows_affected = 0;
+        if (@$data > $INSERT_LIMIT) {
+        }
         for my $row_data (@$data) {
             if (!ref $row_data || ref $row_data ne 'HASH') {
                 die "Malformed row data found in $i: Hash expected.\n";
