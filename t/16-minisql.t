@@ -78,3 +78,11 @@ POST /=/action/ModelSearch/lang/minisql
 "select * from Carrie where title = 'hello carrie' and num=10;"
 --- response
 [{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}]
+
+
+
+=== TEST 9: use minisql through GET & ModelSelect
+--- request
+GET /=/action/ModelSelect/lang/minisql?var=foo&data="select * from Carrie where title = 'hello carrie' and num=10"
+--- response
+[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}]
