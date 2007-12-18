@@ -64,7 +64,7 @@ sub run_test ($) {
     my $charset = $block->charset || 'UTF-8';
     my $format = $block->format || 'JSON';
     my $type = $block->request_type;
-    if ($request =~ /^(GET|POST|HEAD|PUT|DELETE)\s+(\S+)\s*\n(.*)/s) {
+    if ($request =~ /^(GET|POST|HEAD|PUT|DELETE)\s+([^\n]+)\s*\n(.*)/s) {
         my ($method, $url, $body) = ($1, $2, $3);
         ### $method
         ### $url

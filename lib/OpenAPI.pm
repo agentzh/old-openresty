@@ -1050,5 +1050,33 @@ sub POST_admin_select {
     return $self->select($sql, { use_hash => 1 });
 }
 
+sub POST_action_ModelSelect {
+    my ($self, $params) = @_;
+    my $lang = $params->{lang};
+    if (!defined $lang) {
+        die "The 'lang' param is required in the ModelSelect action.\n";
+    }
+    if (lc($lang) ne 'minisql') {
+        die "Only the miniSQL language is supported for ModelSelect.\n";
+    }
+    my $sql = $self->{_req_data};
+    $self->select($sql, {use_hash => 1});
+}
+
+sub GET_action_ModelSelect {
+    my ($self, $params) = @_;
+    my $lang = $params->{lang};
+    if (!defined $lang) {
+        die "The 'lang' param is required in the ModelSelect action.\n";
+    }
+    if (lc($lang) ne 'minisql') {
+        die "Only the miniSQL language is supported for ModelSelect.\n";
+    }
+    #my $sql = $self->{_req_data};
+    my $sql = $self->{_cgi}->url_param('data');
+    $sql = $Importer->($sql);
+    $self->select($sql, {use_hash => 1});
+}
+
 1;
 

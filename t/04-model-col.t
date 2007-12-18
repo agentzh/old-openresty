@@ -69,8 +69,8 @@ GET /=/model/laser
     "columns":
         [
           {"name":"id","label":"ID","type":"serial"},
-          {"name":"A","label":"A","type":"text"},
-          {"name":"B","label":"b","type":"integer"}
+          {"name":"A","default":null,"label":"A","type":"text"},
+          {"name":"B","default":null,"label":"b","type":"integer"}
         ],
     "name":"laser",
     "description":"test model"
@@ -113,8 +113,8 @@ GET /=/model/laser
     "columns":
       [
         {"name":"id","label":"ID","type":"serial"},
-        {"name":"A","label":"A","type":"text"},
-        {"name":"C","label":"b","type":"integer"}
+        {"name":"A","default":null,"label":"A","type":"text"},
+        {"name":"C","default":null,"label":"b","type":"integer"}
       ],
       "name":"laser",
       "description":"test model"
@@ -189,8 +189,8 @@ GET /=/model/laser
     "columns":
       [
         {"name":"id","label":"ID","type":"serial"},
-        {"name":"A","label":"A","type":"text"},
-        {"name":"C","label":"c","type":"integer"}
+        {"name":"A","default":null,"label":"A","type":"text"},
+        {"name":"C","default":null,"label":"c","type":"integer"}
       ],
       "name":"laser",
       "description":"test model"
@@ -233,7 +233,7 @@ GET /=/model/laser
     "columns":
       [
         {"name":"id","label":"ID","type":"serial"},
-        {"name":"A","label":"A","type":"text"}
+        {"name":"A","default":null,"label":"A","type":"text"}
       ],
       "name":"laser",
       "description":"test model"

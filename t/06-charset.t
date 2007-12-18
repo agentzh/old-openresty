@@ -39,11 +39,14 @@ POST /=/model/Foo?charset=GBK
 --- request
 GET /=/model/Foo?charset=GB2312
 --- response
-{"columns":[
+{
+  "columns":[
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"bar","label":"嘿嘿","type":"text"}
-    ],
-    "name":"Foo","description":"你好么？"}
+    {"name":"bar","default":null,"label":"嘿嘿","type":"text"}
+  ],
+  "name":"Foo",
+  "description":"你好么？"
+}
 
 
 
@@ -54,7 +57,7 @@ GET /=/model/Foo?charset=utf8
 --- response
 {"columns":[
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"bar","label":"嘿嘿","type":"text"}
+    {"name":"bar","default":null,"label":"嘿嘿","type":"text"}
     ],
     "name":"Foo","description":"你好么？"}
 
@@ -67,7 +70,7 @@ GET /=/model/Foo?charset=big5
 --- response
 {"columns":[
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"bar","label":"嘿嘿","type":"text"}
+    {"name":"bar","default":null,"label":"嘿嘿","type":"text"}
     ],
     "name":"Foo","description":"你好么？"}
 

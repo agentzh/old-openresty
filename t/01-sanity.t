@@ -54,8 +54,8 @@ GET /=/model/Bookmark.js
   "columns":
    [
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"title","label":"标题","type":"text"},
-    {"name":"url","label":"网址","type":"text"}
+    {"name":"title","default":null,"label":"标题","type":"text"},
+    {"name":"url","default":null,"label":"网址","type":"text"}
    ],
   "name":"Bookmark",
   "description":"我的书签"
@@ -233,8 +233,8 @@ GET /=/model/MyFavorites.js
   "columns":
    [
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"title","label":"标题","type":"text"},
-    {"name":"url","label":"网址","type":"text"}
+    {"name":"title","default":null,"label":"标题","type":"text"},
+    {"name":"url","default":null,"label":"网址","type":"text"}
    ],
   "name":"MyFavorites",
   "description":"我的最爱"

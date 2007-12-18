@@ -152,6 +152,22 @@ while (my $cgi = new CGI::Fast) {
         };
         if ($@) { $openapi->error($@); }
         else { $openapi->data($data); }
+    } elsif ($bits[0] eq 'action') {
+        my $object = $bits[1];
+        my $meth = $http_meth . '_action_' . $object;
+        if (!$openapi->can($meth)) {
+            $object =~ s/_/ /g;
+            $openapi->error("HTTP $http_meth method not supported for '$object'.");
+            $openapi->response();
+            next;
+        }
+        my $data;
+        my @params = @bits[2..$#bits];
+        eval {
+            $data = $openapi->$meth({ @params });
+        };
+        if ($@) { $openapi->error($@); }
+        else { $openapi->data($data); }
     } else {
         $openapi->error("Unknown URL catagory: $bits[0]");
     }
