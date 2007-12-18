@@ -29,7 +29,24 @@ POST /=/model/Foo
 
 
 
-=== TEST 3: Insert a row (wrong way)
+=== TEST 3: Check the model def
+--- request
+GET /=/model/Foo
+--- response
+{
+  "columns":
+    [
+      {"name":"id","label":"ID","type":"serial"},
+      {"name":"title","default":"No title","label":"title","type":"text"},
+      {"name":"content","default":"No content","label":"content","type":"text"}
+    ],
+    "name":"Foo",
+    "description":"Foo"
+}
+
+
+
+=== TEST 4: Insert a row (wrong way)
 --- request
 POST /=/model/Foo/~/~
 {}
@@ -38,7 +55,7 @@ POST /=/model/Foo/~/~
 
 
 
-=== TEST 4: Insert a row
+=== TEST 5: Insert a row
 --- request
 POST /=/model/Foo/~/~
 { title: "Howdy!" }
@@ -47,7 +64,7 @@ POST /=/model/Foo/~/~
 
 
 
-=== TEST 5: Check that it has the default value
+=== TEST 6: Check that it has the default value
 --- request
 GET /=/model/Foo/id/1
 --- response

@@ -484,7 +484,7 @@ sub get_model_cols {
         ->where(name => Q($model));
     my $list = $Backend->select("$select");
     my $desc = $list->[0][0];
-    $select->reset('name', 'type', 'label')
+    $select->reset('name', 'type', 'label', '"default"')
            ->from('_columns')
            ->where(table_name => Q($table));
     $list = $Backend->select("$select", { use_hash => 1 });
@@ -570,7 +570,7 @@ sub new_model {
 
     my $sql = "$insert";
     $insert->reset('_columns')
-        ->cols(qw< name type native_type label table_name >);
+        ->cols(qw< name type native_type label table_name "default" >);
     $sql .=
         "create table $table (\n\tid serial primary key";
     my $sql2;
@@ -606,7 +606,7 @@ sub new_model {
         if (defined $default) {
             $sql .= " default " . Q($default);
         }
-        $sql2 .= $insert->clone->values(Q($name, $type, $ntype, $label, $table));
+        $sql2 .= $insert->clone->values(Q($name, $type, $ntype, $label, $table, $default));
         $i++;
     }
     $sql .= "\n)";

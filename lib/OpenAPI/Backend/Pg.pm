@@ -85,6 +85,7 @@ sub add_user {
         type text not null,
         table_name text not null,
         native_type varchar(20) default 'text',
+        "default" text,
         label text,
 	unique(table_name, name)
     );
