@@ -134,8 +134,12 @@ sub init {
     ### OpenAPI->new url 1: $url
     if ($http_meth eq 'POST' and $url =~ s{^=/put/}{=/}) {
         $http_meth = 'PUT';
-    } elsif ($http_meth =~ /^GET|POST$/ and $url =~ s{^=/delete/}{=/}) {
+    } elsif ($http_meth =~ /^(?:GET|POST)$/ and $url =~ s{^=/delete/}{=/}) {
         $http_meth = 'DELETE';
+    } elsif ($http_meth =~ /^GET$/ and $url =~ s{^=/post/}{=/} ) {
+        $http_meth = 'POST';
+        my $content = $cgi->url_param('data');
+        $req_data = $Importer->($content);
     }
     ### OpenAPI->new url 2: $url
     $$rurl = $url;
@@ -1060,21 +1064,6 @@ sub POST_action_ModelSelect {
         die "Only the miniSQL language is supported for ModelSelect.\n";
     }
     my $sql = $self->{_req_data};
-    $self->select($sql, {use_hash => 1});
-}
-
-sub GET_action_ModelSelect {
-    my ($self, $params) = @_;
-    my $lang = $params->{lang};
-    if (!defined $lang) {
-        die "The 'lang' param is required in the ModelSelect action.\n";
-    }
-    if (lc($lang) ne 'minisql') {
-        die "Only the miniSQL language is supported for ModelSelect.\n";
-    }
-    #my $sql = $self->{_req_data};
-    my $sql = $self->{_cgi}->url_param('data');
-    $sql = $Importer->($sql);
     $self->select($sql, {use_hash => 1});
 }
 
