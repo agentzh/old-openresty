@@ -83,7 +83,7 @@ POST /=/action/ModelSelect/lang/minisql
 
 === TEST 9: use minisql through GET & ModelSelect
 --- request
-GET /=/post/action/ModelSelect/lang/minisql?var=foo&data="select * from Carrie where title = 'hello carrie' and num=10"
+GET /=/post/action/ModelSelect/lang/minisql?var=foo&data="select * from Carrie where url = 'http://www.carriezh.cn/' and num=10"
 --- response
 var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
 
