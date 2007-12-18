@@ -19,27 +19,37 @@ DELETE /=/model
 POST /=/model/Foo
 {
   description:"Foo",
-  columns:{name:"title", label: "title", default:"No title"}
+  columns: [
+    {name:"title", label: "title", default:"No title"},
+    {name:"content", label: "content", default:"No content" }
+  ]
 }
 --- response
 {"success":1}
 
 
 
-=== TEST 3: Insert a row
+=== TEST 3: Insert a row (wrong way)
 --- request
 POST /=/model/Foo/~/~
 {}
+--- response
+{"success":0,"error":"No column specified in row 1."}
+
+
+
+=== TEST 4: Insert a row
+--- request
+POST /=/model/Foo/~/~
+{ title: "Howdy!" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Foo/id/1"}
 
 
 
-=== TEST 4: Check that it has the default value
+=== TEST 5: Check that it has the default value
 --- request
 GET /=/model/Foo/id/1
 --- response
-{"title":"No title","id":"1"}
-
-
+[{"content":"No content","title":"Howdy!","id":"1"}]
 

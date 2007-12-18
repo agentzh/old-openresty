@@ -577,7 +577,7 @@ sub new_model {
     my $found_id = undef;
     for my $col (@$columns) {
         _HASH($col) or die "Column definition must be a hash: ", $Dumper->($col), "\n";
-        my $name = $col->{name} or
+        my $name = delete $col->{name} or
             die "No 'name' specified for the " . ORD($i) . " column.\n";
         _STRING($name) or die "Bad column name: ", $Dumper->($name), "\n";
         _IDENT($name) or die "Bad column name: $name\n";
@@ -591,9 +591,11 @@ sub new_model {
             next;
         }
         # type defaults to 'text' if not specified.
-        my $type = $col->{type} || 'text';
+        my $type = delete $col->{type} || 'text';
         my $label = $col->{label} or
             die "No 'label' specified for column \"$name\" in model \"$model\".\n";
+
+        my $default = delete $col->{default};
         my $ntype = $to_native_type{$type};
         if (!$ntype) {
             die "Invalid column type: $type\n",
@@ -601,10 +603,14 @@ sub new_model {
                 join(", ", sort keys %to_native_type), "\n";
         }
         $sql .= ",\n\t$name $ntype";
+        if (defined $default) {
+            $sql .= " default " . Q($default);
+        }
         $sql2 .= $insert->clone->values(Q($name, $type, $ntype, $label, $table));
         $i++;
     }
     $sql .= "\n)";
+    warn $sql, "\n";
     ### $sql
     #register_table($table);
     #register_columns
@@ -700,7 +706,7 @@ sub insert_records {
     }
     my $cols = $self->get_model_col_names($model);
     my $sql;
-    my $insert = SQL::Insert->new($table)->cols(@$cols);
+    my $insert = SQL::Insert->new($table);
 
     if (ref $data eq 'HASH') { # record found
         ### Row inserted: $data
@@ -715,9 +721,8 @@ sub insert_records {
             die "You can only insert $INSERT_LIMIT rows at a time.\n";
         }
         for my $row_data (@$data) {
-            if (!ref $row_data || ref $row_data ne 'HASH') {
-                die "Malformed row data found in $i: Hash expected.\n";
-            }
+            _HASH($row_data) or
+                die "Bad data in row $i: ", $Dumper->($row_data), "\n";
             $rows_affected += insert_record($insert, $row_data, $cols, $i);
             $i++;
         }
@@ -730,15 +735,19 @@ sub insert_records {
 
 sub insert_record {
     my ($insert, $row_data, $cols, $row_num) = @_;
-    my @vals;
-    for my $col (@$cols) {
-        push @vals, delete $row_data->{$col};
+    $insert = $insert->clone;
+    my $found = 0;
+    while (my ($col, $val) = each %$row_data) {
+        _IDENT($col) or
+            die "Bad column name in row $row_num: ", $Dumper->($col), "\n";
+        $insert->cols($col);
+        $insert->values(Q($val));
+        $found = 1;
     }
-    if (%$row_data) {
-        die "Unknown column found in row $row_num: ",
-            join(", ", keys %$row_data), "\n";
+    if (!$found) {
+        die "No column specified in row $row_num.\n";
     }
-    my $sql = $insert->clone->values(Q(@vals));
+    my $sql = $insert;
     return $Backend->do($sql);
 }
 
