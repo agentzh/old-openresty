@@ -138,8 +138,11 @@ sub init {
         $http_meth = 'DELETE';
     } elsif ($http_meth =~ /^GET$/ and $url =~ s{^=/post/}{=/} ) {
         $http_meth = 'POST';
-        my $content = $cgi->url_param('data');
-        $req_data = $Importer->($content);
+        $req_data = $cgi->url_param('data');
+        #$req_data = $Importer->($content);
+        ### $req_data
+        #warn "Content: ", $Dumper->($content);
+        #warn "Data: ", $Dumper->($req_data);
     }
     ### OpenAPI->new url 2: $url
     $$rurl = $url;
@@ -1064,7 +1067,11 @@ sub POST_action_ModelSelect {
         die "Only the miniSQL language is supported for ModelSelect.\n";
     }
     my $sql = $self->{_req_data};
-    $self->select($sql, {use_hash => 1});
+    ### $sql
+    _STRING($sql) or
+        die "SQL must be a literal string: ", $Dumper->($sql), "\n";
+    warn "$sql\n";
+    $self->select("$sql", {use_hash => 1});
 }
 
 1;
