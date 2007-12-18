@@ -83,7 +83,7 @@ _EOC_
     $self->set_user($user);
     $retval = $self->do(<<"_EOC_");
     --create schema $user;
-    
+
     create table $user._models (
 	id serial primary key,
         name text unique not null,
@@ -99,6 +99,7 @@ _EOC_
         table_name text not null,
         native_type varchar(20),
         label text,
+        "default" text,
 	unique(table_name, name)
     );
 

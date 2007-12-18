@@ -22,7 +22,7 @@ POST /=/model/Carrie.js
     columns: [
         { name: "title", label: "标题" },
         { name: "url", label: "网址" },
-        { name: "num", label: "num" }
+        { name: "num", type: "integer", label: "num" }
     ]
 }
 --- response
