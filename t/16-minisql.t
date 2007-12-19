@@ -94,3 +94,11 @@ var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id"
 GET /=/post/action/ModelSelect/lang/minisql?var=foo&offset=0&count=1&data="select * from Carrie"
 --- response
 var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
+
+
+
+=== TEST 11: OFFSET & limit in minisql
+--- request
+GET /=/post/action/ModelSelect/lang/minisql?var=foo&data="select * from Carrie limit 1 offset 0"
+--- response
+var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
