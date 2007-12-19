@@ -150,11 +150,34 @@ where name = 'Hi' or age <= 3;
 
 
 
-=== TEST 13: "'" is not allowed in "''"
+=== TEST 13: escaped single quotes
 --- sql
 select *
 from blah
 where name = '''Hi' or age <= 3;
 --- error
-line 3: error: Unexpected input: ''' (INTEGER or IDENT or STRING expected).
+--- models: blah
+--- cols: name age
+
+
+
+=== TEST 14: unmatched single quotes
+--- sql
+select *
+from blah
+where name = ''''Hi' or age <= 3;
+--- error
+line 3: error: Unexpected input: 'Hi'.
+
+
+
+=== TEST 15: "'" is not allowed in "''"
+--- sql
+select *
+from blah
+where name = '' or age <= 3;
+--- error
+--- models: blah
+--- cols: name age
+
 
