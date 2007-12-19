@@ -65,7 +65,7 @@ select * from Carrie;
 --- sql
 select * from Carrie blah
 --- error
-line 1: error: Unexpected input: 'blah'.
+line 1: error: Unexpected input: "blah".
 
 
 
@@ -90,7 +90,7 @@ line 3: error: Unexpected end of input (IDENT or '(' expected).
 --- sql
 select * from Carrie blah
 --- error
-line 1: error: Unexpected input: 'blah'.
+line 1: error: Unexpected input: "blah".
 
 
 
@@ -124,7 +124,7 @@ from People, Blah
 where name='zhxj';
 group by name
 --- error
-line 4: error: Unexpected input: 'group by'.
+line 4: error: Unexpected input: "group by".
 
 
 
@@ -156,8 +156,7 @@ select *
 from blah
 where name = '''Hi' or age <= 3;
 --- error
---- models: blah
---- cols: name age
+line 3: error: Unexpected input: "'Hi'".
 
 
 
@@ -167,11 +166,22 @@ select *
 from blah
 where name = ''''Hi' or age <= 3;
 --- error
-line 3: error: Unexpected input: 'Hi'.
+line 3: error: Unexpected input: "''".
 
 
 
-=== TEST 15: empty string literals
+=== TEST 15: unmatched single quotes
+--- sql
+select *
+from blah
+where name = ''
+--- error
+--- models: blah
+--- cols: name
+
+
+
+=== TEST 16: empty string literals
 --- sql
 select *
 from blah
@@ -182,17 +192,17 @@ where name = '' or age <= 3;
 
 
 
-=== TEST 16: sql injection
+=== TEST 17: sql injection
 --- sql
 select *
 from blah
 where name = '\'' and #@!##$@ --' or age <= 3;
 --- error
-line 3: error: Unexpected input: '#' (IDENT or '(' expected).
+line 3: error: Unexpected input: "' and #@!##$@ --'".
 
 
 
-=== TEST 17: empty string literals
+=== TEST 18: empty string literals
 --- sql
 select *
 from Book, Student
@@ -203,7 +213,7 @@ where Book.brower = Student.name and Book.title = '' or age <= 3;
 
 
 
-=== TEST 18: offset & limit
+=== TEST 19: offset & limit
 --- sql
 select * from Carrie limit 1 offset 0
 --- error

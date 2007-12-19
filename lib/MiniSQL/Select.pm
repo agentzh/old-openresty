@@ -709,7 +709,7 @@ sub _Error {
     ## $value
     my @expect = $_[0]->YYExpect;
     ### expect: @expect
-    my ($what) = $value ? "input: '$value'" : "end of input";
+    my ($what) = $value ? "input: \"$value\"" : "end of input";
 
     map { $_ = "'$_'" if $_ ne '' and !/^\w+$/ } @expect;
     my $expected = join " or ", @expect;
@@ -746,7 +746,9 @@ sub _Lexer {
     for ($yydata->{input}) {
         s/^\s*([0-9]+)\b//s
                 and return ('INTEGER', $1);
-        s/^'(?:''|\\'|[^'])*'//
+        s/^\s*('[^']*')//
+                and return ('STRING', $1);
+        s/^\s*(\$q\$.*?\$q)\$//
                 and return ('STRING', $1);
         s/^\s*(\*|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|group by|limit|offset)\b//s
                 and return ($1, $1);
