@@ -171,7 +171,7 @@ line 3: error: Unexpected input: 'Hi'.
 
 
 
-=== TEST 15: "'" is not allowed in "''"
+=== TEST 15: empty string literals
 --- sql
 select *
 from blah
@@ -179,5 +179,4 @@ where name = '' or age <= 3;
 --- error
 --- models: blah
 --- cols: name age
-
 
