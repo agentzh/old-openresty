@@ -213,8 +213,7 @@ where name = $q$Laser's gift...$$ \n\nhehe $q$ and age > 3;
 
 
 
-
-=== TEST 18: $q$ ... $q$ ... $q$
+=== TEST 19: $q$ ... $q$ ... $q$
 --- sql
 select *
 from blah
@@ -223,7 +222,19 @@ where name = $q$Laser's gift...$q$ update nhehe $q$ and age > 3;
 line 3: error: Unexpected input: "update".
 
 
-=== TEST 19: empty string literals
+
+=== TEST 20: $q$q$q$
+--- sql
+select *
+from blah
+where name = $q$q$q$ and age > 3;
+--- error
+--- models: blah
+--- cols: name age
+
+
+
+=== TEST 21: empty string literals
 --- sql
 select *
 from Book, Student
@@ -234,7 +245,7 @@ where Book.brower = Student.name and Book.title = '' or age <= 3;
 
 
 
-=== TEST 20: offset & limit
+=== TEST 22: offset & limit
 --- sql
 select * from Carrie limit 1 offset 0
 --- error
