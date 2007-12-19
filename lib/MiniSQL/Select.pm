@@ -740,7 +740,7 @@ sub _Lexer {
     for ($yydata->{input}) {
         s/^\s*([0-9]+)//s
                 and return ('INTEGER', $1);
-        s/^'(?:''|[^']*)+'//
+        s/^'(?:''|\\'|[^'])*'//
                 and return ('STRING', $1);
         s/^\s*(\*|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|group by|limit|offset)\b//s
                 and return ($1, $1);

@@ -180,3 +180,24 @@ where name = '' or age <= 3;
 --- models: blah
 --- cols: name age
 
+
+
+=== TEST 16: sql injection
+--- sql
+select *
+from blah
+where name = '\'' and #@!##$@ --' or age <= 3;
+--- error
+line 3: error: Unexpected input: '#' (IDENT or '(' expected).
+
+
+
+=== TEST 17: empty string literals
+--- sql
+select *
+from Book, Student
+where Book.brower = Student.name and Book.title = '' or age <= 3;
+--- error
+--- models: Book Student Book Student Book
+--- cols: brower name title age
+

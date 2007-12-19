@@ -18,6 +18,7 @@ use SQL::Update;
 use SQL::Insert;
 use OpenAPI::Backend;
 use OpenAPI::Limits;
+use MiniSQL::Select;
 #use encoding "utf8";
 
 #$YAML::Syck::ImplicitBinary = 1;
@@ -1071,7 +1072,25 @@ sub POST_action_Select {
     _STRING($sql) or
         die "SQL must be a literal string: ", $Dumper->($sql), "\n";
     warn "$sql\n";
-    $self->select("$sql", {use_hash => 1});
+    my $select = MiniSQL::Select->new;
+    my $res = $select->parse($sql);
+    if (_HASH($res)) {
+        my @models = @{ $res->{models} };
+        my @cols = @{ $res->{columns} };
+        validate_model_names(\@models);
+        validate_col_names(\@model, \@cols);
+        $self->select($sql, {use_hash => 1});
+    }
+}
+
+sub validate_model_names {
+    my ($models) = @_;
+    for my $model (@$models) {
+    }
+}
+
+sub validate_col_names {
+    my ($models, $cols) = @_;
 }
 
 1;
