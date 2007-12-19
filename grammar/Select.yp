@@ -1,6 +1,12 @@
 #
 # Select.yp
 #
+#
+%{
+
+my (@Models, @Columns);
+
+%}
 
 %left 'and'
 %left 'or'
@@ -22,7 +28,8 @@ models: model ',' models
       | model
       ;
 
-model: IDENT;
+model: IDENT { push @Models, $_[1] }
+     ;
 
 pattern_list: pattern ',' pattern_list
             | pattern
@@ -44,10 +51,11 @@ func: 'max'
     ;
 
 column: qualified_symbol
-      | symbol
+      | symbol { push @Columns, $_[1] }
       ;
 
 qualified_symbol: symbol '.' symbol
+                    { push @Models, $_[1]; push @Columns, $_[3] }
                 ;
 
 symbol: IDENT
@@ -122,7 +130,6 @@ offset_clause: 'offset' integer;
 %%
 
 #use Smart::Comments;
-my $nberr = 3;
 
 sub _Error {
     my ($value) = $_[0]->YYCurval;
@@ -185,11 +192,15 @@ sub parse {
     $self->YYData->{source} = $source;
     #$self->YYData->{INPUT} = ;
     ### $sql
+    @Models = ();
+    @Columns = ();
     $self->YYParse( yydebug => 0 & 0x1F, yylex => \&_Lexer, yyerror => \&_Error );
     close $source;
+    return { models => [@Models], columns => [@Columns] };
 }
 
 #my ($select) =new Select;
 #my $var = $select->Run;
 
 1;
+

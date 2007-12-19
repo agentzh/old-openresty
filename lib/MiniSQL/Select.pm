@@ -14,6 +14,11 @@ use strict;
 @ISA= qw ( Parse::Yapp::Driver );
 use Parse::Yapp::Driver;
 
+#line 5 "grammar/Select.yp"
+
+
+my (@Models, @Columns);
+
 
 
 sub new {
@@ -531,7 +536,7 @@ sub new {
 	[#Rule 1
 		 'miniSQL', 1,
 sub
-#line 10 "grammar/Select.yp"
+#line 16 "grammar/Select.yp"
 { print "Done!\n" }
 	],
 	[#Rule 2
@@ -553,7 +558,10 @@ sub
 		 'models', 1, undef
 	],
 	[#Rule 8
-		 'model', 1, undef
+		 'model', 1,
+sub
+#line 31 "grammar/Select.yp"
+{ push @Models, $_[1] }
 	],
 	[#Rule 9
 		 'pattern_list', 3, undef
@@ -595,10 +603,16 @@ sub
 		 'column', 1, undef
 	],
 	[#Rule 22
-		 'column', 1, undef
+		 'column', 1,
+sub
+#line 54 "grammar/Select.yp"
+{ push @Columns, $_[1] }
 	],
 	[#Rule 23
-		 'qualified_symbol', 3, undef
+		 'qualified_symbol', 3,
+sub
+#line 58 "grammar/Select.yp"
+{ push @Models, $_[1]; push @Columns, $_[3] }
 	],
 	[#Rule 24
 		 'symbol', 1, undef
@@ -710,11 +724,10 @@ sub
     bless($self,$class);
 }
 
-#line 122 "grammar/Select.yp"
+#line 130 "grammar/Select.yp"
 
 
 #use Smart::Comments;
-my $nberr = 3;
 
 sub _Error {
     my ($value) = $_[0]->YYCurval;
@@ -777,13 +790,17 @@ sub parse {
     $self->YYData->{source} = $source;
     #$self->YYData->{INPUT} = ;
     ### $sql
+    @Models = ();
+    @Columns = ();
     $self->YYParse( yydebug => 0 & 0x1F, yylex => \&_Lexer, yyerror => \&_Error );
     close $source;
+    return { models => [@Models], columns => [@Columns] };
 }
 
 #my ($select) =new Select;
 #my $var = $select->Run;
 
 1;
+
 
 1;

@@ -3,19 +3,35 @@ use Test::Base;
 use lib 'lib';
 use MiniSQL::Select;
 
-plan tests => 1 * blocks();
+#plan tests => 3 * blocks();
+
+plan 'no_plan';
 
 run {
     my $block = shift;
     my $name = $block->name;
     my $select = MiniSQL::Select->new;
     my $sql = $block->sql or die "$name - No --- sql section found.\n";
+    my $res;
     eval {
-        $select->parse($sql);
+        $res = $select->parse($sql);
     };
     my $error = $block->error;
     $error =~ s/^\s+$//g;
     is $@, $error, "$name - parsable?";
+    my (@models, @cols);
+    if ($res) {
+        @models = @{ $res->{models} };
+        @cols = @{ $res->{columns} };
+    }
+    my $ex_models = $block->models;
+    if (defined $ex_models) {
+        is join(' ', @models), $block->models, "$name - model list ok";
+    }
+    my $ex_cols = $block->cols;
+    if (defined $ex_cols) {
+        is join(' ', @cols), $block->cols, "$name - model cols ok";
+    }
 };
 
 __DATA__
@@ -24,6 +40,8 @@ __DATA__
 --- sql
 select * from Carrie
 --- error
+--- models: Carrie
+--- cols:
 
 
 
@@ -31,6 +49,8 @@ select * from Carrie
 --- sql
 select * from Carrie where name='zhxj'
 --- error
+--- models: Carrie
+--- cols: name
 
 
 
@@ -80,7 +100,8 @@ select count(*)
 from Carrie
 where name='zhxj';
 --- error
-
+--- models: Carrie
+--- cols: name
 
 
 === TEST 9: Group by
@@ -90,7 +111,8 @@ from People, Blah
 where name='zhxj'
 group by name
 --- error
-
+--- models: People Blah
+--- cols: name name
 
 
 === TEST 10: Bad ";"
@@ -110,6 +132,8 @@ select *
 from foo
 where name = 'Hi' and age > 4;
 --- error
+--- models: foo
+--- cols: name age
 
 
 
@@ -119,4 +143,6 @@ select *
 from blah
 where name = 'Hi' or age <= 3;
 --- error
+--- models: blah
+--- cols: name age
 
