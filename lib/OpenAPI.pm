@@ -1077,7 +1077,7 @@ sub POST_action_Select {
     my $sql = $self->{_req_data};
     ### $sql
     _STRING($sql) or
-        die "SQL must be a literal string: ", $Dumper->($sql), "\n";
+        die "miniSQL must be an non-empty literal string: ", $Dumper->($sql), "\n";
     warn "SQL 1: $sql\n";
     my $select = MiniSQL::Select->new;
     my $res = $select->parse($sql, { limit => $self->{_limit}, offset => $self->{_offset} });
