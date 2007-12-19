@@ -104,6 +104,7 @@ where name='zhxj';
 --- cols: name
 
 
+
 === TEST 9: Group by
 --- sql
 select sum ( * )
@@ -113,6 +114,7 @@ group by name
 --- error
 --- models: People Blah
 --- cols: name name
+
 
 
 === TEST 10: Bad ";"
@@ -145,4 +147,14 @@ where name = 'Hi' or age <= 3;
 --- error
 --- models: blah
 --- cols: name age
+
+
+
+=== TEST 13: "'" is not allowed in "''"
+--- sql
+select *
+from blah
+where name = '''Hi' or age <= 3;
+--- error
+line 3: error: Unexpected input: ''' (INTEGER or IDENT or STRING expected).
 

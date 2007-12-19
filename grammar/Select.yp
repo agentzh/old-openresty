@@ -103,14 +103,8 @@ operator: '>'
         | 'like'
         ;
 
-literal: string
-       | integer
-       ;
-
-string: '\'' symbol '\''
-      ;
-
-integer: DIGITS
+literal: STRING
+       | INTEGER
        ;
 
 group_by_clause: 'group by' column_list
@@ -123,9 +117,9 @@ column_list: column ',' column_list
 order_by_clause: 'order by' column_list
                ;
 
-limit_clause: 'limit' integer;
+limit_clause: 'limit' INTEGER;
 
-offset_clause: 'offset' integer;
+offset_clause: 'offset' INTEGER;
 
 %%
 
@@ -174,7 +168,9 @@ sub _Lexer {
 
     for ($yydata->{input}) {
         s/^\s*([0-9]+)//s
-                and return ('DIGITS', $1);
+                and return ('INTEGER', $1);
+        s/^'[^']+'//
+                and return ('STRING', $1);
         s/^\s*(\*|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|group by|limit|offset)\b//s
                 and return ($1, $1);
         s/^\s*(<=|>=|<>)//s

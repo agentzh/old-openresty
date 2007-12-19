@@ -257,10 +257,7 @@ sub new {
 	},
 	{#State 37
 		ACTIONS => {
-			'DIGITS' => 55
-		},
-		GOTOS => {
-			'integer' => 54
+			'INTEGER' => 54
 		}
 	},
 	{#State 38
@@ -269,8 +266,8 @@ sub new {
 		},
 		GOTOS => {
 			'symbol' => 6,
-			'column_list' => 56,
-			'column' => 57,
+			'column_list' => 55,
+			'column' => 56,
 			'qualified_symbol' => 9
 		}
 	},
@@ -286,17 +283,14 @@ sub new {
 		},
 		GOTOS => {
 			'symbol' => 6,
-			'column_list' => 58,
-			'column' => 57,
+			'column_list' => 57,
+			'column' => 56,
 			'qualified_symbol' => 9
 		}
 	},
 	{#State 42
 		ACTIONS => {
-			'DIGITS' => 55
-		},
-		GOTOS => {
-			'integer' => 59
+			'INTEGER' => 58
 		}
 	},
 	{#State 43
@@ -312,7 +306,7 @@ sub new {
 		},
 		DEFAULT => -27,
 		GOTOS => {
-			'postfix_clause_list' => 60,
+			'postfix_clause_list' => 59,
 			'order_by_clause' => 35,
 			'offset_clause' => 34,
 			'where_clause' => 39,
@@ -326,7 +320,7 @@ sub new {
 			'IDENT' => 30
 		},
 		GOTOS => {
-			'models' => 61,
+			'models' => 60,
 			'model' => 29
 		}
 	},
@@ -338,13 +332,13 @@ sub new {
 	},
 	{#State 48
 		ACTIONS => {
-			"and" => 62
+			"and" => 61
 		},
 		DEFAULT => -38
 	},
 	{#State 49
 		ACTIONS => {
-			"or" => 63
+			"or" => 62
 		},
 		DEFAULT => -36
 	},
@@ -361,54 +355,63 @@ sub new {
 			'symbol' => 6,
 			'conjunction' => 49,
 			'disjunction' => 50,
-			'condition' => 64,
+			'condition' => 63,
 			'column' => 52,
 			'qualified_symbol' => 9
 		}
 	},
 	{#State 52
 		ACTIONS => {
-			"<" => 65,
-			"like" => 66,
-			"<=" => 70,
-			">" => 72,
-			"<>" => 71,
-			">=" => 68,
-			"=" => 67
+			"<" => 64,
+			"like" => 65,
+			"<=" => 69,
+			">" => 71,
+			"<>" => 70,
+			">=" => 67,
+			"=" => 66
 		},
 		GOTOS => {
-			'operator' => 69
+			'operator' => 68
 		}
 	},
 	{#State 53
 		DEFAULT => -33
 	},
 	{#State 54
-		DEFAULT => -57
-	},
-	{#State 55
-		DEFAULT => -52
-	},
-	{#State 56
-		DEFAULT => -56
-	},
-	{#State 57
-		ACTIONS => {
-			"," => 73
-		},
 		DEFAULT => -55
 	},
-	{#State 58
+	{#State 55
+		DEFAULT => -54
+	},
+	{#State 56
+		ACTIONS => {
+			"," => 72
+		},
 		DEFAULT => -53
 	},
-	{#State 59
-		DEFAULT => -58
+	{#State 57
+		DEFAULT => -51
 	},
-	{#State 60
+	{#State 58
+		DEFAULT => -56
+	},
+	{#State 59
 		DEFAULT => -26
 	},
-	{#State 61
+	{#State 60
 		DEFAULT => -6
+	},
+	{#State 61
+		ACTIONS => {
+			"(" => 51,
+			'IDENT' => 8
+		},
+		GOTOS => {
+			'comparison' => 73,
+			'symbol' => 6,
+			'column' => 52,
+			'qualified_symbol' => 9
+		}
 	},
 	{#State 62
 		ACTIONS => {
@@ -416,7 +419,8 @@ sub new {
 			'IDENT' => 8
 		},
 		GOTOS => {
-			'comparison' => 74,
+			'comparison' => 48,
+			'conjunction' => 74,
 			'symbol' => 6,
 			'column' => 52,
 			'qualified_symbol' => 9
@@ -424,77 +428,65 @@ sub new {
 	},
 	{#State 63
 		ACTIONS => {
-			"(" => 51,
-			'IDENT' => 8
-		},
-		GOTOS => {
-			'comparison' => 48,
-			'conjunction' => 75,
-			'symbol' => 6,
-			'column' => 52,
-			'qualified_symbol' => 9
+			")" => 75
 		}
 	},
 	{#State 64
-		ACTIONS => {
-			")" => 76
-		}
-	},
-	{#State 65
 		DEFAULT => -45
 	},
-	{#State 66
+	{#State 65
 		DEFAULT => -48
 	},
-	{#State 67
+	{#State 66
 		DEFAULT => -47
 	},
-	{#State 68
+	{#State 67
 		DEFAULT => -43
 	},
-	{#State 69
+	{#State 68
 		ACTIONS => {
-			"\'" => 80,
+			'INTEGER' => 76,
 			'IDENT' => 8,
-			'DIGITS' => 55
+			'STRING' => 77
 		},
 		GOTOS => {
 			'literal' => 78,
 			'symbol' => 6,
-			'integer' => 79,
-			'string' => 77,
-			'column' => 81,
+			'column' => 79,
 			'qualified_symbol' => 9
 		}
 	},
-	{#State 70
+	{#State 69
 		DEFAULT => -44
 	},
-	{#State 71
+	{#State 70
 		DEFAULT => -46
 	},
-	{#State 72
+	{#State 71
 		DEFAULT => -42
 	},
-	{#State 73
+	{#State 72
 		ACTIONS => {
 			'IDENT' => 8
 		},
 		GOTOS => {
 			'symbol' => 6,
-			'column_list' => 82,
-			'column' => 57,
+			'column_list' => 80,
+			'column' => 56,
 			'qualified_symbol' => 9
 		}
 	},
-	{#State 74
+	{#State 73
 		DEFAULT => -37
 	},
-	{#State 75
+	{#State 74
 		DEFAULT => -35
 	},
-	{#State 76
+	{#State 75
 		DEFAULT => -41
+	},
+	{#State 76
+		DEFAULT => -50
 	},
 	{#State 77
 		DEFAULT => -49
@@ -503,29 +495,10 @@ sub new {
 		DEFAULT => -39
 	},
 	{#State 79
-		DEFAULT => -50
-	},
-	{#State 80
-		ACTIONS => {
-			'IDENT' => 8
-		},
-		GOTOS => {
-			'symbol' => 83
-		}
-	},
-	{#State 81
 		DEFAULT => -40
 	},
-	{#State 82
-		DEFAULT => -54
-	},
-	{#State 83
-		ACTIONS => {
-			"\'" => 84
-		}
-	},
-	{#State 84
-		DEFAULT => -51
+	{#State 80
+		DEFAULT => -52
 	}
 ],
                                   yyrules  =>
@@ -696,27 +669,21 @@ sub
 		 'literal', 1, undef
 	],
 	[#Rule 51
-		 'string', 3, undef
-	],
-	[#Rule 52
-		 'integer', 1, undef
-	],
-	[#Rule 53
 		 'group_by_clause', 2, undef
 	],
-	[#Rule 54
+	[#Rule 52
 		 'column_list', 3, undef
 	],
-	[#Rule 55
+	[#Rule 53
 		 'column_list', 1, undef
 	],
-	[#Rule 56
+	[#Rule 54
 		 'order_by_clause', 2, undef
 	],
-	[#Rule 57
+	[#Rule 55
 		 'limit_clause', 2, undef
 	],
-	[#Rule 58
+	[#Rule 56
 		 'offset_clause', 2, undef
 	]
 ],
@@ -724,7 +691,7 @@ sub
     bless($self,$class);
 }
 
-#line 130 "grammar/Select.yp"
+#line 124 "grammar/Select.yp"
 
 
 #use Smart::Comments;
@@ -772,7 +739,9 @@ sub _Lexer {
 
     for ($yydata->{input}) {
         s/^\s*([0-9]+)//s
-                and return ('DIGITS', $1);
+                and return ('INTEGER', $1);
+        s/^'[^']+'//
+                and return ('STRING', $1);
         s/^\s*(\*|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|group by|limit|offset)\b//s
                 and return ($1, $1);
         s/^\s*(<=|>=|<>)//s
