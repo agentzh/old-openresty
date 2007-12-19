@@ -62,7 +62,7 @@ select *
 from Carrie
 where
 --- error
-line 3: error: Unexpected end of input.
+line 3: error: Unexpected end of input (IDENT or '(' expected).
 
 
 
@@ -101,4 +101,22 @@ where name='zhxj';
 group by name
 --- error
 line 4: error: Unexpected input: 'group by'.
+
+
+
+=== TEST 11: 'and' in where
+--- sql
+select *
+from foo
+where name = 'Hi' and age > 4;
+--- error
+
+
+
+=== TEST 12: 'or' in where
+--- sql
+select *
+from blah
+where name = 'Hi' or age <= 3;
+--- error
 
