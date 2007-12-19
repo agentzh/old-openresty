@@ -72,3 +72,33 @@ select * from Carrie blah
 --- error
 line 1: error: Unexpected input: 'blah'.
 
+
+
+=== TEST 8: Aggregate function 'count'
+--- sql
+select count(*)
+from Carrie
+where name='zhxj';
+--- error
+
+
+
+=== TEST 9: Group by
+--- sql
+select sum ( * )
+from People, Blah
+where name='zhxj'
+group by name
+--- error
+
+
+
+=== TEST 10: Bad ";"
+--- sql
+select sum ( * )
+from People, Blah
+where name='zhxj';
+group by name
+--- error
+line 4: error: Unexpected input: 'group by'.
+

@@ -32,6 +32,7 @@ pattern: aggregate alias
        ;
 
 aggregate: func '(' column ')'
+         | func '(' '*' ')'
          ;
 func: 'max'
     | 'min'
@@ -158,7 +159,7 @@ sub _Lexer {
     for ($yydata->{input}) {
         s/^\s*([0-9]+)//s
                 and return ('DIGITS', $1);
-        s/^\s*(\*|select|from|where|delete|update|set|order by|limit|offset)\b//s
+        s/^\s*(\*|count|sum|max|min|select|from|where|delete|update|set|order by|group by|limit|offset)\b//s
                 and return ($1, $1);
         s/^\s*([A-Za-z][A-Za-z0-9_]*)//s
                 and return ('IDENT', $1);
@@ -173,7 +174,7 @@ sub parse {
     $self->YYData->{source} = $source;
     #$self->YYData->{INPUT} = ;
     ### $sql
-    $self->YYParse( yydebug => 0x1F & 0, yylex => \&_Lexer, yyerror => \&_Error );
+    $self->YYParse( yydebug => 0 & 0x1F, yylex => \&_Lexer, yyerror => \&_Error );
     close $source;
 }
 
