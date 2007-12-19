@@ -681,17 +681,23 @@ sub
 		 'order_by_clause', 2, undef
 	],
 	[#Rule 55
-		 'limit_clause', 2, undef
+		 'limit_clause', 2,
+sub
+#line 120 "grammar/Select.yp"
+{ delete $_[0]->YYData->{limit} }
 	],
 	[#Rule 56
-		 'offset_clause', 2, undef
+		 'offset_clause', 2,
+sub
+#line 123 "grammar/Select.yp"
+{ delete $_[0]->YYData->{offset} }
 	]
 ],
                                   @_);
     bless($self,$class);
 }
 
-#line 124 "grammar/Select.yp"
+#line 126 "grammar/Select.yp"
 
 
 #use Smart::Comments;
@@ -725,7 +731,7 @@ sub _Lexer {
     #local $" = "\n";
     defined $yydata->{input} && $yydata->{input} =~ s/^\s+//s;
 
-    if (!$yydata->{input}) {
+    if (!defined $yydata->{input} || $yydata->{input} eq '') {
         ### HERE!!!
         $yydata->{input} = <$source>;
     }
@@ -738,7 +744,7 @@ sub _Lexer {
     ### lineno: $.
 
     for ($yydata->{input}) {
-        s/^\s*([0-9]+)//s
+        s/^\s*([0-9]+)\b//s
                 and return ('INTEGER', $1);
         s/^'(?:''|\\'|[^'])*'//
                 and return ('STRING', $1);
@@ -754,16 +760,25 @@ sub _Lexer {
 }
 
 sub parse {
-    my ($self, $sql) = @_;
+    my ($self, $sql, $params) = @_;
     open my $source, '<', \$sql;
-    $self->YYData->{source} = $source;
+    my $yydata = $self->YYData;
+    $yydata->{source} = $source;
+    $yydata->{limit} = $params->{limit};
+    $yydata->{offset} = $params->{offset};
+
     #$self->YYData->{INPUT} = ;
     ### $sql
     @Models = ();
     @Columns = ();
     $self->YYParse( yydebug => 0 & 0x1F, yylex => \&_Lexer, yyerror => \&_Error );
     close $source;
-    return { models => [@Models], columns => [@Columns] };
+    return {
+        limit   => $yydata->{limit},
+        offset  => $yydata->{offset},
+        models  => [@Models],
+        columns => [@Columns],
+    };
 }
 
 #my ($select) =new Select;

@@ -201,3 +201,10 @@ where Book.brower = Student.name and Book.title = '' or age <= 3;
 --- models: Book Student Book Student Book
 --- cols: brower name title age
 
+
+
+=== TEST 18: offset & limit
+--- sql
+select * from Carrie limit 1 offset 0
+--- error
+

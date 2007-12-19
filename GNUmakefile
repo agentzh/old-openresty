@@ -15,7 +15,7 @@ doc/spec.html: doc/spec.pod
 lib/MiniSQL/Select.pm: grammar/Select.yp
 	yapp -m MiniSQL::Select -o $@ $<
 
-test:
+test: all
 	$(CMDS)
 
 debug:

@@ -87,6 +87,30 @@ sub init {
     my $var = $cgi->url_param('var');
     $self->{'_var'} = $var;
 
+    my $offset = $cgi->url_param('offset');
+    $offset ||= 0;
+    if ($offset !~ /^\d+$/) {
+        die "Invalid value for the \"offset\" param: $offset\n";
+    }
+    $self->{_offset} = $offset;
+
+    my $limit = $cgi->url_param('count');
+    # limit is an alias for count
+    if (!defined $limit) {
+        $limit = $cgi->url_param('limit');
+    }
+    if (!defined $limit) {
+        $limit = $MAX_SELECT_LIMIT;
+    } else {
+        $limit ||= 0;
+        if ($limit !~ /^\d+$/) {
+            die "Invalid value for the \"count\" param: $limit\n";
+        }
+        if ($limit > $MAX_SELECT_LIMIT) {
+            die "Value too large for the limit param: $limit\n";
+        }
+    }
+    $self->{_limit} = $limit;
 
     my $http_meth = $ENV{'REQUEST_METHOD'};
     #$self->{'_method'} = $http_meth;
@@ -782,35 +806,18 @@ sub process_order_by {
 
 sub process_offset {
     my ($self, $select) = @_;
-    my $offset = $self->{_cgi}->url_param('offset');
-    return unless defined $offset;
-    $offset ||= 0;
-    if ($offset !~ /^\d+$/) {
-        die "Invalid value for the \"offset\" param: $offset\n";
+    my $offset = $self->{_offset};
+    if ($offset) {
+        $select->offset($offset);
     }
-    $select->offset($offset);
 }
 
 sub process_limit {
     my ($self, $select) = @_;
-    my $cgi = $self->{_cgi};
-    my $limit = $cgi->url_param('count');
-    # limit is an alias for count
-    if (!defined $limit) {
-        $limit = $cgi->url_param('limit');
+    my $limit = $self->{_limit};
+    if (defined $limit) {
+        $select->limit($limit);
     }
-    if (!defined $limit) {
-        $select->limit($MAX_SELECT_LIMIT);
-        return;
-    }
-    $limit ||= 0;
-    if ($limit !~ /^\d+$/) {
-        die "Invalid value for the \"count\" param: $limit\n";
-    }
-    if ($limit > $MAX_SELECT_LIMIT) {
-        die "Value too large for the limit param: $limit\n";
-    }
-    $select->limit($limit);
 }
 
 sub select_records {
@@ -1071,16 +1078,34 @@ sub POST_action_Select {
     ### $sql
     _STRING($sql) or
         die "SQL must be a literal string: ", $Dumper->($sql), "\n";
-    warn "$sql\n";
+    warn "SQL 1: $sql\n";
     my $select = MiniSQL::Select->new;
-    my $res = $select->parse($sql);
+    my $res = $select->parse($sql, { limit => $self->{_limit}, offset => $self->{_offset} });
     if (_HASH($res)) {
+        $sql = $self->append_limit_offset($sql, $res);
         my @models = @{ $res->{models} };
         my @cols = @{ $res->{columns} };
         validate_model_names(\@models);
-        validate_col_names(\@model, \@cols);
-        $self->select($sql, {use_hash => 1});
+        validate_col_names(\@models, \@cols);
+        warn "SQL 2: $sql\n";
+        $self->select("$sql", {use_hash => 1});
     }
+}
+
+sub append_limit_offset {
+    my ($self, $sql, $res) = @_;
+    #my $order_by $cgi->url
+    my $limit = $res->{limit};
+    if (defined $limit) {
+        $sql =~ s/;\s*$/ limit $limit/s or
+            $sql .= " limit $limit";
+    }
+    my $offset = $res->{offset};
+    if (defined $offset) {
+        $sql =~ s/;\s*$/ offset $offset;/s or
+            $sql .= " offset $offset";
+    }
+    return "$sql;\n";
 }
 
 sub validate_model_names {
