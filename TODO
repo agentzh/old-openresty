@@ -1,5 +1,6 @@
 TODO items for OpenAPI
 
+* Create pg_XXX tables in sql injection tests.
 * Design and implement the login interface (i.e. /=/login/user/...)
 * Design and implement roles and ACL, /=/roles/...
 * Captcha support in the login interface.
