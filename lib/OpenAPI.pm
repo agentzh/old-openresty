@@ -1085,8 +1085,8 @@ sub POST_action_Select {
         $sql = $self->append_limit_offset($sql, $res);
         my @models = @{ $res->{models} };
         my @cols = @{ $res->{columns} };
-        validate_model_names(\@models);
-        validate_col_names(\@models, \@cols);
+        $self->validate_model_names(\@models);
+        $self->validate_col_names(\@models, \@cols);
         warn "SQL 2: $sql\n";
         $self->select("$sql", {use_hash => 1});
     }
@@ -1109,13 +1109,18 @@ sub append_limit_offset {
 }
 
 sub validate_model_names {
-    my ($models) = @_;
+    my ($self, $models) = @_;
     for my $model (@$models) {
+        _IDENT($model) or die "Bad model name: \"$model\"\n";
+        if (!$self->has_model($model)) {
+            die "Model \"$model\" not found.\n";
+        }
     }
 }
 
 sub validate_col_names {
-    my ($models, $cols) = @_;
+    my ($self, $models, $cols) = @_;
+    # XXX TODO...
 }
 
 1;

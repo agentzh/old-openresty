@@ -112,3 +112,21 @@ POST /=/action/Select/lang/minisql?var=foo
 --- response
 var foo=[{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}];
 
+
+
+=== TEST 12: Try to reference meta models
+--- request
+POST /=/action/Select/lang/minisql?var=foo
+"select * from _models limit 1 offset 1"
+--- response
+var foo={"success":0,"error":"line 1: error: Unexpected input: '_' (IDENT expected)."};
+
+
+
+=== TEST 13: Reference nonexistent models
+--- request
+POST /=/action/Select/lang/minisql
+"select * from BlahBlah limit 1 offset 1"
+--- response
+{"success":0,"error":"Model \"BlahBlah\" not found."}
+
