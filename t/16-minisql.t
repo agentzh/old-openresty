@@ -87,3 +87,10 @@ GET /=/post/action/ModelSelect/lang/minisql?var=foo&data="select * from Carrie w
 --- response
 var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
 
+
+
+=== TEST 10: test for offset & count
+--- request
+GET /=/post/action/ModelSelect/lang/minisql?var=foo&offset=0&count=1&data="select * from Carrie"
+--- response
+var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
