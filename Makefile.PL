@@ -17,6 +17,7 @@ requires            ('DBD::Pg' => '1.49');
 requires            ('DBI' => '1.57');
 requires            ('Params::Util' => '0.22');
 requires            ('Clone' => '0.22');
+requires            ('Parse::Yapp');
 
 build_requires      ('Test::LongString' => 0.11);
 build_requires      ('Test::Base' => 0.54);
