@@ -74,16 +74,16 @@ var hello=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","i
 
 === TEST 8: use minisql to find record
 --- request
-POST /=/action/ModelSelect/lang/minisql
+POST /=/action/Select/lang/minisql
 "select * from Carrie where title = 'hello carrie' and num=10;"
 --- response
 [{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}]
 
 
 
-=== TEST 9: use minisql through GET & ModelSelect
+=== TEST 9: use minisql through GET & Select
 --- request
-GET /=/post/action/ModelSelect/lang/minisql?var=foo&data="select * from Carrie where url = 'http://www.carriezh.cn/' and num=10"
+GET /=/post/action/Select/lang/minisql?var=foo&data="select * from Carrie where url = 'http://www.carriezh.cn/' and num=10"
 --- response
 var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
 
@@ -91,7 +91,7 @@ var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id"
 
 === TEST 10: test for offset & count
 --- request
-GET /=/post/action/ModelSelect/lang/minisql?var=foo&offset=0&count=1&data="select * from Carrie"
+GET /=/post/action/Select/lang/minisql?var=foo&offset=0&count=1&data="select * from Carrie"
 --- response
 var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
 
@@ -99,6 +99,7 @@ var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id"
 
 === TEST 11: OFFSET & limit in minisql
 --- request
-GET /=/post/action/ModelSelect/lang/minisql?var=foo&data="select * from Carrie limit 1 offset 0"
+GET /=/post/action/Select/lang/minisql?var=foo&data="select * from Carrie limit 1 offset 0"
 --- response
 var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
+

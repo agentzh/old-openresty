@@ -1,0 +1,172 @@
+#
+# Select.yp
+# 
+# Parse::Yapp input grammar example.
+#
+# This file is PUBLIC DOMAIN 
+#
+#
+
+%%
+
+miniSQL: statement { print "Done!\n" }
+       ;
+
+statement: select_stmt ';'
+         | select_stmt
+         ;
+
+select_stmt: 'select' pattern_list 'from' models postfix_clause_list
+           | 'select' pattern_list 'from' models
+           ;
+
+models: model ',' models
+      | model
+      ;
+
+model: IDENT;
+
+pattern_list: pattern ',' pattern_list
+            | pattern
+            ;
+
+pattern: aggregate alias
+       | aggregate
+       | column
+       | '*'
+       ;
+
+aggregate: func '(' column ')'
+         ;
+func: 'max'
+    | 'min'
+    | 'count'
+    | 'sum'
+    ;
+
+column: qualified_symbol
+      | symbol
+      ;
+
+qualified_symbol: symbol '.' symbol
+                ;
+
+symbol: IDENT
+      ;
+
+alias: symbol
+     ;
+
+postfix_clause_list: postfix_clause postfix_clause_list
+                   | postfix_clause
+                   ;
+
+postfix_clause: where_clause
+              | group_by_clause
+              | order_by_clause
+              | limit_clause
+              | offset_clause
+              ;
+
+where_clause: 'where' condition
+            ;
+
+condition: disjunction
+         ;
+
+disjunction: conjunction 'or' disjuntion
+           | conjunction
+           ;
+conjunction: comparison 'and' conjunction
+           | comparison
+           ;
+comparison: column operator literal
+          | column operator column
+          | '(' condition ')'
+          ;
+
+operator: '>'
+        | '>='
+        | '<'
+        | '<='
+        | '<>'
+        | '='
+        | 'like'
+        ;
+
+literal: string
+       | integer
+       ;
+
+string: '\'' symbol '\''
+      ;
+
+integer: DIGITS
+       ;
+
+group_by_clause: 'group by' column_list
+               ;
+
+column_list: column ',' column_list
+           | column
+           ;
+
+order_by_clause: 'order by' column_list
+               ;
+
+limit_clause: 'limit' integer;
+
+offset_clause: 'offset' integer;
+
+%%
+
+use Smart::Comments;
+my $nberr = 3;
+
+sub _Error {
+    my ($value) = $_[0]->YYCurval;
+
+    my $token = 1;
+    ### $value
+    my ($what) = $value ? "input: '$value'" : "end of input";
+
+    _SyntaxError(1,"Unexpected $what", $.);
+}
+
+sub _SyntaxError {
+    my ($level, $message, $lineno) = @_;
+
+    $message= "line $lineno: error: $message";
+    die $message, ".\n";
+}
+
+sub _Lexer {
+    my ($parser) = shift;
+
+    $parser->YYData->{INPUT} or  return ('', undef);
+
+    $parser->YYData->{INPUT} =~ s/^[ \t]+//;
+
+    for ($parser->YYData->{INPUT}) {
+        s/^\s*([0-9]+)//s
+                and return ('DIGITS', $1);
+        s/^\s*(\*|select|from|where|delete|update|set|order by|limit|offset)\b//s
+                and return ($1, $1);
+        s/^\s*([A-Za-z][A-Za-z0-9_]*)//s
+                and return ('IDENT', $1);
+        s/^\s*(\S)//s
+                and return ($1, $1);
+    }
+}
+
+sub parse {
+    my ($self, $sql) = @_;
+    $self->YYData->{INPUT} = $sql;
+    ### $sql
+    $self->YYParse( yydebug => 0x1F & 0, yylex => \&_Lexer, yyerror => \&_Error );
+}
+
+#my ($select) =new Select;
+#my $var = $select->Run;
+
+1;

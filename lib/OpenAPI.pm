@@ -1057,14 +1057,14 @@ sub POST_admin_select {
     return $self->select($sql, { use_hash => 1 });
 }
 
-sub POST_action_ModelSelect {
+sub POST_action_Select {
     my ($self, $params) = @_;
     my $lang = $params->{lang};
     if (!defined $lang) {
-        die "The 'lang' param is required in the ModelSelect action.\n";
+        die "The 'lang' param is required in the Select action.\n";
     }
     if (lc($lang) ne 'minisql') {
-        die "Only the miniSQL language is supported for ModelSelect.\n";
+        die "Only the miniSQL language is supported for Select.\n";
     }
     my $sql = $self->{_req_data};
     ### $sql

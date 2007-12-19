@@ -102,7 +102,6 @@ POST /=/admin/select
 
 
 
-
 === TEST 10: drop tables
 --- request
 POST /=/admin/do
