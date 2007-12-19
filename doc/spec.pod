@@ -882,7 +882,7 @@ miniSQL 语言是标准 SQL 一个核心子集. 其基本语法如下：
                   | group_by_clause
                   | order_by_clause
 
-    where_clause: "where" conditon
+    where_clause: "where" condition
 
     condition: disjunction
     disjunction: conjunction "or" disjuntion
