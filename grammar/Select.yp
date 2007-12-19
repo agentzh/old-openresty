@@ -1,10 +1,5 @@
 #
 # Select.yp
-# 
-# Parse::Yapp input grammar example.
-#
-# This file is PUBLIC DOMAIN 
-#
 #
 
 %%
@@ -120,17 +115,17 @@ offset_clause: 'offset' integer;
 
 %%
 
-use Smart::Comments;
+#use Smart::Comments;
 my $nberr = 3;
 
 sub _Error {
     my ($value) = $_[0]->YYCurval;
 
     my $token = 1;
-    ### $value
+    ## $value
     my ($what) = $value ? "input: '$value'" : "end of input";
 
-    _SyntaxError(1,"Unexpected $what", $.);
+    _SyntaxError(1, "Unexpected $what", $.);
 }
 
 sub _SyntaxError {
@@ -143,11 +138,24 @@ sub _SyntaxError {
 sub _Lexer {
     my ($parser) = shift;
 
-    $parser->YYData->{INPUT} or  return ('', undef);
+    my $yydata = $parser->YYData;
+    my $source = $yydata->{source};
+    #local $" = "\n";
+    defined $yydata->{input} && $yydata->{input} =~ s/^\s+//s;
 
-    $parser->YYData->{INPUT} =~ s/^[ \t]+//;
+    if (!$yydata->{input}) {
+        ### HERE!!!
+        $yydata->{input} = <$source>;
+    }
+    if (!defined $yydata->{input}) {
+        return ('', undef);
+    }
 
-    for ($parser->YYData->{INPUT}) {
+    ## other data: <$source>
+    ### data: $yydata->{input}
+    ### lineno: $.
+
+    for ($yydata->{input}) {
         s/^\s*([0-9]+)//s
                 and return ('DIGITS', $1);
         s/^\s*(\*|select|from|where|delete|update|set|order by|limit|offset)\b//s
@@ -161,9 +169,12 @@ sub _Lexer {
 
 sub parse {
     my ($self, $sql) = @_;
-    $self->YYData->{INPUT} = $sql;
+    open my $source, '<', \$sql;
+    $self->YYData->{source} = $source;
+    #$self->YYData->{INPUT} = ;
     ### $sql
     $self->YYParse( yydebug => 0x1F & 0, yylex => \&_Lexer, yyerror => \&_Error );
+    close $source;
 }
 
 #my ($select) =new Select;

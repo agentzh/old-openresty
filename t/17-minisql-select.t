@@ -15,7 +15,7 @@ run {
     };
     my $error = $block->error;
     $error =~ s/^\s+$//g;
-    is $@, $error, '$name - parsable?';
+    is $@, $error, "$name - parsable?";
 };
 
 __DATA__
@@ -41,7 +41,7 @@ select * from Carrie;
 
 
 
-=== TEST 4:
+=== TEST 4: Bad token
 --- sql
 select * from Carrie blah
 --- error
@@ -49,14 +49,24 @@ line 1: error: Unexpected input: 'blah'.
 
 
 
-=== TEST 5:
+=== TEST 5: Select w/o where or other clauses
 --- sql
 select * from Carrie;
 --- error
 
 
 
-=== TEST 6:
+=== TEST 6: Unexpected end of input
+--- sql
+select *
+from Carrie
+where
+--- error
+line 3: error: Unexpected end of input.
+
+
+
+=== TEST 7:
 --- sql
 select * from Carrie blah
 --- error
