@@ -155,7 +155,7 @@ $Q$LANGUAGE plpgsql;"
 
 === TEST 14: select * from proc() as ....
 --- request
-GET /=/post/action/Select/lang/minisql?data="select * from hello_world2(1,0)"
+GET /=/post/action/Select/lang/minisql?var=sss&data="select * from hello_world2(1,0)"
 --- response
 [{"body":"Larry Wall","num":"2","id":"1"},{"body":"Audrey Tang","num":"0","id":"2"},{"body":"Larry Wall","num":"0","id":"3"},{"body":"Audrey Tang","num":"0","id":"4"}]
 
