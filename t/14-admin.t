@@ -126,7 +126,15 @@ GET /=/post/action/Select/lang/minisql?data="select hello_world(1,0)"
 
 
 
-=== TEST 12: drop tables
+=== TEST 12: select * from proc() as ....
+--- request
+GET /=/post/action/Select/lang/minisql?data="select * from hello_world(1,0) as (a int,b text,c int)"
+--- response
+[{"hello_world":"(1,\"Larry Wall\",2)"}]
+
+
+
+=== TEST 13: drop tables
 --- request
 POST /=/admin/do
 "drop table if exists _books;
