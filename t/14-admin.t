@@ -102,7 +102,31 @@ POST /=/admin/select
 
 
 
-=== TEST 10: drop tables
+=== TEST 10: CREATE PROC
+--- request
+POST /=/admin/do
+"CREATE OR REPLACE FUNCTION hello_world(i int,j int) RETURNS record AS $Q$
+	declare
+		tmp record;
+	begin
+		select * into tmp from _books where id=i;
+	return tmp;
+	end;
+$Q$LANGUAGE plpgsql;"
+--- response
+{"success":1}
+
+
+
+=== TEST 11: select proc
+--- request
+GET /=/post/action/Select/lang/minisql?data="select hello_world(1,0)"
+--- response
+[{"body":"Larry Wall","num":"2","id":"1"}]
+
+
+
+=== TEST 12: drop tables
 --- request
 POST /=/admin/do
 "drop table if exists _books;
