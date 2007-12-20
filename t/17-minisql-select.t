@@ -250,3 +250,24 @@ where Book.brower = Student.name and Book.title = '' or age <= 3;
 select * from Carrie limit 1 offset 0
 --- error
 
+
+
+=== TEST 23: proc call
+--- sql
+select hello(1) from Carrie limit 1 offset 0
+--- error
+
+
+
+=== TEST 24: proc call with more parameters
+--- sql
+select hello(1, '2') from Carrie limit 1 offset 0
+--- error
+
+
+
+=== TEST 25: proc names with underscores
+--- sql
+select hello_world(1, '2') from Carrie limit 1 offset 0
+--- error
+

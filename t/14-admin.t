@@ -122,7 +122,7 @@ $Q$LANGUAGE plpgsql;"
 --- request
 GET /=/post/action/Select/lang/minisql?data="select hello_world(1,0)"
 --- response
-[{"body":"Larry Wall","num":"2","id":"1"}]
+[{"hello_world":"(1,\"Larry Wall\",2)"}]
 
 
 

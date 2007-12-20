@@ -20,8 +20,8 @@ statement: select_stmt ';'
          | select_stmt
          ;
 
-select_stmt: 'select' pattern_list 'from' models postfix_clause_list
-           | 'select' pattern_list 'from' models
+select_stmt: 'select' pattern_list postfix_clause_list
+           | 'select' pattern_list
            ;
 
 models: model ',' models
@@ -37,6 +37,7 @@ pattern_list: pattern ',' pattern_list
 
 pattern: aggregate alias
        | aggregate
+       | proc_call
        | column
        | '*'
        ;
@@ -44,11 +45,23 @@ pattern: aggregate alias
 aggregate: func '(' column ')'
          | func '(' '*' ')'
          ;
+
 func: 'max'
     | 'min'
     | 'count'
     | 'sum'
     ;
+
+proc_call: IDENT '(' parameter_list ')'
+         ;
+
+parameter_list: parameter ',' parameter_list
+              | parameter
+              ;
+
+parameter: STRING
+         | INTEGER
+         ;
 
 column: qualified_symbol
       | symbol { push @Columns, $_[1] }
@@ -73,7 +86,11 @@ postfix_clause: where_clause
               | order_by_clause
               | limit_clause
               | offset_clause
+              | from_clause
               ;
+
+from_clause: 'from' models
+           ;
 
 where_clause: 'where' condition
             ;

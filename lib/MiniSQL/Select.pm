@@ -50,26 +50,27 @@ sub new {
 	},
 	{#State 3
 		ACTIONS => {
-			"sum" => 10,
+			"sum" => 11,
 			"max" => 7,
-			"*" => 12,
-			"count" => 13,
+			"*" => 13,
+			"count" => 14,
 			'IDENT' => 8,
 			"min" => 18
 		},
 		GOTOS => {
-			'pattern' => 11,
 			'symbol' => 6,
-			'func' => 16,
-			'aggregate' => 15,
-			'pattern_list' => 14,
-			'column' => 17,
-			'qualified_symbol' => 9
+			'proc_call' => 9,
+			'qualified_symbol' => 10,
+			'pattern' => 12,
+			'pattern_list' => 15,
+			'aggregate' => 16,
+			'func' => 17,
+			'column' => 19
 		}
 	},
 	{#State 4
 		ACTIONS => {
-			'' => 19
+			'' => 20
 		}
 	},
 	{#State 5
@@ -77,164 +78,127 @@ sub new {
 	},
 	{#State 6
 		ACTIONS => {
-			"." => 20
+			"." => 21
 		},
-		DEFAULT => -22
+		DEFAULT => -28
 	},
 	{#State 7
-		DEFAULT => -17
+		DEFAULT => -18
 	},
 	{#State 8
-		DEFAULT => -24
+		ACTIONS => {
+			"(" => 22
+		},
+		DEFAULT => -30
 	},
 	{#State 9
-		DEFAULT => -21
+		DEFAULT => -13
 	},
 	{#State 10
-		DEFAULT => -20
+		DEFAULT => -27
 	},
 	{#State 11
+		DEFAULT => -21
+	},
+	{#State 12
 		ACTIONS => {
-			"," => 21
+			"," => 23
 		},
 		DEFAULT => -10
 	},
-	{#State 12
-		DEFAULT => -14
-	},
 	{#State 13
-		DEFAULT => -19
+		DEFAULT => -15
 	},
 	{#State 14
-		ACTIONS => {
-			"from" => 22
-		}
+		DEFAULT => -20
 	},
 	{#State 15
 		ACTIONS => {
-			'IDENT' => 8
+			"where" => 24,
+			"order by" => 29,
+			"limit" => 28,
+			"group by" => 32,
+			"from" => 33,
+			"offset" => 35
 		},
-		DEFAULT => -12,
+		DEFAULT => -5,
 		GOTOS => {
-			'symbol' => 23,
-			'alias' => 24
+			'postfix_clause_list' => 27,
+			'order_by_clause' => 26,
+			'offset_clause' => 25,
+			'from_clause' => 34,
+			'where_clause' => 30,
+			'group_by_clause' => 31,
+			'limit_clause' => 36,
+			'postfix_clause' => 37
 		}
 	},
 	{#State 16
 		ACTIONS => {
-			"(" => 25
+			'IDENT' => 39
+		},
+		DEFAULT => -12,
+		GOTOS => {
+			'symbol' => 38,
+			'alias' => 40
 		}
 	},
 	{#State 17
-		DEFAULT => -13
+		ACTIONS => {
+			"(" => 41
+		}
 	},
 	{#State 18
-		DEFAULT => -18
+		DEFAULT => -19
 	},
 	{#State 19
-		DEFAULT => 0
+		DEFAULT => -14
 	},
 	{#State 20
-		ACTIONS => {
-			'IDENT' => 8
-		},
-		GOTOS => {
-			'symbol' => 26
-		}
+		DEFAULT => 0
 	},
 	{#State 21
 		ACTIONS => {
-			"sum" => 10,
-			"max" => 7,
-			"*" => 12,
-			"count" => 13,
-			'IDENT' => 8,
-			"min" => 18
+			'IDENT' => 39
 		},
 		GOTOS => {
-			'pattern' => 11,
-			'symbol' => 6,
-			'pattern_list' => 27,
-			'aggregate' => 15,
-			'func' => 16,
-			'column' => 17,
-			'qualified_symbol' => 9
+			'symbol' => 42
 		}
 	},
 	{#State 22
 		ACTIONS => {
-			'IDENT' => 30
+			'INTEGER' => 43,
+			'STRING' => 44
 		},
 		GOTOS => {
-			'models' => 28,
-			'model' => 29
+			'parameter' => 45,
+			'parameter_list' => 46
 		}
 	},
 	{#State 23
-		DEFAULT => -25
-	},
-	{#State 24
-		DEFAULT => -11
-	},
-	{#State 25
 		ACTIONS => {
-			"*" => 31,
-			'IDENT' => 8
+			"sum" => 11,
+			"max" => 7,
+			"*" => 13,
+			"count" => 14,
+			'IDENT' => 8,
+			"min" => 18
 		},
 		GOTOS => {
 			'symbol' => 6,
-			'column' => 32,
-			'qualified_symbol' => 9
+			'proc_call' => 9,
+			'qualified_symbol' => 10,
+			'pattern' => 12,
+			'func' => 17,
+			'aggregate' => 16,
+			'pattern_list' => 47,
+			'column' => 19
 		}
 	},
-	{#State 26
-		DEFAULT => -23
-	},
-	{#State 27
-		DEFAULT => -9
-	},
-	{#State 28
-		ACTIONS => {
-			"where" => 33,
-			"order by" => 38,
-			"limit" => 37,
-			"group by" => 41,
-			"offset" => 42
-		},
-		DEFAULT => -5,
-		GOTOS => {
-			'postfix_clause_list' => 36,
-			'order_by_clause' => 35,
-			'offset_clause' => 34,
-			'where_clause' => 39,
-			'group_by_clause' => 40,
-			'limit_clause' => 43,
-			'postfix_clause' => 44
-		}
-	},
-	{#State 29
-		ACTIONS => {
-			"," => 45
-		},
-		DEFAULT => -7
-	},
-	{#State 30
-		DEFAULT => -8
-	},
-	{#State 31
-		ACTIONS => {
-			")" => 46
-		}
-	},
-	{#State 32
-		ACTIONS => {
-			")" => 47
-		}
-	},
-	{#State 33
+	{#State 24
 		ACTIONS => {
 			"(" => 51,
-			'IDENT' => 8
+			'IDENT' => 39
 		},
 		GOTOS => {
 			'comparison' => 48,
@@ -243,262 +207,357 @@ sub new {
 			'disjunction' => 50,
 			'condition' => 53,
 			'column' => 52,
-			'qualified_symbol' => 9
+			'qualified_symbol' => 10
 		}
 	},
-	{#State 34
-		DEFAULT => -32
+	{#State 25
+		DEFAULT => -38
 	},
-	{#State 35
-		DEFAULT => -30
+	{#State 26
+		DEFAULT => -36
 	},
-	{#State 36
+	{#State 27
 		DEFAULT => -4
 	},
-	{#State 37
+	{#State 28
 		ACTIONS => {
 			'INTEGER' => 54
 		}
 	},
-	{#State 38
+	{#State 29
 		ACTIONS => {
-			'IDENT' => 8
+			'IDENT' => 39
 		},
 		GOTOS => {
 			'symbol' => 6,
 			'column_list' => 55,
 			'column' => 56,
-			'qualified_symbol' => 9
+			'qualified_symbol' => 10
 		}
 	},
-	{#State 39
-		DEFAULT => -28
+	{#State 30
+		DEFAULT => -34
 	},
-	{#State 40
-		DEFAULT => -29
+	{#State 31
+		DEFAULT => -35
 	},
-	{#State 41
+	{#State 32
 		ACTIONS => {
-			'IDENT' => 8
+			'IDENT' => 39
 		},
 		GOTOS => {
 			'symbol' => 6,
 			'column_list' => 57,
 			'column' => 56,
-			'qualified_symbol' => 9
+			'qualified_symbol' => 10
+		}
+	},
+	{#State 33
+		ACTIONS => {
+			'IDENT' => 60
+		},
+		GOTOS => {
+			'models' => 58,
+			'model' => 59
+		}
+	},
+	{#State 34
+		DEFAULT => -39
+	},
+	{#State 35
+		ACTIONS => {
+			'INTEGER' => 61
+		}
+	},
+	{#State 36
+		DEFAULT => -37
+	},
+	{#State 37
+		ACTIONS => {
+			"where" => 24,
+			"order by" => 29,
+			"limit" => 28,
+			"group by" => 32,
+			"from" => 33,
+			"offset" => 35
+		},
+		DEFAULT => -33,
+		GOTOS => {
+			'postfix_clause_list' => 62,
+			'order_by_clause' => 26,
+			'offset_clause' => 25,
+			'from_clause' => 34,
+			'where_clause' => 30,
+			'group_by_clause' => 31,
+			'limit_clause' => 36,
+			'postfix_clause' => 37
+		}
+	},
+	{#State 38
+		DEFAULT => -31
+	},
+	{#State 39
+		DEFAULT => -30
+	},
+	{#State 40
+		DEFAULT => -11
+	},
+	{#State 41
+		ACTIONS => {
+			"*" => 63,
+			'IDENT' => 39
+		},
+		GOTOS => {
+			'symbol' => 6,
+			'column' => 64,
+			'qualified_symbol' => 10
 		}
 	},
 	{#State 42
-		ACTIONS => {
-			'INTEGER' => 58
-		}
+		DEFAULT => -29
 	},
 	{#State 43
-		DEFAULT => -31
+		DEFAULT => -26
 	},
 	{#State 44
-		ACTIONS => {
-			"where" => 33,
-			"order by" => 38,
-			"limit" => 37,
-			"group by" => 41,
-			"offset" => 42
-		},
-		DEFAULT => -27,
-		GOTOS => {
-			'postfix_clause_list' => 59,
-			'order_by_clause' => 35,
-			'offset_clause' => 34,
-			'where_clause' => 39,
-			'group_by_clause' => 40,
-			'limit_clause' => 43,
-			'postfix_clause' => 44
-		}
+		DEFAULT => -25
 	},
 	{#State 45
 		ACTIONS => {
-			'IDENT' => 30
+			"," => 65
 		},
-		GOTOS => {
-			'models' => 60,
-			'model' => 29
-		}
+		DEFAULT => -24
 	},
 	{#State 46
-		DEFAULT => -16
+		ACTIONS => {
+			")" => 66
+		}
 	},
 	{#State 47
-		DEFAULT => -15
+		DEFAULT => -9
 	},
 	{#State 48
 		ACTIONS => {
-			"and" => 61
+			"and" => 67
 		},
-		DEFAULT => -38
+		DEFAULT => -46
 	},
 	{#State 49
 		ACTIONS => {
-			"or" => 62
+			"or" => 68
 		},
-		DEFAULT => -36
+		DEFAULT => -44
 	},
 	{#State 50
-		DEFAULT => -34
+		DEFAULT => -42
 	},
 	{#State 51
 		ACTIONS => {
 			"(" => 51,
-			'IDENT' => 8
+			'IDENT' => 39
 		},
 		GOTOS => {
 			'comparison' => 48,
 			'symbol' => 6,
 			'conjunction' => 49,
 			'disjunction' => 50,
-			'condition' => 63,
+			'condition' => 69,
 			'column' => 52,
-			'qualified_symbol' => 9
+			'qualified_symbol' => 10
 		}
 	},
 	{#State 52
 		ACTIONS => {
-			"<" => 64,
-			"like" => 65,
-			"<=" => 69,
-			">" => 71,
-			"<>" => 70,
-			">=" => 67,
-			"=" => 66
+			"<" => 70,
+			"like" => 71,
+			"<=" => 75,
+			">" => 77,
+			"<>" => 76,
+			">=" => 73,
+			"=" => 72
 		},
 		GOTOS => {
-			'operator' => 68
+			'operator' => 74
 		}
 	},
 	{#State 53
-		DEFAULT => -33
+		DEFAULT => -41
 	},
 	{#State 54
-		DEFAULT => -55
+		DEFAULT => -63
 	},
 	{#State 55
-		DEFAULT => -54
+		DEFAULT => -62
 	},
 	{#State 56
 		ACTIONS => {
-			"," => 72
+			"," => 78
 		},
-		DEFAULT => -53
+		DEFAULT => -61
 	},
 	{#State 57
-		DEFAULT => -51
+		DEFAULT => -59
 	},
 	{#State 58
-		DEFAULT => -56
+		DEFAULT => -40
 	},
 	{#State 59
-		DEFAULT => -26
+		ACTIONS => {
+			"," => 79
+		},
+		DEFAULT => -7
 	},
 	{#State 60
-		DEFAULT => -6
+		DEFAULT => -8
 	},
 	{#State 61
-		ACTIONS => {
-			"(" => 51,
-			'IDENT' => 8
-		},
-		GOTOS => {
-			'comparison' => 73,
-			'symbol' => 6,
-			'column' => 52,
-			'qualified_symbol' => 9
-		}
+		DEFAULT => -64
 	},
 	{#State 62
-		ACTIONS => {
-			"(" => 51,
-			'IDENT' => 8
-		},
-		GOTOS => {
-			'comparison' => 48,
-			'conjunction' => 74,
-			'symbol' => 6,
-			'column' => 52,
-			'qualified_symbol' => 9
-		}
+		DEFAULT => -32
 	},
 	{#State 63
 		ACTIONS => {
-			")" => 75
+			")" => 80
 		}
 	},
 	{#State 64
-		DEFAULT => -45
+		ACTIONS => {
+			")" => 81
+		}
 	},
 	{#State 65
-		DEFAULT => -48
+		ACTIONS => {
+			'INTEGER' => 43,
+			'STRING' => 44
+		},
+		GOTOS => {
+			'parameter' => 45,
+			'parameter_list' => 82
+		}
 	},
 	{#State 66
-		DEFAULT => -47
+		DEFAULT => -22
 	},
 	{#State 67
-		DEFAULT => -43
+		ACTIONS => {
+			"(" => 51,
+			'IDENT' => 39
+		},
+		GOTOS => {
+			'comparison' => 83,
+			'symbol' => 6,
+			'column' => 52,
+			'qualified_symbol' => 10
+		}
 	},
 	{#State 68
 		ACTIONS => {
-			'INTEGER' => 76,
-			'IDENT' => 8,
-			'STRING' => 77
+			"(" => 51,
+			'IDENT' => 39
 		},
 		GOTOS => {
-			'literal' => 78,
+			'comparison' => 48,
+			'conjunction' => 84,
 			'symbol' => 6,
-			'column' => 79,
-			'qualified_symbol' => 9
+			'column' => 52,
+			'qualified_symbol' => 10
 		}
 	},
 	{#State 69
-		DEFAULT => -44
+		ACTIONS => {
+			")" => 85
+		}
 	},
 	{#State 70
-		DEFAULT => -46
+		DEFAULT => -53
 	},
 	{#State 71
-		DEFAULT => -42
+		DEFAULT => -56
 	},
 	{#State 72
+		DEFAULT => -55
+	},
+	{#State 73
+		DEFAULT => -51
+	},
+	{#State 74
 		ACTIONS => {
-			'IDENT' => 8
+			'INTEGER' => 86,
+			'IDENT' => 39,
+			'STRING' => 87
+		},
+		GOTOS => {
+			'literal' => 88,
+			'symbol' => 6,
+			'column' => 89,
+			'qualified_symbol' => 10
+		}
+	},
+	{#State 75
+		DEFAULT => -52
+	},
+	{#State 76
+		DEFAULT => -54
+	},
+	{#State 77
+		DEFAULT => -50
+	},
+	{#State 78
+		ACTIONS => {
+			'IDENT' => 39
 		},
 		GOTOS => {
 			'symbol' => 6,
-			'column_list' => 80,
+			'column_list' => 90,
 			'column' => 56,
-			'qualified_symbol' => 9
+			'qualified_symbol' => 10
 		}
 	},
-	{#State 73
-		DEFAULT => -37
-	},
-	{#State 74
-		DEFAULT => -35
-	},
-	{#State 75
-		DEFAULT => -41
-	},
-	{#State 76
-		DEFAULT => -50
-	},
-	{#State 77
-		DEFAULT => -49
-	},
-	{#State 78
-		DEFAULT => -39
-	},
 	{#State 79
-		DEFAULT => -40
+		ACTIONS => {
+			'IDENT' => 60
+		},
+		GOTOS => {
+			'models' => 91,
+			'model' => 59
+		}
 	},
 	{#State 80
-		DEFAULT => -52
+		DEFAULT => -17
+	},
+	{#State 81
+		DEFAULT => -16
+	},
+	{#State 82
+		DEFAULT => -23
+	},
+	{#State 83
+		DEFAULT => -45
+	},
+	{#State 84
+		DEFAULT => -43
+	},
+	{#State 85
+		DEFAULT => -49
+	},
+	{#State 86
+		DEFAULT => -58
+	},
+	{#State 87
+		DEFAULT => -57
+	},
+	{#State 88
+		DEFAULT => -47
+	},
+	{#State 89
+		DEFAULT => -48
+	},
+	{#State 90
+		DEFAULT => -60
+	},
+	{#State 91
+		DEFAULT => -6
 	}
 ],
                                   yyrules  =>
@@ -519,10 +578,10 @@ sub
 		 'statement', 1, undef
 	],
 	[#Rule 4
-		 'select_stmt', 5, undef
+		 'select_stmt', 3, undef
 	],
 	[#Rule 5
-		 'select_stmt', 4, undef
+		 'select_stmt', 2, undef
 	],
 	[#Rule 6
 		 'models', 3, undef
@@ -555,13 +614,13 @@ sub
 		 'pattern', 1, undef
 	],
 	[#Rule 15
-		 'aggregate', 4, undef
+		 'pattern', 1, undef
 	],
 	[#Rule 16
 		 'aggregate', 4, undef
 	],
 	[#Rule 17
-		 'func', 1, undef
+		 'aggregate', 4, undef
 	],
 	[#Rule 18
 		 'func', 1, undef
@@ -573,123 +632,147 @@ sub
 		 'func', 1, undef
 	],
 	[#Rule 21
-		 'column', 1, undef
+		 'func', 1, undef
 	],
 	[#Rule 22
-		 'column', 1,
-sub
-#line 54 "grammar/Select.yp"
-{ push @Columns, $_[1] }
+		 'proc_call', 4, undef
 	],
 	[#Rule 23
-		 'qualified_symbol', 3,
-sub
-#line 58 "grammar/Select.yp"
-{ push @Models, $_[1]; push @Columns, $_[3] }
+		 'parameter_list', 3, undef
 	],
 	[#Rule 24
-		 'symbol', 1, undef
+		 'parameter_list', 1, undef
 	],
 	[#Rule 25
-		 'alias', 1, undef
+		 'parameter', 1, undef
 	],
 	[#Rule 26
-		 'postfix_clause_list', 2, undef
+		 'parameter', 1, undef
 	],
 	[#Rule 27
-		 'postfix_clause_list', 1, undef
+		 'column', 1, undef
 	],
 	[#Rule 28
-		 'postfix_clause', 1, undef
+		 'column', 1,
+sub
+#line 67 "grammar/Select.yp"
+{ push @Columns, $_[1] }
 	],
 	[#Rule 29
-		 'postfix_clause', 1, undef
+		 'qualified_symbol', 3,
+sub
+#line 71 "grammar/Select.yp"
+{ push @Models, $_[1]; push @Columns, $_[3] }
 	],
 	[#Rule 30
-		 'postfix_clause', 1, undef
+		 'symbol', 1, undef
 	],
 	[#Rule 31
-		 'postfix_clause', 1, undef
+		 'alias', 1, undef
 	],
 	[#Rule 32
-		 'postfix_clause', 1, undef
+		 'postfix_clause_list', 2, undef
 	],
 	[#Rule 33
-		 'where_clause', 2, undef
+		 'postfix_clause_list', 1, undef
 	],
 	[#Rule 34
-		 'condition', 1, undef
+		 'postfix_clause', 1, undef
 	],
 	[#Rule 35
-		 'disjunction', 3, undef
+		 'postfix_clause', 1, undef
 	],
 	[#Rule 36
-		 'disjunction', 1, undef
+		 'postfix_clause', 1, undef
 	],
 	[#Rule 37
-		 'conjunction', 3, undef
+		 'postfix_clause', 1, undef
 	],
 	[#Rule 38
-		 'conjunction', 1, undef
+		 'postfix_clause', 1, undef
 	],
 	[#Rule 39
-		 'comparison', 3, undef
+		 'postfix_clause', 1, undef
 	],
 	[#Rule 40
-		 'comparison', 3, undef
+		 'from_clause', 2, undef
 	],
 	[#Rule 41
-		 'comparison', 3, undef
+		 'where_clause', 2, undef
 	],
 	[#Rule 42
-		 'operator', 1, undef
+		 'condition', 1, undef
 	],
 	[#Rule 43
-		 'operator', 1, undef
+		 'disjunction', 3, undef
 	],
 	[#Rule 44
-		 'operator', 1, undef
+		 'disjunction', 1, undef
 	],
 	[#Rule 45
-		 'operator', 1, undef
+		 'conjunction', 3, undef
 	],
 	[#Rule 46
-		 'operator', 1, undef
+		 'conjunction', 1, undef
 	],
 	[#Rule 47
-		 'operator', 1, undef
+		 'comparison', 3, undef
 	],
 	[#Rule 48
-		 'operator', 1, undef
+		 'comparison', 3, undef
 	],
 	[#Rule 49
-		 'literal', 1, undef
+		 'comparison', 3, undef
 	],
 	[#Rule 50
-		 'literal', 1, undef
+		 'operator', 1, undef
 	],
 	[#Rule 51
-		 'group_by_clause', 2, undef
+		 'operator', 1, undef
 	],
 	[#Rule 52
-		 'column_list', 3, undef
+		 'operator', 1, undef
 	],
 	[#Rule 53
-		 'column_list', 1, undef
+		 'operator', 1, undef
 	],
 	[#Rule 54
-		 'order_by_clause', 2, undef
+		 'operator', 1, undef
 	],
 	[#Rule 55
-		 'limit_clause', 2,
-sub
-#line 120 "grammar/Select.yp"
-{ delete $_[0]->YYData->{limit} }
+		 'operator', 1, undef
 	],
 	[#Rule 56
+		 'operator', 1, undef
+	],
+	[#Rule 57
+		 'literal', 1, undef
+	],
+	[#Rule 58
+		 'literal', 1, undef
+	],
+	[#Rule 59
+		 'group_by_clause', 2, undef
+	],
+	[#Rule 60
+		 'column_list', 3, undef
+	],
+	[#Rule 61
+		 'column_list', 1, undef
+	],
+	[#Rule 62
+		 'order_by_clause', 2, undef
+	],
+	[#Rule 63
+		 'limit_clause', 2,
+sub
+#line 137 "grammar/Select.yp"
+{ delete $_[0]->YYData->{limit} }
+	],
+	[#Rule 64
 		 'offset_clause', 2,
 sub
-#line 123 "grammar/Select.yp"
+#line 140 "grammar/Select.yp"
 { delete $_[0]->YYData->{offset} }
 	]
 ],
@@ -697,7 +780,7 @@ sub
     bless($self,$class);
 }
 
-#line 126 "grammar/Select.yp"
+#line 143 "grammar/Select.yp"
 
 
 #use Smart::Comments;
