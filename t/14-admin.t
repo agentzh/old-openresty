@@ -18,7 +18,8 @@ DELETE /=/model.js
 --- request
 POST /=/admin/do
 "drop table if exists _books;
-drop table if exists _cats;"
+drop table if exists _cats;
+drop table if exists _books2 cascade;"
 --- response
 {"success":1}
 
@@ -54,6 +55,8 @@ POST /=/admin/select
     {"body":"Larry Wall","num":"0","id":"1"},
     {"body":"Audrey Tang","num":"0","id":"2"}
 ]
+
+
 
 
 
@@ -101,13 +104,20 @@ POST /=/admin/select
 [{"body":"Larry Wall","num":"2","id":"1"}]
 
 
-
-=== TEST 10: CREATE PROC
+=== TEST 10: Create a DB table
 --- request
 POST /=/admin/do
-"CREATE OR REPLACE FUNCTION hello_world(i int,j int) RETURNS record AS $Q$
+"create table _books2 (id serial primary key, body text, num integer default 0);
+--- response
+{"success":1}
+
+=== TEST 11: CREATE PROC
+--- request
+POST /=/admin/do
+"DROP FUNCTION if exists hello_world(int,int);
+CREATE OR REPLACE FUNCTION hello_world(i int,j int) RETURNS _books2 AS $Q$
 	declare
-		tmp record;
+		tmp _books2%ROWTYPE;
 	begin
 		select * into tmp from _books where id=i;
 	return tmp;
@@ -118,7 +128,7 @@ $Q$LANGUAGE plpgsql;"
 
 
 
-=== TEST 11: select proc
+=== TEST 12: select proc
 --- request
 GET /=/post/action/Select/lang/minisql?data="select hello_world(1,0)"
 --- response
@@ -126,15 +136,32 @@ GET /=/post/action/Select/lang/minisql?data="select hello_world(1,0)"
 
 
 
-=== TEST 12: select * from proc() as ....
+=== TEST 13 CREATE PROC
 --- request
-GET /=/post/action/Select/lang/minisql?data="select * from hello_world(1,0) as (a int,b text,c int)"
+POST /=/admin/do
+"DROP FUNCTION if exists hello_world2(int,int);
+CREATE OR REPLACE FUNCTION hello_world2(i int,j int) RETURNS setof _books2 AS $Q$
+	declare
+		tmp _books2%ROWTYPE;
+	begin
+		for tmp in select * from _books order by id loop
+		return next tmp;
+		end loop;
+	return;
+	end;
+$Q$LANGUAGE plpgsql;"
 --- response
-[{"hello_world":"(1,\"Larry Wall\",2)"}]
+{"success":1}
+
+=== TEST 14: select * from proc() as ....
+--- request
+GET /=/post/action/Select/lang/minisql?data="select * from hello_world2(1,0)"
+--- response
+[{"body":"Larry Wall","num":"2","id":"1"},{"body":"Audrey Tang","num":"0","id":"2"},{"body":"Larry Wall","num":"0","id":"3"},{"body":"Audrey Tang","num":"0","id":"4"}]
 
 
 
-=== TEST 13: drop tables
+=== TEST 15: drop tables
 --- request
 POST /=/admin/do
 "drop table if exists _books;
