@@ -24,10 +24,6 @@ select_stmt: 'select' pattern_list postfix_clause_list
            | 'select' pattern_list
            ;
 
-models: model ',' models
-      | model
-      ;
-
 model: IDENT { push @Models, $_[1] }
      ;
 
@@ -89,8 +85,16 @@ postfix_clause: where_clause
               | from_clause
               ;
 
-from_clause: 'from' models
+from_clause: 'from' source_list
            ;
+
+source_list: source_list source
+           | source
+           ;
+
+source: model
+      | proc_call
+      ;
 
 where_clause: 'where' condition
             ;

@@ -270,4 +270,15 @@ select hello(1, '2') from Carrie limit 1 offset 0
 --- sql
 select hello_world(1, '2') from Carrie limit 1 offset 0
 --- error
+--- models: Carrie
+--- cols:
+
+
+
+=== TEST 26: from a proc call
+--- sql
+select * from hello_world(1, '2')
+--- error
+--- models:
+--- cols:
 
