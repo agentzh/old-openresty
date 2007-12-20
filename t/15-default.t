@@ -37,8 +37,8 @@ GET /=/model/Foo
   "columns":
     [
       {"name":"id","label":"ID","type":"serial"},
-      {"name":"title","default":"No title","label":"title","type":"text"},
-      {"name":"content","default":"No content","label":"content","type":"text"}
+      {"name":"content","default":"No content","label":"content","type":"text"},
+      {"name":"title","default":"No title","label":"title","type":"text"}
     ],
     "name":"Foo",
     "description":"Foo"

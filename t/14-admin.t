@@ -58,8 +58,6 @@ POST /=/admin/select
 
 
 
-
-
 === TEST 6: CREATE FUNCTION
 --- request
 POST /=/admin/do
@@ -104,12 +102,15 @@ POST /=/admin/select
 [{"body":"Larry Wall","num":"2","id":"1"}]
 
 
+
 === TEST 10: Create a DB table
 --- request
 POST /=/admin/do
 "create table _books2 (id serial primary key, body text, num integer default 0);
 --- response
 {"success":1}
+
+
 
 === TEST 11: CREATE PROC
 --- request
@@ -152,6 +153,8 @@ CREATE OR REPLACE FUNCTION hello_world2(i int,j int) RETURNS setof _books2 AS $Q
 $Q$LANGUAGE plpgsql;"
 --- response
 {"success":1}
+
+
 
 === TEST 14: select * from proc() as ....
 --- request
