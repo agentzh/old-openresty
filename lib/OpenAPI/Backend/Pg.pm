@@ -9,7 +9,7 @@ sub new {
     my $class = shift;
     my $opts = shift || {};
     my $dbh = DBI->connect(
-        "dbi:Pg:dbname=test",
+        "dbi:Pg:dbname=test;host=localhost",
         "agentzh", "agentzh",
         {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts}
     );
