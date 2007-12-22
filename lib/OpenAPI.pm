@@ -3,7 +3,7 @@ package OpenAPI;
 use strict;
 use warnings;
 
-use Smart::Comments;
+#use Smart::Comments;
 use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
@@ -229,7 +229,7 @@ sub response {
     eval {
         #$str = decode_utf8($str);
         from_to($str, 'UTF-8', $charset);
-    };  warn $@ if $@;
+    }; #warn $@ if $@;
     if (my $var = $self->{_var} and $Dumper eq \&JSON::Syck::Dump) {
         $str = "var $self->{_var}=$str;";
     }
@@ -297,42 +297,53 @@ sub GET_model_column {
     ### $model
     ### $col
     my $table_name = lc($model);
-    my $select = SQL::Select->new( qw< name type label > )
-                            ->from( '_columns' )
-                            ->where( table_name => Q($table_name) )
-                            ->where( name => Q($col) );
-    my $res = $Backend->select("$select", { use_hash => 1 });
-    if (!$res or !@$res) {
-        die "Column '$col' not found.\n";
-    }
-    ### $res
-    return $res->[0];
+	 warn "hehe" if $col eq '!';
+	 if($col eq '~') {
+	 	 return {'columns' => $self->get_model_cols($model)->{columns}};
+	 } else {
+	 	 my $select = SQL::Select->new( qw< name type label > )
+	                            ->from( '_columns' )
+	                            ->where( table_name => Q($table_name) )
+	                            ->where( name => Q($col) );
+	  	
+	    my $res = $Backend->select("$select", { use_hash => 1 });
+	    if (!$res or !@$res) {
+	        die "Column '$col' not found.\n";
+	   	 }
+	    ### $res
+	    return $res->[0];
+	 }
+	
 }
 
 sub POST_model_column {
-    my ($self, $bits) = @_;
+    my ($self, $bits) = @_;	
     my $model = $bits->[1];
     my $col = $bits->[2];
     my $data = $self->{_req_data};
     my $table_name = lc($model);
 
     my $num = $self->column_count;
+	  my $alias;
     ### Column count: $num
     if ($num >= $COLUMN_LIMIT) {
         die "Exceeded model column count limit: $COLUMN_LIMIT.\n";
     }
 
     $data = _HASH($data) or die "column spec must be a HASH.\n";
-
-    # discard 'id' column
+	
     if ($col eq 'id') {
         die "Column id is reserved.";
-    }
+    }	
+	if($col eq '~') {
+    	 $col = $data->{name} || die "you must provide the new the column with a name!";
+	}
+	$alias = $data->{name};
     my $cols = $self->get_model_col_names($model);
     my $fst = first { lc($col) eq lc($_) } @$cols;
     if (defined $fst) {
         die "Column '$col' already exists in model '$model'.\n";
-    }
+	    }
     # type defaults to 'text' if not specified.
     my $type = $data->{type} || 'text';
     my $label = $data->{label} or
@@ -349,6 +360,12 @@ sub POST_model_column {
         ->values( Q($col, $label, $type, $ntype, $table_name) );
     my $sql = "alter table $table_name add column $col $ntype;\n";
     my $res = $Backend->do($sql . "$insert");
+	 
+	
+	 return { success => 1, 
+				src => "/=/model/$model/$col",
+	   		 warning => "Column name \"$alias\" Ignored."
+	 } if $alias && $alias ne $col; 
     return { success => 1, src => "/=/model/$model/$col" };
 }
 
@@ -377,7 +394,7 @@ sub PUT_model_column {
         #$col = $new_col;
     } else {
         $new_col = $col;
-    }
+         }
     my $type = $data->{type};
     my $ntype;
     if ($type) {
@@ -387,11 +404,11 @@ sub PUT_model_column {
             die "Bad column type: $type\n",
                 "\tOnly the following types are available: ",
                 join(", ", sort keys %to_native_type), "\n";
-        }
+    		    }
         $update_meta->set(type => Q($type))
             ->set(native_type => Q($ntype));
         $sql .= "alter table $table_name alter column $new_col type $ntype;\n",
-    }
+ 	   }
     my $label = $data->{label};
     if ($label) {
         $update_meta->set(label => Q($label));
@@ -653,7 +670,7 @@ sub new_model {
         $i++;
     }
     $sql .= "\n)";
-    warn $sql, "\n";
+   #warn $sql, "\n";
     ### $sql
     #register_table($table);
     #register_columns
@@ -1094,7 +1111,7 @@ sub POST_action_Select {
     ### $sql
     _STRING($sql) or
         die "miniSQL must be an non-empty literal string: ", $Dumper->($sql), "\n";
-    warn "SQL 1: $sql\n";
+   #warn "SQL 1: $sql\n";
     my $select = MiniSQL::Select->new;
     my $res = $select->parse($sql, { limit => $self->{_limit}, offset => $self->{_offset} });
     if (_HASH($res)) {
@@ -1103,7 +1120,7 @@ sub POST_action_Select {
         my @cols = @{ $res->{columns} };
         $self->validate_model_names(\@models);
         $self->validate_col_names(\@models, \@cols);
-        warn "SQL 2: $sql\n";
+       #warn "SQL 2: $sql\n";
         $self->select("$sql", {use_hash => 1});
     }
 }
