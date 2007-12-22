@@ -36,11 +36,11 @@ POST /=/model/Dummy/~/~
 --- request
 POST /=/model/Address
 {
-    description: "ͨѶ¼",
+    description: "通讯录",
     columns: [
         { name: "id", type: "serial", label: "ID" },
-        { name: "name", label: "����" },
-        { name: "phone", label: "�绰" }
+        { name: "name", label: "姓名" },
+        { name: "phone", label: "电话" }
     ]
 }
 --- response
@@ -52,7 +52,7 @@ POST /=/model/Address
 --- request
 GET /=/model/Address
 --- response
-[{"src":"/=/model/Address","name":"Address","description":"ͨѶ¼"}]
+[{"src":"/=/model/Address","name":"Address","description":"通讯录"}]
 
 
 
@@ -60,7 +60,7 @@ GET /=/model/Address
 --- request
 POST /=/model/Dummy/~/~
 [
-    { title: "Google����", url: "http://www.google.cn" },
+    { title: "Google搜索", url: "http://www.google.cn" },
     { url: "http://www.baidu.com" },
     { title: "Perl.com", url: "http://www.perl.com" }
 ]
