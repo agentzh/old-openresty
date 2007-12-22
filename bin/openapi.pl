@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-#use Smart::Comments;
+use Smart::Comments;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use OpenAPI;
@@ -39,9 +39,10 @@ if ($url_prefix) {
 
 my $ext = qr/\.(?:js|json|xml|yaml|yml)/;
 while (my $cgi = new CGI::Fast) {
-    #my $url  = $ENV{REQUEST_URI};
-    #$url =~ s/\?.*//g;
-    my $url = $cgi->url(-absolute=>1,-path_info=>1);
+    my $url  = $ENV{REQUEST_URI};
+    ### $url
+    $url =~ s/\?.*//g;
+    #my $url = $cgi->url(-absolute=>1,-path_info=>1);
     $url =~ s{^/+}{}g;
     ### Old URL: $url
     ### URL Prefox: $url_prefix
@@ -105,6 +106,8 @@ while (my $cgi = new CGI::Fast) {
         $openapi->response();
         next;
     }
+
+    map { s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg; } @bits;
     ### @bits
     my $fst = shift @bits;
     if ($fst ne '=') {

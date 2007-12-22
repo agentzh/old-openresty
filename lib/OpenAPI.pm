@@ -3,7 +3,7 @@ package OpenAPI;
 use strict;
 use warnings;
 
-#use Smart::Comments;
+use Smart::Comments;
 use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
@@ -518,7 +518,8 @@ sub get_model_cols {
     my $desc = $list->[0][0];
     $select->reset('name', 'type', 'label', '"default"')
            ->from('_columns')
-           ->where(table_name => Q($table));
+           ->where(table_name => Q($table))
+           ->order_by('id');
     $list = $Backend->select("$select", { use_hash => 1 });
     if (!$list or !ref $list) { $list = []; }
     unshift @$list, { name => 'id', type => 'serial', label => 'ID' };

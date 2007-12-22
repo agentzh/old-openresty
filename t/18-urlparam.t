@@ -55,7 +55,6 @@ POST /=/model/Carrie/~/~.js
 
 
 
-
 === TEST 6: read all the records
 --- request
 GET /=/model/Carrie/~/~
@@ -66,7 +65,7 @@ GET /=/model/Carrie/~/~
 
 === TEST 7: read a record according to url
 --- request
-GET /=/model/Carrie/url/http://www.carriezh.cn/index.html#/~/~
+GET /=/model/Carrie/url/http://www.carriezh.cn/index.html%23
 --- response
 [{"url":"http://www.carriezh.cn/index.html#","title":"hello carrie","id":"1"}]
 
@@ -74,7 +73,7 @@ GET /=/model/Carrie/url/http://www.carriezh.cn/index.html#/~/~
 
 === TEST 8: read a record according to url
 --- request
-GET /=/model/Carrie/url/http://zhangxiaojue.cn/test.php?p=mp3&t=web
+GET /=/model/Carrie/url/http://zhangxiaojue.cn/test%2Ephp%3Fp%3Dmp3%26t%3Dweb
 --- response
 [{"url":"http://zhangxiaojue.cn/test.php?p=mp3&t=web","title":"second","id":"2"}]
 
@@ -85,3 +84,4 @@ GET /=/model/Carrie/url/http://zhangxiaojue.cn/test.php?p=mp3&t=web
 GET /=/model/Carrie/url/zhangxiaojue?op=like
 --- response
 [{"url":"http://zhangxiaojue.cn/test.php?p=mp3&t=web","title":"second","id":"2"}]
+
