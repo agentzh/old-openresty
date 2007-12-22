@@ -588,7 +588,7 @@ Action 亦可分为内建 Action (如 C<WebSearch> 和 C<Select> ) 和用户自�
 
 =head3 Create Actions
 
-用户自定义的 Action 在概念上类似于数据库中存储过程，并将通过 OpenAPI 自己定义的 minisql 语言来表达其功能.
+用户自定义的 Action 在概念上类似于数据库中存储过程，并将通过 OpenAPI 自己定义的 minisql 语言中的 C<update> 和 C<delete> 语句来表达其功能.
 
 示例：
 
@@ -781,8 +781,6 @@ C<< <column> >> 和 C<< <value> >> 的含义与 Model 的 URL 记法中的一致
 
     POST /=/role/<role name>/~/~
     [ rule1, rule2, ... ]
-
-
 
 =head2 Administration
 
