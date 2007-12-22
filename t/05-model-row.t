@@ -30,3 +30,48 @@ POST /=/model/Dummy/~/~
 --- response
 {"success":0,"error":"Model \"Dummy\" not found."}
 
+
+
+=== TEST 3: Create a model
+--- request
+POST /=/model/Address
+{
+    description: "通讯录",
+    columns: [
+        { name: "id", type: "serial", label: "ID" },
+        { name: "name", label: "姓名" },
+        { name: "phone", label: "电话" }
+    ]
+}
+--- response
+{"success":1,"warning":"Column \"id\" reserved. Ignored."}
+
+
+
+=== TEST 4: check the model list
+--- request
+GET /=/model/Address
+--- response
+[{"src":"/=/model/Address","name":"Address","description":"通讯录"}]
+
+
+
+=== TEST 5: insert multiple records at a time
+--- request
+POST /=/model/Dummy/~/~
+[
+    { title: "Google搜索", url: "http://www.google.cn" },
+    { url: "http://www.baidu.com" },
+    { title: "Perl.com", url: "http://www.perl.com" }
+]
+--- response
+{"success":1,"rows_affected":3,"last_row":"/=/model/Bookmark/id/5"}
+
+
+
+=== TEST 3: get columns by value
+--- request
+GET /=/model/Dummy/~/~
+{ name: 'foo' }
+--- response
+{"success":0,"error":"Model \"Dummy\" not found."}
