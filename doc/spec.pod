@@ -412,7 +412,6 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
     GET /=/model/<model name>/<column name>/~
 
-这里的星号 C<~> 是“通配符”(wildcard).
 
 逻辑上相当于下面这行 SQL 语句：
 
@@ -447,6 +446,9 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
         { id: 1, title: "Revision 34: /trunk", url: "http://svn.openfoundry.com/xulapp/trunk", description: "" }
     ]
 
+如果 C<column value> 中含有 URL 特殊字符，例如 C<?>, C<%>, C<&> 之类，
+则应该进行转义。例如 C<?> 使用 C<%2E> 代替。
+
 如果不希望用 C<=> 执行精确匹配的话，可以通过指定 C<op> 选项来指定其他运算符，包括 C<contains>, C<gt>, C<ge>, C<lt>, C<le>, 和 C<eq>.
 
 下面是一个例子：
@@ -465,6 +467,26 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
         { id: 56, title: "Yahoo News", url: "http://news.yahoo.com", description: "美国雅虎网站" },
         { id: 57, title: "Yahoo中国", url: "http://cn.yahoo.com", description: "阿里巴巴中国雅虎首页" }
     ]
+
+
+=item 显示各列中出现某个值的记录
+
+    GET /=/model/<model name>/~/<column value>
+
+这里的星号 C<~> 是“通配符”(wildcard).
+
+该查询相当于下面的 SQL 语句：
+
+    select *
+    from <model name>
+    where <column 1> = <column value> or <column 2> = <column value> or ...
+
+=item 显示所有记录
+
+    GET /=/model/<model name>/~/~
+
+值得一提的是，查询 C< GET /=/model/<model name>/<column name>/~ > 的效果
+也是显示所有记录。
 
 =item 扩展查询语法
 
