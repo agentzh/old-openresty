@@ -577,12 +577,10 @@ I<POST body>
 
 =head2 Actions
 
-"动作(Action)"是一种抽象的功能实体。典型的 Action 的例子有"网页搜索", "模型搜索", 以及"邮件发送"等等。Action 在概念上与编程语言中的函数相近。
+"动作(Action)"是一种抽象的功能实体。Action 在概念上与编程语言中的函数相近。
 
 每一个 Action 都有一个界面，界面一般由若干个 parameters 组成。就像每一个 model
 都由若干个 columns 组成一样。
-
-Action 一般都拥有返回值, 比如“网页搜索”这个动作会返回一个结果列表，而"邮件发送"这个Action 只会返回 true 或者 false.
 
 Action 亦可分为内建 Action (如 C<WebSearch> 和 C<Select> ) 和用户自定义 Action 两大类.
 
@@ -615,13 +613,8 @@ Action 亦可分为内建 Action (如 C<WebSearch> 和 C<Select> ) 和用户自�
 
 以指定的参数调用 actions. 示例：
 
-    GET /=/action/WebSearch/query/Hello,world
-    [
-        { title: "Hello world program - Wikipedia, the free encyclopedia", url: "en.wikipedia.org/wiki/Hello_world_program", summary: "..." },
-        { title: "Helloworld.com", url: "www.helloworld.com/", summary: "..." },
-        { title: "...", url: "...", summary: "..." },
-        ...
-    ]
+    GET /=/action/RemoveBookmarks/pattern/Hello,world
+    {"success":1}
 
 对于无参数的 Action 调用时使用
 
