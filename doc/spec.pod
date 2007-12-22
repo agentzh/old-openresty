@@ -679,6 +679,56 @@ I<POST body>
 
 =back
 
+=head2 Views
+
+OpenAPI 中的视图 (Views) 与数据库中的视图比较近似，但不同的是它是可以带参数的。比如：
+
+    POST /=/view/MyQuery
+    "select * from CComment where name = $name and parent_id = $parent_id"
+
+此时便创建了一个名为 MyQuery 的 OpenAPI 视图对象。
+该视图返回的结果是由一个带特殊变量的 miniSQL 语句来指定的。
+由 C<$> 起始的变量都是 MyQuery 这个视图的参数。例如上面这个例子中，
+C<$name> 和 C<$parent_id> 都是参数变量。
+
+于是后面可以通过这样的语法调用 MyQuery:
+
+    GET /=/view/MyQuery/name/Foo?parent_id=Blah
+
+或者等价地：
+
+    GET /=/view/MyQuery/parent_id/Blah?name=Foo
+
+视图参量可以带缺省值，例如：
+
+    POST /=/view/MyQuery
+    "select * from CComment where name = $name|'Foo' and parent_id = $parent_id|'Blah'"
+
+这样调用 MyQuery 的时候如果不提供参量，也不会报错：
+
+    GET /=/view/MyQuery/~/~
+
+这与前面的两种 MyQuery 调用方式是等效的。
+
+虽然视图对象的功能都可以使用 C<Select> 动作来完成，但它却拥有以下优点：
+
+=over
+
+=item 1.
+
+服务器可以只在创建视图的时候解析 minisql 语句一次，而在随后的视图调用中提高处理速度。
+
+=item 2.
+
+视图调用中会自动对参量进行 quote 处理，而客户无需自己在拼 minisql 串的时候自己去做。
+
+=item 3.
+
+方便通过 C<Role> 的 URL 规则来限制客户端的权限，从而不必直接将 minisql 界面
+（即 C</=/action/Select/lang/minisql> ) 暴露给客户端。
+
+=back
+
 =head2 Roles
 
 OpenAPI 通过角色 (Role) 来实现子用户和权限分配功能。
