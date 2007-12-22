@@ -288,7 +288,7 @@ POST /=/model/laser/~
 
 
 
-=== TEST 28 : Add a new column 
+=== TEST 28 : Add a new column
 --- request
 POST /=/model/laser/N
 {"name":"M","type":"text","label":"N"}
@@ -297,7 +297,32 @@ POST /=/model/laser/N
 
 
 
-=== TEST 29 : Remove all the columns 
+=== TEST 29 : Get a column with other invalid symbol
+--- request
+GET /=/model/laser/!
+--- response
+{"success":0,"error":"Column '!' not found."}
+
+
+
+=== TEST 30 : Add a new column with other invalid symbol
+--- request
+POST /=/model/laser/!
+{"name":"D","type":"text","label":"D"}
+--- response
+{"success":0,"error":"Bad column name: \"!\""}
+
+
+
+=== TEST 31 : Remove all the columns with other invalid symbol
+--- request
+DELETE /=/model/laser/!
+--- response
+{"success":0,"error":"Column '!' not found."}
+
+
+
+=== TEST 32 : Remove all the columns 
 --- request
 DELETE /=/model/laser/~
 --- response
