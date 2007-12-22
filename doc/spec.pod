@@ -336,15 +336,12 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
     GET /=/model
 
     [
-        { description: "My favorite bookmark", name: "Bookmark", src: "/=/model/Bookmark", writable: 1, readable: 1 },
-        { description: "My favorite music", type: "model", name: "Music", src: "/=/model/Music", writable: 1, readable: 1 },
-        { description: "My frequently accessed blog", name: "Blog", src: "/=/model/Blog", writable: 1, readable: 1 },
+        { description: "My favorite bookmark", name: "Bookmark", src: "/=/model/Bookmark" },
+        { description: "My favorite music", type: "model", name: "Music", src: "/=/model/Music" },
+        { description: "My frequently accessed blog", name: "Blog", src: "/=/model/Blog" },
     ]
 
 有关结果格式的讨论，请见 L</DATA FORMAT> 一节.
-
-
-这里的 C<writable> 和 C<readable> 属性标记了模型的读权限和写权限。读写权限是用户通过"角色" (Role) 来分配的。
 
 =item 显示指定模型的 schema
 
@@ -366,10 +363,10 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
       description: "My favorite bookmark",
       columns:
         [
-          { name: "id", type: "serial", src: "/=/model/Bookmark/id", writable: 1, readable: 1 },
-          { name: "title", type: "string", src: "/=/model/Bookmark/string", writable: 1, readable: 1 },
-          { name: "url", type: "string", src: "/=/model/Bookmark/url", writable: 1, readable: 1 },
-          { name: "description", type: "string", src: "/=/model/Bookmark/description", writable: 1, readable: 1 },
+          { name: "id", type: "serial", src: "/=/model/Bookmark/id" },
+          { name: "title", type: "string", src: "/=/model/Bookmark/string" },
+          { name: "url", type: "string", src: "/=/model/Bookmark/url" },
+          { name: "description", type: "string", src: "/=/model/Bookmark/description" },
         ]
     }
 
@@ -383,7 +380,7 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
 返回
 
-    { name: "title", type: "string", src: "/=/model/Bookmark/string", writable: 1, readable: 1 },
+    { name: "title", type: "string", src: "/=/model/Bookmark/string" },
 
 =back
 
