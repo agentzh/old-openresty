@@ -577,41 +577,23 @@ I<POST body>
 
 =head2 Actions
 
-"动作(Action)"是一种抽象的功能实体。典型的 Action 的例子有"网页搜索", "模型搜索", 以及"邮件发送"等等。
-Action 在概念上与编程语言中的函数相近。
+"动作(Action)"是一种抽象的功能实体。典型的 Action 的例子有"网页搜索", "模型搜索", 以及"邮件发送"等等。Action 在概念上与编程语言中的函数相近。
 
 每一个 Action 都有一个界面，界面一般由若干个 parameters 组成。就像每一个 model
 都由若干个 columns 组成一样。
 
-Action 一般都拥有返回值, 比如“网页搜索”这个动作会返回一个结果列表，而"邮件发送"这个Action
-只会返回 true 或者 false.
+Action 一般都拥有返回值, 比如“网页搜索”这个动作会返回一个结果列表，而"邮件发送"这个Action 只会返回 true 或者 false.
 
 Action 亦可分为内建 Action (如 C<WebSearch> 和 C<Select> ) 和用户自定义 Action 两大类.
 
 =head3 Create Actions
 
-警告：这一部分是高度猜想性质。
-
-用户自定义的 Action 在概念上等同于数据库中的视图(view)，并将通过 OpenAPI 自己定义的 miniSQL 语言来表达其功能.
-
-miniSQL 将不支持嵌套语句，比如嵌套型 select 语句.
+用户自定义的 Action 在概念上类似于数据库中存储过程，并将通过 OpenAPI 自己定义的 minisql 语言来表达其功能.
 
 示例：
 
-    POST /=/action
-
-I<POST body>
-
-    [
-      {
-        name: "My SVN bookmarks",
-        body: "select * from Bookmark where url like "%svn.%" or description like "%SVN%""
-      },
-      {
-        name: "My Yahoo bookmarks",
-        body: "select * from Bookmark where url like "%yahoo%" and title like "%yahoo%""
-      }
-    ]
+    POST /=/action/RemoveBookmarks
+    "delete from Bookmark where url like $pattern description like pattern"
 
 =head3 Inspect Actions
 
@@ -621,8 +603,11 @@ I<POST body>
 
 示例：
 
-    GET /=/action/WebSearch
+    GET /=/action/RemoveBooks
 
+输出为它的 minisql 定义：
+
+    "delete from Bookmark where url like $pattern description like pattern"
 
 =head3 Call Actions
 
@@ -640,7 +625,7 @@ I<POST body>
 
 对于无参数的 Action 调用时使用
 
-    GET /=/action/<action name>/dummy/nil
+    GET /=/action/<action name>/~/~
 
 的形式。
 
@@ -684,7 +669,7 @@ OpenAPI 中的视图 (Views) 与数据库中的视图比较近似，但不同的
     "select * from CComment where name = $name and parent_id = $parent_id"
 
 此时便创建了一个名为 MyQuery 的 OpenAPI 视图对象。
-该视图返回的结果是由一个带特殊变量的 miniSQL 语句来指定的。
+该视图返回的结果是由一个带特殊变量的 minisql 语句来指定的。
 由 C<$> 起始的变量都是 MyQuery 这个视图的参数。例如上面这个例子中，
 C<$name> 和 C<$parent_id> 都是参数变量。
 
@@ -795,9 +780,6 @@ C<< <column> >> 和 C<< <value> >> 的含义与 Model 的 URL 记法中的一致
 =head3 添加权限规则
 
     POST /=/role/<role name>/~/~
-
-I<POST content>
-
     [ rule1, rule2, ... ]
 
 
@@ -886,11 +868,11 @@ C<limit> 参数为 C<count> 的一个别名。
 
 XXX Needs work...
 
-=head1 GRAMMAR FOR miniSQL
+=head1 GRAMMAR FOR minisql
 
-miniSQL 语言是标准 SQL 一个核心子集. 其基本语法如下：
+minisql 语言是标准 SQL 一个核心子集. 其基本语法如下：
 
-    miniSQL: statement
+    minisql: statement
 
     statement: select_stmt
              | update_stmt
