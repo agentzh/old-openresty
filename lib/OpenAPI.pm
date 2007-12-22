@@ -24,6 +24,16 @@ use MiniSQL::Select;
 #$YAML::Syck::ImplicitBinary = 1;
 our $Backend;
 
+my %OpMap = (
+    contains => 'like',
+    gt => '>',
+    ge => '>=',
+    lt => '<',
+    le => '<=',
+    eq => '=',
+    ne => '<>',
+);
+
 my %ext2dumper = (
     '.yml' => \&YAML::Syck::Dump,
     '.yaml' => \&YAML::Syck::Dump,
@@ -422,7 +432,7 @@ sub GET_model_row {
     my $model  = $bits->[1];
     my $column = $bits->[2];
     my $value  = $bits->[3];
-    
+
     if ($column ne '~' and $value ne '~') {
         return $self->select_records($model, $column, $value);
     }
@@ -836,15 +846,20 @@ sub select_records {
     my $select = SQL::Select->new;
     $select->from($table);
     if (defined $val) {
+        my $op = $self->{_cgi}->url_param('op') || 'eq';
+        $op = $OpMap{$op};
+        if ($op eq 'like') {
+            $val = "%$val%";
+        }
         $select->select('id', @$cols)
-               ->where($user_col => Q($val));
+               ->where($user_col => $op => Q($val));
     } else {
         $select->select($user_col);
     }
     $self->process_order_by($select, $model, $user_col);
     $self->process_offset($select);
     $self->process_limit($select);
-    ### $val
+    ### select SQL: "$select"
     my $res = $Backend->select("$select", { use_hash => 1 });
     if (!$res and !ref $res) { return []; }
     return $res;
