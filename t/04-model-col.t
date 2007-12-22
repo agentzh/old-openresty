@@ -263,3 +263,42 @@ DELETE /=/model/laser/C
 --- response
 {"success":0,"error":"Column 'C' not found."}
 
+
+
+=== TEST 26 : Get all the columns
+--- request
+GET /=/model/laser/~
+--- response
+{
+    "columns":
+      [
+        {"name":"id","label":"ID","type":"serial"},
+        {"name":"A","default":null,"label":"A","type":"text"}
+      ]
+}
+
+
+
+=== TEST 27 : Add a new column with '~'
+--- request
+POST /=/model/laser/~
+{"name":"M","type":"real","label":"M"}
+--- response
+{"success":1,"src":"/=/model/laser/M"}
+
+
+
+=== TEST 28 : Add a new column 
+--- request
+POST /=/model/laser/N
+{"name":"M","type":"text","label":"N"}
+--- response
+{"success":1,"src":"/=/model/laser/N","warning":"Column name \"M\" Ignored."}
+
+
+
+=== TEST 29 : Remove all the columns 
+--- request
+DELETE /=/model/laser/~
+--- response
+{"success":1}
