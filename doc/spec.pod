@@ -504,7 +504,7 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
 =back
 
-更高级的检索需求 (比如 table join 和 group by) 应由 C</=/action/ModelSearch> 来完成.
+更高级的检索需求 (比如 table join 和 group by) 应由 C</=/action/Select> 来完成.
 
 =head3 Manipulate Records
 
@@ -586,7 +586,7 @@ Action 在概念上与编程语言中的函数相近。
 Action 一般都拥有返回值, 比如“网页搜索”这个动作会返回一个结果列表，而"邮件发送"这个Action
 只会返回 true 或者 false.
 
-Action 亦可分为内建 Action (如 WebSearch 和 ModelSearch ) 和用户自定义 Action 两大类.
+Action 亦可分为内建 Action (如 C<WebSearch> 和 C<Select> ) 和用户自定义 Action 两大类.
 
 =head3 Create Actions
 
@@ -652,14 +652,11 @@ I<POST body>
 
 =over
 
-=item ModelSearch
+=item Select
 
-ModelSearch 提供了用 MiniSQL 对 Models 进行高级查询的方式。下面是一个例子：
+Select 提供了用 minisql 的 select 语句对 Models 进行高级查询的方式。下面是一个例子：
 
-    POST /=/action/ModelSearch/lang/miniSQL
-
-I<POST body>
-
+    POST /=/action/Select/lang/minisql
     "select * from Music, Bookmark where Music.url = Bookmark.url"
 
 =item WebSearch
