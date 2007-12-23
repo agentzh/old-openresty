@@ -342,3 +342,20 @@ DELETE /=/model/laser/~
 --- response
 {"success":1}
 
+
+
+=== TEST 35: Get columns
+--- request
+GET /=/model/laser/~
+--- reponse
+[]
+
+
+
+=== TEST 36: Re-add an old column
+--- request
+POST /=/model/laser/~
+{"name":"M","type":"real","label":"M"}
+--- response
+{"success":1,"src":"/=/model/laser/M"}
+
