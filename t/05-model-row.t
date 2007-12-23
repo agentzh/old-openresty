@@ -65,14 +65,13 @@ POST /=/model/Dummy/~/~
     { title: "Perl.com", url: "http://www.perl.com" }
 ]
 --- response
-{"success":1,"rows_affected":3,"last_row":"/=/model/Bookmark/id/5"}
+{"success":0,"error":"Model \"Dummy\" not found."}
 
 
 
 === TEST 6: Access records via a bad model name
 --- request
 GET /=/model/Dummy/~/~
-{ name: 'foo' }
 --- response
 {"success":0,"error":"Model \"Dummy\" not found."}
 
