@@ -2,10 +2,12 @@ use strict;
 use warnings;
 
 my $reason;
+my $env;
 BEGIN {
-    $reason = "environment TEST_PG_CLUSTER not set.";
+    $env = 'OPENAPI_TEST_CLUSTER';
+    $reason = "environment $env not set.";
 }
-use Test::More $ENV{OPENAPI_TEST_CLUSTER} ? 'no_plan' : (skip_all => $reason);
+use Test::More $ENV{$env} ? 'no_plan' : (skip_all => $reason);
 
 use lib 'lib';
 use OpenAPI::Backend::PgFarm;
