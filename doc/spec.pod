@@ -12,7 +12,7 @@ Agent Zhang (章亦春) <agentzh@yahoo.cn>
 
     CREATED:       Nov 19, 2007
     LAST MODIFIED: Dec 23, 2007
-    VERSION:       0.11
+    VERSION:       0.12
 
 =head1 DESCRIPTION
 
@@ -851,7 +851,15 @@ XXX needs work...
 
 =head1 Content type
 
-XXX...
+HTTP 响应的头部中的 Content-Type 总是 C<text/plain>.
+
+HTTP 请求头部中的 Content-Type 推荐是 C<text/plain>. 如果 PUT 和 POST
+请求的 C<Content-Type> 被设为 C<application/x-www-form-urlencoded>,
+则 content 部分应该写作
+
+    data=<content>
+
+XXX specify what happens when it is "multipart/form-data"
 
 =head1 URL Parameters
 
