@@ -8,7 +8,7 @@ use Data::Dumper;
 use subs 'dump';
 
 SKIP: {
-	skip "Intranet Only!!!" unless $ENV{OPENAPI_TEST_CLUSTER};
+	skip "Warning: env TEST_PG_CLUSTER not set; all tests skipped" unless $ENV{OPENAPI_TEST_CLUSTER};
 
 	my $backend = OpenAPI::Backend::PgFarm->new({ RaiseError => 0 });
 	ok $backend, "database handle okay";
