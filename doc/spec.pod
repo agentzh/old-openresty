@@ -99,8 +99,7 @@ C<update> 和 C<alter> 语句.
 
 =item HEAD
 
-与 C<GET> 相近，但对于返回列表型数据的读取操作而言，
-仅返回第一个列表项。类似 SQL 语言中的 C<select top 1>.
+与 C<GET> 相近，但对于返回列表型数据的读取操作而言，返回列表中元素的个数。类似 SQL 语言中的 C<select count(*)>.
 
 =back
 
