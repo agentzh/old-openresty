@@ -367,3 +367,19 @@ POST /=/model/laser/~
 --- response
 {"success":1,"src":"/=/model/laser/M"}
 
+
+
+=== TEST 38: Insert a record
+--- request
+GET /=/post/model/laser/~/~?data={M:3.14}
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/laser/id/1"}
+
+
+
+=== TEST 39: query via id
+--- request
+GET /=/model/laser/id/1
+--- response
+[{"id":"1","M":"3.14"}]
+
