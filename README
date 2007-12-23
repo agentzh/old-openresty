@@ -47,7 +47,7 @@ It's also possible to debug a simple .t file, for instance,
 
 Or use prove to test a remote OpenAPI server, for example:
 
-    REMOTE_OPENAPI=10.62.136.86 prove t/0*.t
+    OPENAPI_FRONTEND=10.62.136.86 prove t/0*.t
 
 where 10.62.136.86 is the IP (or hostname or URL) of your OpenAPI server
 being tested.

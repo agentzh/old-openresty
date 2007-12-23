@@ -13,7 +13,7 @@ use Benchmark::Timer;
 my $timer = Benchmark::Timer->new();
 
 my $ua = LWP::UserAgent->new;
-our $host = $ENV{'REMOTE_OPENAPI'} || 'http://localhost';
+our $host = $ENV{'OPENAPI_FRONTEND'} || $ENV{'REMOTE_OPENAPI'} || 'http://localhost';
 $host = "http://$host" if $host !~ m{^http://};
 
 sub init {
