@@ -21,6 +21,7 @@ requires            ('Parse::Yapp');
 
 build_requires      ('Test::LongString' => 0.11);
 build_requires      ('Test::Base' => 0.54);
+build_requires      ('Test::More' => 0.74);
 build_requires      ('LWP::UserAgent');
 build_requires      ('Benchmark::Timer');
 build_requires      ('Hash::Merge');
