@@ -11,8 +11,8 @@ Agent Zhang (章亦春) <agentzh@yahoo.cn>
 =head1 VERSION
 
     CREATED:       Nov 19, 2007
-    LAST MODIFIED: Dec 22, 2007
-    VERSION:       0.08
+    LAST MODIFIED: Dec 23, 2007
+    VERSION:       0.09
 
 =head1 DESCRIPTION
 
@@ -102,6 +102,35 @@ C<update> 和 C<alter> 语句.
 与 C<GET> 相近，但对于返回列表型数据的读取操作而言，返回列表中元素的个数。类似 SQL 语言中的 C<select count(*)>.
 
 =back
+
+那于一些防火墙阻止 PUT 和 DELETE 请求，而且对于跨域 AJAX 调用而言，
+DELETE 和 PUT 也较难实现，OpenAPI 为 PUT 和 DELETE 提供了相应的变形接口。
+例如
+
+    PUT /=/model/Foo
+    <content>
+
+等价于下面这个 POST 请求：
+
+    POST /=/put/model/Foo
+    <content>
+
+类似地，下面这个 DELETE 请求
+
+    DELETE /=/model/~
+
+等价于下面这个 GET 请求：
+
+    GET /=/delete/model/~
+
+为方便起见，POST 请求也具有对应的 GET 变形：
+
+    GET /=/post/...?data=<content>
+
+等价于
+
+    POST /=/...
+    <content>
 
 =head1 URL SYNTAX
 
@@ -318,6 +347,12 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
     DELETE /=/model/Bookmark/comment
 
+删除所有的列可以使用下面的命令：
+
+    DELETE /=/model/Bookmark/~
+
+值得提醒的是 C<id> 列是保留的，故它不会被删除。
+
 =back
 
 =head3 Read Models
@@ -400,6 +435,10 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 =item 删除所有的 Model
 
     DELETE /=/model
+
+或者
+
+    DELETE /=/model/~
 
 =back
 
