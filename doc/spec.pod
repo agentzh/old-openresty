@@ -962,7 +962,21 @@ C<limit> 参数为 C<count> 的一个别名。
 
 =head1 ERROR HANDLING
 
-XXX Needs work...
+当操作成功时，服务器返回的数据如果用 JSON 格式表达，一般为
+
+    {"success":1}
+
+如果操作虽然成功，但有警告的场合，会是：
+
+    {"success":1,"warning":"Some warning goes here..."}
+
+对于插入 Model 记录的操作，服务器会返回一些额外的字段，比如：
+
+    {"success":1,"rows_affected":5,"last_row":"/=/model/Foo/id/3"}
+
+如果操作失败，则是下面这个样子：
+
+    {"success":0,"error":"Error message goes here..."}
 
 =head1 GRAMMAR FOR minisql
 
