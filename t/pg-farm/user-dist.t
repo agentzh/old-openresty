@@ -3,8 +3,7 @@
 use strict;
 use warnings;
 
-my $reason;
-my $env;
+my ($reason, $env);
 BEGIN {
     $env = 'OPENAPI_TEST_CLUSTER';
     $reason = "environment $env not set.";
