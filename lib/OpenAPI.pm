@@ -1021,6 +1021,7 @@ sub alter_model {
 
 sub global_model_check {
     my ($self, $rbits, $meth) = @_;
+         #warn "$meth: {@$rbits}\n";
     ### Check model existence and column existence here...
     ### if method is not POST...
     ### method: $meth
@@ -1037,15 +1038,20 @@ sub global_model_check {
     if (@$rbits >= 3) {
         # XXX check column name here...
         $col = $rbits->[2];
-
-        (_IDENT($col) || $col eq '~') or die "Column '$col' not found.\n";
+		    
+        unless(_IDENT($col) || $col eq '~'){
+			 die "Bad column name: \"$col\"\n" if $meth eq 'POST'; 
+			 die "Column '$col' not found.\n";
+			}
     }
 
     if ($meth eq 'POST') {
+			#warn "hello {@$rbits}";
         if (@$rbits >= 3) {
             if (!$self->has_model($model)) {
                 die "Model \"$model\" not found.\n";
-            }
+            		}
+ #(_IDENT($col) || $col eq '~') or die "Column '$col' not found.\n";
         }
     } else {
         ### Testing...
@@ -1054,9 +1060,10 @@ sub global_model_check {
                 die "Model \"$model\" not found.\n";
             }
         }
-		#_IDENT($col) or die "Bad column name: $col.\n";
+		#
         if ($col and $col ne '~') {
             ### Testing 2...
+
             if (! $self->has_model_col($model, $col)) {
                 ### Dying...
                 die "Column '$col' not found.\n";

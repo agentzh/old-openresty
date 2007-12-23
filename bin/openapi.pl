@@ -142,7 +142,7 @@ while (my $cgi = new CGI::Fast) {
 
             $data = $openapi->$meth(\@bits);
         };
-			warn "here: $meth - @bits - $@";
+			#warn "here: $meth - @bits - $@";
         if ($@) { $openapi->error($@); }
         else { $openapi->data($data); }
     } elsif ($bits[0] eq 'admin') { # XXX caution!!!
