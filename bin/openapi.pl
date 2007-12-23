@@ -100,6 +100,7 @@ while (my $cgi = new CGI::Fast) {
     #print "charset: ", url_param("charset"), "\n";
 
     my @bits = split /\//, $url, 5;
+	
     if (!@bits) {
         ### Unknown URL: $url
         $openapi->error("Unknown URL: $url");
@@ -109,6 +110,7 @@ while (my $cgi = new CGI::Fast) {
 
     map { s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg; } @bits;
     ### @bits
+
     my $fst = shift @bits;
     if ($fst ne '=') {
         $openapi->error("URLs must be led by '='.");
@@ -127,6 +129,7 @@ while (my $cgi = new CGI::Fast) {
         my $object = $ModelDispatcher[$#bits];
         my $meth = $http_meth . '_' . $object;
         ### $meth
+			#warn @bits, ": ", $meth;
         if (!$openapi->can($meth)) {
             $object =~ s/_/ /g;
             $openapi->error("HTTP $http_meth method not supported for $object.");
@@ -136,8 +139,10 @@ while (my $cgi = new CGI::Fast) {
         my $data;
         eval {
             $openapi->global_model_check(\@bits, $http_meth);
+
             $data = $openapi->$meth(\@bits);
         };
+			warn "here: $meth - @bits - $@";
         if ($@) { $openapi->error($@); }
         else { $openapi->data($data); }
     } elsif ($bits[0] eq 'admin') { # XXX caution!!!

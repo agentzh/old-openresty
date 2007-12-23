@@ -297,7 +297,7 @@ sub GET_model_column {
     ### $model
     ### $col
     my $table_name = lc($model);
-	 
+	
 	 if($col eq '~') {
 	 	 return {'columns' => $self->get_model_cols($model)->{columns}};
 	 } else {
@@ -1026,6 +1026,7 @@ sub global_model_check {
     ### method: $meth
     ### URL bits: $rbits
     my ($model, $col);
+	
     if (@$rbits >= 2) {
         $model = $rbits->[1];
         _IDENT($model) or die "Bad model name: ", $Dumper->($model), "\n";
@@ -1036,8 +1037,10 @@ sub global_model_check {
     if (@$rbits >= 3) {
         # XXX check column name here...
         $col = $rbits->[2];
-        (_IDENT($col) || $col eq '~') or die "Bad column name: ", $Dumper->($col), "\n";
+
+        (_IDENT($col) || $col eq '~') or die "Column '$col' not found.\n";
     }
+
     if ($meth eq 'POST') {
         if (@$rbits >= 3) {
             if (!$self->has_model($model)) {
@@ -1051,6 +1054,7 @@ sub global_model_check {
                 die "Model \"$model\" not found.\n";
             }
         }
+		#_IDENT($col) or die "Bad column name: $col.\n";
         if ($col and $col ne '~') {
             ### Testing 2...
             if (! $self->has_model_col($model, $col)) {
