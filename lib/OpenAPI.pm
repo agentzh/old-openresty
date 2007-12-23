@@ -433,10 +433,10 @@ sub DELETE_model_column {
     }
     my $sql;
 	if($col eq '~') {
-	$sql = "delete from _columns where table_name = '$table_name'";
-} else {
-	$sql = "delete from _columns where table_name='$table_name' and name='$col'; alter table $table_name drop column $col restrict;";
-}
+		$sql = "delete from _columns where table_name = '$table_name'";
+	} else {
+		$sql = "delete from _columns where table_name='$table_name' and name='$col'; alter table $table_name drop column $col restrict;";
+	}
     my $res = $Backend->do($sql);
     return { success => $res > -1? 1:0 };
 }
