@@ -21,12 +21,10 @@ SKIP: {
 	ok $backend, "database handle okay";
 
 =pod
-
 	if ($backend->has_user("agentz")) {
 	    #    $backend->do("drop table test cascade");
 	    $backend->drop_user("agentz");
 	}
-
 =cut
 
 	my @userdb;
