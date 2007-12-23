@@ -269,13 +269,10 @@ DELETE /=/model/laser/C
 --- request
 GET /=/model/laser/~
 --- response
-{
-    "columns":
-      [
-        {"name":"id","label":"ID","type":"serial"},
-        {"name":"A","default":null,"label":"A","type":"text"}
-      ]
-}
+[
+    {"name":"id","label":"ID","type":"serial"},
+    {"name":"A","default":null,"label":"A","type":"text"}
+]
 
 
 

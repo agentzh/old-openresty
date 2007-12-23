@@ -297,53 +297,59 @@ sub GET_model_column {
     ### $model
     ### $col
     my $table_name = lc($model);
-	
-	 if($col eq '~') {
-	 	 return {'columns' => $self->get_model_cols($model)->{columns}};
-	 } else {
-	 	 my $select = SQL::Select->new( qw< name type label > )
-	                            ->from( '_columns' )
-	                            ->where( table_name => Q($table_name) )
-	                            ->where( name => Q($col) );
-	  	
-	    my $res = $Backend->select("$select", { use_hash => 1 });
-	    if (!$res or !@$res) {
-	        die "Column '$col' not found.\n";
-	   	 }
-	    ### $res
-	    return $res->[0];
-	 }
-	
+
+    if ($col eq '~') {
+        my $select = SQL::Select->new(qw< name type label >, '"default"')
+            ->from('_columns')
+            ->where(table_name => Q($table_name))
+            ->order_by('id');
+        my $list = $Backend->select("$select", { use_hash => 1 });
+        if (!$list or !ref $list) { $list = []; }
+        unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
+        return $list;
+    } else {
+        my $select = SQL::Select->new( qw< name type label > )
+                                ->from( '_columns' )
+                                ->where( table_name => Q($table_name) )
+                                ->where( name => Q($col) );
+
+        my $res = $Backend->select("$select", { use_hash => 1 });
+        if (!$res or !@$res) {
+            die "Column '$col' not found.\n";
+        }
+        ### $res
+        return $res->[0];
+    }
 }
 
 sub POST_model_column {
-    my ($self, $bits) = @_;	
+    my ($self, $bits) = @_;    
     my $model = $bits->[1];
     my $col = $bits->[2];
     my $data = $self->{_req_data};
     my $table_name = lc($model);
 
     my $num = $self->column_count;
-	  my $alias;
+      my $alias;
     ### Column count: $num
     if ($num >= $COLUMN_LIMIT) {
         die "Exceeded model column count limit: $COLUMN_LIMIT.\n";
     }
 
     $data = _HASH($data) or die "column spec must be a HASH.\n";
-	
+    
     if ($col eq 'id') {
         die "Column id is reserved.";
-    }	
-	if($col eq '~') {
-    	 $col = $data->{name} || die "you must provide the new the column with a name!";
-	}
-	$alias = $data->{name};
+    }    
+    if($col eq '~') {
+         $col = $data->{name} || die "you must provide the new the column with a name!";
+    }
+    $alias = $data->{name};
     my $cols = $self->get_model_col_names($model);
     my $fst = first { lc($col) eq lc($_) } @$cols;
     if (defined $fst) {
         die "Column '$col' already exists in model '$model'.\n";
-	    }
+        }
     # type defaults to 'text' if not specified.
     my $type = $data->{type} || 'text';
     my $label = $data->{label} or
@@ -360,12 +366,12 @@ sub POST_model_column {
         ->values( Q($col, $label, $type, $ntype, $table_name) );
     my $sql = "alter table $table_name add column $col $ntype;\n";
     my $res = $Backend->do($sql . "$insert");
-	 
-	
-	 return { success => 1, 
-				src => "/=/model/$model/$col",
-	   		 warning => "Column name \"$alias\" Ignored."
-	 } if $alias && $alias ne $col; 
+     
+    
+     return { success => 1, 
+                src => "/=/model/$model/$col",
+                warning => "Column name \"$alias\" Ignored."
+     } if $alias && $alias ne $col; 
     return { success => 1, src => "/=/model/$model/$col" };
 }
 
@@ -404,11 +410,11 @@ sub PUT_model_column {
             die "Bad column type: $type\n",
                 "\tOnly the following types are available: ",
                 join(", ", sort keys %to_native_type), "\n";
-    		    }
+                }
         $update_meta->set(type => Q($type))
             ->set(native_type => Q($ntype));
         $sql .= "alter table $table_name alter column $new_col type $ntype;\n",
- 	   }
+        }
     my $label = $data->{label};
     if ($label) {
         $update_meta->set(label => Q($label));
@@ -432,11 +438,11 @@ sub DELETE_model_column {
         die "Column id is reserved.";
     }
     my $sql;
-	if($col eq '~') {
-		$sql = "delete from _columns where table_name = '$table_name'";
-	} else {
-		$sql = "delete from _columns where table_name='$table_name' and name='$col'; alter table $table_name drop column $col restrict;";
-	}
+    if($col eq '~') {
+        $sql = "delete from _columns where table_name = '$table_name'";
+    } else {
+        $sql = "delete from _columns where table_name='$table_name' and name='$col'; alter table $table_name drop column $col restrict;";
+    }
     my $res = $Backend->do($sql);
     return { success => $res > -1? 1:0 };
 }
@@ -1032,7 +1038,6 @@ sub global_model_check {
     ### method: $meth
     ### URL bits: $rbits
     my ($model, $col);
-	
     if (@$rbits >= 2) {
         $model = $rbits->[1];
         _IDENT($model) or die "Bad model name: ", $Dumper->($model), "\n";
@@ -1043,19 +1048,18 @@ sub global_model_check {
     if (@$rbits >= 3) {
         # XXX check column name here...
         $col = $rbits->[2];
-		    
         unless(_IDENT($col) || $col eq '~'){
-			 die "Bad column name: \"$col\"\n" if $meth eq 'POST'; 
-			 die "Column '$col' not found.\n";
-			}
+             die "Bad column name: \"$col\"\n" if $meth eq 'POST';
+             die "Column '$col' not found.\n";
+        }
     }
 
     if ($meth eq 'POST') {
-			#warn "hello {@$rbits}";
+            #warn "hello {@$rbits}";
         if (@$rbits >= 3) {
             if (!$self->has_model($model)) {
                 die "Model \"$model\" not found.\n";
-            		}
+                    }
  #(_IDENT($col) || $col eq '~') or die "Column '$col' not found.\n";
         }
     } else {
@@ -1065,7 +1069,7 @@ sub global_model_check {
                 die "Model \"$model\" not found.\n";
             }
         }
-		#
+        #
         if ($col and $col ne '~') {
             ### Testing 2...
 
