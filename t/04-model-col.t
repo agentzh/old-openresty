@@ -336,23 +336,31 @@ DELETE /=/model/laser/!
 
 
 
-=== TEST 34 : Remove all the columns
+=== TEST 34 : Remove the reserved column "id"
+--- request
+DELETE /=/model/laser/id
+--- response
+{"success":0,"error":"Column \"id\" is reserved."}
+
+
+
+=== TEST 35 : Remove all the columns
 --- request
 DELETE /=/model/laser/~
 --- response
-{"success":1}
+{"success":1,"warning":"Column \"id\" is reserved."}
 
 
 
-=== TEST 35: Get columns
+=== TEST 36: Get columns
 --- request
 GET /=/model/laser/~
---- reponse
-[]
+--- response
+[{"name":"id","label":"ID","type":"serial"}]
 
 
 
-=== TEST 36: Re-add an old column
+=== TEST 37: Re-add an old column
 --- request
 POST /=/model/laser/~
 {"name":"M","type":"real","label":"M"}

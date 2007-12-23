@@ -76,7 +76,7 @@ sub run_test ($) {
         my $res = do_request($method, $url, $body, $type);
         ok $res->is_success, "request returns OK - $name";
         my $expected_res = $block->response;
-        if ($format eq 'JSON') {
+        if ($format eq 'JSON' and $expected_res) {
             $expected_res =~ s/\n[ \t]*([^\n\s])/$1/sg;
         }
         if ($expected_res) {

@@ -432,10 +432,11 @@ sub DELETE_model_column {
 
     # discard 'id' column
     if ($col eq 'id') {
-        die "Column id is reserved.";
+        die "Column \"id\" is reserved.\n";
     }
     my $sql;
     if($col eq '~') {
+        $self->warning("Column \"id\" is reserved.");
         $sql = "delete from _columns where table_name = '$table_name'";
     } else {
         $sql = "delete from _columns where table_name='$table_name' and name='$col'; alter table $table_name drop column $col restrict;";
