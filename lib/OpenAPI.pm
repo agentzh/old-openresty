@@ -297,7 +297,7 @@ sub GET_model_column {
     ### $model
     ### $col
     my $table_name = lc($model);
-	 warn "hehe" if $col eq '!';
+	 
 	 if($col eq '~') {
 	 	 return {'columns' => $self->get_model_cols($model)->{columns}};
 	 } else {
