@@ -12,7 +12,7 @@ Agent Zhang (章亦春) <agentzh@yahoo.cn>
 
     CREATED:       Nov 19, 2007
     LAST MODIFIED: Dec 23, 2007
-    VERSION:       0.13
+    VERSION:       0.14
 
 =head1 DESCRIPTION
 
@@ -840,28 +840,7 @@ C<< <column> >> 和 C<< <value> >> 的含义与 Model 的 URL 记法中的一致
 
 XXX needs work...
 
-=head1 DATA FORMAT
-
-服务器返回的数据格式可以由用户通过 URL 后缀来控制。
-
-支持的格式后缀为 C<.json>, C<.xml>, 和 C<.yaml>. 它们分别对应 JSON 格式，XML/RDF 格式，和 YAML 格式。
-它们的别名为 C<.js>, C<.rdf>, 和 C<.yml>.
-
-当后缀名未指定时，缺省为 C<.json>。
-
-=head1 Content type
-
-HTTP 响应的头部中的 Content-Type 总是 C<text/plain>.
-
-HTTP 请求头部中的 Content-Type 推荐是 C<text/plain>. 如果 PUT 和 POST
-请求的 C<Content-Type> 被设为 C<application/x-www-form-urlencoded>,
-则 content 部分应该写作
-
-    data=<content>
-
-XXX specify what happens when it is "multipart/form-data"
-
-=head1 URL Parameters
+=head2 URL Parameters
 
 =over
 
@@ -959,6 +938,27 @@ C<limit> 参数为 C<count> 的一个别名。
 注：以明文方式传递用户名和密码在安全性较高的场合是不允许使用的。
 
 =back
+
+=head1 DATA FORMAT
+
+服务器返回的数据格式可以由用户通过 URL 后缀来控制。
+
+支持的格式后缀为 C<.json>, C<.xml>, 和 C<.yaml>. 它们分别对应 JSON 格式，XML/RDF 格式，和 YAML 格式。
+它们的别名为 C<.js>, C<.rdf>, 和 C<.yml>.
+
+当后缀名未指定时，缺省为 C<.json>。
+
+=head1 Content type
+
+HTTP 响应的头部中的 Content-Type 总是 C<text/plain>.
+
+HTTP 请求头部中的 Content-Type 推荐是 C<text/plain>. 如果 PUT 和 POST
+请求的 C<Content-Type> 被设为 C<application/x-www-form-urlencoded>,
+则 content 部分应该写作
+
+    data=<content>
+
+XXX specify what happens when it is "multipart/form-data"
 
 =head1 ERROR HANDLING
 
