@@ -439,11 +439,10 @@ sub DELETE_model_column {
     if($col eq '~') {
          $self->warning("Column \"id\" is reserved.");
 	 my $columns = $self->get_model_col_names($model);
-	 for my $c (@$columns) {       	
+	 for my $c (@$columns) {
               $sql .= "delete from _columns where table_name = '$table_name' and name='$c';" .
                       "alter table $table_name drop column $c restrict;";
          }
-                                                        
     } else {
         $sql = "delete from _columns where table_name='$table_name' and name='$col'; alter table $table_name drop column $col restrict;";
     }

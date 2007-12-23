@@ -381,5 +381,5 @@ GET /=/post/model/laser/~/~?data={M:3.14}
 --- request
 GET /=/model/laser/id/1
 --- response
-[{"id":"1","M":"3.14"}]
+[{"M":"3.14","id":"1"}]
 
