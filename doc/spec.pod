@@ -12,7 +12,7 @@ Agent Zhang (章亦春) <agentzh@yahoo.cn>
 
     CREATED:       Nov 19, 2007
     LAST MODIFIED: Dec 23, 2007
-    VERSION:       0.10
+    VERSION:       0.11
 
 =head1 DESCRIPTION
 
@@ -146,7 +146,6 @@ DELETE 和 PUT 也较难实现，OpenAPI 为 PUT 和 DELETE 提供了相应的�
 在本文中，将总是使用 C</=/> 前导，以强调这些 URL 是特殊的（从某种意义上说），并保持一致性。
 
 =head2 Help
-
 
     GET /=/help
 
@@ -910,6 +909,28 @@ C<limit> 参数为 C<count> 的一个别名。
     var foo=...;
 
 这里的 C<...> 是没有指定 C<var> 选项时服务器返回的内容。
+
+=item data
+
+该选项用于 POST 和 PUT 方法的 GET 变形接口，例如
+
+    POST /=/model
+    <content>
+
+可以使用
+
+    GET /=/post/model?data=<content>
+
+来代替（如果 <content> 含有 URL 特殊字符，需要进行 URL 编码）。
+
+再比如下面这个 PUT 请求
+
+    PUT /=/model/Foo
+    <content>
+
+改用 GET 就是
+
+    GET /=/put/model/Foo?data=<content>
 
 =item user
 
