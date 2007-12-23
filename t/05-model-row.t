@@ -17,7 +17,7 @@ __DATA__
 
 === TEST 1: Delete existing models
 --- request
-DELETE /=/model.js
+DELETE /=/model
 --- response
 {"success":1}
 
@@ -50,7 +50,7 @@ POST /=/model/Address
 
 === TEST 4: check the model list
 --- request
-GET /=/model/Address
+GET /=/model
 --- response
 [{"src":"/=/model/Address","name":"Address","description":"通讯录"}]
 
@@ -69,9 +69,10 @@ POST /=/model/Dummy/~/~
 
 
 
-=== TEST 3: get columns by value
+=== TEST 6: Access records via a bad model name
 --- request
 GET /=/model/Dummy/~/~
 { name: 'foo' }
 --- response
 {"success":0,"error":"Model \"Dummy\" not found."}
+
