@@ -276,7 +276,15 @@ GET /=/model/laser/~
 
 
 
-=== TEST 27 : Add a new column with '~'
+=== TEST 27 : Get a column (invalid char)
+--- request
+GET /=/model/laser/@
+--- response
+{"success":0,"error":"Bad column name: \"@\""}
+
+
+
+=== TEST 28 : Add a new column with '~'
 --- request
 POST /=/model/laser/~
 {"name":"M","type":"real","label":"M"}
@@ -285,7 +293,16 @@ POST /=/model/laser/~
 
 
 
-=== TEST 28 : Add a new column
+=== TEST 29 : Add a new column with invalid char '@'
+--- request
+POST /=/model/laser/@
+{"name":"M","type":"real","label":"M"}
+--- response
+{"success":0,"error":"Bad column name: \"@\""}
+
+
+
+=== TEST 30 : Add a new column
 --- request
 POST /=/model/laser/N
 {"name":"M","type":"text","label":"N"}
@@ -294,15 +311,15 @@ POST /=/model/laser/N
 
 
 
-=== TEST 29 : Get a column with other invalid symbol
+=== TEST 31 : Get a column with other invalid symbol
 --- request
 GET /=/model/laser/!
 --- response
-{"success":0,"error":"Column '!' not found."}
+{"success":0,"error":"Bad column name: \"!\""}
 
 
 
-=== TEST 30 : Add a new column with other invalid symbol
+=== TEST 32 : Add a new column with other invalid symbol
 --- request
 POST /=/model/laser/!
 {"name":"D","type":"text","label":"D"}
@@ -311,16 +328,17 @@ POST /=/model/laser/!
 
 
 
-=== TEST 31 : Remove all the columns with other invalid symbol
+=== TEST 33 : Remove all the columns with other invalid symbol
 --- request
 DELETE /=/model/laser/!
 --- response
-{"success":0,"error":"Column '!' not found."}
+{"success":0,"error":"Bad column name: \"!\""}
 
 
 
-=== TEST 32 : Remove all the columns 
+=== TEST 34 : Remove all the columns
 --- request
 DELETE /=/model/laser/~
 --- response
 {"success":1}
+
