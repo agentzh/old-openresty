@@ -849,7 +849,11 @@ XXX needs work...
 
 当后缀名未指定时，缺省为 C<.json>。
 
-=head2 Parameters
+=head1 Content type
+
+XXX...
+
+=head1 URL Parameters
 
 =over
 
