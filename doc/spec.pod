@@ -12,7 +12,7 @@ Agent Zhang (章亦春) <agentzh@yahoo.cn>
 
     CREATED:       Nov 19, 2007
     LAST MODIFIED: Dec 23, 2007
-    VERSION:       0.14
+    VERSION:       0.15
 
 =head1 DESCRIPTION
 
@@ -38,6 +38,8 @@ API 应该足够直观和友好，应尽量做到 DWIM (Do What I mean).
 
 确保 API 能够在绝大多数支持 HTTP 1.1 和 cookie 的环境中使用。包括但不限于网页中的 Javascript, 应用程序中的 Perl, C/C++, Java, C#, VB，
 以及纯命令行工具 wget 和 curl 等等。
+
+普通网页中的 Javascript 代码应能通过 AJAX 跨域方式访问 100% 的 API.
 
 =item *
 
