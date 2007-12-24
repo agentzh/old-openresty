@@ -70,3 +70,47 @@ GET /=/model/Foo/id/1
 --- response
 [{"content":"No content","title":"Howdy!","id":"1"}]
 
+
+
+=== TEST 7: Add a column with default now()
+--- request
+POST /=/model/Foo/~
+{ name: "created", label: "创建日期", type: "timestamp", default: ["now"] }
+--- response
+{"success":1,"src":"/=/model/Foo/created"}
+
+
+
+=== TEST 8: Insert a row w/o setting "created"
+--- request
+POST /=/model/Foo/~/~
+{ title: "Hi!" }
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/Foo/id/2"}
+
+
+
+=== TEST 9: Check the newly added row
+--- request
+GET /=/model/Foo/id/2
+--- response_like
+\[\{"created":"20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+","content":"No content","title":"Hi!","id":"2"\}\]
+
+
+
+=== TEST 10: Insert another row
+--- request
+POST /=/model/Foo/~/~
+{ title: "Bah!" }
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/Foo/id/3"}
+
+
+
+=== TEST 11: Check the newly added row
+--- request
+GET /=/model/Foo/id/3
+--- response_like
+\[\{"created":"20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+","content":"No content","title":"Bah!","id":"3"\}\]
+
+

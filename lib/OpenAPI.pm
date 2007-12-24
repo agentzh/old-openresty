@@ -9,7 +9,7 @@ use JSON::Syck ();
 use Data::Dumper ();
 use Lingua::EN::Inflect qw(PL ORD);
 use List::Util qw(first);
-use Params::Util qw(_HASH _STRING _ARRAY0 _SCALAR);
+use Params::Util qw(_HASH _STRING _ARRAY0 _ARRAY _SCALAR);
 use Encode qw(decode_utf8 from_to encode decode);
 use Data::Dumper;
 use DBI;
@@ -368,10 +368,15 @@ sub POST_model_column {
             join(", ", sort keys %to_native_type), "\n";
     }
 
+    my $default = delete $data->{default};
+    if (defined $default) {
+        $default = $self->process_default($default);
+    }
+
     my $insert = SQL::Insert->new('_columns')
-        ->cols(qw< name label type native_type table_name >)
-        ->values( Q($col, $label, $type, $ntype, $table_name) );
-    my $sql = "alter table \"$table_name\" add column \"$col\" $ntype;\n";
+        ->cols(qw< name label type native_type table_name "default" >)
+        ->values( Q($col, $label, $type, $ntype, $table_name), $default );
+    my $sql = "alter table \"$table_name\" add column \"$col\" $ntype default $default;\n";
     $sql .= "$insert";
     ### SQL: $sql
     my $res = $Backend->do($sql);
@@ -695,7 +700,8 @@ sub new_model {
         }
         $sql .= ",\n\t\"$name\" $ntype";
         if (defined $default) {
-            $sql .= " default " . Q($default);
+            # XXX
+            $sql .= " default " . $self->process_default($default);
         }
         $sql2 .= $insert->clone->values(Q($name, $type, $ntype, $label, $table, $default));
         $i++;
@@ -715,6 +721,25 @@ sub new_model {
         success => 1,
         $found_id ? (warning => "Column \"id\" reserved. Ignored.") : ()
     };
+}
+
+sub process_default {
+    my ($self, $default) = @_;
+    if (_STRING($default)) {
+        return Q($default);
+    } elsif (_ARRAY($default)) {
+        my $func = shift @$default;
+        _STRING($func) or
+            die "Invalid \"default\" value: ", $Dumper->($default), "\n";
+        $func = lc($func);
+        if ($func eq 'now') {
+            return "now()";
+        } else {
+            die "Unknown function for \"default\": ", $Dumper->($func);
+        }
+    } else {
+        die "Invalid \"default\" value: ", $Dumper->($default), "\n";
+    }
 }
 
 sub has_model {
