@@ -61,6 +61,14 @@ sub Q (@) {
     }
 }
 
+sub QI (@) {
+    if (@_ == 1) {
+        return $Backend->quote_identifier($_[0]);
+    } else {
+        return map { $Backend->quote_identifier($_) } @_;
+    }
+}
+
 # XXX more data types...
 our %to_native_type = (
     text => 'text',
@@ -284,7 +292,7 @@ sub POST_model {
 sub DELETE_model {
     my ($self, $bits) = @_;
     my $model = $bits->[1];
-    my $table = lc($model);
+    my $table = $model;
     #$tables = $tables->[0];
     $self->drop_table($table);
     return { success => 1 };
@@ -296,7 +304,7 @@ sub GET_model_column {
     my $col = $bits->[2];
     ### $model
     ### $col
-    my $table_name = lc($model);
+    my $table_name = $model;
 
     if ($col eq '~') {
         my $select = SQL::Select->new(qw< name type label >, '"default"')
@@ -327,7 +335,7 @@ sub POST_model_column {
     my $model = $bits->[1];
     my $col = $bits->[2];
     my $data = $self->{_req_data};
-    my $table_name = lc($model);
+    my $table_name = $model;
 
     my $num = $self->column_count;
     ### Column count: $num
@@ -336,7 +344,7 @@ sub POST_model_column {
     }
 
     $data = _HASH($data) or die "column spec must be a HASH.\n";
-    if (lc($col) eq 'id') {
+    if ($col eq 'id') {
         die "Column id is reserved.";
     }
     if ($col eq '~') {
@@ -345,7 +353,7 @@ sub POST_model_column {
     ### Column: $col
     my $alias = $data->{name};
     my $cols = $self->get_model_col_names($model);
-    my $fst = first { lc($col) eq lc($_) } @$cols;
+    my $fst = first { $col eq $_ } @$cols;
     if (defined $fst) {
         die "Column '$col' already exists in model '$model'.\n";
     }
@@ -363,7 +371,7 @@ sub POST_model_column {
     my $insert = SQL::Insert->new('_columns')
         ->cols(qw< name label type native_type table_name >)
         ->values( Q($col, $label, $type, $ntype, $table_name) );
-    my $sql = "alter table $table_name add column $col $ntype;\n";
+    my $sql = "alter table \"$table_name\" add column \"$col\" $ntype;\n";
     $sql .= "$insert";
     ### SQL: $sql
     my $res = $Backend->do($sql);
@@ -380,10 +388,10 @@ sub PUT_model_column {
     my $model = $bits->[1];
     my $col = $bits->[2];
     my $data = _HASH($self->{_req_data}) or die "column spec must be a HASH.\n";
-    my $table_name = lc($model);
+    my $table_name = $model;
 
     # discard 'id' column
-    if ($col eq 'id') {
+    if (lc($col) eq 'id') {
         die "Column id is reserved.";
     }
     # type defaults to 'text' if not specified.
@@ -396,7 +404,7 @@ sub PUT_model_column {
 
         #$new_col = $new_col);
         $update_meta->set(name => Q($new_col));
-        $sql .= "alter table $table_name rename column $col to $new_col;\n";
+        $sql .= "alter table \"$table_name\" rename column \"$col\" to \"$new_col\";\n";
         #$col = $new_col;
     } else {
         $new_col = $col;
@@ -413,7 +421,7 @@ sub PUT_model_column {
         }
         $update_meta->set(type => Q($type))
             ->set(native_type => Q($ntype));
-        $sql .= "alter table $table_name alter column $new_col type $ntype;\n",
+        $sql .= "alter table \"$table_name\" alter column \"$new_col\" type $ntype;\n",
     }
     my $label = $data->{label};
     if ($label) {
@@ -431,10 +439,10 @@ sub DELETE_model_column {
     my ($self, $bits) = @_;
     my $model = $bits->[1];
     my $col = $bits->[2];
-    my $table_name = lc($model);
+    my $table_name = $model;
 
     # discard 'id' column
-    if ($col eq 'id') {
+    if (lc($col) eq 'id') {
         die "Column \"id\" is reserved.\n";
     }
     my $sql = '';
@@ -444,10 +452,10 @@ sub DELETE_model_column {
 	 my $columns = $self->get_model_col_names($model);
 	 for my $c (@$columns) {
               $sql .= "delete from _columns where table_name = '$table_name' and name='$c';" .
-                      "alter table $table_name drop column $c restrict;";
+                      "alter table \"$table_name\" drop column \"$c\" restrict;";
          }
     } else {
-        $sql = "delete from _columns where table_name='$table_name' and name='$col'; alter table $table_name drop column $col restrict;";
+        $sql = "delete from _columns where table_name='$table_name' and name='$col'; alter table \"$table_name\" drop column \"$col\" restrict;";
     }
     my $res = $Backend->do($sql);
     return { success => $res > -1? 1:0 };
@@ -458,6 +466,7 @@ sub POST_model_row {
     my ($self, $bits) = @_;
     my $data = $self->{_req_data};
     my $model = $bits->[1];
+    ### Howdy!!...
     return $self->insert_records($model, $data);
 }
 
@@ -524,7 +533,7 @@ sub connect {
 sub get_tables {
     #my ($self, $user) = @_;
     my $self = shift;
-    my $select = SQL::Select->new('table_name')->from('_models');
+    my $select = SQL::Select->new('name')->from('_models');
     return $Backend->select("$select");
 }
 
@@ -540,7 +549,7 @@ sub column_count {
 
 sub row_count {
     my ($self, $table) = @_;
-    return $self->select("select count(*) from $table")->[0][0];
+    return $self->select("select count(*) from \"$table\"")->[0][0];
 }
 
 sub get_models {
@@ -554,13 +563,13 @@ sub get_model_cols {
     if (!$self->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
-    my $table = lc($model);
+    my $table = $model;
     my $select = SQL::Select->new('description')
         ->from('_models')
         ->where(name => Q($model));
     my $list = $Backend->select("$select");
     my $desc = $list->[0][0];
-    $select->reset('name', 'type', 'label', '"default"')
+    $select->reset( QI(qw< name type label default >) )
            ->from('_columns')
            ->where(table_name => Q($table))
            ->order_by('id');
@@ -572,13 +581,15 @@ sub get_model_cols {
 
 sub get_model_col_names {
     my ($self, $model) = @_;
+    ### get_model_col_names...
     if (!$self->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
-    my $table = lc($model);
+    my $table = $model;
     my $select = SQL::Select->new('name')
         ->from('_columns')
         ->where(table_name => Q($table));
+    ### get_model_col_names: "$select"
     my $list = $Backend->select("$select");
     if (!$list or !ref $list) { return []; }
     return [map { @$_ } @$list];
@@ -608,7 +619,7 @@ sub new_model {
     }
     my $model = delete $data->{name} or
         die "No 'name' field found for the new model\n";
-    my $table = lc($model);
+    my $table = $model;
     ### Table: $table
     my $description = delete $data->{description} or
         die "No 'description' specified for model \"$model\".\n";
@@ -647,9 +658,9 @@ sub new_model {
 
     my $sql = "$insert";
     $insert->reset('_columns')
-        ->cols(qw< name type native_type label table_name "default" >);
+        ->cols(QI( qw<name type native_type label table_name default> ));
     $sql .=
-        "create table $table (\n\tid serial primary key";
+        "create table \"$table\" (\n\t\"id\" serial primary key";
     my $sql2;
     my $found_id = undef;
     for my $col (@$columns) {
@@ -679,7 +690,7 @@ sub new_model {
                 "\tOnly the following types are available: ",
                 join(", ", sort keys %to_native_type), "\n";
         }
-        $sql .= ",\n\t$name $ntype";
+        $sql .= ",\n\t\"$name\" $ntype";
         if (defined $default) {
             $sql .= " default " . Q($default);
         }
@@ -721,7 +732,7 @@ sub has_model_col {
     my ($self, $model, $col) = @_;
     _IDENT($model) or die "Bad model name: $model\n";
     _IDENT($col) or die "Bad model column name: $col\n";
-    my $table_name = lc($model);
+    my $table_name = $model;
     ### has model col (model):  $model
     ### has model col (col): $col
     return 1 if $col eq 'id';
@@ -740,7 +751,7 @@ sub has_model_col {
 sub drop_table {
     my ($self, $table) = @_;
     $self->do(<<_EOC_);
-drop table $table;
+drop table "$table";
 delete from _models where table_name='$table';
 delete from _columns where table_name='$table';
 _EOC_
@@ -777,19 +788,21 @@ sub insert_records {
         die "Malformed data: Hash or Array expected\n";
     }
     ## Data: $data
-    my $table = lc($model);
+    my $table = $model;
     if ($self->row_count($table) >= $RECORD_LIMIT) {
         die "Exceeded model row count limit: $RECORD_LIMIT.\n";
     }
+    ### before get_model_col_names...
     my $cols = $self->get_model_col_names($model);
     my $sql;
-    my $insert = SQL::Insert->new($table);
+    my $insert = SQL::Insert->new(QI($table));
 
     if (ref $data eq 'HASH') { # record found
         ### Row inserted: $data
         my $num = insert_record($insert, $data, $cols, 1);
-        #...
+        ### after insert record...
         my $last_id = $self->last_insert_id($table);
+        ### after last insert id...
         return { rows_affected => $num, last_row => "/=/model/$model/id/$last_id", success => $num?1:0 };
     } elsif (ref $data eq 'ARRAY') {
         my $i = 0;
@@ -817,14 +830,15 @@ sub insert_record {
     while (my ($col, $val) = each %$row_data) {
         _IDENT($col) or
             die "Bad column name in row $row_num: ", $Dumper->($col), "\n";
-        $insert->cols($col);
+        $insert->cols(QI($col));
         $insert->values(Q($val));
         $found = 1;
     }
     if (!$found) {
         die "No column specified in row $row_num.\n";
     }
-    my $sql = $insert;
+    my $sql = "$insert";
+    ### Insert SQL: $sql
     return $Backend->do($sql);
 }
 
@@ -867,10 +881,10 @@ sub process_limit {
 
 sub select_records {
     my ($self, $model, $user_col, $val) = @_;
-    my $table = lc($model);
+    my $table = $model;
     my $cols = $self->get_model_col_names($model);
     ### inside select_records: $self->{'_order_by'}
-    if ($user_col ne 'id') {
+    if (lc($user_col) ne 'id') {
         my $found = 0;
         for my $col (@$cols) {
             if ($col eq $user_col) { $found = 1; last; }
@@ -878,15 +892,15 @@ sub select_records {
         if (!$found) { die "Column $user_col not available.\n"; }
     }
     my $select = SQL::Select->new;
-    $select->from($table);
+    $select->from(QI($table));
     if (defined $val) {
         my $op = $self->{_cgi}->url_param('op') || 'eq';
         $op = $OpMap{$op};
         if ($op eq 'like') {
             $val = "%$val%";
         }
-        $select->select('id', @$cols)
-               ->where($user_col => $op => Q($val));
+        $select->select('id', QI(@$cols))
+               ->where(QI($user_col) => $op => Q($val));
     } else {
         $select->select($user_col);
     }
@@ -907,8 +921,8 @@ sub select_all_records {
         die "Model \"$model\" not found.\n";
     }
 
-    my $table = lc($model);
-    my $select = SQL::Select->new('*')->from($table);
+    my $table = $model;
+    my $select = SQL::Select->new('*')->from(QI($table));
 
     $self->process_order_by($select, $model);
     $self->process_offset($select);
@@ -925,8 +939,8 @@ sub delete_all_records {
     if (!$self->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
-    my $table = lc($model);
-    my $retval = $Backend->do("delete from $table");
+    my $table = $model;
+    my $retval = $Backend->do("delete from \"$table\"");
     return {success => 1,rows_affected => $retval+0};
 }
 
@@ -935,9 +949,9 @@ sub delete_records {
     if (!$self->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
-    my $table = lc($model);
+    my $table = $model;
     my $cols = $self->get_model_col_names($model);
-    if ($user_col ne 'id') {
+    if (lc($user_col) ne 'id') {
         my $found = 0;
         for my $col (@$cols) {
             if ($col eq $user_col) { $found = 1; last; }
@@ -947,9 +961,9 @@ sub delete_records {
     #my $flds = join(",", @$cols);
     my $sql;
     if (defined $val) {
-        $sql = "delete from $table where $user_col=" . Q($val);
+        $sql = "delete from \"$table\" where \"$user_col\"=" . Q($val);
     } else {
-        $sql = "delete from $table";
+        $sql = "delete from \"$table\"";
     }
     ### $sql
     ### $val
@@ -959,7 +973,7 @@ sub delete_records {
 
 sub update_records {
     my ($self, $model, $user_col, $val, $data) = @_;
-    my $table = lc($model);
+    my $table = $model;
     my $cols = $self->get_model_col_names($model);
     if ($user_col ne 'id' && $user_col ne '~') {
         my $found = 0;
@@ -972,17 +986,17 @@ sub update_records {
     if (!ref $data || ref $data ne 'HASH') {
         die "HASH data expected in the content body.\n";
     }
-    my $update = SQL::Update->new($table);
+    my $update = SQL::Update->new(QI($table));
     while (my ($key, $val) = each %$data) {
         my $col = $key;
         if ($col eq 'id') {
             next;  # XXX maybe issue a warning?
         }
-        $update->set($col => Q($val));
+        $update->set(QI($col) => Q($val));
     }
 
     if (defined $val and $val ne '~') {
-        $update->where($user_col => $val);
+        $update->where(QI($user_col) => $val);
     }
     my $retval = $Backend->do("$update") + 0;
     return {success => $retval ? 1 : 0,rows_affected => $retval};
@@ -1005,7 +1019,7 @@ sub alter_model {
     my $self = $_[0];
     my $model = _IDENT($_[1]) or die "Invalid model name \"$_[1]\".\n";
     my $data = _HASH($_[2]) or die "HASH expected in the PUT content.\n";
-    my $table = lc($model);
+    my $table = $model;
     if (!$self->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
@@ -1017,11 +1031,11 @@ sub alter_model {
         if ($self->has_model($new_model)) {
             die "Model \"$new_model\" already exists.\n";
         }
-        my $new_table = lc($new_model);
+        my $new_table = $new_model;
         $sql .=
             "update _models set table_name='$new_table', name='$new_model' where name='$model';\n" .
             "update _columns set table_name='$new_table' where table_name='$table';\n" .
-            "alter table $table rename to $new_table;\n";
+            "alter table \"$table\" rename to \"$new_table\";\n";
     }
     if (my $desc = delete $data->{description}) {
         _STRING($desc) or die "Model descriptons must be strings.\n";

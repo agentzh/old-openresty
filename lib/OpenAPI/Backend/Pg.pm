@@ -38,10 +38,15 @@ sub quote {
     return $self->{dbh}->quote($val);
 }
 
+sub quote_identifier {
+    my ($self, $val) = @_;
+    return $self->{dbh}->quote_identifier($val);
+}
+
 sub last_insert_id {
     my ($self, $table) = @_;
     #die "Found table!!! $table";
-    my $res = $self->select("select currval('${table}_id_seq')");
+    my $res = $self->select("select currval('\"${table}_id_seq\"')");
     if ($res && @$res) { return $res->[0][0]; }
 }
 

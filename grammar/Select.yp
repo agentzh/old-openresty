@@ -13,7 +13,7 @@ my (@Models, @Columns);
 
 %%
 
-miniSQL: statement { print "Done!\n" }
+miniSQL: statement
        ;
 
 statement: select_stmt ';'
@@ -21,17 +21,21 @@ statement: select_stmt ';'
          ;
 
 select_stmt: 'select' pattern_list postfix_clause_list
+             { join(' ', @_[1..$#_]) }
            | 'select' pattern_list
+             { join(' ', @_[1..$#_]) }
            ;
 
 models: model ',' models
+             { join(' ', @_[1..$#_]) }
       | model
       ;
 
-model: IDENT { push @Models, $_[1] }
+model: IDENT { push @Models, $_[1]; "\"$_[1]\"" }
      ;
 
 pattern_list: pattern ',' pattern_list
+                { join(' ', @_[1..$#_]) }
             | pattern
             ;
 
@@ -43,7 +47,9 @@ pattern: aggregate alias
        ;
 
 aggregate: func '(' column ')'
+             { join(' ', @_[1..$#_]) }
          | func '(' '*' ')'
+             { join(' ', @_[1..$#_]) }
          ;
 
 func: 'max'
@@ -53,9 +59,11 @@ func: 'max'
     ;
 
 proc_call: IDENT '(' parameter_list ')'
+             { join(' ', @_[1..$#_]) }
          ;
 
 parameter_list: parameter ',' parameter_list
+                { join(' ', @_[1..$#_]) }
               | parameter
               ;
 
@@ -64,11 +72,15 @@ parameter: STRING
          ;
 
 column: qualified_symbol
-      | symbol { push @Columns, $_[1] }
+      | symbol { push @Columns, $_[1]; "\"$_[1]\"" }
       ;
 
 qualified_symbol: symbol '.' symbol
-                    { push @Models, $_[1]; push @Columns, $_[3] }
+                    {
+                      push @Models, $_[1];
+                      push @Columns, $_[3];
+                      "\"$_[1]\".\"$_[2]\""
+                    }
                 ;
 
 symbol: IDENT
@@ -78,6 +90,7 @@ alias: symbol
      ;
 
 postfix_clause_list: postfix_clause postfix_clause_list
+                        { join(' ', @_[1..$#_]) }
                    | postfix_clause
                    ;
 
@@ -90,26 +103,34 @@ postfix_clause: where_clause
               ;
 
 from_clause: 'from' models
+                { join(' ', @_[1..$#_]) }
            | 'from' proc_call
+                { join(' ', @_[1..$#_]) }
            ;
 
 where_clause: 'where' condition
+                { join(' ', @_[1..$#_]) }
             ;
 
 condition: disjunction
          ;
 
 disjunction: conjunction 'or' conjunction
+            { join(' ', @_[1..$#_]) }
            | conjunction
            ;
 
 conjunction: comparison 'and' comparison
+                { join(' ', @_[1..$#_]) }
            | comparison
            ;
 
 comparison: column operator literal
+                { join(' ', @_[1..$#_]) }
           | column operator column
+                { join(' ', @_[1..$#_]) }
           | '(' condition ')'
+                { join(' ', @_[1..$#_]) }
           ;
 
 operator: '>'
@@ -126,19 +147,24 @@ literal: STRING
        ;
 
 group_by_clause: 'group by' column_list
+                    { join(' ', @_[1..$#_]) }
                ;
 
 column_list: column ',' column_list
+                { join(' ', @_[1..$#_]) }
            | column
            ;
 
 order_by_clause: 'order by' column_list
+                    { join(' ', @_[1..$#_]) }
                ;
 
-limit_clause: 'limit' INTEGER { delete $_[0]->YYData->{limit} }
+limit_clause: 'limit' INTEGER
+                { delete $_[0]->YYData->{limit}; join(' ', @_[1..$#_]) }
             ;
 
 offset_clause: 'offset' INTEGER { delete $_[0]->YYData->{offset} }
+                    { join(' ', @_[1..$#_]) }
              ;
 
 %%
@@ -216,13 +242,14 @@ sub parse {
     ### $sql
     @Models = ();
     @Columns = ();
-    $self->YYParse( yydebug => 0 & 0x1F, yylex => \&_Lexer, yyerror => \&_Error );
+    my $sql = $self->YYParse( yydebug => 0 & 0x1F, yylex => \&_Lexer, yyerror => \&_Error );
     close $source;
     return {
         limit   => $yydata->{limit},
         offset  => $yydata->{offset},
         models  => [@Models],
         columns => [@Columns],
+        sql => $sql,
     };
 }
 

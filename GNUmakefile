@@ -18,12 +18,12 @@ lib/MiniSQL/Select.pm: grammar/Select.yp
 test: all
 	$(CMDS)
 
-debug:
+debug: all
 	sudo echo > /var/log/lighttpd/error.log
 	$(CMDS)
 	cat /var/log/lighttpd/error.log | egrep -v '^$$'
 
-%.t: force
+%.t: all force
 	sudo echo > /var/log/lighttpd/error.log
 	perl -c bin/openapi.pl
 	sudo /etc/init.d/lighttpd restart

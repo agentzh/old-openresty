@@ -78,6 +78,7 @@ POST /=/action/Select/lang/minisql
 "select * from Carrie where title = 'hello carrie' and num=10;"
 --- response
 [{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}]
+--- LAST
 
 
 

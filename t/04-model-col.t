@@ -89,10 +89,10 @@ POST /=/model/laser/B
 
 === TEST 8: Add one column twice
 --- request
-POST /=/model/laser/b
-{type:"integer",label:"b"}
+POST /=/model/laser/B
+{type:"integer",labeh:"b"}
 --- response
-{"success":0,"error":"Column 'b' already exists in model 'laser'."}
+{"success":0,"error":"Column 'B' already exists in model 'laser'."}
 
 
 
@@ -367,6 +367,7 @@ POST /=/model/laser/~
 --- response
 {"success":1,"src":"/=/model/laser/M"}
 --- LAST
+
 
 
 === TEST 38: Insert a record

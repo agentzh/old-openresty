@@ -1,5 +1,6 @@
 use Test::Base;
 
+use Smart::Comments;
 use lib 'lib';
 use MiniSQL::Select;
 
@@ -32,6 +33,9 @@ run {
     if (defined $ex_cols) {
         is join(' ', @cols), $block->cols, "$name - model cols ok";
     }
+    if (defined $block->out) {
+        is $res->{sql}, $block->out, "$name - sql emittion ok";
+    }
 };
 
 __DATA__
@@ -42,6 +46,7 @@ select * from Carrie
 --- error
 --- models: Carrie
 --- cols:
+--- out: select * from "Carrie"
 
 
 
@@ -51,13 +56,15 @@ select * from Carrie where name='zhxj'
 --- error
 --- models: Carrie
 --- cols: name
+--- out: select * from "Carrie" where "name" = 'zhxj'
 
 
 
-=== TEST 3:
+=== TEST 3: with trailing ;
 --- sql
 select * from Carrie;
 --- error
+--- out: select * from "Carrie"
 
 
 
@@ -69,14 +76,7 @@ line 1: error: Unexpected input: "blah".
 
 
 
-=== TEST 5: Select w/o where or other clauses
---- sql
-select * from Carrie;
---- error
-
-
-
-=== TEST 6: Unexpected end of input
+=== TEST 5: Unexpected end of input
 --- sql
 select *
 from Carrie
@@ -86,7 +86,7 @@ line 3: error: Unexpected end of input (IDENT or '(' expected).
 
 
 
-=== TEST 7:
+=== TEST 6:
 --- sql
 select * from Carrie blah
 --- error
@@ -94,7 +94,7 @@ line 1: error: Unexpected input: "blah".
 
 
 
-=== TEST 8: Aggregate function 'count'
+=== TEST 7: Aggregate function 'count'
 --- sql
 select count(*)
 from Carrie
@@ -102,10 +102,11 @@ where name='zhxj';
 --- error
 --- models: Carrie
 --- cols: name
+--- out: select count ( * ) from "Carrie" where "name" = 'zhxj'
 
 
 
-=== TEST 9: Group by
+=== TEST 8: Group by
 --- sql
 select sum ( * )
 from People, Blah
@@ -114,10 +115,10 @@ group by name
 --- error
 --- models: People Blah
 --- cols: name name
+--- out: 
 
 
-
-=== TEST 10: Bad ";"
+=== TEST 9: Bad ";"
 --- sql
 select sum ( * )
 from People, Blah
@@ -128,7 +129,7 @@ line 4: error: Unexpected input: "group by".
 
 
 
-=== TEST 11: 'and' in where
+=== TEST 10: 'and' in where
 --- sql
 select *
 from foo
@@ -139,7 +140,7 @@ where name = 'Hi' and age > 4;
 
 
 
-=== TEST 12: 'or' in where
+=== TEST 11: 'or' in where
 --- sql
 select *
 from blah
@@ -150,7 +151,7 @@ where name = 'Hi' or age <= 3;
 
 
 
-=== TEST 13: escaped single quotes
+=== TEST 12: escaped single quotes
 --- sql
 select *
 from blah
@@ -160,7 +161,7 @@ line 3: error: Unexpected input: "'Hi'".
 
 
 
-=== TEST 14: unmatched single quotes
+=== TEST 13: unmatched single quotes
 --- sql
 select *
 from blah
@@ -170,7 +171,7 @@ line 3: error: Unexpected input: "''".
 
 
 
-=== TEST 15: unmatched single quotes
+=== TEST 14: unmatched single quotes
 --- sql
 select *
 from blah
@@ -181,7 +182,7 @@ where name = ''
 
 
 
-=== TEST 16: empty string literals
+=== TEST 15: empty string literals
 --- sql
 select *
 from blah
@@ -192,7 +193,7 @@ where name = '' or age <= 3;
 
 
 
-=== TEST 17: sql injection
+=== TEST 16: sql injection
 --- sql
 select *
 from blah
@@ -202,7 +203,7 @@ line 3: error: Unexpected input: "' and #@!##$@ --'".
 
 
 
-=== TEST 18: $q$ ... $q$
+=== TEST 17: $q$ ... $q$
 --- sql
 select *
 from blah
@@ -213,7 +214,7 @@ where name = $q$Laser's gift...$$ \n\nhehe $q$ and age > 3;
 
 
 
-=== TEST 19: $q$ ... $q$ ... $q$
+=== TEST 18: $q$ ... $q$ ... $q$
 --- sql
 select *
 from blah
@@ -223,7 +224,7 @@ line 3: error: Unexpected input: "update".
 
 
 
-=== TEST 20: $q$q$q$
+=== TEST 19: $q$q$q$
 --- sql
 select *
 from blah
@@ -234,7 +235,7 @@ where name = $q$q$q$ and age > 3;
 
 
 
-=== TEST 21: empty string literals
+=== TEST 20: empty string literals
 --- sql
 select *
 from Book, Student
@@ -245,28 +246,28 @@ where Book.brower = Student.name and Book.title = '' or age <= 3;
 
 
 
-=== TEST 22: offset & limit
+=== TEST 21: offset & limit
 --- sql
 select * from Carrie limit 1 offset 0
 --- error
 
 
 
-=== TEST 23: proc call
+=== TEST 22: proc call
 --- sql
 select hello(1) from Carrie limit 1 offset 0
 --- error
 
 
 
-=== TEST 24: proc call with more parameters
+=== TEST 23: proc call with more parameters
 --- sql
 select hello(1, '2') from Carrie limit 1 offset 0
 --- error
 
 
 
-=== TEST 25: proc names with underscores
+=== TEST 24: proc names with underscores
 --- sql
 select hello_world(1, '2') from Carrie limit 1 offset 0
 --- error
@@ -275,7 +276,7 @@ select hello_world(1, '2') from Carrie limit 1 offset 0
 
 
 
-=== TEST 26: from a proc call
+=== TEST 25: from a proc call
 --- sql
 select * from hello_world(1, '2')
 --- error

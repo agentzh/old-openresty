@@ -418,19 +418,22 @@ sub new {
 		DEFAULT => -41
 	},
 	{#State 62
-		DEFAULT => -65
+		DEFAULT => -65,
+		GOTOS => {
+			'@1-2' => 81
+		}
 	},
 	{#State 63
 		DEFAULT => -32
 	},
 	{#State 64
 		ACTIONS => {
-			")" => 81
+			")" => 82
 		}
 	},
 	{#State 65
 		ACTIONS => {
-			")" => 82
+			")" => 83
 		}
 	},
 	{#State 66
@@ -440,7 +443,7 @@ sub new {
 		},
 		GOTOS => {
 			'parameter' => 45,
-			'parameter_list' => 83
+			'parameter_list' => 84
 		}
 	},
 	{#State 67
@@ -452,7 +455,7 @@ sub new {
 			'IDENT' => 39
 		},
 		GOTOS => {
-			'comparison' => 84,
+			'comparison' => 85,
 			'symbol' => 6,
 			'column' => 52,
 			'qualified_symbol' => 10
@@ -465,7 +468,7 @@ sub new {
 		},
 		GOTOS => {
 			'comparison' => 48,
-			'conjunction' => 85,
+			'conjunction' => 86,
 			'symbol' => 6,
 			'column' => 52,
 			'qualified_symbol' => 10
@@ -473,7 +476,7 @@ sub new {
 	},
 	{#State 70
 		ACTIONS => {
-			")" => 86
+			")" => 87
 		}
 	},
 	{#State 71
@@ -490,14 +493,14 @@ sub new {
 	},
 	{#State 75
 		ACTIONS => {
-			'INTEGER' => 87,
+			'INTEGER' => 88,
 			'IDENT' => 39,
-			'STRING' => 88
+			'STRING' => 89
 		},
 		GOTOS => {
-			'literal' => 89,
+			'literal' => 90,
 			'symbol' => 6,
-			'column' => 90,
+			'column' => 91,
 			'qualified_symbol' => 10
 		}
 	},
@@ -516,57 +519,60 @@ sub new {
 		},
 		GOTOS => {
 			'symbol' => 6,
-			'column_list' => 91,
+			'column_list' => 92,
 			'column' => 56,
 			'qualified_symbol' => 10
 		}
 	},
 	{#State 80
 		ACTIONS => {
-			'IDENT' => 93
+			'IDENT' => 94
 		},
 		GOTOS => {
-			'models' => 92,
+			'models' => 93,
 			'model' => 59
 		}
 	},
 	{#State 81
-		DEFAULT => -17
+		DEFAULT => -66
 	},
 	{#State 82
-		DEFAULT => -16
+		DEFAULT => -17
 	},
 	{#State 83
-		DEFAULT => -23
+		DEFAULT => -16
 	},
 	{#State 84
-		DEFAULT => -46
+		DEFAULT => -23
 	},
 	{#State 85
-		DEFAULT => -44
+		DEFAULT => -46
 	},
 	{#State 86
-		DEFAULT => -50
+		DEFAULT => -44
 	},
 	{#State 87
-		DEFAULT => -59
+		DEFAULT => -50
 	},
 	{#State 88
-		DEFAULT => -58
+		DEFAULT => -59
 	},
 	{#State 89
-		DEFAULT => -48
+		DEFAULT => -58
 	},
 	{#State 90
-		DEFAULT => -49
+		DEFAULT => -48
 	},
 	{#State 91
-		DEFAULT => -61
+		DEFAULT => -49
 	},
 	{#State 92
-		DEFAULT => -6
+		DEFAULT => -61
 	},
 	{#State 93
+		DEFAULT => -6
+	},
+	{#State 94
 		DEFAULT => -8
 	}
 ],
@@ -576,10 +582,7 @@ sub new {
 		 '$start', 2, undef
 	],
 	[#Rule 1
-		 'miniSQL', 1,
-sub
-#line 16 "grammar/Select.yp"
-{ print "Done!\n" }
+		 'miniSQL', 1, undef
 	],
 	[#Rule 2
 		 'statement', 2, undef
@@ -588,13 +591,22 @@ sub
 		 'statement', 1, undef
 	],
 	[#Rule 4
-		 'select_stmt', 3, undef
+		 'select_stmt', 3,
+sub
+#line 24 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 5
-		 'select_stmt', 2, undef
+		 'select_stmt', 2,
+sub
+#line 26 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 6
-		 'models', 3, undef
+		 'models', 3,
+sub
+#line 30 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 7
 		 'models', 1, undef
@@ -602,11 +614,14 @@ sub
 	[#Rule 8
 		 'model', 1,
 sub
-#line 31 "grammar/Select.yp"
-{ push @Models, $_[1] }
+#line 34 "grammar/Select.yp"
+{ push @Models, $_[1]; "\"$_[1]\"" }
 	],
 	[#Rule 9
-		 'pattern_list', 3, undef
+		 'pattern_list', 3,
+sub
+#line 38 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 10
 		 'pattern_list', 1, undef
@@ -627,10 +642,16 @@ sub
 		 'pattern', 1, undef
 	],
 	[#Rule 16
-		 'aggregate', 4, undef
+		 'aggregate', 4,
+sub
+#line 50 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 17
-		 'aggregate', 4, undef
+		 'aggregate', 4,
+sub
+#line 52 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 18
 		 'func', 1, undef
@@ -645,10 +666,16 @@ sub
 		 'func', 1, undef
 	],
 	[#Rule 22
-		 'proc_call', 4, undef
+		 'proc_call', 4,
+sub
+#line 62 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 23
-		 'parameter_list', 3, undef
+		 'parameter_list', 3,
+sub
+#line 66 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 24
 		 'parameter_list', 1, undef
@@ -665,14 +692,18 @@ sub
 	[#Rule 28
 		 'column', 1,
 sub
-#line 67 "grammar/Select.yp"
-{ push @Columns, $_[1] }
+#line 75 "grammar/Select.yp"
+{ push @Columns, $_[1]; "\"$_[1]\"" }
 	],
 	[#Rule 29
 		 'qualified_symbol', 3,
 sub
-#line 71 "grammar/Select.yp"
-{ push @Models, $_[1]; push @Columns, $_[3] }
+#line 79 "grammar/Select.yp"
+{
+                      push @Models, $_[1];
+                      push @Columns, $_[3];
+                      "\"$_[1]\".\"$_[2]\""
+                    }
 	],
 	[#Rule 30
 		 'symbol', 1, undef
@@ -681,7 +712,10 @@ sub
 		 'alias', 1, undef
 	],
 	[#Rule 32
-		 'postfix_clause_list', 2, undef
+		 'postfix_clause_list', 2,
+sub
+#line 93 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 33
 		 'postfix_clause_list', 1, undef
@@ -705,37 +739,61 @@ sub
 		 'postfix_clause', 1, undef
 	],
 	[#Rule 40
-		 'from_clause', 2, undef
+		 'from_clause', 2,
+sub
+#line 106 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 41
-		 'from_clause', 2, undef
+		 'from_clause', 2,
+sub
+#line 108 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 42
-		 'where_clause', 2, undef
+		 'where_clause', 2,
+sub
+#line 112 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 43
 		 'condition', 1, undef
 	],
 	[#Rule 44
-		 'disjunction', 3, undef
+		 'disjunction', 3,
+sub
+#line 119 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 45
 		 'disjunction', 1, undef
 	],
 	[#Rule 46
-		 'conjunction', 3, undef
+		 'conjunction', 3,
+sub
+#line 124 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 47
 		 'conjunction', 1, undef
 	],
 	[#Rule 48
-		 'comparison', 3, undef
+		 'comparison', 3,
+sub
+#line 129 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 49
-		 'comparison', 3, undef
+		 'comparison', 3,
+sub
+#line 131 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 50
-		 'comparison', 3, undef
+		 'comparison', 3,
+sub
+#line 133 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 51
 		 'operator', 1, undef
@@ -765,35 +823,50 @@ sub
 		 'literal', 1, undef
 	],
 	[#Rule 60
-		 'group_by_clause', 2, undef
+		 'group_by_clause', 2,
+sub
+#line 150 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 61
-		 'column_list', 3, undef
+		 'column_list', 3,
+sub
+#line 154 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 62
 		 'column_list', 1, undef
 	],
 	[#Rule 63
-		 'order_by_clause', 2, undef
+		 'order_by_clause', 2,
+sub
+#line 159 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 64
 		 'limit_clause', 2,
 sub
-#line 138 "grammar/Select.yp"
-{ delete $_[0]->YYData->{limit} }
+#line 163 "grammar/Select.yp"
+{ delete $_[0]->YYData->{limit}; join(' ', @_[1..$#_]) }
 	],
 	[#Rule 65
-		 'offset_clause', 2,
+		 '@1-2', 0,
 sub
-#line 141 "grammar/Select.yp"
+#line 166 "grammar/Select.yp"
 { delete $_[0]->YYData->{offset} }
+	],
+	[#Rule 66
+		 'offset_clause', 3,
+sub
+#line 167 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	]
 ],
                                   @_);
     bless($self,$class);
 }
 
-#line 144 "grammar/Select.yp"
+#line 170 "grammar/Select.yp"
 
 
 #use Smart::Comments;
@@ -869,13 +942,14 @@ sub parse {
     ### $sql
     @Models = ();
     @Columns = ();
-    $self->YYParse( yydebug => 0 & 0x1F, yylex => \&_Lexer, yyerror => \&_Error );
+    my $sql = $self->YYParse( yydebug => 0 & 0x1F, yylex => \&_Lexer, yyerror => \&_Error );
     close $source;
     return {
         limit   => $yydata->{limit},
         offset  => $yydata->{offset},
         models  => [@Models],
         columns => [@Columns],
+        sql => $sql,
     };
 }
 
