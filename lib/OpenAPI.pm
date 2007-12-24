@@ -1151,6 +1151,7 @@ sub POST_action_Select {
     my $select = MiniSQL::Select->new;
     my $res = $select->parse($sql, { limit => $self->{_limit}, offset => $self->{_offset} });
     if (_HASH($res)) {
+        my $sql = $res->{sql};
         $sql = $self->append_limit_offset($sql, $res);
         my @models = @{ $res->{models} };
         my @cols = @{ $res->{columns} };
