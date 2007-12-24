@@ -51,12 +51,17 @@ sub quote {
     return $self->{dbh}->quote($val);
 }
 
+sub quote_identifier {
+    my ($self, $val) = @_;
+    return $self->{dbh}->quote_identifier($val);
+}
+
 sub last_insert_id {
     my ($self, $table) = @_;
     #die "Found table!!! $table";
     #my $sql = "select xquery('$self->{user}',')', 0)";
     #my $dbh = $self->{dbh};
-    my $sql = "select max(id) from ${table}";
+    my $sql = "select max(id) from \"$table\"";
     my $res = $self->select($sql);
     return $res->[0][0];
 }

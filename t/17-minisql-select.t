@@ -141,6 +141,7 @@ where name = 'Hi' and age > 4;
 --- out: select * from "foo" where "name" = 'Hi' and "age" > 4
 
 
+
 === TEST 11: 'or' in where
 --- sql
 select *
@@ -150,6 +151,7 @@ where name = 'Hi' or age <= 3;
 --- models: blah
 --- cols: name age
 --- out: select * from "blah" where "name" = 'Hi' or "age" <= 3
+
 
 
 === TEST 12: escaped single quotes
@@ -195,6 +197,7 @@ where name = '' or age <= 3;
 --- out: select * from "blah" where "name" = '' or "age" <= 3
 
 
+
 === TEST 16: sql injection
 --- sql
 select *
@@ -214,6 +217,7 @@ where name = $q$Laser's gift...$$ \n\nhehe $q$ and age > 3;
 --- models: blah
 --- cols: name age
 --- out: select * from "blah" where "name" = $q$Laser's gift...$$ \n\nhehe $q$ and "age" > 3
+
 
 
 === TEST 18: $q$ ... $q$ ... $q$
@@ -237,6 +241,7 @@ where name = $q$q$q$ and age > 3;
 --- out: select * from "blah" where "name" = $q$q$q$ and "age" > 3
 
 
+
 === TEST 20: empty string literals
 --- sql
 select *
@@ -256,11 +261,13 @@ select * from Carrie limit 1 offset 0
 --- out: select * from "Carrie" limit 1 offset 0
 
 
+
 === TEST 22: proc call
 --- sql
 select hello(1) from Carrie limit 1 offset 0
 --- error
 --- out: select hello ( 1 ) from "Carrie" limit 1 offset 0
+
 
 
 === TEST 23: proc call with more parameters
@@ -278,6 +285,7 @@ select hello_world(1, '2') from Carrie limit 1 offset 0
 --- models: Carrie
 --- cols:
 --- out: select hello_world ( 1 , '2' ) from "Carrie" limit 1 offset 0
+
 
 
 === TEST 25: from a proc call

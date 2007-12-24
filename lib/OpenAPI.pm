@@ -751,7 +751,7 @@ sub has_model_col {
 sub drop_table {
     my ($self, $table) = @_;
     $self->do(<<_EOC_);
-drop table "$table";
+drop table if exists "$table";
 delete from _models where table_name='$table';
 delete from _columns where table_name='$table';
 _EOC_

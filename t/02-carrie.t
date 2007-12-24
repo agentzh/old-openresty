@@ -145,7 +145,15 @@ DELETE /=/model?user=tester2
 
 
 
-=== TEST 16: Create model with user info
+=== TEST 16: Check the model list
+--- request
+GET /=/model?user=tester2
+--- response
+[]
+
+
+
+=== TEST 17: Create model with user info
 --- request
 POST /=/model/Test2?user=tester2
 {
@@ -160,7 +168,7 @@ POST /=/model/Test2?user=tester2
 
 
 
-=== TEST 17: insert another record
+=== TEST 18: insert another record
 --- request
 POST /=/model/Test2/~/~?user=tester2
 { title:'second',url:"http://zhangxiaojue.cn"}
@@ -169,7 +177,7 @@ POST /=/model/Test2/~/~?user=tester2
 
 
 
-=== TEST 18: delete all records with user info
+=== TEST 19: delete all records with user info
 --- request
 GET /=/delete/model/Test2/~/~?user=tester2
 --- response
@@ -177,7 +185,7 @@ GET /=/delete/model/Test2/~/~?user=tester2
 
 
 
-=== TEST 19: Check that the records have been indeed removed
+=== TEST 20: Check that the records have been indeed removed
 --- request
 GET /=/model/Test2/~/~?user=tester2
 --- response
@@ -185,7 +193,7 @@ GET /=/model/Test2/~/~?user=tester2
 
 
 
-=== TEST 20: delete all records with user info (the wrong way)
+=== TEST 21: delete all records with user info (the wrong way)
 --- request
 GET /=/delete/Test2/~/~?user=tester2
 --- response
@@ -193,7 +201,7 @@ GET /=/delete/Test2/~/~?user=tester2
 
 
 
-=== TEST 21: insert another record
+=== TEST 22: insert another record
 --- request
 POST /=/model/Test2/~/~?user=tester2
 { title:'second',url:"http://zhangxiaojue.cn"}
@@ -202,7 +210,7 @@ POST /=/model/Test2/~/~?user=tester2
 
 
 
-=== TEST 22: read record using yml
+=== TEST 23: read record using yml
 --- format: YAML
 --- request
 GET /=/model/Test2/~/~.yml?user=tester2
@@ -215,7 +223,7 @@ GET /=/model/Test2/~/~.yml?user=tester2
 
 
 
-=== TEST 23: read record using json
+=== TEST 24: read record using json
 --- request
 GET /=/model/Test2/~/~?user=tester2
 --- response
@@ -223,7 +231,7 @@ GET /=/model/Test2/~/~?user=tester2
 
 
 
-=== TEST 24: Add column
+=== TEST 25: Add column
 --- request
 POST /=/model/Test2/num?user=tester2
 { type:'integer',label:'num'}
@@ -232,7 +240,7 @@ POST /=/model/Test2/num?user=tester2
 
 
 
-=== TEST 25: Update records
+=== TEST 26: Update records
 --- request
 POST /=/put/model/Test2/~/~?user=tester2
 { num:1 }
@@ -241,7 +249,7 @@ POST /=/put/model/Test2/~/~?user=tester2
 
 
 
-=== TEST 26: read records
+=== TEST 27: read records
 --- request
 GET /=/model/Test2/~/~?user=tester2
 --- response
@@ -249,7 +257,7 @@ GET /=/model/Test2/~/~?user=tester2
 
 
 
-=== TEST 27: Update for adding 1 at the original record
+=== TEST 28: Update for adding 1 at the original record
 --- request
 POST /=/put/model/Test2/id/2?user=tester2
 { num:num+1}
@@ -259,7 +267,7 @@ POST /=/put/model/Test2/id/2?user=tester2
 
 
 
-=== TEST 28:read records
+=== TEST 29:read records
 --- request
 GET /=/model/Test2/~/~?user=tester2
 --- response
