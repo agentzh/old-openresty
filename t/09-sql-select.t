@@ -2,7 +2,7 @@ use lib 'lib';
 use strict;
 use warnings;
 
-use Test::More tests => 8;
+use Test::More tests => 9;
 BEGIN { use_ok('SQL::Select'); }
 
 sub _Q { "'$_[0]'" }
@@ -46,5 +46,11 @@ $select->reset( qw<name> )->from("users")
        ->order_by( foo => 'asc' )->order_by( bar => 'desc' )->limit(0);
 is $select->generate, <<_EOC_;
 select name from users order by foo asc, bar desc limit 0;
+_EOC_
+
+$select->reset( qw<name> )->from("users")->op('or')
+       ->where(foo => 1)->where(bar => 2)->where(baz => 3);
+is "$select", <<_EOC_;
+select name from users where foo = 1 or bar = 2 or baz = 3;
 _EOC_
 

@@ -484,6 +484,9 @@ sub GET_model_row {
     }
     if ($column eq '~' and $value eq '~') {
         return $self->select_all_records($model);
+    }
+    if ($column eq '~') {
+        return $self->select_records($model, $column, $value);
     } else {
         return { success => 0, error => "Unsupported operation." };
     }
@@ -884,7 +887,7 @@ sub select_records {
     my $table = $model;
     my $cols = $self->get_model_col_names($model);
     ### inside select_records: $self->{'_order_by'}
-    if (lc($user_col) ne 'id') {
+    if (lc($user_col) ne 'id' and $user_col ne '~') {
         my $found = 0;
         for my $col (@$cols) {
             if ($col eq $user_col) { $found = 1; last; }
@@ -893,14 +896,22 @@ sub select_records {
     }
     my $select = SQL::Select->new;
     $select->from(QI($table));
-    if (defined $val) {
+    if (defined $val and $val ne '~') {
         my $op = $self->{_cgi}->url_param('op') || 'eq';
         $op = $OpMap{$op};
         if ($op eq 'like') {
             $val = "%$val%";
         }
-        $select->select('id', QI(@$cols))
-               ->where(QI($user_col) => $op => Q($val));
+        $select->select('id', QI(@$cols));
+        if ($user_col eq '~') {
+            # XXX
+            $select->op('or');
+            for my $col (@$cols) {
+                $select->where($col => $op => Q($val));
+            }
+        } else {
+            $select->where(QI($user_col) => $op => Q($val));
+        }
     } else {
         $select->select($user_col);
     }

@@ -14,6 +14,7 @@ sub new {
         limit => undef,
         offset => undef,
         order_by => [],
+        op => 'and',
     }, $class;
 }
 
@@ -45,13 +46,18 @@ sub order_by {
     $self;
 }
 
+sub op {
+    $_[0]->{op} = lc($_[1]);
+    $_[0];
+}
+
 sub generate {
     my $self = shift;
     my $sql;
     local $" = ', ';
     $sql .= "select @{ $self->{select} } from @{ $self->{from} }";
     my @where = @{ $self->{where} };
-    my $where = join ' and ', map { join(' ', @$_) } @where;
+    my $where = join ' '. $self->{op} . ' ', map { join(' ', @$_) } @where;
     if ($where) { $sql .= " where $where" }
     my $order_by = $self->{order_by};
     if (@$order_by) { $sql .= " order by @$order_by"; }
