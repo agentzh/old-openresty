@@ -10,9 +10,9 @@ Agent Zhang (章亦春) <agentzh@yahoo.cn>
 
 =head1 VERSION
 
-    CREATED:       Nov 19, 2007
-    LAST MODIFIED: Dec 23, 2007
-    VERSION:       0.15
+    CREATED:            Nov 19, 2007
+    LAST MODIFIED:      Dec 23, 2007
+    VERSION:            0.16
 
 =head1 DESCRIPTION
 
@@ -262,9 +262,9 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
 列名必须以字母开头，后跟若干字母，下划线或数字，与模型名的命名规则相似。但不同的是，推荐列名总是由小写字母开头，例如 C<book_name>, C<gender>, 等等。
 
-虽然服务器会存储模型名和列名的大小字，但是内部处理时是不区分大小写的。所以并不允许 C<Bookmark> 和 C<bookmark> 这两个 Model 同时存在。
+模型名和列名都是大小写敏感的，所以 C<Bookmark> 和 C<bookmark> 被认为是两个不同的 Model.
 
-任何模型都将拥有一个默认列，名为 C<id>，用于在一个模型中唯一地标识某一条数据记录（或者说数据行）。若用户自己在模型中指定了 C<id> 列，则服务器会将之忽略，并将给出一条警告信息。
+任何模型都将拥有一个默认列，名为 C<id>，用于在一个模型中唯一地标识某一条数据记录（或者说数据行）。若用户自己在模型中指定了 C<id> 列，则服务器会将之忽略，并将给出一条警告信息。值得一提的是，C<Id>, C<ID>, 和 C<iD> 也是保留的列名。
 
 默认情况下，URL 及请求数据中的非 ASCII 字符都按 UTF-8 编码处理。如若需要使用其他编码，如 GBK, Big5, 和 Latin1 的话，需要显式地通过 C<charset> 参数指定，例如：
 
