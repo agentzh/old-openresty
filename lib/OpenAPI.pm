@@ -3,7 +3,7 @@ package OpenAPI;
 use strict;
 use warnings;
 
-#use Smart::Comments;
+use Smart::Comments;
 use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
@@ -364,14 +364,17 @@ sub POST_model_column {
             join(", ", sort keys %to_native_type), "\n";
     }
 
+    my $insert = SQL::Insert->new('_columns')
+        ->cols(qw< name label type native_type table_name >)
+        ->values( Q($col, $label, $type, $ntype, $table_name) );
+
     my $default = delete $data->{default};
     if (defined $default) {
         $default = $self->process_default($default);
+        $insert->cols('"default"')->values(Q($default));
     }
+    $default ||= 'null';
 
-    my $insert = SQL::Insert->new('_columns')
-        ->cols(qw< name label type native_type table_name "default" >)
-        ->values( Q($col, $label, $type, $ntype, $table_name, $default) );
     my $sql = "alter table \"$table_name\" add column \"$col\" $ntype default $default;\n";
     $sql .= "$insert";
     ### SQL: $sql
@@ -388,7 +391,8 @@ sub PUT_model_column {
     my ($self, $bits) = @_;
     my $model = $bits->[1];
     my $col = $bits->[2];
-    my $data = _HASH($self->{_req_data}) or die "column spec must be a HASH.\n";
+    my $data = _HASH($self->{_req_data}) or
+        die "column spec must be a non-empty HASH.\n";
     my $table_name = $model;
 
     # discard 'id' column
@@ -397,7 +401,7 @@ sub PUT_model_column {
     }
     # type defaults to 'text' if not specified.
     my $sql;
-    my $new_col = $data->{name};
+    my $new_col = delete $data->{name};
     my $update_meta = SQL::Update->new('_columns');
     if ($new_col) {
         _IDENT($new_col) or die "Bad column name: ",
@@ -410,7 +414,7 @@ sub PUT_model_column {
     } else {
         $new_col = $col;
     }
-    my $type = $data->{type};
+    my $type = delete $data->{type};
     my $ntype;
     if ($type) {
         die "Changing column type is not supported.\n";
@@ -424,12 +428,13 @@ sub PUT_model_column {
             ->set(native_type => Q($ntype));
         $sql .= "alter table \"$table_name\" alter column \"$new_col\" type $ntype;\n",
     }
-    my $label = $data->{label};
+    my $label = delete $data->{label};
     if ($label) {
         $update_meta->set(label => Q($label));
     }
     $update_meta->where(table_name => Q($table_name))
         ->where(name => Q($col));
+
     ### $sql
     my $res = $Backend->do($sql . $update_meta);
     ### $res

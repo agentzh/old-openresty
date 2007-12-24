@@ -133,3 +133,11 @@ GET /=/model/Foo/id/3
 --- response_like
 \[\{"created":"20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+","content":"No content","title":"Bah!","id":"3"\}\]
 
+
+
+=== TEST 14: change the default value of the "content" column
+--- request
+PUT /=/model/Foo/content
+{ default: ["now"] }
+--- response
+

@@ -40,7 +40,7 @@ POST /=/model/laser
 --- request
 GET /=/model/laser/A
 --- response
-{"name":"A","label":"A","type":"text"}
+{"name":"A","default":null,"label":"A","type":"text"}
 
 
 
@@ -57,7 +57,7 @@ POST /=/model/laser/B
 --- request
 GET /=/model/laser/B
 --- response
-{"name":"B","label":"b","type":"integer"}
+{"name":"B","default":null,"label":"b","type":"integer"}
 
 
 
@@ -126,7 +126,7 @@ GET /=/model/laser
 --- request
 GET /=/model/laser/C
 --- response
-{"name":"C","label":"b","type":"integer"}
+{"name":"C","default":null,"label":"b","type":"integer"}
 
 
 
@@ -160,7 +160,7 @@ PUT /=/model/laser/C
 --- request
 GET /=/model/laser/C
 --- response
-{"name":"C","label":"b","type":"integer"}
+{"name":"C","default":null,"label":"b","type":"integer"}
 
 
 
@@ -177,7 +177,7 @@ PUT /=/model/laser/C
 --- request
 GET /=/model/laser/C
 --- response
-{"name":"C","label":"c","type":"integer"}
+{"name":"C","default":null,"label":"c","type":"integer"}
 
 
 
@@ -366,7 +366,6 @@ POST /=/model/laser/~
 {"name":"M","type":"real","label":"M"}
 --- response
 {"success":1,"src":"/=/model/laser/M"}
---- LAST
 
 
 
@@ -382,5 +381,14 @@ GET /=/post/model/laser/~/~?data={M:3.14}
 --- request
 GET /=/model/laser/id/1
 --- response
-[{"m":"3.14","id":"1"}]
+[{"M":"3.14","id":"1"}]
+
+
+
+=== TEST 40: Put a model column with empty hash
+--- request
+PUT /=/model/laser/M
+{}
+--- response
+{"success":0,"error":"column spec must be a non-empty HASH."}
 

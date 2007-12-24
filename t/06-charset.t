@@ -81,7 +81,7 @@ GET /=/model/Foo?charset=big5
 --- request
 GET /=/model/Foo/bar?charset=latin-1
 --- response
-{"name":"bar","label":"??","type":"text"}
+{"name":"bar","default":null,"label":"??","type":"text"}
 
 
 
