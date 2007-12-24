@@ -366,7 +366,7 @@ POST /=/model/laser/~
 {"name":"M","type":"real","label":"M"}
 --- response
 {"success":1,"src":"/=/model/laser/M"}
-
+--- LAST
 
 
 === TEST 38: Insert a record
@@ -381,5 +381,5 @@ GET /=/post/model/laser/~/~?data={M:3.14}
 --- request
 GET /=/model/laser/id/1
 --- response
-[{"M":"3.14","id":"1"}]
+[{"m":"3.14","id":"1"}]
 

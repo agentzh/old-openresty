@@ -336,12 +336,13 @@ sub POST_model_column {
     }
 
     $data = _HASH($data) or die "column spec must be a HASH.\n";
-    if ($col eq 'id') {
+    if (lc($col) eq 'id') {
         die "Column id is reserved.";
     }
     if ($col eq '~') {
          $col = $data->{name} || die "you must provide the new the column with a name!";
     }
+    ### Column: $col
     my $alias = $data->{name};
     my $cols = $self->get_model_col_names($model);
     my $fst = first { lc($col) eq lc($_) } @$cols;
@@ -363,7 +364,9 @@ sub POST_model_column {
         ->cols(qw< name label type native_type table_name >)
         ->values( Q($col, $label, $type, $ntype, $table_name) );
     my $sql = "alter table $table_name add column $col $ntype;\n";
-    my $res = $Backend->do($sql . "$insert");
+    $sql .= "$insert";
+    ### SQL: $sql
+    my $res = $Backend->do($sql);
 
     return { success => 1,
              src => "/=/model/$model/$col",
