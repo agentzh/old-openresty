@@ -39,8 +39,8 @@ POST /=/model/Address
     description: "通讯录",
     columns: [
         { name: "id", type: "serial", label: "ID" },
-        { name: "name", label: "姓名" },
-        { name: "phone", label: "电话" }
+        { name: "name", label: "名称" },
+        { name: "addr", label: "地址" }
     ]
 }
 --- response
@@ -58,20 +58,21 @@ GET /=/model
 
 === TEST 5: insert multiple records at a time
 --- request
-POST /=/model/Dummy/~/~
+POST /=/model/Address/~/~
 [
-    { title: "Google搜索", url: "http://www.google.cn" },
-    { url: "http://www.baidu.com" },
-    { title: "Perl.com", url: "http://www.perl.com" }
+    { name: "Google搜索", addr: "http://www.google.cn" },
+    { addr: "http://www.baidu.com" },
+    { name: "Perl", addr: "http://www.perl.com" },
+    { name: "Perl.com", addr: "Perl" }
 ]
 --- response
-{"success":0,"error":"Model \"Dummy\" not found."}
+{"success":1,"rows_affected":4,"last_row":"/=/model/Address/id/4"}
 
 
 
-=== TEST 6: Access records via a bad model name
+=== TEST 6: Get rows found 'Perl' in any column
 --- request
-GET /=/model/Dummy/~/~
+GET /=/model/Address/~/Perl
 --- response
-{"success":0,"error":"Model \"Dummy\" not found."}
+[{"name":"Perl","id":"3","addr":"http://www.perl.com"},{"name":"Perl.com","id":"4","addr":"Perl"}]
 
