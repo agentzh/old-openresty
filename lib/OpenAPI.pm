@@ -306,21 +306,17 @@ sub GET_model_column {
     ### $col
     my $table_name = $model;
 
-    if ($col eq '~') {
-        my $select = SQL::Select->new(qw< name type label >, '"default"')
+    my $select = SQL::Select->new(qw< name type label >, '"default"')
             ->from('_columns')
             ->where(table_name => Q($table_name))
             ->order_by('id');
+    if ($col eq '~') {
         my $list = $Backend->select("$select", { use_hash => 1 });
         if (!$list or !ref $list) { $list = []; }
         unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
         return $list;
     } else {
-        my $select = SQL::Select->new( qw< name type label > )
-                                ->from( '_columns' )
-                                ->where( table_name => Q($table_name) )
-                                ->where( name => Q($col) );
-
+        $select->where( name => Q($col) );
         my $res = $Backend->select("$select", { use_hash => 1 });
         if (!$res or !@$res) {
             die "Column '$col' not found.\n";
@@ -375,7 +371,7 @@ sub POST_model_column {
 
     my $insert = SQL::Insert->new('_columns')
         ->cols(qw< name label type native_type table_name "default" >)
-        ->values( Q($col, $label, $type, $ntype, $table_name), $default );
+        ->values( Q($col, $label, $type, $ntype, $table_name, $default) );
     my $sql = "alter table \"$table_name\" add column \"$col\" $ntype default $default;\n";
     $sql .= "$insert";
     ### SQL: $sql

@@ -80,15 +80,16 @@ POST /=/model/Foo/~
 {"success":1,"src":"/=/model/Foo/created"}
 
 
+
 === TEST 8: Check the column
 --- request
 GET /=/model/Foo/created
 --- response
+{"name":"created","default":"now()","label":"创建日期","type":"timestamp"}
 
 
 
-
-=== TEST 8: Insert a row w/o setting "created"
+=== TEST 9: Insert a row w/o setting "created"
 --- request
 POST /=/model/Foo/~/~
 { title: "Hi!" }
@@ -97,7 +98,7 @@ POST /=/model/Foo/~/~
 
 
 
-=== TEST 9: Check the newly added row
+=== TEST 10: Check the newly added row
 --- request
 GET /=/model/Foo/id/2
 --- response_like
@@ -105,7 +106,7 @@ GET /=/model/Foo/id/2
 
 
 
-=== TEST 10: Insert another row
+=== TEST 11: Insert another row
 --- request
 POST /=/model/Foo/~/~
 { title: "Bah!" }
@@ -114,7 +115,7 @@ POST /=/model/Foo/~/~
 
 
 
-=== TEST 11: Check the newly added row
+=== TEST 12: Check the newly added row
 --- request
 GET /=/model/Foo/id/3
 --- response_like
