@@ -698,6 +698,10 @@ Select 提供了用 minisql 的 select 语句对 Models 进行高级查询的方
     POST /=/action/Select/lang/minisql
     "select * from Music, Bookmark where Music.url = Bookmark.url"
 
+minisql 与 SQL 的语法非常近似，不同的是它是大小写敏感的。
+所有的关键字都必须为小写。在 minisql 中可以直接引用利用 C</=/model>
+接口定义的 Model 名和列名.
+
 =item WebSearch
 
     GET /=/action/WebSearch
