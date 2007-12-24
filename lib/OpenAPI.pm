@@ -280,9 +280,13 @@ sub POST_model {
     my $data = _HASH($self->{_req_data}) or
         die "The model schema must be a HASH.\n";
     my $model = $bits->[1];
-    ### $model
+
     my $name;
-    if ($name = $data->{name} and $name ne $model) {
+    if ($model eq '~') {
+        $model = $data->{name};
+    }
+    ### $model
+    if ($name = delete $data->{name} and $name ne $model) {
         $self->warning("name \"$name\" in POST content ignored.");
     }
     $data->{name} = $model;
@@ -647,10 +651,12 @@ sub new_model {
         die "No 'description' specified for model \"$model\".\n";
     die "Bad 'description' value: ", $Dumper->($description), "\n"
         unless _STRING($description);
+
     # XXX Should we allow 0 column table here?
     if (!ref $data) {
         die "Malformed data. Hash or Array expected.\n";
     }
+
     my $columns = delete $data->{columns};
     if (_HASH($columns)) { $columns = [$columns] }
     if ($columns && !_ARRAY0($columns)) {
@@ -680,7 +686,7 @@ sub new_model {
 
     my $sql = "$insert";
     $insert->reset('_columns')
-        ->cols(QI( qw<name type native_type label table_name default> ));
+        ->cols(QI( qw<name type native_type label table_name> ));
     $sql .=
         "create table \"$table\" (\n\t\"id\" serial primary key";
     my $sql2;
@@ -713,11 +719,16 @@ sub new_model {
                 join(", ", sort keys %to_native_type), "\n";
         }
         $sql .= ",\n\t\"$name\" $ntype";
+        my $ins = $insert->clone
+            ->values(Q($name, $type, $ntype, $label, $table));
         if (defined $default) {
+            $default = $self->process_default($default);
             # XXX
-            $sql .= " default " . $self->process_default($default);
+            $sql .= " default $default";
+            $ins->cols(QI('default'))
+                ->values(Q($default));
         }
-        $sql2 .= $insert->clone->values(Q($name, $type, $ntype, $label, $table, $default));
+        $sql2 .= $ins;
         $i++;
     }
     $sql .= "\n)";
@@ -1110,7 +1121,7 @@ sub global_model_check {
     my ($model, $col);
     if (@$rbits >= 2) {
         $model = $rbits->[1];
-        _IDENT($model) or die "Bad model name: ", $Dumper->($model), "\n";
+        _IDENT($model) or $model eq '~' or die "Bad model name: ", $Dumper->($model), "\n";
         if (length($model) >= 32) {
             die "Model name too long: $model\n";
         }
@@ -1123,7 +1134,7 @@ sub global_model_check {
 
     if ($meth eq 'POST') {
             #warn "hello {@$rbits}";
-        if (@$rbits >= 3) {
+        if (@$rbits >= 3 and $model ne '~') {
             if (!$self->has_model($model)) {
                 die "Model \"$model\" not found.\n";
             }
@@ -1131,7 +1142,7 @@ sub global_model_check {
         }
     } else {
         ### Testing...
-        if ($model) {
+        if ($model and $model ne '~') {
             if (!$self->has_model($model)) {
                 die "Model \"$model\" not found.\n";
             }
@@ -1139,7 +1150,7 @@ sub global_model_check {
         #
         if ($col and $col ne '~') {
             ### Testing 2...
-            if (! $self->has_model_col($model, $col)) {
+            if ($model ne '~' and ! $self->has_model_col($model, $col)) {
                 ### Dying...
                 die "Column '$col' not found.\n";
             }

@@ -39,8 +39,8 @@ GET /=/model/Foo
   "columns":
     [
       {"name":"id","label":"ID","type":"serial"},
-      {"name":"title","default":"No title","label":"title","type":"text"},
-      {"name":"content","default":"No content","label":"content","type":"text"}
+      {"name":"title","default":"'No title'","label":"title","type":"text"},
+      {"name":"content","default":"'No content'","label":"content","type":"text"}
     ],
     "name":"Foo",
     "description":"Foo"
@@ -97,8 +97,8 @@ GET /=/model/Foo/~
 --- response
 [
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"title","default":"No title","label":"title","type":"text"},
-    {"name":"content","default":"No content","label":"content","type":"text"},
+    {"name":"title","default":"'No title'","label":"title","type":"text"},
+    {"name":"content","default":"'No content'","label":"content","type":"text"},
     {"name":"created","default":"now()","label":"创建日期","type":"timestamp"}]
 
 
@@ -188,4 +188,44 @@ GET /=/model/Foo/id/5
 \[\{"created":"(20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)","content":"\1[-+]\d{2}","title":"Dog!","id":"5"\}\]
 
 
+
+=== TEST 20: model with default now()
+--- request
+POST /=/model/~
+{ name:"Howdy", description:"Howdy",
+  columns:[
+    {name:"title",label:"title"},
+    {name:"updated",label:"updated",default:["now"]}
+  ] }
+--- response
+{"success":1}
+
+
+
+=== TEST 21: Check the columns
+--- request
+GET /=/model/Howdy/~
+--- response
+[
+    {"name":"id","label":"ID","type":"serial"},
+    {"name":"title","default":null,"label":"title","type":"text"},
+    {"name":"updated","default":"now()","label":"updated","type":"text"}
+]
+
+
+
+=== TEST 22: Insert another row
+--- request
+POST /=/model/Howdy/~/~
+{ title: "Hey" }
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/Howdy/id/1"}
+
+
+
+=== TEST 23: Check the newly added row
+--- request
+GET /=/model/Howdy/id/1
+--- response_like
+\[\{"updated":"(20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+[-+]\d{2})","title":"Hey","id":"1"\}\]
 
