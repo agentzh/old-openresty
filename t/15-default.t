@@ -89,7 +89,19 @@ GET /=/model/Foo/created
 
 
 
-=== TEST 9: Insert a row w/o setting "created"
+=== TEST 9: Check the column list
+--- request
+GET /=/model/Foo/~
+--- response
+[
+    {"name":"id","label":"ID","type":"serial"},
+    {"name":"title","default":"No title","label":"title","type":"text"},
+    {"name":"content","default":"No content","label":"content","type":"text"},
+    {"name":"created","default":"now()","label":"创建日期","type":"timestamp"}]
+
+
+
+=== TEST 10: Insert a row w/o setting "created"
 --- request
 POST /=/model/Foo/~/~
 { title: "Hi!" }
@@ -98,7 +110,7 @@ POST /=/model/Foo/~/~
 
 
 
-=== TEST 10: Check the newly added row
+=== TEST 11: Check the newly added row
 --- request
 GET /=/model/Foo/id/2
 --- response_like
@@ -106,7 +118,7 @@ GET /=/model/Foo/id/2
 
 
 
-=== TEST 11: Insert another row
+=== TEST 12: Insert another row
 --- request
 POST /=/model/Foo/~/~
 { title: "Bah!" }
@@ -115,7 +127,7 @@ POST /=/model/Foo/~/~
 
 
 
-=== TEST 12: Check the newly added row
+=== TEST 13: Check the newly added row
 --- request
 GET /=/model/Foo/id/3
 --- response_like
