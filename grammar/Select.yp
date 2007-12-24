@@ -79,7 +79,7 @@ qualified_symbol: symbol '.' symbol
                     {
                       push @Models, $_[1];
                       push @Columns, $_[3];
-                      "\"$_[1]\".\"$_[2]\""
+                      "\"$_[1]\".\"$_[3]\""
                     }
                 ;
 
@@ -163,8 +163,8 @@ limit_clause: 'limit' INTEGER
                 { delete $_[0]->YYData->{limit}; join(' ', @_[1..$#_]) }
             ;
 
-offset_clause: 'offset' INTEGER { delete $_[0]->YYData->{offset} }
-                    { join(' ', @_[1..$#_]) }
+offset_clause: 'offset' INTEGER {
+                 delete $_[0]->YYData->{offset}; join(' ', @_[1..$#_]) }
              ;
 
 %%
@@ -217,7 +217,7 @@ sub _Lexer {
                 and return ('INTEGER', $1);
         s/^\s*('[^']*')//
                 and return ('STRING', $1);
-        s/^\s*(\$q\$.*?\$q)\$//
+        s/^\s*(\$q\$.*?\$q\$)//
                 and return ('STRING', $1);
         s/^\s*(\*|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|group by|limit|offset)\b//s
                 and return ($1, $1);

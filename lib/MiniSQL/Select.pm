@@ -418,22 +418,19 @@ sub new {
 		DEFAULT => -41
 	},
 	{#State 62
-		DEFAULT => -65,
-		GOTOS => {
-			'@1-2' => 81
-		}
+		DEFAULT => -65
 	},
 	{#State 63
 		DEFAULT => -32
 	},
 	{#State 64
 		ACTIONS => {
-			")" => 82
+			")" => 81
 		}
 	},
 	{#State 65
 		ACTIONS => {
-			")" => 83
+			")" => 82
 		}
 	},
 	{#State 66
@@ -443,7 +440,7 @@ sub new {
 		},
 		GOTOS => {
 			'parameter' => 45,
-			'parameter_list' => 84
+			'parameter_list' => 83
 		}
 	},
 	{#State 67
@@ -455,7 +452,7 @@ sub new {
 			'IDENT' => 39
 		},
 		GOTOS => {
-			'comparison' => 85,
+			'comparison' => 84,
 			'symbol' => 6,
 			'column' => 52,
 			'qualified_symbol' => 10
@@ -468,7 +465,7 @@ sub new {
 		},
 		GOTOS => {
 			'comparison' => 48,
-			'conjunction' => 86,
+			'conjunction' => 85,
 			'symbol' => 6,
 			'column' => 52,
 			'qualified_symbol' => 10
@@ -476,7 +473,7 @@ sub new {
 	},
 	{#State 70
 		ACTIONS => {
-			")" => 87
+			")" => 86
 		}
 	},
 	{#State 71
@@ -493,14 +490,14 @@ sub new {
 	},
 	{#State 75
 		ACTIONS => {
-			'INTEGER' => 88,
+			'INTEGER' => 87,
 			'IDENT' => 39,
-			'STRING' => 89
+			'STRING' => 88
 		},
 		GOTOS => {
-			'literal' => 90,
+			'literal' => 89,
 			'symbol' => 6,
-			'column' => 91,
+			'column' => 90,
 			'qualified_symbol' => 10
 		}
 	},
@@ -519,60 +516,57 @@ sub new {
 		},
 		GOTOS => {
 			'symbol' => 6,
-			'column_list' => 92,
+			'column_list' => 91,
 			'column' => 56,
 			'qualified_symbol' => 10
 		}
 	},
 	{#State 80
 		ACTIONS => {
-			'IDENT' => 94
+			'IDENT' => 93
 		},
 		GOTOS => {
-			'models' => 93,
+			'models' => 92,
 			'model' => 59
 		}
 	},
 	{#State 81
-		DEFAULT => -66
-	},
-	{#State 82
 		DEFAULT => -17
 	},
-	{#State 83
+	{#State 82
 		DEFAULT => -16
 	},
-	{#State 84
+	{#State 83
 		DEFAULT => -23
 	},
-	{#State 85
+	{#State 84
 		DEFAULT => -46
 	},
-	{#State 86
+	{#State 85
 		DEFAULT => -44
 	},
-	{#State 87
+	{#State 86
 		DEFAULT => -50
 	},
-	{#State 88
+	{#State 87
 		DEFAULT => -59
 	},
-	{#State 89
+	{#State 88
 		DEFAULT => -58
 	},
-	{#State 90
+	{#State 89
 		DEFAULT => -48
 	},
-	{#State 91
+	{#State 90
 		DEFAULT => -49
 	},
-	{#State 92
+	{#State 91
 		DEFAULT => -61
 	},
-	{#State 93
+	{#State 92
 		DEFAULT => -6
 	},
-	{#State 94
+	{#State 93
 		DEFAULT => -8
 	}
 ],
@@ -702,7 +696,7 @@ sub
 {
                       push @Models, $_[1];
                       push @Columns, $_[3];
-                      "\"$_[1]\".\"$_[2]\""
+                      "\"$_[1]\".\"$_[3]\""
                     }
 	],
 	[#Rule 30
@@ -850,16 +844,11 @@ sub
 { delete $_[0]->YYData->{limit}; join(' ', @_[1..$#_]) }
 	],
 	[#Rule 65
-		 '@1-2', 0,
+		 'offset_clause', 2,
 sub
 #line 166 "grammar/Select.yp"
-{ delete $_[0]->YYData->{offset} }
-	],
-	[#Rule 66
-		 'offset_clause', 3,
-sub
-#line 167 "grammar/Select.yp"
-{ join(' ', @_[1..$#_]) }
+{
+                 delete $_[0]->YYData->{offset}; join(' ', @_[1..$#_]) }
 	]
 ],
                                   @_);
@@ -917,7 +906,7 @@ sub _Lexer {
                 and return ('INTEGER', $1);
         s/^\s*('[^']*')//
                 and return ('STRING', $1);
-        s/^\s*(\$q\$.*?\$q)\$//
+        s/^\s*(\$q\$.*?\$q\$)//
                 and return ('STRING', $1);
         s/^\s*(\*|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|group by|limit|offset)\b//s
                 and return ($1, $1);

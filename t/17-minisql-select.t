@@ -115,7 +115,8 @@ group by name
 --- error
 --- models: People Blah
 --- cols: name name
---- out: 
+--- out: select sum ( * ) from "People" , "Blah" where "name" = 'zhxj' group by "name"
+
 
 
 === TEST 9: Bad ";"
@@ -137,7 +138,7 @@ where name = 'Hi' and age > 4;
 --- error
 --- models: foo
 --- cols: name age
-
+--- out: select * from "foo" where "name" = 'Hi' and "age" > 4
 
 
 === TEST 11: 'or' in where
@@ -148,7 +149,7 @@ where name = 'Hi' or age <= 3;
 --- error
 --- models: blah
 --- cols: name age
-
+--- out: select * from "blah" where "name" = 'Hi' or "age" <= 3
 
 
 === TEST 12: escaped single quotes
@@ -179,6 +180,7 @@ where name = ''
 --- error
 --- models: blah
 --- cols: name
+--- out: select * from "blah" where "name" = ''
 
 
 
@@ -190,7 +192,7 @@ where name = '' or age <= 3;
 --- error
 --- models: blah
 --- cols: name age
-
+--- out: select * from "blah" where "name" = '' or "age" <= 3
 
 
 === TEST 16: sql injection
@@ -211,7 +213,7 @@ where name = $q$Laser's gift...$$ \n\nhehe $q$ and age > 3;
 --- error
 --- models: blah
 --- cols: name age
-
+--- out: select * from "blah" where "name" = $q$Laser's gift...$$ \n\nhehe $q$ and "age" > 3
 
 
 === TEST 18: $q$ ... $q$ ... $q$
@@ -232,17 +234,18 @@ where name = $q$q$q$ and age > 3;
 --- error
 --- models: blah
 --- cols: name age
-
+--- out: select * from "blah" where "name" = $q$q$q$ and "age" > 3
 
 
 === TEST 20: empty string literals
 --- sql
 select *
 from Book, Student
-where Book.brower = Student.name and Book.title = '' or age <= 3;
+where Book.browser = Student.name and Book.title = '' or age <= 3;
 --- error
 --- models: Book Student Book Student Book
---- cols: brower name title age
+--- cols: browser name title age
+--- out: select * from "Book" , "Student" where "Book"."browser" = "Student"."name" and "Book"."title" = '' or "age" <= 3
 
 
 
@@ -250,20 +253,21 @@ where Book.brower = Student.name and Book.title = '' or age <= 3;
 --- sql
 select * from Carrie limit 1 offset 0
 --- error
-
+--- out: select * from "Carrie" limit 1 offset 0
 
 
 === TEST 22: proc call
 --- sql
 select hello(1) from Carrie limit 1 offset 0
 --- error
-
+--- out: select hello ( 1 ) from "Carrie" limit 1 offset 0
 
 
 === TEST 23: proc call with more parameters
 --- sql
 select hello(1, '2') from Carrie limit 1 offset 0
 --- error
+--- out: select hello ( 1 , '2' ) from "Carrie" limit 1 offset 0
 
 
 
@@ -273,7 +277,7 @@ select hello_world(1, '2') from Carrie limit 1 offset 0
 --- error
 --- models: Carrie
 --- cols:
-
+--- out: select hello_world ( 1 , '2' ) from "Carrie" limit 1 offset 0
 
 
 === TEST 25: from a proc call
@@ -282,4 +286,5 @@ select * from hello_world(1, '2')
 --- error
 --- models:
 --- cols:
+--- out: select * from hello_world ( 1 , '2' )
 
