@@ -80,6 +80,13 @@ POST /=/model/Foo/~
 {"success":1,"src":"/=/model/Foo/created"}
 
 
+=== TEST 8: Check the column
+--- request
+GET /=/model/Foo/created
+--- response
+
+
+
 
 === TEST 8: Insert a row w/o setting "created"
 --- request
@@ -112,5 +119,4 @@ POST /=/model/Foo/~/~
 GET /=/model/Foo/id/3
 --- response_like
 \[\{"created":"20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+","content":"No content","title":"Bah!","id":"3"\}\]
-
 
