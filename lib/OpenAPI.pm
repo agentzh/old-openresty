@@ -3,7 +3,7 @@ package OpenAPI;
 use strict;
 use warnings;
 
-use Smart::Comments;
+#use Smart::Comments;
 use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
@@ -428,15 +428,28 @@ sub PUT_model_column {
             ->set(native_type => Q($ntype));
         $sql .= "alter table \"$table_name\" alter column \"$new_col\" type $ntype;\n",
     }
+
     my $label = delete $data->{label};
-    if ($label) {
+    if (defined $label) {
+        _STRING($label) or die "Lable must be a non-empty string: ",
+            $Dumper->($label);
         $update_meta->set(label => Q($label));
     }
+
+    my $default = delete $data->{default};
+    if (defined $default) {
+        $default = $self->process_default($default);
+        ### default: $default
+        $update_meta->set(QI('default') => Q($default));
+        $sql .= "alter table \"$table_name\" alter column \"$new_col\" set default $default;\n",
+    }
+
     $update_meta->where(table_name => Q($table_name))
         ->where(name => Q($col));
 
+    $sql .= $update_meta;
     ### $sql
-    my $res = $Backend->do($sql . $update_meta);
+    my $res = $Backend->do($sql);
     ### $res
     return { success => $res ? 1 : 0 };
 }

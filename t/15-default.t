@@ -1,3 +1,5 @@
+# vi:filetype=
+
 use t::OpenAPI;
 
 plan tests => 3 * blocks();
@@ -138,6 +140,52 @@ GET /=/model/Foo/id/3
 === TEST 14: change the default value of the "content" column
 --- request
 PUT /=/model/Foo/content
+{ default: "hi" }
+--- response
+{"success":1}
+
+
+
+=== TEST 15: Insert another row
+--- request
+POST /=/model/Foo/~/~
+{ title: "Cat!" }
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/Foo/id/4"}
+
+
+
+=== TEST 16: Check the newly added row
+--- request
+GET /=/model/Foo/id/4
+--- response_like
+\[\{"created":"20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+","content":"hi","title":"Cat!","id":"4"\}\]
+
+
+
+=== TEST 17: change the default value of the "content" column to now()
+--- request
+PUT /=/model/Foo/content
 { default: ["now"] }
 --- response
+{"success":1}
+
+
+
+=== TEST 18: Insert another row
+--- request
+POST /=/model/Foo/~/~
+{ title: "Dog!" }
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/Foo/id/5"}
+
+
+
+=== TEST 19: Check the newly added row
+--- request
+GET /=/model/Foo/id/5
+--- response_like
+\[\{"created":"(20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)","content":"\1[-+]\d{2}","title":"Dog!","id":"5"\}\]
+
+
 

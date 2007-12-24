@@ -1,3 +1,5 @@
+# vi:filetype=
+
 use t::OpenAPI;
 
 plan tests => 3 * blocks();
