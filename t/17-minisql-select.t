@@ -292,7 +292,6 @@ select hello(1, '2') from Carrie limit 1 offset 0
 === TEST 23: proc names with underscores
 --- sql
 select hello_world(1, '2') from Carrie limit 1 offset 0
---- error
 --- models: Carrie
 --- cols:
 --- out: select hello_world ( 1 , $y$2$y$ ) from "Carrie" limit 1 offset 0
@@ -302,7 +301,6 @@ select hello_world(1, '2') from Carrie limit 1 offset 0
 === TEST 24: from a proc call
 --- sql
 select * from hello_world(1, '2')
---- error
 --- models:
 --- cols:
 --- out: select * from hello_world ( 1 , $y$2$y$ )
@@ -312,7 +310,6 @@ select * from hello_world(1, '2')
 === TEST 25: from a proc call
 --- sql
 select * from foo where bar = 'a''b\'\\' and a >= 3
---- error
 --- models: foo
 --- cols: bar a
 --- out: select * from "foo" where "bar" = $y$a'b'\$y$ and "a" >= 3
