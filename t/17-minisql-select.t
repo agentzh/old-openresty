@@ -86,15 +86,7 @@ line 3: error: Unexpected end of input (IDENT or '(' expected).
 
 
 
-=== TEST 6:
---- sql
-select * from Carrie blah
---- error
-line 1: error: Unexpected input: "blah".
-
-
-
-=== TEST 7: Aggregate function 'count'
+=== TEST 6: Aggregate function 'count'
 --- sql
 select count(*)
 from Carrie
@@ -106,7 +98,7 @@ where name='zhxj';
 
 
 
-=== TEST 8: Group by
+=== TEST 7: Group by
 --- sql
 select sum ( * )
 from People, Blah
@@ -119,7 +111,7 @@ group by name
 
 
 
-=== TEST 9: Bad ";"
+=== TEST 8: Bad ";"
 --- sql
 select sum ( * )
 from People, Blah
@@ -130,7 +122,7 @@ line 4: error: Unexpected input: "group by".
 
 
 
-=== TEST 10: 'and' in where
+=== TEST 9: 'and' in where
 --- sql
 select *
 from foo
@@ -142,7 +134,7 @@ where name = 'Hi' and age > 4;
 
 
 
-=== TEST 11: 'or' in where
+=== TEST 10: 'or' in where
 --- sql
 select *
 from blah
@@ -154,7 +146,7 @@ where name = 'Hi' or age <= 3;
 
 
 
-=== TEST 12: escaped single quotes
+=== TEST 11: escaped single quotes
 --- sql
 select *
 from blah
@@ -164,7 +156,7 @@ line 3: error: Unexpected input: "'Hi'".
 
 
 
-=== TEST 13: unmatched single quotes
+=== TEST 12: unmatched single quotes
 --- sql
 select *
 from blah
@@ -174,7 +166,7 @@ line 3: error: Unexpected input: "''".
 
 
 
-=== TEST 14: unmatched single quotes
+=== TEST 13: unmatched single quotes
 --- sql
 select *
 from blah
@@ -186,7 +178,7 @@ where name = ''
 
 
 
-=== TEST 15: empty string literals
+=== TEST 14: empty string literals
 --- sql
 select *
 from blah
@@ -198,7 +190,7 @@ where name = '' or age <= 3;
 
 
 
-=== TEST 16: sql injection
+=== TEST 15: sql injection
 --- sql
 select *
 from blah
@@ -208,7 +200,7 @@ line 3: error: Unexpected input: "' and #@!##$@ --'".
 
 
 
-=== TEST 17: $q$ ... $q$
+=== TEST 16: $q$ ... $q$
 --- sql
 select *
 from blah
@@ -220,7 +212,7 @@ where name = $q$Laser's gift...$$ \n\nhehe $q$ and age > 3;
 
 
 
-=== TEST 18: $q$ ... $q$ ... $q$
+=== TEST 17: $q$ ... $q$ ... $q$
 --- sql
 select *
 from blah
@@ -230,7 +222,7 @@ line 3: error: Unexpected input: "update".
 
 
 
-=== TEST 19: $q$q$q$
+=== TEST 18: $q$q$q$
 --- sql
 select *
 from blah
@@ -242,7 +234,7 @@ where name = $q$q$q$ and age > 3;
 
 
 
-=== TEST 20: empty string literals
+=== TEST 19: empty string literals
 --- sql
 select *
 from Book, Student
@@ -254,7 +246,7 @@ where Book.browser = Student.name and Book.title = '' or age <= 3;
 
 
 
-=== TEST 21: offset & limit
+=== TEST 20: offset & limit
 --- sql
 select * from Carrie limit 1 offset 0
 --- error
@@ -262,7 +254,7 @@ select * from Carrie limit 1 offset 0
 
 
 
-=== TEST 22: proc call
+=== TEST 21: proc call
 --- sql
 select hello(1) from Carrie limit 1 offset 0
 --- error
@@ -270,7 +262,7 @@ select hello(1) from Carrie limit 1 offset 0
 
 
 
-=== TEST 23: proc call with more parameters
+=== TEST 22: proc call with more parameters
 --- sql
 select hello(1, '2') from Carrie limit 1 offset 0
 --- error
@@ -278,7 +270,7 @@ select hello(1, '2') from Carrie limit 1 offset 0
 
 
 
-=== TEST 24: proc names with underscores
+=== TEST 23: proc names with underscores
 --- sql
 select hello_world(1, '2') from Carrie limit 1 offset 0
 --- error
@@ -288,7 +280,7 @@ select hello_world(1, '2') from Carrie limit 1 offset 0
 
 
 
-=== TEST 25: from a proc call
+=== TEST 24: from a proc call
 --- sql
 select * from hello_world(1, '2')
 --- error
