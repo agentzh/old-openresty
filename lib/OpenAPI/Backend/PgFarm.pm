@@ -119,6 +119,15 @@ _EOC_
         writeable boolean,
         manageable boolean
 			      );
+
+    create table $user._views(
+        id serial primary key,
+        name text unique not null,
+        definition text unique not null,
+	createdate timestamp with time zone default current_timestamp,
+	updatedate timestamp with time zone default current_timestamp,
+	description text	
+    );
 _EOC_
 
     #$retval += 0;
