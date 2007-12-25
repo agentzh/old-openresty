@@ -229,3 +229,12 @@ GET /=/model/Howdy/id/1
 --- response_like
 \[\{"updated":"(20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+[-+]\d{2})","title":"Hey","id":"1"\}\]
 
+
+
+=== TEST 25: Add a column with default 0
+--- request
+POST /=/model/Foo/~
+{ name: "num", label: "num", type: "integer", default: "0" }
+--- response
+{"success":1,"src":"/=/model/Foo/num"}
+
