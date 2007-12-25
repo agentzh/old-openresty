@@ -4,7 +4,7 @@
 #
 %{
 
-my (@Models, @Columns);
+my (@Models, @Columns, @Vars, %Vals, $Quote);
 
 %}
 
@@ -31,7 +31,7 @@ models: model ',' models
       | model
       ;
 
-model: IDENT { push @Models, $_[1]; "\"$_[1]\"" }
+model: symbol { push @Models, $_[1]; "\"$_[1]\"" }
      ;
 
 pattern_list: pattern ',' pattern_list
@@ -84,6 +84,8 @@ qualified_symbol: symbol '.' symbol
                 ;
 
 symbol: IDENT
+      | VAR
+          { push @Vars, $_[1]; $Quote ? $Quote->($Vals{$_[1]}) : '' }
       ;
 
 alias: symbol

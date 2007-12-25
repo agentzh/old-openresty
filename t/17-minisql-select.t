@@ -1,3 +1,5 @@
+# vi:filetype=
+
 use Test::Base;
 
 use Smart::Comments;
@@ -82,7 +84,7 @@ select *
 from Carrie
 where
 --- error
-line 3: error: Unexpected end of input (IDENT or '(' expected).
+line 3: error: Unexpected end of input (VAR or IDENT or '(' expected).
 
 
 
