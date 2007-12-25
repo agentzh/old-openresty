@@ -10,6 +10,15 @@ use MiniSQL::Select;
 
 plan 'no_plan';
 
+sub quote {
+    my $s = shift;
+    if (!defined $s) { $s = '' }
+    $s =~ s/\n/{NEW_LINE}/g;
+    $s =~ s/\r/{RETURN}/g;
+    $s =~ s/\t/{TAB}/g;
+    '$y$' . $s . '$y$';
+}
+
 run {
     my $block = shift;
     my $name = $block->name;
@@ -17,11 +26,14 @@ run {
     my $sql = $block->sql or die "$name - No --- sql section found.\n";
     my $res;
     eval {
-        $res = $select->parse($sql);
+        $res = $select->parse(
+            $sql,
+            { quote => \&quote }
+        );
     };
     my $error = $block->error || '';
     $error =~ s/^\s+$//g;
-    is $@, $error, "$name - parsable?";
+    is $@, $error, "$name - parse ok";
     my (@models, @cols, @vars);
     if ($res) {
         @models = @{ $res->{models} };
@@ -63,7 +75,7 @@ select * from Carrie where name='zhxj'
 --- error
 --- models: Carrie
 --- cols: name
---- out: select * from "Carrie" where "name" = 'zhxj'
+--- out: select * from "Carrie" where "name" = $y$zhxj$y$
 
 
 
@@ -101,7 +113,7 @@ where name='zhxj';
 --- error
 --- models: Carrie
 --- cols: name
---- out: select count ( * ) from "Carrie" where "name" = 'zhxj'
+--- out: select count ( * ) from "Carrie" where "name" = $y$zhxj$y$
 
 
 
@@ -114,7 +126,7 @@ group by name
 --- error
 --- models: People Blah
 --- cols: name name
---- out: select sum ( * ) from "People" , "Blah" where "name" = 'zhxj' group by "name"
+--- out: select sum ( * ) from "People" , "Blah" where "name" = $y$zhxj$y$ group by "name"
 
 
 
@@ -137,7 +149,7 @@ where name = 'Hi' and age > 4;
 --- error
 --- models: foo
 --- cols: name age
---- out: select * from "foo" where "name" = 'Hi' and "age" > 4
+--- out: select * from "foo" where "name" = $y$Hi$y$ and "age" > 4
 
 
 
@@ -149,7 +161,7 @@ where name = 'Hi' or age <= 3;
 --- error
 --- models: blah
 --- cols: name age
---- out: select * from "blah" where "name" = 'Hi' or "age" <= 3
+--- out: select * from "blah" where "name" = $y$Hi$y$ or "age" <= 3
 
 
 
@@ -159,7 +171,7 @@ select *
 from blah
 where name = '''Hi' or age <= 3;
 --- error
-line 3: error: Unexpected input: "'Hi'".
+--- out: select * from "blah" where "name" = $y$'Hi$y$ or "age" <= 3
 
 
 
@@ -169,7 +181,7 @@ select *
 from blah
 where name = ''''Hi' or age <= 3;
 --- error
-line 3: error: Unexpected input: "''".
+line 3: error: Unexpected input: "Hi".
 
 
 
@@ -181,7 +193,7 @@ where name = ''
 --- error
 --- models: blah
 --- cols: name
---- out: select * from "blah" where "name" = ''
+--- out: select * from "blah" where "name" = $y$$y$ 
 
 
 
@@ -193,7 +205,7 @@ where name = '' or age <= 3;
 --- error
 --- models: blah
 --- cols: name age
---- out: select * from "blah" where "name" = '' or "age" <= 3
+--- out: select * from "blah" where "name" = $y$$y$ or "age" <= 3
 
 
 
@@ -203,7 +215,7 @@ select *
 from blah
 where name = '\'' and #@!##$@ --' or age <= 3;
 --- error
-line 3: error: Unexpected input: "' and #@!##$@ --'".
+line 3: error: Unexpected input: "#" (VAR or IDENT or '(' expected).
 
 
 
@@ -215,7 +227,7 @@ where name = $q$Laser's gift...$$ \n\nhehe $q$ and age > 3;
 --- error
 --- models: blah
 --- cols: name age
---- out: select * from "blah" where "name" = $q$Laser's gift...$$ \n\nhehe $q$ and "age" > 3
+--- out: select * from "blah" where "name" = $y$Laser's gift...$$ \n\nhehe $y$ and "age" > 3
 
 
 
@@ -237,7 +249,7 @@ where name = $q$q$q$ and age > 3;
 --- error
 --- models: blah
 --- cols: name age
---- out: select * from "blah" where "name" = $q$q$q$ and "age" > 3
+--- out: select * from "blah" where "name" = $y$q$y$ and "age" > 3
 
 
 
@@ -249,7 +261,7 @@ where Book.browser = Student.name and Book.title = '' or age <= 3;
 --- error
 --- models: Book Student Book Student Book
 --- cols: browser name title age
---- out: select * from "Book" , "Student" where "Book"."browser" = "Student"."name" and "Book"."title" = '' or "age" <= 3
+--- out: select * from "Book" , "Student" where "Book"."browser" = "Student"."name" and "Book"."title" = $y$$y$ or "age" <= 3
 
 
 
@@ -273,7 +285,7 @@ select hello(1) from Carrie limit 1 offset 0
 --- sql
 select hello(1, '2') from Carrie limit 1 offset 0
 --- error
---- out: select hello ( 1 , '2' ) from "Carrie" limit 1 offset 0
+--- out: select hello ( 1 , $y$2$y$ ) from "Carrie" limit 1 offset 0
 
 
 
@@ -283,7 +295,7 @@ select hello_world(1, '2') from Carrie limit 1 offset 0
 --- error
 --- models: Carrie
 --- cols:
---- out: select hello_world ( 1 , '2' ) from "Carrie" limit 1 offset 0
+--- out: select hello_world ( 1 , $y$2$y$ ) from "Carrie" limit 1 offset 0
 
 
 
@@ -293,15 +305,32 @@ select * from hello_world(1, '2')
 --- error
 --- models:
 --- cols:
---- out: select * from hello_world ( 1 , '2' )
+--- out: select * from hello_world ( 1 , $y$2$y$ )
 
 
 
-=== TEST 25: variable interpolation
+=== TEST 25: from a proc call
+--- sql
+select * from foo where bar = 'a''b\'\\' and a >= 3
+--- error
+--- models: foo
+--- cols: bar a
+--- out: select * from "foo" where "bar" = $y$a'b'\$y$ and "a" >= 3
+
+
+=== TEST 26: Test the literal
+--- sql
+select * from foo where bar = '\n\t\r\'\\'''
+--- error
+--- out: select * from "foo" where "bar" = $y${NEW_LINE}{TAB}{RETURN}'\'$y$
+
+
+
+=== TEST 27: variable interpolation
 --- sql
 select * from $model where $col = 'hello'
 --- models:
 --- cols:
---- out: select * from "" where "" = 'hello'
 --- vars: model col
+--- out: select * from "" where "" = $y$hello$y$
 

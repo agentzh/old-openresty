@@ -1210,7 +1210,7 @@ sub POST_action__Select {
         die "miniSQL must be an non-empty literal string: ", $Dumper->($sql), "\n";
    #warn "SQL 1: $sql\n";
     my $select = MiniSQL::Select->new;
-    my $res = $select->parse($sql, { limit => $self->{_limit}, offset => $self->{_offset} });
+    my $res = $select->parse($sql, { quote => \&Q, limit => $self->{_limit}, offset => $self->{_offset} });
     if (_HASH($res)) {
         my $sql = $res->{sql};
         $sql = $self->append_limit_offset($sql, $res);

@@ -67,9 +67,12 @@ parameter_list: parameter ',' parameter_list
               | parameter
               ;
 
-parameter: STRING
+parameter: string
          | INTEGER
          ;
+
+string: STRING  { $Quote ? $Quote->(parse_string($_[1])) : "" }
+      ;
 
 column: qualified_symbol
       | symbol { push @Columns, $_[1]; "\"$_[1]\"" }
@@ -85,7 +88,7 @@ qualified_symbol: symbol '.' symbol
 
 symbol: IDENT
       | VAR
-          { push @OutVars, $_[1]; $Quote ? $Quote->($InVals{$_[1]}) : '' }
+          { push @OutVars, $_[1]; $InVals{$_[1]} }
       ;
 
 alias: symbol
@@ -144,7 +147,7 @@ operator: '>'
         | 'like'
         ;
 
-literal: STRING
+literal: string
        | INTEGER
        ;
 
@@ -217,7 +220,7 @@ sub _Lexer {
     for ($yydata->{input}) {
         s/^\s*([0-9]+)\b//s
                 and return ('INTEGER', $1);
-        s/^\s*('[^']*')//
+        s/^\s*('(?:\\.|''|[^'])*')//
                 and return ('STRING', $1);
         s/^\s*(\$q\$.*?\$q\$)//
                 and return ('STRING', $1);
@@ -234,6 +237,24 @@ sub _Lexer {
     }
 }
 
+sub parse_string {
+    my $s = $_[0];
+    if ($s =~ /^'(.*)'$/) {
+        $s = $1;
+        $s =~ s/''/'/g;
+        $s =~ s/\\n/\n/g;
+        $s =~ s/\\t/\t/g;
+        $s =~ s/\\r/\r/g;
+        $s =~ s/\\(.)/$1/g;
+        return $s;
+    } elsif ($s =~ /^\$(\w*)\$(.*)\$\1\$$/) {
+        $s = $2;
+        return $s;
+    } else {
+        die "Unknown string literal: $s";
+    }
+}
+
 sub parse {
     my ($self, $sql, $params) = @_;
     open my $source, '<', \$sql;
@@ -241,6 +262,9 @@ sub parse {
     $yydata->{source} = $source;
     $yydata->{limit} = $params->{limit};
     $yydata->{offset} = $params->{offset};
+
+    $Quote = $params->{quote};
+    #$QuoteIdent = $params->{quote_ident};
 
     #$self->YYData->{INPUT} = ;
     ### $sql

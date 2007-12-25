@@ -231,7 +231,7 @@ GET /=/model/Howdy/id/1
 
 
 
-=== TEST 25: Add a column with default 0
+=== TEST 24: Add a column with default 0
 --- request
 POST /=/model/Foo/~
 { name: "num", label: "num", type: "integer", default: "0" }
