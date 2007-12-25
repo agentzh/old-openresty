@@ -750,7 +750,7 @@ sub new_model {
 
 sub process_default {
     my ($self, $default) = @_;
-    if (_STRING($default)) {
+    if (_STRING($default or $default eq '0')) {
         return Q($default);
     } elsif (_ARRAY($default)) {
         my $func = shift @$default;
