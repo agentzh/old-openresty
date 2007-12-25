@@ -17,7 +17,7 @@ use Parse::Yapp::Driver;
 #line 5 "grammar/Select.yp"
 
 
-my (@Models, @Columns, @OutVars, %InVals, $Quote);
+my (@Models, @Columns, @OutVars, %InVals, %Defaults, $Quote);
 
 
 
@@ -953,6 +953,9 @@ sub parse {
     ### $sql
     @Models = ();
     @Columns = ();
+    %InVals = ();
+    @OutVars = ();
+    %Defaults = ();
     my $sql = $self->YYParse( yydebug => 0 & 0x1F, yylex => \&_Lexer, yyerror => \&_Error );
     close $source;
     return {
@@ -962,6 +965,7 @@ sub parse {
         columns => [@Columns],
         sql => $sql,
         vars => [@OutVars],
+        defaults => {%Defaults},
     };
 }
 
