@@ -372,3 +372,16 @@ col=foo
 --- vars: model col
 --- out: select * from "blah" where "foo" = $y$hello$y$
 
+
+=== TEST 30: variable interpolation
+--- sql
+select * from $model where col = $value order by $col
+--- in_vars
+model=blah
+col=baz
+value='howdy'
+--- models: blah
+--- cols: col baz
+--- vars: model value col
+--- out: select * from "blah" where "col" = $y$'howdy'$y$ order by "baz"
+
