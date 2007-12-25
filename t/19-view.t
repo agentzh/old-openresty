@@ -182,5 +182,50 @@ POST /=/model/B/~/~
 --- request
 GET /=/view/View/~/~
 --- response
-[XXX]
+[XXX]  4 rows
+
+
+
+=== TEST 20: Insert another record to model A
+--- request
+POST /=/model/A/~/~
+{title:"163"}
+
+
+
+=== TEST 21: recheck the view
+--- request
+GET /=/view/View/~/~
+--- response
+[XXX] 5 rows
+
+
+
+=== TEST 22: Create a second view
+--- request
+POST /=/view/~
+{name:"View2",body:"select title from A order by $col"}
+
+
+
+=== TEST 23: Check the view
+--- request
+GET /=/view/View2
+--- response
+{"name":"View2","body":"select title from A order by $col"}
+
+
+
+=== TEST 24: Check the view list
+--- request
+GET /=/view
+--- response
+[
+
+    {name:"View2",body:"select title from A order by $col"},
+    {
+      "name":"View",
+      "body":"select * from A, B where A.id = B.a order by A.title"
+    }
+]
 
