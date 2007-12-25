@@ -4,7 +4,7 @@
 #
 %{
 
-my (@Models, @Columns, @OutVars, %InVals, %Defaults, $Quote);
+my (@Models, @Columns, @OutVars, $InVals, %Defaults, $Quote);
 
 %}
 
@@ -72,6 +72,13 @@ parameter: string
          ;
 
 string: STRING  { $Quote ? $Quote->(parse_string($_[1])) : "" }
+      | VAR
+          { push @OutVars, $_[1];
+            ($InVals && $Quote) ?
+                $Quote->($InVals->{$_[1]})
+                :
+                '""'
+          }
       ;
 
 column: qualified_symbol
@@ -88,7 +95,7 @@ qualified_symbol: symbol '.' symbol
 
 symbol: IDENT
       | VAR
-          { push @OutVars, $_[1]; $InVals{$_[1]} }
+          { push @OutVars, $_[1]; $InVals ? $InVals->{$_[1]} : '' }
       ;
 
 alias: symbol
@@ -264,13 +271,13 @@ sub parse {
     $yydata->{offset} = $params->{offset};
 
     $Quote = $params->{quote};
+    $InVals = $params->{vars};
     #$QuoteIdent = $params->{quote_ident};
 
     #$self->YYData->{INPUT} = ;
     ### $sql
     @Models = ();
     @Columns = ();
-    %InVals = ();
     @OutVars = ();
     %Defaults = ();
     my $sql = $self->YYParse( yydebug => 0 & 0x1F, yylex => \&_Lexer, yyerror => \&_Error );

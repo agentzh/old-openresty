@@ -22,13 +22,24 @@ sub quote {
 run {
     my $block = shift;
     my $name = $block->name;
+
+    my %in_vars;
+    my $in_vars = $block->in_vars;
+    if (defined $in_vars) {
+        my @ln = split /\n+/, $in_vars;
+        map {
+            my ($var, $val) = split /=/, $_, 2;
+            $in_vars{$var} = $val;
+        } @ln;
+    }
+
     my $select = MiniSQL::Select->new;
     my $sql = $block->sql or die "$name - No --- sql section found.\n";
     my $res;
     eval {
         $res = $select->parse(
             $sql,
-            { quote => \&quote }
+            { quote => \&quote, vars => \%in_vars }
         );
     };
     my $error = $block->error || '';
@@ -347,4 +358,17 @@ select * from $model where $col = 'hello'
 --- cols:
 --- vars: model col
 --- out: select * from "" where "" = $y$hello$y$
+
+
+
+=== TEST 30: variable interpolation
+--- sql
+select * from $model where $col = 'hello'
+--- in_vars
+model=blah
+col=foo
+--- models: blah
+--- cols: foo
+--- vars: model col
+--- out: select * from "blah" where "foo" = $y$hello$y$
 
