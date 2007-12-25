@@ -318,6 +318,7 @@ select * from foo where bar = 'a''b\'\\' and a >= 3
 --- out: select * from "foo" where "bar" = $y$a'b'\$y$ and "a" >= 3
 
 
+
 === TEST 26: Test the literal
 --- sql
 select * from foo where bar = '\n\t\r\'\\'''
@@ -326,7 +327,23 @@ select * from foo where bar = '\n\t\r\'\\'''
 
 
 
-=== TEST 27: variable interpolation
+=== TEST 27: Test the literal
+--- sql
+select * from foo where bar = $$hi$$
+--- error
+--- out: select * from "foo" where "bar" = $y$hi$y$
+
+
+
+=== TEST 28: Test the literal
+--- sql
+select * from foo where bar = $hello$hi$h$$hello$ and a>3
+--- error
+--- out: select * from "foo" where "bar" = $y$hi$h$$y$ and "a" > 3
+
+
+
+=== TEST 29: variable interpolation
 --- sql
 select * from $model where $col = 'hello'
 --- models:

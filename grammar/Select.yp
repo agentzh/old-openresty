@@ -222,7 +222,7 @@ sub _Lexer {
                 and return ('INTEGER', $1);
         s/^\s*('(?:\\.|''|[^'])*')//
                 and return ('STRING', $1);
-        s/^\s*(\$q\$.*?\$q\$)//
+        s/^\s*(\$(\w*)\$.*?\$\2\$)//
                 and return ('STRING', $1);
         s/^\s*(\*|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|group by|limit|offset)\b//s
                 and return ($1, $1);
