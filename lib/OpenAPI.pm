@@ -543,6 +543,9 @@ sub PUT_model {
     return $self->alter_model($model, $data);
 }
 
+sub POST_view{
+}
+
 sub set_formatter {
     my ($self, $ext) = @_;
     $ext ||= '.json';
