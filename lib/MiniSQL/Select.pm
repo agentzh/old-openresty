@@ -17,7 +17,7 @@ use Parse::Yapp::Driver;
 #line 5 "grammar/Select.yp"
 
 
-my (@Models, @Columns, @Vars, %Vals, $Quote);
+my (@Models, @Columns, @OutVars, %InVals, $Quote);
 
 
 
@@ -720,7 +720,7 @@ sub
 		 'symbol', 1,
 sub
 #line 88 "grammar/Select.yp"
-{ push @Vars, $_[1]; $Quote ? $Quote->($Vals{$_[1]}) : '' }
+{ push @OutVars, $_[1]; $Quote ? $Quote->($InVals{$_[1]}) : '' }
 	],
 	[#Rule 32
 		 'alias', 1, undef
@@ -934,6 +934,8 @@ sub _Lexer {
                 and return ($1, $1);
         s/^\s*([A-Za-z][A-Za-z0-9_]*)\b//s
                 and return ('IDENT', $1);
+        s/^\$(\w+)//s
+                and return ('VAR', $1);
         s/^\s*(\S)//s
                 and return ($1, $1);
     }
@@ -959,6 +961,7 @@ sub parse {
         models  => [@Models],
         columns => [@Columns],
         sql => $sql,
+        vars => [@OutVars],
     };
 }
 

@@ -19,13 +19,14 @@ run {
     eval {
         $res = $select->parse($sql);
     };
-    my $error = $block->error;
+    my $error = $block->error || '';
     $error =~ s/^\s+$//g;
     is $@, $error, "$name - parsable?";
-    my (@models, @cols);
+    my (@models, @cols, @vars);
     if ($res) {
         @models = @{ $res->{models} };
         @cols = @{ $res->{columns} };
+        @vars = @{ $res->{vars} };
     }
     my $ex_models = $block->models;
     if (defined $ex_models) {
@@ -37,6 +38,10 @@ run {
     }
     if (defined $block->out) {
         is $res->{sql}, $block->out, "$name - sql emittion ok";
+    }
+    my $ex_vars = $block->vars;
+    if (defined $ex_vars) {
+        is join(' ', @vars), $ex_vars, "$name - var list ok";
     }
 };
 
@@ -289,4 +294,14 @@ select * from hello_world(1, '2')
 --- models:
 --- cols:
 --- out: select * from hello_world ( 1 , '2' )
+
+
+
+=== TEST 25: variable interpolation
+--- sql
+select * from $model where $col = 'hello'
+--- models:
+--- cols:
+--- out: select * from "" where "" = 'hello'
+--- vars: model col
 
