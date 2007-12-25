@@ -47,9 +47,9 @@ run {
     is $@, $error, "$name - parse ok";
     my (@models, @cols, @vars);
     if ($res) {
-        @models = @{ $res->{models} };
-        @cols = @{ $res->{columns} };
-        @vars = @{ $res->{vars} };
+        @models = grep { defined $_ && $_ ne '' } @{ $res->{models} };
+        @cols = grep { defined $_ && $_ ne '' } @{ $res->{columns} };
+        @vars = grep { defined $_ && $_ ne '' } @{ $res->{vars} };
     }
     my $ex_models = $block->models;
     if (defined $ex_models) {
@@ -385,4 +385,41 @@ value='howdy'
 --- cols: col baz
 --- vars: model value col
 --- out: select * from "blah" where "col" = $y$'howdy'$y$ order by "baz"
+
+
+
+=== TEST 32: default values for vars
+--- sql
+select * from $model where col = $value|'val' order by $col
+--- models:
+--- cols: col
+--- vars: model value col
+--- out: select * from "" where "col" = $y$val$y$ order by ""
+
+
+
+=== TEST 33: default values for vars
+--- sql
+select * from $model where col = $value|'val' order by $col
+--- in_vars
+model=blah
+col=baz
+--- models: blah
+--- cols: col baz
+--- vars: model value col
+--- out: select * from "blah" where "col" = $y$val$y$ order by "baz"
+
+
+
+=== TEST 34: default values for vars (override it)
+--- sql
+select * from $model where col = $value|'val' order by $col
+--- in_vars
+model=blah
+col=baz
+value='howdy''!'
+--- models: blah
+--- cols: col baz
+--- vars: model value col
+--- out: select * from "blah" where "col" = $y$'howdy''!'$y$ order by "baz"
 

@@ -761,7 +761,7 @@ sub
             my $val = $InVals->{$_[1]};
             if (!defined $val) {
                 my $default;
-                $Defaults{$_[1]} = $default = parse_string($_[1]);
+                $Defaults{$_[1]} = $default = parse_string($_[3]);
                 return $Quote->($default);
             }
             $Quote->($val);
