@@ -184,5 +184,3 @@ GET /=/view/View/~/~
 --- response
 [XXX]
 
---- response
-
