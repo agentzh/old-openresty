@@ -68,16 +68,25 @@ parameter_list: parameter ',' parameter_list
               ;
 
 parameter: string
-         | INTEGER
+         | NUM
          ;
 
-string: STRING  { $Quote ? $Quote->(parse_string($_[1])) : "" }
+constant: STRING | NUM;
+
+string: STRING  { $Quote->(parse_string($_[1])) }
       | VAR
           { push @OutVars, $_[1];
-            ($InVals && $Quote) ?
-                $Quote->($InVals->{$_[1]})
-                :
-                '""'
+            $Quote->($InVals->{$_[1]})
+          }
+      | VAR '|' constant
+          { push @OutVars, $_[1];
+            my $val = $InVals->{$_[1]};
+            if (!defined $val) {
+                my $default;
+                $Defaults{$_[1]} = $default = parse_string($_[1]);
+                return $Quote->($default);
+            }
+            $Quote->($val);
           }
       ;
 
@@ -95,7 +104,7 @@ qualified_symbol: symbol '.' symbol
 
 symbol: IDENT
       | VAR
-          { push @OutVars, $_[1]; $InVals ? $InVals->{$_[1]} : '' }
+          { push @OutVars, $_[1]; $InVals->{$_[1]} }
       ;
 
 alias: symbol
@@ -155,7 +164,7 @@ operator: '>'
         ;
 
 literal: string
-       | INTEGER
+       | NUM
        ;
 
 group_by_clause: 'group by' column_list
@@ -171,11 +180,11 @@ order_by_clause: 'order by' column_list
                     { join(' ', @_[1..$#_]) }
                ;
 
-limit_clause: 'limit' INTEGER
+limit_clause: 'limit' NUM
                 { delete $_[0]->YYData->{limit}; join(' ', @_[1..$#_]) }
             ;
 
-offset_clause: 'offset' INTEGER {
+offset_clause: 'offset' NUM {
                  delete $_[0]->YYData->{offset}; join(' ', @_[1..$#_]) }
              ;
 
@@ -225,8 +234,8 @@ sub _Lexer {
     ### lineno: $.
 
     for ($yydata->{input}) {
-        s/^\s*([0-9]+)\b//s
-                and return ('INTEGER', $1);
+        s/^\s*(\d+(?:\.\d+)?)\b//s
+                and return ('NUM', $1);
         s/^\s*('(?:\\.|''|[^'])*')//
                 and return ('STRING', $1);
         s/^\s*(\$(\w*)\$.*?\$\2\$)//
@@ -270,8 +279,8 @@ sub parse {
     $yydata->{limit} = $params->{limit};
     $yydata->{offset} = $params->{offset};
 
-    $Quote = $params->{quote};
-    $InVals = $params->{vars};
+    $Quote = $params->{quote} || sub { "''" };
+    $InVals = $params->{vars} || {};
     #$QuoteIdent = $params->{quote_ident};
 
     #$self->YYData->{INPUT} = ;
