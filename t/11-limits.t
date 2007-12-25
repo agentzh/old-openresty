@@ -118,7 +118,7 @@ for ($RECORD_LIMIT..$RECORD_LIMIT + 1) {
     my $res_body = $res->content;
     ### $res_body
     if ($_ <= $RECORD_LIMIT) {
-        is $res_body, '{"success":1,"rows_affected":1,"last_row":"/=/model/foos/id/100"}'."\n", "Model record limit test ".$_;
+        is $res_body, '{"success":1,"rows_affected":1,"last_row":"/=/model/foos/id/'.$RECORD_LIMIT.'"}'."\n", "Model record limit test ".$_;
     } else {
         is $res_body, '{"success":0,"error":"Exceeded model row count limit: '.$RECORD_LIMIT.'."}'."\n", "Model record limit test ".$_;
     }
