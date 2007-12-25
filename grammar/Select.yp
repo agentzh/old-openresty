@@ -105,6 +105,16 @@ qualified_symbol: symbol '.' symbol
 symbol: IDENT
       | VAR
           { push @OutVars, $_[1]; $InVals->{$_[1]} }
+      | VAR '|' IDENT
+          { push @OutVars, $_[1];
+            my $val = $InVals->{$_[1]};
+            if (!defined $val) {
+                my $default;
+                $Defaults{$_[1]} = $default = $_[3];
+                return $default;
+            }
+            $val;
+          }
       ;
 
 alias: symbol

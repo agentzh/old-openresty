@@ -423,3 +423,29 @@ value='howdy''!'
 --- vars: model value col
 --- out: select * from "blah" where "col" = $y$'howdy''!'$y$ order by "baz"
 
+
+
+=== TEST 35: default values for vars (columns)
+--- sql
+select * from $model where col = $value|'val' order by $col|id
+--- in_vars
+model=blah
+--- models: blah
+--- cols: col id
+--- vars: model value col
+--- out: select * from "blah" where "col" = $y$val$y$ order by "id"
+
+
+
+=== TEST 36: default values for vars (columns)
+--- sql
+select * from $model where col = $value|'val' order by $col|id
+--- in_vars
+model=blah
+col=baz
+--- models: blah
+--- cols: col baz
+--- vars: model value col
+--- out: select * from "blah" where "col" = $y$val$y$ order by "baz"
+
+

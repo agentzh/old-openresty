@@ -26,9 +26,10 @@ sub select {
     my ($self, $sql, $opts) = @_;
     $opts ||= {};
     my $type = $opts->{use_hash} ? 1 : 0;
+    my $readonly = $opts->{readonly} ? 1 : 0;
     $sql = $self->quote($sql);
     #warn "==================> $sql\n";
-    my $sql_cmd = "select xquery('$self->{user}', $sql, $type)";
+    my $sql_cmd = "select xquery('$self->{user}', $sql, $type, $readonly)";
     #warn "------------------> $sql_cmd";
     my $dbh = $self->{dbh};
     my $res = $dbh->selectall_arrayref($sql_cmd);

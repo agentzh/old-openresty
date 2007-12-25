@@ -1222,7 +1222,7 @@ sub POST_action__Select {
         $self->validate_model_names(\@models);
         $self->validate_col_names(\@models, \@cols);
        #warn "SQL 2: $sql\n";
-        $self->select("$sql", {use_hash => 1});
+        $self->select("$sql", {use_hash => 1, readonly => 0});
     }
 }
 
