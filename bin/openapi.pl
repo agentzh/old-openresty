@@ -162,6 +162,7 @@ while (my $cgi = new CGI::Fast) {
         else { $openapi->data($data); }
     } elsif ($bits[0] eq 'action') {
         my $object = $bits[1];
+        $object =~ s/\./_/g;
         my $meth = $http_meth . '_action_' . $object;
         if (!$openapi->can($meth)) {
             $object =~ s/_/ /g;

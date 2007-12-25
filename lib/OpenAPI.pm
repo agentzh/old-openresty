@@ -1195,7 +1195,7 @@ sub POST_admin_select {
     return $self->select($sql, { use_hash => 1 });
 }
 
-sub POST_action_Select {
+sub POST_action__Select {
     my ($self, $params) = @_;
     my $lang = $params->{lang};
     if (!defined $lang) {

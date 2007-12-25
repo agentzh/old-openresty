@@ -1,3 +1,5 @@
+# vi:filetype=
+
 use t::OpenAPI;
 
 plan tests => 3 * blocks();
@@ -46,7 +48,7 @@ insert into _cats (name) values ('mimi');"
 
 
 
-=== TEST 5: Select data
+=== TEST 5: .Select data
 --- request
 POST /=/admin/select
 "select * from _books"
@@ -94,7 +96,7 @@ insert into _cats (name) values ('mimi');"
 
 
 
-=== TEST 9: Select data
+=== TEST 9: .Select data
 --- request
 POST /=/admin/select
 "select * from _books where id=1"
@@ -131,7 +133,7 @@ $Q$LANGUAGE plpgsql;"
 
 === TEST 12: select proc
 --- request
-GET /=/post/action/Select/lang/minisql?data="select hello_world(1,0)"
+GET /=/post/action/.Select/lang/minisql?data="select hello_world(1,0)"
 --- response
 [{"hello_world":"(1,\"Larry Wall\",2)"}]
 
@@ -158,7 +160,7 @@ $Q$LANGUAGE plpgsql;"
 
 === TEST 14: select * from proc() as ....
 --- request
-GET /=/post/action/Select/lang/minisql?var=sss&data="select * from hello_world2(1,0)"
+GET /=/post/action/.Select/lang/minisql?var=sss&data="select * from hello_world2(1,0)"
 --- response
 var sss=[{"body":"Larry Wall","num":"2","id":"1"},{"body":"Audrey Tang","num":"0","id":"2"},{"body":"Larry Wall","num":"0","id":"3"},{"body":"Audrey Tang","num":"0","id":"4"}];
 
