@@ -448,4 +448,3 @@ col=baz
 --- vars: model value col
 --- out: select * from "blah" where "col" = $y$val$y$ order by "baz"
 
-

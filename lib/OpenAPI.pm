@@ -3,7 +3,7 @@ package OpenAPI;
 use strict;
 use warnings;
 
-#use Smart::Comments;
+use Smart::Comments;
 use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
@@ -734,7 +734,7 @@ sub new_model {
         $sql2 .= $ins;
         $i++;
     }
-    $sql .= "\n)";
+    $sql .= "\n);\ngrant select on table \"$table\" to anonymous;\n";
    #warn $sql, "\n";
     ### $sql
     #register_table($table);
@@ -1209,6 +1209,7 @@ sub POST_action__Select {
     }
     my $sql = $self->{_req_data};
     ### $sql
+    warn "$sql";
     _STRING($sql) or
         die "miniSQL must be an non-empty literal string: ", $Dumper->($sql), "\n";
    #warn "SQL 1: $sql\n";
@@ -1222,7 +1223,7 @@ sub POST_action__Select {
         $self->validate_model_names(\@models);
         $self->validate_col_names(\@models, \@cols);
        #warn "SQL 2: $sql\n";
-        $self->select("$sql", {use_hash => 1, readonly => 0});
+        $self->select("$sql", {use_hash => 1, readonly => 1});
     }
 }
 

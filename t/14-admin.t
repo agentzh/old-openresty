@@ -125,7 +125,9 @@ CREATE OR REPLACE FUNCTION hello_world(i int,j int) RETURNS _books2 AS $Q$
 		select * into tmp from _books where id=i;
 	return tmp;
 	end;
-$Q$LANGUAGE plpgsql;"
+$Q$LANGUAGE plpgsql;
+GRANT EXECUTE ON FUNCTION \"hello_world\" (int,int) to anonymous;
+GRANT SELECT ON TABLE _books to anonymous;"
 --- response
 {"success":1}
 
@@ -152,10 +154,12 @@ CREATE OR REPLACE FUNCTION hello_world2(i int,j int) RETURNS setof _books2 AS $Q
 		end loop;
 	return;
 	end;
-$Q$LANGUAGE plpgsql;"
+$Q$LANGUAGE plpgsql;
+GRANT EXECUTE ON FUNCTION \"hello_world2\" (int,int) to anonymous;
+GRANT SELECT ON TABLE _books2 to anonymous;"
 --- response
 {"success":1}
-
+--- LAST
 
 
 === TEST 14: select * from proc() as ....

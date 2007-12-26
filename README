@@ -12,6 +12,9 @@ Also give read/write access to lighttpd's log file:
     $ chmod 777 /var/log/lighttpd/error.log
     $ chmod 777 /var/log/lighttpd
 
+For the Pg backend, one need to create the "anonymous" role in the "test"
+database.
+
 Sample lighttpd configuration:
 
 # lighttpd.conf

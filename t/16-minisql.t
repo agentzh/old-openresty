@@ -40,7 +40,7 @@ GET /=/model.js
 
 
 
-=== TEST 4: insert a record 
+=== TEST 4: insert a record
 --- request
 POST /=/model/Carrie/~/~.js
 { title:'hello carrie',url:"http://www.carriezh.cn/",num:"10"}
