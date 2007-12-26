@@ -7,7 +7,7 @@ use Smart::Comments;
 use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
-use Lingua::EN::Inflect qw(PL ORD);
+#use Lingua::EN::Inflect qw(PL ORD);
 use List::Util qw(first);
 use Params::Util qw(_HASH _STRING _ARRAY0 _ARRAY _SCALAR);
 use Encode qw(decode_utf8 from_to encode decode);
@@ -676,7 +676,7 @@ sub new_model {
 
     if (%$data) {
     my @key = sort(keys %$data);
-        die "Unrecognized ",PL("key",scalar @key)," in model schema 'TTT': ",
+        die "Unrecognized keys in model schema 'TTT': ",
             join(", ", @key),"\n";
     }
     my $i = 1;
@@ -697,7 +697,7 @@ sub new_model {
     for my $col (@$columns) {
         _HASH($col) or die "Column definition must be a hash: ", $Dumper->($col), "\n";
         my $name = delete $col->{name} or
-            die "No 'name' specified for the " . ORD($i) . " column.\n";
+            die "No 'name' specified for the column $i.\n";
         _STRING($name) or die "Bad column name: ", $Dumper->($name), "\n";
         _IDENT($name) or die "Bad column name: $name\n";
         if (length($name) >= 32) {
