@@ -80,7 +80,6 @@ POST /=/action/.Select/lang/minisql
 "select * from Carrie where title = 'hello carrie' and num=10;"
 --- response
 [{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}]
---- LAST
 
 
 
@@ -122,7 +121,7 @@ var foo=[{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}];
 POST /=/action/.Select/lang/minisql?var=foo
 "select * from _models limit 1 offset 1"
 --- response
-var foo={"success":0,"error":"line 1: error: Unexpected input: \"_\" (IDENT expected)."};
+var foo={"success":0,"error":"line 1: error: Unexpected input: \"_\" (VAR or IDENT expected)."};
 
 
 

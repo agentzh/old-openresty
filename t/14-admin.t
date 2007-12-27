@@ -159,7 +159,6 @@ GRANT EXECUTE ON FUNCTION \"hello_world2\" (int,int) to anonymous;
 GRANT SELECT ON TABLE _books2 to anonymous;"
 --- response
 {"success":1}
---- LAST
 
 
 === TEST 14: select * from proc() as ....
