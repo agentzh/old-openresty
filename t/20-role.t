@@ -148,6 +148,7 @@ POST /=/model/B
 === TEST 14: Get model list
 --- request
 GET /=/model
+--- response
 [
     {"name":"A","description":"A","src":"/=/model/A"},
     {"name":"B","description":"B","src":"/=/model/B"}
@@ -155,7 +156,23 @@ GET /=/model
 
 
 
-=== TEST 15: Get an individual model (not in rules)
+=== TEST 15: Delete the models
+--- request
+DELETE /=/model
+--- response
+{"success":0,"error":"Permission denied for the \"Public\" role."}
+
+
+
+=== TEST 16: Put to models
+--- request
+PUT /=/model
+--- response
+{"success":0,"error":"Permission denied for the \"Public\" role."}
+
+
+
+=== TEST 17: Get an individual model (not in rules)
 --- request
 GET /=/model/A
 --- response
@@ -163,7 +180,7 @@ GET /=/model/A
 
 
 
-=== TEST 16: Use the other form
+=== TEST 18: Use the other form
 --- request
 GET /=/model/~
 --- response
@@ -171,7 +188,7 @@ GET /=/model/~
 
 
 
-=== TEST 17: Read the column
+=== TEST 19: Read the column
 --- request
 GET /=/model/A/~
 --- response
@@ -179,7 +196,7 @@ GET /=/model/A/~
 
 
 
-=== TEST 18: Read the column (be explicit)
+=== TEST 20: Read the column (be explicit)
 --- request
 GET /=/model/A/title
 --- response
@@ -187,11 +204,34 @@ GET /=/model/A/title
 
 
 
-=== TEST 19: Try to remove the column
+=== TEST 21: Try to remove the column
 --- request
 DELETE /=/model/A/title
 --- response
 {"success":0,"error":"Permission denied for the \"Public\" role."}
 
 
+
+=== TEST 22: Insert rows
+--- request
+POST /=/model/A/~/~
+[ {"title":"Audrey"}, {"title":"Larry"}, {"title":"Patrick"} ]
+--- response
+{"success":1,"row_affected":3,"last_row":"/=/model/A/id/3"}
+
+
+
+=== TEST 23: Get the rows
+--- request
+GET /=/model/A/~/~
+--- response
+{"success":0,"error":"Permission denied for the \"Public\" role."}
+
+
+
+=== TEST 24: Get a single row
+--- request
+GET /=/model/A/id/3
+--- response
+{"success":0,"error":"Permission denied for the \"Public\" role."}
 
