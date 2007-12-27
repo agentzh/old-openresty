@@ -161,6 +161,7 @@ GRANT SELECT ON TABLE _books2 to anonymous;"
 {"success":1}
 
 
+
 === TEST 14: select * from proc() as ....
 --- request
 GET /=/post/action/.Select/lang/minisql?var=sss&data="select * from hello_world2(1,0)"
