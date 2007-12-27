@@ -23,6 +23,7 @@ DELETE /=/view
 {"success":1}
 
 
+
 === TEST 3: Check the view list
 --- request
 GET /=/view
@@ -125,6 +126,7 @@ GET /=/view/View
 }
 
 
+
 === TEST 13: Check a non-existent model
 --- request
 GET /=/view/Dummy
@@ -140,11 +142,14 @@ GET /=/view/Dummy/~/~
 {"success":0,"error":"View \"Dummy\" not found."}
 
 
+
 === TEST 15: Invoke the View view
 --- request
 GET /=/view/View/~/~
 --- response
 []
+
+
 
 === TEST 16: Insert some data into model A
 --- request
@@ -188,12 +193,14 @@ GET /=/view/View/~/~
 ]
 
 
+
 === TEST 20: Insert another record to model A
 --- request
 POST /=/model/A/~/~
 {title:"163"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/A/id/6"}
+
 
 
 === TEST 21: recheck the view

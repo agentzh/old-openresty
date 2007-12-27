@@ -162,3 +162,12 @@ GET /=/model/A
 {"success":0,"error":"Permission denied for the \"Public\" role."}
 
 
+
+=== TEST 16: Use the other form
+--- request
+GET /=/model/~
+--- response
+{"success":0,"error":"Permission denied for the \"Public\" role."}
+
+
+
