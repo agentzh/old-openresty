@@ -152,7 +152,7 @@ sub init {
     my $req_data;
     if ($http_meth eq 'POST') {
         $req_data = $cgi->param('POSTDATA');
-        ### $req_data
+
         if (!defined $req_data) {
             $req_data = $cgi->param('data') or
                 die "No POST content specified.\n";
@@ -164,7 +164,7 @@ sub init {
     }
     elsif ($http_meth eq 'PUT') {
         $req_data = $cgi->param('PUTDATA');
-        ### $req_data
+
         if (!defined $req_data) {
             $req_data = $cgi->param('data') or
                 die "No PUT content specified.\n";
@@ -174,7 +174,7 @@ sub init {
             }
         }
     }
-    ### OpenAPI->new url 1: $url
+
     if ($http_meth eq 'POST' and $url =~ s{^=/put/}{=/}) {
         $http_meth = 'PUT';
     } elsif ($http_meth =~ /^(?:GET|POST)$/ and $url =~ s{^=/delete/}{=/}) {
@@ -183,11 +183,11 @@ sub init {
         $http_meth = 'POST';
         $req_data = $cgi->url_param('data');
         #$req_data = $Importer->($content);
-        ### $req_data
+
         #warn "Content: ", $Dumper->($content);
         #warn "Data: ", $Dumper->($req_data);
     }
-    ### OpenAPI->new url 2: $url
+
     $$rurl = $url;
     $self->{'_url'} = $url;
     $self->{'_http_method'} = $http_meth;
@@ -206,7 +206,7 @@ sub error {
     $s =~ s/^DBD::Pg::st execute failed:\s+ERROR:\s+//;
     #$s =~ s/^DBD::Pg::db do failed:\s.*?ERROR:\s+//;
     $self->{_error} .= $s . "\n";
-### $self->{_error}
+
 }
 
 sub data {
@@ -253,7 +253,7 @@ sub DELETE_model_list {
     }; # no-op
     my @tables = map { @$_ } @$res;
     #$tables = $tables->[0];
-    ### tables: @tables
+
     for my $table (@tables) {
         $self->drop_table($table);
     }
@@ -264,7 +264,7 @@ sub GET_model_list {
     my ($self, $bits) = @_;
     my $models = $self->get_models;
     $models ||= [];
-    ### $models
+
     map { $_->{src} = "/=/model/$_->{name}" } @$models;
     $models;
 }
@@ -272,6 +272,9 @@ sub GET_model_list {
 sub GET_model {
     my ($self, $bits) = @_;
     my $model = $bits->[1];
+    #
+    # TODO: need to deal with '~'
+    #
     return $self->get_model_cols($model);
 }
 
@@ -285,7 +288,7 @@ sub POST_model {
     if ($model eq '~') {
         $model = $data->{name};
     }
-    ### $model
+
     if ($name = delete $data->{name} and $name ne $model) {
         $self->warning("name \"$name\" in POST content ignored.");
     }
@@ -306,8 +309,7 @@ sub GET_model_column {
     my ($self, $bits) = @_;
     my $model = $bits->[1];
     my $col = $bits->[2];
-    ### $model
-    ### $col
+
     my $table_name = $model;
 
     my $select = SQL::Select->new(qw< name type label >, '"default"')
@@ -325,7 +327,7 @@ sub GET_model_column {
         if (!$res or !@$res) {
             die "Column '$col' not found.\n";
         }
-        ### $res
+
         return $res->[0];
     }
 }
@@ -338,7 +340,7 @@ sub POST_model_column {
     my $table_name = $model;
 
     my $num = $self->column_count;
-    ### Column count: $num
+
     if ($num >= $COLUMN_LIMIT) {
         die "Exceeded model column count limit: $COLUMN_LIMIT.\n";
     }
@@ -350,7 +352,7 @@ sub POST_model_column {
     if ($col eq '~') {
          $col = $data->{name} || die "you must provide the new the column with a name!";
     }
-    ### Column: $col
+
     my $alias = $data->{name};
     my $cols = $self->get_model_col_names($model);
     my $fst = first { $col eq $_ } @$cols;
@@ -381,7 +383,7 @@ sub POST_model_column {
 
     my $sql = "alter table \"$table_name\" add column \"$col\" $ntype default $default;\n";
     $sql .= "$insert";
-    ### SQL: $sql
+
     my $res = $Backend->do($sql);
 
     return { success => 1,
@@ -443,7 +445,7 @@ sub PUT_model_column {
     my $default = delete $data->{default};
     if (defined $default) {
         $default = $self->process_default($default);
-        ### default: $default
+
         $update_meta->set(QI('default') => Q($default));
         $sql .= "alter table \"$table_name\" alter column \"$new_col\" set default $default;\n",
     }
@@ -452,9 +454,9 @@ sub PUT_model_column {
         ->where(name => Q($col));
 
     $sql .= $update_meta;
-    ### $sql
+
     my $res = $Backend->do($sql);
-    ### $res
+
     return { success => $res ? 1 : 0 };
 }
 
@@ -489,7 +491,7 @@ sub POST_model_row {
     my ($self, $bits) = @_;
     my $data = $self->{_req_data};
     my $model = $bits->[1];
-    ### Howdy!!...
+
     return $self->insert_records($model, $data);
 }
 
@@ -544,6 +546,146 @@ sub PUT_model {
 }
 
 sub POST_view{
+    my ($self, $bits) = @_;
+    my $data = _HASH($self->{_req_data}) or
+        die "The view schema must be a HASH.\n";
+    my $view = $bits->[1];
+
+    my $name;
+    if ($view eq '~') {
+        $view = $data->{name};
+    }
+
+    if ($name = delete $data->{name} and $name ne $view) {
+        $self->warning("name \"$name\" in POST content ignored.");
+    }
+    $data->{name} = $view;
+    return $self->new_view($data);
+}
+
+sub get_views {
+    my $self = shift;
+    my $select = SQL::Select->new('name','definition', 'description')->from('_views');
+
+    return $Backend->select("$select", { use_hash => 1 });
+}
+
+sub GET_view_list {
+    my ($self, $bits) = @_;
+    my $views = $self->get_views;
+    $views ||= [];
+
+    map { $_->{src} = "/=/view/$_->{name}" } @$views;
+    $views;
+}
+
+sub GET_view {
+    my ($self, $bits) = @_;
+    my $view = $bits->[1];
+
+    if($view eq '~'){
+	return $self->get_views;
+    }
+    if(!$self->has_view($view)){
+	die "View \"$view\" not found.\n";
+    }
+    my $select = SQL::Select->new('name','definition', 'description')->from('_views')->where('name', '=', Q($view));
+
+    return $Backend->select("$select", {use_hash => 1})->[0];
+}
+
+sub exec_view{
+    my ($self,$view, @params) = @_;
+    my $select = MiniSQL::Select->new;
+    my $sql = "select definition from _views where name =".Q($view);
+    ### laser exec_view: "$sql"
+    my $view_def = $self->select($sql)->[0][0];
+
+    my $res;
+
+    eval {
+        $res = $select->parse(
+            $view_def,
+            { quote => \&quote }
+        );
+    };
+    return $self->select($res->{sql}, {use_hash=>1, read_only=>1});
+}
+
+sub GET_view_exec{
+    my ($self,$bits) = @_;
+    my $view = $bits->[1];
+    die "View \"$view\" not found.\n" if (!$self->has_view($view));
+    return $self->exec_view($view);
+}
+
+sub GET_view_exec_with_param{
+    my ($self,$bits) = @_;
+    my $view = $bits->[1];
+    ### laser GET_view_exec_with_param: $bits
+    die "View \"$view\" not found.\n" if (!$self->has_view($view));
+    if($bits->[2] eq '~'){
+	### laser GET_view_exec_with_param: $view
+	return $self->exec_view($view);
+    }
+}
+
+sub view_count{
+    my $self = shift;
+    return $self->select("select count(*) from _views")->[0][0];
+}
+
+sub new_view{
+    my ($self, $data) = @_;
+    my $nviews = $self->view_count;
+    my $res;
+    if ($nviews >= $VIEW_LIMIT) {
+        #warn "===================================> $num\n";
+        die "Exceeded view count limit $VIEW_LIMIT.\n";
+    }
+    my $select = MiniSQL::Select->new;
+    my $sql = $data->{body};
+    
+    eval {
+        $res = $select->parse(
+            $sql,
+            { quote => \&quote }
+        );
+    };
+
+    #
+    # check to see if modes exists
+    #
+    my @models = @{$res->{models}};
+
+    foreach my $model (@models){
+	if (!$self->has_model($model)) {
+        	die "Model \"$model\" not found.\n";
+    	}
+    }
+
+    my $insert = SQL::Insert->new('_views')->cols(qw<name definition description>)
+		->values(Q($data->{name},$data->{body},$data->{description}));
+
+    return $Backend->do($insert) >=0 ?  { success => 1 } : { success => 0};
+
+}
+
+sub DELETE_view {
+    my ($self, $bits) = @_;
+    my $view = $bits->[1];
+    undef $view if ($view eq '~');
+    my $sql = defined $view ? "delete from _views where name ='".$view."';" : "truncate _views;";
+
+    return $Backend->do($sql) >= 0 ? { success => 1 } : { success => 0};
+}
+
+sub DELETE_view_list {
+    my ($self, $bits) = @_;
+    my $view = $bits->[1];
+    my $sql = defined $view ? "delete from _views where name ='".$view."';" : "truncate _views;";
+
+    return $Backend->do($sql) >= 0 ? { success => 1 } : { success => 0};
 }
 
 sub set_formatter {
@@ -610,7 +752,7 @@ sub get_model_cols {
 
 sub get_model_col_names {
     my ($self, $model) = @_;
-    ### get_model_col_names...
+
     if (!$self->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
@@ -618,7 +760,7 @@ sub get_model_col_names {
     my $select = SQL::Select->new('name')
         ->from('_columns')
         ->where(table_name => Q($table));
-    ### get_model_col_names: "$select"
+
     my $list = $Backend->select("$select");
     if (!$list or !ref $list) { return []; }
     return [map { @$_ } @$list];
@@ -649,7 +791,7 @@ sub new_model {
     my $model = delete $data->{name} or
         die "No 'name' field found for the new model\n";
     my $table = $model;
-    ### Table: $table
+
     my $description = delete $data->{description} or
         die "No 'description' specified for model \"$model\".\n";
     die "Bad 'description' value: ", $Dumper->($description), "\n"
@@ -736,7 +878,7 @@ sub new_model {
     }
     $sql .= "\n);\ngrant select on table \"$table\" to anonymous;\n";
    #warn $sql, "\n";
-    ### $sql
+
     #register_table($table);
     #register_columns
     eval {
@@ -750,6 +892,7 @@ sub new_model {
         $found_id ? (warning => "Column \"id\" reserved. Ignored.") : ()
     };
 }
+
 
 sub process_default {
     my ($self, $default) = @_;
@@ -784,13 +927,26 @@ sub has_model {
     return $retval + 0;
 }
 
+sub has_view {
+    my ($self, $view) = @_;
+    _IDENT($view) or die "Bad model name: $view\n";
+    my $retval;
+    my $select = SQL::Select->new('name')
+        ->from('_views')
+        ->where(name => Q($view))
+        ->limit(1);
+    eval {
+        $retval = $self->do("$select");
+    };
+    return $retval + 0;
+}
+
 sub has_model_col {
     my ($self, $model, $col) = @_;
     _IDENT($model) or die "Bad model name: $model\n";
     _IDENT($col) or die "Bad model column name: $col\n";
     my $table_name = $model;
-    ### has model col (model):  $model
-    ### has model col (col): $col
+
     return 1 if $col eq 'id';
     my $res;
     my $select = SQL::Select->new('name')
@@ -848,17 +1004,17 @@ sub insert_records {
     if ($self->row_count($table) >= $RECORD_LIMIT) {
         die "Exceeded model row count limit: $RECORD_LIMIT.\n";
     }
-    ### before get_model_col_names...
+
     my $cols = $self->get_model_col_names($model);
     my $sql;
     my $insert = SQL::Insert->new(QI($table));
 
     if (ref $data eq 'HASH') { # record found
-        ### Row inserted: $data
+
         my $num = insert_record($insert, $data, $cols, 1);
-        ### after insert record...
+
         my $last_id = $self->last_insert_id($table);
-        ### after last insert id...
+
         return { rows_affected => $num, last_row => "/=/model/$model/id/$last_id", success => $num?1:0 };
     } elsif (ref $data eq 'ARRAY') {
         my $i = 0;
@@ -894,7 +1050,7 @@ sub insert_record {
         die "No column specified in row $row_num.\n";
     }
     my $sql = "$insert";
-    ### Insert SQL: $sql
+
     return $Backend->do($sql);
 }
 
@@ -908,7 +1064,7 @@ sub process_order_by {
         die "Invalid order_by value: $order_by\n";
     }
     foreach my $item (@sub_order_by){
-        ### $item
+
         my ($col, $dir) = split ':', $item, 2;
         die "No column \"$col\" found in order_by.\n"
             unless $self->has_model_col($model, $col);
@@ -939,7 +1095,7 @@ sub select_records {
     my ($self, $model, $user_col, $val) = @_;
     my $table = $model;
     my $cols = $self->get_model_col_names($model);
-    ### inside select_records: $self->{'_order_by'}
+
     if (lc($user_col) ne 'id' and $user_col ne '~') {
         my $found = 0;
         for my $col (@$cols) {
@@ -971,7 +1127,7 @@ sub select_records {
     $self->process_order_by($select, $model, $user_col);
     $self->process_offset($select);
     $self->process_limit($select);
-    ### select SQL: "$select"
+
     my $res = $Backend->select("$select", { use_hash => 1 });
     if (!$res and !ref $res) { return []; }
     return $res;
@@ -991,7 +1147,6 @@ sub select_all_records {
     $self->process_order_by($select, $model);
     $self->process_offset($select);
     $self->process_limit($select);
-    ### Select all records SQL: "$select"
 
     my $list = $Backend->select("$select", { use_hash => 1 });
     if (!$list or !ref $list) { return []; }
@@ -1029,8 +1184,7 @@ sub delete_records {
     } else {
         $sql = "delete from \"$table\"";
     }
-    ### $sql
-    ### $val
+
     my $retval = $Backend->do($sql);
     return {success => 1,rows_affected => $retval+0};
 }
@@ -1108,19 +1262,16 @@ sub alter_model {
     if (%$data) {
         die "Unknown fields ", join(", ", keys %$data), "\n";
     }
-    ### $sql
+
     my $retval = $Backend->do($sql);
-    ### $retval
+
     return {success => 1};
 }
 
 sub global_model_check {
     my ($self, $rbits, $meth) = @_;
          #warn "$meth: {@$rbits}\n";
-    ### Check model existence and column existence here...
-    ### if method is not POST...
-    ### method: $meth
-    ### URL bits: $rbits
+
     my ($model, $col);
     if (@$rbits >= 2) {
         $model = $rbits->[1];
@@ -1144,7 +1295,7 @@ sub global_model_check {
  #(_IDENT($col) || $col eq '~') or die "Column '$col' not found.\n";
         }
     } else {
-        ### Testing...
+
         if ($model and $model ne '~') {
             if (!$self->has_model($model)) {
                 die "Model \"$model\" not found.\n";
@@ -1152,9 +1303,7 @@ sub global_model_check {
         }
         #
         if ($col and $col ne '~') {
-            ### Testing 2...
             if ($model ne '~' and ! $self->has_model_col($model, $col)) {
-                ### Dying...
                 die "Column '$col' not found.\n";
             }
         }
@@ -1185,7 +1334,7 @@ sub POST_admin_do {
     my ($self, $bits) = @_;
     my $sql = _STRING($self->{_req_data}) or
         die "SQL literal must be a string.\n";
-    ### $sql
+
     $self->do($sql);
     return { success => 1 };
 }
@@ -1194,7 +1343,6 @@ sub POST_admin_select {
     my ($self, $bits) = @_;
     my $sql = _STRING($self->{_req_data}) or
         die "SQL literal must be a string.\n";
-    ### $sql
     return $self->select($sql, { use_hash => 1 });
 }
 
@@ -1208,7 +1356,7 @@ sub POST_action__Select {
         die "Only the miniSQL language is supported for Select.\n";
     }
     my $sql = $self->{_req_data};
-    ### $sql
+
     warn "$sql";
     _STRING($sql) or
         die "miniSQL must be an non-empty literal string: ", $Dumper->($sql), "\n";
@@ -1223,7 +1371,7 @@ sub POST_action__Select {
         $self->validate_model_names(\@models);
         $self->validate_col_names(\@models, \@cols);
        #warn "SQL 2: $sql\n";
-        $self->select("$sql", {use_hash => 1, readonly => 1});
+        $self->select("$sql", {use_hash => 1, read_only => 1});
     }
 }
 

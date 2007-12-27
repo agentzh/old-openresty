@@ -6,6 +6,7 @@ use base 'Exporter';
 
 our @EXPORT = qw(
     $MODEL_LIMIT
+    $VIEW_LIMIT
     $COLUMN_LIMIT
     $RECORD_LIMIT
     $INSERT_LIMIT
@@ -15,6 +16,7 @@ our @EXPORT = qw(
 );
 
 our $MODEL_LIMIT = 40;
+our $VIEW_LIMIT = 100;
 our $COLUMN_LIMIT = 40;
 our $INSERT_LIMIT = 20;
 our $RECORD_LIMIT = 200; # XXX Should be at least 10_000 for production!

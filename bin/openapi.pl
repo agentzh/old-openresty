@@ -32,6 +32,10 @@ my @ModelDispatcher = qw(
     model_list model model_column model_row
 );
 
+my @ViewDispatcher = qw(
+    view_list view view_exec view_exec_with_param
+			);
+
 my $url_prefix = $ENV{OPENAPI_URL_PREFIX};
 if ($url_prefix) {
     $url_prefix =~ s{^/+|/+$}{}g;
@@ -125,6 +129,9 @@ while (my $cgi = new CGI::Fast) {
         $openapi->response();
         next;
     }
+    #
+    # TODO: build below into a status machine
+    #
     if ($bits[0] eq 'model') {
         my $object = $ModelDispatcher[$#bits];
         my $meth = $http_meth . '_' . $object;
@@ -175,6 +182,24 @@ while (my $cgi = new CGI::Fast) {
         eval {
             $data = $openapi->$meth({ @params });
         };
+        if ($@) { $openapi->error($@); }
+        else { $openapi->data($data); }
+    } elsif ($bits[0] eq 'view') {
+        my $object = defined $ViewDispatcher[$#bits] ? $ViewDispatcher[$#bits] : '';
+        my $meth = $http_meth . '_' . $object;
+        ### $meth
+			#warn @bits, ": ", $meth;
+        if (!$openapi->can($meth)) {
+            $object =~ s/_/ /g;
+            $openapi->error("HTTP $http_meth method not supported for $object.");
+            $openapi->response();
+            next;
+        }
+        my $data;
+        eval {
+            $data = $openapi->$meth(\@bits);
+        };
+			#warn "here: $meth - @bits - $@";
         if ($@) { $openapi->error($@); }
         else { $openapi->data($data); }
     } else {

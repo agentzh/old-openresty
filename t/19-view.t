@@ -23,7 +23,6 @@ DELETE /=/view
 {"success":1}
 
 
-
 === TEST 3: Check the view list
 --- request
 GET /=/view
@@ -106,8 +105,10 @@ GET /=/view
 --- response
 [
     {
+      "src":"/=/view/View",
       "name":"View",
-      "body":"select * from A, B where A.id = B.a order by A.title"
+      "description":null,
+      "definition":"select * from A, B where A.id = B.a order by A.title"
     }
 ]
 
@@ -119,9 +120,9 @@ GET /=/view/View
 --- response
 {
     "name":"View",
-    "body":"select * from A, B where A.id = B.a order by A.title"
+    "description":null,
+    "definition":"select * from A, B where A.id = B.a order by A.title"
 }
-
 
 
 === TEST 13: Check a non-existent model
@@ -139,14 +140,11 @@ GET /=/view/Dummy/~/~
 {"success":0,"error":"View \"Dummy\" not found."}
 
 
-
 === TEST 15: Invoke the View view
 --- request
 GET /=/view/View/~/~
 --- response
 []
-
-
 
 === TEST 16: Insert some data into model A
 --- request
@@ -155,7 +153,7 @@ POST /=/model/A/~/~
   {title:"Yahoo"},{title:"Google"},{title:"Baidu"},
   {title:"Sina"},{title:"Sohu"} ]
 --- response
-{"success":1,"row_affected":5,"last_row":"/=/model/A/id/5"}
+{"success":1,"rows_affected":5,"last_row":"/=/model/A/id/5"}
 
 
 
@@ -174,7 +172,7 @@ POST /=/model/B/~/~
  {body:"sohu.com",a:5},{body:"163.com",a:6},
  {body:"yahoo.cn",a:1}]
 --- response
-{"success":1,"row_affected":5,"last_row":"/=/model/B/id/5"}
+{"success":1,"rows_affected":5,"last_row":"/=/model/B/id/5"}
 
 
 
@@ -182,8 +180,12 @@ POST /=/model/B/~/~
 --- request
 GET /=/view/View/~/~
 --- response
-[XXX]  4 rows
-
+[
+{"body":"baidu.com","a":"3","title":"Baidu","id":"1"},
+{"body":"google.com","a":"2","title":"Google","id":"2"},
+{"body":"sohu.com","a":"5","title":"Sohu","id":"3"},
+{"body":"yahoo.cn","a":"1","title":"Yahoo","id":"5"}
+]
 
 
 === TEST 20: Insert another record to model A
@@ -221,12 +223,16 @@ GET /=/view/View2
 GET /=/view
 --- response
 [
-
-    {
-      "name":"View",
-      "body":"select * from A, B where A.id = B.a order by A.title"
-    },
-    {name:"View2",body:"select title from A order by $col"}
+{"src":"/=/view/View",
+ "name":"View",
+ "description":null,
+ "definition":"select * from A, B where A.id = B.a order by A.title"
+},
+{"src":"/=/view/View2",
+"name":"View2",
+"description":null,
+"definition":"select title from A order by $col"
+}
 ]
 
 
