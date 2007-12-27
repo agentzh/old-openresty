@@ -463,6 +463,7 @@ col=baz
 --- out: select * from "blah" where "col" = $y$val$y$ order by "baz"
 
 
+
 === TEST 37: unbound vars in literals
 --- sql
 select * from $model_1, $model_2 where $col = $value and $blah = $val2 | 32
