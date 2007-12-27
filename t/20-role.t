@@ -171,3 +171,27 @@ GET /=/model/~
 
 
 
+=== TEST 17: Read the column
+--- request
+GET /=/model/A/~
+--- response
+{"success":0,"error":"Permission denied for the \"Public\" role."}
+
+
+
+=== TEST 18: Read the column (be explicit)
+--- request
+GET /=/model/A/title
+--- response
+{"success":0,"error":"Permission denied for the \"Public\" role."}
+
+
+
+=== TEST 19: Try to remove the column
+--- request
+DELETE /=/model/A/title
+--- response
+{"success":0,"error":"Permission denied for the \"Public\" role."}
+
+
+
