@@ -4,7 +4,11 @@
 #
 %{
 
-my (@Models, @Columns, @OutVars, $InVals, %Defaults, $Quote);
+my (
+    @Models, @Columns, @OutVars,
+    $InVals, %Defaults, $Quote,
+    @Unbound,
+);
 
 %}
 
@@ -74,10 +78,6 @@ parameter: string
 constant: STRING | NUM;
 
 string: STRING  { $Quote->(parse_string($_[1])) }
-      | VAR
-          { push @OutVars, $_[1];
-            $Quote->($InVals->{$_[1]})
-          }
       | VAR '|' constant
           { push @OutVars, $_[1];
             my $val = $InVals->{$_[1]};
@@ -85,6 +85,15 @@ string: STRING  { $Quote->(parse_string($_[1])) }
                 my $default;
                 $Defaults{$_[1]} = $default = parse_string($_[3]);
                 return $Quote->($default);
+            }
+            $Quote->($val);
+          }
+      | VAR
+          { push @OutVars, $_[1];
+            my $val = $InVals->{$_[1]};
+            if (!defined $val) {
+                push @Unbound, $_[1];
+                return $Quote->("");
             }
             $Quote->($val);
           }
@@ -103,8 +112,6 @@ qualified_symbol: symbol '.' symbol
                 ;
 
 symbol: IDENT
-      | VAR
-          { push @OutVars, $_[1]; $InVals->{$_[1]} }
       | VAR '|' IDENT
           { push @OutVars, $_[1];
             my $val = $InVals->{$_[1]};
@@ -112,6 +119,15 @@ symbol: IDENT
                 my $default;
                 $Defaults{$_[1]} = $default = $_[3];
                 return $default;
+            }
+            $val;
+          }
+      | VAR
+          { push @OutVars, $_[1];
+            my $val = $InVals->{$_[1]};
+            if (!defined $val) {
+                push @Unbound, $_[1];
+                return '';
             }
             $val;
           }
@@ -250,8 +266,8 @@ sub _Lexer {
                 and return ('STRING', $1);
         s/^\s*(\$(\w*)\$.*?\$\2\$)//
                 and return ('STRING', $1);
-        s/^\s*(\*|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|group by|limit|offset)\b//s
-                and return ($1, $1);
+        s/^\s*(\*|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|group by|limit|offset)\b//is
+                and return (lc($1), lc($1));
         s/^\s*(<=|>=|<>)//s
                 and return ($1, $1);
         s/^\s*([A-Za-z][A-Za-z0-9_]*)\b//s
@@ -276,6 +292,8 @@ sub parse_string {
     } elsif ($s =~ /^\$(\w*)\$(.*)\$\1\$$/) {
         $s = $2;
         return $s;
+    } elsif ($s =~ /^[\d\.]*$/) {
+        return $s;
     } else {
         die "Unknown string literal: $s";
     }
@@ -295,6 +313,7 @@ sub parse {
 
     #$self->YYData->{INPUT} = ;
     ### $sql
+    @Unbound = ();
     @Models = ();
     @Columns = ();
     @OutVars = ();
@@ -309,6 +328,7 @@ sub parse {
         sql => $sql,
         vars => [@OutVars],
         defaults => {%Defaults},
+        unbound => [@Unbound],
     };
 }
 

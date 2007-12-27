@@ -45,11 +45,12 @@ run {
     my $error = $block->error || '';
     $error =~ s/^\s+$//g;
     is $@, $error, "$name - parse ok";
-    my (@models, @cols, @vars);
+    my (@models, @cols, @vars, @unbound);
     if ($res) {
         @models = grep { defined $_ && $_ ne '' } @{ $res->{models} };
         @cols = grep { defined $_ && $_ ne '' } @{ $res->{columns} };
         @vars = grep { defined $_ && $_ ne '' } @{ $res->{vars} };
+        @unbound = grep { defined $_ && $_ ne '' } @{ $res->{unbound} };
     }
     my $ex_models = $block->models;
     if (defined $ex_models) {
@@ -65,6 +66,10 @@ run {
     my $ex_vars = $block->vars;
     if (defined $ex_vars) {
         is join(' ', @vars), $ex_vars, "$name - var list ok";
+    }
+    my $ex_unbound = $block->unbound;
+    if (defined $ex_unbound) {
+        is join(' ', @unbound), $ex_unbound, "$name - unbound var list ok";
     }
 };
 
@@ -339,6 +344,7 @@ select * from foo where bar = '\n\t\r\'\\'''
 --- sql
 select * from foo where bar = $$hi$$
 --- error
+--- unbound:
 --- out: select * from "foo" where "bar" = $y$hi$y$
 
 
@@ -347,6 +353,7 @@ select * from foo where bar = $$hi$$
 --- sql
 select * from foo where bar = $hello$hi$h$$hello$ and a>3
 --- error
+--- unbound:
 --- out: select * from "foo" where "bar" = $y$hi$h$$y$ and "a" > 3
 
 
@@ -357,6 +364,7 @@ select * from $model where $col = 'hello'
 --- models:
 --- cols:
 --- vars: model col
+--- unbound: model col
 --- out: select * from "" where "" = $y$hello$y$
 
 
@@ -370,6 +378,7 @@ col=foo
 --- models: blah
 --- cols: foo
 --- vars: model col
+--- unbound:
 --- out: select * from "blah" where "foo" = $y$hello$y$
 
 
@@ -384,6 +393,7 @@ value='howdy'
 --- models: blah
 --- cols: col baz
 --- vars: model value col
+--- unbound:
 --- out: select * from "blah" where "col" = $y$'howdy'$y$ order by "baz"
 
 
@@ -394,6 +404,7 @@ select * from $model where col = $value|'val' order by $col
 --- models:
 --- cols: col
 --- vars: model value col
+--- unbound: model col
 --- out: select * from "" where "col" = $y$val$y$ order by ""
 
 
@@ -407,6 +418,7 @@ col=baz
 --- models: blah
 --- cols: col baz
 --- vars: model value col
+--- unbound:
 --- out: select * from "blah" where "col" = $y$val$y$ order by "baz"
 
 
@@ -421,6 +433,7 @@ value='howdy''!'
 --- models: blah
 --- cols: col baz
 --- vars: model value col
+--- unbound:
 --- out: select * from "blah" where "col" = $y$'howdy''!'$y$ order by "baz"
 
 
@@ -446,5 +459,17 @@ col=baz
 --- models: blah
 --- cols: col baz
 --- vars: model value col
+--- unbound:
 --- out: select * from "blah" where "col" = $y$val$y$ order by "baz"
+
+
+=== TEST 37: unbound vars in literals
+--- sql
+select * from $model_1, $model_2 where $col = $value and $blah = $val2 | 32
+--- in_vars
+model_1=Cat
+--- models: Cat
+--- cols:
+--- unbound: model_2 col value blah
+--- out: select * from "Cat" , "" where "" = $y$$y$ and "" = $y$32$y$
 

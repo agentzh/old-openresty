@@ -17,7 +17,11 @@ use Parse::Yapp::Driver;
 #line 5 "grammar/Select.yp"
 
 
-my (@Models, @Columns, @OutVars, $InVals, %Defaults, $Quote);
+my (
+    @Models, @Columns, @OutVars,
+    $InVals, %Defaults, $Quote,
+    @Unbound,
+);
 
 
 
@@ -114,7 +118,7 @@ sub new {
 		ACTIONS => {
 			"|" => 25
 		},
-		DEFAULT => -36
+		DEFAULT => -37
 	},
 	{#State 15
 		DEFAULT => -20
@@ -359,7 +363,7 @@ sub new {
 		ACTIONS => {
 			"|" => 72
 		},
-		DEFAULT => -30
+		DEFAULT => -31
 	},
 	{#State 50
 		ACTIONS => {
@@ -370,7 +374,7 @@ sub new {
 		DEFAULT => -9
 	},
 	{#State 52
-		DEFAULT => -37
+		DEFAULT => -36
 	},
 	{#State 53
 		ACTIONS => {
@@ -591,7 +595,7 @@ sub new {
 		DEFAULT => -23
 	},
 	{#State 90
-		DEFAULT => -31
+		DEFAULT => -30
 	},
 	{#State 91
 		DEFAULT => -27
@@ -620,9 +624,9 @@ sub new {
 	{#State 99
 		ACTIONS => {
 			"|" => 103,
-			"." => -36
+			"." => -37
 		},
-		DEFAULT => -30
+		DEFAULT => -31
 	},
 	{#State 100
 		DEFAULT => -56
@@ -661,19 +665,19 @@ sub new {
 	[#Rule 4
 		 'select_stmt', 3,
 sub
-#line 24 "grammar/Select.yp"
+#line 28 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 5
 		 'select_stmt', 2,
 sub
-#line 26 "grammar/Select.yp"
+#line 30 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 6
 		 'models', 3,
 sub
-#line 30 "grammar/Select.yp"
+#line 34 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 7
@@ -682,13 +686,13 @@ sub
 	[#Rule 8
 		 'model', 1,
 sub
-#line 34 "grammar/Select.yp"
+#line 38 "grammar/Select.yp"
 { push @Models, $_[1]; "\"$_[1]\"" }
 	],
 	[#Rule 9
 		 'pattern_list', 3,
 sub
-#line 38 "grammar/Select.yp"
+#line 42 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 10
@@ -712,13 +716,13 @@ sub
 	[#Rule 16
 		 'aggregate', 4,
 sub
-#line 50 "grammar/Select.yp"
+#line 54 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 17
 		 'aggregate', 4,
 sub
-#line 52 "grammar/Select.yp"
+#line 56 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 18
@@ -736,13 +740,13 @@ sub
 	[#Rule 22
 		 'proc_call', 4,
 sub
-#line 62 "grammar/Select.yp"
+#line 66 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 23
 		 'parameter_list', 3,
 sub
-#line 66 "grammar/Select.yp"
+#line 70 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 24
@@ -763,18 +767,10 @@ sub
 	[#Rule 29
 		 'string', 1,
 sub
-#line 76 "grammar/Select.yp"
+#line 80 "grammar/Select.yp"
 { $Quote->(parse_string($_[1])) }
 	],
 	[#Rule 30
-		 'string', 1,
-sub
-#line 78 "grammar/Select.yp"
-{ push @OutVars, $_[1];
-            $Quote->($InVals->{$_[1]})
-          }
-	],
-	[#Rule 31
 		 'string', 3,
 sub
 #line 82 "grammar/Select.yp"
@@ -788,19 +784,32 @@ sub
             $Quote->($val);
           }
 	],
+	[#Rule 31
+		 'string', 1,
+sub
+#line 92 "grammar/Select.yp"
+{ push @OutVars, $_[1];
+            my $val = $InVals->{$_[1]};
+            if (!defined $val) {
+                push @Unbound, $_[1];
+                return $Quote->("");
+            }
+            $Quote->($val);
+          }
+	],
 	[#Rule 32
 		 'column', 1, undef
 	],
 	[#Rule 33
 		 'column', 1,
 sub
-#line 94 "grammar/Select.yp"
+#line 103 "grammar/Select.yp"
 { push @Columns, $_[1]; "\"$_[1]\"" }
 	],
 	[#Rule 34
 		 'qualified_symbol', 3,
 sub
-#line 98 "grammar/Select.yp"
+#line 107 "grammar/Select.yp"
 {
                       push @Models, $_[1];
                       push @Columns, $_[3];
@@ -811,15 +820,9 @@ sub
 		 'symbol', 1, undef
 	],
 	[#Rule 36
-		 'symbol', 1,
-sub
-#line 107 "grammar/Select.yp"
-{ push @OutVars, $_[1]; $InVals->{$_[1]} }
-	],
-	[#Rule 37
 		 'symbol', 3,
 sub
-#line 109 "grammar/Select.yp"
+#line 116 "grammar/Select.yp"
 { push @OutVars, $_[1];
             my $val = $InVals->{$_[1]};
             if (!defined $val) {
@@ -830,13 +833,26 @@ sub
             $val;
           }
 	],
+	[#Rule 37
+		 'symbol', 1,
+sub
+#line 126 "grammar/Select.yp"
+{ push @OutVars, $_[1];
+            my $val = $InVals->{$_[1]};
+            if (!defined $val) {
+                push @Unbound, $_[1];
+                return '';
+            }
+            $val;
+          }
+	],
 	[#Rule 38
 		 'alias', 1, undef
 	],
 	[#Rule 39
 		 'postfix_clause_list', 2,
 sub
-#line 124 "grammar/Select.yp"
+#line 140 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 40
@@ -863,19 +879,19 @@ sub
 	[#Rule 47
 		 'from_clause', 2,
 sub
-#line 137 "grammar/Select.yp"
+#line 153 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 48
 		 'from_clause', 2,
 sub
-#line 139 "grammar/Select.yp"
+#line 155 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 49
 		 'where_clause', 2,
 sub
-#line 143 "grammar/Select.yp"
+#line 159 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 50
@@ -884,7 +900,7 @@ sub
 	[#Rule 51
 		 'disjunction', 3,
 sub
-#line 150 "grammar/Select.yp"
+#line 166 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 52
@@ -893,7 +909,7 @@ sub
 	[#Rule 53
 		 'conjunction', 3,
 sub
-#line 155 "grammar/Select.yp"
+#line 171 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 54
@@ -902,19 +918,19 @@ sub
 	[#Rule 55
 		 'comparison', 3,
 sub
-#line 160 "grammar/Select.yp"
+#line 176 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 56
 		 'comparison', 3,
 sub
-#line 162 "grammar/Select.yp"
+#line 178 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 57
 		 'comparison', 3,
 sub
-#line 164 "grammar/Select.yp"
+#line 180 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 58
@@ -947,13 +963,13 @@ sub
 	[#Rule 67
 		 'group_by_clause', 2,
 sub
-#line 181 "grammar/Select.yp"
+#line 197 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 68
 		 'column_list', 3,
 sub
-#line 185 "grammar/Select.yp"
+#line 201 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 69
@@ -962,19 +978,19 @@ sub
 	[#Rule 70
 		 'order_by_clause', 2,
 sub
-#line 190 "grammar/Select.yp"
+#line 206 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 71
 		 'limit_clause', 2,
 sub
-#line 194 "grammar/Select.yp"
+#line 210 "grammar/Select.yp"
 { delete $_[0]->YYData->{limit}; join(' ', @_[1..$#_]) }
 	],
 	[#Rule 72
 		 'offset_clause', 2,
 sub
-#line 197 "grammar/Select.yp"
+#line 213 "grammar/Select.yp"
 {
                  delete $_[0]->YYData->{offset}; join(' ', @_[1..$#_]) }
 	]
@@ -983,7 +999,7 @@ sub
     bless($self,$class);
 }
 
-#line 201 "grammar/Select.yp"
+#line 217 "grammar/Select.yp"
 
 
 #use Smart::Comments;
@@ -1036,8 +1052,8 @@ sub _Lexer {
                 and return ('STRING', $1);
         s/^\s*(\$(\w*)\$.*?\$\2\$)//
                 and return ('STRING', $1);
-        s/^\s*(\*|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|group by|limit|offset)\b//s
-                and return ($1, $1);
+        s/^\s*(\*|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|group by|limit|offset)\b//is
+                and return (lc($1), lc($1));
         s/^\s*(<=|>=|<>)//s
                 and return ($1, $1);
         s/^\s*([A-Za-z][A-Za-z0-9_]*)\b//s
@@ -1062,6 +1078,8 @@ sub parse_string {
     } elsif ($s =~ /^\$(\w*)\$(.*)\$\1\$$/) {
         $s = $2;
         return $s;
+    } elsif ($s =~ /^[\d\.]*$/) {
+        return $s;
     } else {
         die "Unknown string literal: $s";
     }
@@ -1081,6 +1099,7 @@ sub parse {
 
     #$self->YYData->{INPUT} = ;
     ### $sql
+    @Unbound = ();
     @Models = ();
     @Columns = ();
     @OutVars = ();
@@ -1095,6 +1114,7 @@ sub parse {
         sql => $sql,
         vars => [@OutVars],
         defaults => {%Defaults},
+        unbound => [@Unbound],
     };
 }
 
