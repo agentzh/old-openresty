@@ -26,7 +26,7 @@ sub select {
     my ($self, $sql, $opts) = @_;
     $opts ||= {};
     my $type = $opts->{use_hash} ? 1 : 0;
-    my $readonly = $opts->{readonly} ? 1 : 0;
+    my $readonly = $opts->{read_only} ? 1 : 0;
     $sql = $self->quote($sql);
     #warn "==================> $sql\n";
     my $sql_cmd = "select xquery('$self->{user}', $sql, $type, $readonly)";
