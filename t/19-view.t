@@ -192,14 +192,21 @@ GET /=/view/View/~/~
 --- request
 POST /=/model/A/~/~
 {title:"163"}
-
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/A/id/6"}
 
 
 === TEST 21: recheck the view
 --- request
 GET /=/view/View/~/~
 --- response
-[XXX] 5 rows
+[
+{"body":"163.com","a":"6","title":"163","id":"4"},
+{"body":"baidu.com","a":"3","title":"Baidu","id":"1"},
+{"body":"google.com","a":"2","title":"Google","id":"2"},
+{"body":"sohu.com","a":"5","title":"Sohu","id":"3"},
+{"body":"yahoo.cn","a":"1","title":"Yahoo","id":"5"}
+]
 
 
 
@@ -207,6 +214,8 @@ GET /=/view/View/~/~
 --- request
 POST /=/view/~
 {name:"View2",body:"select title from A order by $col"}
+--- response
+{"success":1}
 
 
 
@@ -214,7 +223,7 @@ POST /=/view/~
 --- request
 GET /=/view/View2
 --- response
-{"name":"View2","body":"select title from A order by $col"}
+{"name":"View2","description":null,"definition":"select title from A order by $col"}
 
 
 
@@ -284,12 +293,8 @@ PUT /=/view/View2
 GET /=/view/~
 --- response
 [
-
-    {
-      "name":"View",
-      "body":"select * from A, B where A.id = B.a order by A.title"
-    },
-    {name:"TitleOnly",body:"select title from A order by $col"},
+{"name":"View","description":null,"definition":"select * from A, B where A.id = B.a order by A.title"},
+{"name":"View2","description":null,"definition":"select title from A order by $col"}
 ]
 
 
@@ -452,7 +457,7 @@ POST /=/view/Foo
 --- request
 GET /=/view/Foo
 --- response
-{"name":"Foo","body":"select $col|id from A order by $by|title"}
+{"name":"Foo","description":null,"definition":"select $col|id from A order by $by|title"}
 
 
 
@@ -460,7 +465,7 @@ GET /=/view/Foo
 --- request
 GET /=/view/Foo/~/~
 --- response
-[XXX] # 6 rows
+[{"id":"6"},{"id":"3"},{"id":"2"},{"id":"4"},{"id":"5"},{"id":"1"}]
 
 
 
