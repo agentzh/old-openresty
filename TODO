@@ -19,4 +19,4 @@ TODO items for OpenAPI
 * move all initialize SQLs into a independent file [laser]
 * add a global default PostgreSQL user, named by anonymous/public etc., to act as a read-only role in PG (clusters) [laser]
 * add a per-model PostgreSQL user/role, act as writer for all permitted write from the roles of model itself.
-
+* use a status machine to recognize different url pattern [laser]
