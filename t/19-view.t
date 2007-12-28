@@ -594,3 +594,23 @@ POST /=/view/Foo
 {"success":0,"error":"No 'definition' specified."}
 
 
+
+=== TEST 65: Re-add view Foo (Bad minisql)
+--- request
+POST /=/view/Foo
+{description:"Test vars for vals",name:"Foo",
+    definition:""}
+--- response
+{"success":0,"error":"Bad definition: \"\""}
+
+
+
+=== TEST 66: Re-add view Foo (Bad minisql)
+--- request
+POST /=/view/Foo
+{description:"Test vars for vals",name:"Foo",
+    definition:"update _view set "}
+--- response
+{"success":0,"error":"minisql: line 1: error: Unexpected input: \"update\" (select expected)."}
+
+

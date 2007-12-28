@@ -718,7 +718,7 @@ sub new_view{
     if (!defined $minisql) {
         die "No 'definition' specified.\n";
     }
-    _STRING($minisql) or die "Bad minisql string: ", $Dumper->($minisql);
+    _STRING($minisql) or die "Bad definition: ", $Dumper->($minisql), "\n";
 
     my $desc = delete $data->{description};
     if (defined $desc) {
@@ -737,7 +737,7 @@ sub new_view{
         );
     };
     if ($@) {
-        die "minisql: $@";
+        die "minisql: $@\n";
     }
 
     #
