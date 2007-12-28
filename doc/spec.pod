@@ -16,7 +16,7 @@ Agent Zhang (章亦春) <agentzh@yahoo.cn>
 
 =head1 LICENSE
 
-  Copyright (c)  2007  Yahoo! China.
+  Copyright (c)  2007  Yahoo! China (中国雅虎公司).
   Permission is granted to copy, distribute and/or modify this document
   under the terms of the GNU Free Documentation License, Version 1.2
   or any later version published by the Free Software Foundation;
