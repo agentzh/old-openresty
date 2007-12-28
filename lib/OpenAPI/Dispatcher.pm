@@ -51,13 +51,12 @@ sub process_request {
     ### Old URL: $url
     ### URL Prefox: $url_prefix
 
-    $url =~ s{^\Q$url_prefix\E/+}{}g if $url_prefix;
-    ### New URL: $url
+    $url =~ s{^\Q$url_prefix\E/+}{}g if $url_prefix;    ### New URL: $url
 
     my $openapi = OpenAPI->new($cgi);
     if ($DBFatal) {
         $openapi->fatal($DBFatal);
-        next;
+        return;
     }
 
     # XXX this part is lame...
@@ -82,7 +81,7 @@ sub process_request {
     };
     if ($@) {
         $openapi->fatal($@);
-        next;
+        return ;
     }
 
     eval {
@@ -91,7 +90,7 @@ sub process_request {
     if ($@) {
         ### Exception in new: $@
         $openapi->fatal($@);
-        next;
+        return;
     }
 
     #$url =~ s/\/+$//g;
@@ -104,7 +103,7 @@ sub process_request {
     if (!@bits) {
         ### Unknown URL: $url
         $openapi->fatal("Unknown URL: $url");
-        next;
+        return;
     }
 
     map { s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg; } @bits;
@@ -113,13 +112,13 @@ sub process_request {
     my $fst = shift @bits;
     if ($fst ne '=') {
         $openapi->fatal("URLs must be led by '='.");
-        next;
+        return;
     }
 
     my $http_meth = $openapi->{'_http_method'};
     if (!$http_meth) {
         $openapi->fatal("HTTP method not detected.");
-        next;
+        return;
     }
 
     my $category = $Dispatcher{$bits[0]};
@@ -128,14 +127,14 @@ sub process_request {
         ### $object
         if (!defined $object) {
             $openapi->fatal("Unknown URL level: $url");
-            next;
+            return;
         }
         my $meth = $http_meth . '_' . $object;
         $meth =~ s/\./_/g;
         if (!$openapi->can($meth)) {
             $object =~ s/_/ /g;
             $openapi->fatal("HTTP $http_meth method not supported for $object.");
-            next;
+            return;
         }
         my $data;
         eval {
@@ -147,7 +146,7 @@ sub process_request {
         };
         if ($@) {
             $openapi->fatal($@);
-            next;
+            return;
         }
         $openapi->data($data);
         $openapi->response();

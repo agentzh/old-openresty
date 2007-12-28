@@ -227,7 +227,10 @@ sub response {
     my $self = shift;
     my $charset = $self->{_charset};
     my $cgi = $self->{_cgi};
-    print $cgi->header(-type => "text/plain; charset=$charset");
+    my $s = $cgi->header(-type => "text/plain; charset=$charset");
+    print "HTTP/1.1 200 OK\n";
+    print $s;
+    #warn $s;
     my $str = '';
     if ($self->{_error}) {
         $str = $self->emit_error($self->{_error});

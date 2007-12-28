@@ -27,6 +27,7 @@ features(
         recommends    ('LWP::UserAgent'),
         recommends    ('Benchmark::Timer'),
         recommends    ('Hash::Merge'),
+        recommends    ('HTTP::Server::Simple' => '0.27'),
     ]
 );
 
