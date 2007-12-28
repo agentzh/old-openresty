@@ -635,9 +635,56 @@ POST /=/view/Foo
 
 
 
-=== TEST 69: Invoke the view
+=== TEST 69: Invoke the view (required vars missing)
 --- request
 GET /=/view/Foo/~/~
 --- response
 {"success":0,"error":"Parameters required: val"}
+
+
+
+=== TEST 70: Invoke the view
+--- request
+GET /=/view/Foo/val/2
+--- response
+[
+    {"title":"Baidu","id":"3"},
+    {"title":"Sina","id":"4"},
+    {"title":"Sohu","id":"5"},
+    {"title":"163","id":"6"}
+]
+
+
+
+=== TEST 71: Invoke the view (another way)
+--- request
+GET /=/view/Foo/~/~?val=2
+--- response
+[
+    {"title":"Baidu","id":"3"},
+    {"title":"Sina","id":"4"},
+    {"title":"Sohu","id":"5"},
+    {"title":"163","id":"6"}
+]
+
+
+
+=== TEST 72: Invoke the view (bad symbol)
+--- request
+GET /=/view/Foo/~/~?val=2&col=id"
+--- response
+{"success":0,"error":"minisql: Bad symbol: id\""}
+
+
+
+=== TEST 73: Invoke the view (overriding vars)
+--- request
+GET /=/view/Foo/~/~?val=2&col=id
+--- response
+[
+    {"title":"Baidu","id":"3"},
+    {"title":"Sina","id":"4"},
+    {"title":"Sohu","id":"5"},
+    {"title":"163","id":"6"}
+]
 

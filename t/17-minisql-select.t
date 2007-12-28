@@ -19,6 +19,10 @@ sub quote {
     '$y$' . $s . '$y$';
 }
 
+sub quote_ident {
+    qq/"$_[0]"/
+}
+
 run {
     my $block = shift;
     my $name = $block->name;
@@ -39,7 +43,11 @@ run {
     eval {
         $res = $select->parse(
             $sql,
-            { quote => \&quote, vars => \%in_vars }
+            {
+                quote => \&quote,
+                quote_ident => \&quote_ident,
+                vars => \%in_vars,
+            }
         );
     };
     my $error = $block->error || '';

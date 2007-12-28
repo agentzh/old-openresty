@@ -6,7 +6,7 @@
 
 my (
     @Models, @Columns, @OutVars,
-    $InVals, %Defaults, $Quote,
+    $InVals, %Defaults, $Quote, $QuoteIdent,
     @Unbound,
 );
 
@@ -35,7 +35,7 @@ models: model ',' models
       | model
       ;
 
-model: symbol { push @Models, $_[1]; "\"$_[1]\"" }
+model: symbol { push @Models, $_[1]; $QuoteIdent->($_[1]) }
      ;
 
 pattern_list: pattern ',' pattern_list
@@ -100,14 +100,14 @@ string: STRING  { $Quote->(parse_string($_[1])) }
       ;
 
 column: qualified_symbol
-      | symbol { push @Columns, $_[1]; "\"$_[1]\"" }
+      | symbol { push @Columns, $_[1]; $QuoteIdent->($_[1]) }
       ;
 
 qualified_symbol: symbol '.' symbol
                     {
                       push @Models, $_[1];
                       push @Columns, $_[3];
-                      "\"$_[1]\".\"$_[3]\""
+                      $QuoteIdent->($_[1]).'.'.$QuoteIdent->($_[3]);
                     }
                 ;
 
@@ -118,8 +118,10 @@ symbol: IDENT
             if (!defined $val) {
                 my $default;
                 $Defaults{$_[1]} = $default = $_[3];
+                _IDENT($default) or die "Bad symbol: $default\n";
                 return $default;
             }
+            _IDENT($val) or die "Bad symbol: $val\n";
             $val;
           }
       | VAR
@@ -129,6 +131,8 @@ symbol: IDENT
                 push @Unbound, $_[1];
                 return '';
             }
+            #warn _IDENT($val);
+            _IDENT($val) or die "Bad symbol: $val\n";
             $val;
           }
       ;
@@ -308,6 +312,7 @@ sub parse {
     $yydata->{offset} = $params->{offset};
 
     $Quote = $params->{quote} || sub { "''" };
+    $QuoteIdent = $params->{quote_ident} || sub { '""' };
     $InVals = $params->{vars} || {};
     #$QuoteIdent = $params->{quote_ident};
 
@@ -330,6 +335,10 @@ sub parse {
         defaults => {%Defaults},
         unbound => [@Unbound],
     };
+}
+
+sub _IDENT {
+    (defined $_[0] && $_[0] =~ /^[A-Za-z]\w*$/) ? $_[0] : undef;
 }
 
 #my ($select) =new Select;

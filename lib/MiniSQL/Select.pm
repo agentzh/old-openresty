@@ -19,7 +19,7 @@ use Parse::Yapp::Driver;
 
 my (
     @Models, @Columns, @OutVars,
-    $InVals, %Defaults, $Quote,
+    $InVals, %Defaults, $Quote, $QuoteIdent,
     @Unbound,
 );
 
@@ -687,7 +687,7 @@ sub
 		 'model', 1,
 sub
 #line 38 "grammar/Select.yp"
-{ push @Models, $_[1]; "\"$_[1]\"" }
+{ push @Models, $_[1]; $QuoteIdent->($_[1]) }
 	],
 	[#Rule 9
 		 'pattern_list', 3,
@@ -804,7 +804,7 @@ sub
 		 'column', 1,
 sub
 #line 103 "grammar/Select.yp"
-{ push @Columns, $_[1]; "\"$_[1]\"" }
+{ push @Columns, $_[1]; $QuoteIdent->($_[1]) }
 	],
 	[#Rule 34
 		 'qualified_symbol', 3,
@@ -813,7 +813,7 @@ sub
 {
                       push @Models, $_[1];
                       push @Columns, $_[3];
-                      "\"$_[1]\".\"$_[3]\""
+                      $QuoteIdent->($_[1]).'.'.$QuoteIdent->($_[3]);
                     }
 	],
 	[#Rule 35
@@ -828,21 +828,25 @@ sub
             if (!defined $val) {
                 my $default;
                 $Defaults{$_[1]} = $default = $_[3];
+                _IDENT($default) or die "Bad symbol: $default\n";
                 return $default;
             }
+            _IDENT($val) or die "Bad symbol: $val\n";
             $val;
           }
 	],
 	[#Rule 37
 		 'symbol', 1,
 sub
-#line 126 "grammar/Select.yp"
+#line 128 "grammar/Select.yp"
 { push @OutVars, $_[1];
             my $val = $InVals->{$_[1]};
             if (!defined $val) {
                 push @Unbound, $_[1];
                 return '';
             }
+            #warn _IDENT($val);
+            _IDENT($val) or die "Bad symbol: $val\n";
             $val;
           }
 	],
@@ -852,7 +856,7 @@ sub
 	[#Rule 39
 		 'postfix_clause_list', 2,
 sub
-#line 140 "grammar/Select.yp"
+#line 144 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 40
@@ -879,19 +883,19 @@ sub
 	[#Rule 47
 		 'from_clause', 2,
 sub
-#line 153 "grammar/Select.yp"
+#line 157 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 48
 		 'from_clause', 2,
 sub
-#line 155 "grammar/Select.yp"
+#line 159 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 49
 		 'where_clause', 2,
 sub
-#line 159 "grammar/Select.yp"
+#line 163 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 50
@@ -900,7 +904,7 @@ sub
 	[#Rule 51
 		 'disjunction', 3,
 sub
-#line 166 "grammar/Select.yp"
+#line 170 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 52
@@ -909,7 +913,7 @@ sub
 	[#Rule 53
 		 'conjunction', 3,
 sub
-#line 171 "grammar/Select.yp"
+#line 175 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 54
@@ -918,19 +922,19 @@ sub
 	[#Rule 55
 		 'comparison', 3,
 sub
-#line 176 "grammar/Select.yp"
+#line 180 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 56
 		 'comparison', 3,
 sub
-#line 178 "grammar/Select.yp"
+#line 182 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 57
 		 'comparison', 3,
 sub
-#line 180 "grammar/Select.yp"
+#line 184 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 58
@@ -963,13 +967,13 @@ sub
 	[#Rule 67
 		 'group_by_clause', 2,
 sub
-#line 197 "grammar/Select.yp"
+#line 201 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 68
 		 'column_list', 3,
 sub
-#line 201 "grammar/Select.yp"
+#line 205 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 69
@@ -978,19 +982,19 @@ sub
 	[#Rule 70
 		 'order_by_clause', 2,
 sub
-#line 206 "grammar/Select.yp"
+#line 210 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 71
 		 'limit_clause', 2,
 sub
-#line 210 "grammar/Select.yp"
+#line 214 "grammar/Select.yp"
 { delete $_[0]->YYData->{limit}; join(' ', @_[1..$#_]) }
 	],
 	[#Rule 72
 		 'offset_clause', 2,
 sub
-#line 213 "grammar/Select.yp"
+#line 217 "grammar/Select.yp"
 {
                  delete $_[0]->YYData->{offset}; join(' ', @_[1..$#_]) }
 	]
@@ -999,7 +1003,7 @@ sub
     bless($self,$class);
 }
 
-#line 217 "grammar/Select.yp"
+#line 221 "grammar/Select.yp"
 
 
 #use Smart::Comments;
@@ -1094,6 +1098,7 @@ sub parse {
     $yydata->{offset} = $params->{offset};
 
     $Quote = $params->{quote} || sub { "''" };
+    $QuoteIdent = $params->{quote_ident} || sub { '""' };
     $InVals = $params->{vars} || {};
     #$QuoteIdent = $params->{quote_ident};
 
@@ -1116,6 +1121,10 @@ sub parse {
         defaults => {%Defaults},
         unbound => [@Unbound],
     };
+}
+
+sub _IDENT {
+    (defined $_[0] && $_[0] =~ /^[A-Za-z]\w*$/) ? $_[0] : undef;
 }
 
 #my ($select) =new Select;

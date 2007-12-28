@@ -655,18 +655,18 @@ sub exec_view{
 
     my $res;
 
-    foreach my $var ($cgi->url_param){
-    $vars{$var}=$cgi->url_param($var);
+    foreach my $var ($cgi->url_param) {
+        $vars{$var}=$cgi->url_param($var);
     }
 
-    if($fix_var ne '~' and $fix_var_value ne '~'){
-    $vars{$fix_var} = $fix_var_value;
+    if ($fix_var ne '~' and $fix_var_value ne '~') {
+        $vars{$fix_var} = $fix_var_value;
     }
 
     eval {
         $res = $select->parse(
             $view_def,
-            { quote => \&Q, vars => \%vars }
+            { quote => \&Q, quote_ident => \&QI, vars => \%vars }
         );
     };
     if ($@) {
@@ -677,7 +677,7 @@ sub exec_view{
     if (@unbound){
         die "Parameters required: @unbound\n";
     }
-    return $self->select($res->{sql}, {use_hash=>1, read_only=>1});
+    return $self->select($res->{sql}, { use_hash=>1, read_only=>1 });
 
 }
 
@@ -733,7 +733,7 @@ sub new_view{
     eval {
         $res = $select->parse(
             $minisql,
-            { quote => \&Q }
+            { quote => \&Q, quote_ident => \&QI }
         );
     };
     if ($@) {
@@ -1456,7 +1456,13 @@ sub POST_action_exec {
         die "miniSQL must be an non-empty literal string: ", $Dumper->($sql), "\n";
    #warn "SQL 1: $sql\n";
     my $select = MiniSQL::Select->new;
-    my $res = $select->parse($sql, { quote => \&Q, limit => $self->{_limit}, offset => $self->{_offset} });
+    my $res = $select->parse(
+        $sql,
+        {
+            quote => \&Q, quote_ident => \&QI,
+            limit => $self->{_limit}, offset => $self->{_offset}
+        }
+    );
     if (_HASH($res)) {
         my $sql = $res->{sql};
         $sql = $self->append_limit_offset($sql, $res);
