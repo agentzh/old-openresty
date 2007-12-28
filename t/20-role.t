@@ -26,7 +26,7 @@ DELETE /=/view
 
 === TEST 3: Delete existing roles
 --- request
-DELETE /=/view
+DELETE /=/role
 --- response
 {"success":1,"warning":"Predefined roles skipped."}
 
@@ -111,7 +111,6 @@ POST /=/role/Public/~/~
     {"method":"POST","url":"/=/model/~"},
     {"method":"POST","url":"/=/model/A/~/~"},
     {"method":"DELETE","url":"/=/model/A/id/~"},
-    {"method":"DELETE","url":"/=/model/~/~"}
 ]
 
 
@@ -150,8 +149,8 @@ POST /=/model/B
 GET /=/model
 --- response
 [
-    {"name":"A","description":"A","src":"/=/model/A"},
-    {"name":"B","description":"B","src":"/=/model/B"}
+    {"src":"/=/model/A","name":"A","description":"A"},
+    {"src":"/=/model/B","name":"B","description":"B"}
 ]
 
 
@@ -234,4 +233,230 @@ GET /=/model/A/~/~
 GET /=/model/A/id/3
 --- response
 {"success":0,"error":"Permission denied for the \"Public\" role."}
+
+
+
+=== TEST 25: Delete rows
+--- request
+DELETE /=/model/A/~/~
+--- response
+{"success":0,"error":"Permission denied for the \"Public\" role."}
+
+
+
+=== TEST 26: Delete rows
+--- request
+DELETE /=/model/A/title/Audrey
+--- response
+{"success":0,"error":"Permission denied for the \"Public\" role."}
+
+
+
+=== TEST 27: Update a row
+--- request
+PUT /=/model/A/id/3
+{"title":"fglock"}
+--- response
+{"success":0,"error":"Permission denied for the \"Public\" role."}
+
+
+
+=== TEST 28: Delete a row
+--- request
+DELETE /=/model/A/id/3
+--- response
+{"success":1}
+
+
+
+=== TEST 29: Delete a row again
+--- request
+DELETE /=/model/A/id/3
+--- response
+{"success":1}
+
+
+
+=== TEST 30: Delete all the rows
+--- request
+DELETE /=/model/A/id/~
+--- response
+{"success":1}
+
+
+
+=== TEST 31: Delete all the rows in model B
+--- request
+DELETE /=/model/B/id/~
+--- response
+{"success":0,"error":"Permission denied for the \"Public\" role."}
+
+
+
+=== TEST 32: Add a new column to A
+--- request
+POST /=/model/A/foo
+{"label":"foo"}
+--- response
+{"success":1}
+
+
+
+=== TEST 33: Add a second new column to A
+--- request
+POST /=/model/A/bar
+{"label":"bar"}
+--- response
+{"success":1}
+
+
+
+=== TEST 34: Delete the newly added column
+--- request
+DELETE /=/model/A/bar
+--- response
+{"success":0,"error":"Permission denied for the \"Public\" role."}
+
+
+
+=== TEST 35: Get the view list
+--- request
+GET /=/view
+--- response
+{"success":0,"error":"Permission denied for the \"Public\" role."}
+
+
+
+=== TEST 36: Try to create a view
+--- request
+POST /=/view/MyView
+{"body":"select * from A"}
+--- response
+{"success":0,"error":"Permission denied for the \"Public\" role."}
+
+
+
+=== TEST 37: Switch back to the Amin role
+--- request
+GET /=/login/Admin/test1234
+--- response
+{"success":1}
+
+
+
+=== TEST 38: Switch back to the Amin role
+--- request
+GET /=/login/Admin/test1234
+--- response
+{"success":1}
+
+
+
+=== TEST 39: Check the records in A
+--- request
+GET /=/model/A/~/~
+--- response
+XXX
+
+
+
+=== TEST 40: Check the model A
+--- request
+GET /=/model/A
+--- response
+XXX
+
+
+
+=== TEST 41: Create a new role w/o description
+--- request
+POST /=/role/Poster
+{
+    login: ["password","4423037"]
+}
+--- response
+{"success":0,"error":"Field \"description\" missing."}
+
+
+
+=== TEST 42: Create a new role w/o login
+--- request
+POST /=/role/Poster
+{
+    "description":"Comment poster"
+}
+--- response
+{"success":0,"error":"Field \"login\" missing."}
+
+
+
+=== TEST 43: Create a new role w/o password
+--- request
+POST /=/role/Poster
+{
+    "description":"Comment poster",
+    login: ["password"]
+}
+--- response
+{"success":0,"error":"Password value required."}
+
+
+
+=== TEST 44: Create a new role w/o password
+--- request
+POST /=/role/Poster
+{
+    "description":"Comment poster",
+    login: "password"
+}
+--- response
+{"success":0,"error":"Password value required."}
+
+
+
+=== TEST 45: unknown login method (scalar form)
+--- request
+POST /=/role/Poster
+{
+    "description":"Comment poster",
+    login: "blah"
+}
+--- response
+{"success":0,"error":"Unknown login method: \"blah\""}
+
+
+
+=== TEST 46: unknown login method (array form)
+--- request
+POST /=/role/Poster
+{
+    "description":"Comment poster",
+    login: ["blah"]
+}
+--- response
+{"success":0,"error":"Unknown login method: \"blah\""}
+
+
+
+=== TEST 47: unknown login method (array of arrays form)
+--- request
+POST /=/role/Poster
+{
+    "description":"Comment poster",
+    login: [[]]
+}
+--- response
+{"success":0,"error":"Unknown login method: []"}
+
+
+
+=== TEST 48: Create a new role in the right way
+--- request
+POST /=/role/Poster
+{
+    "description":"Comment poster",
+    login: ["password","4423037"]
+}
+--- response
+{"success":1}
 

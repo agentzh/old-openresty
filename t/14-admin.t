@@ -19,7 +19,7 @@ DELETE /=/model.js
 === TEST 2: drop tables
 --- request
 POST /=/admin/do
-"drop table if exists _books;
+"drop table if exists _books cascade;
 drop table if exists _cats;
 drop table if exists _books2 cascade;"
 --- response
@@ -117,16 +117,16 @@ POST /=/admin/do
 === TEST 11: CREATE PROC
 --- request
 POST /=/admin/do
-"DROP FUNCTION if exists hello_world(int,int);
-CREATE OR REPLACE FUNCTION hello_world(i int,j int) RETURNS _books2 AS $Q$
+"DROP FUNCTION if exists hello_world0(int,int);
+CREATE OR REPLACE FUNCTION hello_world0(i int,j int) RETURNS _books AS $Q$
 	declare
-		tmp _books2%ROWTYPE;
+		tmp _books%ROWTYPE;
 	begin
 		select * into tmp from _books where id=i;
 	return tmp;
 	end;
 $Q$LANGUAGE plpgsql;
-GRANT EXECUTE ON FUNCTION \"hello_world\" (int,int) to anonymous;
+GRANT EXECUTE ON FUNCTION \"hello_world0\" (int,int) to anonymous;
 GRANT SELECT ON TABLE _books to anonymous;"
 --- response
 {"success":1}
@@ -135,27 +135,27 @@ GRANT SELECT ON TABLE _books to anonymous;"
 
 === TEST 12: select proc
 --- request
-GET /=/post/action/.Select/lang/minisql?data="select hello_world(1,0)"
+GET /=/post/action/.Select/lang/minisql?data="select hello_world0(1,0)"
 --- response
-[{"hello_world":"(1,\"Larry Wall\",2)"}]
+[{"hello_world0":"(1,\"Larry Wall\",2)"}]
 
 
 
 === TEST 13 CREATE PROC
 --- request
 POST /=/admin/do
-"DROP FUNCTION if exists hello_world2(int,int);
-CREATE OR REPLACE FUNCTION hello_world2(i int,j int) RETURNS setof _books2 AS $Q$
+"DROP FUNCTION if exists hello_world4(int,int);
+CREATE OR REPLACE FUNCTION hello_world4(i int,j int) RETURNS setof _books2 AS $Q$
 	declare
 		tmp _books2%ROWTYPE;
 	begin
-		for tmp in select * from _books order by id loop
+		for tmp in select * from _books2 order by id loop
 		return next tmp;
 		end loop;
 	return;
 	end;
 $Q$LANGUAGE plpgsql;
-GRANT EXECUTE ON FUNCTION \"hello_world2\" (int,int) to anonymous;
+GRANT EXECUTE ON FUNCTION \"hello_world4\" (int,int) to anonymous;
 GRANT SELECT ON TABLE _books2 to anonymous;"
 --- response
 {"success":1}
@@ -164,16 +164,16 @@ GRANT SELECT ON TABLE _books2 to anonymous;"
 
 === TEST 14: select * from proc() as ....
 --- request
-GET /=/post/action/.Select/lang/minisql?var=sss&data="select * from hello_world2(1,0)"
+GET /=/post/action/.Select/lang/minisql?var=sss&data="select * from hello_world4(1,0)"
 --- response
-var sss=[{"body":"Larry Wall","num":"2","id":"1"},{"body":"Audrey Tang","num":"0","id":"2"},{"body":"Larry Wall","num":"0","id":"3"},{"body":"Audrey Tang","num":"0","id":"4"}];
-
+var sss=[];
 
 
 === TEST 15: drop tables
 --- request
 POST /=/admin/do
-"drop table if exists _books;
+"drop table if exists _books cascade;
+drop table if exists _books2 cascade;
 drop table if exists _cats;"
 --- response
 {"success":1}
