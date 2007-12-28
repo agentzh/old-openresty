@@ -51,7 +51,7 @@ DELETE /=/view/~
 === TEST 6: Create a view referencing non-existent models
 --- request
 POST /=/view/View
-{ body: "select * from A, B where A.id = B.a order by A.title" }
+{ definition: "select * from A, B where A.id = B.a order by A.title" }
 --- response
 {"success":0,"error":"Model \"A\" not found."}
 
@@ -71,7 +71,7 @@ POST /=/model/A
 === TEST 8: Create a view referencing non-existent model B
 --- request
 POST /=/view/View
-{ body: "select * from A, B where A.id = B.a order by A.title" }
+{ definition: "select * from A, B where A.id = B.a order by A.title" }
 --- response
 {"success":0,"error":"Model \"B\" not found."}
 
@@ -94,7 +94,7 @@ POST /=/model/B
 === TEST 10: Create the view when the models are ready
 --- request
 POST /=/view/View
-{ body: "select * from A, B where A.id = B.a order by A.title" }
+{ definition: "select * from A, B where A.id = B.a order by A.title" }
 --- response
 {"success":1}
 
@@ -219,7 +219,7 @@ GET /=/view/View/~/~
 === TEST 22: Create a second view
 --- request
 POST /=/view/~
-{name:"View2",body:"select title from A order by $col"}
+{name:"View2",definition:"select title from A order by $col"}
 --- response
 {"success":1}
 
@@ -453,7 +453,7 @@ GET /=/view
 === TEST 49: Add a new view with default values
 --- request
 POST /=/view/Foo
-{"body":"select $col|id from A order by $by|title"}
+{"definition":"select $col|id from A order by $by|title"}
 --- response
 {"success":1}
 
@@ -515,4 +515,31 @@ GET /=/view
     {"src":"/=/view/TitleOnly","name":"TitleOnly","description":null},
     {"src":"/=/view/Foo","name":"Foo","description":null}
 ]
+
+
+=== TEST 57: Change the view name and definition simultaneously
+--- request
+PUT /=/view/Foo
+{ name: "Bah", definition: "select * from A" }
+--- response
+{"success":1}
+
+
+=== TEST 58: Check the old view
+--- request
+GET /=/view/Foo
+--- response
+{"success":0,"error":"View \"Foo\" not found."}
+
+
+=== TEST 58: Check the new view
+--- request
+GET /=/view/Bah
+--- response
+{
+    "name":"Bah",
+    "description":null,
+    "definition":"select * from A"
+}
+
 

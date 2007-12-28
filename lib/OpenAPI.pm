@@ -619,13 +619,11 @@ sub PUT_view {
 	my $new_view_name = $data->{name};
         $update->set(QI('name')=>Q($new_view_name));
         ### $update
-    } elsif (defined $data->{definition}) {
+    }
+    if (defined $data->{definition}) {
 	my $new_view_definition = $data->{definition};
 	$update->set(definition => Q($new_view_definition));
-    } else {
-	die "Unknown PUT view operation\n";
     }
-
     my $retval = $Backend->do("$update") + 0;
     return { success => $retval ? 1 : 0 };
 }
@@ -698,8 +696,12 @@ sub new_view{
         die "Exceeded view count limit $VIEW_LIMIT.\n";
     }
     my $select = MiniSQL::Select->new;
-    my $sql = $data->{body};
-    
+    my $sql = delete $data->{definition};
+    if (!defined $sql) {
+        die "No 'definition' specified.\n";
+    }
+    _STRING($sql) or die "Bad minisql string: ", $Dumper->($sql);
+
     eval {
         $res = $select->parse(
             $sql,
@@ -719,7 +721,7 @@ sub new_view{
     }
 
     my $insert = SQL::Insert->new('_views')->cols(qw<name definition description>)
-		->values(Q($data->{name},$data->{body},$data->{description}));
+		->values(Q($data->{name},$sql,$data->{description}));
 
     return $Backend->do($insert) >=0 ?  { success => 1 } : { success => 0};
 
