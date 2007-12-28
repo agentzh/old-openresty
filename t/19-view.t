@@ -108,8 +108,7 @@ GET /=/view
     {
       "src":"/=/view/View",
       "name":"View",
-      "description":null,
-      "definition":"select * from A, B where A.id = B.a order by A.title"
+      "description":null
     }
 ]
 
@@ -241,13 +240,11 @@ GET /=/view
 [
 {"src":"/=/view/View",
  "name":"View",
- "description":null,
- "definition":"select * from A, B where A.id = B.a order by A.title"
+ "description":null
 },
 {"src":"/=/view/View2",
-"name":"View2",
-"description":null,
-"definition":"select title from A order by $col"
+ "name":"View2",
+ "description":null
 }
 ]
 
@@ -300,8 +297,8 @@ PUT /=/view/View2
 GET /=/view/~
 --- response
 [
-{"name":"View","description":null,"definition":"select * from A, B where A.id = B.a order by A.title"},
-{"name":"TitleOnly","description":null,"definition":"select title from A order by $col"}
+    {"name":"View","description":null},
+    {"name":"TitleOnly","description":null}
 ]
 
 
@@ -447,7 +444,9 @@ GET /=/view/View
 --- request
 GET /=/view
 --- response
-[{"src":"/=/view/TitleOnly","name":"TitleOnly","description":null,"definition":"select $select_col from A order by $order_by"}]
+[
+    {"src":"/=/view/TitleOnly","name":"TitleOnly","description":null}
+]
 
 
 
@@ -505,4 +504,15 @@ GET /=/view/Foo/col/title?by=id
 GET /=/view/!@
 --- response
 {"success":0,"error":"Bad view name: !@"}
+
+
+
+=== TEST 56: Get the view list
+--- request
+GET /=/view
+--- response
+[
+    {"src":"/=/view/TitleOnly","name":"TitleOnly","description":null},
+    {"src":"/=/view/Foo","name":"Foo","description":null}
+]
 

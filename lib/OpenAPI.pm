@@ -570,9 +570,10 @@ sub POST_view{
 }
 
 sub get_views {
-    my $self = shift;
-    my $select = SQL::Select->new(qw< name definition description >)
-                            ->from('_views');
+    my ($self, $params) = @_;
+    my $select = SQL::Select->new(
+        qw< name description >
+    )->from('_views');
     return $self->select("$select", { use_hash => 1 });
 }
 
