@@ -169,6 +169,7 @@ GET /=/post/action/.Select/lang/minisql?var=sss&data="select * from hello_world4
 var sss=[];
 
 
+
 === TEST 15: drop tables
 --- request
 POST /=/admin/do

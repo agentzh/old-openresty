@@ -116,7 +116,7 @@ POST /=/role/Public/~/~
 
 
 === TEST 11: Switch to the Public role
-GET /=/login/Public
+GET /=/login/tester.Public
 --- response
 {"success":1}
 
@@ -459,4 +459,45 @@ POST /=/role/Poster
 }
 --- response
 {"success":1}
+
+
+
+=== TEST 49: Add a rule to read model list
+--- request
+POST /=/role/Poster/~/~
+{"url":"/=/model"}
+--- response
+{"success":1}
+
+
+
+=== TEST 50: Add a rule to insert new rows to A
+--- request
+POST /=/role/Poster/~/~
+{"method":"POST","src":"/=/model/A/~/~"}
+--- response
+{"success":1}
+
+
+
+=== TEST 51: Check the rule list
+--- request
+GET /=/role/Poster/~/~
+--- response
+[...]
+
+
+
+=== TEST 52: Log into the new role
+--- request
+GET /=/login/tester.Poster
+--- response
+{"success":1}
+
+
+
+=== TEST 53: Try to do something
+--- request
+GET /=/model
+--- response
 
