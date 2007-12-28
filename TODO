@@ -22,4 +22,5 @@ TODO items for OpenAPI
 * use a status machine to recognize different url pattern [laser]
 * use $self->select() instead $Backend->do() in OpenAPI.pm [laser]
 * different URL mode for view implementation, should clearify the url path meaning [laser]
-* mv Backend from OpenAPI to lib, seems it belongs there
+* mv Backend from OpenAPI to lib, seems it belongs there [laser]
+* mv some work (like has_somethig()) into store procedore into store procedure to minimum c/s interact [leiyh,laser]
