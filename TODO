@@ -20,9 +20,14 @@ TODO items for OpenAPI
 * add a global default PostgreSQL user, named by anonymous/public etc., to act as a read-only role in PG (clusters) [laser]
 * add a per-model PostgreSQL user/role, act as writer for all permitted write from the roles of model itself.
 * use a status machine to recognize different url pattern [laser]
-* use $self->select() instead $Backend->do() in OpenAPI.pm [laser]
+* use $self->select() instead $Backend->do() in OpenAPI.pm [laser] [done]
 * different URL mode for view implementation, should clearify the url path meaning [laser]
 * mv Backend from OpenAPI to lib, seems it belongs there [laser]
 * move some work (like has_somethig()) into store procedore into store procedure to minimum c/s interact [leiyh,laser]
 * make OpenAPI into a database interfaces [laser]
   ** add proc support
+* make OpenAPI meta data store in another special meta-schema, naming by prefixing '_' to username, e.g. "_username", then
+  we create 2 schema when creating a user: _username & username, and create 2 different database roles (PostgreSQL role)
+  when creating user, one for access meta data, we could call it meta-user, the other for access user data; all meta data,
+  like _models, _columns, _views will be keep in meta-schema, thus we could use PostgreSQL security model to make maximum
+  protection for us. [laser,leiyh,angentzh]
