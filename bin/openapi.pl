@@ -28,20 +28,26 @@ if ($@) {
     $DBFatal = $@;
 }
 
-my @ModelDispatcher = qw(
-    model_list model model_column model_row
+my %Dispatcher = (
+    model => [
+        qw< model_list model model_column model_row >
+    ],
+    view => [
+        qw< view_list view view_exec view_exec_with_param >
+    ],
+    action => [
+        qw< action_list action action_param action_exec  >
+    ],
+    admin => [
+        qw< admin admin_op >
+    ]
 );
-
-my @ViewDispatcher = qw(
-    view_list view view_exec view_exec_with_param
-			);
 
 my $url_prefix = $ENV{OPENAPI_URL_PREFIX};
 if ($url_prefix) {
     $url_prefix =~ s{^/+|/+$}{}g;
 }
 
-my $ext = qr/\.(?:js|json|xml|yaml|yml)/;
 while (my $cgi = new CGI::Fast) {
     my $url  = $ENV{REQUEST_URI};
     ### $url
@@ -50,16 +56,14 @@ while (my $cgi = new CGI::Fast) {
     $url =~ s{^/+}{}g;
     ### Old URL: $url
     ### URL Prefox: $url_prefix
-    #print header(-type => 'text/plain; charset=UTF-8');
-    #die $url;
 
     $url =~ s{^\Q$url_prefix\E/+}{}g if $url_prefix;
     ### New URL: $url
 
     my $openapi = OpenAPI->new($cgi);
     if ($DBFatal) {
-        $openapi->error($DBFatal);
-        $openapi->response();
+        $openapi->fatal($DBFatal);
+        next;
     }
 
     # XXX this part is lame...
@@ -83,8 +87,7 @@ while (my $cgi = new CGI::Fast) {
         OpenAPI->set_user($user);
     };
     if ($@) {
-        $openapi->error($@);
-        $openapi->response();
+        $openapi->fatal($@);
         next;
     }
 
@@ -93,8 +96,7 @@ while (my $cgi = new CGI::Fast) {
     };
     if ($@) {
         ### Exception in new: $@
-        $openapi->error($@);
-        $openapi->response();
+        $openapi->fatal($@);
         next;
     }
 
@@ -107,8 +109,7 @@ while (my $cgi = new CGI::Fast) {
 	
     if (!@bits) {
         ### Unknown URL: $url
-        $openapi->error("Unknown URL: $url");
-        $openapi->response();
+        $openapi->fatal("Unknown URL: $url");
         next;
     }
 
@@ -117,95 +118,47 @@ while (my $cgi = new CGI::Fast) {
 
     my $fst = shift @bits;
     if ($fst ne '=') {
-        $openapi->error("URLs must be led by '='.");
-        $openapi->response();
+        $openapi->fatal("URLs must be led by '='.");
         next;
     }
-
 
     my $http_meth = $openapi->{'_http_method'};
     if (!$http_meth) {
-        $openapi->error("HTTP method not detected.");
-        $openapi->response();
+        $openapi->fatal("HTTP method not detected.");
         next;
     }
-    #
-    # TODO: build below into a status machine
-    #
-    if ($bits[0] eq 'model') {
-        my $object = $ModelDispatcher[$#bits];
+
+    my $category = $Dispatcher{$bits[0]};
+    if ($category) {
+        my $object = $category->[$#bits];
+        ### $object
+        if (!defined $object) {
+            $openapi->fatal("Unknown URL level: $url");
+            next;
+        }
         my $meth = $http_meth . '_' . $object;
-        ### $meth
-			#warn @bits, ": ", $meth;
+        $meth =~ s/\./_/g;
         if (!$openapi->can($meth)) {
             $object =~ s/_/ /g;
-            $openapi->error("HTTP $http_meth method not supported for $object.");
-            $openapi->response();
+            $openapi->fatal("HTTP $http_meth method not supported for $object.");
             next;
         }
         my $data;
         eval {
-            $openapi->global_model_check(\@bits, $http_meth);
+            if ($bits[0] eq 'model') {
+                $openapi->global_model_check(\@bits, $http_meth);
+            }
 
             $data = $openapi->$meth(\@bits);
         };
-			#warn "here: $meth - @bits - $@";
-        if ($@) { $openapi->error($@); }
-        else { $openapi->data($data); }
-    } elsif ($bits[0] eq 'admin') { # XXX caution!!!
-        my $object = $bits[1];
-        my $meth = $http_meth . '_admin_' . $object;
-        if (!$openapi->can($meth)) {
-            $object =~ s/_/ /g;
-            $openapi->error("HTTP $http_meth method not supported for '$object'.");
-            $openapi->response();
+        if ($@) {
+            $openapi->fatal($@);
             next;
         }
-        my $data;
-        eval {
-            $data = $openapi->$meth(\@bits);
-        };
-        if ($@) { $openapi->error($@); }
-        else { $openapi->data($data); }
-    } elsif ($bits[0] eq 'action') {
-        my $object = $bits[1];
-        $object =~ s/\./_/g;
-        my $meth = $http_meth . '_action_' . $object;
-        if (!$openapi->can($meth)) {
-            $object =~ s/_/ /g;
-            $openapi->error("HTTP $http_meth method not supported for '$object'.");
-            $openapi->response();
-            next;
-        }
-        my $data;
-        my @params = @bits[2..$#bits];
-        eval {
-            $data = $openapi->$meth({ @params });
-        };
-        if ($@) { $openapi->error($@); }
-        else { $openapi->data($data); }
-    } elsif ($bits[0] eq 'view') {
-        my $object = defined $ViewDispatcher[$#bits] ? $ViewDispatcher[$#bits] : '';
-        my $meth = $http_meth . '_' . $object;
-        ### $meth
-			#warn @bits, ": ", $meth;
-        if (!$openapi->can($meth)) {
-            $object =~ s/_/ /g;
-            $openapi->error("HTTP $http_meth method not supported for $object.");
-            $openapi->response();
-            next;
-        }
-        my $data;
-        eval {
-            $data = $openapi->$meth(\@bits);
-        };
-			#warn "here: $meth - @bits - $@";
-        if ($@) { $openapi->error($@); }
-        else { $openapi->data($data); }
+        $openapi->data($data);
+        $openapi->response();
     } else {
-        $openapi->error("Unknown URL catagory: $bits[0]");
+        $openapi->fatal("Unknown URL catagory: $bits[0]");
     }
-
-    $openapi->response();
 }
 

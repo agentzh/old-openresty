@@ -200,6 +200,12 @@ sub init {
     $self->{_req_data} = $req_data;
 }
 
+sub fatal {
+    my ($self, $s) = @_;
+    $self->error($s);
+    $self->response();
+}
+
 sub error {
     my ($self, $s) = @_;
     $s =~ s/^Syck parser \(line (\d+), column (\d+)\): syntax error at .+/Syntax error found in the JSON input: line $1, column $2./;
@@ -1341,24 +1347,30 @@ sub last_insert_id {
     $Backend->last_insert_id(@_);
 }
 
-sub POST_admin_do {
+sub POST_admin_op {
     my ($self, $bits) = @_;
+    my $op = $bits->[1];
+    if ($op ne 'select' and $op ne 'do') {
+        die "Admin operation not supported: $op\n";
+    }
+    ### $op
     my $sql = _STRING($self->{_req_data}) or
         die "SQL literal must be a string.\n";
 
-    $self->do($sql);
-    return { success => 1 };
+    if ($op eq 'select') {
+        return $self->select($sql, { use_hash => 1 });
+    } elsif ($op eq 'do') {
+        $self->do($sql);
+        return { success => 1 };
+    }
 }
 
-sub POST_admin_select {
+sub POST_action_exec {
     my ($self, $bits) = @_;
-    my $sql = _STRING($self->{_req_data}) or
-        die "SQL literal must be a string.\n";
-    return $self->select($sql, { use_hash => 1 });
-}
-
-sub POST_action__Select {
-    my ($self, $params) = @_;
+    my $action = $bits->[1];
+    my $params = {
+        $bits->[2] => $bits->[3]
+    };
     my $lang = $params->{lang};
     if (!defined $lang) {
         die "The 'lang' param is required in the Select action.\n";
