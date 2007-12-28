@@ -15,7 +15,6 @@ DELETE /=/model
 {"success":1}
 
 
-
 === TEST 2: Delete existing views
 --- request
 DELETE /=/view
@@ -257,7 +256,7 @@ GET /=/view
 --- request
 GET /=/view/View2/~/~?col=title
 --- response
-[XXX]  3 rows
+[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]
 
 
 
@@ -265,7 +264,7 @@ GET /=/view/View2/~/~?col=title
 --- request
 GET /=/view/View2/col/title
 --- response
-[XXX] 3 rows
+[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]
 
 
 
@@ -273,7 +272,7 @@ GET /=/view/View2/col/title
 --- request
 GET /=/view/View2/col/id
 --- response
-[XXX] 3 rows
+[{"title":"Yahoo"},{"title":"Google"},{"title":"Baidu"},{"title":"Sina"},{"title":"Sohu"},{"title":"163"}]
 
 
 
@@ -447,7 +446,7 @@ GET /=/view/View
 --- request
 GET /=/view
 --- response
-[{"name":"TitleOnly","body":"select $select_col from A order by $order_by"}]
+[{"src":"/=/view/View2","name":"View2","description":null,"definition":"select title from A order by $col"}]
 
 
 
@@ -480,15 +479,14 @@ GET /=/view/Foo/~/~
 --- request
 GET /=/view/Foo/by/id
 --- response
-[XXX] # 6 rows
-
+[{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"},{"id":"5"},{"id":"6"}]
 
 
 === TEST 53: Invoke Foo with the other one param set
 --- request
 GET /=/view/Foo/col/title
 --- response
-[XXX] # 6 rows
+[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]
 
 
 
@@ -496,6 +494,6 @@ GET /=/view/Foo/col/title
 --- request
 GET /=/view/Foo/col/title?by=id
 --- response
-[XXX] # 6 rows
+[{"title":"Yahoo"},{"title":"Google"},{"title":"Baidu"},{"title":"Sina"},{"title":"Sohu"},{"title":"163"}]
 
 

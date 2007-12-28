@@ -595,39 +595,50 @@ sub GET_view {
 }
 
 sub exec_view{
-    my ($self,$view, @params) = @_;
+    my ($self,$view, $bits, $cgi) = @_;
     my $select = MiniSQL::Select->new;
     my $sql = "select definition from _views where name =".Q($view);
     ### laser exec_view: "$sql"
     my $view_def = $self->select($sql)->[0][0];
+    my $fix_var = $bits->[2];
+    my $fix_var_value = $bits->[3];
+    my $exists;
+    my %vars;
 
     my $res;
+    
+    foreach my $var ($cgi->url_param){
+	$vars{$var}=$cgi->url_param($var);
+    }
+
+    if($fix_var ne '~' and $fix_var_value ne '~'){
+	$vars{$fix_var} = $fix_var_value;
+    }
 
     eval {
         $res = $select->parse(
             $view_def,
-            { quote => \&quote }
+            { quote => \&quote, vars => \%vars }
         );
     };
+
     return $self->select($res->{sql}, {use_hash=>1, read_only=>1});
+
 }
 
 sub GET_view_exec{
     my ($self,$bits) = @_;
     my $view = $bits->[1];
     die "View \"$view\" not found.\n" if (!$self->has_view($view));
-    return $self->exec_view($view);
+    return $self->exec_view($view, $bits, $self->{_cgi});
 }
 
 sub GET_view_exec_with_param{
     my ($self,$bits) = @_;
     my $view = $bits->[1];
-    ### laser GET_view_exec_with_param: $bits
+
     die "View \"$view\" not found.\n" if (!$self->has_view($view));
-    if($bits->[2] eq '~'){
-	### laser GET_view_exec_with_param: $view
-	return $self->exec_view($view);
-    }
+    return $self->exec_view($view, $bits, $self->{_cgi});
 }
 
 sub view_count{
