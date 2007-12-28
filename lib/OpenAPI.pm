@@ -565,6 +565,7 @@ sub POST_view{
     if ($name = delete $data->{name} and $name ne $view) {
         $self->warning("name \"$name\" in POST content ignored.");
     }
+
     $data->{name} = $view;
     return $self->new_view($data);
 }

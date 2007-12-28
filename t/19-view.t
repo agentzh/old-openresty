@@ -547,17 +547,25 @@ GET /=/view/Bah
 
 
 
-=== TEST 60: Set the description
+=== TEST 60: Set the description (the wrong way, typo)
+--- request
+PUT /=/view/Bah
+{ descripition: "Blah blah blah..." }
+--- response
+{"success":0,"error":"Unknown keys in POST data: descripition"}
+
+
+
+=== TEST 61: Set the description
 --- request
 PUT /=/view/Bah
 { description: "Blah blah blah..." }
 --- response
 {"success":1}
---- LAST
 
 
 
-=== TEST 61: Check the desc
+=== TEST 62: Check the desc
 --- request
 GET /=/view/Bah
 --- response
@@ -566,5 +574,23 @@ GET /=/view/Bah
     "description":"Blah blah blah...",
     "definition":"select * from A"
 }
+
+
+
+=== TEST 63: give wrong POST data
+--- request
+POST /=/view/Foo
+[1,2,3]
+--- response
+{"success":0,"error":"The view schema must be a HASH."}
+
+
+
+=== TEST 64: Bad hash
+--- request
+POST /=/view/Foo
+{cat=>3}
+--- response
+{"success":0,"error":"No 'definition' specified."}
 
 
