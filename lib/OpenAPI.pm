@@ -706,9 +706,13 @@ sub new_view{
     }
     _STRING($minisql) or die "Bad minisql string: ", $Dumper->($minisql);
 
-    my $desc = $data->{description};
+    my $desc = delete $data->{description};
     if (defined $desc) {
         _STRING($desc) or die "View description must be a string.\n";
+    }
+
+    if (%$data) {
+        die "Unknown keys: ", join(" ", keys %$data), "\n";
     }
 
     my $select = MiniSQL::Select->new;
