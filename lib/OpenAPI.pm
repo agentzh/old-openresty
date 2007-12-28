@@ -615,16 +615,25 @@ sub PUT_view {
     my $update = SQL::Update->new('_views');
     $update->where(name => Q($view));
 
-    if (defined $data->{name}) {
-    my $new_view_name = $data->{name};
-        $update->set(QI('name')=>Q($new_view_name));
-        ### $update
+    my $new_name = delete $data->{name};
+    if (defined $new_name) {
+        _IDENT($new_name) or die "Bad view name: ", $Dumper->($new_name);
+        $update->set( name => Q($new_name) );
     }
-    if (defined $data->{definition}) {
-    my $new_view_definition = $data->{definition};
-    $update->set(definition => Q($new_view_definition));
+
+    my $new_def = delete $data->{definition};
+    if (defined $new_def) {
+        _STRING($new_def) or die "Bad view definition: ", $Dumper->($new_def);
+        $update->set(definition => Q($new_def));
     }
-    my $retval = $Backend->do("$update") + 0;
+
+    my $new_desc = delete $data->{description};
+    if (defined $new_desc) {
+        _STRING($new_desc) or die "Bad view definition: ", $Dumper->($new_desc);
+        $update->set(description => Q($new_desc));
+    }
+    ### Update SQL: "$update"
+    my $retval = $self->do("$update") + 0;
     return { success => $retval ? 1 : 0 };
 }
 

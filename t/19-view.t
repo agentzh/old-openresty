@@ -517,12 +517,14 @@ GET /=/view
 ]
 
 
+
 === TEST 57: Change the view name and definition simultaneously
 --- request
 PUT /=/view/Foo
 { name: "Bah", definition: "select * from A" }
 --- response
 {"success":1}
+
 
 
 === TEST 58: Check the old view
@@ -532,13 +534,36 @@ GET /=/view/Foo
 {"success":0,"error":"View \"Foo\" not found."}
 
 
-=== TEST 58: Check the new view
+
+=== TEST 59: Check the new view
 --- request
 GET /=/view/Bah
 --- response
 {
     "name":"Bah",
     "description":null,
+    "definition":"select * from A"
+}
+
+
+
+=== TEST 60: Set the description
+--- request
+PUT /=/view/Bah
+{ description: "Blah blah blah..." }
+--- response
+{"success":1}
+--- LAST
+
+
+
+=== TEST 61: Check the desc
+--- request
+GET /=/view/Bah
+--- response
+{
+    "name":"Bah",
+    "description":"Blah blah blah...",
     "definition":"select * from A"
 }
 
