@@ -633,6 +633,10 @@ sub PUT_view {
         $update->set(description => Q($new_desc));
     }
     ### Update SQL: "$update"
+    if (%$data) {
+        die "Unknown keys in POST data: ", join(' ', keys %$data), "\n";
+    }
+
     my $retval = $self->do("$update") + 0;
     return { success => $retval ? 1 : 0 };
 }
