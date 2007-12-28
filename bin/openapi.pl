@@ -33,7 +33,7 @@ my %Dispatcher = (
         qw< model_list model model_column model_row >
     ],
     view => [
-        qw< view_list view view_exec view_exec_with_param >
+        qw< view_list view view_param view_exec >
     ],
     action => [
         qw< action_list action action_param action_exec  >

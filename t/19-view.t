@@ -656,7 +656,15 @@ GET /=/view/Foo/val/2
 
 
 
-=== TEST 71: Invoke the view (another way)
+=== TEST 71: Invoke the view
+--- request
+GET /=/view/Foo/!@/2
+--- response
+{"success":0,"error":"Bad parameter name: \"!@\""}
+
+
+
+=== TEST 72: Invoke the view (another way)
 --- request
 GET /=/view/Foo/~/~?val=2
 --- response
@@ -669,7 +677,7 @@ GET /=/view/Foo/~/~?val=2
 
 
 
-=== TEST 72: Invoke the view (bad symbol)
+=== TEST 73: Invoke the view (bad symbol)
 --- request
 GET /=/view/Foo/~/~?val=2&col=id"
 --- response
@@ -677,7 +685,7 @@ GET /=/view/Foo/~/~?val=2&col=id"
 
 
 
-=== TEST 73: Invoke the view (overriding vars)
+=== TEST 74: Invoke the view (overriding vars)
 --- request
 GET /=/view/Foo/~/~?val=2&col=id
 --- response
