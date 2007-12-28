@@ -63,3 +63,24 @@ with
 
         "bin-environment" => ( "OPENAPI_BACKEND" => "PgFarm", "OPENAPI_URL_PREFIX" => "" ),
 
+
+For Developer:
+
+bin/ directory is the where CGI entry openapi.pl located
+doc/ directory containing OpenAPI spec
+lib/OpenAPI/ directory contain all the code needed to run OpenAPI
+lib/OpenAPI/OpenAPI.pm contain all the methods to OpenAPI OpenAPI supported, normally it's HTTP_METHOD_some_sub_name
+lib/OpenAPI/Limits.pm are those hard limits located, we limit the number of different objects (model, row, view etc.) a user could create by default
+lib/OpenAPI/Backend contain all the code to initialize OpenAPI meta tables and code to access different database, for now we support Postgres stand alone database and 
+PostgreSQL cluster
+lib/OpenAPI/Backend/Pg.pm OpenAPI PostgreSQL stand alone database access code
+lib/OpenAPI/Backend/PgFarm.pm OpenAPI PostgreSQL cluster database access code
+lib/SQL classes/methods to generate SQL query (in string form), use OO to encapsulate SQL query generation
+lib/SQL/Statement.pm base class
+lib/SQL/Select.pm class and methods to generate SELECT statement
+lib/SQL/Insert.pm class and methods to generate INSERT statement
+lib/SQL/Update.pm class and methods to generate UPDATE statement
+lib/MiniSQL/ directory conatining our mini-sql parser code, now only SELECT support
+t/ directory containing OpenAPI test suite, use `make test' to run the test, read above on how to setup test environment
+
+
