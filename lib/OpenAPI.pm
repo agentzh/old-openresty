@@ -600,6 +600,33 @@ sub GET_view {
     return $Backend->select("$select", {use_hash => 1})->[0];
 }
 
+sub PUT_view {
+    my ($self, $bits) = @_;
+    my $view = $bits->[1];
+    my $data = _HASH($self->{_req_data}) or
+        die "column spec must be a non-empty HASH.\n";
+    ### $view
+    ### "$data->{name}"
+    die "View \"$view\" not found.\n" if (!$self->has_view($view));
+
+    my $update = SQL::Update->new('_views');
+    $update->where(QI('name')=>Q($view));
+
+    if(defined $data->{name}){
+	my $new_view_name = $data->{name};
+        $update->set(QI('name')=>Q($new_view_name));
+        ### $update
+    }elsif(defined $data->{definition}){
+	my $new_view_definition = $data->{definition};
+	$update->set(QI('definition')=>Q($new_view_definition));
+    }else{
+	die "unknown PUT view operation\n";
+    }
+    
+    my $retval = $Backend->do("$update") + 0;
+    return {success => $retval ? 1 : 0,rows_affected => $retval};
+}
+
 sub exec_view{
     my ($self,$view, $bits, $cgi) = @_;
     my $select = MiniSQL::Select->new;
@@ -612,7 +639,7 @@ sub exec_view{
     my %vars;
 
     my $res;
-    
+
     foreach my $var ($cgi->url_param){
 	$vars{$var}=$cgi->url_param($var);
     }
@@ -628,6 +655,13 @@ sub exec_view{
         );
     };
 
+    if((my $len = @{$res->{unbound}}) > 0){
+	my $err_messages = 'Parameter(s) required: ';
+	foreach my $missed (@{$res->{unbound}}){
+		$err_messages .= $missed . ' ';
+	}
+	die $err_messages ."\n";
+    }
     return $self->select($res->{sql}, {use_hash=>1, read_only=>1});
 
 }

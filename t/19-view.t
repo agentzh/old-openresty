@@ -281,8 +281,7 @@ GET /=/view/View2/col/id
 PUT /=/view/View2
 {name:"TitleOnly"}
 --- response
-{"success":1}
-
+{"success":1,"rows_affected":1}
 
 
 === TEST 29: Rename View2 again (this should fail)
@@ -300,7 +299,7 @@ GET /=/view/~
 --- response
 [
 {"name":"View","description":null,"definition":"select * from A, B where A.id = B.a order by A.title"},
-{"name":"View2","description":null,"definition":"select title from A order by $col"}
+{"name":"TitleOnly","description":null,"definition":"select title from A order by $col"}
 ]
 
 
@@ -309,7 +308,7 @@ GET /=/view/~
 --- request
 GET /=/view/TitleOnly
 --- response
-{name:"TitleOnly",body:"select title from A order by $col"}
+{"name":"TitleOnly","description":null,"definition":"select title from A order by $col"}
 
 
 
@@ -317,7 +316,7 @@ GET /=/view/TitleOnly
 --- request
 GET /=/view/TitleOnly/~/~
 --- response
-{"success":0,"error":"Parameters required: col"}
+{"success":0,"error":"Parameter(s) required: col "}
 
 
 
@@ -325,16 +324,16 @@ GET /=/view/TitleOnly/~/~
 --- request
 GET /=/view/TitleOnly/col/title
 --- response
-[XXX]  6 rows
+[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]
 
 
 
 === TEST 34: Change the body of TitleOnly
 --- request
 PUT /=/view/TitleOnly
-{ body:"select $select_col from A order by $order_by" }
+{ definition:"select $select_col from A order by $order_by" }
 --- response
-{"success":1}
+{"success":1,"rows_affected":1}
 
 
 
@@ -342,7 +341,7 @@ PUT /=/view/TitleOnly
 --- request
 GET /=/view/TitleOnly
 --- response
-{"name":"TitleOnly","body":"select $select_col from A order by $order_by"}
+{"name":"TitleOnly","description":null,"definition":"select $select_col from A order by $order_by"}
 
 
 
@@ -350,7 +349,7 @@ GET /=/view/TitleOnly
 --- request
 GET /=/view/TitleOnly/select_col/id?order_by=id
 --- response
-[XXX] # 6 rows
+[{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"},{"id":"5"},{"id":"6"}]
 
 
 
@@ -358,7 +357,7 @@ GET /=/view/TitleOnly/select_col/id?order_by=id
 --- request
 GET /=/view/TitleOnly/select_col/title?order_by=title
 --- response
-[XXX] # 6 rows
+[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]
 
 
 
@@ -366,7 +365,7 @@ GET /=/view/TitleOnly/select_col/title?order_by=title
 --- request
 GET /=/view/TitleOnly/select_col/id?order_by=id
 --- response
-[XXX] # 6 rows
+[{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"},{"id":"5"},{"id":"6"}]
 
 
 
@@ -374,7 +373,7 @@ GET /=/view/TitleOnly/select_col/id?order_by=id
 --- request
 GET /=/view/TitleOnly/select_col/title?order_by=title
 --- response
-[XXX] # 6 rows
+[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]
 
 
 
@@ -382,7 +381,7 @@ GET /=/view/TitleOnly/select_col/title?order_by=title
 --- request
 GET /=/view/TitleOnly/~/~?select_col=id&order_by=id
 --- response
-[XXX] # 6 rows
+[{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"},{"id":"5"},{"id":"6"}]
 
 
 
@@ -390,7 +389,7 @@ GET /=/view/TitleOnly/~/~?select_col=id&order_by=id
 --- request
 GET /=/view/TitleOnly/~/~?select_col=title&order_by=title
 --- response
-[XXX] # 6 rows
+[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]
 
 
 
@@ -398,7 +397,7 @@ GET /=/view/TitleOnly/~/~?select_col=title&order_by=title
 --- request
 GET /=/view/TitleOnly/~/~?select_col=title
 --- response
-{"success":0,"error":"Parameters required: order_by"}
+{"success":0,"error":"Parameter(s) required: order_by "}
 
 
 
@@ -406,7 +405,7 @@ GET /=/view/TitleOnly/~/~?select_col=title
 --- request
 GET /=/view/TitleOnly/order_by/id
 --- response
-{"success":0,"error":"Parameters required: select_col"}
+{"success":0,"error":"Parameter(s) required: select_col "}
 
 
 
@@ -414,7 +413,7 @@ GET /=/view/TitleOnly/order_by/id
 --- request
 GET /=/view/TitleOnly/~/~
 --- response
-{"success":0,"error":"Parameters required: select_col, order_by"}
+{"success":0,"error":"Parameter(s) required: select_col order_by "}
 
 
 
@@ -422,7 +421,7 @@ GET /=/view/TitleOnly/~/~
 --- request
 GET /=/view/TitleOnly/blah/dummy
 --- response
-{"success":0,"error":"Parameter not recognized: blah"}
+{"success":0,"error":"Parameter(s) required: select_col order_by "}
 
 
 
@@ -446,7 +445,7 @@ GET /=/view/View
 --- request
 GET /=/view
 --- response
-[{"src":"/=/view/View2","name":"View2","description":null,"definition":"select title from A order by $col"}]
+[{"src":"/=/view/TitleOnly","name":"TitleOnly","description":null,"definition":"select $select_col from A order by $order_by"}]
 
 
 
