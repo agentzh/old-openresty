@@ -480,8 +480,8 @@ sub DELETE_model_column {
 
     if($col eq '~') {
          $self->warning("Column \"id\" is reserved.");
-	 my $columns = $self->get_model_col_names($model);
-	 for my $c (@$columns) {
+     my $columns = $self->get_model_col_names($model);
+     for my $c (@$columns) {
               $sql .= "delete from _columns where table_name = '$table_name' and name='$c';" .
                       "alter table \"$table_name\" drop column \"$c\" restrict;";
          }
@@ -591,10 +591,10 @@ sub GET_view {
     my $view = $bits->[1];
 
     if($view eq '~'){
-	return $self->get_views;
+    return $self->get_views;
     }
     if(!$self->has_view($view)){
-	die "View \"$view\" not found.\n";
+    die "View \"$view\" not found.\n";
     }
     my $select = SQL::Select->new( qw< name definition description > )
         ->from('_views')
@@ -616,13 +616,13 @@ sub PUT_view {
     $update->where(name => Q($view));
 
     if (defined $data->{name}) {
-	my $new_view_name = $data->{name};
+    my $new_view_name = $data->{name};
         $update->set(QI('name')=>Q($new_view_name));
         ### $update
     }
     if (defined $data->{definition}) {
-	my $new_view_definition = $data->{definition};
-	$update->set(definition => Q($new_view_definition));
+    my $new_view_definition = $data->{definition};
+    $update->set(definition => Q($new_view_definition));
     }
     my $retval = $Backend->do("$update") + 0;
     return { success => $retval ? 1 : 0 };
@@ -642,11 +642,11 @@ sub exec_view{
     my $res;
 
     foreach my $var ($cgi->url_param){
-	$vars{$var}=$cgi->url_param($var);
+    $vars{$var}=$cgi->url_param($var);
     }
 
     if($fix_var ne '~' and $fix_var_value ne '~'){
-	$vars{$fix_var} = $fix_var_value;
+    $vars{$fix_var} = $fix_var_value;
     }
 
     eval {
@@ -657,11 +657,11 @@ sub exec_view{
     };
 
     if((my $len = @{$res->{unbound}}) > 0){
-	my $err_messages = 'Parameter(s) required: ';
-	foreach my $missed (@{$res->{unbound}}){
-		$err_messages .= $missed . ' ';
-	}
-	die $err_messages ."\n";
+    my $err_messages = 'Parameter(s) required: ';
+    foreach my $missed (@{$res->{unbound}}){
+        $err_messages .= $missed . ' ';
+    }
+    die $err_messages ."\n";
     }
     return $self->select($res->{sql}, {use_hash=>1, read_only=>1});
 
@@ -695,35 +695,49 @@ sub new_view{
         #warn "===================================> $num\n";
         die "Exceeded view count limit $VIEW_LIMIT.\n";
     }
-    my $select = MiniSQL::Select->new;
-    my $sql = delete $data->{definition};
-    if (!defined $sql) {
+
+    my $name = delete $data->{name} or
+        die "No 'name' specified.\n";
+    _IDENT($name) or die "Bad view name: ", $Dumper->($name);
+
+    my $minisql = delete $data->{definition};
+    if (!defined $minisql) {
         die "No 'definition' specified.\n";
     }
-    _STRING($sql) or die "Bad minisql string: ", $Dumper->($sql);
+    _STRING($minisql) or die "Bad minisql string: ", $Dumper->($minisql);
 
+    my $desc = $data->{description};
+    if (defined $desc) {
+        _STRING($desc) or die "View description must be a string.\n";
+    }
+
+    my $select = MiniSQL::Select->new;
     eval {
         $res = $select->parse(
-            $sql,
+            $minisql,
             { quote => \&quote }
         );
     };
+    if ($@) {
+        die "minisql: $@";
+    }
 
     #
     # check to see if modes exists
     #
-    my @models = @{$res->{models}};
-
+    my @models = @{ $res->{models} };
     foreach my $model (@models){
-	if (!$self->has_model($model)) {
-        	die "Model \"$model\" not found.\n";
-    	}
+        if (!$self->has_model($model)) {
+            die "Model \"$model\" not found.\n";
+        }
     }
 
-    my $insert = SQL::Insert->new('_views')->cols(qw<name definition description>)
-		->values(Q($data->{name},$sql,$data->{description}));
+    my $insert = SQL::Insert
+        ->new('_views')
+        ->cols( qw<name definition description> )
+        ->values( Q($name, $minisql, $desc) );
 
-    return $Backend->do($insert) >=0 ?  { success => 1 } : { success => 0};
+    return { success => $self->do($insert) ? 1 : 0 };
 
 }
 
