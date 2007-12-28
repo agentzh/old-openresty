@@ -15,6 +15,7 @@ DELETE /=/model
 {"success":1}
 
 
+
 === TEST 2: Delete existing views
 --- request
 DELETE /=/view
@@ -284,6 +285,7 @@ PUT /=/view/View2
 {"success":1,"rows_affected":1}
 
 
+
 === TEST 29: Rename View2 again (this should fail)
 --- request
 PUT /=/view/View2
@@ -481,6 +483,7 @@ GET /=/view/Foo/by/id
 [{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"},{"id":"5"},{"id":"6"}]
 
 
+
 === TEST 53: Invoke Foo with the other one param set
 --- request
 GET /=/view/Foo/col/title
@@ -495,4 +498,11 @@ GET /=/view/Foo/col/title?by=id
 --- response
 [{"title":"Yahoo"},{"title":"Google"},{"title":"Baidu"},{"title":"Sina"},{"title":"Sohu"},{"title":"163"}]
 
+
+
+=== TEST 55: Bad view name
+--- request
+GET /=/view/!@
+--- response
+{"success":0,"error":"Bad view name: !@"}
 

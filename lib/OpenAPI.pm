@@ -980,7 +980,7 @@ sub has_model {
 
 sub has_view {
     my ($self, $view) = @_;
-    _IDENT($view) or die "Bad model name: $view\n";
+    _IDENT($view) or die "Bad view name: $view\n";
     my $retval;
     my $select = SQL::Select->new('name')
         ->from('_views')
