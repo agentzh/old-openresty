@@ -656,7 +656,7 @@ GET /=/view/Foo/val/2
 
 
 
-=== TEST 71: Invoke the view
+=== TEST 71: Invoke the view (bad fixed var name)
 --- request
 GET /=/view/Foo/!@/2
 --- response
@@ -677,7 +677,15 @@ GET /=/view/Foo/~/~?val=2
 
 
 
-=== TEST 73: Invoke the view (bad symbol)
+=== TEST 73: Invoke the view (bad free var name)
+--- request
+GET /=/view/Foo/~/~?!@=2
+--- response
+{"success":0,"error":"Parameters required: val"}
+
+
+
+=== TEST 74: Invoke the view (bad symbol)
 --- request
 GET /=/view/Foo/~/~?val=2&col=id"
 --- response
@@ -685,7 +693,7 @@ GET /=/view/Foo/~/~?val=2&col=id"
 
 
 
-=== TEST 74: Invoke the view (overriding vars)
+=== TEST 75: Invoke the view (overriding vars)
 --- request
 GET /=/view/Foo/~/~?val=2&col=id
 --- response
