@@ -733,7 +733,7 @@ sub new_view{
     eval {
         $res = $select->parse(
             $minisql,
-            { quote => \&quote }
+            { quote => \&Q }
         );
     };
     if ($@) {

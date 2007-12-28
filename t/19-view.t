@@ -614,3 +614,23 @@ POST /=/view/Foo
 {"success":0,"error":"minisql: line 1: error: Unexpected input: \"update\" (select expected)."}
 
 
+
+=== TEST 67: Re-add view Foo (Bad minisql)
+--- request
+POST /=/view/Foo
+{description:"Test vars for vals",name:"Foo",
+    definition:"select * from $model | 'A' where $col|id > $val"}
+--- response
+{"success":0,"error":"minisql: line 1: error: Unexpected input: \"'A'\" (IDENT expected)."}
+
+
+
+=== TEST 68: Re-add view Foo
+--- request
+POST /=/view/Foo
+{description:"Test vars for vals",name:"Foo",
+    definition:"select * from $model | A where $col|id > $val"}
+--- response
+{"success":1}
+
+
