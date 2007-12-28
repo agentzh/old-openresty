@@ -315,7 +315,7 @@ GET /=/view/TitleOnly
 --- request
 GET /=/view/TitleOnly/~/~
 --- response
-{"success":0,"error":"Parameter(s) required: col "}
+{"success":0,"error":"Parameters required: col"}
 
 
 
@@ -396,7 +396,7 @@ GET /=/view/TitleOnly/~/~?select_col=title&order_by=title
 --- request
 GET /=/view/TitleOnly/~/~?select_col=title
 --- response
-{"success":0,"error":"Parameter(s) required: order_by "}
+{"success":0,"error":"Parameters required: order_by"}
 
 
 
@@ -404,7 +404,7 @@ GET /=/view/TitleOnly/~/~?select_col=title
 --- request
 GET /=/view/TitleOnly/order_by/id
 --- response
-{"success":0,"error":"Parameter(s) required: select_col "}
+{"success":0,"error":"Parameters required: select_col"}
 
 
 
@@ -412,7 +412,7 @@ GET /=/view/TitleOnly/order_by/id
 --- request
 GET /=/view/TitleOnly/~/~
 --- response
-{"success":0,"error":"Parameter(s) required: select_col order_by "}
+{"success":0,"error":"Parameters required: select_col order_by"}
 
 
 
@@ -420,7 +420,7 @@ GET /=/view/TitleOnly/~/~
 --- request
 GET /=/view/TitleOnly/blah/dummy
 --- response
-{"success":0,"error":"Parameter(s) required: select_col order_by "}
+{"success":0,"error":"Parameters required: select_col order_by"}
 
 
 
@@ -632,5 +632,13 @@ POST /=/view/Foo
     definition:"select * from $model | A where $col|id > $val"}
 --- response
 {"success":1}
+
+
+
+=== TEST 69: Invoke the view
+--- request
+GET /=/view/Foo/~/~
+--- response
+{"success":0,"error":"Parameters required: val"}
 
 

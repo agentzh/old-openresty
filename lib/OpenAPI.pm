@@ -666,16 +666,16 @@ sub exec_view{
     eval {
         $res = $select->parse(
             $view_def,
-            { quote => \&quote, vars => \%vars }
+            { quote => \&Q, vars => \%vars }
         );
     };
-
-    if((my $len = @{$res->{unbound}}) > 0){
-    my $err_messages = 'Parameter(s) required: ';
-    foreach my $missed (@{$res->{unbound}}){
-        $err_messages .= $missed . ' ';
+    if ($@) {
+        die "minisql: $@\n";
     }
-    die $err_messages ."\n";
+
+    my @unbound = @{ $res->{unbound} };
+    if (@unbound){
+        die "Parameters required: @unbound\n";
     }
     return $self->select($res->{sql}, {use_hash=>1, read_only=>1});
 
