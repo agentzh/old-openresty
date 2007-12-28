@@ -571,9 +571,9 @@ sub POST_view{
 
 sub get_views {
     my $self = shift;
-    my $select = SQL::Select->new('name','definition', 'description')->from('_views');
-
-    return $Backend->select("$select", { use_hash => 1 });
+    my $select = SQL::Select->new(qw< name definition description >)
+                            ->from('_views');
+    return $self->select("$select", { use_hash => 1 });
 }
 
 sub GET_view_list {
@@ -595,7 +595,9 @@ sub GET_view {
     if(!$self->has_view($view)){
 	die "View \"$view\" not found.\n";
     }
-    my $select = SQL::Select->new('name','definition', 'description')->from('_views')->where('name', '=', Q($view));
+    my $select = SQL::Select->new( qw< name definition description > )
+        ->from('_views')
+        ->where(name => Q($view));
 
     return $Backend->select("$select", {use_hash => 1})->[0];
 }
@@ -607,24 +609,24 @@ sub PUT_view {
         die "column spec must be a non-empty HASH.\n";
     ### $view
     ### "$data->{name}"
-    die "View \"$view\" not found.\n" if (!$self->has_view($view));
+    die "View \"$view\" not found.\n" unless $self->has_view($view);
 
     my $update = SQL::Update->new('_views');
-    $update->where(QI('name')=>Q($view));
+    $update->where(name => Q($view));
 
-    if(defined $data->{name}){
+    if (defined $data->{name}) {
 	my $new_view_name = $data->{name};
         $update->set(QI('name')=>Q($new_view_name));
         ### $update
-    }elsif(defined $data->{definition}){
+    } elsif (defined $data->{definition}) {
 	my $new_view_definition = $data->{definition};
-	$update->set(QI('definition')=>Q($new_view_definition));
-    }else{
-	die "unknown PUT view operation\n";
+	$update->set(definition => Q($new_view_definition));
+    } else {
+	die "Unknown PUT view operation\n";
     }
-    
+
     my $retval = $Backend->do("$update") + 0;
-    return {success => $retval ? 1 : 0,rows_affected => $retval};
+    return { success => $retval ? 1 : 0 };
 }
 
 sub exec_view{

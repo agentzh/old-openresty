@@ -282,7 +282,7 @@ GET /=/view/View2/col/id
 PUT /=/view/View2
 {name:"TitleOnly"}
 --- response
-{"success":1,"rows_affected":1}
+{"success":1}
 
 
 
@@ -335,7 +335,7 @@ GET /=/view/TitleOnly/col/title
 PUT /=/view/TitleOnly
 { definition:"select $select_col from A order by $order_by" }
 --- response
-{"success":1,"rows_affected":1}
+{"success":1}
 
 
 
