@@ -323,13 +323,13 @@ sub GET_model_column {
             ->where(table_name => Q($table_name))
             ->order_by('id');
     if ($col eq '~') {
-        my $list = $Backend->select("$select", { use_hash => 1 });
+        my $list = $self->select("$select", { use_hash => 1 });
         if (!$list or !ref $list) { $list = []; }
         unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
         return $list;
     } else {
         $select->where( name => Q($col) );
-        my $res = $Backend->select("$select", { use_hash => 1 });
+        my $res = $self->select("$select", { use_hash => 1 });
         if (!$res or !@$res) {
             die "Column '$col' not found.\n";
         }
@@ -599,7 +599,7 @@ sub GET_view {
         ->from('_views')
         ->where(name => Q($view));
 
-    return $Backend->select("$select", {use_hash => 1})->[0];
+    return $self->select("$select", {use_hash => 1})->[0];
 }
 
 sub PUT_view {
@@ -758,7 +758,7 @@ sub get_tables {
     #my ($self, $user) = @_;
     my $self = shift;
     my $select = SQL::Select->new('name')->from('_models');
-    return $Backend->select("$select");
+    return $self->select("$select");
 }
 
 sub model_count {
@@ -779,7 +779,7 @@ sub row_count {
 sub get_models {
     my $self = shift;
     my $select = SQL::Select->new('name','description')->from('_models');
-    return $Backend->select("$select", { use_hash => 1 });
+    return $self->select("$select", { use_hash => 1 });
 }
 
 sub get_model_cols {
@@ -791,13 +791,13 @@ sub get_model_cols {
     my $select = SQL::Select->new('description')
         ->from('_models')
         ->where(name => Q($model));
-    my $list = $Backend->select("$select");
+    my $list = $self->select("$select");
     my $desc = $list->[0][0];
     $select->reset( QI(qw< name type label default >) )
            ->from('_columns')
            ->where(table_name => Q($table))
            ->order_by('id');
-    $list = $Backend->select("$select", { use_hash => 1 });
+    $list = $self->select("$select", { use_hash => 1 });
     if (!$list or !ref $list) { $list = []; }
     unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
     return { description => $desc, name => $model, columns => $list };
@@ -814,7 +814,7 @@ sub get_model_col_names {
         ->from('_columns')
         ->where(table_name => Q($table));
 
-    my $list = $Backend->select("$select");
+    my $list = $self->select("$select");
     if (!$list or !ref $list) { return []; }
     return [map { @$_ } @$list];
 }
@@ -1181,7 +1181,7 @@ sub select_records {
     $self->process_offset($select);
     $self->process_limit($select);
 
-    my $res = $Backend->select("$select", { use_hash => 1 });
+    my $res = $self->select("$select", { use_hash => 1 });
     if (!$res and !ref $res) { return []; }
     return $res;
 }
@@ -1201,7 +1201,7 @@ sub select_all_records {
     $self->process_offset($select);
     $self->process_limit($select);
 
-    my $list = $Backend->select("$select", { use_hash => 1 });
+    my $list = $self->select("$select", { use_hash => 1 });
     if (!$list or !ref $list) { return []; }
     return $list;
 }
