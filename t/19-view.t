@@ -641,4 +641,3 @@ GET /=/view/Foo/~/~
 --- response
 {"success":0,"error":"Parameters required: val"}
 
-
