@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use DBI;
 use SQL::Select;
+use base 'OpenAPI::Backend::Base';
 
 sub new {
     my $class = shift;
@@ -72,52 +73,11 @@ sub set_user {
 
 sub add_user {
     my ($self, $user) = @_;
-
-    my $retval = $self->do(<<"_EOC_");
-    create schema $user;
-    set search_path to $user;
-
-    create table $user._models (
-	id serial primary key,
-        name text unique not null,
-        table_name text unique not null,
-        description text
-    );
-
-    create table $user._columns (
-        id serial primary key,
-        name text  not null,
-        type text not null,
-        table_name text not null,
-        native_type varchar(20) default 'text',
-        "default" text,
-        label text,
-	unique(table_name, name)
-    );
-
-    create table $user._roles(
-	id serial primary key,
-	name text unique not null,
-        parentRole integer default 0, -- a column reference to $user._roles itself. 0 means no parent
-        password text not null,
-	obj integer not null, -- a column reference to $user._columns or $user._models
-        visible boolean,
-	readable boolean,
-        writeable boolean,
-        manageable boolean
-			      );
-
-    create table $user._views(
-        id serial primary key,
-        name text unique not null,
-        definition text unique not null,
-	createdate timestamp with time zone default current_timestamp,
-	updatedate timestamp with time zone default current_timestamp,
-	description text	
-    );
+    $self->do(<<"_EOC_");
+create schema $user;
+set search_path to $user;
 _EOC_
-    #$retval += 0;
-    return $retval;
+    $self->SUPER::add_user($user);
 }
 
 sub drop_user {

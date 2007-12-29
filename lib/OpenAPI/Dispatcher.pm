@@ -20,7 +20,10 @@ my %Dispatcher = (
     ],
     admin => [
         qw< admin admin_op >
-    ]
+    ],
+    role => [
+        qw< role_list role rule_col rule >
+    ],
 );
 
 my $url_prefix = $ENV{OPENAPI_URL_PREFIX};
@@ -60,12 +63,16 @@ sub process_request {
     }
 
     # XXX this part is lame...
-    my $user = $cgi->url_param('user') || 'tester';
+    my $user = $cgi->url_param('user') || 'peee';
     ### $user
     eval {
         #OpenAPI->drop_user($user);
     };
-    if ($@) { warn $@; }
+    if ($@) {
+        $openapi->fatal($@);
+        warn $@;
+        next;
+    }
     if (my $retval = OpenAPI->has_user($user)) {
         ### Found user: $user
     } else {
@@ -73,7 +80,11 @@ sub process_request {
         eval {
             $openapi->add_user($user);
         };
-        if ($@) {  warn $@; }
+        if ($@) {
+            warn $@;
+            $openapi->fatal($@);
+            next;
+        }
     }
 
     eval {
@@ -99,7 +110,7 @@ sub process_request {
     #print "charset: ", url_param("charset"), "\n";
 
     my @bits = split /\//, $url, 5;
-	
+
     if (!@bits) {
         ### Unknown URL: $url
         $openapi->fatal("Unknown URL: $url");
@@ -111,7 +122,7 @@ sub process_request {
 
     my $fst = shift @bits;
     if ($fst ne '=') {
-        $openapi->fatal("URLs must be led by '='.");
+        $openapi->fatal("URLs must be led by '=': $url");
         return;
     }
 

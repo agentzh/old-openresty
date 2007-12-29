@@ -594,11 +594,11 @@ sub GET_view {
     my ($self, $bits) = @_;
     my $view = $bits->[1];
 
-    if($view eq '~'){
-    return $self->get_views;
+    if ($view eq '~') {
+        return $self->get_views;
     }
-    if(!$self->has_view($view)){
-    die "View \"$view\" not found.\n";
+    if (!$self->has_view($view)) {
+        die "View \"$view\" not found.\n";
     }
     my $select = SQL::Select->new( qw< name definition description > )
         ->from('_views')
@@ -697,7 +697,7 @@ sub view_count{
     return $self->select("select count(*) from _views")->[0][0];
 }
 
-sub new_view{
+sub new_view {
     my ($self, $data) = @_;
     my $nviews = $self->view_count;
     my $res;
@@ -758,18 +758,86 @@ sub new_view{
 sub DELETE_view {
     my ($self, $bits) = @_;
     my $view = $bits->[1];
-    undef $view if ($view eq '~');
-    my $sql = defined $view ? "delete from _views where name ='".$view."';" : "truncate _views;";
-
-    return $Backend->do($sql) >= 0 ? { success => 1 } : { success => 0};
+    _IDENT($view) or $view eq '~' or
+        die "Bad view name: ", $Dumper->($view), "\n";
+    if ($view eq '~') {
+        return $self->DELETE_view_list;
+    }
+    if (!$self->has_view($view)) {
+        die "View \"$view\" not found.\n";
+    }
+    my $sql = "delete from _views where name = " . Q($view);
+    return { success => $self->do($sql) >= 0 ? 1 : 0 };
 }
 
 sub DELETE_view_list {
     my ($self, $bits) = @_;
-    my $view = $bits->[1];
-    my $sql = defined $view ? "delete from _views where name ='".$view."';" : "truncate _views;";
+    my $sql = "truncate _views;";
+    return { success => $self->do($sql) >= 0 ? 1 : 0 };
+}
 
-    return $Backend->do($sql) >= 0 ? { success => 1 } : { success => 0};
+sub DELETE_role_list {
+    my ($self, $bits) = @_;
+    my $sql = "delete from _roles where name <> 'Admin' and name <> 'Public'";
+    $self->warning("Predefined roles skipped.");
+    return { success => $self->do($sql) >= 0 ? 1 : 0 };
+}
+
+sub has_role {
+    my ($self, $role) = @_;
+    _IDENT($role) or
+        die "Bad role name: ", $Dumper->($role), "\n";
+    my $select = SQL::Select->new('count(name)')
+        ->from('_roles')
+        ->where(name => Q($role))
+        ->limit(1);
+    return $self->select("$select",)->[0][0];
+}
+
+sub DELETE_role {
+    my ($self, $bits) = @_;
+    my $role = $bits->[1];
+    if ($role eq '~') {
+        return $self->DELETE_role_list;
+    }
+    if (!$self->has_role($role)) {
+        die "Role \"$role\" not found.\n";
+    }
+    my $sql = "delete from _roles where name = ".Q($role);
+    return { success => $self->do($sql) >= 0 ? 1 : 0 };
+}
+
+sub GET_role_list {
+    my ($self, $bits) = @_;
+    my $select = SQL::Select->new(
+        qw< name description >
+    )->from('_roles');
+    my $roles = $self->select("$select", { use_hash => 1 });
+
+    $roles ||= [];
+    map { $_->{src} = "/=/role/$_->{name}" } @$roles;
+    $roles;
+}
+
+sub GET_role {
+    my ($self, $bits) = @_;
+    my $role = $bits->[1];
+    if ($role eq '~') {
+        return $self->GET_role_list;
+    }
+    if (!$self->has_role($role)) {
+        die "Role \"$role\" not found.\n";
+    }
+    my $select = SQL::Select->new( qw< name description login > )
+        ->from('_roles')
+        ->where(name => Q($role));
+
+    my $res = $self->select("$select", {use_hash => 1})->[0];
+    $res->{columns} = [
+        { name => "method", type => "text", label => "HTTP method" },
+        { name => "url", type => "text", label => "Resource"}
+    ];
+    return $res;
 }
 
 sub set_formatter {
@@ -1016,18 +1084,11 @@ sub has_view {
 
     _IDENT($view) or die "Bad view name: $view\n";
 
-    my $retval;
-
     my $select = SQL::Select->new('count(name)')
         ->from('_views')
         ->where(name => Q($view))
         ->limit(1);
-
-    eval {
-        $retval = $self->select("$select",)->[0][0];
-    };
-
-    return $retval;
+    return $self->select("$select",)->[0][0];
 }
 
 sub has_model_col {

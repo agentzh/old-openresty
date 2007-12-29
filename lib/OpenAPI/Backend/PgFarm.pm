@@ -5,6 +5,7 @@ use warnings;
 #use Smart::Comments;
 use DBI;
 use JSON::Syck 'Load';
+use base 'OpenAPI::Backend::Base';
 
 sub new {
     #
@@ -88,51 +89,7 @@ sub add_user {
     -- grant usage on schema $user to anonymous;
 _EOC_
     $self->set_user($user);
-    $retval = $self->do(<<"_EOC_");
-    --create schema $user;
-
-    create table $user._models (
-	id serial primary key,
-        name text unique not null,
-        table_name text unique not null,
-        description text
-    );
-
-
-    create table $user._columns (
-        id serial primary key,
-        name text not null,
-        type text not null default 'text',
-        table_name text not null,
-        native_type varchar(20),
-        label text,
-        "default" text,
-	unique(table_name, name)
-    );
-
-    create table $user._roles(
-	id serial primary key,
-	name text unique not null,
-        parentRole integer default 0, -- a column reference to $user._roles itself.
-        password text not null,
-	obj integer, -- a column reference to $user._columns or $user._models
-        visible boolean,
-	readable boolean,
-        writeable boolean,
-        manageable boolean
-			      );
-
-    create table $user._views(
-        id serial primary key,
-        name text unique not null,
-        definition text unique not null,
-	createdate timestamp with time zone default current_timestamp,
-	updatedate timestamp with time zone default current_timestamp,
-	description text	
-    );
-_EOC_
-
-    #$retval += 0;
+    $self->SUPER::add_user($user);
     return $retval >= 0;
 }
 

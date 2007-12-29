@@ -32,45 +32,53 @@ DELETE /=/role
 
 
 
-=== TEST 4: Get the role list
+=== TEST 4: Delete existing roles (using wildcard)
+--- request
+DELETE /=/role/~
+--- response
+{"success":1,"warning":"Predefined roles skipped."}
+
+
+
+=== TEST 5: Get the role list
 --- request
 GET /=/role
 --- response
 [
-    {"name":"Admin","description":"Administrator","src":"/=/role/Admin"},
-    {"name":"Public","description":"Anonymous","src":"/=/role/Public"}
+    {"src":"/=/role/Admin","name":"Admin","description":"Administrator"},
+    {"src":"/=/role/Public","name":"Public","description":"Anonymous"}
 ]
 
 
 
-=== TEST 5: Use wildcard to get the role list
+=== TEST 6: Use wildcard to get the role list
 --- request
 GET /=/role/~
 --- response
 [
-    {"name":"Admin","description":"Administrator","src":"/=/role/Admin"},
-    {"name":"Public","description":"Anonymous","src":"/=/role/Public"}
+    {"src":"/=/role/Admin","name":"Admin","description":"Administrator"},
+    {"src":"/=/role/Public","name":"Public","description":"Anonymous"}
 ]
 
 
 
-=== TEST 6: Get the Admin role
+=== TEST 7: Get the Admin role
 --- request
 GET /=/role/Admin
 --- response
 {
+    "columns":[
+        {"name":"method","label":"HTTP method","type":"text"},
+        {"name":"url","label":"Resource","type":"text"}
+    ],
     "name":"Admin",
     "description":"Administrator",
-    "login":["password","******"],
-    "columns":[
-        {"name":"method","type":"text",label:"HTTP method"},
-        {"name":"url","type":"text",label:"Resource"}
-    ]
+    "login":"password"
 }
+--- LAST
 
 
-
-=== TEST 7: GET the Public role
+=== TEST 8: GET the Public role
 --- request
 GET /=/role/Public
 --- response
@@ -86,7 +94,7 @@ GET /=/role/Public
 
 
 
-=== TEST 8: Clear out Public's rules
+=== TEST 9: Clear out Public's rules
 --- request
 DELETE /=/role/Public/~/~
 --- response
@@ -94,7 +102,7 @@ DELETE /=/role/Public/~/~
 
 
 
-=== TEST 9: Get Public's rules
+=== TEST 10: Get Public's rules
 --- request
 GET /=/role/Public/~/~
 --- response
@@ -102,7 +110,7 @@ GET /=/role/Public/~/~
 
 
 
-=== TEST 10: Add a new rule to Public
+=== TEST 11: Add a new rule to Public
 --- request
 POST /=/role/Public/~/~
 --- response
@@ -115,14 +123,14 @@ POST /=/role/Public/~/~
 
 
 
-=== TEST 11: Switch to the Public role
+=== TEST 12: Switch to the Public role
 GET /=/login/tester.Public
 --- response
 {"success":1}
 
 
 
-=== TEST 12: Create model A
+=== TEST 13: Create model A
 --- request
 POST /=/model/~
 {name:"A",description:"A",columns:{"name":"title",label:"name"}}
@@ -131,7 +139,7 @@ POST /=/model/~
 
 
 
-=== TEST 13: Create model B
+=== TEST 14: Create model B
 --- request
 POST /=/model/B
 {description:"B",columns:[
@@ -144,7 +152,7 @@ POST /=/model/B
 
 
 
-=== TEST 14: Get model list
+=== TEST 15: Get model list
 --- request
 GET /=/model
 --- response
@@ -155,7 +163,7 @@ GET /=/model
 
 
 
-=== TEST 15: Delete the models
+=== TEST 16: Delete the models
 --- request
 DELETE /=/model
 --- response
@@ -163,7 +171,7 @@ DELETE /=/model
 
 
 
-=== TEST 16: Put to models
+=== TEST 17: Put to models
 --- request
 PUT /=/model
 --- response
@@ -171,7 +179,7 @@ PUT /=/model
 
 
 
-=== TEST 17: Get an individual model (not in rules)
+=== TEST 18: Get an individual model (not in rules)
 --- request
 GET /=/model/A
 --- response
@@ -179,7 +187,7 @@ GET /=/model/A
 
 
 
-=== TEST 18: Use the other form
+=== TEST 19: Use the other form
 --- request
 GET /=/model/~
 --- response
@@ -187,7 +195,7 @@ GET /=/model/~
 
 
 
-=== TEST 19: Read the column
+=== TEST 20: Read the column
 --- request
 GET /=/model/A/~
 --- response
@@ -195,7 +203,7 @@ GET /=/model/A/~
 
 
 
-=== TEST 20: Read the column (be explicit)
+=== TEST 21: Read the column (be explicit)
 --- request
 GET /=/model/A/title
 --- response
@@ -203,7 +211,7 @@ GET /=/model/A/title
 
 
 
-=== TEST 21: Try to remove the column
+=== TEST 22: Try to remove the column
 --- request
 DELETE /=/model/A/title
 --- response
@@ -211,7 +219,7 @@ DELETE /=/model/A/title
 
 
 
-=== TEST 22: Insert rows
+=== TEST 23: Insert rows
 --- request
 POST /=/model/A/~/~
 [ {"title":"Audrey"}, {"title":"Larry"}, {"title":"Patrick"} ]
@@ -220,7 +228,7 @@ POST /=/model/A/~/~
 
 
 
-=== TEST 23: Get the rows
+=== TEST 24: Get the rows
 --- request
 GET /=/model/A/~/~
 --- response
@@ -228,7 +236,7 @@ GET /=/model/A/~/~
 
 
 
-=== TEST 24: Get a single row
+=== TEST 25: Get a single row
 --- request
 GET /=/model/A/id/3
 --- response
@@ -236,7 +244,7 @@ GET /=/model/A/id/3
 
 
 
-=== TEST 25: Delete rows
+=== TEST 26: Delete rows
 --- request
 DELETE /=/model/A/~/~
 --- response
@@ -244,7 +252,7 @@ DELETE /=/model/A/~/~
 
 
 
-=== TEST 26: Delete rows
+=== TEST 27: Delete rows
 --- request
 DELETE /=/model/A/title/Audrey
 --- response
@@ -252,7 +260,7 @@ DELETE /=/model/A/title/Audrey
 
 
 
-=== TEST 27: Update a row
+=== TEST 28: Update a row
 --- request
 PUT /=/model/A/id/3
 {"title":"fglock"}
@@ -261,7 +269,7 @@ PUT /=/model/A/id/3
 
 
 
-=== TEST 28: Delete a row
+=== TEST 29: Delete a row
 --- request
 DELETE /=/model/A/id/3
 --- response
@@ -269,7 +277,7 @@ DELETE /=/model/A/id/3
 
 
 
-=== TEST 29: Delete a row again
+=== TEST 30: Delete a row again
 --- request
 DELETE /=/model/A/id/3
 --- response
@@ -277,7 +285,7 @@ DELETE /=/model/A/id/3
 
 
 
-=== TEST 30: Delete all the rows
+=== TEST 31: Delete all the rows
 --- request
 DELETE /=/model/A/id/~
 --- response
@@ -285,7 +293,7 @@ DELETE /=/model/A/id/~
 
 
 
-=== TEST 31: Delete all the rows in model B
+=== TEST 32: Delete all the rows in model B
 --- request
 DELETE /=/model/B/id/~
 --- response
@@ -293,7 +301,7 @@ DELETE /=/model/B/id/~
 
 
 
-=== TEST 32: Add a new column to A
+=== TEST 33: Add a new column to A
 --- request
 POST /=/model/A/foo
 {"label":"foo"}
@@ -302,7 +310,7 @@ POST /=/model/A/foo
 
 
 
-=== TEST 33: Add a second new column to A
+=== TEST 34: Add a second new column to A
 --- request
 POST /=/model/A/bar
 {"label":"bar"}
@@ -311,7 +319,7 @@ POST /=/model/A/bar
 
 
 
-=== TEST 34: Delete the newly added column
+=== TEST 35: Delete the newly added column
 --- request
 DELETE /=/model/A/bar
 --- response
@@ -319,7 +327,7 @@ DELETE /=/model/A/bar
 
 
 
-=== TEST 35: Get the view list
+=== TEST 36: Get the view list
 --- request
 GET /=/view
 --- response
@@ -327,20 +335,12 @@ GET /=/view
 
 
 
-=== TEST 36: Try to create a view
+=== TEST 37: Try to create a view
 --- request
 POST /=/view/MyView
 {"body":"select * from A"}
 --- response
 {"success":0,"error":"Permission denied for the \"Public\" role."}
-
-
-
-=== TEST 37: Switch back to the Amin role
---- request
-GET /=/login/Admin/test1234
---- response
-{"success":1}
 
 
 
@@ -352,7 +352,15 @@ GET /=/login/Admin/test1234
 
 
 
-=== TEST 39: Check the records in A
+=== TEST 39: Switch back to the Amin role
+--- request
+GET /=/login/Admin/test1234
+--- response
+{"success":1}
+
+
+
+=== TEST 40: Check the records in A
 --- request
 GET /=/model/A/~/~
 --- response
@@ -360,7 +368,7 @@ XXX
 
 
 
-=== TEST 40: Check the model A
+=== TEST 41: Check the model A
 --- request
 GET /=/model/A
 --- response
@@ -368,7 +376,7 @@ XXX
 
 
 
-=== TEST 41: Create a new role w/o description
+=== TEST 42: Create a new role w/o description
 --- request
 POST /=/role/Poster
 {
@@ -379,7 +387,7 @@ POST /=/role/Poster
 
 
 
-=== TEST 42: Create a new role w/o login
+=== TEST 43: Create a new role w/o login
 --- request
 POST /=/role/Poster
 {
@@ -390,7 +398,7 @@ POST /=/role/Poster
 
 
 
-=== TEST 43: Create a new role w/o password
+=== TEST 44: Create a new role w/o password
 --- request
 POST /=/role/Poster
 {
@@ -402,7 +410,7 @@ POST /=/role/Poster
 
 
 
-=== TEST 44: Create a new role w/o password
+=== TEST 45: Create a new role w/o password
 --- request
 POST /=/role/Poster
 {
@@ -414,7 +422,7 @@ POST /=/role/Poster
 
 
 
-=== TEST 45: unknown login method (scalar form)
+=== TEST 46: unknown login method (scalar form)
 --- request
 POST /=/role/Poster
 {
@@ -426,7 +434,7 @@ POST /=/role/Poster
 
 
 
-=== TEST 46: unknown login method (array form)
+=== TEST 47: unknown login method (array form)
 --- request
 POST /=/role/Poster
 {
@@ -438,7 +446,7 @@ POST /=/role/Poster
 
 
 
-=== TEST 47: unknown login method (array of arrays form)
+=== TEST 48: unknown login method (array of arrays form)
 --- request
 POST /=/role/Poster
 {
@@ -450,7 +458,7 @@ POST /=/role/Poster
 
 
 
-=== TEST 48: Create a new role in the right way
+=== TEST 49: Create a new role in the right way
 --- request
 POST /=/role/Poster
 {
@@ -462,7 +470,7 @@ POST /=/role/Poster
 
 
 
-=== TEST 49: Add a rule to read model list
+=== TEST 50: Add a rule to read model list
 --- request
 POST /=/role/Poster/~/~
 {"url":"/=/model"}
@@ -471,7 +479,7 @@ POST /=/role/Poster/~/~
 
 
 
-=== TEST 50: Add a rule to insert new rows to A
+=== TEST 51: Add a rule to insert new rows to A
 --- request
 POST /=/role/Poster/~/~
 {"method":"POST","src":"/=/model/A/~/~"}
@@ -480,7 +488,7 @@ POST /=/role/Poster/~/~
 
 
 
-=== TEST 51: Check the rule list
+=== TEST 52: Check the rule list
 --- request
 GET /=/role/Poster/~/~
 --- response
@@ -488,7 +496,7 @@ GET /=/role/Poster/~/~
 
 
 
-=== TEST 52: Log into the new role
+=== TEST 53: Log into the new role
 --- request
 GET /=/login/tester.Poster
 --- response
@@ -496,7 +504,7 @@ GET /=/login/tester.Poster
 
 
 
-=== TEST 53: Try to do something
+=== TEST 54: Try to do something
 --- request
 GET /=/model
 --- response
