@@ -15,7 +15,15 @@ OpenAPI::Dispatcher->init;
 if ($cmd eq 'fastcgi') {
     require CGI::Fast;
     while (my $cgi = new CGI::Fast) {
-        OpenAPI::Dispatcher->process_request($cgi);
+        eval {
+            OpenAPI::Dispatcher->process_request($cgi);
+        };
+        if ($@) {
+            warn $@;
+            print "HTTP/1.1 200 OK\n";
+            # XXX don't show $@ to the end user...
+            print qq[{"success":0,"error":"$@"}\n];
+        }
     }
 } elsif ($cmd eq 'cgi') {
     require CGI;
@@ -24,6 +32,7 @@ if ($cmd eq 'fastcgi') {
 } elsif ($cmd eq 'start') {
     require OpenAPI::Server;
     my $server = OpenAPI::Server->new;
+    $server->port(8000);
     $server->run;
 } else {
     die "Unknown command: $cmd\n";
