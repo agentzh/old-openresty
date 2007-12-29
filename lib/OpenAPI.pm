@@ -1001,12 +1001,12 @@ sub has_model {
     my ($self, $model) = @_;
     _IDENT($model) or die "Bad model name: $model\n";
     my $retval;
-    my $select = SQL::Select->new('name')
+    my $select = SQL::Select->new('count(name)')
         ->from('_models')
         ->where(name => Q($model))
         ->limit(1);
     eval {
-        $retval = $self->do("$select");
+        $retval = $self->select("$select")->[0][0];
     };
     return $retval + 0;
 }
@@ -1038,13 +1038,13 @@ sub has_model_col {
 
     return 1 if $col eq 'id';
     my $res;
-    my $select = SQL::Select->new('name')
+    my $select = SQL::Select->new('count(name)')
         ->from('_columns')
         ->where(table_name => Q($table_name))
         ->where(name => Q($col))
         ->limit(1);
     eval {
-        $res = $self->do("$select");
+        $res = $self->select("$select")->[0][0];
     };
     return $res + 0;
 }
