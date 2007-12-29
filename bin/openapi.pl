@@ -29,11 +29,11 @@ if ($cmd eq 'fastcgi') {
     die "Unknown command: $cmd";
 }
 
-package OpenAPI::Server;
-use base qw(HTTP::Server::Simple::CGI);
+#package OpenAPI::Server;
+#use base qw(HTTP::Server::Simple::CGI);
 
-sub handle_request {
-    my ($self, $cgi) = @_;
-    OpenAPI::Dispatcher->process_request($cgi);
-}
+#sub handle_request {
+#    my ($self, $cgi) = @_;
+#    OpenAPI::Dispatcher->process_request($cgi);
+#}
 

@@ -613,7 +613,7 @@ sub PUT_view {
     my $data = _HASH($self->{_req_data}) or
         die "column spec must be a non-empty HASH.\n";
     ### $view
-    ### "$data->{name}"
+    ### $data
     die "View \"$view\" not found.\n" unless $self->has_view($view);
 
     my $update = SQL::Update->new('_views');
@@ -1013,16 +1013,21 @@ sub has_model {
 
 sub has_view {
     my ($self, $view) = @_;
+
     _IDENT($view) or die "Bad view name: $view\n";
+
     my $retval;
-    my $select = SQL::Select->new('name')
+
+    my $select = SQL::Select->new('count(name)')
         ->from('_views')
         ->where(name => Q($view))
         ->limit(1);
+
     eval {
-        $retval = $self->do("$select");
+        $retval = $self->select("$select",)->[0][0];
     };
-    return $retval + 0;
+
+    return $retval;
 }
 
 sub has_model_col {
