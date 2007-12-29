@@ -32,7 +32,7 @@ if ($cmd eq 'fastcgi') {
 } elsif ($cmd eq 'start') {
     require OpenAPI::Server;
     my $server = OpenAPI::Server->new;
-    $server->port(8000);
+    #$server->port(8000);
     $server->run;
 } else {
     die "Unknown command: $cmd\n";
