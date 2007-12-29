@@ -21,19 +21,11 @@ if ($cmd eq 'fastcgi') {
     require CGI;
     my $cgi = CGI->new;
     OpenAPI::Dispatcher->process_request($cgi);
-} elsif ($cmd eq 'perl') {
-    require CGI;
+} elsif ($cmd eq 'start') {
+    require OpenAPI::Server;
     my $server = OpenAPI::Server->new;
     $server->run;
 } else {
-    die "Unknown command: $cmd";
+    die "Unknown command: $cmd\n";
 }
-
-#package OpenAPI::Server;
-#use base qw(HTTP::Server::Simple::CGI);
-
-#sub handle_request {
-#    my ($self, $cgi) = @_;
-#    OpenAPI::Dispatcher->process_request($cgi);
-#}
 
