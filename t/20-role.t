@@ -75,7 +75,6 @@ GET /=/role/Admin
     "description":"Administrator",
     "login":"password"
 }
---- LAST
 
 
 === TEST 8: GET the Public role
@@ -83,15 +82,14 @@ GET /=/role/Admin
 GET /=/role/Public
 --- response
 {
-    "name":"Public",
-    "description":"Anonymous",
-    "login":"anonymous",
-    "columns":[
-        {"name":"method","type":"text",label:"HTTP method"},
-        {"name":"src","type":"text",label:"Resource"}
-    ]
+  "columns":[
+    {"name":"method","label":"HTTP method","type":"text"},
+    {"name":"url","label":"Resource","type":"text"}
+  ],
+  "name":"Public",
+  "description":"Anonymous",
+  "login":"anonymous"
 }
-
 
 
 === TEST 9: Clear out Public's rules
@@ -109,21 +107,22 @@ GET /=/role/Public/~/~
 []
 
 
-
 === TEST 11: Add a new rule to Public
 --- request
 POST /=/role/Public/~/~
---- response
 [
     {"method":"GET","url":"/=/model"},
     {"method":"POST","url":"/=/model/~"},
     {"method":"POST","url":"/=/model/A/~/~"},
-    {"method":"DELETE","url":"/=/model/A/id/~"},
+    {"method":"DELETE","url":"/=/model/A/id/~"}
 ]
-
+--- response_like
+{"success":1,"rows_affected":4,"last_row":"/=/role/Public/id/\d+"}
+--- LAST
 
 
 === TEST 12: Switch to the Public role
+--- request
 GET /=/login/tester.Public
 --- response
 {"success":1}

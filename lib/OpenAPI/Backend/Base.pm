@@ -10,7 +10,7 @@ insert into _roles (name, description, login)
 values ('Admin', 'Administrator', 'password');
 
 insert into _roles (name, description, login)
-values ('Public', 'Anonymous', 'password');
+values ('Public', 'Anonymous', 'anonymous');
 _EOC_
 }
 

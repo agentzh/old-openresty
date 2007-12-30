@@ -22,7 +22,7 @@ my %Dispatcher = (
         qw< admin admin_op >
     ],
     role => [
-        qw< role_list role rule_col rule >
+        qw< role_list role access_rule_col access_rule >
     ],
 );
 
