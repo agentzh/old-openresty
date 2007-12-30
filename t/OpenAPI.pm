@@ -75,16 +75,17 @@ sub run_test ($) {
         from_to($body, 'UTF-8', $charset) unless $charset eq 'UTF-8';
         my $res = do_request($method, $url, $body, $type);
         ok $res->is_success, "request returns OK - $name";
-        my $expected_res = $block->response;
+        my $expected_res = $block->response || $block->response_like;
         if ($format eq 'JSON' and $expected_res) {
             $expected_res =~ s/\n[ \t]*([^\n\s])/$1/sg;
         }
         if ($expected_res) {
-            from_to($expected_res, 'UTF-8', $charset) unless $charset eq 'UTF-8';
-            is $res->content, $expected_res, "response content OK - $name";
-        } elsif ($block->response_like) {
-            my $pattern = $block->response_like;
-            like $res->content, qr/$pattern/, "$name - response matched";
+            if ($block->response_like) {
+                like $res->content, qr/$expected_res/, "$name - response matched";
+            } else {
+                from_to($expected_res, 'UTF-8', $charset) unless $charset eq 'UTF-8';
+                is $res->content, $expected_res, "response content OK - $name";
+            }
         } else {
             is $res->content, $expected_res, "response content OK - $name";
         }

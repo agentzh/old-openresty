@@ -3,7 +3,7 @@ package OpenAPI;
 use strict;
 use warnings;
 
-use Smart::Comments;
+#use Smart::Comments;
 use YAML::Syck ();
 use JSON::Syck ();
 use Data::Dumper ();
@@ -816,18 +816,18 @@ sub DELETE_access_rule {
     if (!$role_id) {
         die "Role \"$role\" not found.\n";
     }
-    if ($col ne '~' and $col ne 'method' and $col and 'url' and $col ne 'id') {
+    if ($col ne '~' and $col ne 'method' and $col ne 'url' and $col ne 'id') {
         die "Unknown access rule field: $col\n";
     }
     if ($role eq 'Admin') {
         die "Role \"Admin\" is read only.\n";
     }
     my $sql;
-    if ($col eq '~') {
+    if ($value eq '~') {
         $sql = "delete from _access_rules where role = $role_id;";
-    } elsif ($value eq '~') {
+    } elsif ($col eq '~') {
         my $quoted = Q($value);
-        $sql = "delete from _access_rules where role = $role_id and (id = $quoted or method = $quoted or url = $quoted);";
+        $sql = "delete from _access_rules where role = $role_id and (method = $quoted or url = $quoted);";
     } else {
         my $quoted = Q($value);
         $sql = "delete from _access_rules where role = $role_id and $col = $quoted;";
@@ -843,22 +843,32 @@ sub GET_access_rule {
     my $col = $bits->[2];
     my $value = $bits->[3];
     my $role_id = $self->has_role($role);
+    ### $bits
     if (!$role_id) {
         die "Role \"$role\" not found.\n";
     }
-    if ($col ne '~' and $col ne 'method' and $col and 'url' and $col ne 'id') {
+    if ($col ne '~' and $col ne 'method' and $col ne 'url' and $col ne 'id') {
         die "Unknown access rule field: $col\n";
     }
+
     my $sql;
-    if ($col eq '~') {
+    if ($value eq '~') {
         $sql = "select id,method,url from _access_rules where role = $role_id;";
-    } elsif ($value eq '~') {
-        my $quoted = Q($value);
-        $sql = "select id,method,url from _access_rules where role = $role_id and ( id = $quoted or method = $quoted or url = $quoted);";
     } else {
+        my $op = $self->{_cgi}->url_param('op') || 'eq';
+        $op = $OpMap{$op};
+        if ($op eq 'like') {
+            $value = "%$value%";
+        }
         my $quoted = Q($value);
-        $sql = "select id,method,url from _access_rules where role = $role_id and $col = $quoted;";
+
+        if ($col eq '~') {
+            $sql = "select id,method,url from _access_rules where role = $role_id and ( method $op $quoted or url $op $quoted);";
+        } else {
+            $sql = "select id,method,url from _access_rules where role = $role_id and $col $op $quoted;";
+        }
     }
+    ### $sql
     my $res = $self->select($sql, { use_hash => 1 });
     $res ||= [];
     return $res;
@@ -916,6 +926,11 @@ sub insert_rule {
     my $url = delete $data->{url};
     if (!defined $url) {
         die "row $row: Column \"url\" is missing.\n";
+    }
+    if (%$data) {
+        die "Unrecognized keys found in row $row: ",
+            join(" ", keys %$data),
+            "\n";
     }
     my $insert = SQL::Insert->new("_access_rules")
         ->cols( qw< role method url > )
