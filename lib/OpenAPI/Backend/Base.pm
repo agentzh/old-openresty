@@ -36,8 +36,7 @@ sub add_user {
     );
 
     create table $user._roles (
-        id serial primary key,
-        name text unique not null,
+        name text primary key,
         parentRole integer default 0, -- a column reference to $user._roles itself. 0 means no parent
         password text,
         login text not null,
@@ -46,7 +45,7 @@ sub add_user {
 
     create table $user._access_rules (
         id serial primary key,
-        role integer references _roles(id) not null,
+        role text references _roles(name) not null,
         method varchar(10) not null,
         url text not null
     );

@@ -8,7 +8,7 @@ sub has_role {
     my ($self, $role) = @_;
     _IDENT($role) or
         die "Bad role name: ", $Dumper->($role), "\n";
-    my $select = SQL::Select->new('id')
+    my $select = SQL::Select->new('count(*)')
         ->from('_roles')
         ->where(name => Q($role))
         ->limit(1);
@@ -33,8 +33,7 @@ sub DELETE_access_rule {
     my $role = $bits->[1];
     my $col = $bits->[2];
     my $value = $bits->[3];
-    my $role_id = $self->has_role($role);
-    if (!$role_id) {
+    if (!$self->has_role($role)) {
         die "Role \"$role\" not found.\n";
     }
     if ($col ne '~' and $col ne 'method' and $col ne 'url' and $col ne 'id') {
@@ -45,13 +44,13 @@ sub DELETE_access_rule {
     }
     my $sql;
     if ($value eq '~') {
-        $sql = "delete from _access_rules where role = $role_id;";
+        $sql = "delete from _access_rules where role = '$role';";
     } elsif ($col eq '~') {
         my $quoted = Q($value);
-        $sql = "delete from _access_rules where role = $role_id and (method = $quoted or url = $quoted);";
+        $sql = "delete from _access_rules where role = '$role' and (method = $quoted or url = $quoted);";
     } else {
         my $quoted = Q($value);
-        $sql = "delete from _access_rules where role = $role_id and $col = $quoted;";
+        $sql = "delete from _access_rules where role = '$role' and $col = $quoted;";
     }
     ### DELETE access rules: $sql
     my $res = $self->do($sql);
@@ -63,9 +62,8 @@ sub GET_access_rule {
     my $role = $bits->[1];
     my $col = $bits->[2];
     my $value = $bits->[3];
-    my $role_id = $self->has_role($role);
     ### $bits
-    if (!$role_id) {
+    if (!$self->has_role($role)) {
         die "Role \"$role\" not found.\n";
     }
     if ($col ne '~' and $col ne 'method' and $col ne 'url' and $col ne 'id') {
@@ -74,7 +72,7 @@ sub GET_access_rule {
 
     my $sql;
     if ($value eq '~') {
-        $sql = "select id,method,url from _access_rules where role = $role_id;";
+        $sql = "select id,method,url from _access_rules where role = '$role';";
     } else {
         my $op = $self->{_cgi}->url_param('op') || 'eq';
         $op = $OpMap{$op};
@@ -84,9 +82,9 @@ sub GET_access_rule {
         my $quoted = Q($value);
 
         if ($col eq '~') {
-            $sql = "select id,method,url from _access_rules where role = $role_id and ( method $op $quoted or url $op $quoted);";
+            $sql = "select id,method,url from _access_rules where role = '$role' and ( method $op $quoted or url $op $quoted);";
         } else {
-            $sql = "select id,method,url from _access_rules where role = $role_id and $col $op $quoted;";
+            $sql = "select id,method,url from _access_rules where role = '$role' and $col $op $quoted;";
         }
     }
     ### $sql
@@ -100,22 +98,21 @@ sub POST_access_rule {
     my $role = $bits->[1];
     my $col = $bits->[2];
     my $value = $bits->[3];
-    my $role_id = $self->has_role($role);
-    if (!$role_id) {
+    if (!$self->has_role($role)) {
         die "Role \"$role\" not found.\n";
     }
     my $rows_affected = 0;
     my ($success, $last_insert_id);
     my $data = $self->{_req_data};
     if (_HASH($data)) {
-        $rows_affected = $self->insert_rule($role_id, $data, 1);
+        $rows_affected = $self->insert_rule($role, $data, 1);
         $success = $rows_affected >= 1 ? 1 : 0;
     } elsif (_ARRAY($data)) {
         my $i = 1;
         for my $elem (@$data) {
             _HASH($elem) or
                 die "Access rule is not of hash: ", $Dumper->($elem), "\n";
-            $rows_affected += $self->insert_rule($role_id, $elem, $i);
+            $rows_affected += $self->insert_rule($role, $elem, $i);
         } continue {
             $i++;
         }

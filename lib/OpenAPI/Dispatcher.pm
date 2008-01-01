@@ -66,7 +66,7 @@ sub process_request {
     my $user = $cgi->url_param('user') || 'peee';
     ### $user
     eval {
-        #OpenAPI->drop_user($user);
+        # OpenAPI->drop_user($user);
     };
     if ($@) {
         $openapi->fatal($@);
