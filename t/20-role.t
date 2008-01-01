@@ -226,8 +226,6 @@ GET /=/role/Public/~/POST
     {"url":"/=/model/A/~/~","method":"POST","id":"\d+"}
 \]
 
---- LAST
-
 
 
 === TEST 22: Switch to the Public role
@@ -236,6 +234,7 @@ GET /=/login/tester.Public
 --- response
 {"success":1}
 
+--- LAST
 
 
 === TEST 23: Create model A
