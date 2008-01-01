@@ -233,5 +233,17 @@ sub DELETE_role_list {
     return { success => $self->do($sql) >= 0 ? 1 : 0 };
 }
 
+sub has_view {
+    my ($self, $view) = @_;
+
+    _IDENT($view) or die "Bad view name: $view\n";
+
+    my $select = SQL::Select->new('count(name)')
+        ->from('_views')
+        ->where(name => Q($view))
+        ->limit(1);
+    return $self->select("$select",)->[0][0];
+}
+
 1;
 

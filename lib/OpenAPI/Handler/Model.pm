@@ -1,6 +1,6 @@
 package OpenAPI;
 
-use vars qw($Dumper);
+use vars qw($Dumper %OpMap);
 use strict;
 use warnings;
 
@@ -501,6 +501,360 @@ sub global_model_check {
             }
         }
     }
+}
+
+sub get_tables {
+    #my ($self, $user) = @_;
+    my $self = shift;
+    my $select = SQL::Select->new('name')->from('_models');
+    return $self->select("$select");
+}
+
+sub model_count {
+    my $self = shift;
+    return $self->select("select count(*) from _models")->[0][0];
+}
+
+sub column_count {
+    my $self = shift;
+    return $self->select("select count(*) from _columns")->[0][0];
+}
+
+sub row_count {
+    my ($self, $table) = @_;
+    return $self->select("select count(*) from \"$table\"")->[0][0];
+}
+
+sub get_models {
+    my $self = shift;
+    my $select = SQL::Select->new('name','description')->from('_models');
+    return $self->select("$select", { use_hash => 1 });
+}
+
+sub get_model_cols {
+    my ($self, $model) = @_;
+    if (!$self->has_model($model)) {
+        die "Model \"$model\" not found.\n";
+    }
+    my $table = $model;
+    my $select = SQL::Select->new('description')
+        ->from('_models')
+        ->where(name => Q($model));
+    my $list = $self->select("$select");
+    my $desc = $list->[0][0];
+    $select->reset( QI(qw< name type label default >) )
+           ->from('_columns')
+           ->where(table_name => Q($table))
+           ->order_by('id');
+    $list = $self->select("$select", { use_hash => 1 });
+    if (!$list or !ref $list) { $list = []; }
+    unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
+    return { description => $desc, name => $model, columns => $list };
+}
+
+sub get_model_col_names {
+    my ($self, $model) = @_;
+
+    if (!$self->has_model($model)) {
+        die "Model \"$model\" not found.\n";
+    }
+    my $table = $model;
+    my $select = SQL::Select->new('name')
+        ->from('_columns')
+        ->where(table_name => Q($table));
+
+    my $list = $self->select("$select");
+    if (!$list or !ref $list) { return []; }
+    return [map { @$_ } @$list];
+}
+
+sub has_model_col {
+    my ($self, $model, $col) = @_;
+    _IDENT($model) or die "Bad model name: $model\n";
+    _IDENT($col) or die "Bad model column name: $col\n";
+    my $table_name = $model;
+
+    return 1 if $col eq 'id';
+    my $res;
+    my $select = SQL::Select->new('count(name)')
+        ->from('_columns')
+        ->where(table_name => Q($table_name))
+        ->where(name => Q($col))
+        ->limit(1);
+    eval {
+        $res = $self->select("$select")->[0][0];
+    };
+    return $res + 0;
+}
+
+sub drop_table {
+    my ($self, $table) = @_;
+    $self->do(<<_EOC_);
+drop table if exists "$table";
+delete from _models where table_name='$table';
+delete from _columns where table_name='$table';
+_EOC_
+}
+
+sub insert_records {
+    my ($self, $model, $data) = @_;
+    if (!ref $data) {
+        die "Malformed data: Hash or Array expected\n";
+    }
+    ## Data: $data
+    my $table = $model;
+    if ($self->row_count($table) >= $RECORD_LIMIT) {
+        die "Exceeded model row count limit: $RECORD_LIMIT.\n";
+    }
+
+    my $cols = $self->get_model_col_names($model);
+    my $sql;
+    my $insert = SQL::Insert->new(QI($table));
+
+    if (ref $data eq 'HASH') { # record found
+
+        my $num = insert_record($insert, $data, $cols, 1);
+
+        my $last_id = $self->last_insert_id($table);
+
+        return { rows_affected => $num, last_row => "/=/model/$model/id/$last_id", success => $num?1:0 };
+    } elsif (ref $data eq 'ARRAY') {
+        my $i = 0;
+        my $rows_affected = 0;
+        if (@$data > $INSERT_LIMIT) {
+            die "You can only insert $INSERT_LIMIT rows at a time.\n";
+        }
+        for my $row_data (@$data) {
+            _HASH($row_data) or
+                die "Bad data in row $i: ", $Dumper->($row_data), "\n";
+            $rows_affected += insert_record($insert, $row_data, $cols, $i);
+            $i++;
+        }
+        my $last_id = $self->last_insert_id($table);
+        return { rows_affected => $rows_affected, last_row => "/=/model/$model/id/$last_id", success => $rows_affected?1:0 };
+    } else {
+        die "Malformed data: Hash or Array expected.\n";
+    }
+}
+
+sub insert_record {
+    my ($insert, $row_data, $cols, $row_num) = @_;
+    $insert = $insert->clone;
+    my $found = 0;
+    while (my ($col, $val) = each %$row_data) {
+        _IDENT($col) or
+            die "Bad column name in row $row_num: ", $Dumper->($col), "\n";
+        $insert->cols(QI($col));
+        $insert->values(Q($val));
+        $found = 1;
+    }
+    if (!$found) {
+        die "No column specified in row $row_num.\n";
+    }
+    my $sql = "$insert";
+
+    return $Backend->do($sql);
+}
+
+sub process_order_by {
+    my ($self, $select, $model) = @_;
+    my $order_by = $self->{_cgi}->url_param('order_by');
+    return unless defined $order_by;
+    die "No column found in order_by.\n" if $order_by eq '';
+    my @sub_order_by = split ',', $order_by;
+    if (!@sub_order_by and $order_by) {
+        die "Invalid order_by value: $order_by\n";
+    }
+    foreach my $item (@sub_order_by){
+
+        my ($col, $dir) = split ':', $item, 2;
+        die "No column \"$col\" found in order_by.\n"
+            unless $self->has_model_col($model, $col);
+        $dir = lc($dir) if $dir;
+        die "Invalid order_by direction: $dir\n"
+            if $dir and $dir ne 'asc' and $dir ne 'desc';
+        $select->order_by($col => $dir || ());
+    }
+}
+
+sub process_offset {
+    my ($self, $select) = @_;
+    my $offset = $self->{_offset};
+    if ($offset) {
+        $select->offset($offset);
+    }
+}
+
+sub process_limit {
+    my ($self, $select) = @_;
+    my $limit = $self->{_limit};
+    if (defined $limit) {
+        $select->limit($limit);
+    }
+}
+
+sub select_records {
+    my ($self, $model, $user_col, $val) = @_;
+    my $table = $model;
+    my $cols = $self->get_model_col_names($model);
+
+    if (lc($user_col) ne 'id' and $user_col ne '~') {
+        my $found = 0;
+        for my $col (@$cols) {
+            if ($col eq $user_col) { $found = 1; last; }
+        }
+        if (!$found) { die "Column $user_col not available.\n"; }
+    }
+    my $select = SQL::Select->new;
+    $select->from(QI($table));
+    if (defined $val and $val ne '~') {
+        my $op = $self->{_cgi}->url_param('op') || 'eq';
+        $op = $OpMap{$op};
+        if ($op eq 'like') {
+            $val = "%$val%";
+        }
+        $select->select('id', QI(@$cols));
+        if ($user_col eq '~') {
+            # XXX
+            $select->op('or');
+            for my $col (@$cols) {
+                $select->where($col => $op => Q($val));
+            }
+        } else {
+            $select->where(QI($user_col) => $op => Q($val));
+        }
+    } else {
+        $select->select($user_col);
+    }
+    $self->process_order_by($select, $model, $user_col);
+    $self->process_offset($select);
+    $self->process_limit($select);
+
+    my $res = $self->select("$select", { use_hash => 1 });
+    if (!$res and !ref $res) { return []; }
+    return $res;
+}
+
+sub select_all_records {
+    my ($self, $model) = @_;
+    my $order_by = $self->{'_order_by'};
+
+    if (!$self->has_model($model)) {
+        die "Model \"$model\" not found.\n";
+    }
+
+    my $table = $model;
+    my $select = SQL::Select->new('*')->from(QI($table));
+
+    $self->process_order_by($select, $model);
+    $self->process_offset($select);
+    $self->process_limit($select);
+
+    my $list = $self->select("$select", { use_hash => 1 });
+    if (!$list or !ref $list) { return []; }
+    return $list;
+}
+
+sub delete_all_records {
+    my ($self, $model) = @_;
+    if (!$self->has_model($model)) {
+        die "Model \"$model\" not found.\n";
+    }
+    my $table = $model;
+    my $retval = $Backend->do("delete from \"$table\"");
+    return {success => 1,rows_affected => $retval+0};
+}
+
+sub delete_records {
+    my ($self, $model, $user_col, $val) = @_;
+    if (!$self->has_model($model)) {
+        die "Model \"$model\" not found.\n";
+    }
+    my $table = $model;
+    my $cols = $self->get_model_col_names($model);
+    if (lc($user_col) ne 'id') {
+        my $found = 0;
+        for my $col (@$cols) {
+            if ($col eq $user_col) { $found = 1; last; }
+        }
+        if (!$found) { die "Column $user_col not available.\n"; }
+    }
+    #my $flds = join(",", @$cols);
+    my $sql;
+    if (defined $val) {
+        $sql = "delete from \"$table\" where \"$user_col\"=" . Q($val);
+    } else {
+        $sql = "delete from \"$table\"";
+    }
+
+    my $retval = $Backend->do($sql);
+    return {success => 1,rows_affected => $retval+0};
+}
+
+sub update_records {
+    my ($self, $model, $user_col, $val, $data) = @_;
+    my $table = $model;
+    my $cols = $self->get_model_col_names($model);
+    if ($user_col ne 'id' && $user_col ne '~') {
+        my $found = 0;
+        for my $col (@$cols) {
+            if ($col eq $user_col) { $found = 1; last; }
+        }
+        #my $flds = join(",", @$cols);
+        if (!$found) { die "Column $user_col not available.\n"; }
+    }
+    if (!ref $data || ref $data ne 'HASH') {
+        die "HASH data expected in the content body.\n";
+    }
+    my $update = SQL::Update->new(QI($table));
+    while (my ($key, $val) = each %$data) {
+        my $col = $key;
+        if ($col eq 'id') {
+            next;  # XXX maybe issue a warning?
+        }
+        $update->set(QI($col) => Q($val));
+    }
+
+    if (defined $val and $val ne '~') {
+        $update->where(QI($user_col) => $val);
+    }
+    my $retval = $Backend->do("$update") + 0;
+    return {success => $retval ? 1 : 0,rows_affected => $retval};
+}
+
+sub alter_model {
+    my $self = $_[0];
+    my $model = _IDENT($_[1]) or die "Invalid model name \"$_[1]\".\n";
+    my $data = _HASH($_[2]) or die "HASH expected in the PUT content.\n";
+    my $table = $model;
+    if (!$self->has_model($model)) {
+        die "Model \"$model\" not found.\n";
+    }
+
+    my $sql;
+    my $new_model = $model;
+    if ($new_model = delete $data->{name}) {
+        _IDENT($new_model) or die "Invalid model name \"$new_model\"\n";
+        if ($self->has_model($new_model)) {
+            die "Model \"$new_model\" already exists.\n";
+        }
+        my $new_table = $new_model;
+        $sql .=
+            "update _models set table_name='$new_table', name='$new_model' where name='$model';\n" .
+            "update _columns set table_name='$new_table' where table_name='$table';\n" .
+            "alter table \"$table\" rename to \"$new_table\";\n";
+    }
+    if (my $desc = delete $data->{description}) {
+        _STRING($desc) or die "Model descriptons must be strings.\n";
+        $sql .= "update _models set description='$desc' where name='$new_model';\n"
+    }
+    if (%$data) {
+        die "Unknown fields ", join(", ", keys %$data), "\n";
+    }
+
+    my $retval = $Backend->do($sql);
+
+    return {success => 1};
 }
 
 1;
