@@ -13,6 +13,7 @@ use Benchmark::Timer;
 my $timer = Benchmark::Timer->new();
 
 my $ua = LWP::UserAgent->new;
+$ua->cookie_jar({ file => "cookies.txt" });
 our $host = $ENV{'OPENAPI_FRONTEND'} || $ENV{'REMOTE_OPENAPI'} || 'http://localhost';
 $host = "http://$host" if $host !~ m{^http://};
 

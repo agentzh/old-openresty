@@ -28,6 +28,7 @@ use OpenAPI::Handler::View;
 use OpenAPI::Handler::Action;
 use OpenAPI::Handler::Role;
 use OpenAPI::Handler::Admin;
+use OpenAPI::Handler::Login;
 
 #$YAML::Syck::ImplicitBinary = 1;
 our $Backend;
@@ -208,9 +209,22 @@ sub response {
     my $self = shift;
     my $charset = $self->{_charset};
     my $cgi = $self->{_cgi};
-    my $s = $cgi->header(-type => "text/plain; charset=$charset");
+    my $cookie_data = $self->{_cookie};
+    my @cookies;
+    if ($cookie_data) {
+        while (my ($key, $val) = each %$cookie_data) {
+            push @cookies, CGI::Cookie->new(
+                -name => $key, -value => $val
+            );
+        }
+    }
+
     print "HTTP/1.1 200 OK\n";
-    print $s;
+    print $cgi->header(
+        -type => "text/plain; charset=$charset",
+        @cookies ? (-cookie => \@cookies) : ()
+    );
+
     #warn $s;
     my $str = '';
     if ($self->{_error}) {
@@ -302,6 +316,11 @@ sub emit_error {
     my $msg = shift;
     $msg =~ s/\n+$//s;
     return $self->emit_data( { success => 0, error => $msg } );
+}
+
+sub set_role {
+    my ($self, $role) = @_;
+    $self->{_role} = $role;
 }
 
 1;

@@ -8,6 +8,14 @@ run_tests;
 
 __DATA__
 
+=== TEST 1: login
+--- request
+GET /=/login/peee.Admin
+--- response
+{"success":1,"account":"peee","role":"Admin"}
+
+
+
 === TEST 1: Delete existing models
 --- request
 DELETE /=/model/~
@@ -230,10 +238,9 @@ GET /=/role/Public/~/POST
 
 === TEST 22: Switch to the Public role
 --- request
-GET /=/login/tester.Public
+GET /=/login/.Public
 --- response
-{"success":1}
-
+{"success":1,"account":"peee","role":"Public"}
 --- LAST
 
 

@@ -7,7 +7,7 @@ author              ('Agent Zhang <agentzh@yahoo.cn>');
 perl_version        ('5.006001');
 all_from            ('lib/OpenAPI.pm');
 
-requires            ('CGI' => '3.31');
+requires            ('CGI' => '3.32');
 requires            ('FCGI');
 requires            ('YAML::Syck' => '0.99');
 requires            ('List::Util');

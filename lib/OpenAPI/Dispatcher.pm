@@ -24,6 +24,9 @@ my %Dispatcher = (
     role => [
         qw< role_list role access_rule_col access_rule >
     ],
+    login => [
+        qw< login login_user login_user_password >
+    ],
 );
 
 my $url_prefix = $ENV{OPENAPI_URL_PREFIX};
