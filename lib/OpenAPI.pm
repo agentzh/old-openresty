@@ -160,8 +160,8 @@ sub init {
         $http_meth = 'PUT';
     } elsif ($http_meth =~ /^(?:GET|POST)$/ and $url =~ s{^=/delete/}{=/}) {
         $http_meth = 'DELETE';
-    } elsif ($http_meth =~ /^GET$/ and $url =~ s{^=/post/}{=/} ) {
-        $http_meth = 'POST';
+    } elsif ($http_meth eq 'GET' and $url =~ s{^=/(post|put)/}{=/} ) {
+        $http_meth = uc($1);
         $req_data = $cgi->url_param('data');
         #$req_data = $Importer->($content);
 
