@@ -3,6 +3,7 @@ package OpenAPI;
 #use Smart::Comments;
 use strict;
 use warnings;
+
 use vars qw($Dumper);
 
 sub has_role {
@@ -22,10 +23,14 @@ sub DELETE_role {
     if ($role eq '~') {
         return $self->DELETE_role_list;
     }
+    if ($role eq 'Admin' or $role eq 'Public') {
+        die "Role \"$role\" reserved.\n";
+    }
     if (!$self->has_role($role)) {
         die "Role \"$role\" not found.\n";
     }
-    my $sql = "delete from _roles where name = ".Q($role);
+    my $sql = "delete from _access_rules where role = ".Q($role).";\n".
+        "delete from _roles where name = ".Q($role);
     return { success => $self->do($sql) >= 0 ? 1 : 0 };
 }
 
@@ -196,7 +201,8 @@ sub GET_role {
 
 sub DELETE_role_list {
     my ($self, $bits) = @_;
-    my $sql = "delete from _roles where name <> 'Admin' and name <> 'Public'";
+    my $sql = "delete from _access_rules where role <> 'Admin' and role <> 'Public';\n".
+        "delete from _roles where name <> 'Admin' and name <> 'Public'";
     $self->warning("Predefined roles skipped.");
     return { success => $self->do($sql) >= 0 ? 1 : 0 };
 }
@@ -220,6 +226,85 @@ sub current_user_can {
     ### $sql
     my $res = $self->select($sql);
     return do { $res->[0][0] };
+}
+
+sub POST_role {
+    my ($self, $bits) = @_;
+    my $data = _HASH($self->{_req_data}) or
+        die "The role schema must be a HASH.\n";
+    my $role = $bits->[1];
+
+    my $name;
+    if ($role eq '~') {
+        $role = $data->{name};
+    }
+
+    if ($name = delete $data->{name} and $name ne $role) {
+        $self->warning("name \"$name\" in POST content ignored.");
+    }
+
+    $data->{name} = $role;
+    return $self->new_role($data);
+}
+
+sub role_count {
+    my $self = shift;
+    return $self->select("select count(*) from _roles")->[0][0];
+}
+
+sub new_role {
+    my ($self, $data) = @_;
+    my $nroles = $self->role_count;
+    my $res;
+    if ($nroles >= $ROLE_LIMIT) {
+        die "Exceeded role count limit $ROLE_LIMIT.\n";
+    }
+
+    my $name = delete $data->{name} or
+        die "No 'name' specified.\n";
+    _IDENT($name) or die "Bad role name: ", $Dumper->($name), "\n";
+
+    my $desc = delete $data->{description};
+    if (!defined $desc) {
+        die "Field 'description' is missing.\n";
+    }
+    _STRING($desc) or die "Role description must be a string.\n";
+
+    my $login = delete $data->{login};
+    if (!defined $login) {
+        die "No 'login' field specified.\n";
+    }
+    _STRING($login) or die "Bad 'login' value: ", $Dumper->($login), "\n";
+
+    if ($login !~ /^(?:password|captcha|anonymous)$/) {
+        die "Unknown login method: $login\n";
+    }
+
+    my $password = delete $data->{password};
+    if (defined $password and $login ne 'password') {
+        $self->warning("Field 'password' ignored.");
+    }
+
+    if ($login eq 'password') {
+        if (!defined $password) {
+            die "No password given when 'login' is 'password'.\n";
+        } elsif (length($password) < $PASSWORD_MIN_LEN) {
+            die "Password too short; at least $PASSWORD_MIN_LEN chars required.\n";
+        }
+    }
+
+    if (%$data) {
+        die "Unknown keys: ", join(" ", keys %$data), "\n";
+    }
+
+    my $insert = SQL::Insert
+        ->new('_roles')
+        ->cols( qw<name description login password> )
+        ->values( Q($name, $desc, $login, $password) );
+
+    return { success => $self->do($insert) ? 1 : 0 };
+
+
 }
 
 1;

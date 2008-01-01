@@ -252,6 +252,7 @@ POST /=/model/~
 {"success":1}
 
 
+
 === TEST 25: Create model B
 --- request
 POST /=/model/B
@@ -340,6 +341,7 @@ POST /=/model/A/~/~
 {"success":1,"rows_affected":3,"last_row":"/=/model/A/id/3"}
 
 
+
 === TEST 35: Get the rows
 --- request
 GET /=/model/A/~/~
@@ -388,11 +390,13 @@ DELETE /=/model/A/id/3
 {"success":1,"rows_affected":1}
 
 
+
 === TEST 41: Delete a row again
 --- request
 DELETE /=/model/A/id/3
 --- response
 {"success":1,"rows_affected":0}
+
 
 
 === TEST 42: Delete all the rows
@@ -419,7 +423,8 @@ POST /=/model/A/foo
 {"success":0,"error":"Permission denied for the \"Public\" role."}
 
 
-=== TEST 46: Delete the newly added column
+
+=== TEST 45: Delete the newly added column
 --- request
 DELETE /=/model/A/bar
 --- response
@@ -427,7 +432,7 @@ DELETE /=/model/A/bar
 
 
 
-=== TEST 47: Get the view list
+=== TEST 46: Get the view list
 --- request
 GET /=/view
 --- response
@@ -435,7 +440,7 @@ GET /=/view
 
 
 
-=== TEST 48: Try to create a view
+=== TEST 47: Try to create a view
 --- request
 POST /=/view/MyView
 {"body":"select * from A"}
@@ -444,7 +449,7 @@ POST /=/view/MyView
 
 
 
-=== TEST 49: Switch back to the Amin role
+=== TEST 48: Switch back to the Amin role
 --- request
 GET /=/login/.Admin
 --- response
@@ -452,7 +457,7 @@ GET /=/login/.Admin
 
 
 
-=== TEST 51: Check the records in A
+=== TEST 49: Check the records in A
 --- request
 GET /=/model/A/~/~
 --- response
@@ -460,43 +465,30 @@ GET /=/model/A/~/~
 
 
 
-
-
-=== TEST 53: Create a new role w/o description
+=== TEST 50: Create a new role w/o description
 --- request
 POST /=/role/Poster
 {
-    login: ["password","4423037"]
+    login: "password",
+    password: "4423037"
 }
 --- response
-{"success":0,"error":"Field \"description\" missing."}
---- LAST
+{"success":0,"error":"Field 'description' is missing."}
 
 
-=== TEST 54: Create a new role w/o login
+
+=== TEST 51: Create a new role w/o login
 --- request
 POST /=/role/Poster
 {
     "description":"Comment poster"
 }
 --- response
-{"success":0,"error":"Field \"login\" missing."}
+{"success":0,"error":"No 'login' field specified."}
 
 
 
-=== TEST 55: Create a new role w/o password
---- request
-POST /=/role/Poster
-{
-    "description":"Comment poster",
-    login: ["password"]
-}
---- response
-{"success":0,"error":"Password value required."}
-
-
-
-=== TEST 56: Create a new role w/o password
+=== TEST 52: Create a new role w/o password
 --- request
 POST /=/role/Poster
 {
@@ -504,11 +496,11 @@ POST /=/role/Poster
     login: "password"
 }
 --- response
-{"success":0,"error":"Password value required."}
+{"success":0,"error":"No password given when 'login' is 'password'."}
 
 
 
-=== TEST 57: unknown login method (scalar form)
+=== TEST 53: unknown login method
 --- request
 POST /=/role/Poster
 {
@@ -516,82 +508,207 @@ POST /=/role/Poster
     login: "blah"
 }
 --- response
-{"success":0,"error":"Unknown login method: \"blah\""}
+{"success":0,"error":"Unknown login method: blah"}
 
 
 
-=== TEST 58: unknown login method (array form)
+=== TEST 54: blank password not allowed
 --- request
 POST /=/role/Poster
 {
     "description":"Comment poster",
-    login: ["blah"]
+    login: "password",
+    password: ""
 }
 --- response
-{"success":0,"error":"Unknown login method: \"blah\""}
+{"success":0,"error":"Password too short; at least 6 chars required."}
 
 
 
-=== TEST 59: unknown login method (array of arrays form)
+=== TEST 55: too short password not allowed
 --- request
 POST /=/role/Poster
 {
     "description":"Comment poster",
-    login: [[]]
+    login: "password",
+    password: "12345"
 }
 --- response
-{"success":0,"error":"Unknown login method: []"}
+{"success":0,"error":"Password too short; at least 6 chars required."}
 
 
 
-=== TEST 60: Create a new role in the right way
+=== TEST 56: Create a new role in the right way
 --- request
 POST /=/role/Poster
 {
     "description":"Comment poster",
-    login: ["password","4423037"]
+    login: "password",
+    password: "4423037"
 }
 --- response
 {"success":1}
 
 
 
-=== TEST 61: Add a rule to read model list
+=== TEST 57: Add a rule to read model list
 --- request
 POST /=/role/Poster/~/~
 {"url":"/=/model"}
---- response
-{"success":1}
+--- response_like
+\{"success":1,"rows_affected":1,"last_row":"/=/role/Poster/id/\d+"\}
 
 
 
-=== TEST 62: Add a rule to insert new rows to A
+=== TEST 58: Add a rule to insert new rows to A (missing column 'url')
 --- request
 POST /=/role/Poster/~/~
 {"method":"POST","src":"/=/model/A/~/~"}
 --- response
-{"success":1}
+{"success":0,"error":"row 1: Column \"url\" is missing."}
 
 
 
-=== TEST 63: Check the rule list
+=== TEST 59: Add a rule to insert new rows to A (the right way)
+--- request
+POST /=/role/Poster/~/~
+{"method":"POST","url":"/=/model/A/~/~"}
+--- response_like
+^\{"success":1,"rows_affected":1,"last_row":"/=/role/Poster/id/\d+"\}$
+
+
+
+=== TEST 60: Check the rule list
 --- request
 GET /=/role/Poster/~/~
---- response
-[...]
+--- response_like
+^\[
+    {"url":"/=/model","method":"GET","id":"\d+"},
+    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"}
+\]$
 
 
 
-=== TEST 64: Log into the new role
+=== TEST 61: Log into the new role
 --- request
-GET /=/login/tester.Poster
+GET /=/login/.Poster
 --- response
-{"success":1}
+{"success":1,"account":"peee","role":"Poster"}
 
 
 
-=== TEST 65: Try to do something
+=== TEST 62: Try to do something
 --- request
 GET /=/model
 --- response
+[
+    {"src":"/=/model/A","name":"A","description":"A"},
+    {"src":"/=/model/B","name":"B","description":"B"}
+]
+
+
+
+=== TEST 63: Try to get model list by another way
+--- request
+GET /=/model/~
+--- response
+{"success":0,"error":"Permission denied for the \"Poster\" role."}
+
+
+
+=== TEST 64: Try to create a new model
+--- request
+POST /=/model/C
+{ description: "C" }
+--- response
+{"success":0,"error":"Permission denied for the \"Poster\" role."}
+
+
+
+=== TEST 65: Try to access minisql
+--- request
+POST /=/action/.Select/lang/minisql
+"select * from A"
+--- response
+{"success":0,"error":"Permission denied for the \"Poster\" role."}
+
+
+
+=== TEST 66: Try to delete itself
+--- request
+DELETE /=/role/Poster
+--- response
+{"success":0,"error":"Permission denied for the \"Poster\" role."}
+
+
+
+=== TEST 67: Switch back to the Amin role
+--- request
+GET /=/login/.Admin
+--- response
+{"success":1,"account":"peee","role":"Admin"}
+
+
+
+=== TEST 68: Drop the Poster role
+--- request
+DELETE /=/role/Poster
+--- response
+{"success":1}
+
+
+
+=== TEST 69: Access the Poster role again
+--- request
+GET /=/role/Poster
+--- response
+{"success":0,"error":"Role \"Poster\" not found."}
+
+
+
+=== TEST 70: Try to drop the Admin role
+--- request
+DELETE /=/role/Admin
+--- response
+{"success":0,"error":"Role \"Admin\" reserved."}
+
+
+
+=== TEST 71: Access the Admin role again
+--- request
+GET /=/role/Admin
+--- response
+{
+    "columns":[
+        {"name":"method","label":"HTTP method","type":"text"},
+        {"name":"url","label":"Resource","type":"text"}
+    ],
+    "name":"Admin",
+    "description":"Administrator",
+    "login":"password"
+}
+
+
+
+=== TEST 72: Try to drop the Public role
+--- request
+DELETE /=/role/Public
+--- response
+{"success":0,"error":"Role \"Public\" reserved."}
+
+
+
+=== TEST 73: Access the Public role again
+--- request
+GET /=/role/Public
+--- response
+{
+    "columns":[
+        {"name":"method","label":"HTTP method","type":"text"},
+        {"name":"url","label":"Resource","type":"text"}
+    ],
+    "name":"Public",
+    "description":"Anonymous",
+    "login":"anonymous"
+}
 
