@@ -2,16 +2,128 @@ package OpenAPI::Backend::Base;
 
 use strict;
 use warnings;
+use SQL::Insert;
+
+my %DefaultRules = (
+    Admin => [
+        [ DELETE => 'model' ],
+        [ DELETE => 'model/~' ],
+        [ DELETE => 'model/~/~' ],
+        [ DELETE => 'model/~/~/~' ],
+        [ DELETE => 'model/~/~/~/~' ],
+
+        [ GET => 'model' ],
+        [ GET => 'model/~' ],
+        [ GET => 'model/~/~' ],
+        [ GET => 'model/~/~/~' ],
+        [ GET => 'model/~/~/~/~' ],
+
+        [ PUT => 'model' ],
+        [ PUT => 'model/~' ],
+        [ PUT => 'model/~/~' ],
+        [ PUT => 'model/~/~/~' ],
+        [ PUT => 'model/~/~/~/~' ],
+
+        [ POST => 'model' ],
+        [ POST => 'model/~' ],
+        [ POST => 'model/~/~' ],
+        [ POST => 'model/~/~/~' ],
+        [ POST => 'model/~/~/~/~' ],
+
+        [ DELETE => 'view' ],
+        [ DELETE => 'view/~' ],
+        [ DELETE => 'view/~/~' ],
+        [ DELETE => 'view/~/~/~' ],
+        [ DELETE => 'view/~/~/~/~' ],
+
+        [ GET => 'view' ],
+        [ GET => 'view/~' ],
+        [ GET => 'view/~/~' ],
+        [ GET => 'view/~/~/~' ],
+        [ GET => 'view/~/~/~/~' ],
+
+        [ PUT => 'view' ],
+        [ PUT => 'view/~' ],
+        [ PUT => 'view/~/~' ],
+        [ PUT => 'view/~/~/~' ],
+        [ PUT => 'view/~/~/~/~' ],
+
+        [ POST => 'view' ],
+        [ POST => 'view/~' ],
+        [ POST => 'view/~/~' ],
+        [ POST => 'view/~/~/~' ],
+        [ POST => 'view/~/~/~/~' ],
+
+        [ DELETE => 'role' ],
+        [ DELETE => 'role/~' ],
+        [ DELETE => 'role/~/~' ],
+        [ DELETE => 'role/~/~/~' ],
+        [ DELETE => 'role/~/~/~/~' ],
+
+        [ GET => 'role' ],
+        [ GET => 'role/~' ],
+        [ GET => 'role/~/~' ],
+        [ GET => 'role/~/~/~' ],
+        [ GET => 'role/~/~/~/~' ],
+
+        [ PUT => 'role' ],
+        [ PUT => 'role/~' ],
+        [ PUT => 'role/~/~' ],
+        [ PUT => 'role/~/~/~' ],
+        [ PUT => 'role/~/~/~/~' ],
+
+        [ POST => 'role' ],
+        [ POST => 'role/~' ],
+        [ POST => 'role/~/~' ],
+        [ POST => 'role/~/~/~' ],
+        [ POST => 'role/~/~/~/~' ],
+
+        [ DELETE => 'action' ],
+        [ DELETE => 'action/~' ],
+        [ DELETE => 'action/~/~' ],
+        [ DELETE => 'action/~/~/~' ],
+        [ DELETE => 'action/~/~/~/~' ],
+
+        [ GET => 'action' ],
+        [ GET => 'action/~' ],
+        [ GET => 'action/~/~' ],
+        [ GET => 'action/~/~/~' ],
+        [ GET => 'action/~/~/~/~' ],
+
+        [ PUT => 'action' ],
+        [ PUT => 'action/~' ],
+        [ PUT => 'action/~/~' ],
+        [ PUT => 'action/~/~/~' ],
+        [ PUT => 'action/~/~/~/~' ],
+
+        [ POST => 'action' ],
+        [ POST => 'action/~' ],
+        [ POST => 'action/~/~' ],
+        [ POST => 'action/~/~/~' ],
+        [ POST => 'action/~/~/~/~' ],
+
+        [ POST => 'admin/~' ],
+    ],
+);
 
 sub add_default_roles {
     my ($self) = @_;
-    $self->do(<<'_EOC_');
+    my $sql = <<'_EOC_';
 insert into _roles (name, description, login)
 values ('Admin', 'Administrator', 'password');
 
 insert into _roles (name, description, login)
 values ('Public', 'Anonymous', 'anonymous');
 _EOC_
+    while (my ($role, $rules) = each %DefaultRules) {
+        for my $rule (@$rules) {
+            my $insert = SQL::Insert->new('_access_rules')
+                ->cols(qw< role method url >)
+                ->values("'$role'", "'$rule->[0]'", "'/=/$rule->[1]'");
+            $sql .= $insert;
+        }
+    }
+    $self->do($sql);
 }
 
 sub add_user {

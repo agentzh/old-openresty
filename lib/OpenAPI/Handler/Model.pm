@@ -70,6 +70,12 @@ sub DELETE_model {
     my ($self, $bits) = @_;
     my $model = $bits->[1];
     my $table = $model;
+    if ($model eq '~') {
+        return $self->DELETE_model_list();
+    }
+    if (!$self->has_model($model)) {
+        die "Model \"$model\" not found.\n";
+    }
     #$tables = $tables->[0];
     $self->drop_table($table);
     return { success => 1 };
@@ -292,7 +298,7 @@ sub DELETE_model_row {
     my $model  = $bits->[1];
     my $column = $bits->[2];
     my $value  = $bits->[3];
-    if ($column eq '~' and $value eq '~') {
+    if ($value eq '~') {
         return $self->delete_all_records($model);
     }
 

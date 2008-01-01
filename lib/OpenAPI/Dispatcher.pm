@@ -69,7 +69,7 @@ sub process_request {
     my $user = $cgi->url_param('user') || 'peee';
     ### $user
     eval {
-        # OpenAPI->drop_user($user);
+        #OpenAPI->drop_user($user);
     };
     if ($@) {
         $openapi->fatal($@);
@@ -135,7 +135,35 @@ sub process_request {
         return;
     }
 
+    my ($account, $role);
+    my $cookies = CGI::Cookie->fetch;
+    if ($cookies) {
+        my $cookie = $cookies->{account};
+        if ($cookie) {
+            $account = $cookie->value;
+        }
+        $cookie = $cookies->{role};
+        if ($cookie) {
+            $role = $cookie->value;
+        }
+    }
+
+    # XXX hacks...
+    $account ||= $user;
+    $role ||= 'Admin';
+    $openapi->set_role($role);
+
     my $category = $Dispatcher{$bits[0]};
+
+    # XXX check ACL rules...
+    if ($bits[0] and $bits[0] ne 'login') {
+        my $res = $openapi->current_user_can($http_meth => \@bits);
+        if (!$res) {
+            $openapi->fatal("Permission denied for the \"$role\" role.");
+            return;
+        }
+    }
+
     if ($category) {
         my $object = $category->[$#bits];
         ### $object

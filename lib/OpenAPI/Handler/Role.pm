@@ -1,5 +1,6 @@
 package OpenAPI;
 
+#use Smart::Comments;
 use strict;
 use warnings;
 use vars qw($Dumper);
@@ -145,6 +146,9 @@ sub insert_rule {
     if (!defined $url) {
         die "row $row: Column \"url\" is missing.\n";
     }
+    if ($url !~ /^\/=\//) {
+        die "URL must be lead by \"/=/\".\n";
+    }
     if (%$data) {
         die "Unrecognized keys found in row $row: ",
             join(" ", keys %$data),
@@ -195,6 +199,27 @@ sub DELETE_role_list {
     my $sql = "delete from _roles where name <> 'Admin' and name <> 'Public'";
     $self->warning("Predefined roles skipped.");
     return { success => $self->do($sql) >= 0 ? 1 : 0 };
+}
+
+sub current_user_can {
+    my ($self, $meth, $bits) = @_;
+    my @urls = $bits;
+    my $role = $self->{_role};
+    my $max_i = @$bits - 1;
+    while ($max_i >= 1) {
+        my @last_bits = @{ $urls[-1] };
+        if ($last_bits[$max_i] ne '~') {
+            $last_bits[$max_i] = '~';
+            push @urls, \@last_bits;
+        }
+    } continue { $max_i-- }
+    map { $_ = '/=/' . join '/', @$_ } @urls;
+    my $or_clause = join ' or ', map { "url = ".Q($_) } @urls;
+    my $sql = "select count(*) from _access_rules where role = ".
+        Q($role) . " and method = " . Q($meth) . " and ($or_clause);";
+    ### $sql
+    my $res = $self->select($sql);
+    return do { $res->[0][0] };
 }
 
 1;

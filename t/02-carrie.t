@@ -1,3 +1,5 @@
+# vi:filetype=
+
 use t::OpenAPI;
 
 plan tests => 3 * blocks();
@@ -197,7 +199,7 @@ GET /=/model/Test2/~/~?user=tester2
 --- request
 GET /=/delete/Test2/~/~?user=tester2
 --- response
-{"success":0,"error":"Unknown URL catagory: Test2"}
+{"success":0,"error":"Permission denied for the \"Admin\" role."}
 
 
 
