@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use vars qw($Dumper);
 
-sub POST_view{
+sub POST_view {
     my ($self, $bits) = @_;
     my $data = _HASH($self->{_req_data}) or
         die "The view schema must be a HASH.\n";
@@ -142,7 +142,7 @@ sub GET_view_exec {
     return $self->exec_view($view, $bits, $self->{_cgi});
 }
 
-sub view_count{
+sub view_count {
     my $self = shift;
     return $self->select("select count(*) from _views")->[0][0];
 }
