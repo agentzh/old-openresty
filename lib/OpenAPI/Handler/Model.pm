@@ -834,7 +834,8 @@ sub alter_model {
     my $sql;
     my $new_model = $model;
     if ($new_model = delete $data->{name}) {
-        _IDENT($new_model) or die "Invalid model name \"$new_model\"\n";
+        _IDENT($new_model) or
+            die "Bad model name: ", $Dumper->($new_model), "\n";
         if ($self->has_model($new_model)) {
             die "Model \"$new_model\" already exists.\n";
         }
@@ -846,7 +847,7 @@ sub alter_model {
     }
     if (my $desc = delete $data->{description}) {
         _STRING($desc) or die "Model descriptons must be strings.\n";
-        $sql .= "update _models set description='$desc' where name='$new_model';\n"
+        $sql .= "update _models set description=".Q($desc)." where name='$new_model';\n"
     }
     if (%$data) {
         die "Unknown fields ", join(", ", keys %$data), "\n";
