@@ -193,5 +193,12 @@ sub GET_role {
     return $res;
 }
 
+sub DELETE_role_list {
+    my ($self, $bits) = @_;
+    my $sql = "delete from _roles where name <> 'Admin' and name <> 'Public'";
+    $self->warning("Predefined roles skipped.");
+    return { success => $self->do($sql) >= 0 ? 1 : 0 };
+}
+
 1;
 
