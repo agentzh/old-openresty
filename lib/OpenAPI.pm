@@ -3,7 +3,7 @@ package OpenAPI;
 use strict;
 use warnings;
 
-#use Smart::Comments;
+use Smart::Comments;
 use YAML::Syck ();
 use JSON::Syck ();
 
@@ -29,6 +29,7 @@ use OpenAPI::Handler::Action;
 use OpenAPI::Handler::Role;
 use OpenAPI::Handler::Admin;
 use OpenAPI::Handler::Login;
+use Encode::Guess;
 
 $YAML::Syck::ImplicitUnicode = 1;
 #$YAML::Syck::ImplicitBinary = 1;
@@ -50,6 +51,13 @@ our %ext2dumper = (
     '.yaml' => \&YAML::Syck::Dump,
     '.js' => \&JSON::Syck::Dump,
     '.json' => \&JSON::Syck::Dump,
+);
+
+our %EncodingMap = (
+    'cp936' => 'GBK',
+    'utf8'  => 'UTF-8',
+    'euc-cn' => 'GB2312',
+    'big5-eten' => 'Big5',
 );
 
 our %ext2importer = (
@@ -84,6 +92,33 @@ sub init {
     my $cgi = $self->{_cgi};
 
     my $charset = $cgi->url_param('charset') || 'UTF-8';
+
+    if ($charset =~ /^guess(?:ing)?$/i) {
+        undef $charset;
+        my $url  = $ENV{REQUEST_URI};
+        $url =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
+        ### Raw URL: $url
+        my $data = $url .
+            ($cgi->param('PUTDATA') || '') .
+            ($cgi->param('POSTDATA') || '');
+        ### $data
+        my @enc = qw( UTF-8 GB2312 Big5 GBK Latin1 );
+        for my $enc (@enc) {
+            my $decoder = guess_encoding($data, $enc);
+            if (ref $decoder) {
+    #            if ($enc ne 'ascii') {
+    #                print "line $.: $enc message found: ", $decoder->decode($s), "\n";
+    #            }
+                $charset = $decoder->name;
+                $charset = $EncodingMap{$charset} || $charset;
+                last;
+            }
+        }
+        if (!$charset) {
+            die "Can't determine the charset of the input.\n";
+        }
+        ### $charset
+    }
     $self->{'_charset'} = $charset;
 
     my $var = $cgi->url_param('var');

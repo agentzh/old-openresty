@@ -712,3 +712,11 @@ GET /=/role/Public
     "login":"anonymous"
 }
 
+
+
+=== TEST 74: Get access rules in Public
+--- request
+GET /=/role/Public/~/~
+--- response
+{
+}

@@ -156,7 +156,7 @@ GET /=/model/Utf8?charset=UTF-8
 --- charset: GBK
 --- request
 POST /=/model/Gbk?charset=guessing
-{ description: "文字编码测试GBK", columns: [{name:"bar",label:"我们的open api"}] }
+{ description: "文字编码测试GBK 张皛珏 万珣新", columns: [{name:"bar",label:"我们的open api"}] }
 --- response
 {"success":1}
 
@@ -173,7 +173,7 @@ GET /=/model/Gbk?charset=UTF-8
     {"name":"bar","default":null,"label":"我们的open api","type":"text"}
   ],
   "name":"Gbk",
-  "description":"文字编码测试GBK"
+  "description":"文字编码测试GBK 张皛珏 万珣新"
 }
 
 
@@ -205,7 +205,7 @@ GET /=/model/Gb2312?charset=UTF-8
 
 
 === TEST 18: Create a model in big5
---- charset: big5
+--- charset: Big5
 --- request
 POST /=/model/Big5?charset=guessing
 { description: "文字編碼測試big5", columns: [{name:"bar",label:"我們的open api"}] }

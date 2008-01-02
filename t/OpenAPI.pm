@@ -90,7 +90,7 @@ sub run_test ($) {
         } else {
             is $res->content, $expected_res, "response content OK - $name";
         }
-        like $res->header('Content-Type'), qr/\Q; charset=$charset\E$/, 'charset okay';
+        like $res->header('Content-Type'), qr/\Q; charset=$charset\E$/, "charset okay - $name";
     } else {
         my ($firstline) = ($request =~ /^([^\n]*)/s);
         die "Invalid request head: \"$firstline\" in $name\n";
