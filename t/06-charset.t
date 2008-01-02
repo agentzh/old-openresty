@@ -124,3 +124,107 @@ GET /=/model/Foo/~/~?charset=Big5
 --- response
 [{"bar":"廣告服務","id":"1"}]
 
+
+
+=== TEST 12: Create a model in UTF-8
+--- charset: UTF-8
+--- request
+POST /=/model/Utf8?charset=guessing
+{ description: "文字编码测试utf8", columns: [{name:"bar",label:"我们的open api"}] }
+--- response
+{"success":1}
+
+
+
+=== TEST 13: Check the data in UTF-8
+--- charset: UTF-8
+--- request
+GET /=/model/Utf8?charset=UTF-8
+--- response
+{
+  "columns":[
+    {"name":"id","label":"ID","type":"serial"},
+    {"name":"bar","default":null,"label":"我们的open api","type":"text"}
+  ],
+  "name":"Utf8",
+  "description":"文字编码测试utf8"
+}
+
+
+
+=== TEST 14: Create a model in GBK
+--- charset: GBK
+--- request
+POST /=/model/Gbk?charset=guessing
+{ description: "文字编码测试GBK", columns: [{name:"bar",label:"我们的open api"}] }
+--- response
+{"success":1}
+
+
+
+=== TEST 15: Check the data in UTF-8
+--- charset: UTF-8
+--- request
+GET /=/model/Gbk?charset=UTF-8
+--- response
+{
+  "columns":[
+    {"name":"id","label":"ID","type":"serial"},
+    {"name":"bar","default":null,"label":"我们的open api","type":"text"}
+  ],
+  "name":"Gbk",
+  "description":"文字编码测试GBK"
+}
+
+
+
+=== TEST 16: Create a model in GB2312
+--- charset: GB2312
+--- request
+POST /=/model/Gb2312?charset=guessing
+{ description: "文字编码测试GB2312", columns: [{name:"bar",label:"我们的open api"}] }
+--- response
+{"success":1}
+
+
+
+=== TEST 17: Check the data in UTF-8
+--- charset: UTF-8
+--- request
+GET /=/model/Gb2312?charset=UTF-8
+--- response
+{
+  "columns":[
+    {"name":"id","label":"ID","type":"serial"},
+    {"name":"bar","default":null,"label":"我们的open api","type":"text"}
+  ],
+  "name":"Gb2312",
+  "description":"文字编码测试GB2312"
+}
+
+
+
+=== TEST 18: Create a model in big5
+--- charset: big5
+--- request
+POST /=/model/Big5?charset=guessing
+{ description: "文字編碼測試big5", columns: [{name:"bar",label:"我們的open api"}] }
+--- response
+{"success":1}
+
+
+
+=== TEST 19: Check the data in UTF-8
+--- charset: UTF-8
+--- request
+GET /=/model/Big5?charset=UTF-8
+--- response
+{
+  "columns":[
+    {"name":"id","label":"ID","type":"serial"},
+    {"name":"bar","default":null,"label":"我們的open api","type":"text"}
+  ],
+  "name":"Big5",
+  "description":"文字編碼測試big5"
+}
+
