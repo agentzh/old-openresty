@@ -482,3 +482,41 @@ model_1=Cat
 --- unbound: model_2 col value blah
 --- out: select * from "Cat" , "" where "" = $y$$y$ and "" = $y$32$y$
 
+
+
+=== TEST 38: keywords in uppercase
+--- sql
+SELECT * FROM shangtest WHERE col='value'
+--- error
+--- models: shangtest
+--- cols: col
+--- out: select * from "shangtest" where "col" = $y$value$y$
+
+
+
+=== TEST 39: keywords in lower and upper case
+--- sql
+sEleCt * frOM shangtest WHerE col='value'
+--- error
+--- models: shangtest
+--- cols: col
+--- out: select * from "shangtest" where "col" = $y$value$y$
+
+
+
+=== TEST 40: nude keywords 
+--- sql
+select * from from where select='abc'
+--- error
+line 1: error: Unexpected input: "from" (VAR or IDENT expected).
+
+
+
+=== TEST 41: keywords with "
+--- sql
+select * from "from" where "select"='abc'
+--- error
+--- models: from
+--- cols: select
+--- out: select * from "from" where "select" = $y$abc$y$
+
