@@ -30,7 +30,9 @@ use OpenAPI::Handler::Role;
 use OpenAPI::Handler::Admin;
 use OpenAPI::Handler::Login;
 
+$YAML::Syck::ImplicitUnicode = 1;
 #$YAML::Syck::ImplicitBinary = 1;
+
 our $Backend;
 
 our %OpMap = (
