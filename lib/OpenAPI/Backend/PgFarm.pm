@@ -5,7 +5,11 @@ use warnings;
 #use Smart::Comments;
 use DBI;
 use JSON::Syck 'Load';
+use Encode 'encode';
 use base 'OpenAPI::Backend::Base';
+
+$YAML::Syck::ImplicitUnicode = 1;
+$JSON::Syck::ImplicitUnicode = 1;
 
 sub new {
     #
@@ -21,6 +25,11 @@ sub new {
     return bless {
         dbh => $dbh
     }, $class;
+}
+
+sub encode_string {
+    my ($self, $str, $charset) = @_;
+    encode($charset, $str);
 }
 
 sub select {

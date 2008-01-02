@@ -5,6 +5,7 @@ use warnings;
 use DBI;
 use SQL::Select;
 use base 'OpenAPI::Backend::Base';
+use Encode 'from_to';
 
 sub new {
     my $class = shift;
@@ -17,6 +18,12 @@ sub new {
     return bless {
         dbh => $dbh
     }, $class;
+}
+
+sub encode_string {
+    my ($self, $str, $charset) = @_;
+    from_to($str, 'UTF-8', $charset);
+    $str;
 }
 
 sub select {

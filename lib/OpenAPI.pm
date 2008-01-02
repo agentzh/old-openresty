@@ -277,7 +277,12 @@ sub response {
     # XXX if $charset is 'UTF-8' then don't bother decoding and encoding...
     eval {
         #$str = decode_utf8($str);
-        from_to($str, 'UTF-8', $charset);
+        #if (is_utf8($str)) {
+            #} else {
+        $str = $Backend->encode_string($str, $charset);
+            #$str = decode('UTF-8', $str);
+            #$str = encode($charset, $str);
+            #}
     }; #warn $@ if $@;
     if (my $var = $self->{_var} and $Dumper eq \&JSON::Syck::Dump) {
         $str = "var $self->{_var}=$str;";
