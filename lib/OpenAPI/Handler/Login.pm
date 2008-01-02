@@ -1,6 +1,6 @@
 package OpenAPI;
 
-use Smart::Comments;
+#use Smart::Comments;
 use strict;
 use warnings;
 use vars qw($Dumper);
@@ -9,40 +9,72 @@ use CGI::Cookie;
 sub GET_login_user {
     my ($self, $bits) = @_;
     my $user = $bits->[1];
+    $self->login($user);
+}
+
+sub GET_login_user_password {
+    my ($self, $bits) = @_;
+    my $user = $bits->[1];
+    my $password = $bits->[2];
+    $self->login($user, $password);
+}
+
+sub login {
+    my ($self, $user, $password) = @_;
     _STRING($user) or die "Bad user name: ", $Dumper->($user), "\n";
-    my $cookies = CGI::Cookie->fetch;
     my $account;
-    if ($cookies) {
-        my $cookie = $cookies->{account};
-        if ($cookie) {
-            $account = $cookie->value;
-        }
-    }
     my $role = 'Admin';
-    if ($user =~ /^(\S+)\.(\S+)$/) {
+    if ($user =~ /^(\w+)\.(\w+)$/) {
         ($account, $role) = ($1, $2);
-    } elsif ($user =~ /^\.(\S+)$/) {
-        $role = $1;
-    } elsif ($user =~ /^\S+$/) {
+    } elsif ($user =~ /^\w+$/) {
         $account = $&;
-    }else {
-        die "Invalid user name: ", $Dumper->($user), "\n";
+    } else {
+        die "Bad user name: ", $Dumper->($user), "\n";
     }
     _IDENT($account) or die "Bad account name: ", $Dumper->($account), "\n";
     _IDENT($role) or die "Bad role name: ", $Dumper->($role), "\n";
     ### $role
+    # this part is lame?
     if (!$account) {
-        die "No account name specified: $user\n";
+        die "Login required.\n";
     }
-    if (!$role) {
-        die "No role name specified: $user\n";
+    if (!$self->has_user($account)) {
+        ### Found user: $user
+        die "Account \"$account\" does not exist.\n";
     }
     $self->set_user($account);
+
+    if (!$self->has_role($role)) {
+        ### Found user: $user
+        die "Role \"$role\" does not exist.\n";
+    }
+
+    ### $account
+    ### $role
+    ### $password
+    my $res;
+    if (defined $password) {
+        $res = $self->select("select count(*) from _roles where name = " . Q($role) . " and login = 'password' and password = " . Q($password) . ";");
+        ### with password: $res
+        if ($res->[0][0] == 0) {
+            die "Password for $account.$role is incorrect.\n";
+        }
+    } else {
+        $res = $self->select("select count(*) from _roles where name = " . Q($role) . " and login = 'anonymous';");
+        ### no password: $res
+        ### no password (2): $res->[0][0]
+        if ($res->[0][0] == 0) {
+            ### dying...
+            die "Password for $account.$role is required.\n";
+        }
+    }
     $self->set_role($role);
-    my $res = $self->{_cookie} = {
+
+    $res = $self->{_cookie} = {
         account => $account,
         role => $role,
     };
+    ### HERE...
     $res->{success} = 1;
     $res;
 }

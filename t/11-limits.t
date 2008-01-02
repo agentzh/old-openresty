@@ -5,7 +5,7 @@ use JSON::Syck 'Dump';
 use OpenAPI::Limits;
 
 my $host = $t::OpenAPI::host;
-my $res = do_request('DELETE', $host.'/=/model', undef, undef);
+my $res = do_request('DELETE', $host.'/=/model?user=peee&password=4423037', undef, undef);
 ok $res->is_success, 'response OK';
 
 for (1..$MODEL_LIMIT + 1) {

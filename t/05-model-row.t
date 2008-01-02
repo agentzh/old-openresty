@@ -1,3 +1,5 @@
+# vi:filetype=
+
 use t::OpenAPI;
 
 =pod
@@ -15,7 +17,15 @@ run_tests;
 
 __DATA__
 
-=== TEST 1: Delete existing models
+=== TEST 1: Login
+--- request
+GET /=/login/peee.Admin/4423037
+--- response
+{"success":1,"account":"peee","role":"Admin"}
+
+
+
+=== TEST 2: Delete existing models
 --- request
 DELETE /=/model
 --- response
@@ -23,7 +33,7 @@ DELETE /=/model
 
 
 
-=== TEST 2: insert data to an nonexistant model
+=== TEST 3: insert data to an nonexistant model
 --- request
 POST /=/model/Dummy/~/~
 { name: 'foo' }
@@ -32,7 +42,7 @@ POST /=/model/Dummy/~/~
 
 
 
-=== TEST 3: Create a model
+=== TEST 4: Create a model
 --- request
 POST /=/model/Address
 {
@@ -48,7 +58,7 @@ POST /=/model/Address
 
 
 
-=== TEST 4: check the model list
+=== TEST 5: check the model list
 --- request
 GET /=/model
 --- response
@@ -56,7 +66,7 @@ GET /=/model
 
 
 
-=== TEST 5: insert multiple records at a time
+=== TEST 6: insert multiple records at a time
 --- request
 POST /=/model/Address/~/~
 [
@@ -70,7 +80,7 @@ POST /=/model/Address/~/~
 
 
 
-=== TEST 6: Get rows found 'Perl' in any column
+=== TEST 7: Get rows found 'Perl' in any column
 --- request
 GET /=/model/Address/~/Perl
 --- response

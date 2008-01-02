@@ -1,3 +1,5 @@
+# vi:filetype=
+
 use t::OpenAPI;
 
 =pod
@@ -21,7 +23,7 @@ __DATA__
 
 === TEST 1: Delete existing models
 --- request
-DELETE /=/model.js
+DELETE /=/model?user=peee&password=4423037
 --- response
 {"success":1}
 

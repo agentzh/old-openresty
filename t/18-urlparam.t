@@ -1,3 +1,5 @@
+# vi:filetype=
+
 use t::OpenAPI;
 
 plan tests => 3 * blocks();
@@ -8,7 +10,7 @@ __DATA__
 
 === TEST 1: Delete existing models
 --- request
-DELETE /=/model
+DELETE /=/model?user=peee&password=4423037
 --- response
 {"success":1}
 

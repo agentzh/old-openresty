@@ -67,7 +67,7 @@ if ($cmd eq 'adduser') {
 
     my $saved_key = $key;
     #warn "Password: $password\n";
-    check_password($saved_key);
+    OpenAPI::check_password($saved_key);
 
     print "Re Enter the password for the Admin role: ";
     while (not defined ($key = ReadLine(0))) {
@@ -93,16 +93,5 @@ if ($cmd eq 'adduser') {
     die "Unknown command: $cmd\n";
 }
 
-sub check_password {
-    my $password = shift;
-    if (!defined $password) {
-        die "No password specified for the Admin role.\n";
-    }
-    if (length($password) < $PASSWORD_MIN_LEN) {
-        die "Password too short; at least $PASSWORD_MIN_LEN chars are required.\n";
-    }
-    if ($password !~ /^[_A-Za-z0-9]+$/) {
-        die "Invalid password; only underscores, letters, and digits are allowed.\n";
-    }
-}
+
 

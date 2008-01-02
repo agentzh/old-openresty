@@ -64,39 +64,6 @@ sub process_request {
         return;
     }
 
-    # XXX this part is lame...
-    my $user = $cgi->url_param('user') || 'peee';
-    ### $user
-    eval {
-        #OpenAPI->drop_user($user);
-    };
-    if ($@) {
-        $openapi->fatal($@);
-        warn $@;
-        next;
-    }
-    if (my $retval = OpenAPI->has_user($user)) {
-        ### Found user: $user
-    } else {
-        ### Creating new user: $user
-        eval {
-            $openapi->add_user($user);
-        };
-        if ($@) {
-            warn $@;
-            $openapi->fatal($@);
-            next;
-        }
-    }
-
-    eval {
-        OpenAPI->set_user($user);
-    };
-    if ($@) {
-        $openapi->fatal($@);
-        return ;
-    }
-
     eval {
         $openapi->init(\$url);
     };
@@ -134,25 +101,56 @@ sub process_request {
         return;
     }
 
+    # XXX hacks...
+
     my ($account, $role);
-    my $cookies = CGI::Cookie->fetch;
-    if ($cookies) {
-        my $cookie = $cookies->{account};
-        if ($cookie) {
-            $account = $cookie->value;
-        }
-        $cookie = $cookies->{role};
-        if ($cookie) {
-            $role = $cookie->value;
+    if ($bits[0] and $bits[0] ne 'login') {
+        eval {
+            # XXX this part is lame...
+            my $user = $cgi->url_param('user');
+            if (defined $user) {
+                my $res = $openapi->login($user, $cgi->url_param('password'));
+                $account = $res->{account};
+                $role = $res->{role};
+                # XXX login as $account.$role...
+                # XXX if account is anonymous, then create a session
+                # XXX else check password, if correct, create a session
+            } else {
+                my $cookies = CGI::Cookie->fetch;
+                if ($cookies) {
+                    my $cookie = $cookies->{account};
+                    if ($cookie) {
+                        $account = $cookie->value;
+                    }
+                    $cookie = $cookies->{role};
+                    if ($cookie) {
+                        $role = $cookie->value;
+                    }
+                }
+            }
+
+            # this part is lame?
+            if (!$account) {
+                die "Login required.\n";
+            }
+            if (!$openapi->has_user($account)) {
+                ### Found user: $user
+                die "Account \"$account\" does not exist.\n";
+            }
+            $openapi->set_user($account);
+
+            $role ||= 'Admin';
+            if (!$openapi->has_role($role)) {
+                ### Found user: $user
+                die "Role \"$role\" does not exist.\n";
+            }
+            $openapi->set_role($role);
+        };
+        if ($@) {
+            $openapi->fatal($@);
+            return;
         }
     }
-
-    # XXX hacks...
-    $account ||= $user;
-    $role ||= 'Admin';
-    $openapi->set_role($role);
-
-    my $category = $Dispatcher{$bits[0]};
 
     # XXX check ACL rules...
     if ($bits[0] and $bits[0] ne 'login') {
@@ -163,6 +161,7 @@ sub process_request {
         }
     }
 
+    my $category = $Dispatcher{$bits[0]};
     if ($category) {
         my $object = $category->[$#bits];
         ### $object

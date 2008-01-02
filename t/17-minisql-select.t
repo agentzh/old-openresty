@@ -504,7 +504,7 @@ sEleCt * frOM shangtest WHerE col='value'
 
 
 
-=== TEST 40: nude keywords 
+=== TEST 40: nude keywords
 --- sql
 select * from from where select='abc'
 --- error

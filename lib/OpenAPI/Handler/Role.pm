@@ -303,8 +303,6 @@ sub new_role {
         ->values( Q($name, $desc, $login, $password) );
 
     return { success => $self->do($insert) ? 1 : 0 };
-
-
 }
 
 1;

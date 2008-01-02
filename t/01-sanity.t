@@ -8,7 +8,31 @@ run_tests;
 
 __DATA__
 
-=== TEST 1: Delete existing models
+=== TEST 1: Login w/o password
+--- request
+GET /=/login/peee.Admin
+--- response
+{"success":0,"error":"Password for peee.Admin is required."}
+
+
+
+=== TEST 2: Delete existing models (w/o login)
+--- request
+DELETE /=/model.js
+--- response
+{"success":0,"error":"Login required."}
+
+
+
+=== TEST 3: Login with password
+--- request
+GET /=/login/peee.Admin/4423037
+--- response
+{"success":1,"account":"peee","role":"Admin"}
+
+
+
+=== TEST 4: Delete existing models
 --- request
 DELETE /=/model.js
 --- response
@@ -16,7 +40,7 @@ DELETE /=/model.js
 
 
 
-=== TEST 2: Get model list
+=== TEST 5: Get model list
 --- request
 GET /=/model.js
 --- response
@@ -24,7 +48,7 @@ GET /=/model.js
 
 
 
-=== TEST 3: Create a model
+=== TEST 6: Create a model
 --- request
 POST /=/model/Bookmark.js
 {
@@ -40,7 +64,7 @@ POST /=/model/Bookmark.js
 
 
 
-=== TEST 4: check the model list again
+=== TEST 7: check the model list again
 --- request
 GET /=/model.js
 --- response
@@ -48,7 +72,7 @@ GET /=/model.js
 
 
 
-=== TEST 5: check the column
+=== TEST 8: check the column
 --- request
 GET /=/model/Bookmark.js
 --- response
@@ -65,7 +89,7 @@ GET /=/model/Bookmark.js
 
 
 
-=== TEST 6: access inexistent models
+=== TEST 9: access inexistent models
 --- request
 GET /=/model/Foo.js
 --- response
@@ -73,7 +97,7 @@ GET /=/model/Foo.js
 
 
 
-=== TEST 7: insert a single record
+=== TEST 10: insert a single record
 --- request
 POST /=/model/Bookmark/~/~
 { title: "Yahoo Search", url: "http://www.yahoo.cn" }
@@ -82,7 +106,7 @@ POST /=/model/Bookmark/~/~
 
 
 
-=== TEST 8: insert another record
+=== TEST 11: insert another record
 --- request
 POST /=/model/Bookmark/~/~.js
 { title: "Yahoo Search", url: "http://www.yahoo.cn" }
@@ -91,7 +115,7 @@ POST /=/model/Bookmark/~/~.js
 
 
 
-=== TEST 9: insert multiple records at a time
+=== TEST 12: insert multiple records at a time
 --- request
 POST /=/model/Bookmark/~/~.js
 [
@@ -104,7 +128,7 @@ POST /=/model/Bookmark/~/~.js
 
 
 
-=== TEST 10: read a record
+=== TEST 13: read a record
 --- request
 GET /=/model/Bookmark/id/1.js
 --- response
@@ -112,7 +136,7 @@ GET /=/model/Bookmark/id/1.js
 
 
 
-=== TEST 11: read another record
+=== TEST 14: read another record
 --- request
 GET /=/model/Bookmark/id/5.js
 --- response
@@ -120,7 +144,7 @@ GET /=/model/Bookmark/id/5.js
 
 
 
-=== TEST 12: read urls of all the records
+=== TEST 15: read urls of all the records
 --- request
 GET /=/model/Bookmark/url/~.js
 --- response
@@ -134,7 +158,7 @@ GET /=/model/Bookmark/url/~.js
 
 
 
-=== TEST 13: select records
+=== TEST 16: select records
 --- request
 GET /=/model/Bookmark/url/http://www.yahoo.cn.js
 --- response
@@ -145,7 +169,7 @@ GET /=/model/Bookmark/url/http://www.yahoo.cn.js
 
 
 
-=== TEST 14: read all records
+=== TEST 17: read all records
 --- request
 GET /=/model/Bookmark/~/~.js
 --- response
@@ -159,7 +183,7 @@ GET /=/model/Bookmark/~/~.js
 
 
 
-=== TEST 15: delete a record
+=== TEST 18: delete a record
 --- request
 DELETE /=/model/Bookmark/id/2.js
 --- response
@@ -167,7 +191,7 @@ DELETE /=/model/Bookmark/id/2.js
 
 
 
-=== TEST 16: check the record just deleted
+=== TEST 19: check the record just deleted
 --- request
 GET /=/model/Bookmark/id/2.js
 --- response
@@ -175,7 +199,7 @@ GET /=/model/Bookmark/id/2.js
 
 
 
-=== TEST 17: update a nonexistent record
+=== TEST 20: update a nonexistent record
 --- request
 PUT /=/model/Bookmark/id/2.js
 { title: "Blah blah blah" }
@@ -184,7 +208,7 @@ PUT /=/model/Bookmark/id/2.js
 
 
 
-=== TEST 18: update an existent record
+=== TEST 21: update an existent record
 --- request
 PUT /=/model/Bookmark/id/3.js
 { title: "Blah blah blah" }
@@ -193,7 +217,7 @@ PUT /=/model/Bookmark/id/3.js
 
 
 
-=== TEST 19: check if the record is indeed changed
+=== TEST 22: check if the record is indeed changed
 --- request
 GET /=/model/Bookmark/id/3.js
 --- response
@@ -201,7 +225,7 @@ GET /=/model/Bookmark/id/3.js
 
 
 
-=== TEST 20: update an existent record using POST
+=== TEST 23: update an existent record using POST
 --- request
 POST /=/put/model/Bookmark/id/3.js
 { title: "Howdy!" }
@@ -210,7 +234,7 @@ POST /=/put/model/Bookmark/id/3.js
 
 
 
-=== TEST 21: check if the record is indeed changed
+=== TEST 24: check if the record is indeed changed
 --- request
 GET /=/model/Bookmark/id/3.js
 --- response
@@ -218,7 +242,7 @@ GET /=/model/Bookmark/id/3.js
 
 
 
-=== TEST 22: Change the name of the model
+=== TEST 25: Change the name of the model
 --- request
 PUT /=/model/Bookmark.js
 { name: "MyFavorites", description: "我的最爱" }
@@ -227,7 +251,7 @@ PUT /=/model/Bookmark.js
 
 
 
-=== TEST 23: Check the new model
+=== TEST 26: Check the new model
 --- request
 GET /=/model/MyFavorites.js
 --- response
@@ -244,7 +268,7 @@ GET /=/model/MyFavorites.js
 
 
 
-=== TEST 24: Change the name and type of title
+=== TEST 27: Change the name and type of title
 --- request
 PUT /=/model/MyFavorites/title
 { name: "count", type: "integer" }
@@ -253,7 +277,7 @@ PUT /=/model/MyFavorites/title
 
 
 
-=== TEST 25: Get model list
+=== TEST 28: Get model list
 --- request
 GET /=/model.js
 --- response
