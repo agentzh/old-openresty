@@ -1,3 +1,5 @@
+# vi:filetype=
+
 use t::OpenAPI;
 
 plan tests => 3 * blocks();
@@ -95,7 +97,27 @@ POST /=/model/Foo/~/~?charset=Big5
 
 
 
-=== TEST 9: Insert records in Big5
+=== TEST 9: Check the record
+--- request
+GET /=/model/Foo/~/~
+--- response
+[{"bar":"廣告服務","id":"1"}]
+
+
+
+=== TEST 10: Check the record (in YAML)
+--- request
+GET /=/model/Foo/~/~.yml
+--- format: YAML
+--- response
+--- 
+- 
+  bar: 廣告服務
+  id: 1
+
+
+
+=== TEST 11: Insert records in Big5
 --- charset: Big5
 --- request
 GET /=/model/Foo/~/~?charset=Big5
