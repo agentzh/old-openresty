@@ -53,7 +53,7 @@ sub DELETE_access_rule {
         $sql = "delete from _access_rules where role = '$role';";
     } elsif ($col eq '~') {
         my $quoted = Q($value);
-        $sql = "delete from _access_rules where role = '$role' and (method = $quoted or url = $quoted);";
+        $sql = "delete from _access_rules where role = '$role' and (id::text = $quoted or method = $quoted or url = $quoted);";
     } else {
         my $quoted = Q($value);
         $sql = "delete from _access_rules where role = '$role' and $col = $quoted;";
@@ -88,7 +88,7 @@ sub GET_access_rule {
         my $quoted = Q($value);
 
         if ($col eq '~') {
-            $sql = "select id,method,url from _access_rules where role = '$role' and ( method $op $quoted or url $op $quoted);";
+            $sql = "select id,method,url from _access_rules where role = '$role' and ( id::text $op $quoted or method $op $quoted or url $op $quoted);";
         } else {
             $sql = "select id,method,url from _access_rules where role = '$role' and $col $op $quoted;";
         }

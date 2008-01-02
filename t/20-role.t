@@ -717,6 +717,31 @@ GET /=/role/Public
 === TEST 74: Get access rules in Public
 --- request
 GET /=/role/Public/~/~
+--- response_like
+\[
+    \{"url":"/=/model","method":"GET","id":"\d+"},
+    {"url":"/=/model/~","method":"POST","id":"\d+"},
+    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"},
+    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
+\]
+
+
+
+=== TEST 75: Delete rules with POST method
+--- request
+DELETE /=/role/Public/method/POST
 --- response
-{
-}
+{"success":1}
+
+
+
+=== TEST 76: Get access rules in Public again
+--- request
+GET /=/role/Public/~/~
+--- response_like
+\[
+    \{"url":"/=/model","method":"GET","id":"\d+"},
+    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
+\]
+
+
