@@ -7,6 +7,7 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use OpenAPI::Dispatcher;
+use OpenAPI::Limits;
 
 my $cmd = lc(shift) || $ENV{OPENAPI_COMMAND} || 'fastcgi';
 
@@ -25,16 +26,83 @@ if ($cmd eq 'fastcgi') {
             print qq[{"success":0,"error":"$@"}\n];
         }
     }
+    exit;
 } elsif ($cmd eq 'cgi') {
     require CGI;
     my $cgi = CGI->new;
     OpenAPI::Dispatcher->process_request($cgi);
+    exit;
 } elsif ($cmd eq 'start') {
     require OpenAPI::Server;
     my $server = OpenAPI::Server->new;
     #$server->port(8000);
     $server->run;
+    exit;
+}
+
+my $error = $OpenAPI::Dispatcher::DBFatal;
+if ($error) {
+    die $error;
+}
+my $backend = $OpenAPI::Backend;
+
+if ($cmd eq 'adduser') {
+    my $user = shift or
+        die "No user specified.\n";
+    if ($backend->has_user($user)) {
+        die "User $user already exists.\n";
+    }
+    eval "use Term::ReadKey;";
+    if ($@) { die $@; }
+    local $| = 1;
+
+    my $password;
+    print "Enter the password for the Admin role: ";
+    ReadMode(2);
+    my $key;
+    while (not defined ($key = ReadLine(0))) {
+    }
+    $key =~ s/\n//s;
+    print "\n";
+
+    my $saved_key = $key;
+    #warn "Password: $password\n";
+    check_password($saved_key);
+
+    print "Re Enter the password for the Admin role: ";
+    while (not defined ($key = ReadLine(0))) {
+    }
+    $key =~ s/\n//s;
+    print "\n";
+
+    if ($key ne $saved_key) {
+        die "2 passwords don't match.\n";
+    }
+    $password = $key;
+
+    $OpenAPI::Backend->add_user($user, $password);
+} elsif ($cmd eq 'deluser') {
+    my $user = shift or
+        die "No user specified.\n";
+    if ($backend->has_user($user)) {
+        $OpenAPI::Backend->drop_user($user);
+    } else {
+        die "User $user does not exist.\n";
+    }
 } else {
     die "Unknown command: $cmd\n";
+}
+
+sub check_password {
+    my $password = shift;
+    if (!defined $password) {
+        die "No password specified for the Admin role.\n";
+    }
+    if (length($password) < $PASSWORD_MIN_LEN) {
+        die "Password too short; at least $PASSWORD_MIN_LEN chars are required.\n";
+    }
+    if ($password !~ /^[_A-Za-z0-9]+$/) {
+        die "Invalid password; only underscores, letters, and digits are allowed.\n";
+    }
 }
 

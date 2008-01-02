@@ -50,7 +50,7 @@ for (my $i = 0 ; $i < USER_COUNT; $i ++) {
     if ($res) {
         $backend->drop_user($name);
     }
-    $backend->add_user($name);
+    $backend->add_user($name, 'blahblahblah');
     my $machine = $backend->has_user($name);
     $cnt{$machine}++;
     print STDERR "$name\@$machine  ";

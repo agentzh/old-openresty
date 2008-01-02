@@ -5,7 +5,7 @@ use warnings;
 use OpenAPI::Limits;
 use OpenAPI;
 
-my $DBFatal;
+our $DBFatal;
 
 # XXX Excpetion not caputred...when database 'test' not created.
 my %Dispatcher = (
@@ -44,7 +44,6 @@ sub init {
     if ($@) {
         $DBFatal = $@;
     }
-
 }
 
 sub process_request {

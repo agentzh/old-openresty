@@ -2,6 +2,8 @@ package OpenAPI::Backend::Base;
 
 use strict;
 use warnings;
+
+#use Smart::Comments;
 use SQL::Insert;
 
 my %DefaultRules = (
@@ -107,17 +109,20 @@ my %DefaultRules = (
 );
 
 sub add_default_roles {
-    my ($self) = @_;
-    my $sql = <<'_EOC_';
-insert into _roles (name, description, login)
-values ('Admin', 'Administrator', 'password');
+    my ($self, $user, $admin_password) = @_;
+    if (!defined $admin_password) {
+        warn "No password specified.\n";
+    }
+    my $sql = <<"_EOC_";
+insert into $user._roles (name, description, login, password)
+values ('Admin', 'Administrator', 'password', '$admin_password');
 
-insert into _roles (name, description, login)
+insert into $user._roles (name, description, login)
 values ('Public', 'Anonymous', 'anonymous');
 _EOC_
     while (my ($role, $rules) = each %DefaultRules) {
         for my $rule (@$rules) {
-            my $insert = SQL::Insert->new('_access_rules')
+            my $insert = SQL::Insert->new("$user._access_rules")
                 ->cols(qw< role method url >)
                 ->values("'$role'", "'$rule->[0]'", "'/=/$rule->[1]'");
             $sql .= $insert;
@@ -127,7 +132,7 @@ _EOC_
 }
 
 sub add_user {
-    my ($self, $user) = @_;
+    my ($self, $user, $admin_password) = @_;
     my $retval = $self->do(<<"_EOC_");
     create table $user._models (
         id serial primary key,
@@ -172,7 +177,8 @@ sub add_user {
     );
 _EOC_
     #$retval += 0;
-    $self->add_default_roles;
+    ### $admin_password
+    $self->add_default_roles($user, $admin_password);
     return $retval;
 }
 

@@ -744,4 +744,3 @@ GET /=/role/Public/~/~
     {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
 \]
 
-
