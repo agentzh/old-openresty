@@ -15,6 +15,12 @@ Also give read/write access to lighttpd's log file:
 For the Pg backend, one need to create the "anonymous" role in the "test"
 database.
 
+Also, we need to create a "peee" user account for our test suite in OpenAPI:
+
+    $ bin/openapi adduser peee
+
+Give the password 4423037 to its Admin role.
+
 Sample lighttpd configuration:
 
 # lighttpd.conf
