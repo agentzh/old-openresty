@@ -1054,7 +1054,7 @@ sub _Lexer {
                 and return ('NUM', $1);
         s/^\s*('(?:\\.|''|[^'])*')//
                 and return ('STRING', $1);
-        s/^\s*"([^"]*)"//
+        s/^\s*"(\w*)"//
                 and return ('IDENT', $1);
         s/^\s*(\$(\w*)\$.*?\$\2\$)//
                 and return ('STRING', $1);
