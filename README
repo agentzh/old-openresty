@@ -29,9 +29,10 @@ database.
 
     $ createuser anonymouse test
 
-5, create a "peee" user account for our test suite in OpenAPI:
+5, Create a "peee" user account for our test suite in OpenAPI (drop it if it already exists):
 
-    $ bin/openapi adduser peee
+    $ bin/openapi.pl deluser peee 
+    $ bin/openapi.pl adduser peee
 
 Give the password 4423037 to its Admin role.
 
