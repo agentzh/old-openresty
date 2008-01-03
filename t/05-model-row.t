@@ -93,5 +93,5 @@ GET /=/model/Address/~/Perl
 PUT /=/model/Address/id/3
 { id: 99}
 --- response
-{"success":0,"error":"could not update id."}
+{"success":0,"error":"Column \"id\" reserved."}
 

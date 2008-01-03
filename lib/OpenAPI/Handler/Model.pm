@@ -1,8 +1,9 @@
 package OpenAPI;
 
-use vars qw($Dumper %OpMap);
 use strict;
 use warnings;
+#use Smart::Comments;
+use vars qw($Dumper %OpMap);
 
 our %to_native_type = (
     text => 'text',
@@ -815,8 +816,8 @@ sub update_records {
     my $update = SQL::Update->new(QI($table));
     while (my ($key, $val) = each %$data) {
         my $col = $key;
-        if ($col eq 'id') {
-            next;  # XXX maybe issue a warning?
+        if (lc($col) eq 'id') {
+            die "Column \"id\" reserved.\n";
         }
         $update->set(QI($col) => Q($val));
     }
@@ -824,6 +825,7 @@ sub update_records {
     if (defined $val and $val ne '~') {
         $update->where(QI($user_col) => $val);
     }
+    ### SQL: "$update"
     my $retval = $Backend->do("$update") + 0;
     return {success => $retval ? 1 : 0,rows_affected => $retval};
 }

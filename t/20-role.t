@@ -775,7 +775,7 @@ GET /=/role/Public/~/~
 PUT /=/role/Public/id/~
 { id: "521" }
 --- response
-{"success":0,"error":"could not update id."}
+{"success":0,"error":"Column \"id\" reserved."}
 
 
 
@@ -783,33 +783,57 @@ PUT /=/role/Public/id/~
 --- request
 PUT /=/role/Public/method/GET
 { url: "/=/model/A/~" }
+--- response
+{"success":1}
+
+
+
+=== TEST 82: Check the new rules
+--- request
+GET /=/role/Public/~/~
 --- response_like
 \[
-    \{"url":"/=/model/A/~","method":"GET","id":"\d+"},
-    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
-\]
+    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"},
+    {"url":"/=/model/A/~","method":"GET","id":"\d+"}
+]
 
 
 
-=== TEST 82: Update methods of rules
+=== TEST 83: Update methods of rules
 --- request
 PUT /=/role/Public/method/GET
 { method: "POST" }
 --- response_like
+{"success":1}
+
+
+
+=== TEST 84: Check the new rules
+--- request
+GET /=/role/Public/~/~
+--- response_like
 \[
-    \{"url":"/=/model/A/~","method":"POST","id":"\d+"},
-    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
-\]
+    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"},
+    {"url":"/=/model/A/~","method":"POST","id":"\d+"}
+]
 
 
 
-=== TEST 83: Update methods & urls of rules
+=== TEST 85: Update methods & urls of rules
 --- request
 PUT /=/role/Public/method/POST
 { method: "GET",url: "/=/model" }
 --- response_like
+{"success":1}
+
+
+
+=== TEST 86: Check the new rules
+--- request
+GET /=/role/Public/~/~
+--- response_like
 \[
-    \{"url":"/=/model","method":"GET","id":"\d+"},
-    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
+    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"},
+    \{"url":"/=/model","method":"GET","id":"\d+"}
 \]
 

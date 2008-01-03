@@ -99,6 +99,60 @@ sub GET_access_rule {
     return $res;
 }
 
+sub PUT_access_rule {
+    my ($self, $bits) = @_;
+    my $role = $bits->[1];
+    my $col = $bits->[2];
+    my $value = $bits->[3];
+    ### $bits
+    if (!$self->has_role($role)) {
+        die "Role \"$role\" not found.\n";
+    }
+    if ($role eq 'Admin') {
+        die "Role \"Admin\" is read only.\n";
+    }
+    if ($col ne '~' and $col ne 'method' and $col ne 'url' and $col ne 'id') {
+        die "Unknown access rule field: $col\n";
+    }
+
+    my $update = SQL::Update->new('_access_rules');
+    my $data = $self->{_req_data};
+    _HASH($data) or die "Only non-empty HASH expected.\n";
+    while (my ($key, $val) = each %$data) {
+        my $col = $key;
+        if (lc($col) eq 'id') {
+            die "Column \"id\" reserved.\n";
+        }
+        $update->set($col => Q($val));
+    }
+
+    if ($value eq '~') {
+        $update->where(role => Q($role));
+    } else {
+        my $op = $self->{_cgi}->url_param('op') || 'eq';
+        $op = $OpMap{$op};
+        if ($op eq 'like') {
+            $value = "%$value%";
+        }
+        my $quoted = Q($value);
+
+        if ($col eq '~') {
+            $update->where(
+                'role', '=', Q($role),
+                "(id::text $op $quoted or method $op $quoted or url $op $quoted)"
+            );
+
+        } else {
+            $update->where(role => Q($role))
+                   ->where($col => $op => $quoted);
+        }
+    }
+    ### Put rule SQL: "$update"
+    my $res = $self->do("$update");
+    return { success => $res >= 0 ? 1 : 0 };
+
+}
+
 sub POST_access_rule {
     my ($self, $bits) = @_;
     my $role = $bits->[1];
@@ -132,7 +186,6 @@ sub POST_access_rule {
         rows_affected => $rows_affected >= 0 ? $rows_affected : 0,
         last_row => $last_id ? "/=/role/$role/id/$last_id" : undef,
     };
-
 }
 
 sub insert_rule {
