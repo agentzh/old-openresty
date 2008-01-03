@@ -86,3 +86,12 @@ GET /=/model/Address/~/Perl
 --- response
 [{"name":"Perl","id":"3","addr":"http://www.perl.com"},{"name":"Perl.com","id":"4","addr":"Perl"}]
 
+
+
+=== TEST 8: update id
+--- request
+PUT /=/model/Address/id/3
+{ id: 99}
+--- response
+{"success":0,"error":"could not update id."}
+
