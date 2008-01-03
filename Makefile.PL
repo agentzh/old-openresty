@@ -7,15 +7,17 @@ author              ('Agent Zhang <agentzh@yahoo.cn>');
 perl_version        ('5.006001');
 all_from            ('lib/OpenAPI.pm');
 
+requires            ('perl' => '5.008001');
 requires            ('CGI' => '3.32');
 requires            ('FCGI');
-requires            ('YAML::Syck' => '0.99');
+requires            ('YAML::Syck' => '1.00');
 requires            ('List::Util');
 requires            ('DBI' => '1.57');
 requires            ('Clone' => '0.22');
 requires            ('Params::Util' => '0.22');
 requires            ('Parse::Yapp');
 requires            ('DBD::Pg' => '1.49');
+requires            ('Term::ReadKey' => '2.30');
 
 features(
     'Test suite' => [
