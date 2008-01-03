@@ -768,3 +768,48 @@ GET /=/role/Public/~/~
     {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
 \]
 
+
+
+=== TEST 80: Try to update id of rule in Public
+--- request
+PUT /=/role/Public/id/~
+{ id: "521" }
+--- response
+{"success":0,"error":"could not update id."}
+
+
+
+=== TEST 81: Update urls of rules
+--- request
+PUT /=/role/Public/method/GET
+{ url: "/=/model/A/~" }
+--- response_like
+\[
+    \{"url":"/=/model/A/~","method":"GET","id":"\d+"},
+    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
+\]
+
+
+
+=== TEST 82: Update methods of rules
+--- request
+PUT /=/role/Public/method/GET
+{ method: "POST" }
+--- response_like
+\[
+    \{"url":"/=/model/A/~","method":"POST","id":"\d+"},
+    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
+\]
+
+
+
+=== TEST 83: Update methods & urls of rules
+--- request
+PUT /=/role/Public/method/POST
+{ method: "GET",url: "/=/model" }
+--- response_like
+\[
+    \{"url":"/=/model","method":"GET","id":"\d+"},
+    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
+\]
+
