@@ -1,27 +1,41 @@
-First of all, please run "perl Makefile.PL" to check missing dependencies:
+SETUP TEST ENVIRONMENT:
 
+1, grab the openapi package and unpack it in some place, let's say it's openapi;
+
+2, enter openapi directory, run "perl Makefile.PL" to check missing dependencies:
+   
+    $ cd openapi
     $ perl Makefile.PL
     $ sudo make -f Makefile  # This will install missing dependencies
 
-To run "make test" or "make debug", you need to have lighttpd and postgres installed.
-Also you need to create an empty database named "test" and also make user
-'agentzh' a Pg login account (with the password 'agentzh').
+To run "make test" or "make debug", you need to have lighttpd and PostgreSQL database installed.
+for PostgreSQL database, you need to prepare a PostgreSQL account, name 'agentzh'; and you need
+to create an empty database named 'test', and you need to create a store precedure language plpgsql
+for that database, contact your PostgreSQL DBA for it or read PostgreSQL manuel. The password for
+PostgreSQL user 'agentzh' should be 'agentzh' too if needed. Basically, they are command like:
 
-Also give read/write access to lighttpd's log file:
+    $ createdb test
+    $ createuser -P agnetzh
+    $ createlang plpgsql test
+
+3, give read/write access to lighttpd's log file (optional):
 
     $ chmod 777 /var/log/lighttpd/error.log
     $ chmod 777 /var/log/lighttpd
 
-For the Pg backend, one need to create the "anonymous" role in the "test"
+
+4, For the Pg backend, one need to create the "anonymous" role in the "test"
 database.
 
-Also, we need to create a "peee" user account for our test suite in OpenAPI:
+    $ createuser anonymouse test
+
+5, create a "peee" user account for our test suite in OpenAPI:
 
     $ bin/openapi adduser peee
 
 Give the password 4423037 to its Admin role.
 
-Sample lighttpd configuration:
+6, Sample lighttpd configuration:
 
 # lighttpd.conf
 
@@ -54,6 +68,8 @@ fastcgi.server = (
 
 # END
 
+HOW TO TEST ONE SPECIFIC TEST SUITE FILE
+
 It's also possible to debug a simple .t file, for instance,
 
     make t/01-sanity.t
@@ -74,7 +90,7 @@ with
         "bin-environment" => ( "OPENAPI_BACKEND" => "PgFarm", "OPENAPI_URL_PREFIX" => "" ),
 
 
-For Developer:
+FOR DEVELOPER:
 
 bin/ directory is the where CGI entry openapi.pl located
 doc/ directory containing OpenAPI spec
