@@ -30,11 +30,14 @@ use OpenAPI::Handler::Role;
 use OpenAPI::Handler::Admin;
 use OpenAPI::Handler::Login;
 use Encode::Guess;
+use OpenAPI::Cache;
 
 $YAML::Syck::ImplicitUnicode = 1;
 #$YAML::Syck::ImplicitBinary = 1;
 
 our $Backend;
+our $Cache = OpenAPI::Cache->new;
+our $UUID = Data::UUID->new;
 
 our %OpMap = (
     contains => 'like',

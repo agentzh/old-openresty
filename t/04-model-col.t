@@ -154,7 +154,7 @@ PUT /=/model/laser/B
 PUT /=/model/laser/C
 {type:"real"}
 --- response
-{"success":0,"error":"Changing column type is not supported."}
+{"success":1}
 
 
 
@@ -162,7 +162,7 @@ PUT /=/model/laser/C
 --- request
 GET /=/model/laser/C
 --- response
-{"name":"C","default":null,"label":"b","type":"integer"}
+{"name":"C","default":null,"label":"b","type":"real"}
 
 
 
@@ -179,7 +179,7 @@ PUT /=/model/laser/C
 --- request
 GET /=/model/laser/C
 --- response
-{"name":"C","default":null,"label":"c","type":"integer"}
+{"name":"C","default":null,"label":"c","type":"real"}
 
 
 
@@ -192,7 +192,7 @@ GET /=/model/laser
       [
         {"name":"id","label":"ID","type":"serial"},
         {"name":"A","default":null,"label":"A","type":"text"},
-        {"name":"C","default":null,"label":"c","type":"integer"}
+        {"name":"C","default":null,"label":"c","type":"real"}
       ],
       "name":"laser",
       "description":"test model"
@@ -206,7 +206,6 @@ POST /=/model/laser/~/~
 { C: 3.14159 }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/laser/id/1"}
---- SKIP
 
 
 
@@ -214,8 +213,7 @@ POST /=/model/laser/~/~
 --- request
 GET /=/model/laser/id/1
 --- response
-[{"c":"3.14159","a":null,"id":"1"}]
---- SKIP
+[{"A":null,"C":"3.14159","id":"1"}]
 
 
 
@@ -375,15 +373,15 @@ POST /=/model/laser/~
 --- request
 GET /=/post/model/laser/~/~?data={M:3.14}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/laser/id/1"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/laser/id/2"}
 
 
 
 === TEST 39: query via id
 --- request
-GET /=/model/laser/id/1
+GET /=/model/laser/id/2
 --- response
-[{"M":"3.14","id":"1"}]
+[{"M":"3.14","id":"2"}]
 
 
 

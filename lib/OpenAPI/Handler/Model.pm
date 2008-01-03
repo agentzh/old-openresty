@@ -199,7 +199,7 @@ sub PUT_model_column {
     my $type = delete $data->{type};
     my $ntype;
     if ($type) {
-        die "Changing column type is not supported.\n";
+        #die "Changing column type is not supported.\n";
         $ntype = $to_native_type{$type};
         if (!$ntype) {
             die "Bad column type: $type\n",

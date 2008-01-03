@@ -3,7 +3,7 @@ package OpenAPI;
 #use Smart::Comments;
 use strict;
 use warnings;
-use vars qw($Dumper);
+use vars qw($Cache $UUID $Dumper);
 use CGI::Cookie;
 
 sub GET_login_user {
@@ -52,15 +52,14 @@ sub login {
     ### $account
     ### $role
     ### $password
-    my $res;
     if (defined $password) {
-        $res = $self->select("select count(*) from _roles where name = " . Q($role) . " and login = 'password' and password = " . Q($password) . ";");
+        my $res = $self->select("select count(*) from _roles where name = " . Q($role) . " and login = 'password' and password = " . Q($password) . ";");
         ### with password: $res
         if ($res->[0][0] == 0) {
             die "Password for $account.$role is incorrect.\n";
         }
     } else {
-        $res = $self->select("select count(*) from _roles where name = " . Q($role) . " and login = 'anonymous';");
+        my $res = $self->select("select count(*) from _roles where name = " . Q($role) . " and login = 'anonymous';");
         ### no password: $res
         ### no password (2): $res->[0][0]
         if ($res->[0][0] == 0) {
@@ -70,13 +69,15 @@ sub login {
     }
     $self->set_role($role);
 
-    $res = $self->{_cookie} = {
+    my $uuid = $UUID->create_from_name_str($account, $role);
+    $self->{_cookie} = { session => $uuid };
+    $Cache->set($uuid => "$account.$role");
+
+    return {
+        success => 1,
         account => $account,
         role => $role,
     };
-    ### HERE...
-    $res->{success} = 1;
-    $res;
 }
 
 1;

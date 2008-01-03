@@ -2,6 +2,9 @@ package OpenAPI::Dispatcher;
 
 use strict;
 use warnings;
+
+#use Smart::Comments;
+use Data::UUID;
 use OpenAPI::Limits;
 use OpenAPI;
 
@@ -117,14 +120,19 @@ sub process_request {
                 # XXX else check password, if correct, create a session
             } else {
                 my $cookies = CGI::Cookie->fetch;
+                my $session;
                 if ($cookies) {
-                    my $cookie = $cookies->{account};
+                    my $cookie = $cookies->{session};
                     if ($cookie) {
-                        $account = $cookie->value;
-                    }
-                    $cookie = $cookies->{role};
-                    if ($cookie) {
-                        $role = $cookie->value;
+                        my $uuid = $cookie->value;
+                        ### UUID from cookie: $uuid
+                        my $user = $OpenAPI::Cache->get($uuid);
+                        ### User from cookie: $user
+                        if ($user) {
+                            ($account, $role) = split /\./, $user, 2;
+                        }
+                        ### $account
+                        ### $role
                     }
                 }
             }

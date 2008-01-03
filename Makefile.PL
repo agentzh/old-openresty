@@ -18,6 +18,10 @@ requires            ('Params::Util' => '0.22');
 requires            ('Parse::Yapp');
 requires            ('DBD::Pg' => '1.49');
 requires            ('Term::ReadKey' => '2.30');
+requires            ('Data::UUID' => '1.148');
+
+# XXX will make it optional later...
+requires            ('Cache::FastMmap' => '1.24');
 
 features(
     'Test suite' => [

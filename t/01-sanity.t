@@ -271,9 +271,9 @@ GET /=/model/MyFavorites.js
 === TEST 27: Change the name and type of title
 --- request
 PUT /=/model/MyFavorites/title
-{ name: "count", type: "integer" }
+{ name: "count", type: "text" }
 --- response
-{"success":0,"error":"Changing column type is not supported."}
+{"success":1}
 
 
 

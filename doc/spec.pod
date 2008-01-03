@@ -116,7 +116,7 @@ C<update> 和 C<alter> 语句.
 
 =back
 
-那于一些防火墙阻止 PUT 和 DELETE 请求，而且对于跨域 AJAX 调用而言，
+由于一些防火墙阻止 PUT 和 DELETE 请求，而且对于跨域 AJAX 调用而言，
 DELETE 和 PUT 也较难实现，OpenAPI 为 PUT 和 DELETE 提供了相应的变形接口。
 例如
 
