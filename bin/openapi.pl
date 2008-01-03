@@ -58,10 +58,13 @@ if ($cmd eq 'adduser') {
 
     my $password;
     print "Enter the password for the Admin role: ";
+
     ReadMode(2);
     my $key;
     while (not defined ($key = ReadLine(0))) {
     }
+    ReadMode(0);
+
     $key =~ s/\n//s;
     print "\n";
 
@@ -70,8 +73,12 @@ if ($cmd eq 'adduser') {
     OpenAPI::check_password($saved_key);
 
     print "Re Enter the password for the Admin role: ";
+
+    ReadMode(2);
     while (not defined ($key = ReadLine(0))) {
     }
+    ReadMode(0);
+
     $key =~ s/\n//s;
     print "\n";
 
