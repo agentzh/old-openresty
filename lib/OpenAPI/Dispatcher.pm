@@ -105,6 +105,16 @@ sub process_request {
     }
 
     # XXX hacks...
+    my $cookies = CGI::Cookie->fetch;
+    my $uuid_from_cookie;
+    my $session;
+    if ($cookies) {
+        my $cookie = $cookies->{session};
+        if ($cookie) {
+            $openapi->{_uuid_from_cookie} =
+                $uuid_from_cookie = $cookie->value;
+        }
+    }
 
     my ($account, $role);
     if ($bits[0] and $bits[0] ne 'login') {
@@ -112,6 +122,7 @@ sub process_request {
             # XXX this part is lame...
             my $user = $cgi->url_param('user');
             if (defined $user) {
+                #$OpenAPI::Cache->remove($uuid);
                 my $res = $openapi->login($user, $cgi->url_param('password'));
                 $account = $res->{account};
                 $role = $res->{role};
@@ -119,21 +130,15 @@ sub process_request {
                 # XXX if account is anonymous, then create a session
                 # XXX else check password, if correct, create a session
             } else {
-                my $cookies = CGI::Cookie->fetch;
-                my $session;
-                if ($cookies) {
-                    my $cookie = $cookies->{session};
-                    if ($cookie) {
-                        my $uuid = $cookie->value;
-                        ### UUID from cookie: $uuid
-                        my $user = $OpenAPI::Cache->get($uuid);
-                        ### User from cookie: $user
-                        if ($user) {
-                            ($account, $role) = split /\./, $user, 2;
-                        }
-                        ### $account
-                        ### $role
+                ### UUID from cookie: $uuid
+                if ($uuid_from_cookie) {
+                    my $user = $OpenAPI::Cache->get($uuid_from_cookie);
+                    ### User from cookie: $user
+                    if ($user) {
+                        ($account, $role) = split /\./, $user, 2;
                     }
+                    ### $account
+                    ### $role
                 }
             }
 
@@ -167,6 +172,7 @@ sub process_request {
             $openapi->fatal("Permission denied for the \"$role\" role.");
             return;
         }
+    } else {
     }
 
     my $category = $Dispatcher{$bits[0]};

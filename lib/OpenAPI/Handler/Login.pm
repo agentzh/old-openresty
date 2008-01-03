@@ -69,7 +69,13 @@ sub login {
     }
     $self->set_role($role);
 
-    my $uuid = $UUID->create_from_name_str($account, $role);
+    my $uuid_from_cookie = $self->{_uuid_from_cookie};
+    ### Get uuid from cookie: $uuid_from_cookie
+    if ($uuid_from_cookie) {
+        $OpenAPI::Cache->remove($uuid_from_cookie)
+    }
+
+    my $uuid = $UUID->create_str;
     $self->{_cookie} = { session => $uuid };
     $Cache->set($uuid => "$account.$role");
 
