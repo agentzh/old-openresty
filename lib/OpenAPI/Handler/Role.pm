@@ -316,6 +316,9 @@ sub new_role {
     my $name = delete $data->{name} or
         die "No 'name' specified.\n";
     _IDENT($name) or die "Bad role name: ", $Dumper->($name), "\n";
+    if ($self->has_role($name)) {
+        die "Role \"$name\" already exists.\n";
+    }
 
     my $desc = delete $data->{description};
     if (!defined $desc) {

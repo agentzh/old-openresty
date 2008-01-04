@@ -16,12 +16,17 @@ sub GET_login_user_password {
     my ($self, $bits) = @_;
     my $user = $bits->[1];
     my $password = $bits->[2];
-    $self->login($user, $password);
+    $self->login($user, { password => $password });
 }
 
 sub login {
-    my ($self, $user, $password) = @_;
+    my ($self, $user, $params) = @_;
     _STRING($user) or die "Bad user name: ", $Dumper->($user), "\n";
+    $params ||= {};
+    ### $params
+    ### caller: caller()
+    my $password = $params->{password};
+    my $captcha = $params->{captcha};
     my $account;
     my $role = 'Admin';
     if ($user =~ /^(\w+)\.(\w+)$/) {
@@ -52,7 +57,28 @@ sub login {
     ### $account
     ### $role
     ### $password
-    if (defined $password) {
+    ### capture param:  $captcha
+    if (defined $captcha) {
+        my ($id, $user_sol) = split /:/, $captcha, 2;
+        if (!$id or !$user_sol) {
+            die "Bad captcha parameter: $captcha\n";
+        }
+        my $res = $self->select("select count(*) from _roles where name = " . Q($role) . " and login = 'captcha'");
+        ### with captcha: $res
+        if ($res->[0][0] == 0) {
+            die "Cannot login as $account.$role via captchas.\n";
+        }
+        ### Captcha ID: $id
+        my $true_sol = $Cache->get($id);
+        ### True sol: $true_sol
+        $Cache->remove($id);
+        if (!defined $true_sol) {
+            die "Capture ID is bad or expired.\n";
+        }
+        if ($user_sol ne $true_sol) {
+            die "Solution to the captcha is incorrect.\n";
+        }
+    } elsif (defined $password) {
         my $res = $self->select("select count(*) from _roles where name = " . Q($role) . " and login = 'password' and password = " . Q($password) . ";");
         ### with password: $res
         if ($res->[0][0] == 0) {
@@ -69,10 +95,15 @@ sub login {
     }
     $self->set_role($role);
 
-    my $uuid_from_cookie = $self->{_uuid_from_cookie};
-    ### Get uuid from cookie: $uuid_from_cookie
-    if ($uuid_from_cookie) {
-        $OpenAPI::Cache->remove($uuid_from_cookie)
+    my $session_from_cookie = $self->{_session_from_cookie};
+    ### Get session ID from cookie: $session_from_cookie
+    if ($session_from_cookie) {
+        $OpenAPI::Cache->remove($session_from_cookie)
+    }
+
+    my $captcha_from_cookie = $self->{_captcha_from_cookie};
+    if ($captcha_from_cookie) {
+        $OpenAPI::Cache->remove($captcha_from_cookie);
     }
 
     my $uuid = $UUID->create_str;

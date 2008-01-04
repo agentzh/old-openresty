@@ -109,13 +109,19 @@ sub process_request {
 
     # XXX hacks...
     my $cookies = CGI::Cookie->fetch;
-    my $uuid_from_cookie;
+    my ($session_from_cookie, $captcha_from_cookie);
     my $session;
     if ($cookies) {
         my $cookie = $cookies->{session};
         if ($cookie) {
-            $openapi->{_uuid_from_cookie} =
-                $uuid_from_cookie = $cookie->value;
+            $openapi->{_session_from_cookie} =
+                $session_from_cookie = $cookie->value;
+        }
+        $cookie = $cookies->{captcha};
+        if ($cookie) {
+            $openapi->{_captcha_from_cookie} =
+                $captcha_from_cookie = $cookie->value;
+            #$OpenAPI::Cache->remove($captcha_from_cookie);
         }
     }
 
@@ -126,16 +132,20 @@ sub process_request {
             my $user = $cgi->url_param('user');
             if (defined $user) {
                 #$OpenAPI::Cache->remove($uuid);
-                my $res = $openapi->login($user, $cgi->url_param('password'));
+                my $captcha = $cgi->url_param('captcha');
+                ### URL param capture: $captcha
+                my $res = $openapi->login($user, {
+                    password => scalar($cgi->url_param('password')),
+                    captcha => $captcha,
+                });
                 $account = $res->{account};
                 $role = $res->{role};
                 # XXX login as $account.$role...
                 # XXX if account is anonymous, then create a session
                 # XXX else check password, if correct, create a session
             } else {
-                ### UUID from cookie: $uuid
-                if ($uuid_from_cookie) {
-                    my $user = $OpenAPI::Cache->get($uuid_from_cookie);
+                if ($session_from_cookie) {
+                    my $user = $OpenAPI::Cache->get($session_from_cookie);
                     ### User from cookie: $user
                     if ($user) {
                         ($account, $role) = split /\./, $user, 2;
@@ -210,7 +220,6 @@ sub process_request {
     } else {
         $openapi->fatal("Unknown URL catagory: $bits[0]");
     }
-
 }
 
 1;

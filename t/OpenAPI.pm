@@ -29,6 +29,7 @@ sub init {
 sub do_request ($$$$) {
     my ($method, $url, $body, $type) = @_;
     $type ||= 'text/plain';
+    ### $SavedCapture
     my $req = HTTP::Request->new($method);
     $req->header('Content-Type' => $type);
     $req->header('Accept', '*/*');
@@ -65,6 +66,7 @@ sub run_test ($) {
     }
     my $charset = $block->charset || 'UTF-8';
     my $format = $block->format || 'JSON';
+    my $res_type = $block->res_type;
     my $type = $block->request_type;
     if ($request =~ /^(GET|POST|HEAD|PUT|DELETE)\s+([^\n]+)\s*\n(.*)/s) {
         my ($method, $url, $body) = ($1, $2, $3);
@@ -85,8 +87,9 @@ sub run_test ($) {
         }
         if ($expected_res) {
             if ($block->response_like) {
-                $res->content =~ qr/$expected_res/;
-                $SavedCapture = $1;
+                if ($res->content =~ qr/$expected_res/) {
+                    $SavedCapture = $1 if defined $1;
+                }
                 like $res->content, qr/$expected_res/, "$name - response matched";
             } else {
                 from_to($expected_res, 'UTF-8', $charset) unless $charset eq 'UTF-8';
@@ -95,7 +98,11 @@ sub run_test ($) {
         } else {
             is $res->content, $expected_res, "response content OK - $name";
         }
-        like $res->header('Content-Type'), qr/\Q; charset=$charset\E$/, "charset okay - $name";
+        if ($res_type) {
+            is $res->header('Content-Type'), $res_type, "Content-Type in response ok - $name";
+        } else {
+            like $res->header('Content-Type'), qr/\Q; charset=$charset\E$/, "charset okay - $name";
+        }
     } else {
         my ($firstline) = ($request =~ /^([^\n]*)/s);
         die "Invalid request head: \"$firstline\" in $name\n";
