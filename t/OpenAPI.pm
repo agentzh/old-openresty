@@ -11,6 +11,7 @@ our @EXPORT = qw(init do_request run_tests run_test);
 
 use Benchmark::Timer;
 my $timer = Benchmark::Timer->new();
+my $SavedCapture;
 
 my $ua = LWP::UserAgent->new;
 $ua->cookie_jar({ file => "cookies.txt" });
@@ -67,6 +68,8 @@ sub run_test ($) {
     my $type = $block->request_type;
     if ($request =~ /^(GET|POST|HEAD|PUT|DELETE)\s+([^\n]+)\s*\n(.*)/s) {
         my ($method, $url, $body) = ($1, $2, $3);
+        $url =~ s/\$SavedCapture\b/$SavedCapture/g;
+        $body =~ s/\$SavedCapture\b/$SavedCapture/g;
         ### $method
         ### $url
         ### $body
@@ -82,6 +85,8 @@ sub run_test ($) {
         }
         if ($expected_res) {
             if ($block->response_like) {
+                $res->content =~ qr/$expected_res/;
+                $SavedCapture = $1;
                 like $res->content, qr/$expected_res/, "$name - response matched";
             } else {
                 from_to($expected_res, 'UTF-8', $charset) unless $charset eq 'UTF-8';

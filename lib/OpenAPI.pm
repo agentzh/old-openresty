@@ -29,6 +29,7 @@ use OpenAPI::Handler::Action;
 use OpenAPI::Handler::Role;
 use OpenAPI::Handler::Admin;
 use OpenAPI::Handler::Login;
+use OpenAPI::Handler::Captcha;
 use Encode::Guess;
 use OpenAPI::Cache;
 
