@@ -10,6 +10,13 @@ use utf8;
 use Encode 'encode';
 
 our $Captcha;
+my @WordList = qw(
+    word hello world moon machine teatcher school
+    book cookie howdy greeting data tree table
+    print company friend girl character
+    water beef meat meet heavy student
+    worker labor money 
+);
 
 # Create a normal image
 sub GET_captcha_column {
@@ -53,27 +60,32 @@ sub GET_captcha_value {
 
 sub gen_solution {
     my ($self) = @_;
-    "1234";
+    my $str;
+    for (1..2) {
+        my $i = int rand scalar(@WordList);
+        $str .= " ". $WordList[$i];
+    }
+    $str;
 }
 
 sub gen_image {
     my ($self, $type, $str) = @_;
     $Captcha = GD::SecurityImage->new(
-        width   => 150,
-        height  => 100,
-        lines   => 12,
-        font    => "/usr/share/fonts/simkai.ttf",
-        thickness => 0.2,
-        rndmax => 1,
+        width   => 180,
+        height  => 30,
+        lines   => 1,
+        font    => "$FindBin::Bin/../StayPuft.ttf",
+        #thickness => 0.9,
+        rndmax => 4,
         angle => 23 - (int rand 46),
+        ptsize => 80,
         #send_ctobg => 1,
         #scramble => 1,
     );
 
-    my $str = '一心一意';
     $Captcha->random($str);
-    $Captcha->create(ttf => 'default');
-    $Captcha->particle(1732);
+    $Captcha->create(normal => 'rect');
+    $Captcha->particle(432);
     my ($image_data, $mime_type) = $Captcha->out();
     $self->{_bin_data} = $image_data;
     $self->{_type} = "image/$mime_type";
