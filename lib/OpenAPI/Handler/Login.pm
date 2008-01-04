@@ -75,6 +75,9 @@ sub login {
         if (!defined $true_sol) {
             die "Capture ID is bad or expired.\n";
         }
+        if ($true_sol eq '1') {
+            die "Captcha image never used.\n";
+        }
         if ($user_sol ne $true_sol) {
             die "Solution to the captcha is incorrect.\n";
         }

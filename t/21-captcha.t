@@ -102,7 +102,15 @@ GET /=/login/peee.Admin/4423037
 
 
 
-=== TEST 12: Delete existing roles
+=== TEST 12: Delete existing models
+--- request
+DELETE /=/model
+--- response
+{"success":1}
+
+
+
+=== TEST 13: Delete existing roles
 --- request
 DELETE /=/role
 --- response
@@ -110,7 +118,7 @@ DELETE /=/role
 
 
 
-=== TEST 13: Create an account with 'captcha' login method
+=== TEST 14: Create an account with 'captcha' login method
 --- request
 POST /=/role/Poster
 { description:"Poster", login:"captcha" }
@@ -119,7 +127,7 @@ POST /=/role/Poster
 
 
 
-=== TEST 14: Add permission to GET model list
+=== TEST 15: Add permission to GET model list
 --- request
 POST /=/role/Poster/~/~
 {url:"/=/model"}
@@ -128,7 +136,7 @@ POST /=/role/Poster/~/~
 
 
 
-=== TEST 15: Get a new captcha ID
+=== TEST 16: Get a new captcha ID
 --- request
 GET /=/captcha/id
 --- response_like
@@ -136,27 +144,19 @@ GET /=/captcha/id
 
 
 
-=== TEST 16: Login via captcha (not get the image yet)
+=== TEST 17: Login via captcha (not get the image yet)
 --- request
 GET /=/model?user=peee.Poster&captcha=$SavedCapture:abc
 --- response
-{"success":0,"error":"Solution to the captcha is incorrect."}
+{"success":0,"error":"Captcha image never used."}
 
 
 
-=== TEST 17: Login via captcha (the second time)
+=== TEST 18: Login via captcha (the second time)
 --- request
 GET /=/model?user=peee.Poster&captcha=$SavedCapture:abc
 --- response
 {"success":0,"error":"Capture ID is bad or expired."}
-
-
-
-=== TEST 18: get the captcha image using the ID (already expired)
---- request
-GET /=/captcha/id/$SavedCapture
---- response_like
-^{"success":0,"error":"Invalid captcha ID: \w+(?:-\w+)+"}$
 
 
 
@@ -168,7 +168,15 @@ GET /=/captcha/id/$SavedCapture
 
 
 
-=== TEST 20: Get a new captcha ID
+=== TEST 20: get the captcha image using the ID (already expired)
+--- request
+GET /=/captcha/id/$SavedCapture
+--- response_like
+^{"success":0,"error":"Invalid captcha ID: \w+(?:-\w+)+"}$
+
+
+
+=== TEST 21: Get a new captcha ID
 --- request
 GET /=/captcha/id
 --- response_like
@@ -176,7 +184,7 @@ GET /=/captcha/id
 
 
 
-=== TEST 21: Get a new one again
+=== TEST 22: Get a new one again
 --- request
 GET /=/model
 --- response
@@ -184,15 +192,15 @@ GET /=/model
 
 
 
-=== TEST 22: Use the old to try login
+=== TEST 23: Use the old to try login
 --- request
 GET /=/model?user=peee.Poster&captcha=$SavedCapture:efg
 --- response
-{"success":0,"error":"Solution to the captcha is incorrect."}
+{"success":0,"error":"Captcha image never used."}
 
 
 
-=== TEST 23: Get a new captcha ID
+=== TEST 24: Get a new captcha ID
 --- request
 GET /=/captcha/id
 --- response_like
@@ -200,7 +208,7 @@ GET /=/captcha/id
 
 
 
-=== TEST 24: Get a new captcha ID for a second time
+=== TEST 25: Get a new captcha ID for a second time
 --- request
 GET /=/captcha/id
 --- response_like
@@ -208,7 +216,7 @@ GET /=/captcha/id
 
 
 
-=== TEST 25: Use the old ID to try login
+=== TEST 26: Use the old ID to try login
 --- request
 GET /=/model?user=peee.Poster&captcha=$SavedCapture:efg
 --- response
