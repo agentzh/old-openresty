@@ -567,7 +567,20 @@ POST /=/role/Poster
 
 
 
-=== TEST 59: Add a rule to read model list
+=== TEST 59: Create the same role for a second time
+--- request
+POST /=/role/Poster
+{
+    "description":"Comment poster",
+    login: "password",
+    password: "4417935"
+}
+--- response
+{"success":0,"error":"Role \"Poster\" already exists."}
+
+
+
+=== TEST 60: Add a rule to read model list
 --- request
 POST /=/role/Poster/~/~
 {"url":"/=/model"}
@@ -576,7 +589,7 @@ POST /=/role/Poster/~/~
 
 
 
-=== TEST 60: Add a rule to insert new rows to A (missing column 'url')
+=== TEST 61: Add a rule to insert new rows to A (missing column 'url')
 --- request
 POST /=/role/Poster/~/~
 {"method":"POST","src":"/=/model/A/~/~"}
@@ -585,7 +598,7 @@ POST /=/role/Poster/~/~
 
 
 
-=== TEST 61: Add a rule to insert new rows to A (the right way)
+=== TEST 62: Add a rule to insert new rows to A (the right way)
 --- request
 POST /=/role/Poster/~/~
 {"method":"POST","url":"/=/model/A/~/~"}
@@ -594,7 +607,7 @@ POST /=/role/Poster/~/~
 
 
 
-=== TEST 62: Check the rule list
+=== TEST 63: Check the rule list
 --- request
 GET /=/role/Poster/~/~
 --- response_like
@@ -605,7 +618,7 @@ GET /=/role/Poster/~/~
 
 
 
-=== TEST 63: Log into the new role
+=== TEST 64: Log into the new role
 --- request
 GET /=/login/peee.Poster
 --- response
@@ -613,7 +626,7 @@ GET /=/login/peee.Poster
 
 
 
-=== TEST 64: Log into the new role
+=== TEST 65: Log into the new role
 --- request
 GET /=/login/peee.Poster/4417935
 --- response
@@ -621,7 +634,7 @@ GET /=/login/peee.Poster/4417935
 
 
 
-=== TEST 65: Try to do something
+=== TEST 66: Try to do something
 --- request
 GET /=/model
 --- response
@@ -632,7 +645,7 @@ GET /=/model
 
 
 
-=== TEST 66: Try to get model list by another way
+=== TEST 67: Try to get model list by another way
 --- request
 GET /=/model/~
 --- response
@@ -640,7 +653,7 @@ GET /=/model/~
 
 
 
-=== TEST 67: Try to create a new model
+=== TEST 68: Try to create a new model
 --- request
 POST /=/model/C
 { description: "C" }
@@ -649,7 +662,7 @@ POST /=/model/C
 
 
 
-=== TEST 68: Try to access minisql
+=== TEST 69: Try to access minisql
 --- request
 POST /=/action/.Select/lang/minisql
 "select * from A"
@@ -658,7 +671,7 @@ POST /=/action/.Select/lang/minisql
 
 
 
-=== TEST 69: Try to delete itself
+=== TEST 70: Try to delete itself
 --- request
 DELETE /=/role/Poster
 --- response
@@ -666,7 +679,7 @@ DELETE /=/role/Poster
 
 
 
-=== TEST 70: Switch back to the Amin role
+=== TEST 71: Switch back to the Amin role
 --- request
 GET /=/login/peee.Admin/4423037
 --- response
@@ -674,7 +687,7 @@ GET /=/login/peee.Admin/4423037
 
 
 
-=== TEST 71: Drop the Poster role
+=== TEST 72: Drop the Poster role
 --- request
 DELETE /=/role/Poster
 --- response
@@ -682,7 +695,7 @@ DELETE /=/role/Poster
 
 
 
-=== TEST 72: Access the Poster role again
+=== TEST 73: Access the Poster role again
 --- request
 GET /=/role/Poster
 --- response
@@ -690,7 +703,7 @@ GET /=/role/Poster
 
 
 
-=== TEST 73: Try to drop the Admin role
+=== TEST 74: Try to drop the Admin role
 --- request
 DELETE /=/role/Admin
 --- response
@@ -698,7 +711,7 @@ DELETE /=/role/Admin
 
 
 
-=== TEST 74: Access the Admin role again
+=== TEST 75: Access the Admin role again
 --- request
 GET /=/role/Admin
 --- response
@@ -714,7 +727,7 @@ GET /=/role/Admin
 
 
 
-=== TEST 75: Try to drop the Public role
+=== TEST 76: Try to drop the Public role
 --- request
 DELETE /=/role/Public
 --- response
@@ -722,7 +735,7 @@ DELETE /=/role/Public
 
 
 
-=== TEST 76: Access the Public role again
+=== TEST 77: Access the Public role again
 --- request
 GET /=/role/Public
 --- response
@@ -738,7 +751,7 @@ GET /=/role/Public
 
 
 
-=== TEST 77: Get access rules in Public
+=== TEST 78: Get access rules in Public
 --- request
 GET /=/role/Public/~/~
 --- response_like
@@ -751,7 +764,7 @@ GET /=/role/Public/~/~
 
 
 
-=== TEST 78: Delete rules with POST method
+=== TEST 79: Delete rules with POST method
 --- request
 DELETE /=/role/Public/method/POST
 --- response
@@ -759,7 +772,7 @@ DELETE /=/role/Public/method/POST
 
 
 
-=== TEST 79: Get access rules in Public again
+=== TEST 80: Get access rules in Public again
 --- request
 GET /=/role/Public/~/~
 --- response_like
@@ -770,7 +783,7 @@ GET /=/role/Public/~/~
 
 
 
-=== TEST 80: Try to update id of rule in Public
+=== TEST 81: Try to update id of rule in Public
 --- request
 PUT /=/role/Public/id/~
 { id: "521" }
@@ -779,7 +792,7 @@ PUT /=/role/Public/id/~
 
 
 
-=== TEST 81: Update urls of rules
+=== TEST 82: Update urls of rules
 --- request
 PUT /=/role/Public/method/GET
 { url: "/=/model/A/~" }
@@ -788,7 +801,7 @@ PUT /=/role/Public/method/GET
 
 
 
-=== TEST 82: Check the new rules
+=== TEST 83: Check the new rules
 --- request
 GET /=/role/Public/~/~
 --- response_like
@@ -799,7 +812,7 @@ GET /=/role/Public/~/~
 
 
 
-=== TEST 83: Update methods of rules
+=== TEST 84: Update methods of rules
 --- request
 PUT /=/role/Public/method/GET
 { method: "POST" }
@@ -808,7 +821,7 @@ PUT /=/role/Public/method/GET
 
 
 
-=== TEST 84: Check the new rules
+=== TEST 85: Check the new rules
 --- request
 GET /=/role/Public/~/~
 --- response_like
@@ -819,7 +832,7 @@ GET /=/role/Public/~/~
 
 
 
-=== TEST 85: Update methods & urls of rules
+=== TEST 86: Update methods & urls of rules
 --- request
 PUT /=/role/Public/method/POST
 { method: "GET",url: "/=/model" }
@@ -828,7 +841,7 @@ PUT /=/role/Public/method/POST
 
 
 
-=== TEST 86: Check the new rules
+=== TEST 87: Check the new rules
 --- request
 GET /=/role/Public/~/~
 --- response_like
