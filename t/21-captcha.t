@@ -222,3 +222,136 @@ GET /=/model?user=peee.Poster&captcha=$SavedCapture:efg
 --- response
 {"success":0,"error":"Capture ID is bad or expired."}
 
+
+
+=== TEST 27: Get a new captcha ID
+--- request
+GET /=/captcha/id
+--- response_like
+^"(\w+(?:-\w+){3,})"$
+
+
+
+=== TEST 28: Get the image
+--- res_type: image/png
+--- request
+GET /=/captcha/id/$SavedCapture
+--- response_like
+.{100,}
+
+
+
+=== TEST 29: Get a new captcha ID
+--- res_type: image/png
+--- request
+GET /=/captcha/id/$SavedCapture
+--- response_like
+.{100,}
+
+
+
+=== TEST 30: Use captcha to login
+--- request
+GET /=/model?user=peee.Poster&captcha=$SavedCapture:helloworld
+--- response
+[]
+
+
+
+=== TEST 31: Use captcha to login
+--- request
+GET /=/model?user=peee.Poster&captcha=$SavedCapture:helloworld
+--- response
+{"success":0,"error":"Capture ID is bad or expired."}
+
+
+
+=== TEST 32: Get a new captcha ID
+--- request
+GET /=/captcha/id/$SavedCapture
+--- response_like
+{"success":0,"error":"Invalid captcha ID: \w+(?:-\w+)+"}
+
+
+
+=== TEST 33: Use captcha to login
+--- request
+GET /=/model?user=peee.Poster&captcha=$SavedCapture:helloworld
+--- response
+{"success":0,"error":"Capture ID is bad or expired."}
+
+
+
+=== TEST 34: Get a new captcha ID
+--- request
+GET /=/captcha/id
+--- response_like
+^"(\w+(?:-\w+){3,})"$
+
+
+
+=== TEST 35: Get the image
+--- res_type: image/png
+--- request
+GET /=/captcha/id/$SavedCapture?lang=en
+--- response_like
+.{100,}
+
+
+
+=== TEST 36: Use captcha to login (wrong password)
+--- request
+GET /=/model?user=peee.Poster&captcha=$SavedCapture:helloworldd
+--- response
+{"success":0,"error":"Solution to the captcha is incorrect."}
+
+
+
+=== TEST 37: Get a new captcha ID
+--- request
+GET /=/captcha/id
+--- response_like
+^"(\w+(?:-\w+){3,})"$
+
+
+
+=== TEST 38: Get the image
+--- res_type: image/png
+--- request
+GET /=/captcha/id/$SavedCapture?lang=cn
+--- response_like
+.{100,}
+
+
+
+=== TEST 39: Use captcha to login
+--- request
+GET /=/model?user=peee.Poster&captcha=$SavedCapture:你好，世界！
+--- response
+[]
+
+
+
+=== TEST 40: Get a new captcha ID
+--- request
+GET /=/captcha/id
+--- response_like
+^"(\w+(?:-\w+){3,})"$
+
+
+
+=== TEST 41: Get the image
+--- res_type: image/png
+--- request
+GET /=/captcha/id/$SavedCapture?lang=cn
+--- response_like
+.{100,}
+
+
+
+=== TEST 42: Use captcha to login (wrong solution)
+--- request
+GET /=/model?user=peee.Poster&captcha=$SavedCapture:你好，世界啊！
+--- response
+{"success":0,"error":"Solution to the captcha is incorrect."}
+
