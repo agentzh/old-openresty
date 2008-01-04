@@ -35,3 +35,4 @@ TODO items for OpenAPI
 * Backup and Restore data for promotion [shangerdi]
 * Tests for session manager on login [shangerdi]
 * Tests for captcha [shangerdi]
+* Tests for logout [shangerdi]
