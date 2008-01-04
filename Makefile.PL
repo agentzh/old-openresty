@@ -19,6 +19,7 @@ requires            ('Parse::Yapp');
 requires            ('DBD::Pg' => '1.49');
 requires            ('Term::ReadKey' => '2.30');
 requires            ('Data::UUID' => '1.148');
+requires            ('GD::SecurityImage' => '1.64');
 
 # XXX will make it optional later...
 requires            ('Cache::FastMmap' => '1.24');
