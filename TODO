@@ -31,3 +31,7 @@ TODO items for OpenAPI
   when creating user, one for access meta data, we could call it meta-user, the other for access user data; all meta data,
   like _models, _columns, _views will be keep in meta-schema, thus we could use PostgreSQL security model to make maximum
   protection for us. [laser,leiyh,angentzh]
+* Tests for PUT method in Role [shangerdi]
+* Backup and Restore data for promotion [shangerdi]
+* Tests for session manager on login [shangerdi]
+* Tests for captcha [shangerdi]
