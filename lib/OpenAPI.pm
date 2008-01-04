@@ -248,6 +248,7 @@ sub warning {
 
 sub response {
     my $self = shift;
+    if ($self->{_no_response}) { return; }
     my $charset = $self->{_charset};
     my $cgi = $self->{_cgi};
     my $cookie_data = $self->{_cookie};
@@ -261,13 +262,19 @@ sub response {
     }
 
     print "HTTP/1.1 200 OK\n";
+    my $type = $self->{_type} || 'text/plain';
     print $cgi->header(
-        -type => "text/plain; charset=$charset",
+        -type => "$type" . ($type =~ /text/ ? "; charset=$charset" : ""),
         @cookies ? (-cookie => \@cookies) : ()
     );
 
     #warn $s;
     my $str = '';
+    if ($self->{_bin_data}) {
+        binmode \*STDOUT;
+        print $self->{_bin_data};
+        return;
+    }
     if ($self->{_error}) {
         $str = $self->emit_error($self->{_error});
     } elsif ($self->{_data}) {
