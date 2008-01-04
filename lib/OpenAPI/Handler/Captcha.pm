@@ -235,7 +235,7 @@ sub gen_image {
     my ($self, $lang, $str) = @_;
     my $sign = (int rand 2) == 0 ? '' : '-';
     my $angle;
-    if ($lang eq 'cn' && length($str) <= 4) {
+    if (length($str) <= 4) {
         $angle = $sign . (5 + int rand 4);
     } else {
         $angle = $sign . (2 + int rand 4);
@@ -244,7 +244,7 @@ sub gen_image {
         width   => 180,
         height  => 60,
         lines   => 1 + int rand 4,
-        font    => "/home/agentz/Desktop/wqy-zenhei/wqy-zenhei.ttf",
+        font    => "$FindBin::Bin/../font/wqy-zenhei.ttf",
         thickness => 0.5,
         rndmax => 3,
         angle => $angle,
