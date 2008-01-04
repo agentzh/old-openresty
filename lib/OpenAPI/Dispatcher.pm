@@ -25,10 +25,13 @@ my %Dispatcher = (
         qw< admin admin_op >
     ],
     role => [
-        qw< role_list role access_rule_col access_rule >
+        qw< role_list role access_rule_column access_rule >
     ],
     login => [
         qw< login login_user login_user_password >
+    ],
+    captcha => [
+        qw< captcha_list captcha_column captcha_value >
     ],
 );
 
@@ -117,7 +120,7 @@ sub process_request {
     }
 
     my ($account, $role);
-    if ($bits[0] and $bits[0] ne 'login') {
+    if ($bits[0] and $bits[0] !~ /^(?:login|captcha)$/) {
         eval {
             # XXX this part is lame...
             my $user = $cgi->url_param('user');
@@ -166,7 +169,7 @@ sub process_request {
     }
 
     # XXX check ACL rules...
-    if ($bits[0] and $bits[0] ne 'login') {
+    if ($bits[0] and $bits[0] !~ /^(?:login|captcha)$/) {
         my $res = $openapi->current_user_can($http_meth => \@bits);
         if (!$res) {
             $openapi->fatal("Permission denied for the \"$role\" role.");
