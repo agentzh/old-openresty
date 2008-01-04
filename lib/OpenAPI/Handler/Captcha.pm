@@ -229,6 +229,8 @@ sub gen_solution {
     }
     $str = substr($str, 0, 6) if $lang eq 'cn';
     $str;
+    # XXX debug only
+    #$lang eq 'en' ? "hello world " : "你好 世界 "
 }
 
 sub gen_image {
