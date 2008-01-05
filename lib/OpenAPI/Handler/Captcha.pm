@@ -172,13 +172,13 @@ sub GET_captcha_column {
     my ($self, $bits) = @_;
     my $col = $bits->[1];
     if ($col eq 'id') {
-        my $id = $UUID->create_str;
-        $Cache->set($id => 1);
-
         my $captcha_from_cookie = $self->{_captcha_from_cookie};
         if ($captcha_from_cookie) {
             $OpenAPI::Cache->remove($captcha_from_cookie);
         }
+
+        my $id = $UUID->create_str;
+        $Cache->set($id => 1);
 
         $self->{_cookie} = { captcha => $id };
         return $id;
