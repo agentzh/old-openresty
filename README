@@ -54,7 +54,9 @@ fastcgi.server = (
             "bin-environment" => (
                 "OPENAPI_BACKEND" => "Pg",
                 "OPENAPI_URL_PREFIX" => "",
-                "OPENAPI_COMMAND" => "fastcgi"
+                "OPENAPI_COMMAND" => "fastcgi",
+                "OPENAPI_CACHE" => "mmap",
+                    # OR "memcached:10.2.26.17:1117,127.0.0.1:12345,10.62.3.48:1115"
             ),
             "min-procs"    => 1,
             "max-procs"    => 5,

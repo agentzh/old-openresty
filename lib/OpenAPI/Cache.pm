@@ -20,13 +20,16 @@ sub new {
             expire_time => $expire_time,
         );
     } elsif ($spec =~ /^memcached\:(.+)$/) {
-        require Cache::Memcached::Fast;
         my $list = $1;
+        require Cache::Memcached::Fast;
         my @addr = split /\s*,\s*|\s+/, $list;
         $obj = Cache::Memcached::Fast->new({
             servers => [@addr],
         });
+        #$obj->set(dog => 32);
+        #die "Dog value: ", $obj->get('dog');
         $self->{expire_time} = $expire_time;
+        #die $obj;
     } else {
         die "Invalid OPENAPI_CACHE value: $spec\n";
     }
