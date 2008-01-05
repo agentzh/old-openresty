@@ -195,7 +195,7 @@ POST /=/model/~
 { name:"Howdy", description:"Howdy",
   columns:[
     {name:"title",label:"title"},
-    {name:"updated",label:"updated",default:["now()"]}
+    {name:"updated",label:"updated",default:["now() at time zone 'UTC'"]}
   ] }
 --- response
 {"success":1}
@@ -209,7 +209,7 @@ GET /=/model/Howdy/~
 [
     {"name":"id","label":"ID","type":"serial"},
     {"name":"title","default":null,"label":"title","type":"text"},
-    {"name":"updated","default":"now()","label":"updated","type":"text"}
+    {"name":"updated","default":"now() at time zone 'UTC'","label":"updated","type":"text"}
 ]
 
 
@@ -227,7 +227,7 @@ POST /=/model/Howdy/~/~
 --- request
 GET /=/model/Howdy/id/1
 --- response_like
-\[\{"updated":"(20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+[-+]\d{2})","title":"Hey","id":"1"\}\]
+\[\{"updated":"(20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)","title":"Hey","id":"1"\}\]
 
 
 

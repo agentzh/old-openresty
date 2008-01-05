@@ -161,7 +161,7 @@ sub POST_model_column {
     }
     $default ||= 'null';
 
-    my $sql = "alter table \"$table_name\" add column \"$col\" $ntype default $default;\n";
+    my $sql = "alter table \"$table_name\" add column \"$col\" $ntype default ($default);\n";
     $sql .= "$insert";
 
     my $res = $self->do($sql);
@@ -222,7 +222,7 @@ sub PUT_model_column {
         $default = $self->process_default($default);
 
         $update_meta->set(QI('default') => Q($default));
-        $sql .= "alter table \"$table_name\" alter column \"$new_col\" set default $default;\n",
+        $sql .= "alter table \"$table_name\" alter column \"$new_col\" set default ($default);\n",
     }
 
     $update_meta->where(table_name => Q($table_name))
@@ -403,7 +403,7 @@ sub new_model {
         if (defined $default) {
             $default = $self->process_default($default);
             # XXX
-            $sql .= " default $default";
+            $sql .= " default ($default)";
             $ins->cols(QI('default'))
                 ->values(Q($default));
         }
@@ -431,7 +431,8 @@ sub check_default_expr {
     my $expr = shift;
     if ($expr !~ m{^ \s*
                 (
-                    now \s* \( \s* \) |
+                    now \s* \( \s* \)
+                        (?: \s+ at \s+ time \s+ zone \s+ '[^']+' )? |
                 ) \s* $
             }x) {
         die "Bad default expression: $expr\n";
