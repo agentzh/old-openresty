@@ -8,7 +8,7 @@ use vars qw($Dumper %OpMap);
 sub check_type {
     my $type = shift;
     if ($type !~ m{^ \s*
-                (?:
+                (
                     text |
                     integer |
                     serial |
@@ -22,7 +22,7 @@ sub check_type {
             }x) {
         die "Bad column type: $type\n";
     }
-    $type;
+    $1;
 }
 
 sub DELETE_model_list {
@@ -427,21 +427,26 @@ sub new_model {
     };
 }
 
+sub check_default_expr {
+    my $expr = shift;
+    if ($expr !~ m{^ \s*
+                (
+                    now \s* \( \s* \) |
+                ) \s* $
+            }x) {
+        die "Bad default expression: $expr\n";
+    }
+    $1;
+}
 
 sub process_default {
     my ($self, $default) = @_;
     if (_STRING($default or $default eq '0')) {
         return Q($default);
     } elsif (_ARRAY($default)) {
-        my $func = shift @$default;
-        _STRING($func) or
-            die "Invalid \"default\" value: ", $Dumper->($default), "\n";
-        $func = lc($func);
-        if ($func eq 'now') {
-            return "now()";
-        } else {
-            die "Unknown function for \"default\": ", $Dumper->($func), "\n";
-        }
+        my $expr = join ' ', @$default;
+        check_default_expr($expr);
+        return $expr;
     } else {
         die "Invalid \"default\" value: ", $Dumper->($default), "\n";
     }

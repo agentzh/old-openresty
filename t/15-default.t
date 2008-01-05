@@ -77,7 +77,7 @@ GET /=/model/Foo/id/1
 === TEST 7: Add a column with default now()
 --- request
 POST /=/model/Foo/~
-{ name: "created", label: "创建日期", type: "timestamp", default: ["now"] }
+{ name: "created", label: "创建日期", type: "timestamp", default: ["now()"] }
 --- response
 {"success":1,"src":"/=/model/Foo/created"}
 
@@ -166,7 +166,7 @@ GET /=/model/Foo/id/4
 === TEST 17: change the default value of the "content" column to now()
 --- request
 PUT /=/model/Foo/content
-{ default: ["now"] }
+{ default: [" now ( ) "] }
 --- response
 {"success":1}
 
@@ -195,7 +195,7 @@ POST /=/model/~
 { name:"Howdy", description:"Howdy",
   columns:[
     {name:"title",label:"title"},
-    {name:"updated",label:"updated",default:["now"]}
+    {name:"updated",label:"updated",default:["now()"]}
   ] }
 --- response
 {"success":1}
