@@ -231,7 +231,79 @@ GET /=/model/Howdy/id/1
 
 
 
-=== TEST 24: Add a column with default 0
+=== TEST 24: Create a new column with timestamp
+--- request
+POST /=/model/Howdy/colA
+{ label: "colA", type:  "timestamp" }
+--- response
+{"success":1,"src":"/=/model/Howdy/colA"}
+
+
+
+=== TEST 25: Create a new column with timestamp(0)
+--- request
+POST /=/model/Howdy/colB
+{ label: "colB", type:  "timestamp(0)" }
+--- response
+{"success":1,"src":"/=/model/Howdy/colB"}
+
+
+
+=== TEST 26: extra space in type
+--- request
+POST /=/model/Howdy/colC
+{ label: "colC", type:  "  timestamp  (  0  )  " }
+--- response
+{"success":1,"src":"/=/model/Howdy/colC"}
+
+
+
+=== TEST 27: invalid stuff
+--- request
+POST /=/model/Howdy/colD
+{ label: "colD", type:  "  timestamp  (  'a'  )  " }
+--- response
+{"success":0,"error":"Bad column type:   timestamp  (  'a'  )  "}
+
+
+
+=== TEST 28: with timezone (Bad)
+--- request
+POST /=/model/Howdy/colE
+{ label: "colE", type:  "  timestamp  (  0  )  with  timezone " }
+--- response
+{"success":0,"error":"Bad column type:   timestamp  (  0  )  with  timezone "}
+
+
+
+=== TEST 29: with time zone (Good)
+--- request
+POST /=/model/Howdy/colE
+{ label: "colE", type:  " timestamp ( 0 )  with  time  zone " }
+--- response
+{"success":1,"src":"/=/model/Howdy/colE"}
+
+
+
+=== TEST 30: with time zone but w/o precision
+--- request
+POST /=/model/Howdy/colF
+{ label: "colF", type:  " timestamp with  time  zone " }
+--- response
+{"success":1,"src":"/=/model/Howdy/colF"}
+
+
+
+=== TEST 31: with time zone but w/o precision (for time)
+--- request
+POST /=/model/Howdy/colG
+{ label: "colG", type:  " time (0) with  time  zone " }
+--- response
+{"success":1,"src":"/=/model/Howdy/colG"}
+
+
+
+=== TEST 32: Add a column with default 0
 --- request
 POST /=/model/Foo/~
 { name: "num", label: "num", type: "integer", default: "0" }
