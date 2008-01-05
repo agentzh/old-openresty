@@ -169,26 +169,22 @@ GET /=/model
 
 
 === TEST 13: Delete a model with a bad name
+--- request
+DELETE /=/model/@!
+--- response
+{"success":0,"error":"Bad model name: \"@!\""}
 
 
 
 === TEST 14: Delete a non-existent model
+--- request
+DELETE /=/model/NotExist
+--- response
+{"success":0,"error":"Model \"NotExist\" not found."}
 
 
 
-=== TEST 15: Delete a specified model
-
-
-
-=== TEST 16: Delete all the models
-
-
-
-=== TEST 17: Check the model list again (should be empty now)
-
-
-
-=== TEST 18: Post model as a list
+=== TEST 15: Post model as a list
 --- request
 POST /=/model/Tiger
 [{ description: "Tiger" }]
@@ -197,7 +193,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 19: Create a model w/o POST content
+=== TEST 16: Create a model w/o POST content
 --- request
 POST /=/model/laser
 --- response
@@ -205,7 +201,7 @@ POST /=/model/laser
 
 
 
-=== TEST 20: invalid columns in the model schema
+=== TEST 17: invalid columns in the model schema
 --- request
 POST /=/model/Tiger
 { description: "Tiger", columns: 32 }
@@ -214,7 +210,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 21: invalid 'description' slot value in the schema
+=== TEST 18: invalid 'description' slot value in the schema
 --- request
 POST /=/model/Tiger
 { description: ["hello"] }
@@ -223,7 +219,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 22: invalid model column name in schema
+=== TEST 19: invalid model column name in schema
 --- request
 POST /=/model/Tiger
 { description: "Tiger", columns:
@@ -234,7 +230,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 23: model column name too long
+=== TEST 20: model column name too long
 --- request
 POST /=/model/Tiger
 { description: "Tiger", columns:
@@ -245,7 +241,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 24: model column name JUST NOT too long
+=== TEST 21: model column name JUST NOT too long
 --- request
 POST /=/model/Tiger
 { description: "Tiger", columns:
@@ -256,7 +252,7 @@ POST /=/model/Tiger
 
 
 
-=== TEST 25: model name too long
+=== TEST 22: model name too long
 --- request
 POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ123456
 { description: "Bad model" }
@@ -265,7 +261,7 @@ POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ123456
 
 
 
-=== TEST 26: model name JUST NOT too long
+=== TEST 23: model name JUST NOT too long
 --- request
 POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ12345
 { description: "Bad model" }
@@ -274,7 +270,7 @@ POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ12345
 
 
 
-=== TEST 27: Unrecoginzed key in model's block (POST)
+=== TEST 24: Unrecoginzed key in model's block (POST)
 --- request
 POST /=/model/TTT
 { \xFF\xFE: 'key named \xFF\xFE', description: "bad" }
@@ -283,7 +279,7 @@ POST /=/model/TTT
 
 
 
-=== TEST 28: Unrecoginzed keys in model's block (POST)
+=== TEST 25: Unrecoginzed keys in model's block (POST)
 --- request
 POST /=/model/TTT
 { \xFF\xFE: 'key named \xFF\xFE', \xFF\xFF: 'key named \xFF\xFF', description: "bad" }
@@ -292,7 +288,7 @@ POST /=/model/TTT
 
 
 
-=== TEST 29: when column def is bad
+=== TEST 26: when column def is bad
 --- request
 POST /=/model/Foo2
 { description: 'blah',

@@ -31,13 +31,12 @@ use OpenAPI::Handler::Admin;
 use OpenAPI::Handler::Login;
 use OpenAPI::Handler::Captcha;
 use Encode::Guess;
-use OpenAPI::Cache;
 
 $YAML::Syck::ImplicitUnicode = 1;
 #$YAML::Syck::ImplicitBinary = 1;
 
 our $Backend;
-our $Cache = OpenAPI::Cache->new;
+our $Cache;
 our $UUID = Data::UUID->new;
 
 our %OpMap = (

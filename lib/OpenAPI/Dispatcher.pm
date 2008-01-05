@@ -6,9 +6,10 @@ use warnings;
 #use Smart::Comments;
 use Data::UUID;
 use OpenAPI::Limits;
+use OpenAPI::Cache;
 use OpenAPI;
 
-our $DBFatal;
+our $InitFatal;
 
 # XXX Excpetion not caputred...when database 'test' not created.
 my %Dispatcher = (
@@ -45,10 +46,11 @@ sub init {
     $CGI::DISABLE_UPLOADS = 1;  # no uploads
     my $backend = $ENV{OPENAPI_BACKEND} || 'Pg';
     eval {
+        $OpenAPI::Cache = OpenAPI::Cache->new;
         OpenAPI->connect($backend);
     };
     if ($@) {
-        $DBFatal = $@;
+        $InitFatal = $@;
     }
 }
 
@@ -65,8 +67,8 @@ sub process_request {
     $url =~ s{^\Q$url_prefix\E/+}{}g if $url_prefix;    ### New URL: $url
 
     my $openapi = OpenAPI->new($cgi);
-    if ($DBFatal) {
-        $openapi->fatal($DBFatal);
+    if ($InitFatal) {
+        $openapi->fatal($InitFatal);
         return;
     }
 

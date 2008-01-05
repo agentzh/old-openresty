@@ -5,25 +5,54 @@ use warnings;
 use FindBin;
 
 # This is a hack...
-use base 'Cache::FastMmap';
 
 sub new {
-    my $proto = shift;
+    my $class = ref $_[0] ? ref shift : shift;
+    my $params = shift;
+    my $expire_time = $params->{expired};
+    my $spec = $ENV{OPENAPI_CACHE} || 'mmap';
     my $obj;
-    eval {
-        $obj = $proto->SUPER::new( share_file => "/tmp/openapi-mmap.dat" );
-    };
-    warn $@ if $@;
-    $obj;
+    my $self = bless {}, $class;
+    if ($spec eq 'mmap') {
+        require Cache::FastMmap;
+        $obj = Cache::FastMmap->new(
+            share_file => "/tmp/openapi-mmap.dat",
+            expire_time => $expire_time,
+        );
+    } elsif ($spec =~ /^memcached\:(.+)$/) {
+        require Cache::Memcached::Fast;
+        my $list = $1;
+        my @addr = split /\s*,\s*|\s+/, $list;
+        $obj = Cache::Memcached::Fast->new({
+            servers => [@addr],
+        });
+        $self->{expire_time} = $expire_time;
+    } else {
+        die "Invalid OPENAPI_CACHE value: $spec\n";
+    }
+    $self->{obj} = $obj;
+    return $self;
 }
 
-=pod
 sub set {
+    my ($self, $key, $val) = @_;
+    my $expire_time = $self->{expire_time};
+    $self->{obj}->set($key, $val, $expire_time ? $expire_time : ());
 }
 
 sub get {
+    $_[0]->{obj}->get($_[1]);
 }
-=cut
+
+sub remove {
+    my $self = shift;
+    my $obj = $self->{obj};
+    if ($obj->can('remove')) {
+        $obj->remove(@_);
+    } else {
+        $obj->delete(@_);
+    }
+}
 
 1;
 
