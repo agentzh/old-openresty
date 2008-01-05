@@ -1,21 +1,22 @@
 TODO items for OpenAPI
 
 * Create pg_XXX tables in sql injection tests.
-* Design and implement the login interface (i.e. /=/login/user/...)
-* Design and implement roles and ACL, /=/roles/...
-* Captcha support in the login interface.
-* Work out the empty test cases in t/03-model.t
+* Design and implement the login interface (i.e. /=/login/user/...) [done]
+* Design and implement roles and ACL, /=/roles/... [done]
+* Captcha support in the login interface. [done]
+* Work out the empty test cases in t/03-model.t [done]
 * Shortcut for row_count sub.
   (laser++ said "select count(*)" is expensive in Pg.)
 * More tests for t/10-limits.t.
   (i.e. INSERT_LIMIT, POST_LEN_LIMIT, PUT_LEN_LIMIT, and MAX_SELECT_LIMIT)
+  [done]
 * Tests for unknown HTTP methods (like TRACE, OPTIONS, and CONNECT).
 * Tests for common SQL injection patthers.
 * Coverage testing for the test sutie.
 * Review and polish the existing test suite (under t/)
 * Added Apache config directives to README.
-* Hook laye++'s PCR-based miniSQL parser into OpenAPI.
-* Prerequiste groups in Makefile.PL.
+* Hook laye++'s PCR-based miniSQL parser into OpenAPI. [canceled]
+* Prerequiste groups in Makefile.PL. [done]
 * move all initialize SQLs into a independent file [laser]
 * add a global default PostgreSQL user, named by anonymous/public etc., to act as a read-only role in PG (clusters) [laser]
 * add a per-model PostgreSQL user/role, act as writer for all permitted write from the roles of model itself.
