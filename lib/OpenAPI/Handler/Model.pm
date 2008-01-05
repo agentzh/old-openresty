@@ -5,16 +5,25 @@ use warnings;
 #use Smart::Comments;
 use vars qw($Dumper %OpMap);
 
-our %to_native_type = (
-    text => 'text',
-    integer => 'integer',
-    date => 'date',
-    serial => 'serial',
-    time => 'time',
-    timestamp => 'timestamp',
-    real => 'real',
-    double => 'double precision',
-);
+sub check_type {
+    my $type = shift;
+    if ($type !~ m{^ \s*
+                (?:
+                    text |
+                    integer |
+                    serial |
+                    real |
+                    double precision |
+                    date |
+                    (?:timestamp|time) (?: \s* \( \s* \d+ \s* \) )?
+                        (?: \s* with(?:out)? \s+ time \s+ zone)? |
+                    interval (?: \s* \( \s* \d+ \s* \) )?
+                ) \s* $
+            }x) {
+        die "Bad column type: $type\n";
+    }
+    $type;
+}
 
 sub DELETE_model_list {
     my ($self, $bits) = @_;
@@ -140,13 +149,7 @@ sub POST_model_column {
     my $type = $data->{type} || 'text';
     my $label = $data->{label} or
         die "No 'label' specified for column \"$col\" in model \"$model\".\n";
-    my $ntype = $to_native_type{$type};
-    if (!$ntype) {
-        die "Bad column type: $type\n",
-            "\tOnly the following types are available: ",
-            join(", ", sort keys %to_native_type), "\n";
-    }
-
+    my $ntype = check_type($type);
     my $insert = SQL::Insert->new('_columns')
         ->cols(qw< name label type native_type table_name >)
         ->values( Q($col, $label, $type, $ntype, $table_name) );
@@ -201,12 +204,7 @@ sub PUT_model_column {
     my $ntype;
     if ($type) {
         #die "Changing column type is not supported.\n";
-        $ntype = $to_native_type{$type};
-        if (!$ntype) {
-            die "Bad column type: $type\n",
-                "\tOnly the following types are available: ",
-                join(", ", sort keys %to_native_type), "\n";
-        }
+        $ntype = check_type($type);
         $update_meta->set(type => Q($type))
             ->set(native_type => Q($ntype));
         $sql .= "alter table \"$table_name\" alter column \"$new_col\" type $ntype;\n",
@@ -398,12 +396,7 @@ sub new_model {
             die "No 'label' specified for column \"$name\" in model \"$model\".\n";
 
         my $default = delete $col->{default};
-        my $ntype = $to_native_type{$type};
-        if (!$ntype) {
-            die "Invalid column type: $type\n",
-                "\tOnly the following types are available: ",
-                join(", ", sort keys %to_native_type), "\n";
-        }
+        my $ntype = check_type($type);
         $sql .= ",\n\t\"$name\" $ntype";
         my $ins = $insert->clone
             ->values(Q($name, $type, $ntype, $label, $table));
