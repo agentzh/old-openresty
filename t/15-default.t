@@ -310,3 +310,13 @@ POST /=/model/Foo/~
 --- response
 {"success":1,"src":"/=/model/Foo/num"}
 
+
+
+=== TEST 33: Add a column with default 0
+--- request
+POST /=/model/Foo/~
+{ name: "carrie_stamp", label: "num", type: "timestamp", default: ["timestamp(0)"] }
+--- response
+{"success":1,"src":"/=/model/Foo/num"}
+--- SKIP
+

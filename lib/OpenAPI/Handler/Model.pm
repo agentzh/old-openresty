@@ -432,7 +432,7 @@ sub check_default_expr {
     if ($expr !~ m{^ \s*
                 (
                     now \s* \( \s* \)
-                        (?: \s+ at \s+ time \s+ zone \s+ '[^']+' )? |
+                        (?: \s+ at \s+ time \s+ zone \s+ '[^']+' )?
                 ) \s* $
             }x) {
         die "Bad default expression: $expr\n";

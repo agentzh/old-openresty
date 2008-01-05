@@ -40,7 +40,7 @@ if ($cmd eq 'fastcgi') {
     exit;
 }
 
-my $error = $OpenAPI::Dispatcher::DBFatal;
+my $error = $OpenAPI::Dispatcher::InitFatal;
 if ($error) {
     die $error;
 }
