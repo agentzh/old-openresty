@@ -146,7 +146,6 @@ sub add_user {
         name text  not null,
         type text not null,
         table_name text not null,
-        native_type text default 'text',
         "default" text,
         label text,
         unique(table_name, name)
