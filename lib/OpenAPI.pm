@@ -181,10 +181,12 @@ sub init {
     my $req_data;
     if ($http_meth eq 'POST') {
         $req_data = $cgi->param('POSTDATA');
+        #die "Howdy! >>$req_data<<", $cgi->param('data'), "\n";
+        #die $Dumper->(\%ENV);
 
         if (!defined $req_data) {
             $req_data = $cgi->param('data') or
-                die "No POST content specified.\n";
+                die "No POST content specified or no \"data\" field found.\n";
         } else {
             if (length($req_data) > $POST_LEN_LIMIT) {
                 die "Exceeded POST content length limit: $POST_LEN_LIMIT\n";
