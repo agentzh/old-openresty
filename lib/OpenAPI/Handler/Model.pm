@@ -649,9 +649,6 @@ sub insert_record {
         _IDENT($col) or
             die "Bad column name in row $row_num: ", $Dumper->($col), "\n";
         # XXX croak on column "id"
-        if (lc($col) eq 'id') {
-            die "row $row_num: Column \"id\" is read only.\n";
-        }
         $insert->cols(QI($col));
         $insert->values(Q($val));
         $found = 1;
