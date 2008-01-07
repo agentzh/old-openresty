@@ -108,6 +108,15 @@ my %DefaultRules = (
     ],
 );
 
+sub state {
+    $_[0]->{dbh}->state;
+}
+
+sub disconnect {
+    $_[0]->{dbh}->disconnect;
+    $_[0]->{dbh} = undef;
+}
+
 sub add_default_roles {
     my ($self, $user, $admin_password) = @_;
     if (!defined $admin_password) {
