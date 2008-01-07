@@ -35,7 +35,7 @@ use Encode::Guess;
 $YAML::Syck::ImplicitUnicode = 1;
 #$YAML::Syck::ImplicitBinary = 1;
 
-our $Backend;
+our ($Backend, $BackendName);
 our $Cache;
 our $UUID = Data::UUID->new;
 
@@ -93,6 +93,13 @@ sub init {
     my ($self, $rurl) = @_;
     my $class = ref $self;
     my $cgi = $self->{_cgi};
+
+    my $db_state = $Backend->state;
+    if ($db_state && $db_state =~ /^(?:08|57)/) {
+        $Backend->disconnect;
+        $self->connect($ENV{OPENAPI_BACKEND});
+        #die "Backend connection lost: ", $db_state, "\n";
+    }
 
     my $charset = $cgi->url_param('charset') || 'UTF-8';
 
@@ -309,9 +316,11 @@ sub set_formatter {
 }
 
 sub connect {
-    shift;
-    my $backend = shift;
-    $Backend = OpenAPI::Backend->new($backend);
+    my $self = shift;
+    my $name = shift || $BackendName;
+    $Backend = $name;
+    $Backend = OpenAPI::Backend->new($name);
+    #$Backend->select("");
 }
 
 sub emit_data {
