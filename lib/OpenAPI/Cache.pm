@@ -13,10 +13,14 @@ sub new {
     my $spec = $ENV{OPENAPI_CACHE} || 'mmap';
     my $obj;
     my $self = bless {}, $class;
+    my $share_file = "/tmp/openapi-mmap.dat";
+    if (-e $share_file && (!-r $share_file || !-w $share_file)) {
+        $share_file = "$FindBin::Bin/openapi-mmap.dat";
+    }
     if ($spec eq 'mmap') {
         require Cache::FastMmap;
         $obj = Cache::FastMmap->new(
-            share_file => "/tmp/openapi-mmap.dat",
+            share_file => $share_file,
             expire_time => $expire_time,
         );
     } elsif ($spec =~ /^memcached\:(.+)$/) {
