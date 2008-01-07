@@ -42,7 +42,7 @@ if ($url_prefix) {
 }
 
 sub init {
-    $CGI::POST_MAX = 100 * 1024;  # max 100 K posts
+    $CGI::POST_MAX = $POST_LEN_LIMIT;  # max 100 K posts
     $CGI::DISABLE_UPLOADS = 1;  # no uploads
     my $backend = $ENV{OPENAPI_BACKEND} || 'Pg';
     eval {
