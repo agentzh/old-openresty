@@ -8,7 +8,7 @@ perl_version        ('5.006001');
 all_from            ('lib/OpenAPI.pm');
 
 requires            ('perl' => '5.008001');
-requires            ('CGI' => '3.32');
+requires            ('CGI' => '3.33');
 requires            ('FCGI');
 requires            ('YAML::Syck' => '1.00');
 requires            ('List::Util');
