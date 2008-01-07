@@ -149,10 +149,10 @@ sub POST_model_column {
     my $type = $data->{type} || 'text';
     my $label = $data->{label} or
         die "No 'label' specified for column \"$col\" in model \"$model\".\n";
-    my $ntype = check_type($type);
+    $type = check_type($type);
     my $insert = SQL::Insert->new('_columns')
-        ->cols(qw< name label type native_type table_name >)
-        ->values( Q($col, $label, $type, $ntype, $table_name) );
+        ->cols(qw< name label type table_name >)
+        ->values( Q($col, $label, $type, $table_name) );
 
     my $default = delete $data->{default};
     if (defined $default) {
@@ -161,7 +161,7 @@ sub POST_model_column {
     }
     $default ||= 'null';
 
-    my $sql = "alter table \"$table_name\" add column \"$col\" $ntype default ($default);\n";
+    my $sql = "alter table \"$table_name\" add column \"$col\" $type default ($default);\n";
     $sql .= "$insert";
 
     my $res = $self->do($sql);
@@ -201,13 +201,11 @@ sub PUT_model_column {
         $new_col = $col;
     }
     my $type = delete $data->{type};
-    my $ntype;
     if ($type) {
         #die "Changing column type is not supported.\n";
-        $ntype = check_type($type);
-        $update_meta->set(type => Q($type))
-            ->set(native_type => Q($ntype));
-        $sql .= "alter table \"$table_name\" alter column \"$new_col\" type $ntype;\n",
+        $type = check_type($type);
+        $update_meta->set(type => Q($type));
+        $sql .= "alter table \"$table_name\" alter column \"$new_col\" type $type;\n",
     }
 
     my $label = delete $data->{label};
@@ -370,7 +368,7 @@ sub new_model {
 
     my $sql = "$insert";
     $insert->reset('_columns')
-        ->cols(QI( qw<name type native_type label table_name> ));
+        ->cols(QI( qw<name type label table_name> ));
     $sql .=
         "create table \"$table\" (\n\t\"id\" serial primary key";
     my $sql2;
@@ -396,10 +394,10 @@ sub new_model {
             die "No 'label' specified for column \"$name\" in model \"$model\".\n";
 
         my $default = delete $col->{default};
-        my $ntype = check_type($type);
-        $sql .= ",\n\t\"$name\" $ntype";
+        $type = check_type($type);
+        $sql .= ",\n\t\"$name\" $type";
         my $ins = $insert->clone
-            ->values(Q($name, $type, $ntype, $label, $table));
+            ->values(Q($name, $type, $label, $table));
         if (defined $default) {
             $default = $self->process_default($default);
             # XXX

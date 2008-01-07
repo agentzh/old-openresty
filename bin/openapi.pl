@@ -11,7 +11,10 @@ use OpenAPI::Limits;
 
 my $cmd = lc(shift) || $ENV{OPENAPI_COMMAND} || 'fastcgi';
 
-OpenAPI::Dispatcher->init;
+eval {
+    OpenAPI::Dispatcher->init;
+};
+warn $@ if $@;
 
 if ($cmd eq 'fastcgi') {
     require CGI::Fast;
