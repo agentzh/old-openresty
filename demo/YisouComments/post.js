@@ -588,6 +588,7 @@ var ts = dojo.io.iframe.send({
 	dojo.byId('CCvideo').value='';	
 	dojo.byId('CCimg').value='';
 	dojo.byId('CCcontent').value='';
+        document.location.hash = '#__top';
     }
 });
 return false;
