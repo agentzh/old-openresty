@@ -384,13 +384,16 @@ sub PUT_role {
     if (defined $new_login) {
         _STRING($new_login) or
             die "Bad login method: ", $Dumper->($new_login), "\n";
+        if ($new_login !~ /^(?:password|anonymous|captcha)$/) {
+            die "Bad login method: $new_login\n";
+        }
         $update->set(login => Q($new_login));
     }
 
     my $new_password = delete $data->{password};
     if (defined $new_password) {
         if (defined $new_login && $new_login ne 'password') {
-            die "Password is only meaningful when login is 'password'.\n";
+            die "Password given when 'login' is not 'password'.\n";
         }
         _STRING($new_password) or
             die "Bad password: ", $Dumper->($new_password), "\n";
@@ -398,9 +401,13 @@ sub PUT_role {
         $update->set(password => Q($new_password));
     }
 
+    if (defined $new_login and $new_login eq 'password' and !defined $new_password) {
+        die "No password given when 'login' is 'password'.\n";
+    }
+
     my $new_desc = delete $data->{description};
     if (defined $new_desc) {
-        _STRING($new_desc) or die "Bad role definition: ", $Dumper->($new_desc);
+        _STRING($new_desc) or die "Bad role definition: ", $Dumper->($new_desc), "\n";
         $update->set(description => Q($new_desc));
     }
     ### Update SQL: "$update"

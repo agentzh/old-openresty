@@ -170,7 +170,7 @@ sub add_user {
 
     create table $user._access_rules (
         id serial primary key,
-        role text references _roles(name) not null,
+        role text not null,
         method varchar(10) not null,
         url text not null
     );
