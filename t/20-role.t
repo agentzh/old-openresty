@@ -946,7 +946,7 @@ PUT /=/role/Newname
 
 
 
-=== TEST 95: test for the login and the password(1/10)
+=== TEST 96: test for the login and the password(1/10)
 --- request
 PUT /=/role/Poster
 {
@@ -958,7 +958,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 95: test for the login and the password(2/10)
+=== TEST 97: test for the login and the password(2/10)
 --- request
 PUT /=/role/Poster
 {
@@ -969,7 +969,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 95: test for the login and the password(3/10)
+=== TEST 98: test for the login and the password(3/10)
 --- request
 PUT /=/role/Poster
 {
@@ -980,7 +980,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 95: test for the login and the password(4/10)
+=== TEST 99: test for the login and the password(4/10)
 --- request
 PUT /=/role/Poster
 {
@@ -992,7 +992,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 95: test for the login and the password(5/10)
+=== TEST 100: test for the login and the password(5/10)
 --- request
 PUT /=/role/Poster
 {
@@ -1003,7 +1003,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 95: test for the login and the password(6/10)
+=== TEST 101: test for the login and the password(6/10)
 --- request
 PUT /=/role/Poster
 {
@@ -1014,7 +1014,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 95: test for the login and the password(7/10)
+=== TEST 102: test for the login and the password(7/10)
 --- request
 PUT /=/role/Poster
 {
@@ -1026,7 +1026,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 95: test for the login and the password(8/10)
+=== TEST 103: test for the login and the password(8/10)
 --- request
 PUT /=/role/Poster
 {
@@ -1037,7 +1037,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 95: test for the login and the password(9/10)
+=== TEST 104: test for the login and the password(9/10)
 --- request
 PUT /=/role/Poster
 {
@@ -1048,7 +1048,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 95: test for the login and the password(10/10)
+=== TEST 105: test for the login and the password(10/10)
 --- request
 PUT /=/role/Poster
 {
@@ -1060,18 +1060,62 @@ PUT /=/role/Poster
 
 
 
-=== TEST 95: test the validity of the password
+=== TEST 106: test the validity of the password
 --- request
 PUT /=/role/Poster
 {
-    password:"password"
+    password:"shangerdi1984"
 }
 --- response
-{"success":0,"error","No password given when 'login' is 'password'.}
+{"success":1}
 
 
 
-=== TEST 96: Drop the Poster role
+=== TEST 107: test the validity of the password
+--- request
+PUT /=/role/Poster
+{
+    password:"_1984"
+}
+--- response
+{"success":0,"error":"Password too short; at least 6 chars required."}
+
+
+
+=== TEST 108: test the validity of the password
+--- request
+PUT /=/role/Poster
+{
+    password:"_1984_1984"
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 109: test the validity of the password
+--- request
+PUT /=/role/Poster
+{
+    password:"shang_erdi"
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 110: test the validity of the password
+--- request
+PUT /=/role/Poster
+{
+    password:"SHANG1984_shangerdi_1984_shang_er_di_19841984"
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 111: Drop the Poster role
 --- request
 DELETE /=/role/Poster
 --- response
