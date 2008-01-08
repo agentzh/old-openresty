@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>易搜留言簿</title>
+<link href="style3.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<!--{start:head -->
+<div id="hd">
+	<!--{{start:sch -->
+	<div class="lg"><a title="雅虎易搜" href="http://www.yisou.com/"><img  width="180" height="50" src="http://www.yisou.com/r/ylogoh.gif" alt="雅虎易搜"></a></div>
+	<div class="schbox">
+		<fieldset>
+			<legend>雅虎易搜</legend>
+			<form id=searchBox name="search_top" action="" onsubmit="if (dojo.string.trim(dojo.byId('p').value).length < 1) return false;document.location='http://www.yisou.com/search:' + encodeURIComponent(dojo.string.trim(dojo.byId('p').value)).replace(/%2F/g, '/');return false;" method="get" target=_blank><ul><li class="on">网页</li><li><a target=_blank id="n/l/4" href="http://www.yahoo.cn/s?v=news">资讯</a></li><li><a target=_blank id="m/l/4" href="http://www.yahoo.cn/s?v=music">音乐</a></li><li><a target=_blank id="i/l/4" href="http://www.yahoo.cn/s?v=image">图片</a></li><li><a target=_blank id="g/l/4" href="http://www.yahoo.cn/s?v=blog">博客</a></li><li><a target=_blank href="http://cn.yahoo.com/allservice/index.html">更多</a></li></ul><div id="sugst"></div><input id="p" name="p" type="text" accesskey="s" tabindex="0" maxlength="100" value=""><input type="hidden" id="t" name="t" value="13"><input type="hidden" id="v" name="v" value="yprs"><button id="a/s/u" type="submit">搜索<sup>Beta</sup></button>
+			</form>
+		</fieldset>
+	</div>
+	<div class="ulink"><a id="a/l/4/1" href="http://www.yisou.com">易搜首页</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a id="a/l/4/2" href="http://www.yahoo.cn/">雅虎首页</a></div>
+	<!--}}end:sch -->
+	<div class="x"></div>
+</div>
+<!--}end:head -->
+
+<!--{start:body -->
+<div id="bd">
+	<!--{{start:comment content -->
+	<div class="tip">易搜留言簿 >>> 共有<span id='commentsCount'></span>条评论</div>
+	<div class="rw3pl_ab" height="auto">
+		<!--div class="rw3pl_abl">关于<span id=personName></span>的评论<span id='commentsCount'></span>条</div-->
+		<div class="rw3pl_abr" style="margin-top:0px">
+			<a href="#" onclick="alterOrder('review',0,0,11,0,5,'desc','support',this);return false;">按热度查看</a>
+			&nbsp;&nbsp;|&nbsp;&nbsp;
+			<a href="#" onclick="alterOrder('review',0,0,11,0,5,'desc','id',this);return false;">按时间查看</a>
+		</div>
+		<div class="x"></div>
+	</div>
+	<!--{{start:page -->
+	<div class="rw3pl_pg" style="padding-top:0">
+		<div class="page" id="page" style="margin-top:-10px"></div>
+	</div>
+	<!--}}end:page -->
+
+	<div id="review" class="rw3pl_m">
+	</div>
+
+<!--object codebase="" width="460" height="390"  align="middle">
+	<param name="allowScriptAccess" value="always" />
+	<param name="allowFullScreen" value="true" />
+	<param name="FlashVars" value="vid=svvX7o0jSyjTQeL1" />
+	<param name="movie" value="http://img.ku6.com/common/V2.0.1.swf" />
+	<embed src="http://img.ku6.com/common/V2.0.1.swf" flashvars="vid=svvX7o0jSyjTQeL1" width="460" height="390" align="middle" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
+</object>
+
+<object width="400" height="300"><param name="movie" value="http://www.tudou.com/v/z48A7TX_KL4"></param><param name="allowScriptAccess" value="always"></param><param name="wmode" value="transparent"></param><embed src="http://www.tudou.com/v/z48A7TX_KL4" type="application/x-shockwave-flash" width="400" height="300" allowFullScreen="true" wmode="transparent" allowScriptAccess="always"></embed></object>
+
+<object width=550px height=400px>
+<param name="movie" value="http://img.ku6.com/common/V2.0.1.swf">
+<embed width="550px" height="400px"  src="http://vhead.blog.sina.com.cn/player/outer_player.swf?auto=0&vid=10020836&uid=1268906252">
+</embed>
+</object-->
+
+	<!--{{start:page -->
+	<div class="rw3pl_pg">
+		<div class="page" id="page"></div>
+	</div>
+	<!--}}end:page -->
+
+	<!--{{start:appear -->
+
+	<div id="rw3pl_b" class="rw3pl_m">
+		<form method="post" id="myform"></form>
+		<form method="" action="" onsubmit="submitFunc(dojo.byId('CCpid').value);return false;">
+		<h2>留言人：</h2>
+		<h3><input id="CCuser" name="CCuser" type="text" size="30" /> &nbsp; &nbsp; 
+			<input type="checkbox" id="anno"/> 匿名发言</h3>
+		<div class="x"></div>
+		<h2>内　容：</h2>
+		<h3><textarea cols="60" rows="8" name="CCcontent" id="CCcontent"></textarea></h3>
+		<div class="x"></div>
+		<h2>图　片：</h2>
+		<h3><input id=CCimg name="CCimg" type="text" size="60" /></h3>
+		<div class="x"></div>
+		<h2>视　频：</h2>
+		<h3><input id=CCvideo name="CCvideo" type="text" size="60" /></h3>
+		<div class="x"></div>
+		<h2>&nbsp;</h2>
+		<h3>暂时只支持sina或youku视频的flash url</h3>
+		<div class="x"></div>
+		<h2>&nbsp;</h2>
+		<h3><br /><span class="srh_bn"><button type="submit">发  表</button></span></h3>
+		<div class="x"></div>
+		<input id="CCpost_url" type="hidden" name="CCpost_url" value=""/>
+		<input id="CChost" type="hidden" name="CChost" value=""/>
+		<input id="CCpid" type="hidden" value="0" name="CCpid"/>
+		</form>
+	</div>
+	<!--}}end:appear -->
+</div>
+<!--}end:body -->
+
+<!--{start:foot -->		
+<div id="ft">
+<!--{{start:copy -->
+<div class="cp1">
+    Copyright © 2007 Yahoo.com.cn&nbsp;<a href="http://misc.yahoo.com.cn/copyright.html" title="" target="_blank">使用须知</a>&nbsp;<a href="http://cn.yahoo.com/copyright2007/index.html" title="" target="_blank">著作权声明</a>&nbsp;雅虎搜索结果均来自相关来源网站，根据有关法律法规和政策，部分搜索结果可能未予显示。根据《信息网络传播权保护条例》未予显示的结果，请点击<a href="http://search.help.cn.yahoo.com/h3_9.html" title="" target="_blank">这里</a>查看。 </div>
+</div>
+<!--}}end:copy -->
+</div>
+<!--}end:foot -->		
+</div>
+
+<div id="overlay" class="black_overlay" style="display:block; height:2000px"><img width=40 height=40 style="top:0px;left:0px" src="loading.gif"></div>
+<div id="rw3pl_yy">
+	<div class="rw3pl_yyt">
+		<div class="rw3pl_yytl">引用回复</div>
+		<div class="rw3pl_yytr"><img border="0" onclick="hideLightbox()" src="http://cn.yimg.com/i/onesearch/rw3pl_hf_gb.gif" /></div>
+	</div>
+	<div class="rw3pl_yytm">
+		<div class="rw3pl_yytm1" id='quoteContent'><b>引用：</b>ssss</div>
+		<div>用户名 <input id='CCuser2' type="text" /> &nbsp; &nbsp; <input type="checkbox" id="anno2" checked="checked" /> 匿名发言</div>
+		<div class="rw3pl_yytm3"><textarea id="CCcontent2" cols="44" rows="8"></textarea></div>
+		<div align="right"><button onclick="submitFunc(dojo.byId('CCpid').value);hideLightbox()">提 交</button> &nbsp; <button type="button" onclick="hideLightbox()">取 消</button></div>
+	</div>
+</div>
+
+<script type="text/javascript" src="http://cn.yimg.com/i/js/1_2_0/ycnlib.js"></script>
+<script type="text/javascript" src="lightbox3.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+var YUE = YAHOO.util.Event;
+var YUD = YAHOO.util.Dom;
+//]]>
+</script>
+<script type="text/javascript" src="dojo.yisoucomments.js"></script>
+<script type="text/javascript" src="post.js"></script>
+<script type="text/javascript">
+        dojo.require("dojo.io.script");
+        dojo.require("dojo.io.iframe");
+        dojo.require("dojo.cookie");
+        dojo.require("dojo.string");
+</script>
+<img src="http://count.yisou.yahoo.com/search/web?s=2022645954&t=1818545635" width="1" height="1">
+</body>
+</html>
