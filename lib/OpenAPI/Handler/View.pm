@@ -71,13 +71,15 @@ sub PUT_view {
 
     my $new_name = delete $data->{name};
     if (defined $new_name) {
-        _IDENT($new_name) or die "Bad view name: ", $Dumper->($new_name);
+        _IDENT($new_name) or
+            die "Bad view name: ", $Dumper->($new_name), "\n";
         $update->set( name => Q($new_name) );
     }
 
     my $new_def = delete $data->{definition};
     if (defined $new_def) {
-        _STRING($new_def) or die "Bad view definition: ", $Dumper->($new_def);
+        _STRING($new_def) or
+            die "Bad view definition: ", $Dumper->($new_def), "\n";
         $update->set(definition => Q($new_def));
     }
 
@@ -92,7 +94,7 @@ sub PUT_view {
     }
 
     my $retval = $self->do("$update") + 0;
-    return { success => $retval ? 1 : 0 };
+    return { success => $retval >= 0 ? 1 : 0 };
 }
 
 sub exec_view {
