@@ -873,7 +873,7 @@ PUT /=/role/Poster
 }
 --- response
 {"success":1}
-
+--- LAST
 
 
 === TEST 90: update the description
