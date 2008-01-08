@@ -865,7 +865,52 @@ POST /=/role/Poster
 
 
 
-=== TEST 89: update the name
+=== TEST 89: get 'Poster' role
+--- request
+GET /=/role/Poster
+--- response
+{
+  "columns":[
+    {"name":"method","label":"HTTP method","type":"text"},
+    {"name":"url","label":"Resource","type":"text"}
+  ],
+  "name":"Poster",
+  "description":"Comment poster",
+  "login":"password"
+}
+
+
+
+=== TEST 90: Add a rule to read model list
+--- request
+POST /=/role/Poster/~/~
+{"url":"/=/model"}
+--- response_like
+\{"success":1,"rows_affected":1,"last_row":"/=/role/Poster/id/\d+"\}
+
+
+
+=== TEST 91: Add a rule to insert new rows to A (the right way)
+--- request
+POST /=/role/Poster/~/~
+{"method":"POST","url":"/=/model/A/~/~"}
+--- response_like
+^\{"success":1,"rows_affected":1,"last_row":"/=/role/Poster/id/\d+"\}$
+
+
+
+=== TEST 92: Check the rule list
+--- request
+GET /=/role/Poster/~/~
+--- response_like
+^\[
+    {"url":"/=/model","method":"GET","id":"\d+"},
+    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"}
+\]$
+
+
+
+=== TEST 93: update the name
 --- request
 PUT /=/role/Poster
 {
@@ -873,10 +918,57 @@ PUT /=/role/Poster
 }
 --- response
 {"success":1}
---- LAST
 
 
-=== TEST 90: update the description
+
+=== TEST 94: Get the 'Poster' role
+--- request
+GET /=/role/Poster
+--- response
+{"success":0,"error":"Role \"Poster\" not found."}
+
+
+
+=== TEST 95: Get the role list
+--- request
+GET /=/role
+--- response
+[
+    {"src":"/=/role/Admin","name":"Admin","description":"Administrator"},
+    {"src":"/=/role/Public","name":"Public","description":"Anonymous"},
+    {"src":"/=/role/Newposter","name":"Newposter","description":"Comment poster"}
+]
+
+
+
+=== TEST 96: get 'Newposter' role
+--- request
+GET /=/role/Newposter
+--- response
+{
+  "columns":[
+    {"name":"method","label":"HTTP method","type":"text"},
+    {"name":"url","label":"Resource","type":"text"}
+  ],
+  "name":"Newposter",
+  "description":"Comment poster",
+  "login":"password"
+}
+
+
+
+=== TEST 97: Check the rule list
+--- request
+GET /=/role/Newposter/~/~
+--- response_like
+^\[
+    {"url":"/=/model","method":"GET","id":"\d+"},
+    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"}
+\]$
+
+
+
+=== TEST 98: update the description
 --- request
 PUT /=/role/Newposter
 {
@@ -887,7 +979,23 @@ PUT /=/role/Newposter
 
 
 
-=== TEST 91: update the name and the description
+=== TEST 99: get 'Newposter' role
+--- request
+GET /=/role/Newposter
+--- response
+{
+  "columns":[
+    {"name":"method","label":"HTTP method","type":"text"},
+    {"name":"url","label":"Resource","type":"text"}
+  ],
+  "name":"Newposter",
+  "description":"my description",
+  "login":"password"
+}
+
+
+
+=== TEST 100: update the name and the description
 --- request
 PUT /=/role/Newposter
 {
@@ -899,7 +1007,34 @@ PUT /=/role/Newposter
 
 
 
-=== TEST 92: update the password when login == password
+=== TEST 101: get 'Newname' role
+--- request
+GET /=/role/Newname
+--- response
+{
+  "columns":[
+    {"name":"method","label":"HTTP method","type":"text"},
+    {"name":"url","label":"Resource","type":"text"}
+  ],
+  "name":"Newname",
+  "description":"Newdescription",
+  "login":"password"
+}
+
+
+
+=== TEST 102: Check the rule list
+--- request
+GET /=/role/Newname/~/~
+--- response_like
+^\[
+    {"url":"/=/model","method":"GET","id":"\d+"},
+    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"}
+\]$
+
+
+
+=== TEST 103: update the password when login == password
 --- request
 PUT /=/role/Newname
 {
@@ -910,7 +1045,23 @@ PUT /=/role/Newname
 
 
 
-=== TEST 93: update the login
+=== TEST 104: login with the new role
+--- request
+GET /=/login/peee.Newname/123456789
+--- response
+{"success":1,"account":"peee","role":"Newname"}
+
+
+
+=== TEST 105: Switch back to the Amin role
+--- request
+GET /=/login/peee.Admin/4423037
+--- response
+{"success":1,"account":"peee","role":"Admin"}
+
+
+
+=== TEST 106: update the login(normal)
 --- request
 PUT /=/role/Newname
 {
@@ -921,18 +1072,111 @@ PUT /=/role/Newname
 
 
 
-=== TEST 94: try to update the password when login != password
+=== TEST 107: get 'Newname' role
+--- request
+GET /=/role/Newname
+--- response
+{
+  "columns":[
+    {"name":"method","label":"HTTP method","type":"text"},
+    {"name":"url","label":"Resource","type":"text"}
+  ],
+  "name":"Newname",
+  "description":"Newdescription",
+  "login":"captcha"
+}
+
+
+
+=== TEST 108: Check the rule list
+--- request
+GET /=/role/Newname/~/~
+--- response_like
+^\[
+    {"url":"/=/model","method":"GET","id":"\d+"},
+    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"}
+\]$
+
+
+
+=== TEST 109: test the validity of login
+--- request
+PUT /=/role/Newname
+{
+    login:{blah:"blah"}
+}
+--- response
+{"success":0,"error":"I don't know."}
+
+
+
+=== TEST 110: test the validity of login
+--- request
+PUT /=/role/Newname
+{
+    login:[1234]
+}
+--- response
+{"success":0,"error":"I don't know."}
+
+
+
+=== TEST 111: test the validity of login
+--- request
+PUT /=/role/Newname
+{
+    login:"blah"
+}
+--- response
+{"success":0,"error":"I don't know."}
+
+
+
+=== TEST 112: test the validity of description
+--- request
+PUT /=/role/Newname
+{
+    description:{blah:"blah"}
+}
+--- response
+{"success":0,"error":"I don't know."}
+
+
+
+=== TEST 113: test the validity of description
+--- request
+PUT /=/role/Newname
+{
+    description:[1234]
+}
+--- response
+{"success":0,"error":"I don't know."}
+
+
+
+=== TEST 114: test the validity of description
+--- request
+PUT /=/role/Newname
+{
+    description:"blah"
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 115: try to update the password when login != password
 --- request
 PUT /=/role/Newname
 {
     password:"987654321"
 }
 --- response
-{"success":0,"error":"could not update the password when login != 'password'."}
+{"success":1,"warning":"the password is ignored(you can fix this response)."}
 
 
 
-=== TEST 95: update the all the info
+=== TEST 116: update all the info
 --- request
 PUT /=/role/Newname
 {
@@ -946,7 +1190,34 @@ PUT /=/role/Newname
 
 
 
-=== TEST 96: test for the login and the password(1/10)
+=== TEST 117: get 'Poster' role
+--- request
+GET /=/role/Poster
+--- response
+{
+  "columns":[
+    {"name":"method","label":"HTTP method","type":"text"},
+    {"name":"url","label":"Resource","type":"text"}
+  ],
+  "name":"Poster",
+  "description":"Comment poster",
+  "login":"password"
+}
+
+
+
+=== TEST 118: Check the rule list
+--- request
+GET /=/role/Poster/~/~
+--- response_like
+^\[
+    {"url":"/=/model","method":"GET","id":"\d+"},
+    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"}
+\]$
+
+
+
+=== TEST 119: test for the login and the password(1/10)
 --- request
 PUT /=/role/Poster
 {
@@ -958,18 +1229,50 @@ PUT /=/role/Poster
 
 
 
-=== TEST 97: test for the login and the password(2/10)
+=== TEST 120: login with the new password
+--- request
+GET /=/login/peee.Poster/123456789
+--- response
+{"success":1,"account":"peee","role":"Poster"}
+
+
+
+=== TEST 121: Switch back to the Amin role
+--- request
+GET /=/login/peee.Admin/4423037
+--- response
+{"success":1,"account":"peee","role":"Admin"}
+
+
+
+=== TEST 122: test for the login and the password(2/10)
 --- request
 PUT /=/role/Poster
 {
     password:"789456213"
 }
 --- response
-{"success":1}
+{"success":1,"warning":"the password is ignored(you can fix this response)."}
 
 
 
-=== TEST 98: test for the login and the password(3/10)
+=== TEST 123: login with the new password
+--- request
+GET /=/login/peee.Poster/789456213
+--- response
+{"success":1,"account":"peee","role":"Poster"}
+
+
+
+=== TEST 124: Switch back to the Amin role
+--- request
+GET /=/login/peee.Admin/4423037
+--- response
+{"success":1,"account":"peee","role":"Admin"}
+
+
+
+=== TEST 125: test for the login and the password(3/10)
 --- request
 PUT /=/role/Poster
 {
@@ -980,7 +1283,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 99: test for the login and the password(4/10)
+=== TEST 126: test for the login and the password(4/10)
 --- request
 PUT /=/role/Poster
 {
@@ -992,7 +1295,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 100: test for the login and the password(5/10)
+=== TEST 127: test for the login and the password(5/10)
 --- request
 PUT /=/role/Poster
 {
@@ -1003,18 +1306,18 @@ PUT /=/role/Poster
 
 
 
-=== TEST 101: test for the login and the password(6/10)
+=== TEST 128: test for the login and the password(6/10)
 --- request
 PUT /=/role/Poster
 {
     password:"456978321"
 }
 --- response
-{"success":0,"error","Password given when 'login' is not 'password'.}
+{"success":1,"warning":"the password is ignored(you can fix this response)."}
 
 
 
-=== TEST 102: test for the login and the password(7/10)
+=== TEST 129: test for the login and the password(7/10)
 --- request
 PUT /=/role/Poster
 {
@@ -1026,7 +1329,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 103: test for the login and the password(8/10)
+=== TEST 130: test for the login and the password(8/10)
 --- request
 PUT /=/role/Poster
 {
@@ -1037,7 +1340,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 104: test for the login and the password(9/10)
+=== TEST 131: test for the login and the password(9/10)
 --- request
 PUT /=/role/Poster
 {
@@ -1048,7 +1351,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 105: test for the login and the password(10/10)
+=== TEST 132: test for the login and the password(10/10)
 --- request
 PUT /=/role/Poster
 {
@@ -1060,7 +1363,23 @@ PUT /=/role/Poster
 
 
 
-=== TEST 106: test the validity of the password
+=== TEST 133: login with the new password
+--- request
+GET /=/login/peee.Poster/shangerdi
+--- response
+{"success":1,"account":"peee","role":"Poster"}
+
+
+
+=== TEST 134: Switch back to the Amin role
+--- request
+GET /=/login/peee.Admin/4423037
+--- response
+{"success":1,"account":"peee","role":"Admin"}
+
+
+
+=== TEST 135: test the validity of the password
 --- request
 PUT /=/role/Poster
 {
@@ -1071,7 +1390,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 107: test the validity of the password
+=== TEST 136: test the validity of the password
 --- request
 PUT /=/role/Poster
 {
@@ -1082,7 +1401,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 108: test the validity of the password
+=== TEST 137: test the validity of the password
 --- request
 PUT /=/role/Poster
 {
@@ -1093,7 +1412,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 109: test the validity of the password
+=== TEST 138: test the validity of the password
 --- request
 PUT /=/role/Poster
 {
@@ -1104,7 +1423,7 @@ PUT /=/role/Poster
 
 
 
-=== TEST 110: test the validity of the password
+=== TEST 139: test the validity of the password
 --- request
 PUT /=/role/Poster
 {
@@ -1115,7 +1434,23 @@ PUT /=/role/Poster
 
 
 
-=== TEST 111: Drop the Poster role
+=== TEST 140: login with the new password
+--- request
+GET /=/login/peee.Poster/SHANG1984_shangerdi_1984_shang_er_di_19841984
+--- response
+{"success":1,"account":"peee","role":"Poster"}
+
+
+
+=== TEST 141: Switch back to the Amin role
+--- request
+GET /=/login/peee.Admin/4423037
+--- response
+{"success":1,"account":"peee","role":"Admin"}
+
+
+
+=== TEST 142: Drop the Poster role
 --- request
 DELETE /=/role/Poster
 --- response
