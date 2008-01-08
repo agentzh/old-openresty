@@ -1106,7 +1106,7 @@ PUT /=/role/Newname
     login:{blah:"blah"}
 }
 --- response
-{"success":0,"error":"I don't know."}
+{"success":0,"error":"Bad login method: {\"blah\":\"blah\"}"}
 
 
 
@@ -1117,7 +1117,7 @@ PUT /=/role/Newname
     login:[1234]
 }
 --- response
-{"success":0,"error":"I don't know."}
+{"success":0,"error":"Bad login method: [1234]"}
 
 
 
@@ -1139,7 +1139,7 @@ PUT /=/role/Newname
     description:{blah:"blah"}
 }
 --- response
-{"success":0,"error":"I don't know."}
+{"success":0,"error":"Bad role definition: {\"blah\":\"blah\"}"}
 
 
 
@@ -1150,7 +1150,7 @@ PUT /=/role/Newname
     description:[1234]
 }
 --- response
-{"success":0,"error":"I don't know."}
+{"success":0,"error":"Bad role definition: [1234]"}
 
 
 
