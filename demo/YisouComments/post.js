@@ -334,7 +334,9 @@ function drawComments(objs,container,parentid,offset,count,child_offset,child_co
 			pre.className = 'nxt';
 			pre.innerHTML = '上一页';
 			pre.onclick = function(){
-				fetchResults(container,0,offset-count+1,count,child_offset,child_count,dsc);return false;}	
+				fetchResults(container,0,offset-count+1,count,child_offset,child_count,dsc);
+				 document.location.hash = '#__top';
+				return false;}	
 			page.appendChild(pre);			
 		}
 
@@ -587,8 +589,10 @@ var ts = dojo.io.iframe.send({
 		afterSub(info_div.getAttribute('container'),0,info_div.getAttribute('offset'),info_div.getAttribute('count'),info_div.getAttribute('child_offset'),info_div.getAttribute('child_count'),info_div.getAttribute('desc'),orderby);
 	dojo.byId('CCvideo').value='';	
 	dojo.byId('CCimg').value='';
-	dojo.byId('CCcontent').value='';
-        document.location.hash = '#__top';
+	if(dojo.byId('CCcontent').value!=''){
+		dojo.byId('CCcontent').value='';
+		document.location.hash = '#__top';
+	}
     }
 });
 return false;
