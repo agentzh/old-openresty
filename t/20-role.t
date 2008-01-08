@@ -1128,7 +1128,7 @@ PUT /=/role/Newname
     login:"blah"
 }
 --- response
-{"success":0,"error":"I don't know."}
+{"success":0,"error":"Bad login method: blah"}
 
 
 
@@ -1291,7 +1291,7 @@ PUT /=/role/Poster
     password:"123456789"
 }
 --- response
-{"success":0,"error","Password given when 'login' is not 'password'."}
+{"success":0,"error":"Password given when 'login' is not 'password'."}
 
 
 
@@ -1325,7 +1325,7 @@ PUT /=/role/Poster
     password:"321987465"
 }
 --- response
-{"success":0,"error","Password given when 'login' is not 'password'."}
+{"success":0,"error":"Password given when 'login' is not 'password'."}
 
 
 
@@ -1333,7 +1333,7 @@ PUT /=/role/Poster
 --- request
 PUT /=/role/Poster
 {
-    login:"Anonymous"
+    login:"anonymous"
 }
 --- response
 {"success":1}
@@ -1347,7 +1347,7 @@ PUT /=/role/Poster
     login:"password"
 }
 --- response
-{"success":0,"error","No password given when 'login' is 'password'."}
+{"success":0,"error":"No password given when 'login' is 'password'."}
 
 
 
