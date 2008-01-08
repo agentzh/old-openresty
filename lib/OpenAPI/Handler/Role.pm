@@ -361,5 +361,55 @@ sub new_role {
     return { success => $self->do($insert) ? 1 : 0 };
 }
 
+sub PUT_role {
+    my ($self, $bits) = @_;
+    my $role = $bits->[1];
+    my $data = _HASH($self->{_req_data}) or
+        die "column spec must be a non-empty HASH.\n";
+    ### $data
+    die "Role \"$role\" not found.\n" unless $self->has_role($role);
+    my $extra_sql = '';
+
+    my $update = SQL::Update->new('_roles');
+    $update->where(name => Q($role));
+
+    my $new_name = delete $data->{name};
+    if (defined $new_name) {
+        _IDENT($new_name) or die "Bad role name: ", $Dumper->($new_name);
+        $update->set( name => Q($new_name) );
+        $extra_sql .= 'update _access_rules set role='.Q($new_name).' where role='.Q($role).';';
+    }
+
+    my $new_login = delete $data->{login};
+    if (defined $new_login) {
+        _STRING($new_login) or
+            die "Bad login method: ", $Dumper->($new_login), "\n";
+        $update->set(login => Q($new_login));
+    }
+
+    my $new_password = delete $data->{password};
+    if (defined $new_password) {
+        if (defined $new_login && $new_login ne 'password') {
+            die "Password is only meaningful when login is 'password'.\n";
+        }
+        _STRING($new_password) or
+            die "Bad password: ", $Dumper->($new_password), "\n";
+        check_password($new_password);
+        $update->set(password => Q($new_password));
+    }
+
+    my $new_desc = delete $data->{description};
+    if (defined $new_desc) {
+        _STRING($new_desc) or die "Bad role definition: ", $Dumper->($new_desc);
+        $update->set(description => Q($new_desc));
+    }
+    ### Update SQL: "$update"
+    if (%$data) {
+        die "Unknown keys in POST data: ", join(' ', keys %$data), "\n";
+    }
+    my $retval = $self->do("$update" . $extra_sql) + 0;
+    return { success => $retval >= 0 ? 1 : 0 };
+}
+
 1;
 
