@@ -1172,7 +1172,7 @@ PUT /=/role/Newname
     password:"987654321"
 }
 --- response
-{"success":1,"warning":"the password is ignored(you can fix this response)."}
+{"success":1}
 
 
 
@@ -1252,7 +1252,7 @@ PUT /=/role/Poster
     password:"789456213"
 }
 --- response
-{"success":1,"warning":"the password is ignored(you can fix this response)."}
+{"success":1}
 
 
 
@@ -1279,7 +1279,7 @@ PUT /=/role/Poster
     login:"password"
 }
 --- response
-{"success":0,"error","No password given when 'login' is 'password'.}
+{"success":0,"error":"No password given when 'login' is 'password'."}
 
 
 
