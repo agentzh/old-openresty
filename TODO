@@ -1,30 +1,22 @@
-TODO items for OpenAPI
+=TODO items for OpenAPI
 
-* Create pg_XXX tables in sql injection tests.
-* Design and implement the login interface (i.e. /=/login/user/...) [done]
-* Design and implement roles and ACL, /=/roles/... [done]
-* Captcha support in the login interface. [done]
-* Work out the empty test cases in t/03-model.t [done]
+== Implementation
+* Role inheritance support.
+* Allow invoking views via POST.
+* XML/RDF support (in addition to JSON and YAML support).
 * Shortcut for row_count sub.
   (laser++ said "select count(*)" is expensive in Pg.)
-* More tests for t/10-limits.t.
-  (i.e. INSERT_LIMIT, POST_LEN_LIMIT, PUT_LEN_LIMIT, and MAX_SELECT_LIMIT)
-  [done]
-* Tests for unknown HTTP methods (like TRACE, OPTIONS, and CONNECT).
-* Tests for common SQL injection patthers.
-* Coverage testing for the test sutie.
-* Review and polish the existing test suite (under t/)
-* Added Apache config directives to README.
-* Hook laye++'s PCR-based miniSQL parser into OpenAPI. [canceled]
-* Prerequiste groups in Makefile.PL. [done]
+* Implement updating role meta info.
+* Check for joining too many models in minisql's select statement.
+* Cache meta info in OpenAPI::Cache for faster access.
+* Basic SQL injection detection code in OpenAPI::Backend.
+* Sane logging facility (or use stderr and lighttpd's logs?)
+* more DWIMmy in the captcha solution comparison code:
+    lc($user_sol) and 全角 => 半角
+* Use true config file rather than a big set of env vars.
+* A functional query langauge as an alternative to minisql.
 * move all initialize SQLs into a independent file [laser]
 * add a global default PostgreSQL user, named by anonymous/public etc., to act as a read-only role in PG (clusters) [laser]
-* add a per-model PostgreSQL user/role, act as writer for all permitted write from the roles of model itself.
-* use a status machine to recognize different url pattern [laser]
-* use $self->select() instead $Backend->do() in OpenAPI.pm [laser] [done]
-* different URL mode for view implementation, should clearify the url path meaning [laser]
-* mv Backend from OpenAPI to lib, seems it belongs there [laser]
-* move some work (like has_somethig()) into store procedore into store procedure to minimum c/s interact [leiyh,laser]
 * make OpenAPI into a database interfaces [laser]
   ** add proc support
 * make OpenAPI meta data store in another special meta-schema, naming by prefixing '_' to username, e.g. "_username", then
@@ -32,8 +24,47 @@ TODO items for OpenAPI
   when creating user, one for access meta data, we could call it meta-user, the other for access user data; all meta data,
   like _models, _columns, _views will be keep in meta-schema, thus we could use PostgreSQL security model to make maximum
   protection for us. [laser,leiyh,angentzh]
+* add a per-model PostgreSQL user/role, act as writer for all permitted write from the roles of model itself.
+* mv Backend from OpenAPI to lib, seems it belongs there [laser]
+* move some work (like has_somethig()) into store procedore into store procedure to minimum c/s interact [leiyh,laser]
+
+* use a status machine to recognize different url pattern [laser] [done]
+* use $self->select() instead $Backend->do() in OpenAPI.pm [laser] [done]
+* different URL mode for view implementation, should clearify the url path meaning [laser] [canceled]
+* Design and implement the login interface (i.e. /=/login/user/...) [done]
+* Design and implement roles and ACL, /=/roles/... [done]
+* Captcha support in the login interface. [done]
+* Hook laye++'s PCR-based miniSQL parser into OpenAPI. [canceled]
+
+== Documentation
+* A set of OpenAPI tutorials in both en and cn.
+* An English version for the OpenAPI spec.
+* Reorganize the spec according to the latest test suite.
+* Add diffs regarding Google Data API and Amazon SimpleDB.
+* Added Apache config directives to README.
+
+== Utilities
+* Monitor potential memory leaks in lighttpd/apache fastcgi processes.
+* bin/export-model.pl and bin/import-model.pl for exporting/importing user's model records.
+* Client-side OpenAPI libary in various programming languages:
+    JavaScript, Perl, Java, Python, Ruby, C#, PHP
+* Admin site for OpenAPI.
+
+== Test suite
+* Create pg_XXX tables in sql injection tests.
+* Tests for unknown HTTP methods (like TRACE, OPTIONS, and CONNECT).
+* Tests for common SQL injection patthers.
+* Coverage testing for the test sutie.
+* Review and polish the existing test suite (under t/)
+
+* Work out the empty test cases in t/03-model.t [done]
+* More tests for t/10-limits.t.
+  (i.e. INSERT_LIMIT, POST_LEN_LIMIT, PUT_LEN_LIMIT, and MAX_SELECT_LIMIT)
+  [done]
+* Prerequiste groups in Makefile.PL. [done]
 * Tests for PUT method in Role [shangerdi] [done]
 * Backup and Restore data for promotion [shangerdi]
 * Tests for session manager on login [shangerdi]
 * Tests for captcha [shangerdi]
 * Tests for logout [shangerdi]
+
