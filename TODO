@@ -56,6 +56,10 @@
 * Tests for common SQL injection patthers.
 * Coverage testing for the test sutie.
 * Review and polish the existing test suite (under t/)
+* Backup and Restore data for promotion [shangerdi]
+* Tests for session manager on login [shangerdi]
+* Tests for captcha [shangerdi]
+* Tests for logout [shangerdi]
 
 * Work out the empty test cases in t/03-model.t [done]
 * More tests for t/10-limits.t.
@@ -63,8 +67,4 @@
   [done]
 * Prerequiste groups in Makefile.PL. [done]
 * Tests for PUT method in Role [shangerdi] [done]
-* Backup and Restore data for promotion [shangerdi]
-* Tests for session manager on login [shangerdi]
-* Tests for captcha [shangerdi]
-* Tests for logout [shangerdi]
 
