@@ -1299,7 +1299,7 @@ PUT /=/role/Poster
 --- request
 PUT /=/role/Poster
 {
-    login:"captcha",
+    login:"captcha"
 }
 --- response
 {"success":1}
@@ -1333,7 +1333,7 @@ PUT /=/role/Poster
 --- request
 PUT /=/role/Poster
 {
-    login:"Anonymous",
+    login:"Anonymous"
 }
 --- response
 {"success":1}
