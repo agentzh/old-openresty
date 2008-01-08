@@ -938,10 +938,136 @@ PUT /=/role/Newname
 {
     name:"Poster",
     description:"Comment poster",
-    login:"anonymous"
+    login:"password",
+    password:"4417935"
 }
 --- response
 {"success":1}
+
+
+
+=== TEST 95: test for the login and the password(1/10)
+--- request
+PUT /=/role/Poster
+{
+    login:"password",
+    password:"123456789"
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 95: test for the login and the password(2/10)
+--- request
+PUT /=/role/Poster
+{
+    password:"789456213"
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 95: test for the login and the password(3/10)
+--- request
+PUT /=/role/Poster
+{
+    login:"password"
+}
+--- response
+{"success":0,"error","No password given when 'login' is 'password'.}
+
+
+
+=== TEST 95: test for the login and the password(4/10)
+--- request
+PUT /=/role/Poster
+{
+    login:"captcha",
+    password:"123456789"
+}
+--- response
+{"success":0,"error","Password given when 'login' is not 'password'.}
+
+
+
+=== TEST 95: test for the login and the password(5/10)
+--- request
+PUT /=/role/Poster
+{
+    login:"captcha",
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 95: test for the login and the password(6/10)
+--- request
+PUT /=/role/Poster
+{
+    password:"456978321"
+}
+--- response
+{"success":0,"error","Password given when 'login' is not 'password'.}
+
+
+
+=== TEST 95: test for the login and the password(7/10)
+--- request
+PUT /=/role/Poster
+{
+    login:"captcha",
+    password:"321987465"
+}
+--- response
+{"success":0,"error","Password given when 'login' is not 'password'.}
+
+
+
+=== TEST 95: test for the login and the password(8/10)
+--- request
+PUT /=/role/Poster
+{
+    login:"Anonymous",
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 95: test for the login and the password(9/10)
+--- request
+PUT /=/role/Poster
+{
+    login:"password"
+}
+--- response
+{"success":0,"error","No password given when 'login' is 'password'.}
+
+
+
+=== TEST 95: test for the login and the password(10/10)
+--- request
+PUT /=/role/Poster
+{
+    login:"password",
+    password:"shangerdi"
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 95: test the validity of the password
+--- request
+PUT /=/role/Poster
+{
+    password:"password"
+}
+--- response
+{"success":0,"error","No password given when 'login' is 'password'.}
 
 
 
