@@ -850,3 +850,105 @@ GET /=/role/Public/~/~
     \{"url":"/=/model","method":"GET","id":"\d+"}
 \]
 
+
+
+=== TEST 88: Create a new role in the right way
+--- request
+POST /=/role/Poster
+{
+    description:"Comment poster",
+    login: "password",
+    password: "4417935"
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 89: update the name
+--- request
+PUT /=/role/Poster
+{
+    name:"Newposter"
+}
+--- response
+{"success":"What's the response?"}
+
+
+
+=== TEST 90: update the description
+--- request
+PUT /=/role/Newposter
+{
+    description:"my description"
+}
+--- response
+{"success":"What's the response?"}
+
+
+
+=== TEST 91: update the name and the description
+--- request
+PUT /=/role/Newposter
+{
+    name:"Newname",
+    description:"Newdescription"
+}
+--- response
+{"success":"What's the response?"}
+
+
+
+=== TEST 92: update the password when login = password
+--- request
+PUT /=/role/Newname
+{
+    password:"123456789"
+}
+--- response
+{"success":"What's the response?"}
+
+
+
+=== TEST 93: update the login
+--- request
+PUT /=/role/Newname
+{
+    login:"captcha"
+}
+--- response
+{"success":"What's the response?"}
+
+
+
+=== TEST 94: try to update the password when login != password
+--- request
+PUT /=/role/Newname
+{
+    password:"987654321"
+}
+--- response
+{"success":"What's the response?"}
+
+
+
+=== TEST 95: update the all the info
+--- request
+PUT /=/role/Newname
+{
+    name:"Poster",
+    description:"Comment poster",
+    login:"anonymous"
+}
+--- response
+{"success":"What's the response?"}
+
+
+
+=== TEST 96: Drop the Poster role
+--- request
+DELETE /=/role/Poster
+--- response
+{"success":1}
+
+
