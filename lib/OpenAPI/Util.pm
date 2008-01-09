@@ -33,5 +33,13 @@ sub check_password {
     }
 }
 
+sub slurp {
+    my ($file) = @_;
+    open my $in, $file or die "Can't oepn $file for reading: $!\n";
+    my $s = do { local $/; <$in> };
+    close $in;
+    $s;
+}
+
 1;
 
