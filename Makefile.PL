@@ -37,6 +37,8 @@ features(
     ]
 );
 
+system("$^X bin/version.pl");
+
 auto_install();
 WriteAll();
 
