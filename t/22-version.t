@@ -12,5 +12,5 @@ __DATA__
 --- request
 GET /=/version
 --- response
-"OpenAPI 1.0.0\nCopyright (c) 2007 Yahoo! China EEEE\n"
+"OpenAPI 1.0.0\nCopyright (c) 2007-2008 Yahoo! China EEEE\n"
 
