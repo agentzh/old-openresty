@@ -59,6 +59,7 @@ fastcgi.server = (
                     # OR "memcached:10.2.26.17:1117,127.0.0.1:12345,10.62.3.48:1115"
                 "OPENAPI_COLUMN_LIMIT" => 40,
                 "OPENAPI_RECORD_LIMIT" => 200,
+                "OPENAPI_DNS" => "",
             ),
             "min-procs"    => 1,
             "max-procs"    => 5,
