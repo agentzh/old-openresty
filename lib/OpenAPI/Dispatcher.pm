@@ -34,6 +34,7 @@ my %Dispatcher = (
     captcha => [
         qw< captcha_list captcha_column captcha_value >
     ],
+    version => [ qw< version > ],
 );
 
 my $url_prefix = $ENV{OPENAPI_URL_PREFIX};
@@ -128,7 +129,7 @@ sub process_request {
     }
 
     my ($account, $role);
-    if ($bits[0] and $bits[0] !~ /^(?:login|captcha)$/) {
+    if ($bits[0] and $bits[0] !~ /^(?:login|captcha|version)$/) {
         eval {
             # XXX this part is lame...
             my $user = $cgi->url_param('user');
@@ -181,7 +182,7 @@ sub process_request {
     }
 
     # XXX check ACL rules...
-    if ($bits[0] and $bits[0] !~ /^(?:login|captcha)$/) {
+    if ($bits[0] and $bits[0] !~ /^(?:login|captcha|version)$/) {
         my $res = $openapi->current_user_can($http_meth => \@bits);
         if (!$res) {
             $openapi->fatal("Permission denied for the \"$role\" role.");
