@@ -1,11 +1,13 @@
-use t::OpenAPI 'no_plan';
-use lib 'lib';
+use Test::More 'no_plan';
 #use Smart::Comments;
+use lib 'lib';
 use JSON::Syck 'Dump';
 use OpenAPI::Limits;
+use WWW::OpenAPI;
 
 my $host = $t::OpenAPI::host;
-my $res = do_request('DELETE', $host.'/=/model?user=peee&password=4423037', undef, undef);
+my $client = WWW::OpenAPI->new( { server => $host } );
+my $res = $client->delete('/=/model?user=peee&password=4423037');
 ok $res->is_success, 'response OK';
 
 for (1..$MODEL_LIMIT + 1) {
@@ -13,7 +15,7 @@ for (1..$MODEL_LIMIT + 1) {
     my $url = '/=/model/'.$model_name;
     ### $url
     my $body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
-    my $res = do_request('POST', $host.$url, $body, undef);
+    my $res = $client->post($body, $url);
     ok $res->is_success, '1..' . $MODEL_LIMIT . ' OK';
     my $res_body = $res->content;
     ### $res_body
@@ -25,7 +27,7 @@ for (1..$MODEL_LIMIT + 1) {
     }
 }
 
-$res = do_request('DELETE', $host.'/=/model', undef, undef);
+$res = $client->delete('/=/model');
 ok $res->is_success, 'response OK';
 
 # column limit test
@@ -38,7 +40,7 @@ for (1..$COLUMN_LIMIT - 1) {
 ## 1. create a mode first (column number: $COLUMN_LIMIT - 1)
 my $url = '/=/model/foos';
 my $body = Dump($data);
-$res = do_request('POST', $host.$url, $body, undef);
+$res = $client->post($body, $url);
 ok $res->is_success, 'Create model okay';
 is $res->content(), '{"success":1}'."\n";
 
@@ -51,7 +53,7 @@ for ($COLUMN_LIMIT..$COLUMN_LIMIT + 1) {
     my $url_local = $url.'/'.$col_name;
     $body = '{label:"'.$col_name.'"}';
 
-    $res = do_request('POST', $host.$url_local, $body, undef);
+    $res = $client->post($body, $url_local);
     ok $res->is_success, $COLUMN_LIMIT . ' OK';
     my $res_body = $res->content;
     ### $res_body
@@ -72,10 +74,10 @@ for ($COLUMN_LIMIT..$COLUMN_LIMIT + 2) {
     my $body = Dump($data);
     ### $body
 
-    my $url = $host.$url;
+    #my $url = $host.$url;
     #die $url;
-    $res = do_request('DELETE', $url, undef, undef);
-    $res = do_request('POST', $url, $body, undef);
+    $res = $client->delete($url);
+    $res = $client->post($body, $url);
     ok $res->is_success, $COLUMN_LIMIT . ' OK';
     my $res_body = $res->content;
     ### $res_body
@@ -91,18 +93,18 @@ for ($COLUMN_LIMIT..$COLUMN_LIMIT + 2) {
 
 # record limit test
 ## 1. delete the 'foo' model first
-$res = do_request('DELETE', $host.$url, undef, undef);
+$res = $client->delete($url);
 
 ## 2. create it
 $body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
-$res = do_request('POST', $host.$url, $body, undef);
+$res = $client->post($body, $url);
 ### $res
 
 ## 3. insert $RECORD_LIMIT - 1 records
 for (1..$RECORD_LIMIT - 1) {
     $body = '{title:'.($RECORD_LIMIT-1).'}';
     ### $body
-    $res = do_request('POST', $host.$url.'/~/~', $body, undef);
+    $res = $client->post($body, $url.'/~/~');
     ok $res->is_success, $COLUMN_LIMIT . ' OK';
     my $res_body = $res->content;
     ### $res_body
@@ -113,7 +115,7 @@ for ($RECORD_LIMIT..$RECORD_LIMIT + 1) {
     $body = '{title:'.($RECORD_LIMIT-1).'}';
 
     ### $body
-    $res = do_request('POST', $host.$url.'/~/~', $body, undef);
+    $res = $client->post($body, $url.'/~/~');
     ok $res->is_success, $RECORD_LIMIT . ' OK';
     my $res_body = $res->content;
     ### $res_body
@@ -128,9 +130,9 @@ for ($RECORD_LIMIT..$RECORD_LIMIT + 1) {
 for ($INSERT_LIMIT..$INSERT_LIMIT + 1) {
 
     ## 1. delete the 'foo' model first, then create it
-    $res = do_request('DELETE', $host.$url, undef, undef);
+    $res = $client->delete($url);
     $body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
-    $res = do_request('POST', $host.$url, $body, undef);
+    $res = $client->post($body, $url);
     ok $res->is_success, 'Create model okay';
 
     ## 2. insert some records in a session
@@ -139,7 +141,7 @@ for ($INSERT_LIMIT..$INSERT_LIMIT + 1) {
         push @recs, { title => "Foo$_" };
 	}
     $body = Dump(\@recs);
-    $res = do_request('POST', $host.$url.'/~/~', $body, undef);
+    $res = $client->post($body, $url.'/~/~');
     ok $res->is_success, $INSERT_LIMIT . ' OK';
     my $res_body = $res->content;
     ### $res_body
@@ -154,13 +156,13 @@ for ($INSERT_LIMIT..$INSERT_LIMIT + 1) {
 ## new a data exceed the post length limit
 $data = 'a' x ($POST_LEN_LIMIT + 1);
 ## delete the 'foo' model first, then create it
-$res = do_request('DELETE', $host.$url, undef, undef);
+$res = $client->delete($url);
 $body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
-$res = do_request('POST', $host.$url, $data, undef);
+$res = $client->post($data, $url);
 ok $res->is_success, 'Create model okay';
 
 $body = $data;
-$res = do_request('POST', $host.$url.'/~/~', $body, undef);
+$res = $client->post($body, $url.'/~/~');
 ok $res->is_success, $POST_LEN_LIMIT . ' OK';
 my $res_body = $res->content;
 ### $res_body
@@ -170,21 +172,21 @@ is $res_body, '{"success":0,"error":"Exceeded POST content length limit: '.$POST
 ## new a data exceed the post length limit
 $data = 'a' x ($PUT_LEN_LIMIT + 1);
 ## delete the 'foo' model first, then create it
-$res = do_request('DELETE', $host.$url, undef, undef);
+$res = $client->delete($url);
 $body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
-$res = do_request('PUT', $host.$url, $body, undef);
+$res = $client->put($body, $url);
 ok $res->is_success, $PUT_LEN_LIMIT .'init model okay';
 
 ## insert a record
 $body = '{ title: "abc" }';
-$res = do_request('POST', $host.$url.'/~/~', $body, undef);
+$res = $client->post($body, $url.'/~/~');
 ok $res->is_success, $PUT_LEN_LIMIT . 'insert a short record OK';
 $res_body = $res->content;
 ### $res_body
 
 $data = 'a' x ($PUT_LEN_LIMIT + 1);
 #$body = '{title:'.($data).'}';
-$res = do_request('PUT', $host.$url.'/id/1', $data, undef);
+$res = $client->put($data, $url.'/id/1');
 ok $res->is_success, $PUT_LEN_LIMIT . 'update OK';
 $res_body = $res->content;
 ### $res_body
@@ -192,9 +194,9 @@ is $res_body, '{"success":0,"error":"Exceeded PUT content length limit: '.$PUT_L
 
 # max select records in a request
 ## delete the 'foo' model first, then create it
-$res = do_request('DELETE', $host.$url, undef, undef);
+$res = $client->delete($url);
 $body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
-$res = do_request('POST', $host.$url, $body, undef);
+$res = $client->post($body, $url);
 ok $res->is_success, 'Create model okay';
 
 ## insert MAX_SELECT_LIMIT + 1 records
@@ -203,18 +205,18 @@ for (1..$MAX_SELECT_LIMIT + 1) {
     push @recs, { title => "Foo$_" };
 }
 $body = Dump(\@recs);
-$res = do_request('POST', $host.$url.'/~/~', $body, undef);
+$res = $client->post($body, $url.'/~/~');
 ok $res->is_success, $INSERT_LIMIT . ' OK';
 $res_body = $res->content;
 ### $res_body
 
 ## request MAX_SELECT_LIMIT + 1 records
-$res = do_request('GET', $host.$url.'/~/~?count='.($MAX_SELECT_LIMIT + 1), undef, undef);
+$res = $client->get($url.'/~/~?count='.($MAX_SELECT_LIMIT + 1));
 ok $res->is_success, 'select OK';
 $res_body = $res->content;
 ### $res_body
 is $res_body, '{"success":0,"error":"Value too large for the limit param: '.($MAX_SELECT_LIMIT + 1).'"}'."\n", "Model select limit test ".$MAX_SELECT_LIMIT;
 
-$res = do_request('DELETE', $host.'/=/model', undef, undef);
+$res = $client->delete('/=/model');
 ok $res->is_success, 'response OK';
 
