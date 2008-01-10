@@ -9,9 +9,10 @@ use strict;
 use warnings;
 
 use Getopt::Long;
-use t::OpenAPI;
 use Encode qw(decode encode);
 
+use lib 'lib';
+use WWW::OpenAPI;
 use Params::Util qw( _HASH _ARRAY0 );
 use YAML::Syck ();
 use JSON::Syck ();
@@ -30,16 +31,18 @@ $user or die "No user given.\n";
 $model or die "No model given.\n";
 $server or die "No server given.\n";
 
+my $openapi = WWW::OpenAPI->new( { server => $server } );
+
 my $offset = 0;
 my $count = 100;
 my @rows;
 while (1) {
     warn "$offset\n";
-    my $url = "$server/=/model/$model/~/~?user=$user\&offset=$offset\&count=$count\&order_by=id:asc";
+    my $url = "/=/model/$model/~/~?user=$user\&offset=$offset\&count=$count\&order_by=id:asc";
     if ($password) {
         $url .= '&password=' . $password;
     }
-    my $res = do_request(GET => $url, undef, undef);
+    my $res = $openapi->get($url);
     if (!$res->is_success) {
         die "$url: ", $res->status_line, "\n";
     }
