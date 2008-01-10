@@ -3,6 +3,7 @@ use Test::More 'no_plan';
 use lib 'lib';
 use JSON::Syck 'Dump';
 use OpenAPI::Limits;
+use t::OpenAPI;
 use WWW::OpenAPI;
 
 my $host = $t::OpenAPI::host;

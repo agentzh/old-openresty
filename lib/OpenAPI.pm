@@ -134,8 +134,8 @@ sub init {
     }
     $self->{'_charset'} = $charset;
 
-    my $var = $cgi->url_param('var');
-    $self->{'_var'} = $var;
+    $self->{'_var'} = $cgi->url_param('var');
+    $self->{'_callback'} = $cgi->url_param('callback');
 
     my $offset = $cgi->url_param('offset');
     $offset ||= 0;
@@ -307,8 +307,11 @@ sub response {
             #}
     }; #warn $@ if $@;
     if (my $var = $self->{_var} and $Dumper eq \&JSON::Syck::Dump) {
-        $str = "var $self->{_var}=$str;";
+        $str = "var $var=$str;";
+    } elsif (my $callback = $self->{_callback} and $Dumper eq \&JSON::Syck::Dump) {
+        $str = "$callback($str);";
     }
+
     $str =~ s/\n+$//s;
     print $str, "\n";
 }
