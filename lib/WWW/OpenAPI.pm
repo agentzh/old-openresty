@@ -3,14 +3,17 @@ package WWW::OpenAPI;
 use strict;
 use warnings;
 
+#use Smart::Comments;
 use Carp;
 use Params::Util qw( _HASH0 );
 use LWP::UserAgent;
 use Data::Dumper;
 
 sub new {
+    ### @_
     my $class = ref $_[0] ? ref shift : shift;
-    my $params = _HASH0(shift) or croak "Invalid params";
+    my $params = _HASH0(shift @_) or croak "Invalid params";
+    ### $params
     my $server = delete $params->{server} or
         croak "No server specified.";
     my $timer = delete $params->{timer};
@@ -69,7 +72,6 @@ sub request {
     if ($url !~ /^http:\/\//) {
         $url = $self->{server} . $url;
     }
-    ### $SavedCapture
     my $req = HTTP::Request->new($method);
     $req->header('Content-Type' => $type);
     $req->header('Accept', '*/*');
