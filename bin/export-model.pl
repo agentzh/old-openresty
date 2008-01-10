@@ -38,11 +38,17 @@ my $count = 100;
 my @rows;
 while (1) {
     warn "$offset\n";
-    my $url = "/=/model/$model/~/~?user=$user\&offset=$offset\&count=$count\&order_by=id:asc";
+    my $url = "/=/model/$model/~/~";
+    my %args = (
+        user => $user,
+        offset => $offset,
+        count => $count,
+        order_by => "id:asc",
+    );
     if ($password) {
-        $url .= '&password=' . $password;
+        $args{password} = $password;
     }
-    my $res = $openapi->get($url);
+    my $res = $openapi->get($url, \%args);
     if (!$res->is_success) {
         die "$url: ", $res->status_line, "\n";
     }
