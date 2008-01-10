@@ -4,12 +4,13 @@ use strict;
 use warnings;
 
 use Getopt::Long;
-use t::OpenAPI;
 use Encode qw(decode encode);
 
+use lib 'lib';
 use Params::Util qw( _HASH _ARRAY0 );
 use YAML::Syck ();
 use JSON::Syck ();
+use WWW::OpenAPI;
 
 $YAML::Syck::ImplicitUnicode = 1;
 $JSON::Syck::ImplicitUnicode = 1;
@@ -32,9 +33,10 @@ my @rows = @$data;
 
 my $offset = 0;
 my $count = 20;
-my $url = "$server/=/model/$model/~/~?user=$user";
+my $url = "/=/model/$model/~/~?user=$user";
 if ($password) { $url .= "\&password=$password"; }
-do_request(DELETE => $url, undef, undef);
+my $openapi = WWW::OpenAPI->new( { server => $server } );
+$openapi->delete($url);
 while (1) {
     last if $offset >= $#rows;
     warn "$offset\n";
@@ -49,7 +51,7 @@ while (1) {
     $json = encode('UTF-8', $json);
     #warn $json;
 
-    my $res = do_request(POST => $url, $json, undef);
+    my $res = $openapi->post($json, $url);
     if (!$res->is_success) {
         die "$url: ", $res->status_line, "\n";
     }

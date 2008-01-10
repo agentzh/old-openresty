@@ -3,7 +3,7 @@ package t::OpenAPI;
 use Test::Base -Base;
 
 #use Smart::Comments;
-use LWP::UserAgent;
+use WWW::OpenAPI;
 use Test::LongString;
 use Encode 'from_to';
 
@@ -13,42 +13,12 @@ use Benchmark::Timer;
 my $timer = Benchmark::Timer->new();
 my $SavedCapture;
 
-my $ua = LWP::UserAgent->new;
-$ua->cookie_jar({ file => "cookies.txt" });
 our $host = $ENV{'OPENAPI_FRONTEND'} || $ENV{'REMOTE_OPENAPI'} || 'http://localhost';
 $host = "http://$host" if $host !~ m{^http://};
 
-sub init {
-    my $res = do_request('DELETE', $host . '/=/model');
-    ok $res->is_success, 'DELETE /=/model failed';
-    is $res->content, '', 'no error msg';
-}
+my $client = WWW::OpenAPI->new({ server => $host });
 
 #init();
-
-sub do_request ($$$$) {
-    my ($method, $url, $body, $type) = @_;
-    $type ||= 'text/plain';
-    ### $SavedCapture
-    my $req = HTTP::Request->new($method);
-    $req->header('Content-Type' => $type);
-    $req->header('Accept', '*/*');
-    $req->url($url);
-    if ($body) {
-        if ($method eq 'GET' or $method eq 'HEAD') {
-            die "HTTP 1.1 $method request should not have a content body: $body";
-        }
-
-        $req->content($body);
-    } elsif ($method eq 'POST' or $method eq 'PUT') {
-        $req->header('Content-Length' => 0);
-    }
-    $timer->start($method);
-    my $res = $ua->request($req);
-    $timer->stop($method);
-    return $res;
-}
-
 
 sub run_tests () {
     for my $block (blocks()) {
@@ -79,7 +49,8 @@ sub run_test ($) {
         $url = $host.$url;
         from_to($url, 'UTF-8', $charset) unless $charset eq 'UTF-8';
         from_to($body, 'UTF-8', $charset) unless $charset eq 'UTF-8';
-        my $res = do_request($method, $url, $body, $type);
+        $client->content_type($type);
+        my $res = $client->request($body, $method, $url);
         ok $res->is_success, "request returns OK - $name";
         my $expected_res = $block->response || $block->response_like;
         if ($format eq 'JSON' and $expected_res) {
