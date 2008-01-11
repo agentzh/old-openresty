@@ -70,7 +70,7 @@ POST /=/model/Carrie/~/~.js
 --- request
 GET /=/model/Carrie/~/~.js?var=hello
 --- response
-var hello=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}];
+hello=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}];
 
 
 
@@ -87,7 +87,7 @@ POST /=/action/.Select/lang/minisql
 --- request
 GET /=/post/action/.Select/lang/minisql?var=foo&data="select * from Carrie where url = 'http://www.carriezh.cn/' and num=10"
 --- response
-var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
+foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
 
 
 
@@ -95,7 +95,7 @@ var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id"
 --- request
 GET /=/post/action/.Select/lang/minisql?var=foo&offset=0&count=1&data="select * from Carrie"
 --- response
-var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
+foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
 
 
 
@@ -103,7 +103,7 @@ var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id"
 --- request
 GET /=/post/action/.Select/lang/minisql?var=foo&data="select * from Carrie limit 1 offset 0"
 --- response
-var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
+foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
 
 
 
@@ -112,7 +112,7 @@ var foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id"
 POST /=/action/.Select/lang/minisql?var=foo
 "select * from Carrie limit 1 offset 1"
 --- response
-var foo=[{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}];
+foo=[{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}];
 
 
 
@@ -121,7 +121,7 @@ var foo=[{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}];
 POST /=/action/.Select/lang/minisql?var=foo
 "select * from _models limit 1 offset 1"
 --- response
-var foo={"success":0,"error":"line 1: error: Unexpected input: \"_\" (VAR or IDENT expected)."};
+foo={"success":0,"error":"line 1: error: Unexpected input: \"_\" (VAR or IDENT expected)."};
 
 
 
