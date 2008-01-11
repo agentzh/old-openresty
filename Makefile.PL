@@ -37,8 +37,10 @@ features(
     ]
 );
 
-system("$^X bin/version.pl");
-
 auto_install();
+
+system("$^X bin/revision.pl");
+system("$^X bin/fetch-font.pl");
+
 WriteAll();
 
