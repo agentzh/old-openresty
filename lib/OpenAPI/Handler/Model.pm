@@ -315,6 +315,7 @@ sub PUT_model {
     my ($self, $bits) = @_;
     my $model = $bits->[1];
     my $data = $self->{_req_data};
+    #warn "Model: $model";
     return $self->alter_model($model, $data);
 }
 
@@ -531,7 +532,7 @@ sub row_count {
 
 sub get_models {
     my $self = shift;
-    my $select = SQL::Select->new('name','description')->from('_models');
+    my $select = SQL::Select->new('name','description')->from('_models')->order_by('id');
     return $self->select("$select", { use_hash => 1 });
 }
 
@@ -851,6 +852,7 @@ sub alter_model {
             "update _columns set table_name='$new_table' where table_name='$table';\n" .
             "alter table \"$table\" rename to \"$new_table\";\n";
     }
+    $new_model ||= $model;
     if (my $desc = delete $data->{description}) {
         _STRING($desc) or die "Model descriptons must be strings.\n";
         $sql .= "update _models set description=".Q($desc)." where name='$new_model';\n"
@@ -859,9 +861,10 @@ sub alter_model {
         die "Unknown fields ", join(", ", keys %$data), "\n";
     }
 
-    my $retval = $Backend->do($sql);
+    #warn "SQL: $sql";
+    my $retval = $self->do($sql);
 
-    return {success => 1};
+    return {success => $retval+0 >= 0};
 }
 
 1;

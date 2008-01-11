@@ -22,6 +22,18 @@ OpenAPI.prototype.post = function (content, url, args) {
     this.get(url, args);
 };
 
+OpenAPI.prototype.put = function (content, url, args) {
+    if (!args) args = {};
+    url = url.replace(/^\/=\//, '/=/put/');
+    if (typeof(content) == 'object') {
+        content = JSON.stringify(content);
+    }
+    //alert("type of content: " + typeof(content));
+    //alert("content: " + content);
+    args.data = content;
+    this.get(url, args);
+};
+
 OpenAPI.prototype.get = function (url, args) {
     if (!args) args = {};
     if (!this.callback) throw "No callback specified for OpenAPI.";
@@ -47,7 +59,13 @@ OpenAPI.prototype.get = function (url, args) {
     headTag.appendChild(scriptTag);
 };
 
-OpenAPI.purge = function () {
+OpenAPI.prototype.del = function (url, args) {
+    if (!args) args = {};
+    url = url.replace(/^\/=\//, '/=/delete/');
+    this.get(url, args);
+};
+
+OpenAPI.prototype.purge = function () {
     // document.getElementByClassName('openapiScriptTag').remove();
     var nodes = document.getElementsByTagName('script');
     for (var i = 0; i < nodes.length; i++) {
