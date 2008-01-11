@@ -307,7 +307,7 @@ sub response {
             #}
     }; #warn $@ if $@;
     if (my $var = $self->{_var} and $Dumper eq \&JSON::Syck::Dump) {
-        $str = "var $var=$str;";
+        $str = "$var=$str;";
     } elsif (my $callback = $self->{_callback} and $Dumper eq \&JSON::Syck::Dump) {
         $str = "$callback($str);";
     }

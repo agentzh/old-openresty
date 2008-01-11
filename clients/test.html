@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <title>Test page for OpenAPI.js</title>
+        <script type="text/javascript" src="openapi.js"></script>
+        <script type="text/javascript" src="jquery.js"></script>
+        <script type="text/javascript" src="JSON.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            var host = '10.62.136.86';
+            var display = function (res) {
+                $("h1").text("/=/model: " + JSON.stringify(res));
+            }
+            var openapi = new OpenAPI(
+                { server: 'http://' + host, callback: 'display' }
+            );
+            openapi.get('/=/model');
+        </script>
+        <h1>/=/model</h1>
+    </body>
+</html>
+
