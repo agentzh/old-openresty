@@ -4,19 +4,26 @@
         <script type="text/javascript" src="../openapi.js"></script>
         <script type="text/javascript" src="jquery.js"></script>
         <script type="text/javascript" src="JSON.js"></script>
+        <script type="text/javascript" src="test.js"></script>
     </head>
     <body>
-        <script type="text/javascript">
-            var host = '10.62.136.86';
-            var display = function (res) {
-                $("h1").text("/=/model: " + JSON.stringify(res));
-            }
-            var openapi = new OpenAPI(
-                { server: 'http://' + host, callback: 'display' }
-            );
-            openapi.get('/=/model');
-        </script>
-        <h1>/=/model</h1>
+        <h1>Admin</h1>
+        <h2>Server response</h2>
+        <p style="word-wrap:break-word;width:32" id="output">
+        </p>
+        <h2>Models</h2>
+        <div id="model-list">
+        </div>
+        <h2>Create model</h2>
+        <form id="new_model">
+          <p>
+            <label>Name</label>&nbsp;<input id="model-name" type="text"/>
+          </p>
+          <p>
+            <label>Description</label>&nbsp;<input id="model-desc" type="text"/>
+          </p>
+          <input type="submit" value="Create!">
+        </form>
     </body>
 </html>
 
