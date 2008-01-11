@@ -297,3 +297,25 @@ POST /=/model/Foo2
 --- response
 {"success":0,"error":"Column definition must be a hash: [1,2]"}
 
+
+
+=== TEST 27: Put a description
+--- request
+PUT /=/model/Tiger
+{ description: "Hello!" }
+--- response
+{"success":1}
+
+
+
+=== TEST 28: Read the model again
+--- request
+GET /=/model/Tiger
+--- response
+{
+    "columns":
+        [{"name":"id","label":"ID","type":"serial"},
+         {"name":"ddddddddddddddddddddddddddddddd","default":null,"label":"hiya","type":"text
+        "}],
+    "name":"Tiger","description":"Hello!"}
+
