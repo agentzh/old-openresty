@@ -166,7 +166,7 @@ GRANT SELECT ON TABLE _books2 to anonymous;"
 --- request
 GET /=/post/action/.Select/lang/minisql?var=sss&data="select * from hello_world4(1,0)"
 --- response
-var sss=[];
+sss=[];
 
 
 
