@@ -5,7 +5,7 @@ our $VERSION = '1.0.0';
 use strict;
 use warnings;
 
-use Smart::Comments;
+#use Smart::Comments;
 use YAML::Syck ();
 use JSON::Syck ();
 
@@ -280,13 +280,18 @@ sub response {
     my $type = $self->{_type} || ($as_html ? 'text/html' : 'text/plain');
     #warn $s;
     my $str = '';
-    if ($self->{_bin_data}) {
+    if (my $bin_data = $self->{_bin_data}) {
         binmode \*STDOUT;
         print $cgi->header(
             -type => "$type" . ($type =~ /text/ ? "; charset=$charset" : ""),
             @cookies ? (-cookie => \@cookies) : ()
         );
-        print $self->{_bin_data};
+        if (my $callback = $self->{_callback}) {
+            chomp($bin_data);
+            print "$callback($bin_data);\n";
+        } else {
+            print $bin_data;
+        }
         return;
     }
     if ($self->{_error}) {
