@@ -104,6 +104,9 @@ sub init {
         #die "Backend connection lost: ", $db_state, "\n";
     }
 
+    my $as_html = $cgi->url_param('as_html') || 0;
+    $self->{_as_html} = $as_html;
+
     my $charset = $cgi->url_param('charset') || 'UTF-8';
 
     if ($charset =~ /^guess(?:ing)?$/i) {
@@ -273,7 +276,8 @@ sub response {
     }
 
     print "HTTP/1.1 200 OK\n";
-    my $type = $self->{_type} || 'text/plain';
+    my $as_html = $self->{_as_html};
+    my $type = $self->{_type} || ($as_html ? 'text/html' : 'text/plain');
     print $cgi->header(
         -type => "$type" . ($type =~ /text/ ? "; charset=$charset" : ""),
         @cookies ? (-cookie => \@cookies) : ()
@@ -311,8 +315,11 @@ sub response {
     } elsif (my $callback = $self->{_callback} and $Dumper eq \&JSON::Syck::Dump) {
         $str = "$callback($str);";
     }
-
     $str =~ s/\n+$//s;
+
+    if ($as_html) {
+        $str = "<html><body><script type=\"text/javascript\">parent.location.hash = ".$Dumper->($str)."</script></body></html>";
+    }
     print $str, "\n";
 }
 
