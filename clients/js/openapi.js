@@ -6,8 +6,13 @@ var OpenAPI = function (params) {
     if (params == undefined) params = {};
     this.callback = params.callback;
     this.server = params.server;
-    this.user = params.user;
-    this.password = params.password;
+    //this.user = params.user;
+    //this.password = params.password;
+};
+
+OpenAPI.prototype.login = function (user, password) {
+    this.user = user;
+    this.get('/=/login/' + user + '/' + password);
 };
 
 OpenAPI.prototype.post = function (content, url, args) {
@@ -34,16 +39,16 @@ OpenAPI.prototype.put = function (content, url, args) {
     this.get(url, args);
 };
 
-OpenAPI.prototype.get = function (url, args) {
+OpenAPI.prototype.get = function (url, args, isLogin) {
     if (!args) args = {};
     if (!this.callback) throw "No callback specified for OpenAPI.";
     if (!this.server) throw "No server specified for OpenAPI.";
     if (!this.user) throw "No user specified for OpenAPI.";
-    args.user = this.user;
-    args.password = this.password || '';
+    //args.user = this.user;
+    //args.password = this.password || '';
     if (url.match(/\?/)) throw "URL should not contain '?'.";
     args.rand = Math.random();
-    args.user = this.user;
+    //if (!isLogin) args.user = this.user;
     args.password = this.password;
     args.callback = this.callback;
     var scriptTag = document.createElement("script");
