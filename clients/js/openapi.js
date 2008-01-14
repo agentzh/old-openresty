@@ -40,7 +40,6 @@ OpenAPI.prototype.true_post = function (content, url, args) {
     //alert("type of content: " + typeof(content));
     //alert("content: " + content);
     args.rand = Math.random();
-    //this.callback = 'alert';
     //args.callback = this.callback;
     //args.as_html = 1;
 
@@ -52,35 +51,30 @@ OpenAPI.prototype.true_post = function (content, url, args) {
     //alert("URL: " + url);
     //alert("Content: " + content);
     //
+    //
+    var self = this;
+    var ts = dojo.io.iframe.send({
+        form: document.getElementById('new_model'),
+        url: this.server + url,
+        content: { data: content },
+        preventCache: false,
+        handleAs: 'text/plain',
+        handle: function () {
+            //alert("Getting last response!");
+            self.get('/=/last/response');
+        }
+    });
+
+    /*
     var form = document.getElementById('new_model');
     form.action = this.server + url;
     form.method = 'POST';
     form.target = 'blah';
     $("input[@name='data']").val(content);
-    //var iframe = document.getElementById('blah');
-    //alert(iframe);
-    //iframe.setAttribute('onload', 'alert(top.location.href)');
-    //var savedHash = location.hash;
-    //location.hash = '';
-    /*
-    var savedHash = location.hash || null;
-    //location.hash = null;
-    var func = eval(this.callback);
-    var timeout = setInterval(function () {
-        if (location.hash != '') {
-            var data = location.hash;
-            data = data.replace(/^#/, '');
-            location.hash = savedHash;
-            alert("Func: " + func);
-            alert("Data: " + data);
-            func(data);
-            clearTimeout(timeout);
-            //alert(data);
-        }
-    }, 200);
-    */
     form.submit();
+    */
     //this.get(url, args);
+    //
 };
 
 OpenAPI.prototype.put = function (content, url, args) {

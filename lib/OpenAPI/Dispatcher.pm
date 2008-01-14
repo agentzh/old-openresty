@@ -96,7 +96,7 @@ sub process_request {
     }
 
     map { s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg; } @bits;
-    ### @bits
+    ## @bits
 
     my $fst = shift @bits;
     if ($fst ne '=') {
@@ -109,6 +109,7 @@ sub process_request {
         $openapi->fatal("HTTP method not detected.");
         return;
     }
+    ### $http_meth
 
     # XXX hacks...
     my $cookies = CGI::Cookie->fetch;

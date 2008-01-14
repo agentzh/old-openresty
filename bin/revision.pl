@@ -47,12 +47,16 @@ elsif (my @svk_info = qx/svk info/ and $? == 0) {
 }
 $revision ||= 0;
 
-print "Current version is $revision\n";
+if ($revision == 0) {
+    die "Revision failed to obtain.\n";
+} else {
+    print "Current version is $revision\n";
 
-my $rev_file = "$FindBin::Bin/../revision";
-print "Updating $rev_file...\n";
-open my $out, ">$rev_file" or
-    die "Can't open $rev_file for writing: $!\n";
-print $out $revision;
-close $out;
+    my $rev_file = "$FindBin::Bin/../revision";
+    print "Updating $rev_file...\n";
+    open my $out, ">$rev_file" or
+        die "Can't open $rev_file for writing: $!\n";
+    print $out $revision;
+    close $out;
+}
 
