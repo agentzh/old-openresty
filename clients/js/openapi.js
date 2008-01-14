@@ -42,7 +42,7 @@ OpenAPI.prototype.true_post = function (content, url, args) {
     args.rand = Math.random();
     //this.callback = 'alert';
     //args.callback = this.callback;
-    args.as_html = 1;
+    //args.as_html = 1;
 
     var arg_list = new Array();
     for (var key in args) {
@@ -62,16 +62,15 @@ OpenAPI.prototype.true_post = function (content, url, args) {
     //iframe.setAttribute('onload', 'alert(top.location.href)');
     //var savedHash = location.hash;
     //location.hash = '';
+    /*
     var savedHash = location.hash || null;
     //location.hash = null;
-    var self = this;
+    var func = eval(this.callback);
     var timeout = setInterval(function () {
         if (location.hash != '') {
             var data = location.hash;
             data = data.replace(/^#/, '');
             location.hash = savedHash;
-            alert("Func name: " + self.callback);
-            var func = eval(self.callback);
             alert("Func: " + func);
             alert("Data: " + data);
             func(data);
@@ -79,6 +78,7 @@ OpenAPI.prototype.true_post = function (content, url, args) {
             //alert(data);
         }
     }, 200);
+    */
     form.submit();
     //this.get(url, args);
 };

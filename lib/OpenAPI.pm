@@ -278,15 +278,14 @@ sub response {
     print "HTTP/1.1 200 OK\n";
     my $as_html = $self->{_as_html};
     my $type = $self->{_type} || ($as_html ? 'text/html' : 'text/plain');
-    print $cgi->header(
-        -type => "$type" . ($type =~ /text/ ? "; charset=$charset" : ""),
-        @cookies ? (-cookie => \@cookies) : ()
-    );
-
     #warn $s;
     my $str = '';
     if ($self->{_bin_data}) {
         binmode \*STDOUT;
+        print $cgi->header(
+            -type => "$type" . ($type =~ /text/ ? "; charset=$charset" : ""),
+            @cookies ? (-cookie => \@cookies) : ()
+        );
         print $self->{_bin_data};
         return;
     }
@@ -320,6 +319,18 @@ sub response {
     if ($as_html) {
         $str = "<html><body><script type=\"text/javascript\">parent.location.hash = ".$Dumper->($str)."</script></body></html>";
     }
+
+    if ($self->{_http_method} =~ /^(?:PUT|POST)$/) {
+        push @cookies, CGI::Cookie->new(
+            -name => 'last_response',
+            -value => length($str) > 1024 ? substr($str, 0, 1024) : $str,
+        );
+    }
+    print $cgi->header(
+        -type => "$type" . ($type =~ /text/ ? "; charset=$charset" : ""),
+        @cookies ? (-cookie => \@cookies) : ()
+    );
+
     print $str, "\n";
 }
 

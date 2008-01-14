@@ -234,7 +234,23 @@ POST /=/put/model/Bookmark/id/3.js
 
 
 
-=== TEST 24: check if the record is indeed changed
+=== TEST 24: Check the last response
+--- request
+GET /=/last/response
+--- response
+{"success":1,"rows_affected":1}
+
+
+
+=== TEST 25: Check the last response again
+--- request
+GET /=/last/response
+--- response
+{"success":1,"rows_affected":1}
+
+
+
+=== TEST 26: check if the record is indeed changed
 --- request
 GET /=/model/Bookmark/id/3.js
 --- response
@@ -242,7 +258,15 @@ GET /=/model/Bookmark/id/3.js
 
 
 
-=== TEST 25: Change the name of the model
+=== TEST 27: Check the last response again (GET has no effect)
+--- request
+GET /=/last/response
+--- response
+{"success":1,"rows_affected":1}
+
+
+
+=== TEST 28: Change the name of the model
 --- request
 PUT /=/model/Bookmark.js
 { name: "MyFavorites", description: "我的最爱" }
@@ -251,7 +275,15 @@ PUT /=/model/Bookmark.js
 
 
 
-=== TEST 26: Check the new model
+=== TEST 29: Check the last response again (PUT has effect)
+--- request
+GET /=/last/response
+--- response
+{"success":1}
+
+
+
+=== TEST 30: Check the new model
 --- request
 GET /=/model/MyFavorites.js
 --- response
@@ -268,7 +300,7 @@ GET /=/model/MyFavorites.js
 
 
 
-=== TEST 27: Change the name and type of title
+=== TEST 31: Change the name and type of title
 --- request
 PUT /=/model/MyFavorites/title
 { name: "count", type: "text" }
@@ -277,7 +309,7 @@ PUT /=/model/MyFavorites/title
 
 
 
-=== TEST 28: Get model list
+=== TEST 32: Get model list
 --- request
 GET /=/model.js
 --- response
