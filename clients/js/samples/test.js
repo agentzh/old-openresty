@@ -30,7 +30,7 @@ function render_model_list (data) {
         //alert(JSON.stringify(this));
         //var old_desc = this.revert;
         var new_desc = value;
-        alert("New desc: " + new_desc);
+        //alert("New desc: " + new_desc);
         //alert(new_desc);
         //alert("Changing model desciption from " + old_desc + " to " + new_desc);
         openapi.callback = 'handle_put_model';
@@ -65,12 +65,12 @@ function render_model_list (data) {
         height: "26",
         tooltop: "Click to edit"
     });
-    display(data);
+    //display(data);
 }
 
 function handle_put_model (res) {
     display(res);
-    alert("handle put model: " + JSON.stringify(res));
+    //alert("handle put model: " + JSON.stringify(res));
     get_model_list();
 }
 
@@ -92,9 +92,11 @@ $(document).ready( function () {
     openapi = new OpenAPI(
         { server: host, callback: 'display' }
     );
-    openapi.user = 'admin';
-    openapi.password = '4423037';
-    get_model_list();
+    openapi.callback = 'init';
+    openapi.login('admin', '4423037');
 } );
 
+function init () {
+    get_model_list();
+}
 
