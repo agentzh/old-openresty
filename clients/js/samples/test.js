@@ -4,7 +4,9 @@ var display = function (res) {
     $("#output").text(JSON.stringify(res));
 };
 
-function get_model_list () {
+function get_model_list (res) {
+    if (res) display(res);
+    //return;
     openapi.callback = 'render_model_list';
     openapi.get('/=/model');
 }

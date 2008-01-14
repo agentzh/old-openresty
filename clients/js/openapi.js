@@ -15,6 +15,10 @@ OpenAPI.prototype.login = function (user, password) {
     this.get('/=/login/' + user + '/' + password);
 };
 
+function sayhello (res) {
+    alert(res);
+}
+
 OpenAPI.prototype.post = function (content, url, args) {
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/post/');
@@ -27,12 +31,62 @@ OpenAPI.prototype.post = function (content, url, args) {
     this.get(url, args);
 };
 
+OpenAPI.prototype.true_post = function (content, url, args) {
+    if (!args) args = {};
+    //url = url.replace(/^\/=\//, '/=/post/');
+    if (url.match(/\?/)) throw "URL should not contain '?'.";
+    if (!this.callback) throw "No callback specified for OpenAPI.";
+    content = JSON.stringify(content);
+    //alert("type of content: " + typeof(content));
+    //alert("content: " + content);
+    args.rand = Math.random();
+    //this.callback = 'alert';
+    //args.callback = this.callback;
+    args.as_html = 1;
+
+    var arg_list = new Array();
+    for (var key in args) {
+        arg_list.push(key + "=" + encodeURIComponent(args[key]));
+    }
+    url += "?" + arg_list.join("&");
+    //alert("URL: " + url);
+    //alert("Content: " + content);
+    //
+    var form = document.getElementById('new_model');
+    form.action = this.server + url;
+    form.method = 'POST';
+    form.target = 'blah';
+    $("input[@name='data']").val(content);
+    //var iframe = document.getElementById('blah');
+    //alert(iframe);
+    //iframe.setAttribute('onload', 'alert(top.location.href)');
+    //var savedHash = location.hash;
+    //location.hash = '';
+    var savedHash = location.hash || null;
+    //location.hash = null;
+    var self = this;
+    var timeout = setInterval(function () {
+        if (location.hash != '') {
+            var data = location.hash;
+            data = data.replace(/^#/, '');
+            location.hash = savedHash;
+            alert("Func name: " + self.callback);
+            var func = eval(self.callback);
+            alert("Func: " + func);
+            alert("Data: " + data);
+            func(data);
+            clearTimeout(timeout);
+            //alert(data);
+        }
+    }, 200);
+    form.submit();
+    //this.get(url, args);
+};
+
 OpenAPI.prototype.put = function (content, url, args) {
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/put/');
-    if (typeof(content) == 'object') {
-        content = JSON.stringify(content);
-    }
+    content = JSON.stringify(content);
     //alert("type of content: " + typeof(content));
     //alert("content: " + content);
     args.data = content;
@@ -49,7 +103,7 @@ OpenAPI.prototype.get = function (url, args, isLogin) {
     if (url.match(/\?/)) throw "URL should not contain '?'.";
     args.rand = Math.random();
     //if (!isLogin) args.user = this.user;
-    args.password = this.password;
+    //args.password = this.password;
     args.callback = this.callback;
     var scriptTag = document.createElement("script");
     scriptTag.id = "openapiScriptTag" + args.rand;
