@@ -87,7 +87,7 @@ $(document).ready( function () {
             description: desc
         };
         openapi.callback = 'get_model_list';
-        openapi.post(data, "/=/model/~");
+        openapi.true_post(data, "/=/model/~");
         return false;
     });
     var host = 'http://10.62.136.86';

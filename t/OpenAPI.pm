@@ -16,7 +16,7 @@ my $SavedCapture;
 our $host = $ENV{'OPENAPI_FRONTEND'} || $ENV{'REMOTE_OPENAPI'} || 'http://localhost';
 $host = "http://$host" if $host !~ m{^http://};
 
-my $client = WWW::OpenAPI->new({ server => $host });
+my $client = WWW::OpenAPI->new({ server => $host, timer => $timer });
 
 #init();
 

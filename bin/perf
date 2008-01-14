@@ -1,4 +1,6 @@
 #!/usr/bin/env perl
+
+#use Smart::Comments;
 use strict;
 use warnings;
 
@@ -21,12 +23,15 @@ if ($cmd eq 'update_hist' or !-f $hist_file) {
     copy($cur_file, $hist_file);
 }
 my $cur_data = LoadFile($cur_file);
+### $cur_data
 my $hist_data = LoadFile($hist_file);
 
 sub faster ($$);
 sub mean (@);
 
 while (my ($key, $val) =  each %$cur_data) {
+    ### $key
+    ### $val
     my $len = @$val;
     my $mean = mean(@$val);
     my $hist_val = $hist_data->{$key};
