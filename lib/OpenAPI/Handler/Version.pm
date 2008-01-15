@@ -8,9 +8,14 @@ use OpenAPI;
 
 use vars qw($VERSION $Revision);
 
+sub trim {
+    (my $s = $_[0]) =~ s/\s+//gs;
+    $s;
+}
+
 sub GET_version {
     my ($self, $bits) = @_;
-    $Revision ||= slurp("$FindBin::Bin/../revision") || 'Unknown';
+    $Revision ||= trim(slurp("$FindBin::Bin/../revision")) || 'Unknown';
     my $backend = $OpenAPI::BackendName;
     if ($backend eq 'PgFarm') {
         my $dns = $OpenAPI::Backend::PgFarm::DNS;
