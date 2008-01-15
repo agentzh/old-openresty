@@ -5,6 +5,9 @@ use warnings;
 
 use FindBin qw($Bin);
 
+$ENV{LANG}="C";
+$ENV{LC_ALL}="C";
+
 my $revision = 0;
 my $base = shift || "$Bin/../";
 chdir $base;
