@@ -1,0 +1,22 @@
+#!/usr/bin/env perl
+
+use FindBin;
+
+
+if( $#ARGV != 0 )
+{
+	print "usage: $0 <dist_host>\n";
+	exit;
+}
+
+
+chdir("../");
+print "svn up ing\n";
+
+system("svn up");
+
+chdir("../");
+print "tar ing...\n";
+
+system("tar -cz --exclude=trunk/util --exclude=trunk/pkg --exclude=.svn -f  trunk/pkg/openapi.tgz trunk");
+
