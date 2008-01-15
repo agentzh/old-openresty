@@ -91,6 +91,10 @@ if ($cmd eq 'adduser') {
     $password = $key;
 
     $OpenAPI::Backend->add_user($user, $password);
+    my $machine = $OpenAPI::Backend->has_user($user);
+    if ($machine) {
+        warn "User $user created on node $machine.\n";
+    }
 } elsif ($cmd eq 'deluser') {
     my $user = shift or
         die "No user specified.\n";
