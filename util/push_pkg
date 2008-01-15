@@ -10,16 +10,26 @@ if( $#ARGV != 0 )
 }
 
 
-print "$ARGV[0]\n";
-
 chdir("$FindBin::Bin/../");
 print "svn up ing\n";
 
 chdir("../");
 system("svn up");
 
-print "packing  ...\n";
-system("tar -cz --exclude=trunk/util --exclude=trunk/pkg --exclude=.svn -f  $FindBin::Bin/../pkg/openapi.tgz trunk");
+print "seting revision..";
+system("bin/revision.pl");
 
-system("scp $FindBin::Bin/../pkg/openapi.tgz $ARGV[0]:/tmp");
+print "get revision number..";
+$rev = `cat revision`;
+
+print "commiting revision..";
+system("svn ci -m 'openapi-$rev'");
+
+print "cp -rf trunk openapi-$rev";
+print "packing  ...\n";
+
+
+#system("tar -cz --exclude=trunk/util --exclude=trunk/pkg --exclude=.svn -f  $FindBin::Bin/../pkg/openapi.tgz trunk");
+
+#system("scp $FindBin::Bin/../pkg/openapi.tgz $ARGV[0]:/tmp");
 
