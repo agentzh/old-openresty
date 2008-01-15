@@ -10,13 +10,16 @@ if( $#ARGV != 0 )
 }
 
 
-chdir("../");
+print "$ARGV[0]\n";
+
+chdir("$FindBin::Bin/../");
 print "svn up ing\n";
 
+chdir("../");
 system("svn up");
 
-chdir("../");
-print "tar ing...\n";
+print "packing  ...\n";
+system("tar -cz --exclude=trunk/util --exclude=trunk/pkg --exclude=.svn -f  $FindBin::Bin/../pkg/openapi.tgz trunk");
 
-system("tar -cz --exclude=trunk/util --exclude=trunk/pkg --exclude=.svn -f  trunk/pkg/openapi.tgz trunk");
+system("scp $FindBin::Bin/../pkg/openapi.tgz $ARGV[0]:/tmp");
 
