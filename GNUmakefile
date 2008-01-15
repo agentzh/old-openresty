@@ -1,5 +1,5 @@
 define CMDS
-    perl bin/revision.pl
+    -perl bin/revision.pl
     perl -c bin/openapi.pl
     -sudo killall lighttpd
     sudo /etc/init.d/lighttpd restart

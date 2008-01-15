@@ -349,7 +349,7 @@ sub set_formatter {
 sub connect {
     my $self = shift;
     my $name = shift || $BackendName;
-    $Backend = $name;
+    $BackendName = $name;
     $Backend = OpenAPI::Backend->new($name);
     #$Backend->select("");
 }
