@@ -21,6 +21,7 @@ print "get revision number..\n";
 $rev = `cat revision`;
 $pkgname=$pkgdir="openapi-$rev";
 
+$dest=join(",",@ARGV);
 print "commiting $rev revision..";
 system("svn ci -m 'openapi-$rev packaged and will upload to $ARGV[0]'");
 
