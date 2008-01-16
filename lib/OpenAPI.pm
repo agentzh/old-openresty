@@ -379,8 +379,14 @@ sub _IDENT {
 }
 
 sub set_user {
-    my $user = pop;
+    my ($self, $user) = @_;
     $Backend->set_user($user);
+    $self->{_user} = $user;
+}
+
+sub current_user {
+    my ($self) = @_;
+    $self->{_user};
 }
 
 sub do {

@@ -32,19 +32,20 @@ _ARRAY0($data) or die "The YAML data is not an array.\n";
 my @rows = @$data;
 
 my $offset = 0;
-my $count = 20;
+my $count = 1;
 my $url = "/=/model/$model/~/~?user=$user";
 if ($password) { $url .= "\&password=$password"; }
 my $openapi = WWW::OpenAPI->new( { server => $server } );
 $openapi->delete($url);
 while (1) {
     last if $offset >= $#rows;
-    warn "$offset\n";
+    #select(undef, undef, undef, 0.1);
+    print STDERR "$offset\t";
     my $url = "$server/=/model/$model/~/~?user=$user\&offset=$offset\&count=$count\&order_by=id:asc";
     if ($password) {
         $url .= '&password=' . $password;
     }
-    my $to = $offset+$count-1;
+    my $to = $offset + $count - 1;
     my @elems = @rows[$offset..($to > $#rows ? $#rows : $to)];
     #warn "count: ", scalar(@elems), "\n";
     my $json = JSON::Syck::Dump(\@elems);
@@ -60,7 +61,7 @@ while (1) {
     #$res_json = decode('UTF-8', $res_json);
     my $data = JSON::Syck::Load($res_json);
     if (_HASH($data) && !$data->{success} && $data->{error}) {
-        die "Error from the server: $res_json: $json\n";
+        warn "Error from the server: $res_json: $json\n";
     }
 } continue { $offset += $count }
 

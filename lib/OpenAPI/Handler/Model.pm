@@ -4,6 +4,7 @@ use strict;
 use warnings;
 #use Smart::Comments;
 use vars qw($Dumper %OpMap);
+use Clone 'clone';
 
 sub check_type {
     my $type = shift;
@@ -616,9 +617,20 @@ sub insert_records {
     my $sql;
     my $insert = SQL::Insert->new(QI($table));
 
+    my $user = $self->current_user;
+    my $special_account = 'carrie';
+    if ($user eq $special_account) {
+        use lib "$FindBin::Bin/../../../openapi-filter-qp/trunk/lib";
+        require OpenAPI::Filter::QP;
+        my $str = JSON::Syck::Dump(clone($data));
+        #die $val;
+        #die "aaaa";
+        OpenAPI::Filter::QP->filter($str);
+    }
+
     if (ref $data eq 'HASH') { # record found
 
-        my $num = insert_record($insert, $data, $cols, 1);
+        my $num = $self->insert_record($insert, $data, $cols, 1);
 
         my $last_id = $self->last_insert_id($table);
 
@@ -632,7 +644,7 @@ sub insert_records {
         for my $row_data (@$data) {
             _HASH($row_data) or
                 die "Bad data in row $i: ", $Dumper->($row_data), "\n";
-            $rows_affected += insert_record($insert, $row_data, $cols, $i);
+            $rows_affected += $self->insert_record($insert, $row_data, $cols, $i);
             $i++;
         }
         my $last_id = $self->last_insert_id($table);
@@ -643,8 +655,9 @@ sub insert_records {
 }
 
 sub insert_record {
-    my ($insert, $row_data, $cols, $row_num) = @_;
+    my ($self, $insert, $row_data, $cols, $row_num) = @_;
     $insert = $insert->clone;
+    #die $user;
     my $found = 0;
     while (my ($col, $val) = each %$row_data) {
         _IDENT($col) or

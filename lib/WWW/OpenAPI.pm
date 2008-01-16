@@ -30,6 +30,11 @@ sub content_type {
     $_[0]->{content_type} = $_[1];
 }
 
+sub login {
+    my ($self, $user, $password) = @_;
+    $self->get("/=/login/$user/$password");
+}
+
 sub get {
     my $self = shift;
     $self->request(undef, 'GET', @_);
