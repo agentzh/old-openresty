@@ -23,7 +23,8 @@ $rev = `cat revision`;
 print "commiting $rev revision..";
 system("svn ci -m 'openapi-$rev packed and will upload to $ARGV[0]'");
 
-system("tar -cz --exclude=trunk/util --exclude=trunk/pkg --exclude=.svn -f  $FindBin::Bin/../pkg/openapi.tgz trunk");
-
+chdir("../");
+system("cp -rf trunk openapi-$rev");
+system("tar -cz --exclude=openapi-$rev/util --exclude=openapi-$rev/pkg --exclude=.svn -f  $FindBin::Bin/../pkg/openapi.tgz trunk");
 system("scp $FindBin::Bin/../pkg/openapi.tgz $ARGV[0]:/tmp");
 
