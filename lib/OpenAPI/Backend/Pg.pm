@@ -54,7 +54,7 @@ sub quote_identifier {
 sub last_insert_id {
     my ($self, $table) = @_;
     #die "Found table!!! $table";
-    my $res = $self->select("select currval('\"${table}_id_seq\"')");
+    my $res = $self->select("select max(id) from \"$table\"");
     if ($res && @$res) { return $res->[0][0]; }
 }
 
