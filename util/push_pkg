@@ -3,7 +3,7 @@
 use FindBin;
 
 
-if( $#ARGV != 0 )
+if( $#ARGV < 0 )
 {
 	print "usage: $0 <dist_host>\n";
 	exit;
@@ -22,10 +22,14 @@ $rev = `cat revision`;
 $pkgname=$pkgdir="openapi-$rev";
 
 print "commiting $rev revision..";
-system("svn ci -m 'openapi-$rev packed and will upload to $ARGV[0]'");
+system("svn ci -m 'openapi-$rev packaged and will upload to $ARGV[0]'");
 
 chdir("../");
 system("cp -rf trunk openapi-$rev");
 system("tar -cz --exclude=$pkgdir/util --exclude=$pkgdir/pkg --exclude=.svn -f  $FindBin::Bin/../pkg/$pkgname.tgz $pkgdir");
-system("scp $FindBin::Bin/../pkg/$pkgname.tgz $ARGV[0]:/tmp");
+
+foreach (@ARGV)
+{
+	system("scp $FindBin::Bin/../pkg/$pkgname.tgz $_:/tmp");
+}
 
