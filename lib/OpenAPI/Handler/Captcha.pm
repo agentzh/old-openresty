@@ -9,7 +9,6 @@ use GD::SecurityImage;
 use utf8;
 use Encode 'encode';
 
-our $Captcha;
 my @CnWordList = qw(
     一本正经 上升 下降 不假思索 专门
     严严实实 严寒 丰收 乌龟 乱成一团
@@ -242,7 +241,7 @@ sub gen_image {
     } else {
         $angle = $sign . (2 + int rand 4);
     }
-    $Captcha = GD::SecurityImage->new(
+    my $captcha = GD::SecurityImage->new(
         width   => 180,
         height  => 60,
         lines   => 1 + int rand 4,
@@ -257,14 +256,11 @@ sub gen_image {
     #warn "Lang: $lang";
 
     #warn $str;
-    $Captcha->random($str);
-    $Captcha->create(ttf => 'default');
-    my $no_ttf = $Captcha->gdbox_empty;
-    if ($no_ttf) {
-        die "No True-font support found on the server.\n";
-    }
-    $Captcha->particle($lang eq 'cn' ? 3000 : 1732);
-    my ($image_data, $mime_type) = $Captcha->out(compress => 1);
+    $captcha->random($str);
+    $captcha->create(ttf => 'default');
+    die "Failed to load ttf font for GD: $@\n" if $captcha->gdbox_empty;
+    $captcha->particle($lang eq 'cn' ? 3000 : 1732);
+    my ($image_data, $mime_type) = $captcha->out(compress => 1);
     $self->{_bin_data} = $image_data;
     $self->{_type} = "image/$mime_type";
     ### $mime_type
