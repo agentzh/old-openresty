@@ -118,6 +118,7 @@ function hideLightbox()
 	objOverlay.style.display = 'none';
 	objBox.style.display = 'none';
 	document.getElementById('CCcontent2').value= '';
+	document.getElementById('CCpid').value= 0;
 	selects = document.getElementsByTagName("select");
     for (i = 0; i != selects.length; i++) {
 		selects[i].style.visibility = "visible";
