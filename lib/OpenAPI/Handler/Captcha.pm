@@ -201,13 +201,17 @@ sub GET_captcha_value {
         my $solution = $Cache->get($id);
         if (defined $solution) {
             my $lang = lc($self->{_cgi}->url_param('lang')) || 'en';
-            if ($lang ne 'cn' && $lang ne 'en') {
+            if ($lang eq 'cn') {
+            #if ($solution eq '1') { # new ID, no solution yet
+                $solution = $self->gen_cn_solution;
+                $self->gen_cn_image($solution);
+            } elsif ($lang eq 'en') {
+                $solution = $self->gen_en_solution;
+                $self->gen_en_image($solution);
+            } else {
                 die "Unsupported lang (only cn and en allowed): $lang\n";
             }
-            #if ($solution eq '1') { # new ID, no solution yet
-            $solution = $self->gen_solution($lang);
             $Cache->set($id => $solution);
-            $self->gen_image($lang, $solution);
             return;
         } else {
             die "Invalid captcha ID: $id\n";
@@ -217,49 +221,100 @@ sub GET_captcha_value {
     }
 }
 
-sub gen_solution {
-    my ($self, $lang) = @_;
-    my $str;
-    my $list = $lang eq 'cn' ? \@CnWordList : \@WordList;
-    for (1..2) {
-        my $i = int rand scalar(@$list);
-        $str .= $list->[$i] . ($lang eq 'cn' ? "" : " ");
-        last if length($str) > 2 and $lang eq 'cn';
+sub gen_en_solution {
+    my ($self) = @_;
+    my $str = '';
+    my $list = \@WordList;
+    my ($i, $j) = (0, 0);
+    while ($i < 2) {
+        last if $j > 100;
+        my $rand = int rand scalar(@$list);
+        my $saved_str = $str;
+        $str .= $list->[$rand] . " ";
+        my $len = length($str);
+        if ($len >= 15) {
+            $str = $saved_str;
+            $j++;
+            next;
+        }
+        $i++;
     }
-    $str = substr($str, 0, 6) if $lang eq 'cn';
     $str;
     # XXX debug only
-    #$lang eq 'en' ? "hello world " : "你好 世界 "
 }
 
-sub gen_image {
-    my ($self, $lang, $str) = @_;
-    my $sign = (int rand 2) == 0 ? '' : '-';
-    my $angle;
-    if (length($str) <= 4) {
-        $angle = $sign . (5 + int rand 4);
-    } else {
-        $angle = $sign . (2 + int rand 4);
+sub gen_cn_solution {
+    my ($self) = @_;
+    my $str = '';
+    my $list = \@CnWordList;
+    my ($i, $j) = (0, 0);
+    while ($i < 2) {
+        last if $j > 100;
+        my $rand = int rand scalar(@$list);
+        my $saved_str = $str;
+        $str .= $list->[$rand];
+        my $len = length($str);
+        last if $len == 3;
+        if ($len >= 5) {
+            $str = $saved_str;
+            $j++;
+            next;
+        }
+        $i++;
     }
+    $str;
+    # XXX debug only
+}
+
+sub gen_cn_image {
+    my ($self, $str) = @_;
+    my $angle = int rand 4;
     my $captcha = GD::SecurityImage->new(
-        width   => 180,
-        height  => 60,
-        lines   => 1 + int rand 4,
+        width   => 100,
+        height  => 37,
+        lines   => 2 + int rand 2,
         font    => "$FindBin::Bin/../font/wqy-zenhei.ttf",
-        thickness => 0.5,
+        #thickness => 0.5,
         rndmax => 3,
         angle => $angle,
-        #ptsize => 80,
+        ptsize => 15,
         #send_ctobg => 1,
         #scramble => 1,
     );
-    #warn "Lang: $lang";
 
     #warn $str;
     $captcha->random($str);
     $captcha->create(ttf => 'default');
     die "Failed to load ttf font for GD: $@\n" if $captcha->gdbox_empty;
-    $captcha->particle($lang eq 'cn' ? 3000 : 1732);
+    $captcha->particle(300); # : 1732);
+    my ($image_data, $mime_type) = $captcha->out(compress => 1);
+    $self->{_bin_data} = $image_data;
+    $self->{_type} = "image/$mime_type";
+    ### $mime_type
+}
+
+sub gen_en_image {
+    my ($self, $str) = @_;
+    my $angle = 2 + int rand 4;
+    my $captcha = GD::SecurityImage->new(
+        width   => 120,
+        height  => 30,
+        lines   => 1,
+        font    => "$FindBin::Bin/../font/wqy-zenhei.ttf",
+        #thickness => 0.5,
+        rndmax => 3,
+        angle => $angle,
+        ptsize => 14,
+        #ptsize => 80,
+        #send_ctobg => 1,
+        #scramble => 1,
+    );
+
+    #warn $str;
+    $captcha->random($str);
+    $captcha->create(ttf => 'default');
+    die "Failed to load ttf font for GD: $@\n" if $captcha->gdbox_empty;
+    $captcha->particle(100); # : 1732);
     my ($image_data, $mime_type) = $captcha->out(compress => 1);
     $self->{_bin_data} = $image_data;
     $self->{_type} = "image/$mime_type";

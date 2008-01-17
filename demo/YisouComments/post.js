@@ -1,6 +1,6 @@
 //var host = "http://10.62.136.86/";
 //var host = "http://10.62.164.57/";
-var host = "http://ced02.search.cnb.yahoo.com/openapi/";
+var host = "http://ced02.search.cnb.yahoo.com/";
 /**
  * insertAfter
  * @param {obj} DomElementObj
@@ -114,7 +114,8 @@ function countResults(count_span){
 	
 	dojo.io.script.remove('jsonCountTag');
 	
-	var url=host+"=/post/action/.Select/lang/minisql?user=carrie&var=total&data=\"select count(*) from YisouComments where parentid=0 \"";
+	//var url=host+"=/post/action/.Select/lang/minisql?user=carrie&var=total&data=\"select count(*) from YisouComments where parentid=0 \"";
+	var url=host+"=/view/CountResults/~/~?user=carrie.Public&var=total";
 	
 	var scriptTag = document.createElement("script");
         scriptTag.id = "jsonCountTag";
@@ -155,7 +156,8 @@ function fetchResults(container,parentid,offset,count,child_offset,child_count,d
 	if(!dsc) dsc=dojo.cookie('YYisouCommentsSort');
         if(!dsc) dsc='desc';
 		
-	var url=host+"=/post/action/.Select/lang/minisql?user=carrie&var=comments&data=\"select * from yisou_comments_fetch_results("+parentid+",$q$$q$,$q$"+orderby+"$q$,"+offset+","+count+","+child_offset+","+child_count+",$q$"+dsc+"$q$)\"";
+	//var url=host+"=/post/action/.Select/lang/minisql?user=carrie&var=comments&data=\"select * from yisou_comments_fetch_results("+parentid+",$q$$q$,$q$"+orderby+"$q$,"+offset+","+count+","+child_offset+","+child_count+",$q$"+dsc+"$q$)\"";
+	var url=host+"=/view/FetchResults/~/~?user=carrie.Public&var=comments&parentid="+parentid+"&orderby="+orderby+"&offset="+offset+"&count="+count+"&child_offset="+child_offset+"&child_count="+child_count+"&dsc="+dsc;
 
 	var scriptTag = document.createElement("script");
 	scriptTag.id = "jsonScriptTag";
@@ -189,7 +191,8 @@ function fetchResults(container,parentid,offset,count,child_offset,child_count,d
  * @param {str} cid: value span id 
  */
 function updateScore(method,value,id,cid){
-	var u = host+"=/post/action/.Select/lang/minisql?user=carrie&var=hello&data=\"select yisou_comments_update_score($q$"+method+"$q$,"+value+","+id+");\"";
+	//var u = host+"=/post/action/.Select/lang/minisql?user=carrie&var=hello&data=\"select yisou_comments_update_score($q$"+method+"$q$,"+value+","+id+");\"";
+	var u = host+"=/view/UpdateScore/~/~?user=carrie.Public&method="+method+"&value="+value+"&id="+id;
 	dojo.io.script.remove('addScoreScriptTag');
 	
 	var key = escape(getQuery('id')+id);
@@ -250,7 +253,7 @@ function drawComments(objs,container,parentid,offset,count,child_offset,child_co
 		more.className = 'more';
 		more.innerHTML = '更多针对此留言的回复';
 		more.onclick = function(){
-			fetchResults(container,parentid,offset+count-1,count,0,0,dsc);
+			fetchResults(container,parentid,parseInt(offset)+parseInt(count)-1,count,0,0,dsc);
 			return false;
 		}
 		dojo.byId(container).parentNode.parentNode.appendChild(more);
@@ -335,7 +338,7 @@ function drawComments(objs,container,parentid,offset,count,child_offset,child_co
 			pre.innerHTML = '上一页';
 			pre.onclick = function(){
 				fetchResults(container,0,offset-count+1,count,child_offset,child_count,dsc);
-				 document.location.hash = '#__top';
+				document.location.hash = '#__top';
 				return false;}	
 			page.appendChild(pre);			
 		}
@@ -353,6 +356,7 @@ function drawComments(objs,container,parentid,offset,count,child_offset,child_co
                         pp.innerHTML = current-m;
                         pp.onclick = (function(a,b,c,d,e,f,g){ return function(){
                                 fetchResults(a,b,c,d,e,f,g);
+				document.location.hash = '#__top';
 				return false;
 			}})(container,0,k,count,child_offset,child_count,dsc); 
 			k=k-count+1;
@@ -364,7 +368,7 @@ function drawComments(objs,container,parentid,offset,count,child_offset,child_co
 		page.appendChild(current_page);
 		
 
-		var k=offset+count-1;
+		var k=parseInt(offset)+parseInt(count)-1;
 		var m=0;
 		while((m<5)&&(k<total)){
 			m++;
@@ -374,6 +378,7 @@ function drawComments(objs,container,parentid,offset,count,child_offset,child_co
                         nxt.innerHTML = current+m;
                         nxt.onclick = (function(a,b,c,d,e,f,g){ return function(){
                                 fetchResults(a,b,c,d,e,f,g);
+				document.location.hash = '#__top';
 				return false;
 			}})(container,0,k,count,child_offset,child_count,dsc); 
                         page.appendChild(nxt);
@@ -387,7 +392,9 @@ function drawComments(objs,container,parentid,offset,count,child_offset,child_co
 			next.className = 'nxt';
 			next.innerHTML = '下一页';
 			next.onclick = function(){
-				fetchResults(container,0,offset+count-1,count,child_offset,child_count,dsc);return false;}	
+				fetchResults(container,0,parseInt(offset)+parseInt(count)-1,count,child_offset,child_count,dsc);
+				document.location.hash = '#__top';
+				return false;}	
 			page.appendChild(next);
 		}
 
@@ -420,7 +427,7 @@ function drawContent(comment,iidiv){
 
 	var title = document.createElement('h2');
 
-	var d = Date.parse(comment['created'].substring(0,19).replace(/-/gm,"/")+" UTC");
+	var d = Date.parse(comment['created'].substring(0,19).replace(/-/gm,"/")+" +8");
 	var dnow = new Date();
 	dnow.setTime(d);
 	title.innerHTML = '来自<b>'+comment['owner']+'</b>的发言 <span>'+dnow.toLocaleString()+'</span>';
@@ -578,7 +585,7 @@ for(var i=0;i<params.length;i++)
 console.log(str);
 var ts = dojo.io.iframe.send({
     form: dojo.byId("myform"),
-    url: host+"=/model/YisouComments/~/~?user=carrie",
+    url: host+"=/model/YisouComments/~/~?user=carrie.Poster",
     content: {data:"{"+str+"}"},
     preventCache: true,
     handlAs: 'html',
