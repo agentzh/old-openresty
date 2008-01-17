@@ -37,6 +37,7 @@ my $url = "/=/model/$model/~/~?user=$user";
 if ($password) { $url .= "\&password=$password"; }
 my $openapi = WWW::OpenAPI->new( { server => $server } );
 $openapi->delete($url);
+my $inserted = 0;
 while (1) {
     last if $offset >= $#rows;
     #select(undef, undef, undef, 0.1);
@@ -62,9 +63,11 @@ while (1) {
     my $data = JSON::Syck::Load($res_json);
     if (_HASH($data) && !$data->{success} && $data->{error}) {
         warn "Error from the server: $res_json: $json\n";
+    } else {
+        $inserted++;
     }
 } continue { $offset += $count }
 
-warn "For tatal ", scalar(@rows), " records inserted.\n";
+warn "For tatal $inserted (", scalar(@rows), ") records inserted.\n";
 #print encode('UTF-8', YAML::Syck::Dump(\@rows));
 

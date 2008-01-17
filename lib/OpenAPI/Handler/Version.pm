@@ -19,10 +19,13 @@ sub GET_version {
     my $backend = $OpenAPI::BackendName;
     if ($backend eq 'PgFarm') {
         my $dns = $OpenAPI::Backend::PgFarm::DNS;
-        if ($dns =~ /host=([^=\s]+)/) {
+        if ($dns =~ /host=([^=\s;]+)/) {
             $dns = $1;
+            if ($dns =~ /[-\w]+/) {
+                $dns = $&;
+            }
         }
-        $backend .= " ($1)";
+        $backend .= " ($dns)";
     }
     return "OpenAPI $VERSION (revision $Revision) with the $backend backend.\nCopyright (c) 2007-2008 Yahoo! China EEEE\n";
 }
