@@ -31,6 +31,6 @@ system("tar -cz --exclude=$pkgdir/util --exclude=$pkgdir/pkg --exclude=.svn -f  
 
 foreach (@ARGV)
 {
-	system("scp $FindBin::Bin/../pkg/$pkgname.tgz $_:/tmp");
+	system("scp -l 10000 $FindBin::Bin/../pkg/$pkgname.tgz $_:/tmp");
 }
 
