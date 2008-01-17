@@ -259,6 +259,10 @@ sub gen_image {
     #warn $str;
     $Captcha->random($str);
     $Captcha->create(ttf => 'default');
+    my $no_ttf = $Captcha->gdbox_empty;
+    if ($no_ttf) {
+        die "No True-font support found on the server.\n";
+    }
     $Captcha->particle($lang eq 'cn' ? 3000 : 1732);
     my ($image_data, $mime_type) = $Captcha->out(compress => 1);
     $self->{_bin_data} = $image_data;
