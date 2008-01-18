@@ -19,8 +19,8 @@ GET /=/login/peee.Admin
 === TEST 2: login
 --- request
 GET /=/login/peee.Admin/4423037?use_cookie=1
---- response
-{"success":1,"account":"peee","role":"Admin"}
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
 
 
 
@@ -254,9 +254,9 @@ GET /=/login/.Public
 
 === TEST 25: Switch to the Public role
 --- request
-GET /=/login/peee.Public
---- response
-{"success":1,"account":"peee","role":"Public"}
+GET /=/login/peee.Public?use_cookie=1
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Public"}$
 
 
 

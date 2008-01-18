@@ -64,7 +64,7 @@ sub run_test ($) {
                 like $res->content, qr/$expected_res/, "$name - response matched";
             } else {
                 from_to($expected_res, 'UTF-8', $charset) unless $charset eq 'UTF-8';
-                is $res->content, $expected_res, "response content OK - $name";
+                is_string $res->content, $expected_res, "response content OK - $name";
             }
         } else {
             is $res->content, $expected_res, "response content OK - $name";
