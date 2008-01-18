@@ -128,13 +128,16 @@ sub login {
     }
 
     my $uuid = $UUID->create_str;
-    $self->{_cookie} = { session => $uuid };
+    if ($self->{_use_cookie}) {
+        $self->{_cookie} = { session => $uuid };
+    }
     $Cache->set($uuid => "$account.$role");
 
     return {
         success => 1,
         account => $account,
         role => $role,
+        session => $uuid,
     };
 }
 

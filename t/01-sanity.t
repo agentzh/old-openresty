@@ -24,15 +24,31 @@ DELETE /=/model.js
 
 
 
-=== TEST 3: Login with password
+=== TEST 3: Login with password but w/o cookie
 --- request
 GET /=/login/peee.Admin/4423037
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
+
+
+
+=== TEST 4: Delete existing models (wrong way)
+--- request
+DELETE /=/model.js
 --- response
-{"success":1,"account":"peee","role":"Admin"}
+{"success":0,"error":"Login required."}
 
 
 
-=== TEST 4: Delete existing models
+=== TEST 5: Login with password and cookie
+--- request
+GET /=/login/peee.Admin/4423037?use_cookie=1
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
+
+
+
+=== TEST 6: Delete existing models
 --- request
 DELETE /=/model.js
 --- response
@@ -40,7 +56,7 @@ DELETE /=/model.js
 
 
 
-=== TEST 5: Get model list
+=== TEST 7: Get model list
 --- request
 GET /=/model.js
 --- response
@@ -48,7 +64,7 @@ GET /=/model.js
 
 
 
-=== TEST 6: Create a model
+=== TEST 8: Create a model
 --- request
 POST /=/model/Bookmark.js
 {
@@ -64,7 +80,7 @@ POST /=/model/Bookmark.js
 
 
 
-=== TEST 7: check the model list again
+=== TEST 9: check the model list again
 --- request
 GET /=/model.js
 --- response
@@ -72,7 +88,7 @@ GET /=/model.js
 
 
 
-=== TEST 8: check the column
+=== TEST 10: check the column
 --- request
 GET /=/model/Bookmark.js
 --- response
@@ -89,7 +105,7 @@ GET /=/model/Bookmark.js
 
 
 
-=== TEST 9: access inexistent models
+=== TEST 11: access inexistent models
 --- request
 GET /=/model/Foo.js
 --- response
@@ -97,7 +113,7 @@ GET /=/model/Foo.js
 
 
 
-=== TEST 10: insert a single record
+=== TEST 12: insert a single record
 --- request
 POST /=/model/Bookmark/~/~
 { title: "Yahoo Search", url: "http://www.yahoo.cn" }
@@ -106,7 +122,7 @@ POST /=/model/Bookmark/~/~
 
 
 
-=== TEST 11: insert another record
+=== TEST 13: insert another record
 --- request
 POST /=/model/Bookmark/~/~.js
 { title: "Yahoo Search", url: "http://www.yahoo.cn" }
@@ -115,7 +131,7 @@ POST /=/model/Bookmark/~/~.js
 
 
 
-=== TEST 12: insert multiple records at a time
+=== TEST 14: insert multiple records at a time
 --- request
 POST /=/model/Bookmark/~/~.js
 [
@@ -128,7 +144,7 @@ POST /=/model/Bookmark/~/~.js
 
 
 
-=== TEST 13: read a record
+=== TEST 15: read a record
 --- request
 GET /=/model/Bookmark/id/1.js
 --- response
@@ -136,7 +152,7 @@ GET /=/model/Bookmark/id/1.js
 
 
 
-=== TEST 14: read another record
+=== TEST 16: read another record
 --- request
 GET /=/model/Bookmark/id/5.js
 --- response
@@ -144,7 +160,7 @@ GET /=/model/Bookmark/id/5.js
 
 
 
-=== TEST 15: read urls of all the records
+=== TEST 17: read urls of all the records
 --- request
 GET /=/model/Bookmark/url/~.js
 --- response
@@ -158,7 +174,7 @@ GET /=/model/Bookmark/url/~.js
 
 
 
-=== TEST 16: select records
+=== TEST 18: select records
 --- request
 GET /=/model/Bookmark/url/http://www.yahoo.cn.js
 --- response
@@ -169,7 +185,7 @@ GET /=/model/Bookmark/url/http://www.yahoo.cn.js
 
 
 
-=== TEST 17: read all records
+=== TEST 19: read all records
 --- request
 GET /=/model/Bookmark/~/~.js
 --- response
@@ -183,7 +199,7 @@ GET /=/model/Bookmark/~/~.js
 
 
 
-=== TEST 18: delete a record
+=== TEST 20: delete a record
 --- request
 DELETE /=/model/Bookmark/id/2.js
 --- response
@@ -191,7 +207,7 @@ DELETE /=/model/Bookmark/id/2.js
 
 
 
-=== TEST 19: check the record just deleted
+=== TEST 21: check the record just deleted
 --- request
 GET /=/model/Bookmark/id/2.js
 --- response
@@ -199,7 +215,7 @@ GET /=/model/Bookmark/id/2.js
 
 
 
-=== TEST 20: update a nonexistent record
+=== TEST 22: update a nonexistent record
 --- request
 PUT /=/model/Bookmark/id/2.js
 { title: "Blah blah blah" }
@@ -208,7 +224,7 @@ PUT /=/model/Bookmark/id/2.js
 
 
 
-=== TEST 21: update an existent record
+=== TEST 23: update an existent record
 --- request
 PUT /=/model/Bookmark/id/3.js
 { title: "Blah blah blah" }
@@ -217,7 +233,7 @@ PUT /=/model/Bookmark/id/3.js
 
 
 
-=== TEST 22: check if the record is indeed changed
+=== TEST 24: check if the record is indeed changed
 --- request
 GET /=/model/Bookmark/id/3.js
 --- response
@@ -225,7 +241,7 @@ GET /=/model/Bookmark/id/3.js
 
 
 
-=== TEST 23: update an existent record using POST
+=== TEST 25: update an existent record using POST
 --- request
 POST /=/put/model/Bookmark/id/3.js
 { title: "Howdy!" }
@@ -234,7 +250,7 @@ POST /=/put/model/Bookmark/id/3.js
 
 
 
-=== TEST 24: Check the last response
+=== TEST 26: Check the last response
 --- request
 GET /=/last/response
 --- response
@@ -242,7 +258,7 @@ GET /=/last/response
 
 
 
-=== TEST 25: Check the last response (with callback)
+=== TEST 27: Check the last response (with callback)
 --- request
 GET /=/last/response?callback=foo
 --- response
@@ -250,7 +266,7 @@ foo({"success":1,"rows_affected":1});
 
 
 
-=== TEST 26: Check the last response again
+=== TEST 28: Check the last response again
 --- request
 GET /=/last/response
 --- response
@@ -258,7 +274,7 @@ GET /=/last/response
 
 
 
-=== TEST 27: check if the record is indeed changed
+=== TEST 29: check if the record is indeed changed
 --- request
 GET /=/model/Bookmark/id/3.js
 --- response
@@ -266,7 +282,7 @@ GET /=/model/Bookmark/id/3.js
 
 
 
-=== TEST 28: Check the last response again (GET has no effect)
+=== TEST 30: Check the last response again (GET has no effect)
 --- request
 GET /=/last/response
 --- response
@@ -274,7 +290,7 @@ GET /=/last/response
 
 
 
-=== TEST 29: Change the name of the model
+=== TEST 31: Change the name of the model
 --- request
 PUT /=/model/Bookmark.js
 { name: "MyFavorites", description: "我的最爱" }
@@ -283,7 +299,7 @@ PUT /=/model/Bookmark.js
 
 
 
-=== TEST 30: Check the last response again (PUT has effect)
+=== TEST 32: Check the last response again (PUT has effect)
 --- request
 GET /=/last/response
 --- response
@@ -291,7 +307,7 @@ GET /=/last/response
 
 
 
-=== TEST 31: Check the new model
+=== TEST 33: Check the new model
 --- request
 GET /=/model/MyFavorites.js
 --- response
@@ -308,7 +324,7 @@ GET /=/model/MyFavorites.js
 
 
 
-=== TEST 32: Change the name and type of title
+=== TEST 34: Change the name and type of title
 --- request
 PUT /=/model/MyFavorites/title
 { name: "count", type: "text" }
@@ -317,7 +333,7 @@ PUT /=/model/MyFavorites/title
 
 
 
-=== TEST 33: Get model list
+=== TEST 35: Get model list
 --- request
 GET /=/model.js
 --- response
