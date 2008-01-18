@@ -56,3 +56,27 @@ DELETE /=/model.js?session=$SavedCapture
 
 
 
+=== TEST 7: Login with cookie
+--- request
+GET /=/login/peee.Admin/4423037?use_cookie=1
+--- response_like
+^{"success":1,"session":"([-\w]+)","account":"peee","role":"Admin"}$
+
+
+
+=== TEST 8: Delete existing models (session)
+--- request
+DELETE /=/model.js
+--- response
+{"success":1}
+
+
+
+=== TEST 9: Delete existing models (session)
+--- request
+DELETE /=/model.js?session=$SavedCapture
+--- response
+{"success":1}
+
+
+
