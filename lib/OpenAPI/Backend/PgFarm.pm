@@ -11,7 +11,7 @@ use base 'OpenAPI::Backend::Base';
 
 $YAML::Syck::ImplicitUnicode = 1;
 $JSON::Syck::ImplicitUnicode = 1;
-our $DNS = $ENV{OPENAPI_DSN} ||
+our $DSN = $ENV{OPENAPI_DSN} ||
     #"dbi:Pg:dbname=proxy host=pgproxy-ycn.idp.inktomisearch.com;port=55555";
     "dbi:Pg:dbname=proxy host=os901000.inktomisearch.com";
 
@@ -22,7 +22,7 @@ sub new {
     my $class = shift;
     my $opts = shift || {};
     my $dbh = DBI->connect(
-        $DNS,
+        $DSN,
         "searcher", "",
         {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts}
     );
