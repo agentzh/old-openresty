@@ -21,6 +21,8 @@ requires            ('Term::ReadKey' => '2.30');
 requires            ('Data::UUID' => '1.148');
 requires            ('GD::SecurityImage' => '1.64');
 requires            ('Cache::Memcached::Fast' => '0.06');
+requires            ('Hash::Merge'),
+requires            ('Config::Simple'),
 
 features(
     'Test suite' => [
@@ -32,12 +34,19 @@ features(
         recommends    ('Test::More' => 0.74),
         recommends    ('LWP::UserAgent'),
         recommends    ('Benchmark::Timer'),
-        recommends    ('Hash::Merge'),
         recommends    ('HTTP::Server::Simple' => '0.27'),
     ]
 );
 
 auto_install();
+
+# XXX This is not Windows friendly...
+my $site_conf = 'etc/site_openapi.conf';
+if (!-e $site_conf) {
+    warn "cp etc/openapi.conf $site_conf\n";
+    my $cmd = $^O =~ /win32/ ? 'copy' : 'cp';
+    system("$cmd etc/openapi.conf $site_conf");
+}
 
 system("$^X bin/revision.pl");
 system("$^X bin/fetch-font.pl");

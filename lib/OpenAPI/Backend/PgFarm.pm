@@ -11,9 +11,7 @@ use base 'OpenAPI::Backend::Base';
 
 $YAML::Syck::ImplicitUnicode = 1;
 $JSON::Syck::ImplicitUnicode = 1;
-our $DSN = $ENV{OPENAPI_DSN} ||
-    "dbi:Pg:dbname=proxy host=pgproxy-ycn.idp.inktomisearch.com;port=55555";
-    #"dbi:Pg:dbname=proxy host=os901000.inktomisearch.com";
+our ($DSN, $Host, $User, $Password, $Port);
 
 sub new {
     #
@@ -21,9 +19,17 @@ sub new {
     #
     my $class = shift;
     my $opts = shift || {};
+    $Host ||= $OpenAPI::Config{'backend.host'}  or
+        die "No backend.host specified in the config files.\n";
+    $User ||= $OpenAPI::Config{'backend.user'} or
+        die "No backend.user specified in the config files.\n";
+    $Password ||= $OpenAPI::Config{'backend.password'} || '';
+    $Port ||= $OpenAPI::Config{'backend.port'};
+    $DSN ||= "dbi:Pg:dbname=proxy host=$Host" .
+            ($Port ? ";port=$Port" : "");
     my $dbh = DBI->connect(
         $DSN,
-        "searcher", "",
+        $User, $Password,
         {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts}
     );
     return bless {
