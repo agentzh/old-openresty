@@ -32,7 +32,7 @@ DELETE /=/model?user=peee&password=4423038
 
 
 
-=== TEST 4: Delete existing models (using default Admin role)
+=== TEST 4: Delete existing models (using default Admin role) but w/o cookie
 --- request
 DELETE /=/model?user=peee&password=4423037
 --- response
@@ -40,7 +40,31 @@ DELETE /=/model?user=peee&password=4423037
 
 
 
-=== TEST 5: Create a model
+=== TEST 5: Delete existing models
+--- request
+DELETE /=/model
+--- response
+{"success":0,"error":"Login required."}
+
+
+
+=== TEST 6: Delete existing models (using default Admin role) but with cookie
+--- request
+DELETE /=/model?user=peee&password=4423037&use_cookie=1
+--- response
+{"success":1}
+
+
+
+=== TEST 7: Delete existing models
+--- request
+DELETE /=/model
+--- response
+{"success":1}
+
+
+
+=== TEST 8: Create a model
 --- request
 POST /=/model/Carrie.js
 {
@@ -55,7 +79,7 @@ POST /=/model/Carrie.js
 
 
 
-=== TEST 6: check the model list again
+=== TEST 9: check the model list again
 --- request
 GET /=/model.js
 --- response
@@ -63,7 +87,7 @@ GET /=/model.js
 
 
 
-=== TEST 7: insert a record 
+=== TEST 10: insert a record 
 --- request
 POST /=/model/Carrie/~/~.js
 { title:'hello carrie',url:"http://www.carriezh.cn/"}
@@ -72,7 +96,7 @@ POST /=/model/Carrie/~/~.js
 
 
 
-=== TEST 8: read a record according to url
+=== TEST 11: read a record according to url
 --- request
 GET /=/model/Carrie/url/http://www.carriezh.cn/.js
 --- response
@@ -80,7 +104,7 @@ GET /=/model/Carrie/url/http://www.carriezh.cn/.js
 
 
 
-=== TEST 9: insert another record
+=== TEST 12: insert another record
 --- request
 POST /=/model/Carrie/~/~.js
 { title:'second',url:"http://zhangxiaojue.cn"}
@@ -89,7 +113,7 @@ POST /=/model/Carrie/~/~.js
 
 
 
-=== TEST 10: find out two record assign to var hello
+=== TEST 13: find out two record assign to var hello
 --- request
 GET /=/model/Carrie/~/~.js?var=hello
 --- response
@@ -97,7 +121,7 @@ hello=[{"url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},{"url":
 
 
 
-=== TEST 11: the var url param only applies to JSON format
+=== TEST 14: the var url param only applies to JSON format
 --- request
 GET /=/model/Carrie/~/~.yml?var=hello
 --- format: YAML
@@ -114,7 +138,7 @@ GET /=/model/Carrie/~/~.yml?var=hello
 
 
 
-=== TEST 12: delete a record use "post"
+=== TEST 15: delete a record use "post"
 --- request
 POST /=/delete/model/Carrie/id/1.js
 --- response
@@ -122,7 +146,7 @@ POST /=/delete/model/Carrie/id/1.js
 
 
 
-=== TEST 13: delete a record in correct way
+=== TEST 16: delete a record in correct way
 --- request
 GET /=/delete/model/Carrie/id/2.js
 --- response
@@ -130,7 +154,7 @@ GET /=/delete/model/Carrie/id/2.js
 
 
 
-=== TEST 14: insert another record
+=== TEST 17: insert another record
 --- request
 POST /=/model/Carrie/~/~.js
 { title:'second',url:"http://zhangxiaojue.cn"}
@@ -139,7 +163,7 @@ POST /=/model/Carrie/~/~.js
 
 
 
-=== TEST 15: delete all the record
+=== TEST 18: delete all the record
 --- request
 GET /=/delete/model/Carrie/~/~
 --- response
@@ -147,7 +171,7 @@ GET /=/delete/model/Carrie/~/~
 
 
 
-=== TEST 16: see delete result 
+=== TEST 19: see delete result 
 --- request
 GET /=/model/Carrie/~/~
 --- response
@@ -155,7 +179,7 @@ GET /=/model/Carrie/~/~
 
 
 
-=== TEST 17: Delete model
+=== TEST 20: Delete model
 --- request
 GET /=/delete/model/Carrie
 --- response
@@ -163,7 +187,7 @@ GET /=/delete/model/Carrie
 
 
 
-=== TEST 18: Delete model with user info
+=== TEST 21: Delete model with user info
 --- request
 DELETE /=/model?user=peee&password=4423037
 --- response
@@ -171,7 +195,7 @@ DELETE /=/model?user=peee&password=4423037
 
 
 
-=== TEST 19: Check the model list
+=== TEST 22: Check the model list
 --- request
 GET /=/model?user=peee.Admin&password=4423037
 --- response
@@ -179,7 +203,7 @@ GET /=/model?user=peee.Admin&password=4423037
 
 
 
-=== TEST 20: Create model with user info
+=== TEST 23: Create model with user info
 --- request
 POST /=/model/Test2?user=peee&password=4423037
 {
@@ -194,7 +218,7 @@ POST /=/model/Test2?user=peee&password=4423037
 
 
 
-=== TEST 21: insert another record
+=== TEST 24: insert another record
 --- request
 POST /=/model/Test2/~/~?user=peee&password=4423037
 { title:'second',url:"http://zhangxiaojue.cn"}
@@ -203,7 +227,7 @@ POST /=/model/Test2/~/~?user=peee&password=4423037
 
 
 
-=== TEST 22: delete all records with user info
+=== TEST 25: delete all records with user info
 --- request
 GET /=/delete/model/Test2/~/~?user=peee&password=4423037
 --- response
@@ -211,7 +235,7 @@ GET /=/delete/model/Test2/~/~?user=peee&password=4423037
 
 
 
-=== TEST 23: Check that the records have been indeed removed
+=== TEST 26: Check that the records have been indeed removed
 --- request
 GET /=/model/Test2/~/~?user=peee&password=4423037
 --- response
@@ -219,7 +243,7 @@ GET /=/model/Test2/~/~?user=peee&password=4423037
 
 
 
-=== TEST 24: delete all records with user info (the wrong way)
+=== TEST 27: delete all records with user info (the wrong way)
 --- request
 GET /=/delete/Test2/~/~?user=peee&password=4423037
 --- response
@@ -227,7 +251,7 @@ GET /=/delete/Test2/~/~?user=peee&password=4423037
 
 
 
-=== TEST 25: insert another record
+=== TEST 28: insert another record
 --- request
 POST /=/model/Test2/~/~?user=peee&password=4423037
 { title:'second',url:"http://zhangxiaojue.cn"}
@@ -236,7 +260,7 @@ POST /=/model/Test2/~/~?user=peee&password=4423037
 
 
 
-=== TEST 26: read record using yml
+=== TEST 29: read record using yml
 --- format: YAML
 --- request
 GET /=/model/Test2/~/~.yml?user=peee&password=4423037
@@ -249,7 +273,7 @@ GET /=/model/Test2/~/~.yml?user=peee&password=4423037
 
 
 
-=== TEST 27: read record using json
+=== TEST 30: read record using json
 --- request
 GET /=/model/Test2/~/~?user=peee&password=4423037
 --- response
@@ -257,7 +281,7 @@ GET /=/model/Test2/~/~?user=peee&password=4423037
 
 
 
-=== TEST 28: Add column
+=== TEST 31: Add column
 --- request
 POST /=/model/Test2/num?user=peee&password=4423037
 { type:'integer',label:'num'}
@@ -266,7 +290,7 @@ POST /=/model/Test2/num?user=peee&password=4423037
 
 
 
-=== TEST 29: Update records
+=== TEST 32: Update records
 --- request
 POST /=/put/model/Test2/~/~?user=peee&password=4423037
 { num:1 }
@@ -275,7 +299,7 @@ POST /=/put/model/Test2/~/~?user=peee&password=4423037
 
 
 
-=== TEST 30: read records
+=== TEST 33: read records
 --- request
 GET /=/model/Test2/~/~?user=peee&password=4423037
 --- response
@@ -283,7 +307,7 @@ GET /=/model/Test2/~/~?user=peee&password=4423037
 
 
 
-=== TEST 31: Update for adding 1 at the original record
+=== TEST 34: Update for adding 1 at the original record
 --- request
 POST /=/put/model/Test2/id/2?user=peee&password=4423037
 { num:num+1}
@@ -293,7 +317,7 @@ POST /=/put/model/Test2/id/2?user=peee&password=4423037
 
 
 
-=== TEST 32:read records
+=== TEST 35:read records
 --- request
 GET /=/model/Test2/~/~?user=peee&password=4423037
 --- response

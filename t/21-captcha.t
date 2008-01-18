@@ -50,6 +50,8 @@ GET /=/captcha/id/$SavedCapture.jpeg?lang=cn
 --- response_like
 .
 
+
+
 === TEST 6: get the captcha image using the ID (Cn)
 --- res_type: image/png
 --- request
@@ -295,6 +297,8 @@ GET /=/captcha/id/$SavedCapture?lang=en
 --- response_like
 .
 
+
+
 === TEST 36: Use captcha to login (wrong password)
 --- request
 GET /=/model?user=peee.Poster&captcha=$SavedCapture:helloworldd
@@ -342,6 +346,8 @@ GET /=/captcha/id
 GET /=/captcha/id/$SavedCapture?lang=cn
 --- response_like
 .
+
+
 
 === TEST 42: Use captcha to login (wrong solution)
 --- request

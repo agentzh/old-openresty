@@ -107,6 +107,8 @@ sub init {
     my $as_html = $cgi->url_param('as_html') || 0;
     $self->{_as_html} = $as_html;
 
+    $self->{_use_cookie}  = $cgi->url_param('use_cookie') || 0;
+
     my $charset = $cgi->url_param('charset') || 'UTF-8';
 
     if ($charset =~ /^guess(?:ing)?$/i) {
