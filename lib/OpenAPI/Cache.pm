@@ -10,23 +10,28 @@ sub new {
     my $class = ref $_[0] ? ref shift : shift;
     my $params = shift;
     my $expire_time = $params->{expired};
-    my $spec = $ENV{OPENAPI_CACHE} || 'mmap';
+    my $type = $OpenAPI::Config{'cache.type'} or
+        die "No cache.type specified in the config files.\n";
     my $obj;
     my $self = bless {}, $class;
     my $share_file = "/tmp/openapi-mmap.dat";
     if (-e $share_file && (!-r $share_file || !-w $share_file)) {
         $share_file = "$FindBin::Bin/openapi-mmap.dat";
     }
-    if ($spec eq 'mmap') {
+    if ($type eq 'mmap') {
         require Cache::FastMmap;
         $obj = Cache::FastMmap->new(
             share_file => $share_file,
             expire_time => $expire_time,
         );
-    } elsif ($spec =~ /^memcached\:(.+)$/) {
-        my $list = $1;
+    } elsif ($type eq 'memcached') {
+        my $list = $OpenAPI::Config{'cache.servers'} or
+            die "No cache.servers specified in the config files.\n";
         require Cache::Memcached::Fast;
         my @addr = split /\s*,\s*|\s+/, $list;
+        if (!@addr) {
+            die "No memcached server found: $list.\n";
+        }
         $obj = Cache::Memcached::Fast->new({
             servers => [@addr],
         });
@@ -35,7 +40,7 @@ sub new {
         $self->{expire_time} = $expire_time;
         #die $obj;
     } else {
-        die "Invalid OPENAPI_CACHE value: $spec\n";
+        die "Invalid cache.type value: $type\n";
     }
     $self->{obj} = $obj;
     return $self;
