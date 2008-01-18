@@ -157,8 +157,9 @@ sub process_request {
                 # XXX if account is anonymous, then create a session
                 # XXX else check password, if correct, create a session
             } else {
-                if ($session_from_cookie) {
-                    my $user = $OpenAPI::Cache->get($session_from_cookie);
+                my $session = $openapi->{_session} || $session_from_cookie;
+                if ($session) {
+                    my $user = $OpenAPI::Cache->get($session);
                     ### User from cookie: $user
                     if ($user) {
                         ($account, $role) = split /\./, $user, 2;
