@@ -1259,16 +1259,16 @@ PUT /=/role/Poster
 === TEST 123: login with the new password
 --- request
 GET /=/login/peee.Poster/789456213
---- response
-{"success":1,"account":"peee","role":"Poster"}
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Poster"}$
 
 
 
 === TEST 124: Switch back to the Amin role
 --- request
-GET /=/login/peee.Admin/4423037
---- response
-{"success":1,"account":"peee","role":"Admin"}
+GET /=/login/peee.Admin/4423037?use_cookie=1
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
 
 
 
@@ -1366,16 +1366,16 @@ PUT /=/role/Poster
 === TEST 133: login with the new password
 --- request
 GET /=/login/peee.Poster/shangerdi
---- response
-{"success":1,"account":"peee","role":"Poster"}
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Poster"}$
 
 
 
 === TEST 134: Switch back to the Amin role
 --- request
-GET /=/login/peee.Admin/4423037
---- response
-{"success":1,"account":"peee","role":"Admin"}
+GET /=/login/peee.Admin/4423037?use_cookie=1
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
 
 
 
@@ -1437,16 +1437,16 @@ PUT /=/role/Poster
 === TEST 140: login with the new password
 --- request
 GET /=/login/peee.Poster/SHANG1984_shangerdi_1984_shang_er_di_19841984
---- response
-{"success":1,"account":"peee","role":"Poster"}
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Poster"}$
 
 
 
 === TEST 141: Switch back to the Amin role
 --- request
-GET /=/login/peee.Admin/4423037
---- response
-{"success":1,"account":"peee","role":"Admin"}
+GET /=/login/peee.Admin/4423037?use_cookie=1
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
 
 
 
