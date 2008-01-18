@@ -33,6 +33,10 @@ sub init {
         warn "backend.type=Pg\n" if $do_echo;
         $OpenAPI::Config{'backend.type'} = 'Pg';
     }
+    if (!$OpenAPI::Config{'cache.type'}) {
+        warn "backend.type=mmap\n" if $do_echo;
+        $OpenAPI::Config{'cache.type'} = 'mmap';
+    }
 }
 
 1;
