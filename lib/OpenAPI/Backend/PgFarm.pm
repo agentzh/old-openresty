@@ -12,8 +12,8 @@ use base 'OpenAPI::Backend::Base';
 $YAML::Syck::ImplicitUnicode = 1;
 $JSON::Syck::ImplicitUnicode = 1;
 our $DSN = $ENV{OPENAPI_DSN} ||
-    #"dbi:Pg:dbname=proxy host=pgproxy-ycn.idp.inktomisearch.com;port=55555";
-    "dbi:Pg:dbname=proxy host=os901000.inktomisearch.com";
+    "dbi:Pg:dbname=proxy host=pgproxy-ycn.idp.inktomisearch.com;port=55555";
+    #"dbi:Pg:dbname=proxy host=os901000.inktomisearch.com";
 
 sub new {
     #
