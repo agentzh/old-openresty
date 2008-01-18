@@ -10,6 +10,7 @@ use OpenAPI::Dispatcher;
 use OpenAPI::Limits;
 
 my $cmd = lc(shift) || $ENV{OPENAPI_COMMAND} || 'fastcgi';
+$ENV{OPENAPI_COMMAND} = $cmd;
 
 eval {
     OpenAPI::Dispatcher->init;

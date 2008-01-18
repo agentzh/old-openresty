@@ -8,6 +8,7 @@ use Data::UUID;
 use OpenAPI::Limits;
 use OpenAPI::Cache;
 use OpenAPI;
+use OpenAPI::Config;
 
 our $InitFatal;
 
@@ -45,7 +46,8 @@ if ($url_prefix) {
 sub init {
     $CGI::POST_MAX = $POST_LEN_LIMIT;  # max 100 K posts
     $CGI::DISABLE_UPLOADS = 1;  # no uploads
-    my $backend = $ENV{OPENAPI_BACKEND} || 'Pg';
+    OpenAPI::Config->init;
+    my $backend = $OpenAPI::Config{'backend.type'};
     eval {
         $OpenAPI::Cache = OpenAPI::Cache->new;
         OpenAPI->connect($backend);

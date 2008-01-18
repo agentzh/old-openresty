@@ -3,15 +3,21 @@
 use strict;
 use warnings;
 
-my ($reason, $env);
-BEGIN {
-    $env = 'OPENAPI_TEST_CLUSTER';
-    $reason = "environment $env not set.";
-}
-use Test::More $ENV{$env} ? 'no_plan' : (skip_all => $reason);
-
 use lib 'lib';
+use OpenAPI::Config;
+
+my $reason;
+BEGIN {
+    OpenAPI::Config->init('.');
+    if ($OpenAPI::Config{'backend.type'} ne 'PgFarm') {
+        $reason = 'backend.type in the config files is not PgFarm.';
+    }
+}
+use Test::More $reason ? (skip_all => $reason) : 'no_plan';
+
 use OpenAPI::Backend::PgFarm;
+use OpenAPI::Config;
+
 use Data::Dumper;
 use subs 'dump';
 
@@ -20,6 +26,7 @@ use constant {
     USER_COUNT => 10,
 };
 
+OpenAPI::Config->init('.');
 my $backend = OpenAPI::Backend::PgFarm->new({ RaiseError => 0 });
 ok $backend, "database handle okay";
 
