@@ -7,14 +7,28 @@ use SQL::Select;
 use base 'OpenAPI::Backend::Base';
 use Encode 'from_to';
 
+our ($Host, $User, $Password, $Port, $Database);
+
 sub new {
     my $class = shift;
     my $opts = shift || {};
+
+    $Host ||= $OpenAPI::Config{'backend.host'}  or
+        die "No backend.host specified in the config files.\n";
+    $User ||= $OpenAPI::Config{'backend.user'} or
+        die "No backend.user specified in the config files.\n";
+    $Password ||= $OpenAPI::Config{'backend.password'} || '';
+    $Port ||= $OpenAPI::Config{'backend.port'};
+    $Database ||= $OpenAPI::Config{'backend.database'} or
+        die "No backend.database specified in the config files.\n";
+
     my $dbh = DBI->connect(
-        "dbi:Pg:dbname=test;host=localhost",
-        "agentzh", "agentzh",
+        "dbi:Pg:dbname=$Database;host=$Host".
+            ($Port ? ";port=$Port" : ""),
+        $User, $Password,
         {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts}
     );
+
     return bless {
         dbh => $dbh
     }, $class;

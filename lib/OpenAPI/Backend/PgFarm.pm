@@ -11,7 +11,8 @@ use base 'OpenAPI::Backend::Base';
 
 $YAML::Syck::ImplicitUnicode = 1;
 $JSON::Syck::ImplicitUnicode = 1;
-our ($DSN, $Host, $User, $Password, $Port);
+
+our ($Host, $User, $Password, $Port);
 
 sub new {
     #
@@ -25,10 +26,9 @@ sub new {
         die "No backend.user specified in the config files.\n";
     $Password ||= $OpenAPI::Config{'backend.password'} || '';
     $Port ||= $OpenAPI::Config{'backend.port'};
-    $DSN ||= "dbi:Pg:dbname=proxy host=$Host" .
-            ($Port ? ";port=$Port" : "");
     my $dbh = DBI->connect(
-        $DSN,
+        "dbi:Pg:dbname=proxy host=$Host".
+            ($Port ? ";port=$Port" : ""),
         $User, $Password,
         {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts}
     );
