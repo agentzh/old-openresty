@@ -19,9 +19,9 @@ __DATA__
 
 === TEST 1: Login
 --- request
-GET /=/login/peee.Admin/4423037
---- response
-{"success":1,"account":"peee","role":"Admin"}
+GET /=/login/peee.Admin/4423037?use_cookie=1
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
 
 
 

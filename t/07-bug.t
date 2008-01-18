@@ -11,7 +11,7 @@ __DATA__
 === TEST 1: UTF-8
 --- charset: UTF-8
 --- request
-DELETE /=/model?user=peee&password=4423037
+DELETE /=/model?user=peee&password=4423037&use_cookie=1
 --- response
 {"success":1}
 
