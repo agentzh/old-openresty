@@ -2,11 +2,21 @@ use strict;
 use warnings;
 
 use lib 'lib';
-use Test::More 'no_plan';
 use OpenAPI::Backend::Pg;
+use OpenAPI::Config;
 use Data::Dumper;
 use subs 'dump';
 
+my $reason;
+BEGIN {
+    OpenAPI::Config->init('.');
+    if ($OpenAPI::Config{'backend.type'} ne 'Pg') {
+        $reason = 'backend.type in the config files is not Pg.';
+    }
+}
+use Test::More $reason ? (skip_all => $reason) : 'no_plan';
+
+OpenAPI::Config->init('.');
 my $backend = OpenAPI::Backend::Pg->new({ RaiseError => 0 });
 ok $backend, "database handle okay";
 if ($backend->has_user("agentz")) {

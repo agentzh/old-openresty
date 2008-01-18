@@ -18,14 +18,11 @@ sub GET_version {
     $Revision ||= trim(slurp("$FindBin::Bin/../revision")) || 'Unknown';
     my $backend = $OpenAPI::BackendName;
     if ($backend eq 'PgFarm') {
-        my $dsn = $OpenAPI::Backend::PgFarm::DSN;
-        if ($dsn =~ /host=([^=\s;]+)/) {
-            $dsn = $1;
-            if ($dsn =~ /[-\w]+/) {
-                $dsn = $&;
-            }
+        my $host = $OpenAPI::Backend::PgFarm::Host;
+        if ($host =~ /[-\w]+/) {
+            $host = $&;
         }
-        $backend .= " ($dsn)";
+        $backend .= " ($host)";
     }
     return "OpenAPI $VERSION (revision $Revision) with the $backend backend.\nCopyright (c) 2007-2008 Yahoo! China EEEE\n";
 }
