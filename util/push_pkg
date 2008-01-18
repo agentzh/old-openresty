@@ -9,7 +9,6 @@ if( $#ARGV < 0 )
 	exit;
 }
 
-
 chdir("$FindBin::Bin/../");
 print "svn up ing\n";
 system("svn up");
@@ -27,10 +26,11 @@ system("svn ci -m 'openapi-$rev packaged and will upload to $dist_host'");
 
 chdir("../");
 system("cp -rf trunk openapi-$rev");
-system("tar -cz --exclude=$pkgdir/util --exclude=$pkgdir/pkg --exclude=.svn -f  $FindBin::Bin/../pkg/$pkgname.tgz $pkgdir");
+#system("tar -cz --exclude=$pkgdir/util --exclude=$pkgdir/pkg --exclude=.svn -f  $FindBin::Bin/../pkg/$pkgname.tgz $pkgdir");
+system("/usr/bin/shar -z $pkgdir $FindBin::Bin/../pkg/$pkgname.pkg && chmod a+x  $FindBin::Bin/../pkg/$pkgname.pkg ");
 
 foreach (@ARGV)
 {
-	system("scp -l 10000 $FindBin::Bin/../pkg/$pkgname.tgz $_:/tmp");
+	system("scp -l 10000 $FindBin::Bin/../pkg/$pkgname.pkg $_:/tmp");
 }
 
