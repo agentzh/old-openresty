@@ -18,7 +18,7 @@ GET /=/login/peee.Admin
 
 === TEST 2: login
 --- request
-GET /=/login/peee.Admin/4423037
+GET /=/login/peee.Admin/4423037?use_cookie=1
 --- response
 {"success":1,"account":"peee","role":"Admin"}
 
