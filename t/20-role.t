@@ -465,11 +465,11 @@ POST /=/view/MyView
 
 
 
-=== TEST 50: Switch back to the Amin role
+=== TEST 50: Switch back to the Admin role
 --- request
-GET /=/login/peee.Admin/4423037
---- response
-{"success":1,"account":"peee","role":"Admin"}
+GET /=/login/peee.Admin/4423037?use_cookie=1
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
 
 
 
@@ -628,9 +628,9 @@ GET /=/login/peee.Poster
 
 === TEST 65: Log into the new role
 --- request
-GET /=/login/peee.Poster/4417935
---- response
-{"success":1,"account":"peee","role":"Poster"}
+GET /=/login/peee.Poster/4417935?use_cookie=1
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Poster"}$
 
 
 
@@ -681,9 +681,9 @@ DELETE /=/role/Poster
 
 === TEST 71: Switch back to the Amin role
 --- request
-GET /=/login/peee.Admin/4423037
---- response
-{"success":1,"account":"peee","role":"Admin"}
+GET /=/login/peee.Admin/4423037?use_cookie=1
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
 
 
 
@@ -1048,16 +1048,16 @@ PUT /=/role/Newname
 === TEST 104: login with the new role
 --- request
 GET /=/login/peee.Newname/123456789
---- response
-{"success":1,"account":"peee","role":"Newname"}
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Newname"}$
 
 
 
 === TEST 105: Switch back to the Amin role
 --- request
-GET /=/login/peee.Admin/4423037
---- response
-{"success":1,"account":"peee","role":"Admin"}
+GET /=/login/peee.Admin/4423037?use_cookie=1
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
 
 
 
@@ -1232,16 +1232,16 @@ PUT /=/role/Poster
 === TEST 120: login with the new password
 --- request
 GET /=/login/peee.Poster/123456789
---- response
-{"success":1,"account":"peee","role":"Poster"}
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Poster"}$
 
 
 
 === TEST 121: Switch back to the Amin role
 --- request
-GET /=/login/peee.Admin/4423037
---- response
-{"success":1,"account":"peee","role":"Admin"}
+GET /=/login/peee.Admin/4423037?use_cookie=1
+--- response_like
+^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
 
 
 
