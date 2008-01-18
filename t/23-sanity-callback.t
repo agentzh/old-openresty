@@ -26,9 +26,9 @@ foo({"success":0,"error":"Login required."});
 
 === TEST 3: Login with password
 --- request
-GET /=/login/peee.Admin/4423037?callback=foo
---- response
-foo({"success":1,"account":"peee","role":"Admin"});
+GET /=/login/peee.Admin/4423037?callback=foo&use_cookie=1
+--- response_like
+^foo({"success":1,"session":"[-\w]+","account":"peee","role":"Admin"});$
 
 
 
