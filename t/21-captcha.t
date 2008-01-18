@@ -21,7 +21,7 @@ GET /=/captcha/id
 --- request
 GET /=/captcha/id/$SavedCapture
 --- response_like
-.{100}
+.
 
 
 
@@ -30,7 +30,7 @@ GET /=/captcha/id/$SavedCapture
 --- request
 GET /=/captcha/id/$SavedCapture.gif
 --- response_like
-.{100}
+.
 
 
 
@@ -39,7 +39,7 @@ GET /=/captcha/id/$SavedCapture.gif
 --- request
 GET /=/captcha/id/$SavedCapture.jpeg
 --- response_like
-.{100}
+.
 
 
 
@@ -48,16 +48,14 @@ GET /=/captcha/id/$SavedCapture.jpeg
 --- request
 GET /=/captcha/id/$SavedCapture.jpeg?lang=cn
 --- response_like
-.{100}
-
-
+.
 
 === TEST 6: get the captcha image using the ID (Cn)
 --- res_type: image/png
 --- request
 GET /=/captcha/id/$SavedCapture.jpeg?lang=Cn
 --- response_like
-.{100}
+.
 
 
 
@@ -66,7 +64,7 @@ GET /=/captcha/id/$SavedCapture.jpeg?lang=Cn
 --- request
 GET /=/captcha/id/$SavedCapture.jpeg?lang=en
 --- response_like
-.{100}
+.
 
 
 
@@ -237,7 +235,7 @@ GET /=/captcha/id
 --- request
 GET /=/captcha/id/$SavedCapture
 --- response_like
-.{100,}
+.
 
 
 
@@ -246,7 +244,7 @@ GET /=/captcha/id/$SavedCapture
 --- request
 GET /=/captcha/id/$SavedCapture
 --- response_like
-.{100,}
+.
 
 
 
@@ -295,9 +293,7 @@ GET /=/captcha/id
 --- request
 GET /=/captcha/id/$SavedCapture?lang=en
 --- response_like
-.{100,}
-
-
+.
 
 === TEST 36: Use captcha to login (wrong password)
 --- request
@@ -320,7 +316,7 @@ GET /=/captcha/id
 --- request
 GET /=/captcha/id/$SavedCapture?lang=cn
 --- response_like
-.{100,}
+.
 
 
 
@@ -345,9 +341,7 @@ GET /=/captcha/id
 --- request
 GET /=/captcha/id/$SavedCapture?lang=cn
 --- response_like
-.{100,}
-
-
+.
 
 === TEST 42: Use captcha to login (wrong solution)
 --- request
