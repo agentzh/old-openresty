@@ -1,5 +1,6 @@
 package OpenAPI;
 
+#use Smart::Comments;
 use strict;
 use warnings;
 use vars qw($Dumper);
@@ -18,8 +19,8 @@ sub POST_action_exec {
         die "Only the miniSQL language is supported for Select.\n";
     }
     my $sql = $self->{_req_data};
+    ### Action sql: $sql
 
-    warn "$sql";
     _STRING($sql) or
         die "miniSQL must be an non-empty literal string: ", $Dumper->($sql), "\n";
    #warn "SQL 1: $sql\n";

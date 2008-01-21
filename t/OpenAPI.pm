@@ -3,7 +3,19 @@ package t::OpenAPI;
 use Test::Base -Base;
 
 #use Smart::Comments;
-use WWW::OpenAPI;
+my $client_module;
+use OpenAPI::Config;
+BEGIN {
+    OpenAPI::Config->init;
+    my $use_http = $OpenAPI::Config{'test_suite.use_http'};
+    if ($use_http) {
+        $client_module = 'WWW::OpenAPI';
+        require WWW::OpenAPI;
+    } else {
+        $client_module = 'WWW::OpenAPI::Embedded';
+        require WWW::OpenAPI::Embedded;
+    }
+}
 use Test::LongString;
 use Encode 'from_to';
 
@@ -13,10 +25,10 @@ use Benchmark::Timer;
 my $timer = Benchmark::Timer->new();
 my $SavedCapture;
 
-our $host = $ENV{'OPENAPI_FRONTEND'} || $ENV{'REMOTE_OPENAPI'} || 'http://localhost';
+our $host = $OpenAPI::Config{'test_suite.server'} || 'http://localhost';
 $host = "http://$host" if $host !~ m{^http://};
 
-my $client = WWW::OpenAPI->new({ server => $host, timer => $timer });
+my $client = $client_module->new({ server => $host, timer => $timer });
 
 #init();
 
@@ -64,7 +76,7 @@ sub run_test ($) {
                 like $res->content, qr/$expected_res/, "$name - response matched";
             } else {
                 from_to($expected_res, 'UTF-8', $charset) unless $charset eq 'UTF-8';
-                is_string $res->content, $expected_res, "response content OK - $name";
+                is $res->content, $expected_res, "response content OK - $name";
             }
         } else {
             is $res->content, $expected_res, "response content OK - $name";
