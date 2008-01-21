@@ -100,7 +100,8 @@ sub init {
     my $db_state = $Backend->state;
     if ($db_state && $db_state =~ /^(?:08|57)/) {
         $Backend->disconnect;
-        $self->connect($ENV{OPENAPI_BACKEND});
+        my $backend = $OpenAPI::Config{'backend.type'};
+        OpenAPI->connect($backend);
         #die "Backend connection lost: ", $db_state, "\n";
     }
 
@@ -168,7 +169,7 @@ sub init {
     }
     $self->{_limit} = $limit;
 
-    my $http_meth = $ENV{'REQUEST_METHOD'};
+    my $http_meth = $ENV{REQUEST_METHOD};
     #$self->{'_method'} = $http_meth;
 
     #die "#XXXX !!!! $http_meth", Dumper($self);
@@ -334,6 +335,7 @@ sub response {
             -value => length($str) > 1024 ? substr($str, 0, 1024) : $str,
         );
     }
+    #warn ">>>>>>>>>>>>Cookies<<<<<<<<<<<<<<: @cookies\n";
     print $cgi->header(
         -type => "$type" . ($type =~ /text/ ? "; charset=$charset" : ""),
         @cookies ? (-cookie => \@cookies) : ()
