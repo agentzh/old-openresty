@@ -209,8 +209,8 @@ sub init {
             $req_data = $cgi->param('data') or
                 die "No PUT content specified.\n";
         } else {
-            if (length($req_data) > $PUT_LEN_LIMIT) {
-                die "Exceeded PUT content length limit: $PUT_LEN_LIMIT\n";
+            if (length($req_data) > $POST_LEN_LIMIT) {
+                die "Exceeded PUT content length limit: $POST_LEN_LIMIT\n";
             }
         }
     }

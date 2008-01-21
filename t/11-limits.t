@@ -5,7 +5,9 @@ use JSON::Syck 'Dump';
 use OpenAPI::Limits;
 use t::OpenAPI;
 use WWW::OpenAPI;
+use OpenAPI::Config;
 
+OpenAPI::Config->init;
 my $host = $t::OpenAPI::host;
 my $client = WWW::OpenAPI->new( { server => $host } );
 my $res = $client->delete('/=/model?user=peee&password=4423037&use_cookie=1');
@@ -171,27 +173,27 @@ is $res_body, '{"success":0,"error":"Exceeded POST content length limit: '.$POST
 
 # put length limit test
 ## new a data exceed the post length limit
-$data = 'a' x ($PUT_LEN_LIMIT + 1);
+$data = 'a' x ($POST_LEN_LIMIT + 1);
 ## delete the 'foo' model first, then create it
 $res = $client->delete($url);
 $body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
 $res = $client->put($body, $url);
-ok $res->is_success, $PUT_LEN_LIMIT .'init model okay';
+ok $res->is_success, $POST_LEN_LIMIT .'init model okay';
 
 ## insert a record
 $body = '{ title: "abc" }';
 $res = $client->post($body, $url.'/~/~');
-ok $res->is_success, $PUT_LEN_LIMIT . 'insert a short record OK';
+ok $res->is_success, $POST_LEN_LIMIT . 'insert a short record OK';
 $res_body = $res->content;
 ### $res_body
 
-$data = 'a' x ($PUT_LEN_LIMIT + 1);
+$data = 'a' x ($POST_LEN_LIMIT + 1);
 #$body = '{title:'.($data).'}';
 $res = $client->put($data, $url.'/id/1');
-ok $res->is_success, $PUT_LEN_LIMIT . 'update OK';
+ok $res->is_success, $POST_LEN_LIMIT . 'update OK';
 $res_body = $res->content;
 ### $res_body
-is $res_body, '{"success":0,"error":"Exceeded PUT content length limit: '.$PUT_LEN_LIMIT.'"}'."\n", "Model put limit test ".$PUT_LEN_LIMIT;
+is $res_body, '{"success":0,"error":"Exceeded PUT content length limit: '.$POST_LEN_LIMIT.'"}'."\n", "Model put limit test ".$POST_LEN_LIMIT;
 
 # max select records in a request
 ## delete the 'foo' model first, then create it
