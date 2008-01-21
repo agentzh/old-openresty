@@ -37,6 +37,10 @@ sub init {
         warn "backend.type=mmap\n" if $do_echo;
         $OpenAPI::Config{'cache.type'} = 'mmap';
     }
+    $OpenAPI::Limits::RECORD_LIMIT = $OpenAPI::Config{'frontend.row_limit'};
+    $OpenAPI::Limits::COLUMN_LIMIT = $OpenAPI::Config{'frontend.column_limit'};
+    $OpenAPI::Limits::MODEL_LIMIT = $OpenAPI::Config{'frontend.model_limit'};
+    $OpenAPI::Limits::POST_LEN_LIMIT = $OpenAPI::Config{'frontend.post_len_limit'};
 }
 
 1;
