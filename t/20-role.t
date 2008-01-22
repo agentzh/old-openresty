@@ -304,6 +304,7 @@ DELETE /=/model
 === TEST 30: Put to models
 --- request
 PUT /=/model
+""
 --- response
 {"success":0,"error":"Permission denied for the \"Public\" role."}
 

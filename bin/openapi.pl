@@ -18,8 +18,8 @@ eval {
 warn $@ if $@;
 
 if ($cmd eq 'fastcgi') {
-    require CGI::Fast;
-    while (my $cgi = new CGI::Fast) {
+    require OpenAPI::FastCGI;
+    while (my $cgi = new OpenAPI::FastCGI) {
         eval {
             OpenAPI::Dispatcher->process_request($cgi);
         };
@@ -32,8 +32,8 @@ if ($cmd eq 'fastcgi') {
     }
     exit;
 } elsif ($cmd eq 'cgi') {
-    require CGI;
-    my $cgi = CGI->new;
+    require CGI::Simple;
+    my $cgi = CGI::Simple->new;
     OpenAPI::Dispatcher->process_request($cgi);
     exit;
 } elsif ($cmd eq 'start') {

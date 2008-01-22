@@ -373,7 +373,7 @@ sub new_model {
         ->cols(QI( qw<name type label table_name> ));
     $sql .=
         "create table \"$table\" (\n\t\"id\" serial primary key";
-    my $sql2;
+    my $sql2 = '';
     my $found_id = undef;
     for my $col (@$columns) {
         _HASH($col) or die "Column definition must be a hash: ", $Dumper->($col), "\n";

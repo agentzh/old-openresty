@@ -197,7 +197,7 @@ POST /=/model/Tiger
 --- request
 POST /=/model/laser
 --- response
-{"success":0,"error":"The model schema must be a HASH."}
+{"success":0,"error":"No POST content specified or no \"data\" field found."}
 
 
 
