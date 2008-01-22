@@ -4,7 +4,7 @@ package OpenAPI;
 use strict;
 use warnings;
 use vars qw($Cache $UUID $Dumper);
-use CGI::Cookie;
+use CGI::Simple::Cookie;
 use Encode 'is_utf8';
 
 sub GET_login_user {

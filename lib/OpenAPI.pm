@@ -195,8 +195,15 @@ sub init {
         #die $Dumper->(\%ENV);
 
         if (!defined $req_data) {
-            $req_data = $cgi->param('data') or
-                die "No POST content specified or no \"data\" field found.\n";
+            $req_data = $cgi->param('data');
+            if (!defined $req_data) {
+                my $len = $ENV{CONTENT_LENGTH} || 0;
+                if ($len > $POST_LEN_LIMIT) {
+                    die "Exceeded POST content length limit: $POST_LEN_LIMIT\n";
+                } else {
+                    die "No POST content specified or no \"data\" field found.\n";
+                }
+            }
         } else {
             if (length($req_data) > $POST_LEN_LIMIT) {
                 die "Exceeded POST content length limit: $POST_LEN_LIMIT\n";
@@ -207,8 +214,15 @@ sub init {
         $req_data = $cgi->param('PUTDATA');
 
         if (!defined $req_data) {
-            $req_data = $cgi->param('data') or
-                die "No PUT content specified.\n";
+            $req_data = $cgi->param('data');
+            if (!defined $req_data) {
+                my $len = $ENV{CONTENT_LENGTH} || 0;
+                if ($len > $POST_LEN_LIMIT) {
+                    die "Exceeded PUT content length limit: $POST_LEN_LIMIT\n";
+                } else {
+                    die "No PUT content specified.\n";
+                }
+            }
         } else {
             if (length($req_data) > $POST_LEN_LIMIT) {
                 die "Exceeded PUT content length limit: $POST_LEN_LIMIT\n";
@@ -273,7 +287,7 @@ sub response {
     my @cookies;
     if ($cookie_data) {
         while (my ($key, $val) = each %$cookie_data) {
-            push @cookies, CGI::Cookie->new(
+            push @cookies, CGI::Simple::Cookie->new(
                 -name => $key, -value => $val
             );
         }
@@ -329,8 +343,9 @@ sub response {
         $str = "<html><body><script type=\"text/javascript\">parent.location.hash = ".$Dumper->($str)."</script></body></html>";
     }
 
-    if ($self->{_http_method} =~ /^(?:PUT|POST)$/) {
-        push @cookies, CGI::Cookie->new(
+    my $meth = $self->{_http_method};
+    if ($meth && $meth =~ /^(?:PUT|POST)$/) {
+        push @cookies, CGI::Simple::Cookie->new(
             -name => 'last_response',
             -value => length($str) > 1024 ? substr($str, 0, 1024) : $str,
         );

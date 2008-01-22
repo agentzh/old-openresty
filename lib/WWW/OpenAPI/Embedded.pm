@@ -11,12 +11,14 @@ use Data::Dumper;
 use Class::Prototyped;
 use HTTP::Request;
 use HTTP::Response;
-use CGI;
+use CGI::Simple;
+use CGI::Cookie;
 use Test::Base;
 use Encode qw(encode is_utf8);
 
 our $Buffer;
 our %Cookies;
+my $Cgi = CGI::Simple->new;
 
 *Test::Base::Handle::BINMODE = sub {};
 
@@ -145,7 +147,6 @@ sub _request {
     if ($raw_cookie) {
         %Cookies = (%Cookies, CGI::Cookie->parse($raw_cookie));
     }
-    #bless $Cookie, 'CGI::Cookie';
     ### %Cookies
 
     ## $raw_cookie
@@ -170,7 +171,11 @@ sub new_cgi {
             my ($self, $key) = @_;
             #warn "!!!!!$key!!!!";
             if ($key =~ /^(?:PUTDATA|POSTDATA)$/) {
-                return $req->content;
+                my $s = $req->content;
+                if (!defined $s or $s eq '') {
+                    return undef;
+                }
+                return $s;
             }
             $url_params{$key};
         },
@@ -185,7 +190,7 @@ sub new_cgi {
         },
         header => sub {
             my $self = shift;
-            return CGI->header(@_);
+            return $Cgi->header(@_);
 
 =pod
             my $s;

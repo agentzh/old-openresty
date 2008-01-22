@@ -41,6 +41,9 @@ sub init {
     $OpenAPI::Limits::COLUMN_LIMIT = $OpenAPI::Config{'frontend.column_limit'};
     $OpenAPI::Limits::MODEL_LIMIT = $OpenAPI::Config{'frontend.model_limit'};
     $OpenAPI::Limits::POST_LEN_LIMIT = $OpenAPI::Config{'frontend.post_len_limit'};
+
+    $CGI::Simple::POST_MAX = $OpenAPI::Limits::POST_LEN_LIMIT;  # max 100 K posts
+    $CGI::Simple::DISABLE_UPLOADS = 1;  # no uploads
 }
 
 1;

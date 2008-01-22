@@ -44,8 +44,6 @@ if ($url_prefix) {
 }
 
 sub init {
-    $CGI::POST_MAX = $POST_LEN_LIMIT;  # max 100 K posts
-    $CGI::DISABLE_UPLOADS = 1;  # no uploads
     OpenAPI::Config->init;
     my $backend = $OpenAPI::Config{'backend.type'};
     eval {
@@ -114,7 +112,7 @@ sub process_request {
     ### $http_meth
 
     # XXX hacks...
-    my $cookies = CGI::Cookie->fetch;
+    my $cookies = CGI::Simple::Cookie->fetch;
     my ($session_from_cookie, $captcha_from_cookie, $response_from_cookie);
     my $session;
     if ($cookies) {
