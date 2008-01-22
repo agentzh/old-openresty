@@ -64,7 +64,7 @@ GET /=/login/peee.Admin/4423037?use_cookie=1
 
 
 
-=== TEST 8: Delete existing models (session)
+=== TEST 8: Delete existing models (w/o session)
 --- request
 DELETE /=/model.js
 --- response
@@ -78,5 +78,28 @@ DELETE /=/model.js?session=$SavedCapture
 --- response
 {"success":1}
 
+
+
+=== TEST 10: Logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+
+
+
+=== TEST 11: Delete existing models after logout(w/o session)
+--- request
+DELETE /=/model.js
+--- response
+{"success":0,"error":"Login required."}
+
+
+
+=== TEST 12: Delete existing models after logout(session)
+--- request
+DELETE /=/model.js?session=$SavedCapture
+--- response
+{"success":0,"error":"Login required."}
 
 
