@@ -45,8 +45,16 @@ auto_install();
 my $site_conf = 'etc/site_openapi.conf';
 if (!-e $site_conf) {
     warn "cp etc/openapi.conf $site_conf\n";
-    my $cmd = $^O =~ /win32/i ? 'copy' : 'cp';
-    system("$cmd etc/openapi.conf $site_conf");
+    #print $^O;
+    eval {
+        require File::Copy;
+    };
+    if ($@) {
+        my $cmd = 'cp';
+        system("$cmd etc/openapi.conf $site_conf");
+    } else {
+        File::Copy::copy("etc/openapi.conf", $site_conf);
+    }
 }
 
 system("$^X bin/revision.pl");
