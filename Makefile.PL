@@ -27,7 +27,7 @@ requires            ('Config::Simple'),
 features(
     'Test suite' => [
         -default => 0,
-        recommends    ('Cache::FastMmap' => '1.24'),
+        recommends    ('Cache::Cache' => '1.05'),
         recommends    ('Smart::Comments'),
         recommends    ('Class::Prototyped'),
         recommends    ('Test::LongString' => 0.11),

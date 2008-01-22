@@ -18,7 +18,12 @@ sub new {
     if (-e $share_file && (!-r $share_file || !-w $share_file)) {
         $share_file = "$FindBin::Bin/openapi-mmap.dat";
     }
-    if ($type eq 'mmap') {
+    if ($type eq 'filecache') {
+        require Cache::FileCache;
+        $obj = Cache::FileCache->new(
+            { namespace => 'OpenAPI', default_expires_in => 60 * 60 * 24 }
+        );
+    } elsif ($type eq 'mmap') {
         require Cache::FastMmap;
         $obj = Cache::FastMmap->new(
             share_file => $share_file,

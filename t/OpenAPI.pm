@@ -29,7 +29,7 @@ my $SavedCapture;
 our $host = $OpenAPI::Config{'test_suite.server'} || 'http://localhost';
 $host = "http://$host" if $host !~ m{^http://};
 
-my $client = $client_module->new({ server => $host, timer => $timer });
+our $client = $client_module->new({ server => $host, timer => $timer });
 
 #init();
 
