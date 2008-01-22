@@ -8,8 +8,8 @@ perl_version        ('5.006001');
 all_from            ('lib/OpenAPI.pm');
 
 requires            ('perl' => '5.008001');
-requires            ('CGI' => '3.33');
 requires            ('FCGI');
+requires            ('CGI::Simple' => '1.103');
 requires            ('YAML::Syck' => '1.00');
 requires            ('List::Util');
 requires            ('DBI' => '1.57');
@@ -27,6 +27,7 @@ requires            ('Config::Simple'),
 features(
     'Test suite' => [
         -default => 0,
+        recommends    ('CGI' => '3.33'),
         recommends    ('Cache::Cache' => '1.05'),
         recommends    ('Smart::Comments'),
         recommends    ('Class::Prototyped'),
