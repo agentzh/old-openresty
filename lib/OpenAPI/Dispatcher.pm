@@ -138,6 +138,17 @@ sub process_request {
         return;
     }
 
+    $session = $openapi->{_session} || $session_from_cookie;
+    if ($bits[0] eq 'logout') {
+        ### Yeah yeah yeah!
+        if ($session) {
+            $OpenAPI::Cache->remove($session);
+        }
+        $openapi->{_bin_data} = "{\"success\":1}\n";
+        $openapi->response;
+        return;
+    }
+
     my ($account, $role);
     if ($bits[0] and $bits[0] !~ /^(?:login|captcha|version)$/) {
         eval {
@@ -157,7 +168,7 @@ sub process_request {
                 # XXX if account is anonymous, then create a session
                 # XXX else check password, if correct, create a session
             } else {
-                my $session = $openapi->{_session} || $session_from_cookie;
+                ### First bit: $bits[0]
                 if ($session) {
                     my $user = $OpenAPI::Cache->get($session);
                     ### User from cookie: $user
@@ -193,7 +204,7 @@ sub process_request {
     }
 
     # XXX check ACL rules...
-    if ($bits[0] and $bits[0] !~ /^(?:login|captcha|version)$/) {
+    if ($bits[0] and $bits[0] !~ /^(?:login|logout|captcha|version)$/) {
         my $res = $openapi->current_user_can($http_meth => \@bits);
         if (!$res) {
             $openapi->fatal("Permission denied for the \"$role\" role.");
