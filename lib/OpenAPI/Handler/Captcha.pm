@@ -5,9 +5,12 @@ use strict;
 use warnings;
 
 use vars qw( $UUID $Cache );
-use GD::SecurityImage;
 use utf8;
 use Encode 'encode';
+
+my $Error;
+eval "use GD::SecurityImage;";
+$Error = $@;
 
 my @CnWordList = qw(
     一本正经 上升 下降 不假思索 专门
@@ -190,6 +193,10 @@ sub GET_captcha_value {
     my ($self, $bits) = @_;
     my $col = $bits->[1];
     my $value = $bits->[2];
+
+    if ($Error) {
+        die "Captchas support not available on this server.\n";
+    }
 
     my $ext = 'gif';
     if ($value =~ s/\.(gif|jpg|png|jpeg)$//g) {
