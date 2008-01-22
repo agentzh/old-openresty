@@ -45,7 +45,7 @@ auto_install();
 my $site_conf = 'etc/site_openapi.conf';
 if (!-e $site_conf) {
     warn "cp etc/openapi.conf $site_conf\n";
-    my $cmd = $^O =~ /win32/ ? 'copy' : 'cp';
+    my $cmd = $^O =~ /win32/i ? 'copy' : 'cp';
     system("$cmd etc/openapi.conf $site_conf");
 }
 
