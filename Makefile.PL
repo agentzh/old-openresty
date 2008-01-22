@@ -29,7 +29,7 @@ features(
         -default => 0,
         recommends    ('Cache::FastMmap' => '1.24'),
         recommends    ('Smart::Comments'),
-        recommends    ('Class::Prototyped' => '1.11'),
+        recommends    ('Class::Prototyped'),
         recommends    ('Test::LongString' => 0.11),
         recommends    ('Test::Base' => 0.54),
         recommends    ('Test::More' => 0.74),
