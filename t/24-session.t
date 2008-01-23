@@ -156,5 +156,21 @@ GET /=/logout
 --- request
 DELETE /=/model.js?session=$SavedCapture
 --- response
+{"success":1}
+
+
+
+=== TEST 20: Logout
+--- request
+GET /=/logout?session=$SavedCapture
+--- response
+{"success":1}
+
+
+
+=== TEST 21: Delete existing models (session)
+--- request
+DELETE /=/model.js?session=$SavedCapture
+--- response
 {"success":0,"error":"Login required."}
 
