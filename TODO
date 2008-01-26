@@ -58,7 +58,6 @@
 * Review and polish the existing test suite (under t/)
 * Backup and Restore data for promotion [working]
 * Tests for session manager on login [shangerdi]
-* Tests for logout [shangerdi]
 * Tests for 'select * from a,b,c,d,e....' [shangerdi]
 * Tests for 'select * from ... where ???????' [shangerdi]
 * Tests for count('select * from ...... where ......') [shangerdi]
@@ -70,4 +69,5 @@
 * Prerequiste groups in Makefile.PL. [done]
 * Tests for PUT method in Role [shangerdi] [done]
 * Tests for captcha [done]
+* Tests for logout [done]
 
