@@ -37,6 +37,7 @@ function render_model_list (data) {
         //alert(new_desc);
         //alert("Changing model desciption from " + old_desc + " to " + new_desc);
         openapi.callback = 'handle_put_model';
+        openapi.formId = 'new_model';
         openapi.put({ description: new_desc }, '/=/model/' + model_name);
         return "Saving...";
     }, {
