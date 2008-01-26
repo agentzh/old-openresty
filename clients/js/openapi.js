@@ -92,7 +92,7 @@ OpenAPI.Client.prototype.post = function (content, url, args) {
     //
 };
 
-OpenAPI.Client.prototype.put = function (content, url, args) {
+OpenAPI.Client.prototype.put_by_get = function (content, url, args) {
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/put/');
     content = JSON.stringify(content);
@@ -101,6 +101,15 @@ OpenAPI.Client.prototype.put = function (content, url, args) {
     args.data = content;
     this.get(url, args);
 };
+
+OpenAPI.Client.prototype.put = function (content, url, args) {
+    if (!args) args = {};
+    url = url.replace(/^\/=\//, '/=/put/');
+    //alert("type of content: " + typeof(content));
+    //alert("content: " + content);
+    this.post(content, url, args);
+};
+
 
 OpenAPI.Client.prototype.get = function (url, args, isLogin) {
     if (!args) args = {};
