@@ -66,11 +66,10 @@ POST /=/view/View
 
 
 
-
 === TEST 7: Create the view
 --- request
-POST /=/view/Test123
-{ name: "Name", definition: "select * from A, B where A.id = B.a order by A.title" }
+POST /=/view/Test
+{ name: "Name", definition: "select * from A, B" }
 --- response
 {"success":1,"warning":"name \"Name\" in POST content ignored."}
 
@@ -108,47 +107,56 @@ PUT /=/view/Test
 PUT /=/view/Test1
 { name:"123" }
 --- response
-{"success":0,"error":"Bad view name: 123"}
-
-
-
-=== TEST 11: Update name of the view
---- request
-PUT /=/view/Test1
-{ name:"!@#$%#@" }
---- response
-{"success":0,"error":"Bad view name: !@#$%#@"}
+{"success":0,"error":"Bad view name: \"123\""}
 
 
 
 === TEST 12: Update name of the view
 --- request
 PUT /=/view/Test1
-{ name:"_Test" }
+{ name:"!@#$%#@" }
 --- response
-{"success":1}
+{"success":0,"error":"Bad view name: \"!@#$%#@\""}
 
 
 
 === TEST 13: Update name of the view
 --- request
-PUT /=/view/_Test
+PUT /=/view/Test1
+{ name:"_Test" }
+--- response
+{"success":0,"error":"Bad view name: \"_Test\""}
+
+
+
+=== TEST 14: Update name of the view
+--- request
+PUT /=/view/Test1
+{ name:"Test123!@#" }
+--- response
+{"success":0,"error":"Bad view name: \"Test123!@#\""}
+
+
+
+=== TEST 15: Update name of the view
+--- request
+PUT /=/view/Test1
 { name:"Test123" }
 --- response
 {"success":1}
 
 
 
-=== TEST 14: Update definition of the view
+=== TEST 16: Update definition of the view
 --- request
 PUT /=/view/Test123
 { definition:123456 }
 --- response
-{"success":0,"error":"Bad view definition: 123456"}
+{"success":1}
 
 
 
-=== TEST 15: Update definition of the view
+=== TEST 17: Update definition of the view
 --- request
 PUT /=/view/Test123
 { definition:["select * from A, B where A.id = B.a order by A.title"] }
@@ -157,34 +165,34 @@ PUT /=/view/Test123
 
 
 
-=== TEST 15: Update definition of the view
+=== TEST 18: Update definition of the view
 --- request
 PUT /=/view/Test123
 { definition:"select * from A, B where A.id = B.a order by B.a" }
 --- response
-{"success":1"}
+{"success":1}
 
 
 
-=== TEST 16: Update description of the view
+=== TEST 19: Update description of the view
 --- request
 PUT /=/view/Test123
 { description:123456 }
 --- response
-{"success":0,"error":"Bad view description: 123456"}
+{"success":1}
 
 
 
-=== TEST 16: Update description of the view
+=== TEST 20: Update description of the view
 --- request
 PUT /=/view/Test123
 { description:{desc:"blahblah"} }
 --- response
-{"success":0,"error":"Bad view description: {desc:\"blahblah\"}"}
+{"success":0,"error":"Bad view description: {\"desc\":\"blahblah\"}"}
 
 
 
-=== TEST 16: Update description of the view
+=== TEST 21: Update description of the view
 --- request
 PUT /=/view/Test123
 { description:"blahblah" }
@@ -193,7 +201,7 @@ PUT /=/view/Test123
 
 
 
-=== TEST 17: Invoke the Test123 view
+=== TEST 22: Invoke the Test123 view
 --- request
 GET /=/view/Test123/~/~
 --- response
@@ -201,7 +209,7 @@ GET /=/view/Test123/~/~
 
 
 
-=== TEST 17: Invoke the Test123 view
+=== TEST 23: Invoke the Test123 view
 --- request
 GET /=/view/Test123/description/~
 --- response
