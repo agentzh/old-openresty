@@ -37,7 +37,7 @@ function render_model_list (data) {
         //alert(new_desc);
         //alert("Changing model desciption from " + old_desc + " to " + new_desc);
         openapi.callback = 'handle_put_model';
-        openapi.formId = 'new_model';
+        openapi.purge();
         openapi.put({ description: new_desc }, '/=/model/' + model_name);
         return "Saving...";
     }, {
@@ -59,6 +59,7 @@ function render_model_list (data) {
         var new_name = value;
         //alert("Changing model name from " + old_name + " to " + new_name);
         openapi.callback = 'handle_put_model';
+        openapi.purge();
         openapi.put({ name: new_name }, '/=/model/' + old_name);
         return "Saving...";
     }, {
@@ -89,7 +90,7 @@ $(document).ready( function () {
             description: desc
         };
         openapi.callback = get_model_list;
-        openapi.formId = 'new_model';
+        openapi.purge();
         openapi.post(data, "/=/model/~");
         return false;
     });
@@ -97,6 +98,7 @@ $(document).ready( function () {
     openapi = new OpenAPI.Client(
         { server: host, callback: 'display' }
     );
+    openapi.formId = 'new_model';
     openapi.callback = init;
     openapi.login('admin', '4423037');
 } );
