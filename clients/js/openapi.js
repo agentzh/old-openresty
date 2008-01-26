@@ -23,9 +23,9 @@ OpenAPI.Client.prototype.login = function (user, password) {
 
     var self = this;
     this.callback = function (data) {
-        alert(data.session);
+        //alert(data.session);
         self.session = data.session;
-        userCallback();
+        userCallback(data);
     };
     //this.callback = 'save_session';
     this.get('/=/login/' + user + '/' + password);
@@ -48,10 +48,13 @@ OpenAPI.Client.prototype.post = function (content, url, args) {
     //url = url.replace(/^\/=\//, '/=/post/');
     if (url.match(/\?/)) throw "URL should not contain '?'.";
     if (!this.callback) throw "No callback specified for OpenAPI.";
+    var formId = this.formId;
+    if (!formId) throw "No form specified.";
     content = JSON.stringify(content);
     //alert("type of content: " + typeof(content));
     //alert("content: " + content);
     args.rand = Math.random();
+    args.session = this.session;
     //args.callback = this.callback;
     //args.as_html = 1;
 
@@ -66,7 +69,7 @@ OpenAPI.Client.prototype.post = function (content, url, args) {
     //
     var self = this;
     var ts = dojo.io.iframe.send({
-        form: document.getElementById('new_model'),
+        form: document.getElementById(formId),
         url: this.server + url,
         content: { data: content },
         preventCache: false,
