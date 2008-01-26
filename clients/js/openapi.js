@@ -150,14 +150,14 @@ OpenAPI.Client.prototype.del = function (url, args) {
 
 OpenAPI.Client.prototype.purge = function () {
     // document.getElementByClassName('openapiScriptTag').remove();
+    OpenAPI.callbackMap = {};
     var nodes = document.getElementsByTagName('script');
     for (var i = 0; i < nodes.length; i++) {
         var node = nodes[i];
         if (node.className == 'openapiScriptTag') {
-            node.removeNode(false);
+            node.parentNode.removeChild(node);
         }
     }
-    OpenAPI.callbackMap = {};
 };
 
 }
