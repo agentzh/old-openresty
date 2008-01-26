@@ -85,7 +85,7 @@ sub PUT_view {
 
     my $new_desc = delete $data->{description};
     if (defined $new_desc) {
-        _STRING($new_desc) or die "Bad view definition: ", $Dumper->($new_desc);
+        _STRING($new_desc) or die "Bad view description: ", $Dumper->($new_desc), "\n";
         $update->set(description => Q($new_desc));
     }
     ### Update SQL: "$update"

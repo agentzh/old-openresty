@@ -2,7 +2,11 @@ if (typeof window.OpenAPI == "undefined") {
 
 window.undefined = window.undefined;
 
-var OpenAPI = function (params) {
+var OpenAPI = {
+    callbackMap: {}
+};
+
+OpenAPI.Client = function (params) {
     if (params == undefined) params = {};
     this.callback = params.callback;
     this.server = params.server;
@@ -10,16 +14,24 @@ var OpenAPI = function (params) {
     //this.password = params.password;
 };
 
-OpenAPI.prototype.login = function (user, password) {
+OpenAPI.Client.prototype.login = function (user, password) {
     this.user = user;
+    var userCallback = this.callback;
+    if (typeof userCallback == 'string') {
+        userCallback = eval(userCallback);
+    }
+
+    var self = this;
+    this.callback = function (data) {
+        alert(data.session);
+        self.session = data.session;
+        userCallback();
+    };
+    //this.callback = 'save_session';
     this.get('/=/login/' + user + '/' + password);
 };
 
-function sayhello (res) {
-    alert(res);
-}
-
-OpenAPI.prototype.post = function (content, url, args) {
+OpenAPI.Client.prototype.post_by_get = function (content, url, args) {
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/post/');
     if (typeof(content) == 'object') {
@@ -31,7 +43,7 @@ OpenAPI.prototype.post = function (content, url, args) {
     this.get(url, args);
 };
 
-OpenAPI.prototype.true_post = function (content, url, args) {
+OpenAPI.Client.prototype.post = function (content, url, args) {
     if (!args) args = {};
     //url = url.replace(/^\/=\//, '/=/post/');
     if (url.match(/\?/)) throw "URL should not contain '?'.";
@@ -77,7 +89,7 @@ OpenAPI.prototype.true_post = function (content, url, args) {
     //
 };
 
-OpenAPI.prototype.put = function (content, url, args) {
+OpenAPI.Client.prototype.put = function (content, url, args) {
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/put/');
     content = JSON.stringify(content);
@@ -87,7 +99,7 @@ OpenAPI.prototype.put = function (content, url, args) {
     this.get(url, args);
 };
 
-OpenAPI.prototype.get = function (url, args, isLogin) {
+OpenAPI.Client.prototype.get = function (url, args, isLogin) {
     if (!args) args = {};
     if (!this.callback) throw "No callback specified for OpenAPI.";
     if (!this.server) throw "No server specified for OpenAPI.";
@@ -95,10 +107,16 @@ OpenAPI.prototype.get = function (url, args, isLogin) {
     //args.user = this.user;
     //args.password = this.password || '';
     if (url.match(/\?/)) throw "URL should not contain '?'.";
-    args.rand = Math.random();
+    args.rand = Math.round( Math.random() * 100000 );
+    args.session = this.session;
+    //alert(args.rand);
     //if (!isLogin) args.user = this.user;
     //args.password = this.password;
-    args.callback = this.callback;
+    if (typeof this.callback == 'string') {
+        this.callback = eval(this.callback);
+    }
+    OpenAPI.callbackMap[args.rand] = this.callback;
+    args.callback = "OpenAPI.callbackMap[" + args.rand + "]";
     var scriptTag = document.createElement("script");
     scriptTag.id = "openapiScriptTag" + args.rand;
     scriptTag.className = 'openapiScriptTag';
@@ -112,13 +130,13 @@ OpenAPI.prototype.get = function (url, args, isLogin) {
     headTag.appendChild(scriptTag);
 };
 
-OpenAPI.prototype.del = function (url, args) {
+OpenAPI.Client.prototype.del = function (url, args) {
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/delete/');
     this.get(url, args);
 };
 
-OpenAPI.prototype.purge = function () {
+OpenAPI.Client.prototype.purge = function () {
     // document.getElementByClassName('openapiScriptTag').remove();
     var nodes = document.getElementsByTagName('script');
     for (var i = 0; i < nodes.length; i++) {
@@ -127,6 +145,7 @@ OpenAPI.prototype.purge = function () {
             node.removeNode(false);
         }
     }
+    OpenAPI.callbackMap = {};
 };
 
 }

@@ -91,7 +91,7 @@ $(document).ready( function () {
         return false;
     });
     var host = 'http://10.62.136.86';
-    openapi = new OpenAPI(
+    openapi = new OpenAPI.Client(
         { server: host, callback: 'display' }
     );
     openapi.callback = 'init';
