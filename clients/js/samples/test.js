@@ -5,9 +5,10 @@ var display = function (res) {
 };
 
 function get_model_list (res) {
+    //alert("Res: " + JSON.stringify(res));
     if (res) display(res);
     //return;
-    openapi.callback = 'render_model_list';
+    openapi.callback = render_model_list;
     openapi.get('/=/model');
 }
 
@@ -86,19 +87,21 @@ $(document).ready( function () {
             name: name,
             description: desc
         };
-        openapi.callback = 'get_model_list';
-        openapi.true_post(data, "/=/model/~");
+        openapi.callback = get_model_list;
+        openapi.formId = 'new_model';
+        openapi.post(data, "/=/model/~");
         return false;
     });
     var host = 'http://10.62.136.86';
     openapi = new OpenAPI.Client(
         { server: host, callback: 'display' }
     );
-    openapi.callback = 'init';
+    openapi.callback = init;
     openapi.login('admin', '4423037');
 } );
 
-function init () {
-    get_model_list();
+function init (data) {
+    //alert("Hey!");
+    get_model_list(data);
 }
 
