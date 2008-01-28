@@ -99,7 +99,7 @@ sub init {
 
     my $db_state = $Backend->state;
     if ($db_state && $db_state =~ /^(?:08|57)/) {
-        $Backend->disconnect;
+        eval { $Backend->disconnect };
         my $backend = $OpenAPI::Config{'backend.type'};
         OpenAPI->connect($backend);
         #die "Backend connection lost: ", $db_state, "\n";
