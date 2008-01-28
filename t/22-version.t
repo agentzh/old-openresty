@@ -12,5 +12,5 @@ __DATA__
 --- request
 GET /=/version
 --- response_like
-^"OpenAPI \d+\.\d+\.\d+ \(revision \d+\) with the (?:Pg|PgFarm) (?:\([-\w]+\) )?backend\.\\nCopyright \(c\) 2007-2008 Yahoo! China EEEE\\n"$
+^"Yahoo! EEEE OpenAPI \d+\.\d+\.\d+ \(revision \d+\) with the (?:Pg|PgFarm) (?:\([-\w]+\) )?backend\.\\nCopyright \(c\) 2007-2008 by Yahoo! China EEEE works\.\\n"$
 
