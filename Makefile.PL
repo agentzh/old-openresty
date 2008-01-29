@@ -8,37 +8,69 @@ author              ('Agent Zhang <agentzh@yahoo.cn>');
 perl_version        ('5.006001');
 all_from            ('lib/OpenAPI.pm');
 
-requires            ('FCGI');
-requires            ('CGI::Simple' => '1.103');
-requires            ('YAML::Syck' => '1.00');
-requires            ('List::Util');
-requires            ('DBI' => '1.57');
-requires            ('Clone' => '0.22');
-requires            ('Params::Util' => '0.22');
-requires            ('Parse::Yapp');
-requires            ('DBD::Pg' => '1.49');
-requires            ('Term::ReadKey' => '2.30');
-requires            ('Data::UUID' => '1.148');
-requires            ('GD::SecurityImage' => '1.64');
-requires            ('Cache::Memcached::Fast' => '0.06');
-requires            ('Hash::Merge'),
-requires            ('Config::Simple'),
+my $arg = shift || 'devel';
+if ($arg eq 'product') {
+    requires            ('FCGI');
+    requires            ('CGI::Simple' => '1.103');
+    requires            ('YAML::Syck' => '1.00');
+    requires            ('List::Util');
+    requires            ('DBI' => '1.57');
+    requires            ('Clone' => '0.22');
+    requires            ('Params::Util' => '0.22');
+    requires            ('Parse::Yapp');
+    requires            ('DBD::Pg' => '1.49');
+    requires            ('Term::ReadKey' => '2.30');
+    requires            ('Data::UUID' => '1.148');
+    requires            ('GD::SecurityImage' => '1.64');
+    requires            ('Cache::Memcached::Fast' => '0.06');
+    requires            ('Hash::Merge');
+    requires            ('Config::Simple');
 
-features(
-    'Test suite' => [
-        -default => 0,
-        recommends    ('CGI' => '3.33'),
-        recommends    ('Cache::Cache' => '1.05'),
-        recommends    ('Smart::Comments'),
-        recommends    ('Class::Prototyped'),
-        recommends    ('Test::LongString' => 0.11),
-        recommends    ('Test::Base' => 0.54),
-        recommends    ('Test::More' => 0.74),
-        recommends    ('LWP::UserAgent'),
-        recommends    ('Benchmark::Timer'),
-        recommends    ('HTTP::Server::Simple' => '0.27'),
-    ]
-);
+    features(
+        'Test suite' => [
+            -default => 0,
+                recommends    ('CGI' => '3.33'),
+                recommends    ('Cache::Cache' => '1.05'),
+                recommends    ('Smart::Comments'),
+                recommends    ('Class::Prototyped'),
+                recommends    ('Test::LongString' => 0.11),
+                recommends    ('Test::Base' => 0.54),
+                recommends    ('Test::More' => 0.74),
+                recommends    ('LWP::UserAgent'),
+                recommends    ('Benchmark::Timer'),
+                recommends    ('HTTP::Server::Simple' => '0.27'),
+        ]
+    );
+} elsif ($arg eq 'devel') {
+    requires            ('FCGI');
+    requires            ('CGI::Simple' => '1.103');
+    requires            ('YAML::Syck' => '1.00');
+    requires            ('List::Util');
+    requires            ('DBI' => '1.57');
+    requires            ('Clone' => '0.22');
+    requires            ('Params::Util' => '0.22');
+    requires            ('Parse::Yapp');
+    requires            ('DBD::Pg' => '1.49');
+    requires            ('Term::ReadKey' => '2.30');
+    requires            ('Data::UUID' => '1.148');
+    requires            ('GD::SecurityImage' => '1.64');
+    requires            ('Hash::Merge');
+    requires            ('Config::Simple');
+
+    build_requires      ('CGI' => '3.33');
+    build_requires      ('Class::Prototyped');
+    build_requires      ('Test::More' => 0.74);
+    build_requires      ('Test::LongString' => 0.11);
+    build_requires      ('LWP::UserAgent');
+    recommends          ('Cache::FastMmap' => '1.24');
+    recommends          ('Benchmark::Timer');
+    recommends          ('Cache::Cache' => '1.05');
+    recommends          ('Smart::Comments');
+    recommends          ('Test::Base' => 0.54);
+    recommends          ('HTTP::Server::Simple' => '0.27');
+} else {
+    die "Unknown Makefile.PL argument: \"$arg\"\n";
+}
 
 auto_install();
 
