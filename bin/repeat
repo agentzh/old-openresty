@@ -1,0 +1,13 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use File::Slurp;
+
+my $infile = shift or die "No input .t file specified.\n";
+my $code = read_file($infile) ;
+$code =~ s/\brun_tests\b/while (1) { run_tests; warn "\n====== PID: $$\n"; }/s;
+mkdir 'tmp' if !-d 'tmp';
+write_file("tmp/tmp.t", $code);
+system('prove', 'tmp/tmp.t');
+
