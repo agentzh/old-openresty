@@ -8,12 +8,6 @@ author              ('Agent Zhang <agentzh@yahoo.cn>');
 perl_version        ('5.006001');
 all_from            ('lib/OpenAPI.pm');
 
-cc_inc_paths    '.';
-#cc_files        (glob("*.c"), (-e 'Syck.c' ? () : 'Syck.c'));
-cc_optimize_flags '-g3';
-can_cc or die "This module requires a C compiler";
-
-requires            ('perl' => '5.008001');
 requires            ('FCGI');
 requires            ('CGI::Simple' => '1.103');
 requires            ('YAML::Syck' => '1.00');
