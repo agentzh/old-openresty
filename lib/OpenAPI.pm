@@ -263,8 +263,10 @@ sub fatal {
 
 sub error {
     my ($self, $s) = @_;
+    if (!$OpenAPI::Config{'frontend.debug'} && $s =~ /^DBD::Pg::(?:db|st) \w+ failed:/) {
+        $s = 'Operation failed.';
+    }
     $s =~ s/^Syck parser \(line (\d+), column (\d+)\): syntax error at .+/Syntax error found in the JSON input: line $1, column $2./;
-    $s =~ s/^DBD::Pg::st execute failed:\s+ERROR:\s+//;
     #$s =~ s/^DBD::Pg::db do failed:\s.*?ERROR:\s+//;
     $self->{_error} .= $s . "\n";
 

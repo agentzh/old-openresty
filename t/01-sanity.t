@@ -2,7 +2,7 @@
 
 use t::OpenAPI;
 
-plan tests => 3 * blocks();
+plan tests => 3 * blocks() - 3 * 2;
 
 run_tests;
 
@@ -338,4 +338,52 @@ PUT /=/model/MyFavorites/title
 GET /=/model.js
 --- response
 [{"src":"/=/model/MyFavorites","name":"MyFavorites","description":"我的最爱"}]
+
+
+
+=== TEST 36: Check the new column
+--- request
+GET /=/model/MyFavorites/count
+--- response
+{"name":"count","default":null,"label":"标题","type":"text"}
+
+
+
+=== TEST 37: Change the name and type of title to incompactible types
+--- debug: 1
+--- request
+PUT /=/model/MyFavorites/count
+{ name: "count", type: "real" }
+--- response_like
+^{"success":0,"error":"DBD::Pg::db (?:do|selectall_arrayref) failed:.*
+
+
+
+=== TEST 38: Change the name and type of title to incompactible types
+--- debug: 0
+--- request
+PUT /=/model/MyFavorites/count
+{ name: "count", type: "real" }
+--- response
+{"success":0,"error":"Operation failed."}
+
+
+
+=== TEST 39: Change the name and type of title to incompactible types
+--- debug: 1
+--- request
+PUT /=/model/MyFavorites/count
+{ type: "real" }
+--- response_like
+^{"success":0,"error":"DBD::Pg::db (?:do|selectall_arrayref) failed:.*
+
+
+
+=== TEST 40: Change the name and type of title to incompactible types
+--- debug: 0
+--- request
+PUT /=/model/MyFavorites/count
+{ type: "real" }
+--- response
+{"success":0,"error":"Operation failed."}
 
