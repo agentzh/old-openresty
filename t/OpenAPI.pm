@@ -26,7 +26,8 @@ use Benchmark::Timer;
 my $timer = Benchmark::Timer->new();
 my $SavedCapture;
 
-our $server = $OpenAPI::Config{'test_suite.server'} or
+our $server = $ENV{'OPENAPI_TEST_SERVER'} ||
+    $OpenAPI::Config{'test_suite.server'} or
     die "No server specified.\n";
 our ($user, $password, $host);
 if ($server =~ /^(\w+):(\S+)\@(\S+)$/) {
