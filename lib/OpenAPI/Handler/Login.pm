@@ -89,7 +89,9 @@ sub login {
             die "Captcha image never used.\n";
         }
         # XXX for testing purpose...
-        if ($OpenAPI::Config{'frontend.debug'} && $account eq 'peee' && $role eq 'Poster') {
+        ### Account:  $account;
+        my $server = $ENV{OPENAPI_TEST_SERVER} || $OpenAPI::Config{'test_suite.server'};
+        if ($OpenAPI::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
             if ($true_sol =~ /[a-z]/) {
                 $true_sol = 'hello world ';
             } else {
