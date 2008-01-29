@@ -2,7 +2,7 @@ use strict;
 use lib '.';
 use inc::Module::Install;
 
-name                ('Cookie');
+name                ('OpenAPI');
 license             ('perl');
 author              ('Agent Zhang <agentzh@yahoo.cn>');
 perl_version        ('5.006001');
@@ -34,8 +34,6 @@ if ($arg eq 'product') {
                 recommends    ('Smart::Comments'),
                 recommends    ('Class::Prototyped'),
                 recommends    ('Test::LongString' => 0.11),
-                recommends    ('Test::Base' => 0.54),
-                recommends    ('Test::More' => 0.74),
                 recommends    ('LWP::UserAgent'),
                 recommends    ('Benchmark::Timer'),
                 recommends    ('HTTP::Server::Simple' => '0.27'),
@@ -59,19 +57,19 @@ if ($arg eq 'product') {
 
     build_requires      ('CGI' => '3.33');
     build_requires      ('Class::Prototyped');
-    build_requires      ('Test::More' => 0.74);
     build_requires      ('Test::LongString' => 0.11);
     build_requires      ('LWP::UserAgent');
     recommends          ('Cache::FastMmap' => '1.24');
     recommends          ('Benchmark::Timer');
     recommends          ('Cache::Cache' => '1.05');
     recommends          ('Smart::Comments');
-    recommends          ('Test::Base' => 0.54);
     recommends          ('HTTP::Server::Simple' => '0.27');
 } else {
     die "Unknown Makefile.PL argument: \"$arg\"\n";
 }
 
+install_script('bin/openapi.pl');
+use_test_base();
 auto_install();
 
 # XXX This is not Windows friendly...
