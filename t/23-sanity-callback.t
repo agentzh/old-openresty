@@ -10,9 +10,9 @@ __DATA__
 
 === TEST 1: Login w/o password
 --- request
-GET /=/login/peee.Admin?callback=foo
+GET /=/login/$TestAccount.Admin?callback=foo
 --- response
-foo({"success":0,"error":"Password for peee.Admin is required."});
+foo({"success":0,"error":"Password for $TestAccount.Admin is required."});
 
 
 
@@ -26,9 +26,9 @@ foo({"success":0,"error":"Login required."});
 
 === TEST 3: Login with password
 --- request
-GET /=/login/peee.Admin/4423037?callback=foo&use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?callback=foo&use_cookie=1
 --- response_like
-^foo\({"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}\);$
+^foo\({"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}\);$
 
 
 

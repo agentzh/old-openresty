@@ -10,9 +10,9 @@ __DATA__
 
 === TEST 1: Login w/o password
 --- request
-GET /=/login/peee.Admin
+GET /=/login/$TestAccount.Admin
 --- response
-{"success":0,"error":"Password for peee.Admin is required."}
+{"success":0,"error":"Password for $TestAccount.Admin is required."}
 
 
 
@@ -26,9 +26,9 @@ DELETE /=/model.js
 
 === TEST 3: Login with password but w/o cookie
 --- request
-GET /=/login/peee.Admin/4423037
+GET /=/login/$TestAccount.Admin/$TestPass
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
 
 
 
@@ -42,9 +42,9 @@ DELETE /=/model.js
 
 === TEST 5: Login with password and cookie
 --- request
-GET /=/login/peee.Admin/4423037?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
 
 
 

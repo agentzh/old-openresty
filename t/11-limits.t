@@ -4,11 +4,10 @@ use lib 'lib';
 use JSON::Syck 'Dump';
 use OpenAPI::Limits;
 use t::OpenAPI;
-use OpenAPI::Config;
 
 my $host = $t::OpenAPI::host;
 my $client = $t::OpenAPI::client;
-my $res = $client->delete('/=/model?user=peee&password=4423037&use_cookie=1');
+my $res = $client->delete("/=/model?user=$t::OpenAPI::user\&password=$t::OpenAPI::password\&use_cookie=1");
 ok $res->is_success, 'response OK';
 
 for (1..$MODEL_LIMIT + 1) {
