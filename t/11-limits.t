@@ -4,12 +4,10 @@ use lib 'lib';
 use JSON::Syck 'Dump';
 use OpenAPI::Limits;
 use t::OpenAPI;
-use WWW::OpenAPI;
 use OpenAPI::Config;
 
-OpenAPI::Config->init;
 my $host = $t::OpenAPI::host;
-my $client = WWW::OpenAPI->new( { server => $host } );
+my $client = $t::OpenAPI::client;
 my $res = $client->delete('/=/model?user=peee&password=4423037&use_cookie=1');
 ok $res->is_success, 'response OK';
 
