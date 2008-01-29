@@ -19,7 +19,6 @@ if ($arg eq 'product') {
     requires            ('Params::Util' => '0.22');
     requires            ('Parse::Yapp');
     requires            ('DBD::Pg' => '1.49');
-    requires            ('Term::ReadKey' => '2.30');
     requires            ('Data::UUID' => '1.148');
     requires            ('GD::SecurityImage' => '1.64');
     requires            ('Cache::Memcached::Fast' => '0.06');
@@ -29,6 +28,7 @@ if ($arg eq 'product') {
     features(
         'Test suite' => [
             -default => 0,
+                recommends    ('Term::ReadKey' => '2.30');
                 recommends    ('CGI' => '3.33'),
                 recommends    ('Cache::Cache' => '1.05'),
                 recommends    ('Smart::Comments'),
