@@ -1,4 +1,4 @@
 #!/bin/bash
 
-egrep -v ' t::|WWW::OpenAPI|::BEGIN|Test::|CGI::Cookie|CGI::Util'
+egrep -v ' t::|WWW::OpenAPI|::BEGIN|Test::|CGI::Cookie|CGI::Util|Spiffy'
 

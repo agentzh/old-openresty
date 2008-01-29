@@ -1,11 +1,17 @@
 use strict;
-use inc::Module::Install '0.46';
+use lib '.';
+use inc::Module::Install;
 
-name                ('OpenAPI');
+name                ('Cookie');
 license             ('perl');
 author              ('Agent Zhang <agentzh@yahoo.cn>');
 perl_version        ('5.006001');
 all_from            ('lib/OpenAPI.pm');
+
+cc_inc_paths    '.';
+#cc_files        (glob("*.c"), (-e 'Syck.c' ? () : 'Syck.c'));
+cc_optimize_flags '-g3';
+can_cc or die "This module requires a C compiler";
 
 requires            ('perl' => '5.008001');
 requires            ('FCGI');
