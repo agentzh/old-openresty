@@ -28,7 +28,7 @@ if ($arg eq 'product') {
     features(
         'Test suite' => [
             -default => 0,
-                recommends    ('Term::ReadKey' => '2.30');
+                recommends    ('Term::ReadKey' => '2.30'),
                 recommends    ('CGI' => '3.33'),
                 recommends    ('Cache::Cache' => '1.05'),
                 recommends    ('Smart::Comments'),
@@ -70,6 +70,8 @@ if ($arg eq 'product') {
 
 install_script('bin/openapi.pl');
 use_test_base();
+no_index( directory => qw< etc tmp > );
+
 auto_install();
 
 # XXX This is not Windows friendly...
