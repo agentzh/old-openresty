@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 #use Smart::Comments;
-use OpenAPI::Cookie;
+use Cookie::Parser;
 use Data::UUID;
 use OpenAPI::Limits;
 use OpenAPI::Cache;
@@ -113,7 +113,7 @@ sub process_request {
     ### $http_meth
 
     # XXX hacks...
-    my $cookies = OpenAPI::Cookie->fetch;
+    my $cookies = Cookie::Parser->fetch;
     my ($session_from_cookie, $captcha_from_cookie, $response_from_cookie);
     my $session;
     if ($cookies) {

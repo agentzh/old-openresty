@@ -1,6 +1,6 @@
 define CMDS
     -perl bin/revision.pl
-    perl -c bin/openapi.pl
+    -perl -Iblib -c bin/openapi.pl
     -sudo killall lighttpd
     sudo /etc/init.d/lighttpd restart
     rm  -f t/cur-timer.dat
