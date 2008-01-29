@@ -10,17 +10,17 @@ __DATA__
 
 === TEST 1: login (w/o password)
 --- request
-GET /=/login/peee.Admin
+GET /=/login/$TestAccount.Admin
 --- response
-{"success":0,"error":"Password for peee.Admin is required."}
+{"success":0,"error":"Password for $TestAccount.Admin is required."}
 
 
 
 === TEST 2: login
 --- request
-GET /=/login/peee.Admin/4423037?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
 
 
 
@@ -254,9 +254,9 @@ GET /=/login/.Public
 
 === TEST 25: Switch to the Public role
 --- request
-GET /=/login/peee.Public?use_cookie=1
+GET /=/login/$TestAccount.Public?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Public"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Public"}$
 
 
 
@@ -468,9 +468,9 @@ POST /=/view/MyView
 
 === TEST 50: Switch back to the Admin role
 --- request
-GET /=/login/peee.Admin/4423037?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
 
 
 
@@ -487,7 +487,7 @@ GET /=/model/A/~/~
 POST /=/role/Poster
 {
     login: "password",
-    password: "4423037"
+    password: "$TestPass"
 }
 --- response
 {"success":0,"error":"Field 'description' is missing."}
@@ -621,17 +621,17 @@ GET /=/role/Poster/~/~
 
 === TEST 64: Log into the new role
 --- request
-GET /=/login/peee.Poster
+GET /=/login/$TestAccount.Poster
 --- response
-{"success":0,"error":"Password for peee.Poster is required."}
+{"success":0,"error":"Password for $TestAccount.Poster is required."}
 
 
 
 === TEST 65: Log into the new role
 --- request
-GET /=/login/peee.Poster/4417935?use_cookie=1
+GET /=/login/$TestAccount.Poster/4417935?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Poster"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Poster"}$
 
 
 
@@ -682,9 +682,9 @@ DELETE /=/role/Poster
 
 === TEST 71: Switch back to the Amin role
 --- request
-GET /=/login/peee.Admin/4423037?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
 
 
 
@@ -1048,17 +1048,17 @@ PUT /=/role/Newname
 
 === TEST 104: login with the new role
 --- request
-GET /=/login/peee.Newname/123456789
+GET /=/login/$TestAccount.Newname/123456789
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Newname"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Newname"}$
 
 
 
 === TEST 105: Switch back to the Amin role
 --- request
-GET /=/login/peee.Admin/4423037?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
 
 
 
@@ -1232,17 +1232,17 @@ PUT /=/role/Poster
 
 === TEST 120: login with the new password
 --- request
-GET /=/login/peee.Poster/123456789
+GET /=/login/$TestAccount.Poster/123456789
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Poster"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Poster"}$
 
 
 
 === TEST 121: Switch back to the Amin role
 --- request
-GET /=/login/peee.Admin/4423037?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
 
 
 
@@ -1259,17 +1259,17 @@ PUT /=/role/Poster
 
 === TEST 123: login with the new password
 --- request
-GET /=/login/peee.Poster/789456213
+GET /=/login/$TestAccount.Poster/789456213
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Poster"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Poster"}$
 
 
 
 === TEST 124: Switch back to the Amin role
 --- request
-GET /=/login/peee.Admin/4423037?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
 
 
 
@@ -1366,17 +1366,17 @@ PUT /=/role/Poster
 
 === TEST 133: login with the new password
 --- request
-GET /=/login/peee.Poster/shangerdi
+GET /=/login/$TestAccount.Poster/shangerdi
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Poster"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Poster"}$
 
 
 
 === TEST 134: Switch back to the Amin role
 --- request
-GET /=/login/peee.Admin/4423037?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
 
 
 
@@ -1437,17 +1437,17 @@ PUT /=/role/Poster
 
 === TEST 140: login with the new password
 --- request
-GET /=/login/peee.Poster/SHANG1984_shangerdi_1984_shang_er_di_19841984
+GET /=/login/$TestAccount.Poster/SHANG1984_shangerdi_1984_shang_er_di_19841984
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Poster"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Poster"}$
 
 
 
 === TEST 141: Switch back to the Amin role
 --- request
-GET /=/login/peee.Admin/4423037?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
 
 
 

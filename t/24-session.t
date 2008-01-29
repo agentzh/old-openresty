@@ -10,9 +10,9 @@ __DATA__
 
 === TEST 1: Login w/o cookie
 --- request
-GET /=/login/peee.Admin/4423037
+GET /=/login/$TestAccount.Admin/$TestPass
 --- response_like
-^{"success":1,"session":"([-\w]+)","account":"peee","role":"Admin"}$
+^{"success":1,"session":"([-\w]+)","account":"$TestAccount","role":"Admin"}$
 
 
 
@@ -34,9 +34,9 @@ DELETE /=/model.js?session=$SavedCapture
 
 === TEST 4: Login w/o cookie(obvious)
 --- request
-GET /=/login/peee.Admin/4423037?use_cookie=0
+GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=0
 --- response_like
-^{"success":1,"session":"([-\w]+)","account":"peee","role":"Admin"}$
+^{"success":1,"session":"([-\w]+)","account":"$TestAccount","role":"Admin"}$
 
 
 
@@ -58,9 +58,9 @@ DELETE /=/model.js?session=$SavedCapture
 
 === TEST 7: Login with cookie
 --- request
-GET /=/login/peee.Admin/4423037?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"([-\w]+)","account":"peee","role":"Admin"}$
+^{"success":1,"session":"([-\w]+)","account":"$TestAccount","role":"Admin"}$
 
 
 
@@ -98,9 +98,9 @@ DELETE /=/model.js
 
 === TEST 12: Login with cookie
 --- request
-GET /=/login/peee.Admin/4423037?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"([-\w]+)","account":"peee","role":"Admin"}$
+^{"success":1,"session":"([-\w]+)","account":"$TestAccount","role":"Admin"}$
 
 
 
@@ -130,9 +130,9 @@ DELETE /=/model.js?session=$SavedCapture
 
 === TEST 16: Login w/o cookie(obvious)
 --- request
-GET /=/login/peee.Admin/4423037?use_cookie=0
+GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=0
 --- response_like
-^{"success":1,"session":"([-\w]+)","account":"peee","role":"Admin"}$
+^{"success":1,"session":"([-\w]+)","account":"$TestAccount","role":"Admin"}$
 
 
 

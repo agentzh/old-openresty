@@ -80,7 +80,7 @@ GET /=/captcha/id/$SavedCapture.jpeg?lang=fr
 
 === TEST 9: Login via captcha (invalid format, id only)
 --- request
-GET /=/model?user=peee.Admin&captcha=$SavedCapture
+GET /=/model?user=$TestAccount.Admin&captcha=$SavedCapture
 --- response_like
 {"success":0,"error":"Bad captcha parameter: \w+(?:-\w+)+"}
 
@@ -88,17 +88,17 @@ GET /=/model?user=peee.Admin&captcha=$SavedCapture
 
 === TEST 10: Login via captcha (invalid format, id only)
 --- request
-GET /=/model?user=peee.Admin&captcha=$SavedCapture:abc
+GET /=/model?user=$TestAccount.Admin&captcha=$SavedCapture:abc
 --- response_like
-{"success":0,"error":"Cannot login as peee.Admin via captchas."}
+{"success":0,"error":"Cannot login as $TestAccount.Admin via captchas."}
 
 
 
 === TEST 11: Login as Admin
 --- request
-GET /=/login/peee.Admin/4423037?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"peee","role":"Admin"}$
+^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
 
 
 
@@ -146,7 +146,7 @@ GET /=/captcha/id
 
 === TEST 17: Login via captcha (not get the image yet)
 --- request
-GET /=/model?user=peee.Poster&captcha=$SavedCapture:abc
+GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:abc
 --- response
 {"success":0,"error":"Captcha image never used."}
 
@@ -154,7 +154,7 @@ GET /=/model?user=peee.Poster&captcha=$SavedCapture:abc
 
 === TEST 18: Login via captcha (the second time)
 --- request
-GET /=/model?user=peee.Poster&captcha=$SavedCapture:abc
+GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:abc
 --- response
 {"success":0,"error":"Capture ID is bad or expired."}
 
@@ -194,7 +194,7 @@ GET /=/model
 
 === TEST 23: Use the old to try login
 --- request
-GET /=/model?user=peee.Poster&captcha=$SavedCapture:efg
+GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:efg
 --- response
 {"success":0,"error":"Captcha image never used."}
 
@@ -218,7 +218,7 @@ GET /=/captcha/id
 
 === TEST 26: Use the old ID to try login
 --- request
-GET /=/model?user=peee.Poster&captcha=$SavedCapture:efg
+GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:efg
 --- response
 {"success":0,"error":"Capture ID is bad or expired."}
 
@@ -252,7 +252,7 @@ GET /=/captcha/id/$SavedCapture
 
 === TEST 30: Use captcha to login
 --- request
-GET /=/model?user=peee.Poster&captcha=$SavedCapture:helloworld
+GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
 --- response
 []
 
@@ -260,7 +260,7 @@ GET /=/model?user=peee.Poster&captcha=$SavedCapture:helloworld
 
 === TEST 31: Use captcha to login
 --- request
-GET /=/model?user=peee.Poster&captcha=$SavedCapture:helloworld
+GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
 --- response
 {"success":0,"error":"Capture ID is bad or expired."}
 
@@ -276,7 +276,7 @@ GET /=/captcha/id/$SavedCapture
 
 === TEST 33: Use captcha to login
 --- request
-GET /=/model?user=peee.Poster&captcha=$SavedCapture:helloworld
+GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
 --- response
 {"success":0,"error":"Capture ID is bad or expired."}
 
@@ -301,7 +301,7 @@ GET /=/captcha/id/$SavedCapture?lang=en
 
 === TEST 36: Use captcha to login (wrong password)
 --- request
-GET /=/model?user=peee.Poster&captcha=$SavedCapture:helloworldd
+GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworldd
 --- response
 {"success":0,"error":"Solution to the captcha is incorrect."}
 
@@ -326,7 +326,7 @@ GET /=/captcha/id/$SavedCapture?lang=cn
 
 === TEST 39: Use captcha to login
 --- request
-GET /=/model?user=peee.Poster&captcha=$SavedCapture:你好，世界！
+GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:你好，世界！
 --- response
 []
 
@@ -351,7 +351,7 @@ GET /=/captcha/id/$SavedCapture?lang=cn
 
 === TEST 42: Use captcha to login (wrong solution)
 --- request
-GET /=/model?user=peee.Poster&captcha=$SavedCapture:你好，世界啊！
+GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:你好，世界啊！
 --- response
 {"success":0,"error":"Solution to the captcha is incorrect."}
 

@@ -26,7 +26,15 @@ use Benchmark::Timer;
 my $timer = Benchmark::Timer->new();
 my $SavedCapture;
 
-our $host = $OpenAPI::Config{'test_suite.server'} || 'http://localhost';
+our $server = $OpenAPI::Config{'test_suite.server'} or
+    die "No server specified.\n";
+our ($user, $password, $host);
+if ($server =~ /^(\w+):(\S+)\@(\S+)$/) {
+    ($user, $password, $host) = ($1, $2, $3);
+} else {
+    die "test_suite.server syntax error in conf file: $server\n";
+}
+
 $host = "http://$host" if $host !~ m{^http://};
 
 our $client = $client_module->new({ server => $host, timer => $timer });
@@ -51,6 +59,8 @@ sub run_test ($) {
     my $format = $block->format || 'JSON';
     my $res_type = $block->res_type;
     my $type = $block->request_type;
+    $request =~ s/\$TestAccount\b/$user/g;
+    $request =~ s/\$TestPass\b/$password/g;
     if ($request =~ /^(GET|POST|HEAD|PUT|DELETE)\s+([^\n]+)\s*\n(.*)/s) {
         my ($method, $url, $body) = ($1, $2, $3);
         $url =~ s/\$SavedCapture\b/$SavedCapture/g;
@@ -66,6 +76,8 @@ sub run_test ($) {
         my $res = $client->request($body, $method, $url);
         ok $res->is_success, "request returns OK - $name";
         my $expected_res = $block->response || $block->response_like;
+        $expected_res =~ s/\$TestAccount\b/$user/g;
+        $expected_res =~ s/\$TestPass\b/$password/g;
         if ($format eq 'JSON' and $expected_res) {
             $expected_res =~ s/\n[ \t]*([^\n\s])/$1/sg;
         }

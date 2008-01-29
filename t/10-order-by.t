@@ -10,7 +10,7 @@ __DATA__
 
 === TEST 1: Clear the environment
 --- request
-DELETE /=/model?user=peee&password=4423037&use_cookie=1
+DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
 --- response
 {"success":1}
 
