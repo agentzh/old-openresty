@@ -31,7 +31,7 @@ OpenAPI.Client.prototype.login = function (user, password) {
     this.get('/=/login/' + user + '/' + password);
 };
 
-OpenAPI.Client.prototype.post_by_get = function (content, url, args) {
+OpenAPI.Client.prototype.postByGet = function (content, url, args) {
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/post/');
     if (typeof(content) == 'object') {
@@ -92,7 +92,7 @@ OpenAPI.Client.prototype.post = function (content, url, args) {
     //
 };
 
-OpenAPI.Client.prototype.put_by_get = function (content, url, args) {
+OpenAPI.Client.prototype.putByGet = function (content, url, args) {
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/put/');
     content = JSON.stringify(content);
