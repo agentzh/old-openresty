@@ -128,7 +128,7 @@ begin
   if captcha is not null then
 
     if captcha !~ E'\\S+:\\S+' then
-      raise exception 'invalid captcha %', captcha;
+      raise exception 'Bad captcha parameter: %', captcha;
     end if;
     execute 'select name from _roles where name = '''||role||''' and login = ''captcha''' into u;
     if u is null then
