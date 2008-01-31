@@ -121,26 +121,26 @@ sub login {
 
       $retval = $self->do(<<"_EOC_");
 create or replace function login("user" text, 
-  captcha text, pass text) returns integer as @@
+  captcha text, pass text) returns integer as \$\$
 declare
   account text;
   role text;
   u text;
 begin
   account = split_part("user", '.', 1);
-  if account !~ '\\w+' then 
+  if account !~ E'\\w+' then 
     raise exception 'invalid account name %', account;
   end if;
   role = split_part("user", '.', 1);
-  if role !~ '\\w+' then 
+  if role !~ E'\\w+' then 
     role = 'Admin';
   end if;
   execute 'select nspname from pg_namespace where nspname = '||account||' limit 1' into u; 
   if u is null then
-    raise exception 'account % does not existi', account;
+    raise exception 'account % does not exist', account;
   end if;
   execute 'set search_path to public, account';
-  if captcha !~ '\\S+:\\S+' then
+  if captcha !~ E'\\S+:\\S+' then
     raise exception 'invalid captcha %', captcha;
   end if;
   execute 'select name from _roles where name = '||role||' and login = ''captcha''' into u;
@@ -156,7 +156,7 @@ begin
     raise exception 'Cannot login as %.% via anonymous.', account , role;
   end if;
 end;
-@@ language plpgsql;
+\$\$ language plpgsql;
 select login($user, $role, $captcha, $pass);
 _EOC_
     };
