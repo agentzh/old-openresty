@@ -131,7 +131,7 @@ sub login {
     $captcha = $self->quote($captcha);
     $pass = $self->quote($pass);
 
-    my $sql = "select login($account, $role, $captcha, $pass)";
+    my $sql = "select * from public.login($account, $role, $captcha, $pass)";
     $retval = $self->do($sql);
 }
 
