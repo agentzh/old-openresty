@@ -127,7 +127,7 @@ begin
   execute 'set search_path to '$account'';
   if captcha is not null then
 
-    if captcha !~ E'\\S+:\\S+' then
+    if captcha !~ E'\\S:\\S' then
       raise exception 'Bad captcha parameter: %', captcha;
     end if;
     execute 'select name from _roles where name = '''||role||''' and login = ''captcha''' into u;
