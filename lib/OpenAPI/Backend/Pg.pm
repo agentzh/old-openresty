@@ -120,7 +120,7 @@ sub login {
 
     $retval = $self->do(<<"_EOC_");
 create or replace function login(account text, role text,
-  captcha text, pass text) returns integer as \$\$
+  captcha text, pass text) as \$\$
 declare
   u text;
 begin
