@@ -59,13 +59,8 @@ sub login_by_sql {
 
     ### True sol: $true_sol
     $self->set_user($account);
-    eval {
-        $Backend->login($account, $role, $captcha, $password);
-    };
-    if ($@) {
-        (my $error = $@) =~ s/^DBD::Pg::db do failed: ERROR:  //g;
-        die $error;
-    }
+    $Backend->login($account, $role, $captcha, $password);
+
     if (defined $captcha) {
         my ($id, $user_sol) = split /:/, $captcha, 2;
         ### Captcha ID: $id
