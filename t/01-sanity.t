@@ -39,7 +39,6 @@ DELETE /=/model.js
 {"success":0,"error":"Login required."}
 
 
-
 === TEST 5: Login with password and cookie
 --- request
 GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1

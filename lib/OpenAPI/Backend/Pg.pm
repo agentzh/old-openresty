@@ -110,57 +110,44 @@ _EOC_
 }
 
 sub login {
-    my ($self, $user, $role, $captcha, $pass) = @_;
+    my ($self, $account, $role, $captcha, $pass) = @_;
     my $retval;
-    
+
+    $account = $self->quote($account);
+    $role = $self->quote($role);
+    $captcha = $self->quote($captcha);
+    $pass = $self->quote($pass);
+
     eval {
-      $user = $self->quote($user);
-      $role = $self->quote($role);
-      $captcha = $self->quote($captcha);
-      $pass = $self->quote($pass);
 
       $retval = $self->do(<<"_EOC_");
-create or replace function login("user" text, 
+create or replace function login(account text, role text,
   captcha text, pass text) returns integer as \$\$
 declare
-  account text;
-  role text;
   u text;
 begin
-  account = split_part("user", '.', 1);
-  if account !~ E'\\w+' then 
-    raise exception 'invalid account name %', account;
-  end if;
-  role = split_part("user", '.', 1);
-  if role !~ E'\\w+' then 
-    role = 'Admin';
-  end if;
-  execute 'select nspname from pg_namespace where nspname = '||account||' limit 1' into u; 
-  if u is null then
-    raise exception 'account % does not exist', account;
-  end if;
-  execute 'set search_path to public, account';
+  execute 'set search_path to '$account'';
   if captcha !~ E'\\S+:\\S+' then
     raise exception 'invalid captcha %', captcha;
   end if;
-  execute 'select name from _roles where name = '||role||' and login = ''captcha''' into u;
+  execute 'select name from _roles where name = '''||role||''' and login = ''captcha''' into u;
   if u is null then
     raise exception 'Cannot login as %.% via captchas.', account , role;
   end if;
-  execute 'select name from _roles where name = '||role||' and login = ''password''' and password = '||pass||' into u;
+  execute 'select name from _roles where name = '''||role||''' and login = ''password''' and password = '||pass||' into u;
   if u is null then
     raise exception 'Cannot login as %.% via password.', account , role;
   end if;
-  execute 'select name from _roles where name = '||role||' and login = ''anonymous''' into u;
+  execute 'select name from _roles where name = '''||role||''' and login = ''anonymous''' into u;
   if u is null then
     raise exception 'Cannot login as %.% via anonymous.', account , role;
   end if;
 end;
 \$\$ language plpgsql;
-select login($user, $role, $captcha, $pass);
+select login($account, $role, $captcha, $pass);
 _EOC_
     };
-    if ($@) { die $@; }
+    if ($@) { warn $@; die $@; }
 }
 
 
