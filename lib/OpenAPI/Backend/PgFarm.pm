@@ -30,7 +30,7 @@ sub new {
         "dbi:Pg:dbname=proxy host=$Host".
             ($Port ? ";port=$Port" : ""),
         $User, $Password,
-        {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts}
+        {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts, PrintError => 0}
     );
     return bless {
         dbh => $dbh
@@ -60,7 +60,7 @@ sub select {
 
 sub do {
     my ($self, $sql) = @_;
-    $sql=$self->quote($sql);
+    $sql = $self->quote($sql);
     my $sql_cmd = "select xdo('$self->{user}', $sql)";
     my $res = $self->{dbh}->selectall_arrayref($sql_cmd);
     ### $res
@@ -132,7 +132,15 @@ sub login {
     $pass = $self->quote($pass);
 
     my $sql = "select * from public.login($account, $role, $captcha, $pass)";
-    $retval = $self->do($sql);
+    #warn $sql;
+    eval {
+        $self->do($sql);
+    };
+    if ($@) {
+        (my $error = $@) =~ s/^\QDBD::Pg::db selectall_arrayref failed: ERROR:  PL\/Proxy function public.xdo(2): libpq error in weird result: ERROR:  \E//;
+        $error =~ s/\nCONTEXT.*//s;
+        die "$error\n";
+    }
 }
 
 1;

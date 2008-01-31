@@ -7,6 +7,9 @@ use vars qw($Cache $UUID $Dumper $Backend);
 use CGI::Simple::Cookie;
 use Encode 'is_utf8';
 
+#*login = \&login_by_sql;
+*login = \&login_by_perl;
+
 sub GET_login_user {
     my ($self, $bits) = @_;
     my $user = $bits->[1];
@@ -29,7 +32,7 @@ sub trim_sol {
     $s;
 }
 
-sub login {
+sub login_by_sql {
     my ($self, $user, $params) = @_;
     _STRING($user) or die "Bad user name: ", $Dumper->($user), "\n";
     $params ||= {};
@@ -55,6 +58,7 @@ sub login {
     }
 
     ### True sol: $true_sol
+    $self->set_user($account);
     eval {
         $Backend->login($account, $role, $captcha, $password);
     };
@@ -116,7 +120,7 @@ sub login {
     };
 }
 
-sub login2 {
+sub login_by_perl {
     my ($self, $user, $params) = @_;
     _STRING($user) or die "Bad user name: ", $Dumper->($user), "\n";
     $params ||= {};
