@@ -72,8 +72,9 @@ OpenAPI.Client.prototype.post = function (content, url, args) {
         form: document.getElementById(formId),
         url: this.server + url,
         content: { data: content },
-        preventCache: false,
-        handleAs: 'text/plain',
+        preventCache: true,
+        method: "post",
+        handleAs: 'html',
         handle: function () {
             //alert("Getting last response!");
             self.get('/=/last/response');
