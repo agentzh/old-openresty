@@ -140,7 +140,7 @@ begin
   
     execute 'select name from _roles where name = '''||role||''' and login = ''password''' and password = '''||pass||''' into u;
     if u is null then
-      raise exception 'Cannot login as %.% via password.', account , role;
+      raise exception 'Password for %.% is incorrect.', account , role;
     end if;
   else 
 
