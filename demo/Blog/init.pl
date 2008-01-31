@@ -29,7 +29,7 @@ $openapi->post({
         { name => 'email', label => 'Sender email address' },
         { name => 'body', label => 'Comment body' },
         { name => 'created', default => ['now()'], type => 'timestamp(0) with time zone', label => 'Comment creation time' },
-
+        { name => 'post', label => 'target post' },
     ],
 }, '/=/model/Comment');
 
