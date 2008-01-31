@@ -26,7 +26,7 @@ sub new {
         "dbi:Pg:dbname=$Database;host=$Host".
             ($Port ? ";port=$Port" : ""),
         $User, $Password,
-        {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts}
+        {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts, PrintError => 0}
     );
 
     return bless {
@@ -111,14 +111,14 @@ _EOC_
 
 sub login {
     my ($self, $account, $role, $captcha, $pass) = @_;
-    my $retval;
 
     $account = $self->quote($account);
     $role = $self->quote($role);
     $captcha = $self->quote($captcha);
     $pass = $self->quote($pass);
 
-    $retval = $self->do(<<"_EOC_");
+    eval {
+        $self->do(<<"_EOC_");
 create or replace function login(account text, role text,
   captcha text, pass text) returns integer as \$\$
 declare
@@ -152,6 +152,11 @@ end;
 \$\$ language plpgsql;
 select login($account, $role, $captcha, $pass);
 _EOC_
+    };
+    if ($@) {
+        (my $error = $@) =~ s/^DBD::Pg::db do failed: ERROR:  //g;
+        die $error;
+    }
 }
 
 
