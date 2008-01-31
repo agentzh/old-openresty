@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <title>Test page for OpenAPI.js</title>
+        <script type="text/javascript" src="../JSON.js"></script>
+        <script type="text/javascript" src="../dojo.openapi.js"></script>
+        <script type="text/javascript" src="../openapi.js"></script>
+        <script type="text/javascript" src="jquery.js"></script>
+        <script type="text/javascript" src="jquery.jeditable.pack.js"></script>
+        <script type="text/javascript" src="Jemplate.js"></script>
+        <script type="text/javascript" src="jemplates.js"></script>
+        <script type="text/javascript" src="admin.js"></script>
+        <style>
+            span.editable:hover {
+                background-color: yellow;
+                padding: 2;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Admin</h1>
+        <h2>Server response</h2>
+        <p style="word-wrap:break-word;width:450" id="output">
+        </p>
+        <h2>Models</h2>
+        <div id="model-list">
+        </div>
+        <h2>Create model</h2>
+        <form id="new_model">
+          <p>
+            <label>Name</label>&nbsp;<input id="model-name" type="text"/>
+          </p>
+          <p>
+            <label>Description</label>&nbsp;<input id="model-desc" type="text"/>
+          </p>
+          <input type="submit" value="Create!">
+          <input type="hidden" name="data"></input>
+        </form>
+    </body>
+</html>
+

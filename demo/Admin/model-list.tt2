@@ -1,0 +1,17 @@
+<ul>
+[% FOREACH model IN model_list %]
+  <li>
+    <span class="editModelName editable">[% model.name %]</span>
+    &nbsp;
+    <p id="[% model.name %]">
+        <b>Description</b>:
+        <span class="editModelDesc editable">[% model.description %]</span>
+    </p>
+    &nbsp;
+    <a class="del-model" href="javascript:delete_model('[% model.name %]')">
+        Delete
+    </a>
+  </li>
+[% END %]
+</ul>
+
