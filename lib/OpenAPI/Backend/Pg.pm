@@ -129,26 +129,25 @@ begin
   execute 'set search_path to '$account'';
   if captcha is not null then
 
-  if captcha !~ E'\\S+:\\S+' then
-    raise exception 'invalid captcha %', captcha;
-  end if;
-  execute 'select name from _roles where name = '''||role||''' and login = ''captcha''' into u;
-  if u is null then
-    raise exception 'Cannot login as %.% via captchas.', account , role;
-  end if;
-  else if pass is not null then
+    if captcha !~ E'\\S+:\\S+' then
+      raise exception 'invalid captcha %', captcha;
+    end if;
+    execute 'select name from _roles where name = '''||role||''' and login = ''captcha''' into u;
+    if u is null then
+      raise exception 'Cannot login as %.% via captchas.', account , role;
+    end if;
+  elsif pass is not null then
   
-  execute 'select name from _roles where name = '''||role||''' and login = ''password''' and password = '||pass||' into u;
-  if u is null then
-    raise exception 'Cannot login as %.% via password.', account , role;
-  end if;
-  end if;
-
+    execute 'select name from _roles where name = '''||role||''' and login = ''password''' and password = '||pass||' into u;
+    if u is null then
+      raise exception 'Cannot login as %.% via password.', account , role;
+    end if;
   else 
-  execute 'select name from _roles where name = '''||role||''' and login = ''anonymous''' into u;
-  if u is null then
-    raise exception 'Cannot login as %.% via anonymous.', account , role;
-  end if;
+
+    execute 'select name from _roles where name = '''||role||''' and login = ''anonymous''' into u;
+    if u is null then
+      raise exception 'Cannot login as %.% via anonymous.', account , role;
+    end if;
   end if;
 end;
 \$\$ language plpgsql;
