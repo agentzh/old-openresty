@@ -146,7 +146,7 @@ begin
 
     execute 'select name from _roles where name = '''||role||''' and login = ''anonymous''' into u;
     if u is null then
-      raise exception 'Cannot login as %.% via anonymous.', account , role;
+      raise exception 'Password for %.% is required.', account , role;
     end if;
   end if;
 end;
