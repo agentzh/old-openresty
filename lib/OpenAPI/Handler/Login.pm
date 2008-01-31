@@ -3,7 +3,7 @@ package OpenAPI;
 #use Smart::Comments;
 use strict;
 use warnings;
-use vars qw($Cache $UUID $Dumper);
+use vars qw($Cache $UUID $Dumper $Backend);
 use CGI::Simple::Cookie;
 use Encode 'is_utf8';
 
@@ -30,6 +30,60 @@ sub trim_sol {
 }
 
 sub login {
+    my ($self, $user, $params) = @_;
+    _STRING($user) or die "Bad user name: ", $Dumper->($user), "\n";
+    $params ||= {};
+    ### $params
+    ### caller: caller()
+    my $password = $params->{password};
+    my $captcha = $params->{captcha};
+    my $account;
+    my $role = 'Admin';
+    if ($user =~ /^(\w+)\.(\w+)$/) {
+        ($account, $role) = ($1, $2);
+    } elsif ($user =~ /^\w+$/) {
+        $account = $&;
+    } else {
+        die "Bad user name: ", $Dumper->($user), "\n";
+    }
+    _IDENT($account) or die "Bad account name: ", $Dumper->($account), "\n";
+    _IDENT($role) or die "Bad role name: ", $Dumper->($role), "\n";
+    ### $role
+    # this part is lame?
+    if (!$account) {
+        die "Login required.\n";
+    }
+
+    $Backend->login($account, $role, $captcha, $password);
+
+    $self->set_role($role);
+
+    my $session_from_cookie = $self->{_session_from_cookie};
+    ### Get session ID from cookie: $session_from_cookie
+    if ($session_from_cookie) {
+        $OpenAPI::Cache->remove($session_from_cookie)
+    }
+
+    my $captcha_from_cookie = $self->{_captcha_from_cookie};
+    if ($captcha_from_cookie) {
+        $OpenAPI::Cache->remove($captcha_from_cookie);
+    }
+
+    my $uuid = $UUID->create_str;
+    if ($self->{_use_cookie}) {
+        $self->{_cookie} = { session => $uuid };
+    }
+    $Cache->set($uuid => "$account.$role");
+
+    return {
+        success => 1,
+        account => $account,
+        role => $role,
+        session => $uuid,
+    };
+}
+
+sub login2 {
     my ($self, $user, $params) = @_;
     _STRING($user) or die "Bad user name: ", $Dumper->($user), "\n";
     $params ||= {};
