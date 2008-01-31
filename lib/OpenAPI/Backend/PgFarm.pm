@@ -122,4 +122,11 @@ _EOC_
     return $retval;
 }
 
+sub login {
+    my ($self, $user, $role, $captcha, $pass) = @_;
+    my $retval;
+
+    # TODO
+}
+
 1;
