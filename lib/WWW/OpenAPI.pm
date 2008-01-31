@@ -32,7 +32,7 @@ sub content_type {
 
 sub login {
     my ($self, $user, $password) = @_;
-    $self->get("/=/login/$user/$password");
+    my $res = $self->get("/=/login/$user/$password?use_cookie=1");
 }
 
 sub get {
