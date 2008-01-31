@@ -136,7 +136,7 @@ begin
     end if;
   elsif pass is not null then
   
-    execute 'select name from _roles where name = '''||role||''' and login = ''password'' and password = '''||pass||''' into u;
+    execute 'select name from _roles where name = '''||role||''' and login = ''password'' and password = '''||pass||'''' into u;
     if u is null then
       raise exception 'Password for %.% is incorrect.', account , role;
     end if;
