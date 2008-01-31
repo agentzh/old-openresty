@@ -54,12 +54,39 @@ sub login {
         die "Login required.\n";
     }
 
+    ### True sol: $true_sol
     eval {
         $Backend->login($account, $role, $captcha, $password);
     };
     if ($@) {
         (my $error = $@) =~ s/^DBD::Pg::db do failed: ERROR:  //g;
         die $error;
+    }
+    if (defined $captcha) {
+        my ($id, $user_sol) = split /:/, $captcha, 2;
+        ### Captcha ID: $id
+        my $true_sol = $Cache->get($id);
+        ### True sol: $true_sol
+        $Cache->remove($id);
+        if (!defined $true_sol) {
+            die "Capture ID is bad or expired.\n";
+        }
+        if ($true_sol eq '1') {
+            die "Captcha image never used.\n";
+        }
+        # XXX for testing purpose...
+        ### Account:  $account;
+        my $server = $ENV{OPENAPI_TEST_SERVER} || $OpenAPI::Config{'test_suite.server'};
+        if ($OpenAPI::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
+            if ($true_sol =~ /[a-z]/) {
+                $true_sol = 'hello world ';
+            } else {
+                $true_sol = '你好世界';
+            }
+        }
+        if (trim_sol($user_sol) ne trim_sol($true_sol)) {
+            die "Solution to the captcha is incorrect.\n";
+        }
     }
 
     $self->set_role($role);
