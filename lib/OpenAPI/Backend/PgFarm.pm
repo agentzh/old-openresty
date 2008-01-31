@@ -123,10 +123,16 @@ _EOC_
 }
 
 sub login {
-    my ($self, $user, $role, $captcha, $pass) = @_;
+    my ($self, $account, $role, $captcha, $pass) = @_;
     my $retval;
 
-    # TODO
+    $account = $self->quote($account);
+    $role = $self->quote($role);
+    $captcha = $self->quote($captcha);
+    $pass = $self->quote($pass);
+
+    my $sql = "select login($account, $role, $captcha, $pass)";
+    $retval = $self->do($sql);
 }
 
 1;
