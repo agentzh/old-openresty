@@ -118,9 +118,7 @@ sub login {
     $captcha = $self->quote($captcha);
     $pass = $self->quote($pass);
 
-    eval {
-
-      $retval = $self->do(<<"_EOC_");
+    $retval = $self->do(<<"_EOC_");
 create or replace function login(account text, role text,
   captcha text, pass text) returns integer as \$\$
 declare
@@ -153,8 +151,6 @@ end;
 \$\$ language plpgsql;
 select login($account, $role, $captcha, $pass);
 _EOC_
-    };
-    if ($@) { warn $@; die $@; }
 }
 
 

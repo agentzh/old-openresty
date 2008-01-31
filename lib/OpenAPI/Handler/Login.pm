@@ -54,7 +54,13 @@ sub login {
         die "Login required.\n";
     }
 
-    $Backend->login($account, $role, $captcha, $password);
+    eval {
+        $Backend->login($account, $role, $captcha, $password);
+    };
+    if ($@) {
+        (my $error = $@) =~ s/^DBD::Pg::db do failed: ERROR:  //g;
+        die $error;
+    }
 
     $self->set_role($role);
 
