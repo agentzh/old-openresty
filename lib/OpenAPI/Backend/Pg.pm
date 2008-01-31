@@ -128,11 +128,11 @@ declare
   u text;
 begin
   account = split_part("user", '.', 1);
-  if account !~ '\w+' then 
+  if account !~ '\\w+' then 
     raise exception 'invalid account name %', account;
   end if;
   role = split_part("user", '.', 1);
-  if role !~ '\w+' then 
+  if role !~ '\\w+' then 
     role = 'Admin';
   end if;
   execute 'select nspname from pg_namespace where nspname = '||account||' limit 1' into u; 
@@ -140,7 +140,7 @@ begin
     raise exception 'account % does not existi', account;
   end if;
   execute 'set search_path to public, account';
-  if captcha !~ '\S+:\S+' then
+  if captcha !~ '\\S+:\\S+' then
     raise exception 'invalid captcha %', captcha;
   end if;
   execute 'select name from _roles where name = '||role||' and login = ''captcha''' into u;
