@@ -205,13 +205,6 @@ This work is dedicated to the
 			
 		</div>
 	</div>
-	
-<script type="text/javascript">
-<!--
-var extra_happy = Math.floor(1000000000 * Math.random());
-document.write('<img src="http://www.typepad.com/t/stats?blog_id=272701&amp;user_id=655519&amp;page=' + escape(location.href) + '&amp;referrer=' + escape(document.referrer) + '&amp;i=' + extra_happy + '" width="1" height="1" alt="" style="position: absolute; top: 0; left: 0;" />');
-// -->
-</script>
 
 <!-- Start Quantcast tag -->
 <script type="text/javascript" src="http://edge.quantserve.com/quant.js"></script>
