@@ -1,0 +1,85 @@
+<a id="comments"></a>
+    <div class="comments">
+
+        <h3 class="comments-header">Comments</h3>
+        
+        <div class="comments-content">
+            <!-- comment list -->
+    <a id="c95523406"></a>
+    <div class="comment" id="comment-95523406">
+        <div class="comment-content">
+            <p>Have you ever used PPI::Tester?</p>
+
+<p>I found it hugely useful to have a real-time visual parse tree dumper like that.</p>
+        </div>
+        <p class="comment-footer">
+            Posted by:
+            Adam Kennedy |
+            <a href="http://pugs.blogs.com/pugs/2007/10/a-graphical-tra.html#comment-95523406">2008.01.02 at 08:43 AM</a>
+        </p>
+    </div>
+
+
+        </div>
+
+        
+    </div>
+    <!-- comment form -->
+    <script type="text/javascript" src="/.shared/js/comments.js"></script>
+    <script type="text/javascript">hostName = '.blogs.com';</script>
+    
+    <form id="comment-form"
+        method="post" action="http://www.typepad.com/t/comments">
+        <input type="hidden" name="entry_id" value="40621150" />
+        <input type="hidden" name="user_id" value="655519" />
+        
+        <div class="comments-open">
+
+            <h2 class="comments-open-header">Post a comment</h2>
+            <div class="comments-open-content">
+                
+                
+                
+                
+                                    <div id="comments-open-data">
+                        <p>
+                            <label for="comment-author">Name:</label>
+                            <input id="comment-author" name="author" size="30" />
+                        </p>
+                        <p>
+
+                            <label for="comment-email">Email Address: <span class="comment-form-note">(Not displayed with comment.)</span></label>
+                            <input id="comment-email" name="email" size="30" />
+                        </p>
+                        <p>
+                            <label for="comment-url">URL:</label>
+                            <input id="comment-url" name="url" size="30" />
+                        </p>
+
+                        <p>
+                            <label for="comment-bake-cookie"><input type="checkbox"
+                                id="comment-bake-cookie" name="bakecookie" value="1" />
+                                Remember personal info?</label>
+                        </p>
+                    </div>
+                
+
+    <p id="comments-open-text">
+
+
+                    <label for="comment-text">Comments:</label>
+
+                    <textarea id="comment-text" name="text" rows="10" cols="30" onkeyup="maxTextarea(this, 64000)"></textarea>
+                </p>
+            </div>
+
+    <div id="comments-open-footer" class="comments-open-footer">
+
+
+                <input type="submit" name="preview" id="comment-preview" value="&nbsp;Preview&nbsp;" />
+                <input type="submit" name="post" id="comment-post" value="&nbsp;Post&nbsp;" onclick="disableButton(this)" />
+            </div>
+
+        </div>
+    </form>
+

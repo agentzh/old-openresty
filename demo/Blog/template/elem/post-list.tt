@@ -1,0 +1,4 @@
+[% FOREACH post IN post_list %]
+    [% PROCESS 'post.tt' %]
+[% END %]
+
