@@ -10,7 +10,7 @@ OpenAPI.Client = function (params) {
     if (params == undefined) params = {};
     this.callback = params.callback;
     this.server = params.server;
-    //this.user = params.user;
+    this.user = params.user;
     //this.password = params.password;
 };
 
@@ -116,8 +116,9 @@ OpenAPI.Client.prototype.get = function (url, args, isLogin) {
     if (!args) args = {};
     if (!this.callback) throw "No callback specified for OpenAPI.";
     if (!this.server) throw "No server specified for OpenAPI.";
-    if (!this.user) throw "No user specified for OpenAPI.";
-    //args.user = this.user;
+    //if (!this.user) throw "No user specified for OpenAPI.";
+    if (!args.user)
+        args.user = this.user;
     //args.password = this.password || '';
     if (url.match(/\?/)) throw "URL should not contain '?'.";
     args.rand = Math.round( Math.random() * 100000 );

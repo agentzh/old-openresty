@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" id="sixapart-standard">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="generator" content="http://www.typepad.com/" />
+
+        <script type="text/javascript" src="JSON.js"></script>
+        <script type="text/javascript" src="dojo.openapi.js"></script>
+        <script type="text/javascript" src="openapi.js"></script>
+        <script type="text/javascript" src="jquery.js"></script>
+        <script type="text/javascript" src="Jemplate.js"></script>
+        <script type="text/javascript" src="jemplates.js"></script>
+        <script type="text/javascript" src="blog.js"></script>
+
+	<meta name="description" content="agentzh's mad house" />
+	
+	<link rel="stylesheet" href="styles.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="themes/common/print.css" type="text/css" media="print" />
+		<link rel="alternate" type="application/atom+xml" title="Posts on 'Pugs' (Atom)" href="http://pugs.blogs.com/pugs/atom.xml" />
+	<link rel="alternate" type="application/rss+xml" title="Posts on 'Pugs' (RSS 1.0)" href="http://pugs.blogs.com/pugs/index.rdf" />
+	<link rel="alternate" type="application/rss+xml" title="Posts on 'Pugs' (RSS 2.0)" href="http://pugs.blogs.com/pugs/rss.xml" />
+	
+
+	<title>Human & Machine</title>
+	<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.typepad.com/t/rsd/272701" />
+        <link rel="meta" type="application/rdf+xml" title="FOAF" href="http://pugs.blogs.com/foaf.rdf" />
+	
+</head>
+
+<body class="layout-two-column-left">
+	
+	<div id="container">
+		<div id="container-inner" class="pkg">
+			
+			<!-- banner -->
+<div id="banner">
+	<div id="banner-inner" class="pkg">
+		
+            <h1 id="banner-header">
+                <a href="index.html" onclick="is.href='javascript:void';init();" accesskey="1">Human & Machine</a>
+            </h1>
+
+		<h2 id="banner-description">The mad house for a Perl guy, agentzh</h2>
+	</div>
+</div>
+
+			<div id="pagebody">
+				<div id="pagebody-inner" class="pkg">
+					<div id="alpha">
+						<div id="alpha-inner" class="pkg">
+							<!-- sidebar -->
+
+
+	<div class="module-archives module">
+		<h2 class="module-header">Recent Posts</h2>
+		<div class="module-content">
+			<ul class="module-list">
+				
+			</ul>
+		</div>
+	</div>
+
+<div class="module-recent-comments module">
+	<h2 class="module-header">Recent Comments</h2>
+	<div class="module-content">
+		<ul class="module-list">
+            							<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/03/mo_bridge_landi_1.html#comment-99226028">karabas</a> on <a href="http://pugs.blogs.com/pugs/2007/03/mo_bridge_landi_1.html">MO bridge landing!</a></li>
+							<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/03/mo_bridge_landi_1.html#comment-99216908">adver</a> on <a href="http://pugs.blogs.com/pugs/2007/03/mo_bridge_landi_1.html">MO bridge landing!</a></li>
+		
+		</ul>
+	</div>
+</div>
+<div class="module-typelist module">
+	<h2 class="module-header">Papers I'm reading</h2>
+	<div class="module-content">
+		<ul class="module-list">
+							<li class="module-list-item"><a title="The holy grail has been found.  Film at 11. :-)" href="http://www.cs.colorado.edu/~siek/pubs/pubs/2006/siek06:_gradual.pdf">Gradual Typing for Functional Languages</a></li>
+							<li class="module-list-item"><a title="As per nothingmuch++'s suggestion, the new AST refactoring is strongly decoupling concrete implementation (Hs-types/P6-classes) with interfaces (Hs-typeclasses/P6-roles).  This paper shows how." href="http://homepages.cwi.nl/~ralf/gpce06/">Software Extension and Integration with Type Classes</a></li>
+		
+		</ul>
+	</div>
+</div>
+
+<div class="module-categories module">
+	<h2 class="module-header"><a href="http://pugs.blogs.com/pugs/archives.html">Categories</a></h2>
+	<div class="module-content">
+		<ul class="module-list">
+						<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/app/index.html">App</a></li>
+						<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/backends/index.html">Backends</a></li>
+						<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/doc/index.html">Doc</a></li>
+						<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/event/index.html">Event</a></li>
+		
+		</ul>
+	</div>
+</div>
+	<div class="module-archives module">
+		<h2 class="module-header"><a href="http://pugs.blogs.com/pugs/archives.html">Archives</a></h2>
+		<div class="module-content">
+												<ul class="module-list">
+				
+				<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/10/index.html">October 2007</a></li>
+				
+							
+				<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/08/index.html">August 2007</a></li>
+				
+                    </ul>
+                    <p class="module-more"><a href="http://pugs.blogs.com/pugs/archives.html">More...</a></p>
+			
+		</div>
+	</div>
+
+<div class="module-galleries module">
+	<h2 class="module-header"><a href="http://pugs.blogs.com/photos/visiolization/index.html">Visiolization</a></h2>
+	<div class="typelist-thumbnailed module-content">
+		<ul class="module-list">
+			<li class="module-list-item"><div class="typelist-no-description"><a href="http://pugs.blogs.com/photos/visiolization/index.html"
+	><img src="mp6bootstrap-thumb.png" alt="Mp6bootstrap"
+	/></a></div></li>
+		</ul>
+	</div>
+</div>
+
+<div class="module-feed module">
+	<h2 class="module-header">Audrey</h2>
+	<div class="module-content" id="feed-d6e3ea166d4156b0ee0935b704a55dbf5f52a212">
+		<script type="text/javascript" defer="defer" src="http://www.typepad.com/t/content?src=Feed:http%3A%2F%2Fpugs.blogs.com%2Faudrey%2Fatom.xml,5"></script>
+	</div>
+</div>
+<!-- user photo -->
+	<div class="module-photo module">
+		<div class="module-content"><img src="img_5916.jpg" alt="My Photo" /></div>
+	</div>
+
+<!-- about page link -->
+<div class="module-about module">
+	<h2 class="module-header"><a
+		href="http://pugs.blogs.com/about.html">About</a></h2>
+</div>
+<div class="module-syndicate module">
+	<div class="module-content">
+		<a href="http://pugs.blogs.com/pugs/index.rdf">Subscribe to this blog's feed</a>
+	</div>
+</div>
+<div class="module-syndicate module">
+	<div class="module-content">
+		<a href="http://pugs.blogs.com/pugs/rss.xml">Subscribe to my Podcast</a>
+	</div>
+</div>
+<div class="module-widget module" id="widget-Site_Meter_s27audreyt">
+	<div class="module-content">
+    	<!-- Site Meter -->
+<script type="text/javascript" src="http://s27.sitemeter.com/js/counter.js?site=s27audreyt">
+</script>
+<noscript>
+<a href="http://s27.sitemeter.com/stats.asp?site=s27audreyt" target="_top">
+<img src="http://s27.sitemeter.com/meter.asp?site=s27audreyt" alt="Site Meter" border="0"/></a>
+</noscript>
+<!-- Copyright (c)2006 Site Meter -->
+
+	</div>
+</div>
+<div class="module-typelist module">
+	<h2 class="module-header">License</h2>
+	<div class="module-content">
+		<ul class="module-list">
+							<li class="module-list-item"><a href=""></a><br /><!-- Creative Commons Public Domain -->
+
+<a href="http://creativecommons.org/licenses/publicdomain"><img alt="Public Domain Dedication" border="0"
+src="http://creativecommons.org/images/public/norights.gif" /></a><br />
+This work is dedicated to the
+<a href="http://creativecommons.org/licenses/publicdomain/">Public Domain</a>.
+<!-- /Creative Commons Public Domain -->
+
+
+<!--
+<rdf:RDF xmlns="http://web.resource.org/cc/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+
+<Work rdf:about="">
+<license rdf:resource="http://web.resource.org/cc/PublicDomain" />
+</Work>
+
+<License rdf:about="http://web.resource.org/cc/PublicDomain">
+   <permits rdf:resource="http://web.resource.org/cc/Reproduction" />
+
+   <permits rdf:resource="http://web.resource.org/cc/Distribution" />
+   <permits rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+
+</License>
+
+</rdf:RDF>
+-->
+</li>
+			
+		</ul>
+	</div>
+</div>
+
+
+
+
+
+						</div>
+					</div>
+					<div id="beta">
+						<div id="beta-inner" class="pkg">
+							<!-- entries -->
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+	
+<script type="text/javascript">
+<!--
+var extra_happy = Math.floor(1000000000 * Math.random());
+document.write('<img src="http://www.typepad.com/t/stats?blog_id=272701&amp;user_id=655519&amp;page=' + escape(location.href) + '&amp;referrer=' + escape(document.referrer) + '&amp;i=' + extra_happy + '" width="1" height="1" alt="" style="position: absolute; top: 0; left: 0;" />');
+// -->
+</script>
+
+<!-- Start Quantcast tag -->
+<script type="text/javascript" src="http://edge.quantserve.com/quant.js"></script>
+<script type="text/javascript">_qoptions = { tags:"typepad.core" }; _qacct="p-fcYWUmj5YbYKM"; quantserve();</script>
+<noscript>
+<a href="http://www.quantcast.com/p-fcYWUmj5YbYKM" target="_blank"><img src="http://pixel.quantserve.com/pixel/p-fcYWUmj5YbYKM.gif?tags=typepad.core" style="display: none" border="0" height="1" width="1" alt="Quantcast"/></a>
+</noscript>
+<!-- End Quantcast tag -->
+</body>
+</html>
