@@ -41,7 +41,19 @@ function afterPostComment (res) {
         alert("Failed to post the comment: " + JSON.stringify(res));
     } else {
         //alert(JSON.stringify(res));
-        goToPost(data.post);
+        openapi.callback = renderComments;
+        openapi.get('/=/model/Comment/~/~');
+        var spans = $(".comment-count");
+        var commentCount = parseInt(spans.text());
+        var postId = spans.attr('post');
+        openapi.callback = function (res) {
+            if (typeof res == 'object' && res.success == 0 && res.error) {
+                alert(JSON.stringify(res));
+            } else {
+                spans.text(commentCount + 1);
+            }
+        };
+        openapi.putByGet({ comments: commentCount + 1 }, '/=/model/Post/id/' + postId);
     }
 }
 
@@ -56,9 +68,23 @@ function renderPost (posts) {
     if (typeof posts == 'object' && posts.success == 0 && posts.error) {
         alert("Failed to render post: " + JSON.stringify(posts));
     } else {
-        $("#beta-inner.pkg").html(Jemplate.process('post-page.tt', { post: posts[0], comments: [] }));
+        var post = posts[0];
+        $("#beta-inner.pkg").html(
+            Jemplate.process('post-page.tt', { post: post })
+        );
         openapi.callback = renderComments;
         openapi.get('/=/model/Comment/~/~');
+    }
+}
+
+function renderComments (res) {
+    //alert("Comments: " + JSON.stringify(res));
+    if (typeof data == 'object' && data.success == 0 && data.error) {
+        alert("Failed to render post list: " + JSON.stringify(data));
+    } else {
+        $(".comments-content").html(
+            Jemplate.process('comments.tt', { comments: res })
+        );
     }
 }
 
