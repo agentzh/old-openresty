@@ -1,4 +1,5 @@
 var openapi;
+var position;
 
 $(window).ready(init);
 
@@ -8,12 +9,30 @@ function init () {
         { server: host, callback: 'display', user: 'agentzh.Public' }
     );
     //openapi.formId = 'new_model';
-    openapi.callback = renderPostList;
-    //openapi.user = 'agentzh.Public';
-    openapi.get('/=/model/Post/~/~', {
-        count: 5,
-        order_by: 'created:desc'
-    });
+    setTimeout(checkAnchor, 500);
+    checkAnchor();
+}
+
+function checkAnchor () {
+    var hash = location.hash;
+    setTimeout(checkAnchor, 500);
+    if (position == hash) {
+        return;
+    }
+    position = hash;
+    var match = hash.match(/post-(\d+)/);
+    if (match) {
+        var postId = match[1];
+        //alert("Post ID: " + postId);
+        goToPost(postId);
+    } else {
+        openapi.callback = renderPostList;
+        //openapi.user = 'agentzh.Public';
+        openapi.get('/=/model/Post/~/~', {
+            count: 5,
+            order_by: 'created:desc'
+        });
+    }
 }
 
 function postComment (form) {
@@ -42,10 +61,10 @@ function afterPostComment (res) {
     } else {
         //alert(JSON.stringify(res));
         openapi.callback = renderComments;
-        openapi.get('/=/model/Comment/~/~');
         var spans = $(".comment-count");
         var commentCount = parseInt(spans.text());
         var postId = spans.attr('post');
+        openapi.get('/=/model/Comment/post/' + postId);
         openapi.callback = function (res) {
             if (typeof res == 'object' && res.success == 0 && res.error) {
                 alert(JSON.stringify(res));
@@ -61,6 +80,7 @@ function goToPost (id) {
     //alert("Go to Post " + id);
     openapi.callback = renderPost;
     openapi.get('/=/model/Post/id/' + id);
+    location.hash = 'post-' + id;
 }
 
 function renderPost (posts) {

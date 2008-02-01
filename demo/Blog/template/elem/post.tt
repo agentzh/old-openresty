@@ -1,7 +1,7 @@
 <h2 class="date-header">[% post.created %]</h2>
 <div class="entry" id="entry-40621150">
     <h3 class="entry-header">
-        <a href="#post:id-[% post.id %]" onclick="this.href='javascript:void';goToPost([% post.id %]);return false;">
+        <a href="#post-[% post.id %]" onclick="this.href='javascript:void';goToPost([% post.id %]);return false;">
             [%- post.title -%]
         </a>
     </h3>
@@ -13,9 +13,9 @@
     </div>
     <div class="entry-footer">
         <p class="entry-footer-info">
-            <span class="post-footers">Posted by [% post.author %] at [% post.created %] in <a href="http://pugs.blogs.com/pugs/rules/index.html">Rules</a> </span> <span class="separator">|</span> <a class="permalink" href="http://pugs.blogs.com/pugs/2007/10/a-graphical-tra.html">Permalink</a>
+            <span class="post-footers">Posted by [% post.author %] at [% post.created %] in <a href="#post-[% post-id %]">Articles</a> </span> <span class="separator">|</span> <a class="permalink" href="#post-[% post.id %]">Permalink</a>
                                 <span class="separator">|</span>
-                <a href="http://pugs.blogs.com/pugs/2007/10/a-graphical-tra.html#comments">Comments (<span class="comment-count" post="[% post.id %]">[% post.comments %]</span>)</a>
+                <a href="#comments" onclick="this.href='javascript:void';goToPost([% post.id %]);">Comments (<span class="comment-count" post="[% post.id %]">[% post.comments %]</span>)</a>
         </p>
         <!-- technorati tags -->
         <!-- post footer links -->
