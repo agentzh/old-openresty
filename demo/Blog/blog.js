@@ -93,7 +93,7 @@ function renderPost (posts) {
             Jemplate.process('post-page.tt', { post: post })
         );
         openapi.callback = renderComments;
-        openapi.get('/=/model/Comment/~/~');
+        openapi.get('/=/model/Comment/post/' + post.id);
     }
 }
 
