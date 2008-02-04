@@ -3,14 +3,16 @@
 use strict;
 use warnings;
 
+use lib '../../lib';
 use utf8;
 use YAML 'Dump';
 use lib '/home/agentz/hack/openapi/trunk/lib';
 use WWW::OpenAPI::Simple;
 
-my $openapi = WWW::OpenAPI::Simple->new( { server => 'http://localhost' } );
+my $openapi = WWW::OpenAPI::Simple->new( { server => 'http://localhost:8080' } );
 $openapi->login('agentzh', 4423037);
 $openapi->delete("/=/model");
+$openapi->delete("/=/role/Public/~/~");
 
 $openapi->post({
     description => "Blog post",
@@ -19,6 +21,7 @@ $openapi->post({
         { name => 'content', label => 'Post content' },
         { name => 'author', label => 'Post author' },
         { name => 'created', default => ['now()'], type => 'timestamp(0) with time zone', label => 'Post creation time' },
+        { name => 'comments', label => 'Number of comments', default => 0 },
     ],
 }, '/=/model/Post');
 
@@ -27,6 +30,7 @@ $openapi->post({
     columns => [
         { name => 'sender', label => 'Comment sender' },
         { name => 'email', label => 'Sender email address' },
+        { name => 'url', label => 'Sender homepage URL' },
         { name => 'body', label => 'Comment body' },
         { name => 'created', default => ['now()'], type => 'timestamp(0) with time zone', label => 'Comment creation time' },
         { name => 'post', label => 'target post' },
@@ -39,9 +43,12 @@ print Dump($openapi->get('/=/model')), "\n";
 
 my ($title, $buffer);
 while (<DATA>) {
-    if ($_ and !$title) {
+    if (!$title) {
+        next if /^\s*$/;
         $title = $_;
+        chop $title;
     } elsif (m{^////////+$}) {
+        warn $title, "\n";
         $openapi->post({
             author => '章亦春',
             title => $title,
@@ -49,6 +56,7 @@ while (<DATA>) {
         }, '/=/model/Post/~/~');
         undef $title;
         undef $buffer;
+        sleep 1;
     } else {
         $buffer .= $_;
     }
@@ -62,6 +70,22 @@ if ($title && $buffer) {
 }
 
 print Dump($openapi->get('/=/model/Post/~/~')), "\n";
+
+$openapi->post([
+    { sender => 'laser', body => 'super cool!', post => 4 },
+    { sender => 'ting', body => '呵呵。。。', post => 4 },
+    { sender => 'clover', body => "yay!\nso great!", post => 3 },
+], '/=/model/Comment/~/~');
+
+$openapi->put({ comments => 2 }, '/=/model/Post/id/4');
+$openapi->put({ comments => 1 }, '/=/model/Post/id/3');
+
+$openapi->post([
+    { method => "GET", url => '/=/model/Post/~/~' },
+    { method => "GET", url => '/=/model/Comment/~/~' },
+    { method => 'PUT', url => '/=/model/Post/id/~' },
+    { method => 'POST', url => '/=/model/Comment/~/~' },
+], '/=/role/Public/~/~');
 
 __DATA__
 
