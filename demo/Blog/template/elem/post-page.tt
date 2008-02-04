@@ -1,3 +1,4 @@
+<a name="post-[% post.id %]" id="post-[% post.id %]"></a>
 <p class="content-nav">
     <a href="http://pugs.blogs.com/pugs/2007/10/kindaperl6-now-.html">&laquo; KindaPerl6 now runs on sbcl, clisp and ecl</a> |
     <a href="http://pugs.blogs.com/pugs/">Main</a>
