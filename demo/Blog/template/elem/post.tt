@@ -1,7 +1,7 @@
 <h2 class="date-header">[% post.created %]</h2>
 <div class="entry" id="entry-40621150">
     <h3 class="entry-header">
-        <a href="#post-[% post.id %]" onclick="this.href='javascript:void';goToPost([% post.id %]);return false;">
+        <a href="#post-[% post.id %]">
             [%- post.title -%]
         </a>
     </h3>
