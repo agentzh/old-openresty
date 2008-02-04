@@ -106,6 +106,7 @@ function renderComments (res) {
         $(".comments-content").html(
             Jemplate.process('comments.tt', { comments: res })
         );
+        location.hash = location.hash;
     }
 }
 
