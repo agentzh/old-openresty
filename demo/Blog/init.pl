@@ -74,9 +74,11 @@ if ($title && $buffer) {
 #print Dump($openapi->get('/=/model/Post/~/~')), "\n";
 
 for my $i (1..5) {
+    warn "Comment $i\n";
     $openapi->post([
-        { sender => 'bot', body => "This is a comment $i\n" x 20, post => 2 },
+        { sender => 'bot', body => qq{This is a comment <b>\t<a href="">&nbsp;</a>\t</b>$i\n} x 20, post => 2 },
     ], '/=/model/Comment/~/~');
+    sleep(0.5);
 }
 
 $openapi->post([

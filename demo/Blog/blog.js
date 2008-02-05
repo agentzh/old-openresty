@@ -17,7 +17,7 @@ function init () {
 
 function getRecentComments () {
     openapi.callback = renderRecentComments;
-    openapi.get('/=/view/RecentComments/limit/10');
+    openapi.get('/=/view/RecentComments/limit/6');
 }
 
 function renderRecentComments (res) {
