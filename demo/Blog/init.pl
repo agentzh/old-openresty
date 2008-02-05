@@ -88,24 +88,41 @@ $openapi->post([
 
 
 $openapi->post({
-    definition =>
-        "select Comment.id as id, post, sender, title ".
-        "from Post, Comment ".
-        "where post = Post.id ".
-        "order by Comment.id desc ".
-        'offset $offset | 0 '.
-        'limit $limit | 10',
+    definition => <<'_EOC_',
+        select Comment.id as id, post, sender, title
+        from Post, Comment
+        where post = Post.id
+        order by Comment.id desc
+        offset $offset | 0
+        limit $limit | 10
+_EOC_
 }, '/=/view/RecentComments');
 
 $openapi->post({
-    definition =>
-        "select id, title ".
-        "from Post ".
-        "order by id desc ".
-        'offset $offset | 0 '.
-        'limit $limit | 10',
+    definition => <<'_EOC_',
+        select id, title
+        from Post
+        order by id desc
+        offset $offset | 0
+        limit $limit | 10
+_EOC_
 }, '/=/view/RecentPosts');
 
+$openapi->post({
+    definition => <<'_EOC_',
+        select id, title
+        from Post
+        where id >= $current
+        order by id asc
+        limit 2
+      union
+        select id, title
+        from Post
+        where id <= $current
+        order by id desc
+        limit 2
+_EOC_
+}, '/=/view/PrevNextPost');
 
 $openapi->put({ comments => 2 }, '/=/model/Post/id/4');
 $openapi->put({ comments => 1 }, '/=/model/Post/id/3');
@@ -116,6 +133,7 @@ $openapi->post([
     { method => "GET", url => '/=/model/Comment/~/~' },
     { method => "GET", url => '/=/view/RecentComments/~/~' },
     { method => "GET", url => '/=/view/RecentPosts/~/~' },
+    { method => "GET", url => '/=/view/PrevNextPost/~/~' },
     { method => "PUT", url => '/=/model/Post/id/~' },
     { method => "POST", url => '/=/model/Comment/~/~' },
 ], '/=/role/Public/~/~');

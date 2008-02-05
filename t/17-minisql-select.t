@@ -558,8 +558,8 @@ select Post.id as ID from Post
 
 === TEST 46: union
 --- sql
-select Blah union select Foo where id >= 3
---- out: select "Blah" union select "Foo" where "id" >= 3
+(select Blah) union ( select Foo where id >= 3 )
+--- out: ( select "Blah" ) union ( select "Foo" where "id" >= 3 )
 --- models:
 --- cols: Blah Foo id
 
@@ -567,8 +567,8 @@ select Blah union select Foo where id >= 3
 
 === TEST 47: intersect
 --- sql
-select Blah intersect select Foo where id >= 3
---- out: select "Blah" intersect select "Foo" where "id" >= 3
+( select Blah ) intersect (select Foo where id >= 3)
+--- out: ( select "Blah" ) intersect ( select "Foo" where "id" >= 3 )
 --- models:
 --- cols: Blah Foo id
 
@@ -576,8 +576,25 @@ select Blah intersect select Foo where id >= 3
 
 === TEST 48: except
 --- sql
-select Blah except  select Foo where id >= 3
---- out: select "Blah" except select "Foo" where "id" >= 3
+(select Blah) except(  select Foo where id >= 3)
+--- out: ( select "Blah" ) except ( select "Foo" where "id" >= 3 )
 --- models:
 --- cols: Blah Foo id
+
+
+
+=== TEST 49: big union
+--- sql
+        (select id, title
+        from Post
+        where id > $current
+        order by id asc
+        limit 1)
+      union
+        (select id, title
+        from Post
+        where id < $current
+        order by id desc
+        limit 1)
+--- out: ( select "id" , "title" from "Post" where "id" > $y$$y$ order by "id" asc limit 1 ) union ( select "id" , "title" from "Post" where "id" < $y$$y$ order by "id" desc limit 1 )
 
