@@ -61,6 +61,13 @@ pattern: aggregate alias
              { join(' ', @_[1..$#_]) }
        | column
        | '*'
+       | number 'as' alias
+             { join(' ', @_[1..$#_]) }
+       | number
+       | string 'as' alias
+             { join(' ', @_[1..$#_]) }
+       | string
+
        ;
 
 aggregate: func '(' column ')'

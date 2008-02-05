@@ -598,3 +598,19 @@ select Post.id as ID from Post
         limit 1)
 --- out: ( select "id" , "title" from "Post" where "id" > $y$$y$ order by "id" asc limit 1 ) union ( select "id" , "title" from "Post" where "id" < $y$$y$ order by "id" desc limit 1 )
 
+
+
+=== TEST 50: select literals
+--- sql: select 0 as id, 'a' as title, 32
+--- out: select 0 as id , $y$a$y$ as title , 32
+
+
+
+=== TEST 51: regression in 19-view.t
+--- sql: select $select_col from A order by $order_by
+--- in_vars
+select_col=id
+order_by=id
+--- out: select "id" from "A" order by "id"
+
+
