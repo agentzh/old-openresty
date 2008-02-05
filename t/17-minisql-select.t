@@ -480,7 +480,7 @@ model_1=Cat
 --- models: Cat
 --- cols:
 --- unbound: model_2 col value blah
---- out: select * from "Cat" , "" where "" = $y$$y$ and "" = $y$32$y$
+--- out: select * from "Cat" , "" where "" = $y$$y$ and "" = 32
 
 
 
@@ -530,9 +530,18 @@ select * from blah order by id asc
 
 
 
-=== TEST 43: order by with asc
+=== TEST 43: order by with asc/desc
 --- sql
 select * from blah order by id desc, name asc
 --- error
 --- out: select * from "blah" order by "id" desc , "name" asc
+
+
+
+=== TEST 44:offset & limit with vars
+--- sql
+select * from blah offset $offset | 0 limit $limit | 32
+--- in_vars
+--- error
+--- out: select * from "blah" offset 0 limit 32
 

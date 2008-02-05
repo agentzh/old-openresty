@@ -71,29 +71,43 @@ parameter_list: parameter ',' parameter_list
               | parameter
               ;
 
-parameter: string
-         | NUM
+parameter: literal
          ;
 
-constant: STRING | NUM;
+variable: VAR
+            {
+                push @OutVars, $_[1];
+                my $val = $InVals->{$_[1]};
+                if (!defined $val) {
+                    push @Unbound, $_[1];
+                    return $Quote->("");
+                }
+                $Quote->($val);
+            }
+        ;
+
+number: NUM
+      | VAR '|' NUM
+            {
+                push @OutVars, $_[1];
+                my $val = $InVals->{$_[1]};
+                if (!defined $val) {
+                    my $default;
+                    $Defaults{$_[1]} = $default = $_[3];
+                    return $default;
+                }
+                $Quote->($val);
+            }
+      ;
 
 string: STRING  { $Quote->(parse_string($_[1])) }
-      | VAR '|' constant
+      | VAR '|' STRING
           { push @OutVars, $_[1];
             my $val = $InVals->{$_[1]};
             if (!defined $val) {
                 my $default;
                 $Defaults{$_[1]} = $default = parse_string($_[3]);
                 return $Quote->($default);
-            }
-            $Quote->($val);
-          }
-      | VAR
-          { push @OutVars, $_[1];
-            my $val = $InVals->{$_[1]};
-            if (!defined $val) {
-                push @Unbound, $_[1];
-                return $Quote->("");
             }
             $Quote->($val);
           }
@@ -194,7 +208,8 @@ operator: '>'
         ;
 
 literal: string
-       | NUM
+       | number
+       | variable
        ;
 
 group_by_clause: 'group by' column_list
@@ -221,14 +236,14 @@ order_by_object: column order_by_modifier
                ;
 
 order_by_modifier: 'asc' | 'desc'
-                ;
+                 ;
 
-limit_clause: 'limit' NUM
+limit_clause: 'limit' literal
                 { delete $_[0]->YYData->{limit}; join(' ', @_[1..$#_]) }
             ;
 
-offset_clause: 'offset' NUM {
-                 delete $_[0]->YYData->{offset}; join(' ', @_[1..$#_]) }
+offset_clause: 'offset' literal
+                { delete $_[0]->YYData->{offset}; join(' ', @_[1..$#_]) }
              ;
 
 %%
