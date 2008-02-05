@@ -614,3 +614,8 @@ order_by=id
 --- out: select "id" from "A" order by "id"
 
 
+
+=== TEST 52: union all
+--- sql: (select 3) union all (select 4)
+--- out: ( select 3 ) union all ( select 4 )
+

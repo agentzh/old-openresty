@@ -31,7 +31,7 @@ compound_select_stmt: '(' select_stmt ')' set_operator compound_select_stmt
                     | select_stmt
                     ;
 
-set_operator: 'union' | 'intersect' | 'except'
+set_operator: 'union all' | 'union' | 'intersect' | 'except'
             ;
 
 select_stmt: 'select' pattern_list postfix_clause_list
@@ -320,8 +320,11 @@ sub _Lexer {
                 and return ('IDENT', $1);
         s/^\s*(\$(\w*)\$.*?\$\2\$)//
                 and return ('STRING', $1);
-        s/^\s*(\*|as|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|asc|desc|group by|limit|offset|union|intersect|except)\b//is
-                and return (lc($1), lc($1));
+        if (s/^\s*(\*|as|count|sum|max|min|select|and|or|from|where|delete|update|set|order\s+by|asc|desc|group\s+by|limit|offset|union\s+all|union|intersect|except)\b//is) {
+            my $s = $1;
+            (my $token = $s) =~ s/\s+/ /g;
+            return (lc($token), lc($s));
+        }
         s/^\s*(<=|>=|<>)//s
                 and return ($1, $1);
         s/^\s*([A-Za-z][A-Za-z0-9_]*)\b//s
