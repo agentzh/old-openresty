@@ -97,6 +97,16 @@ $openapi->post({
         'limit $limit | 10',
 }, '/=/view/RecentComments');
 
+$openapi->post({
+    definition =>
+        "select id, title ".
+        "from Post ".
+        "order by id desc ".
+        'offset $offset | 0 '.
+        'limit $limit | 10',
+}, '/=/view/RecentPosts');
+
+
 $openapi->put({ comments => 2 }, '/=/model/Post/id/4');
 $openapi->put({ comments => 1 }, '/=/model/Post/id/3');
 $openapi->put({ comments => 5 }, '/=/model/Post/id/3');
@@ -105,6 +115,7 @@ $openapi->post([
     { method => "GET", url => '/=/model/Post/~/~' },
     { method => "GET", url => '/=/model/Comment/~/~' },
     { method => "GET", url => '/=/view/RecentComments/~/~' },
+    { method => "GET", url => '/=/view/RecentPosts/~/~' },
     { method => "PUT", url => '/=/model/Post/id/~' },
     { method => "POST", url => '/=/model/Comment/~/~' },
 ], '/=/role/Public/~/~');

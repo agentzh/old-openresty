@@ -13,11 +13,17 @@ function init () {
     setInterval(checkAnchor, 300);
     checkAnchor();
     getRecentComments();
+    getRecentPosts();
 }
 
 function getRecentComments () {
     openapi.callback = renderRecentComments;
     openapi.get('/=/view/RecentComments/limit/6');
+}
+
+function getRecentPosts () {
+    openapi.callback = renderRecentPosts;
+    openapi.get('/=/view/RecentPosts/limit/6');
 }
 
 function renderRecentComments (res) {
@@ -29,6 +35,17 @@ function renderRecentComments (res) {
         $("#recent-comments").html(html);
     }
 }
+
+function renderRecentPosts (res) {
+    if (typeof res == 'object' && res.success == 0 && res.error) {
+        alert("Failed to get the recent posts: " + JSON.stringify(res));
+    } else {
+        //alert("Get the recent posts: " + JSON.stringify(res));
+        var html = Jemplate.process('recent-posts.tt', { posts: res });
+        $("#recent-posts").html(html);
+    }
+}
+
 
 function checkAnchor () {
     var hash = location.hash;
