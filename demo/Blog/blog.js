@@ -111,6 +111,8 @@ function afterPostComment (res) {
 
 function goToPost (id) {
     //alert("Go to Post " + id);
+    $(".blog-top").attr('id', 'post-' + id);
+    //alert($(".blog-top").attr('id'));
     openapi.callback = renderPost;
     openapi.get('/=/model/Post/id/' + id);
 }
@@ -132,7 +134,6 @@ function renderPost (posts) {
         openapi.callback = renderComments;
         openapi.get('/=/model/Comment/post/' + post.id);
     }
-    $(".blog-top").attr('id', location.hash).attr('name', location.hash);
 }
 
 function renderPrevNextPost (currentId, res) {
