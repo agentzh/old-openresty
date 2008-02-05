@@ -110,17 +110,19 @@ _EOC_
 
 $openapi->post({
     definition => <<'_EOC_',
-        select id, title
+        (select id, title
         from Post
-        where id >= $current
-        order by id asc
-        limit 2
-      union
-        select id, title
-        from Post
-        where id <= $current
+        where id < $current
         order by id desc
-        limit 2
+        limit 1)
+      union
+        (select 0, '')
+      union
+        (select id, title
+        from Post
+        where id > $current
+        order by id asc
+        limit 1)
 _EOC_
 }, '/=/view/PrevNextPost');
 

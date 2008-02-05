@@ -1,13 +1,13 @@
 [%
    SET prev_post = 0;
    SET next_post = 0;
-   IF posts.length == 4;
+   IF posts.length == 3;
      prev_post = posts.0;
-     next_post = posts.3;
-   ELSIF posts.length == 3;
-     IF posts.0.id == posts.1.id;
-        next_post = posts.2;
-     ELSIF posts.1.id == posts.2.id;
+     next_post = posts.2;
+   ELSIF posts.length == 2;
+     IF posts.0.id == 0;
+        next_post = posts.1;
+     ELSE;
         prev_post = posts.0;
      END;
    END -%]
