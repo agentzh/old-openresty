@@ -546,10 +546,38 @@ select * from blah offset $offset | 0 limit $limit | 32
 --- out: select * from "blah" offset 0 limit 32
 
 
+
 === TEST 45: column alias
 --- sql
 select Post.id as ID from Post
 --- out: select "Post"."id" as ID from "Post"
 --- cols: id
 --- models: Post Post
+
+
+
+=== TEST 46: union
+--- sql
+select Blah union select Foo where id >= 3
+--- out: select "Blah" union select "Foo" where "id" >= 3
+--- models:
+--- cols: Blah Foo id
+
+
+
+=== TEST 47: intersect
+--- sql
+select Blah intersect select Foo where id >= 3
+--- out: select "Blah" intersect select "Foo" where "id" >= 3
+--- models:
+--- cols: Blah Foo id
+
+
+
+=== TEST 48: except
+--- sql
+select Blah except  select Foo where id >= 3
+--- out: select "Blah" except select "Foo" where "id" >= 3
+--- models:
+--- cols: Blah Foo id
 
