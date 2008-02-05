@@ -132,6 +132,7 @@ function renderPost (posts) {
         openapi.callback = renderComments;
         openapi.get('/=/model/Comment/post/' + post.id);
     }
+    $(".blog-top").attr('id', location.hash).attr('name', location.hash);
 }
 
 function renderPrevNextPost (currentId, res) {
