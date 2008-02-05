@@ -1,0 +1,24 @@
+[%
+   SET prev_post = 0;
+   SET next_post = 0;
+   IF posts.length == 4;
+     prev_post = posts.0;
+     next_post = posts.3;
+   ELSIF posts.length == 3;
+     IF posts.0.id == posts.1.id;
+        next_post = posts.2;
+     ELSIF posts.1.id == posts.2.id;
+        prev_post = posts.0;
+     END;
+   END -%]
+[% IF prev_post %]
+<a href="#post-[% prev_post %]">
+    « [% prev_post.title %]
+</a>
+[% END %]
+ |
+<a href="#main"> Main </a> |
+[% IF next_post %]
+<a href="#post-[% next_post.id %]">[% next_post.id %] »</a>
+[% END %]
+

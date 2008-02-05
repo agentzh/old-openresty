@@ -24,7 +24,9 @@ statement: compound_select_stmt ';'
          | compound_select_stmt
          ;
 
-compound_select_stmt: select_stmt set_operator compound_select_stmt
+compound_select_stmt: '(' select_stmt ')' set_operator compound_select_stmt
+                        { join(' ', @_[1..$#_]) }
+                    | '(' select_stmt ')'
                         { join(' ', @_[1..$#_]) }
                     | select_stmt
                     ;

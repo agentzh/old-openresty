@@ -124,8 +124,23 @@ function renderPost (posts) {
         $("#beta-inner.pkg").html(
             Jemplate.process('post-page.tt', { post: post })
         );
+        openapi.callback = renderPrevNextPost;
+        openapi.get('/=/view/PrevNextPost/current/' + post.id);
+
         openapi.callback = renderComments;
         openapi.get('/=/model/Comment/post/' + post.id);
+    }
+}
+
+function renderPrevNextPost (res) {
+    if (typeof res == 'object' && res.success == 0 && res.error) {
+        alert("Failed to render prev next post navigation: " + JSON.stringify(res));
+    } else {
+        alert("Going to render prev next post navigation: " + JSON.stringify(res));
+        $(".content-nav").html(
+            Jemplate.process('nav.tt', { posts: res })
+        );
+        location.hash = location.hash;
     }
 }
 
