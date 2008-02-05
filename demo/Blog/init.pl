@@ -95,7 +95,7 @@ $openapi->put({ comments => 1 }, '/=/model/Post/id/3');
 $openapi->post([
     { method => "GET", url => '/=/model/Post/~/~' },
     { method => "GET", url => '/=/model/Comment/~/~' },
-    { method => "GET", url => '/=/view/Comment/~/~' },
+    { method => "GET", url => '/=/view/RecentComments/~/~' },
     { method => "PUT", url => '/=/model/Post/id/~' },
     { method => "POST", url => '/=/model/Comment/~/~' },
 ], '/=/role/Public/~/~');
