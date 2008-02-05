@@ -46,7 +46,7 @@ function checkAnchor () {
         //openapi.user = 'agentzh.Public';
         openapi.get('/=/model/Post/~/~', {
             count: 5,
-            order_by: 'created:desc'
+            order_by: 'id:desc'
         });
     }
 }

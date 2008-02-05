@@ -58,7 +58,6 @@ while (<DATA>) {
         }, '/=/model/Post/~/~');
         undef $title;
         undef $buffer;
-        sleep 0.5;
     } else {
         $buffer .= $_;
     }
@@ -78,7 +77,7 @@ for my $i (1..5) {
     $openapi->post([
         { sender => 'bot', body => qq{This is a comment <b>\t<a href="">&nbsp;</a>\t</b>$i\n} x 20, post => 2 },
     ], '/=/model/Comment/~/~');
-    sleep(0.5);
+    #sleep(0.8);
 }
 
 $openapi->post([
@@ -93,7 +92,7 @@ $openapi->post({
         "select Comment.id as id, post, sender, title ".
         "from Post, Comment ".
         "where post = Post.id ".
-        "order by Comment.created desc ".
+        "order by Comment.id desc ".
         'offset $offset | 0 '.
         'limit $limit | 10',
 }, '/=/view/RecentComments');
