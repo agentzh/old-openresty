@@ -86,6 +86,9 @@ $openapi->post([
     { sender => 'clover', body => "yay!\nso great!", post => 3 },
 ], '/=/model/Comment/~/~');
 
+$openapi->put({ comments => 2 }, '/=/model/Post/id/4');
+$openapi->put({ comments => 1 }, '/=/model/Post/id/3');
+$openapi->put({ comments => 5 }, '/=/model/Post/id/2');
 
 $openapi->post({
     definition => <<'_EOC_',
@@ -123,10 +126,6 @@ $openapi->post({
         limit 1)
 _EOC_
 }, '/=/view/PrevNextPost');
-
-$openapi->put({ comments => 2 }, '/=/model/Post/id/4');
-$openapi->put({ comments => 1 }, '/=/model/Post/id/3');
-$openapi->put({ comments => 5 }, '/=/model/Post/id/3');
 
 $openapi->post([
     { method => "GET", url => '/=/model/Post/~/~' },
