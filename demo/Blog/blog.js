@@ -10,7 +10,7 @@ function init () {
         { server: host, callback: 'display', user: 'agentzh.Public' }
     );
     //openapi.formId = 'new_model';
-    setTimeout(checkAnchor, 500);
+    setInterval(checkAnchor, 300);
     checkAnchor();
     getRecentComments();
 }
@@ -24,18 +24,19 @@ function renderRecentComments (res) {
     if (typeof res == 'object' && res.success == 0 && res.error) {
         alert("Failed to get the recent comments: " + JSON.stringify(res));
     } else {
-        alert("Get the recent comments: " + JSON.stringify(res));
+        //alert("Get the recent comments: " + JSON.stringify(res));
+        var html = Jemplate.process('recent-comments.tt', { comments: res });
+        $("#recent-comments").html(html);
     }
 }
 
 function checkAnchor () {
     var hash = location.hash;
-    setTimeout(checkAnchor, 500);
     if (position == hash) {
         return;
     }
     position = hash;
-    var match = hash.match(/post-(\d+)/);
+    var match = hash.match(/post-(\d+)(:comments)?/);
     if (match) {
         var postId = match[1];
         //alert("Post ID: " + postId);
@@ -95,7 +96,6 @@ function goToPost (id) {
     //alert("Go to Post " + id);
     openapi.callback = renderPost;
     openapi.get('/=/model/Post/id/' + id);
-    location.hash = 'post-' + id;
 }
 
 function renderPost (posts) {

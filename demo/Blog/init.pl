@@ -84,7 +84,7 @@ $openapi->post({
         "select post, sender, title ".
         "from Post, Comment ".
         "where post = Post.id ".
-        "order by created desc ".
+        "order by Comment.created desc ".
         'offset $offset | 0 '.
         'limit $limit | 10',
 }, '/=/view/RecentComments');
