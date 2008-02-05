@@ -44,8 +44,11 @@ pattern_list: pattern ',' pattern_list
             ;
 
 pattern: aggregate alias
+             { join(' ', @_[1..$#_]) }
        | aggregate
        | proc_call
+       | column alias
+             { join(' ', @_[1..$#_]) }
        | column
        | '*'
        ;

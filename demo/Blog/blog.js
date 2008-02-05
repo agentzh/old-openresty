@@ -36,7 +36,7 @@ function checkAnchor () {
         return;
     }
     position = hash;
-    var match = hash.match(/post-(\d+)(:comments)?/);
+    var match = hash.match(/post-(\d+)(:comments|comment-(\d+))?/);
     if (match) {
         var postId = match[1];
         //alert("Post ID: " + postId);
