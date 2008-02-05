@@ -55,8 +55,8 @@
 	<div class="module-archives module">
 		<h2 class="module-header">Recent Posts</h2>
 		<div class="module-content">
-			<ul class="module-list">
-				
+			<ul id="recent-posts" class="module-list">
+
 			</ul>
 		</div>
 	</div>
@@ -64,10 +64,7 @@
 <div class="module-recent-comments module">
 	<h2 class="module-header">Recent Comments</h2>
 	<div class="module-content">
-		<ul class="module-list">
-            							<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/03/mo_bridge_landi_1.html#comment-99226028">karabas</a> on <a href="http://pugs.blogs.com/pugs/2007/03/mo_bridge_landi_1.html">MO bridge landing!</a></li>
-							<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/03/mo_bridge_landi_1.html#comment-99216908">adver</a> on <a href="http://pugs.blogs.com/pugs/2007/03/mo_bridge_landi_1.html">MO bridge landing!</a></li>
-		
+		<ul id="recent-comments" class="module-list">
 		</ul>
 	</div>
 </div>

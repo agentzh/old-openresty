@@ -520,3 +520,19 @@ select * from "from" where "select"='abc'
 --- cols: select
 --- out: select * from "from" where "select" = $y$abc$y$
 
+
+
+=== TEST 42: order by with asc
+--- sql
+select * from blah order by id asc
+--- error
+--- out: select * from "blah" order by "id" asc
+
+
+
+=== TEST 43: order by with asc
+--- sql
+select * from blah order by id desc, name asc
+--- error
+--- out: select * from "blah" order by "id" desc , "name" asc
+

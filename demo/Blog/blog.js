@@ -5,13 +5,27 @@ $(window).ready(init);
 
 function init () {
     //var host = 'http://10.62.136.86';
-    var host = 'http://127.0.0.1:8080';
+    var host = 'http://169.254.9.99';
     openapi = new OpenAPI.Client(
         { server: host, callback: 'display', user: 'agentzh.Public' }
     );
     //openapi.formId = 'new_model';
     setTimeout(checkAnchor, 500);
     checkAnchor();
+    getRecentComments();
+}
+
+function getRecentComments () {
+    openapi.callback = renderRecentComments;
+    openapi.get('/=/view/RecentComments/limit/10');
+}
+
+function renderRecentComments (res) {
+    if (typeof res == 'object' && res.success == 0 && res.error) {
+        alert("Failed to get the recent comments: " + JSON.stringify(res));
+    } else {
+        alert("Get the recent comments: " + JSON.stringify(res));
+    }
 }
 
 function checkAnchor () {

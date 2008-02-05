@@ -4,15 +4,17 @@ use strict;
 use warnings;
 
 use lib '../../lib';
+use Time::HiRes 'sleep';
 use utf8;
 use YAML 'Dump';
 use lib '/home/agentz/hack/openapi/trunk/lib';
 use WWW::OpenAPI::Simple;
 
-my $openapi = WWW::OpenAPI::Simple->new( { server => 'http://localhost:8080' } );
+my $openapi = WWW::OpenAPI::Simple->new( { server => 'http://localhost' } );
 $openapi->login('agentzh', 4423037);
 $openapi->delete("/=/model");
 $openapi->delete("/=/role/Public/~/~");
+$openapi->delete("/=/view");
 
 $openapi->post({
     description => "Blog post",
@@ -56,7 +58,7 @@ while (<DATA>) {
         }, '/=/model/Post/~/~');
         undef $title;
         undef $buffer;
-        sleep 1;
+        sleep 0.5;
     } else {
         $buffer .= $_;
     }
@@ -69,7 +71,7 @@ if ($title && $buffer) {
     }, '/=/model/Post/~/~');
 }
 
-print Dump($openapi->get('/=/model/Post/~/~')), "\n";
+#print Dump($openapi->get('/=/model/Post/~/~')), "\n";
 
 $openapi->post([
     { sender => 'laser', body => 'super cool!', post => 4 },
@@ -77,14 +79,25 @@ $openapi->post([
     { sender => 'clover', body => "yay!\nso great!", post => 3 },
 ], '/=/model/Comment/~/~');
 
+$openapi->post({
+    definition =>
+        "select post, sender, title ".
+        "from Post, Comment ".
+        "where post = Post.id ".
+        "order by created desc ".
+        'offset $offset | 0 '.
+        'limit $limit | 10',
+}, '/=/view/RecentComments');
+
 $openapi->put({ comments => 2 }, '/=/model/Post/id/4');
 $openapi->put({ comments => 1 }, '/=/model/Post/id/3');
 
 $openapi->post([
     { method => "GET", url => '/=/model/Post/~/~' },
     { method => "GET", url => '/=/model/Comment/~/~' },
-    { method => 'PUT', url => '/=/model/Post/id/~' },
-    { method => 'POST', url => '/=/model/Comment/~/~' },
+    { method => "GET", url => '/=/view/Comment/~/~' },
+    { method => "PUT", url => '/=/model/Post/id/~' },
+    { method => "POST", url => '/=/model/Comment/~/~' },
 ], '/=/role/Public/~/~');
 
 __DATA__
