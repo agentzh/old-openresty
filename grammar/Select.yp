@@ -206,9 +206,22 @@ column_list: column ',' column_list
            | column
            ;
 
-order_by_clause: 'order by' column_list
+order_by_clause: 'order by' order_by_objects
                     { join(' ', @_[1..$#_]) }
                ;
+
+order_by_objects: order_by_object ',' order_by_objects
+                    { join(' ', @_[1..$#_]) }
+                | order_by_object
+                ;
+
+order_by_object: column order_by_modifier
+                    { join(' ', @_[1..$#_]) }
+               | column
+               ;
+
+order_by_modifier: 'asc' | 'desc'
+                ;
 
 limit_clause: 'limit' NUM
                 { delete $_[0]->YYData->{limit}; join(' ', @_[1..$#_]) }
@@ -272,7 +285,7 @@ sub _Lexer {
                 and return ('IDENT', $1);
         s/^\s*(\$(\w*)\$.*?\$\2\$)//
                 and return ('STRING', $1);
-        s/^\s*(\*|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|group by|limit|offset)\b//is
+        s/^\s*(\*|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|asc|desc|group by|limit|offset)\b//is
                 and return (lc($1), lc($1));
         s/^\s*(<=|>=|<>)//s
                 and return ($1, $1);

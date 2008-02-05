@@ -8,7 +8,11 @@ author              ('Agent Zhang <agentzh@yahoo.cn>');
 perl_version        ('5.006001');
 all_from            ('lib/OpenAPI.pm');
 
-my $arg = shift || 'devel';
+my $arg = 'devel';
+if (@ARGV == 1) {
+    $arg = shift;
+}
+
 if ($arg eq 'product') {
     requires            ('FCGI');
     requires            ('CGI::Simple' => '1.103');
@@ -24,6 +28,7 @@ if ($arg eq 'product') {
     requires            ('Cache::Memcached::Fast' => '0.06');
     requires            ('Hash::Merge');
     requires            ('Config::Simple');
+    requires            ('Cookie::XS');
 
     features(
         'Test suite' => [
@@ -40,6 +45,7 @@ if ($arg eq 'product') {
         ]
     );
 } elsif ($arg eq 'devel') {
+    requires            ('Cookie::XS');
     requires            ('FCGI');
     requires            ('CGI::Simple' => '1.103');
     requires            ('YAML::Syck' => '1.00');
