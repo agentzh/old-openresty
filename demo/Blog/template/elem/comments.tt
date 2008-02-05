@@ -1,8 +1,15 @@
 [%- FOREACH comment IN comments -%]
-    <a id="post-[% post.id %]:comment-[% comment.id %]"></a>
+    <a id="post-[% comment.post %]:comment-[% comment.id %]"></a>
     <div class="comment" id="comment-95523406">
         <div class="comment-content">
-            [% comment.body %]
+            [% comment.body
+                .replace("&", '&amp;')
+                .replace("<", '&lt;')
+                .replace(">", '&gt;')
+                .replace("\n", "<br/>")
+                .replace(" ", '&nbsp;')
+                .replace("\t", '&nbsp;&nbsp;&nbsp;&nbsp;')
+            %]
         </div>
         <p class="comment-footer">
             Posted by:
