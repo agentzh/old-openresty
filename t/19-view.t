@@ -611,7 +611,7 @@ POST /=/view/Foo
 {description:"Test vars for vals",name:"Foo",
     definition:"update _view set "}
 --- response
-{"success":0,"error":"minisql: line 1: error: Unexpected input: \"update\" (select expected)."}
+{"success":0,"error":"minisql: line 1: error: Unexpected input: \"update\" ('(' or select expected)."}
 
 
 
