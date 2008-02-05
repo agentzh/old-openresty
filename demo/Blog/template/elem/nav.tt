@@ -1,16 +1,13 @@
 [%
-   SET prev_post = 0;
-   SET next_post = 0;
-   IF posts.length == 3;
-     prev_post = posts.0;
-     next_post = posts.2;
-   ELSIF posts.length == 2;
-     IF posts.0.id == 0;
-        next_post = posts.1;
+   SET prev_post = undef;
+   SET next_post = undef;
+   FOREACH post IN posts;
+     IF post.id < current;
+        prev_post = post;
      ELSE;
-        prev_post = posts.0;
+        next_post = post;
      END;
-   END -%]
+    END -%]
 [% IF prev_post %]
 <a href="#post-[% prev_post.id %]">
     « [% prev_post.title %]
@@ -19,6 +16,8 @@
  |
 <a href="#main"> Main </a> |
 [% IF next_post %]
-<a href="#post-[% next_post.id %]">[% next_post.id %] »</a>
+<a href="#post-[% next_post.id %]">
+    [% next_post.title %] »
+</a>
 [% END %]
 

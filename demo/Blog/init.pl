@@ -116,8 +116,6 @@ $openapi->post({
         order by id desc
         limit 1)
       union
-        (select 0, '')
-      union
         (select id, title
         from Post
         where id > $current

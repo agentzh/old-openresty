@@ -124,7 +124,9 @@ function renderPost (posts) {
         $("#beta-inner.pkg").html(
             Jemplate.process('post-page.tt', { post: post })
         );
-        openapi.callback = renderPrevNextPost;
+        openapi.callback = function (res) {
+            renderPrevNextPost(post.id, res);
+        };
         openapi.get('/=/view/PrevNextPost/current/' + post.id);
 
         openapi.callback = renderComments;
@@ -132,13 +134,13 @@ function renderPost (posts) {
     }
 }
 
-function renderPrevNextPost (res) {
+function renderPrevNextPost (currentId, res) {
     if (typeof res == 'object' && res.success == 0 && res.error) {
         alert("Failed to render prev next post navigation: " + JSON.stringify(res));
     } else {
-        alert("Going to render prev next post navigation: " + JSON.stringify(res));
+        //alert("Going to render prev next post navigation: " + JSON.stringify(res));
         $(".content-nav").html(
-            Jemplate.process('nav.tt', { posts: res })
+            Jemplate.process('nav.tt', { posts: res, current: currentId })
         );
         location.hash = location.hash;
     }
