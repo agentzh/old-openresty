@@ -23,7 +23,7 @@
 	
 
 	<title>Human & Machine</title>
-	<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.typepad.com/t/rsd/272701" />
+	<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://ced02.search.cnb.yahoo.com/=/feed/BlogPost" />
         <link rel="meta" type="application/rdf+xml" title="FOAF" href="http://pugs.blogs.com/foaf.rdf" />
 	
 </head>
@@ -38,7 +38,7 @@
 	<div id="banner-inner" class="pkg">
 		
             <h1 id="banner-header">
-                <a href="index.html" onclick="is.href='javascript:void';init();" accesskey="1">Human & Machine</a>
+                <a href="#main" accesskey="1">Human & Machine</a>
             </h1>
 
 		<h2 id="banner-description">The mad house for a Perl guy, agentzh</h2>
@@ -121,7 +121,6 @@
 <div class="module-feed module">
 	<h2 class="module-header">Audrey</h2>
 	<div class="module-content" id="feed-d6e3ea166d4156b0ee0935b704a55dbf5f52a212">
-		<script type="text/javascript" defer="defer" src="http://www.typepad.com/t/content?src=Feed:http%3A%2F%2Fpugs.blogs.com%2Faudrey%2Fatom.xml,5"></script>
 	</div>
 </div>
 <!-- user photo -->
@@ -204,11 +203,6 @@ This work is dedicated to the
 	</div>
 
 <!-- Start Quantcast tag -->
-<script type="text/javascript" src="http://edge.quantserve.com/quant.js"></script>
-<script type="text/javascript">_qoptions = { tags:"typepad.core" }; _qacct="p-fcYWUmj5YbYKM"; quantserve();</script>
-<noscript>
-<a href="http://www.quantcast.com/p-fcYWUmj5YbYKM" target="_blank"><img src="http://pixel.quantserve.com/pixel/p-fcYWUmj5YbYKM.gif?tags=typepad.core" style="display: none" border="0" height="1" width="1" alt="Quantcast"/></a>
-</noscript>
 <!-- End Quantcast tag -->
 </body>
 </html>

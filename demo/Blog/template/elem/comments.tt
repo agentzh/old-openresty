@@ -1,5 +1,5 @@
 [%- FOREACH comment IN comments -%]
-    <a id="c95523406"></a>
+    <a id="post-[% post.id %]:comment-[% comment.id %]"></a>
     <div class="comment" id="comment-95523406">
         <div class="comment-content">
             [% comment.body %]
@@ -7,7 +7,7 @@
         <p class="comment-footer">
             Posted by:
             [% comment.sender %] |
-            <a href="http://pugs.blogs.com/pugs/2007/10/a-graphical-tra.html#comment-95523406">[% comment.created %]</a>
+            [% comment.created %]
         </p>
     </div>
 [%- END %]

@@ -73,15 +73,22 @@ if ($title && $buffer) {
 
 #print Dump($openapi->get('/=/model/Post/~/~')), "\n";
 
+for my $i (1..5) {
+    $openapi->post([
+        { sender => 'bot', body => "This is a comment $i\n" x 20, post => 2 },
+    ], '/=/model/Comment/~/~');
+}
+
 $openapi->post([
     { sender => 'laser', body => 'super cool!', post => 4 },
     { sender => 'ting', body => '呵呵。。。', post => 4 },
     { sender => 'clover', body => "yay!\nso great!", post => 3 },
 ], '/=/model/Comment/~/~');
 
+
 $openapi->post({
     definition =>
-        "select post, sender, title ".
+        "select Comment.id id, post, sender, title ".
         "from Post, Comment ".
         "where post = Post.id ".
         "order by Comment.created desc ".
@@ -91,6 +98,7 @@ $openapi->post({
 
 $openapi->put({ comments => 2 }, '/=/model/Post/id/4');
 $openapi->put({ comments => 1 }, '/=/model/Post/id/3');
+$openapi->put({ comments => 5 }, '/=/model/Post/id/3');
 
 $openapi->post([
     { method => "GET", url => '/=/model/Post/~/~' },

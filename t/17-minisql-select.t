@@ -545,3 +545,11 @@ select * from blah offset $offset | 0 limit $limit | 32
 --- error
 --- out: select * from "blah" offset 0 limit 32
 
+
+=== TEST 45: column alias
+--- sql
+select Post.id id from Post
+--- out: select "Post"."id" id from "Post"
+--- cols: id
+--- models: Post Post
+
