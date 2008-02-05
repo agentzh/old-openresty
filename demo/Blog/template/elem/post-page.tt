@@ -7,7 +7,7 @@
 
 [% PROCESS 'post.tt' -%]
 
-<a id="comments"></a>
+<a id="post-[%post.id%]:comments" name="post-[%post.id%]-comments"></a>
     <div class="comments">
 
         <h3 class="comments-header">Comments</h3>
