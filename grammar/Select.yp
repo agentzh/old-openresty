@@ -47,7 +47,7 @@ pattern: aggregate alias
              { join(' ', @_[1..$#_]) }
        | aggregate
        | proc_call
-       | column alias
+       | column 'as' alias
              { join(' ', @_[1..$#_]) }
        | column
        | '*'
@@ -303,7 +303,7 @@ sub _Lexer {
                 and return ('IDENT', $1);
         s/^\s*(\$(\w*)\$.*?\$\2\$)//
                 and return ('STRING', $1);
-        s/^\s*(\*|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|asc|desc|group by|limit|offset)\b//is
+        s/^\s*(\*|as|count|sum|max|min|select|and|or|from|where|delete|update|set|order by|asc|desc|group by|limit|offset)\b//is
                 and return (lc($1), lc($1));
         s/^\s*(<=|>=|<>)//s
                 and return ($1, $1);
