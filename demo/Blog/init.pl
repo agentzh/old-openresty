@@ -88,7 +88,7 @@ $openapi->post([
 
 $openapi->post({
     definition =>
-        "select Comment.id id, post, sender, title ".
+        "select Comment.id as id, post, sender, title ".
         "from Post, Comment ".
         "where post = Post.id ".
         "order by Comment.created desc ".
