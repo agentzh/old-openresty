@@ -5,7 +5,7 @@ $(window).ready(init);
 
 function init () {
     //var host = 'http://10.62.136.86';
-    var host = 'http://169.254.9.99';
+    var host = 'http://127.0.0.1';
     openapi = new OpenAPI.Client(
         { server: host, callback: 'display', user: 'agentzh.Public' }
     );
