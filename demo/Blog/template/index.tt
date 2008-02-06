@@ -69,16 +69,6 @@
 		</ul>
 	</div>
 </div>
-<div class="module-typelist module">
-	<h2 class="module-header">Papers I'm reading</h2>
-	<div class="module-content">
-		<ul class="module-list">
-							<li class="module-list-item"><a title="The holy grail has been found.  Film at 11. :-)" href="http://www.cs.colorado.edu/~siek/pubs/pubs/2006/siek06:_gradual.pdf">Gradual Typing for Functional Languages</a></li>
-							<li class="module-list-item"><a title="As per nothingmuch++'s suggestion, the new AST refactoring is strongly decoupling concrete implementation (Hs-types/P6-classes) with interfaces (Hs-typeclasses/P6-roles).  This paper shows how." href="http://homepages.cwi.nl/~ralf/gpce06/">Software Extension and Integration with Type Classes</a></li>
-		
-		</ul>
-	</div>
-</div>
 
 <div class="module-categories module">
 	<h2 class="module-header"><a href="http://pugs.blogs.com/pugs/archives.html">Categories</a></h2>
