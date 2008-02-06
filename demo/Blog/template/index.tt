@@ -108,25 +108,15 @@
 		</div>
 	</div>
 
-<div class="module-galleries module">
-	<h2 class="module-header"><a href="http://pugs.blogs.com/photos/visiolization/index.html">Visiolization</a></h2>
-	<div class="typelist-thumbnailed module-content">
-		<ul class="module-list">
-			<li class="module-list-item"><div class="typelist-no-description"><a href="http://pugs.blogs.com/photos/visiolization/index.html"
-	><img src="mp6bootstrap-thumb.png" alt="Mp6bootstrap"
-	/></a></div></li>
-		</ul>
-	</div>
-</div>
-
 <div class="module-feed module">
-	<h2 class="module-header">Audrey</h2>
+	<h2 class="module-header">agentzh</h2>
 	<div class="module-content" id="feed-d6e3ea166d4156b0ee0935b704a55dbf5f52a212">
 	</div>
 </div>
 <!-- user photo -->
 	<div class="module-photo module">
-		<div class="module-content"><img src="img_5916.jpg" alt="My Photo" /></div>
+		<div class="module-content"><img src="me.jpg" alt="My Photo" /></div>
+                <br/>
 	</div>
 
 <!-- about page link -->
