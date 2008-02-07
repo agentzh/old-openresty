@@ -3,9 +3,13 @@ var position;
 
 $(window).ready(init);
 
+function error (msg) {
+    alert(msg);
+}
+
 function init () {
     //var host = 'http://10.62.136.86';
-    var host = 'http://127.0.0.1';
+    var host = 'http://169.254.9.99';
     openapi = new OpenAPI.Client(
         { server: host, callback: 'display', user: 'agentzh.Public' }
     );
@@ -45,6 +49,15 @@ function getCalendar (year, month) {
             }
         )
     );
+    /*
+    openapi.callback = function (res) {
+        renderPostsInCalendar(res, year, month);
+    };
+    openapi.get('/=/view/PostsByMonth', { year: year, month: month });
+    */
+}
+
+function renderPostsInCalendar (res, year, month) {
 }
 
 function getRecentComments () {
@@ -58,8 +71,8 @@ function getRecentPosts () {
 }
 
 function renderRecentComments (res) {
-    if (typeof res == 'object' && res.success == 0 && res.error) {
-        alert("Failed to get the recent comments: " + JSON.stringify(res));
+    if (openapi.isSuccess(res)) {
+        error("Failed to get the recent comments: " + JSON.stringify(res));
     } else {
         //alert("Get the recent comments: " + JSON.stringify(res));
         var html = Jemplate.process('recent-comments.tt', { comments: res });
@@ -68,8 +81,8 @@ function renderRecentComments (res) {
 }
 
 function renderRecentPosts (res) {
-    if (typeof res == 'object' && res.success == 0 && res.error) {
-        alert("Failed to get the recent posts: " + JSON.stringify(res));
+    if (openapi.isSuccess(res)) {
+        error("Failed to get the recent posts: " + JSON.stringify(res));
     } else {
         //alert("Get the recent posts: " + JSON.stringify(res));
         var html = Jemplate.process('recent-posts.tt', { posts: res });
@@ -108,7 +121,7 @@ function postComment (form) {
     data.post = $("#comment-for").val();
     //alert(JSON.stringify(data));
     if (!data.body) {
-        alert("Comment text cannot be empty :)");
+        error("Comment text cannot be empty :)");
         return false;
     }
     //openapi.purge();
@@ -120,8 +133,8 @@ function postComment (form) {
 
 function afterPostComment (res) {
     //alert("HERE!!!");
-    if (typeof res == 'object' && res.success == 0 && res.error) {
-        alert("Failed to post the comment: " + JSON.stringify(res));
+    if (openapi.isSuccess(res)) {
+        error("Failed to post the comment: " + JSON.stringify(res));
     } else {
         //alert(JSON.stringify(res));
         openapi.callback = renderComments;
@@ -130,8 +143,8 @@ function afterPostComment (res) {
         var postId = spans.attr('post');
         openapi.get('/=/model/Comment/post/' + postId);
         openapi.callback = function (res) {
-            if (typeof res == 'object' && res.success == 0 && res.error) {
-                alert(JSON.stringify(res));
+            if (openapi.isSuccess(res)) {
+                error("Failed to increment the comment count for post " + postId + ": " + JSON.stringify(res));
             } else {
                 spans.text(commentCount + 1);
             }
@@ -148,12 +161,12 @@ function goToPost (id) {
     openapi.get('/=/model/Post/id/' + id);
 }
 
-function renderPost (posts) {
+function renderPost (res) {
     //alert(JSON.stringify(post));
-    if (typeof posts == 'object' && posts.success == 0 && posts.error) {
-        alert("Failed to render post: " + JSON.stringify(posts));
+    if (openapi.isSuccess(res)) {
+        error("Failed to render post: " + JSON.stringify(res));
     } else {
-        var post = posts[0];
+        var post = res[0];
         $("#beta-inner.pkg").html(
             Jemplate.process('post-page.tt', { post: post })
         );
@@ -168,8 +181,8 @@ function renderPost (posts) {
 }
 
 function renderPrevNextPost (currentId, res) {
-    if (typeof res == 'object' && res.success == 0 && res.error) {
-        alert("Failed to render prev next post navigation: " + JSON.stringify(res));
+    if (openapi.isSuccess(res)) {
+        error("Failed to render prev next post navigation: " + JSON.stringify(res));
     } else {
         //alert("Going to render prev next post navigation: " + JSON.stringify(res));
         $(".content-nav").html(
@@ -181,8 +194,8 @@ function renderPrevNextPost (currentId, res) {
 
 function renderComments (res) {
     //alert("Comments: " + JSON.stringify(res));
-    if (typeof data == 'object' && data.success == 0 && data.error) {
-        alert("Failed to render post list: " + JSON.stringify(data));
+    if (openapi.isSuccess(res)) {
+        error("Failed to render post list: " + JSON.stringify(data));
     } else {
         $(".comments-content").html(
             Jemplate.process('comments.tt', { comments: res })
@@ -191,12 +204,12 @@ function renderComments (res) {
     }
 }
 
-function renderPostList (data) {
-    if (typeof data == 'object' && data.success == 0 && data.error) {
-        alert("Failed to render post list: " + JSON.stringify(data));
+function renderPostList (res) {
+    if (openapi.isSuccess(res)) {
+        error("Failed to render post list: " + JSON.stringify(res));
     } else {
         //alert(JSON.stringify(data));
-        $("#beta-inner.pkg").html(Jemplate.process('post-list.tt', { post_list: data }));
+        $("#beta-inner.pkg").html(Jemplate.process('post-list.tt', { post_list: res }));
     }
 }
 
