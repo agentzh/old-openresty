@@ -98,12 +98,11 @@ $openapi->put({ comments => 5 }, '/=/model/Post/id/2');
 
 $openapi->post({
     definition => <<'_EOC_',
-        select id, title, date_part('day', created) day
+        select id, title, date_part('day', created) as day
         from Post
         where date_part('year', created) = $year and
               date_part('month', created) = $month
         order by id desc
-        limit 1
 _EOC_
 }, '/=/view/PostsByMonth');
 

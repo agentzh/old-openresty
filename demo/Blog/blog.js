@@ -59,13 +59,13 @@ function renderPostsInCalendar (res, year, month) {
     if (!openapi.isSuccess(res)) {
         error("Failed to fetch posts for calendar: " + JSON.stringify(res));
     } else {
-        alert(JSON.stringify(res));
+        //alert(JSON.stringify(res));
         for (var i = 0; i < res.length; i++) {
             var line = res[i];
             var id = 'day-' + year + '-' + month + '-' + line.day;
-            alert("ID: " + id);
+            //alert("ID: " + id);
             var cell = $("#" + id);
-            alert("cell html: " + cell.html());
+            //alert("cell html: " + cell.html());
             cell.html('<a href="#post-' + line.id + '">' + cell.html() + '</a>');
         }
     }
