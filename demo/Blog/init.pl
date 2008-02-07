@@ -59,7 +59,7 @@ while (<DATA>) {
             author => '章亦春',
             title => $title,
             content => $buffer,
-            created => $created,
+            $created eq 'undef' ? () : (created => $created),
         }, '/=/model/Post/~/~');
         undef $title;
         undef $buffer;
@@ -179,7 +179,7 @@ Villarrubia 的西班牙文翻译。对于非中文用户而言，第一次使�
 ////////////////////////////
 
 写了一篇东西到"雅虎搜索日志"
-2006-02-09 02:05
+2006-12-31 12:27
 写了一篇东西到我们 Yahoo 自己的"雅虎搜索日志"网站上：<br><br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="http://ysearchblog.cn/2007/11/searchall.html">http://ysearchblog.cn/2007/11/searchall.html</a><br><br>感谢咱们 content team 的何远银同学提供的初稿。毕竟发起一些东西不是我的长项，而大刀阔斧地修改现成的东西却是，呵呵。
 <br><br>另外还必须特别感谢一下我的编辑石杏岚小姐不厌其烦地反复修改这篇东西。在修改过 N 处之后，她终于说自己快崩溃了，呵呵。<br><br>这里顺便 spam 一下，SearchAll 的下一个版本将提供一个全新的视图，Mapping View：<br><br>&nbsp;&nbsp; <a href="http://agentzh.org/misc/mapview.png">http://agentzh.org/misc/mapview.png</a><br><br>欢迎大家试用 Subversion 里的版本：<br><br>&nbsp;&nbsp;&nbsp; <a href="http://svn.openfoundry.org/searchall/trunk/searchall.xpi">
 http://svn.openfoundry.org/searchall/trunk/searchall.xpi</a><br><br>Enjoy!<br><br>-agentzh
@@ -199,3 +199,8 @@ Yahoo! 4e team 贺岁语录
 最近又写了一篇东西到"<a href="http://ysearchblog.cn/">雅虎搜索日志</a>"，题为"从SearchAll看搜索引擎DNA":<br><br>&nbsp;&nbsp;&nbsp; <a href="http://ysearchblog.cn/2008/01/searchalldna.html">http://ysearchblog.cn/2008/01/searchalldna.html</a><br><br>感谢杏岚的编辑工作 :)<br>
 <br>我的下一篇东西可能题为"装在口袋里的网站"；我一直打算介绍一下我们的基于 OpenAPI 的纯客户端应用的开发技术。<br><br>我们的 M，yuting++，已经怪我"染上了作秀不良风气"了，哈哈。我看来是很难改正了，呵呵。tingting 一定要原谅我哦 ;)<br><br>-agentzh
 
+/////////////////////////////
+
+三叶草
+undef
+昨天在校园里漫步的时候，偶然间发现路旁的绿地上竟满是我最爱的三叶草。圆圆的叶子是那么娇嫩，那么雅致。我仿佛能觉出一缕淡淡的幽香……
