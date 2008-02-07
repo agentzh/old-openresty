@@ -1,9 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" id="sixapart-standard">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="generator" content="http://www.typepad.com/" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="generator" content="http://www.typepad.com/" />
 
         <script type="text/javascript" src="JSON.js"></script>
         <script type="text/javascript" src="dojo.openapi.js"></script>
@@ -13,126 +13,131 @@
         <script type="text/javascript" src="jemplates.js"></script>
         <script type="text/javascript" src="blog.js"></script>
 
-	<meta name="description" content="agentzh's mad house" />
-	
-	<link rel="stylesheet" href="styles.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="themes/common/print.css" type="text/css" media="print" />
-		<link rel="alternate" type="application/atom+xml" title="Posts on 'Pugs' (Atom)" href="http://pugs.blogs.com/pugs/atom.xml" />
-	<link rel="alternate" type="application/rss+xml" title="Posts on 'Pugs' (RSS 1.0)" href="http://pugs.blogs.com/pugs/index.rdf" />
-	<link rel="alternate" type="application/rss+xml" title="Posts on 'Pugs' (RSS 2.0)" href="http://pugs.blogs.com/pugs/rss.xml" />
-	
+    <meta name="description" content="agentzh's mad house" />
 
-	<title>Human & Machine</title>
-	<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://ced02.search.cnb.yahoo.com/=/feed/BlogPost" />
+    <link rel="stylesheet" href="blog.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="styles.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="themes/common/print.css" type="text/css" media="print" />
+        <link rel="alternate" type="application/atom+xml" title="Posts on 'Pugs' (Atom)" href="http://pugs.blogs.com/pugs/atom.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Posts on 'Pugs' (RSS 1.0)" href="http://pugs.blogs.com/pugs/index.rdf" />
+    <link rel="alternate" type="application/rss+xml" title="Posts on 'Pugs' (RSS 2.0)" href="http://pugs.blogs.com/pugs/rss.xml" />
+
+
+    <title>Human & Machine</title>
+    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://ced02.search.cnb.yahoo.com/=/feed/BlogPost" />
         <link rel="meta" type="application/rdf+xml" title="FOAF" href="http://pugs.blogs.com/foaf.rdf" />
-	
+
 </head>
 
 <body class="layout-two-column-left">
-	
+
         <a name="main" class="blog-top"></a>
-	<div id="container">
-		<div id="container-inner" class="pkg">
-			
-			<!-- banner -->
+    <div id="container">
+        <div id="container-inner" class="pkg">
+
+            <!-- banner -->
 <div id="banner">
-	<div id="banner-inner" class="pkg">
-		
+    <div id="banner-inner" class="pkg">
+
             <h1 id="banner-header">
                 <a href="#main" accesskey="1">Human & Machine</a>
             </h1>
 
-		<h2 id="banner-description">The mad house for a Perl guy, agentzh</h2>
-	</div>
+        <h2 id="banner-description">The mad house for a Perl guy, agentzh</h2>
+    </div>
 </div>
 
-			<div id="pagebody">
-				<div id="pagebody-inner" class="pkg">
-					<div id="alpha">
-						<div id="alpha-inner" class="pkg">
-							<!-- sidebar -->
+            <div id="pagebody">
+                <div id="pagebody-inner" class="pkg">
+                    <div id="alpha">
+                        <div id="alpha-inner" class="pkg">
+                            <!-- sidebar -->
 
+<div class="module-calendar module">
+    <!-- calendar.tt -->
+</div>
 
-	<div class="module-archives module">
-		<h2 class="module-header">Recent Posts</h2>
-		<div class="module-content">
-			<ul id="recent-posts" class="module-list">
-
-			</ul>
-		</div>
-	</div>
+<div class="module-archives module">
+    <h2 class="module-header">Recent Posts</h2>
+    <div class="module-content">
+        <ul id="recent-posts" class="module-list">
+        </ul>
+    </div>
+</div>
 
 <div class="module-recent-comments module">
-	<h2 class="module-header">Recent Comments</h2>
-	<div class="module-content">
-		<ul id="recent-comments" class="module-list">
-		</ul>
-	</div>
+    <h2 class="module-header">Recent Comments</h2>
+    <div class="module-content">
+        <ul id="recent-comments" class="module-list">
+        </ul>
+    </div>
 </div>
 
 <div class="module-categories module">
-	<h2 class="module-header"><a href="http://pugs.blogs.com/pugs/archives.html">Categories</a></h2>
-	<div class="module-content">
-		<ul class="module-list">
-						<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/app/index.html">App</a></li>
-						<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/backends/index.html">Backends</a></li>
-						<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/doc/index.html">Doc</a></li>
-						<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/event/index.html">Event</a></li>
-		
-		</ul>
-	</div>
+    <h2 class="module-header"><a href="http://pugs.blogs.com/pugs/archives.html">Categories</a></h2>
+    <div class="module-content">
+        <ul class="module-list">
+                    <!--
+                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/app/index.html">App</a></li>
+                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/backends/index.html">Backends</a></li>
+                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/doc/index.html">Doc</a></li>
+                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/event/index.html">Event</a></li>
+                    -->
+
+        </ul>
+    </div>
 </div>
-	<div class="module-archives module">
-		<h2 class="module-header"><a href="http://pugs.blogs.com/pugs/archives.html">Archives</a></h2>
-		<div class="module-content">
-												<ul class="module-list">
-				
-				<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/10/index.html">October 2007</a></li>
-				
-							
-				<li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/08/index.html">August 2007</a></li>
-				
+    <div class="module-archives module">
+        <h2 class="module-header"><a href="http://pugs.blogs.com/pugs/archives.html">Archives</a></h2>
+        <div class="module-content">
+                                                <ul class="module-list">
+
+                <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/10/index.html">October 2007</a></li>
+
+
+                <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/08/index.html">August 2007</a></li>
+
                     </ul>
                     <p class="module-more"><a href="http://pugs.blogs.com/pugs/archives.html">More...</a></p>
-			
-		</div>
-	</div>
+
+        </div>
+    </div>
 
 <div class="module-feed module">
-	<h2 class="module-header">agentzh</h2>
-	<div class="module-content" id="feed-d6e3ea166d4156b0ee0935b704a55dbf5f52a212">
-	</div>
+    <h2 class="module-header">agentzh</h2>
+    <div class="module-content" id="feed-d6e3ea166d4156b0ee0935b704a55dbf5f52a212">
+    </div>
 </div>
 <!-- user photo -->
-	<div class="module-photo module">
-		<div class="module-content"><img src="me.jpg" alt="My Photo" /></div>
+    <div class="module-photo module">
+        <div class="module-content"><img src="me.jpg" alt="My Photo" /></div>
                 <br/>
-	</div>
+    </div>
 
 <!-- about page link -->
 <div class="module-about module">
-	<h2 class="module-header"><a
-		href="http://pugs.blogs.com/about.html">About</a></h2>
+    <h2 class="module-header"><a
+        href="http://pugs.blogs.com/about.html">About</a></h2>
 </div>
 <div class="module-syndicate module">
-	<div class="module-content">
-		<a href="http://pugs.blogs.com/pugs/index.rdf">Subscribe to this blog's feed</a>
-	</div>
+    <div class="module-content">
+        <a href="http://pugs.blogs.com/pugs/index.rdf">Subscribe to this blog's feed</a>
+    </div>
 </div>
 <div class="module-syndicate module">
-	<div class="module-content">
-		<a href="http://pugs.blogs.com/pugs/rss.xml">Subscribe to my Podcast</a>
-	</div>
+    <div class="module-content">
+        <a href="http://pugs.blogs.com/pugs/rss.xml">Subscribe to my Podcast</a>
+    </div>
 </div>
 <div class="module-widget module" id="widget-Site_Meter_s27audreyt">
-	<div class="module-content">
-	</div>
+    <div class="module-content">
+    </div>
 </div>
 <div class="module-typelist module">
-	<h2 class="module-header">License</h2>
-	<div class="module-content">
-		<ul class="module-list">
-							<li class="module-list-item"><a href=""></a><br /><!-- Creative Commons Public Domain -->
+    <h2 class="module-header">License</h2>
+    <div class="module-content">
+        <ul class="module-list">
+                            <li class="module-list-item"><a href=""></a><br /><!-- Creative Commons Public Domain -->
 
 <a href="http://creativecommons.org/licenses/publicdomain"><img alt="Public Domain Dedication" border="0"
 src="http://creativecommons.org/images/public/norights.gif" /></a><br />
@@ -161,27 +166,27 @@ This work is dedicated to the
 </rdf:RDF>
 -->
 </li>
-			
-		</ul>
-	</div>
+
+        </ul>
+    </div>
 </div>
 
 
 
 
 
-						</div>
-					</div>
-					<div id="beta">
-						<div id="beta-inner" class="pkg">
-							<!-- entries -->
-						</div>
-					</div>
-				</div>
-			</div>
-			
-		</div>
-	</div>
+                        </div>
+                    </div>
+                    <div id="beta">
+                        <div id="beta-inner" class="pkg">
+                            <!-- entries -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
 <!-- Start Quantcast tag -->
 <!-- End Quantcast tag -->
