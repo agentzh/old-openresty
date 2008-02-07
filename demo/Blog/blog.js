@@ -65,6 +65,7 @@ function renderPostsInCalendar (res, year, month) {
             var id = 'day-' + year + '-' + month + '-' + line.day;
             //alert("ID: " + id);
             var cell = $("#" + id);
+            if (cell.length == 0) return;
             //alert("cell html: " + cell.html());
             cell.html('<a href="#post-' + line.id + '">' + cell.html() + '</a>');
         }
