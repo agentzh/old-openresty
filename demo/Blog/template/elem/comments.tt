@@ -13,7 +13,15 @@
         </div>
         <p class="comment-footer">
             Posted by:
-            [% comment.sender %] |
+            [% IF comment.url %]
+                [%- url = comment.url %]
+                [% IF NOT url.match('^\\w+://');
+                        url = 'http://' _ url;
+                    END -%]
+                <a href="[% url %]">[% comment.sender %]</a>
+            [% ELSE %]
+                [% comment.sender %] |
+            [% END %]
             [% comment.created %]
         </p>
     </div>

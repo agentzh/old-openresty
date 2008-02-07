@@ -13,6 +13,7 @@
     'December',
   ]
 -%]
+
 <h2 class="module-header">[% months.$month %] [% year %]</h2>
 <div class="module-content">
     <table id="calendar-nav">
