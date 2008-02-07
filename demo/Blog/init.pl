@@ -43,21 +43,27 @@ print Dump($openapi->get('/=/model')), "\n";
 #print Dump($openapi->get('/=/model/Post')), "\n";
 #print Dump($openapi->get('/=/model/Comment')), "\n";
 
-my ($title, $buffer);
+my ($title, $created, $buffer);
 while (<DATA>) {
     if (!$title) {
         next if /^\s*$/;
         $title = $_;
         chop $title;
+    } elsif (!$created) {
+        next if /^\s*$/;
+        $created = $_;
+        chop $created;
     } elsif (m{^////////+$}) {
         warn $title, "\n";
         $openapi->post({
             author => '章亦春',
             title => $title,
             content => $buffer,
+            created => $created,
         }, '/=/model/Post/~/~');
         undef $title;
         undef $buffer;
+        undef $created;
     } else {
         $buffer .= $_;
     }
@@ -81,14 +87,23 @@ for my $i (1..5) {
 }
 
 $openapi->post([
-    { sender => 'laser', body => 'super cool!', post => 4 },
-    { sender => 'ting', body => '呵呵。。。', post => 4 },
+    { sender => 'laser', body => 'super cool!', url => 'www.pgsqldb.org', post => 4 },
+    { sender => 'ting', body => '呵呵。。。', url => 'http://agentzh.org', post => 4 },
     { sender => 'clover', body => "yay!\nso great!", post => 3 },
 ], '/=/model/Comment/~/~');
 
 $openapi->put({ comments => 2 }, '/=/model/Post/id/4');
 $openapi->put({ comments => 1 }, '/=/model/Post/id/3');
 $openapi->put({ comments => 5 }, '/=/model/Post/id/2');
+
+$openapi->post({
+    definition => <<'_EOC_',
+        select id, title
+        from Post
+        order by id asc
+        limit 1
+_EOC_
+}, '/=/view/PostsByMonth');
 
 $openapi->post({
     definition => <<'_EOC_',
@@ -140,6 +155,7 @@ $openapi->post([
 __DATA__
 
 SearchAll 0.3.2 发布！
+2007-08-09 13:05
 经过 Yahoo! China EEEE hacking 小组近一个月的努力， <a href="http://searchall.agentzh.cn/">SearchAll</a>  0.3.2 版终于发布到了  <a href="http://addons.mozilla.org/">AMO 官方网站</a> ： </p><p><a href="https://addons.mozilla.org/zh-TW/firefox/addon/5712">
 https://addons.mozilla.org/zh-TW/firefox/addon/5712</a> </p><p>如果您已经安装了 SearchAll 的话，您的 Firefox 在启动时会自动检查更新，并按用户选择进行升级。 </p><p>和上一个 AMO 公开发布版本 0.1.8 相比，SearchAll 积累了许多重大改进。其中的亮点包括： </p><ul><li> <p>增加了对结果页中的链接进行本地测试的功能。SearchAll 现在会自动在``规格化视图''中用可爱的小图标标记出坏链，好链，和慢链。由于使用 Ajax HEAD 请求，所以测试的速度很快。我们 team 的 
 <a href="http://blog.jianingy.com/">杨家宁</a> 当初做 <a href="http://www.yisou.com/">"易搜"</a> 的时候就想到实现这样的本地链接测试的功能，但受到 AJAX 跨域请求的限制而未能实现。谢谢杨家宁提的这个 feature! </p></li><li> <p>增加了 <a href="http://agentzh.org/misc/rightclick.swf">
@@ -163,6 +179,7 @@ Villarrubia 的西班牙文翻译。对于非中文用户而言，第一次使�
 ////////////////////////////
 
 写了一篇东西到"雅虎搜索日志"
+2006-02-09 02:05
 写了一篇东西到我们 Yahoo 自己的"雅虎搜索日志"网站上：<br><br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="http://ysearchblog.cn/2007/11/searchall.html">http://ysearchblog.cn/2007/11/searchall.html</a><br><br>感谢咱们 content team 的何远银同学提供的初稿。毕竟发起一些东西不是我的长项，而大刀阔斧地修改现成的东西却是，呵呵。
 <br><br>另外还必须特别感谢一下我的编辑石杏岚小姐不厌其烦地反复修改这篇东西。在修改过 N 处之后，她终于说自己快崩溃了，呵呵。<br><br>这里顺便 spam 一下，SearchAll 的下一个版本将提供一个全新的视图，Mapping View：<br><br>&nbsp;&nbsp; <a href="http://agentzh.org/misc/mapview.png">http://agentzh.org/misc/mapview.png</a><br><br>欢迎大家试用 Subversion 里的版本：<br><br>&nbsp;&nbsp;&nbsp; <a href="http://svn.openfoundry.org/searchall/trunk/searchall.xpi">
 http://svn.openfoundry.org/searchall/trunk/searchall.xpi</a><br><br>Enjoy!<br><br>-agentzh
@@ -171,12 +188,14 @@ http://svn.openfoundry.org/searchall/trunk/searchall.xpi</a><br><br>Enjoy!<br><b
 /////////////////////////////
 
 Yahoo! 4e team 贺岁语录
+2008-02-09 02:05
 "妈呀，又是测试啊？" -- leiyh<br><br>"话说……你加的功能 work 了！" -- carrie<br><br>"这事咋办呢？让我想想。。。" -- ting<br><br>"每日常坐电脑前，每逢春秋必感冒。锻炼永远计划中，感冒一直在行动。" -- jianingy<br><br>"谁说我不乖的？我很乖的。" -- ywayne
 <br><br>"咦？是 exe 的。。。我来 hack 一下。。。" -- shangerdi<br><br>"哈哈！央视8套真好看,讲苍蝇飞行的原理 :D" -- laser<br><br>"锅得刚说了，铛铛铛，铛儿嘀儿嘀个儿铛！" -- arthas<br><br>"yay! it works! :D" -- agentzh<br><br>"春儿太猛了！整天写一坨一坨的没用的东西……" -- luoyi
 
 ////////////////////////////
 
 作秀中...
+2008-02-01 02:05
 最近又写了一篇东西到"<a href="http://ysearchblog.cn/">雅虎搜索日志</a>"，题为"从SearchAll看搜索引擎DNA":<br><br>&nbsp;&nbsp;&nbsp; <a href="http://ysearchblog.cn/2008/01/searchalldna.html">http://ysearchblog.cn/2008/01/searchalldna.html</a><br><br>感谢杏岚的编辑工作 :)<br>
 <br>我的下一篇东西可能题为"装在口袋里的网站"；我一直打算介绍一下我们的基于 OpenAPI 的纯客户端应用的开发技术。<br><br>我们的 M，yuting++，已经怪我"染上了作秀不良风气"了，哈哈。我看来是很难改正了，呵呵。tingting 一定要原谅我哦 ;)<br><br>-agentzh
 
