@@ -14,6 +14,10 @@ OpenAPI.Client = function (params) {
     //this.password = params.password;
 };
 
+OpenAPI.Client.prototype.isSuccess = function (res) {
+    return (typeof res == 'object' && res.success == 0 && res.error);
+};
+
 OpenAPI.Client.prototype.login = function (user, password) {
     this.user = user;
     var userCallback = this.callback;
