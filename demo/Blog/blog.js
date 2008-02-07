@@ -12,8 +12,39 @@ function init () {
     //openapi.formId = 'new_model';
     setInterval(checkAnchor, 300);
     checkAnchor();
-    getRecentComments();
+    getCalendar();
     getRecentPosts();
+    getRecentComments();
+}
+
+function getCalendar (year, month) {
+    if (year == undefined || month == undefined) {
+        var now = new Date();
+        year = now.getFullYear();
+        month = now.getMonth();
+    }
+    var date = new Date(year, month, 1);
+    var first_day_of_week = date.getDay();
+    var end_of_month;
+    if (month == 11) {
+        end_of_month = 31;
+    } else {
+        var delta = new Date(year, month + 1, 1) - date;
+        end_of_month = Math.round(delta/1000/60/60/24);
+    }
+    //alert(year);
+    //alert(month);
+    $(".module-calendar").html(
+        Jemplate.process(
+            'calendar.tt',
+            {
+                year: year,
+                month: month,
+                first_day_of_week: first_day_of_week,
+                end_of_month: end_of_month
+            }
+        )
+    );
 }
 
 function getRecentComments () {
