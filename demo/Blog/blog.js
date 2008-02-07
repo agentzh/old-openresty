@@ -60,8 +60,11 @@ function renderPostsInCalendar (res, year, month) {
         error("Failed to fetch posts for calendar: " + JSON.stringify(res));
     } else {
         //alert(JSON.stringify(res));
+        var prev_day = 0;
         for (var i = 0; i < res.length; i++) {
             var line = res[i];
+            if (prev_day == line.day) continue;
+            prev_day = line.day;
             var id = 'day-' + year + '-' + month + '-' + line.day;
             //alert("ID: " + id);
             var cell = $("#" + id);
