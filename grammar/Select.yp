@@ -53,9 +53,7 @@ pattern_list: pattern ',' pattern_list
             | pattern
             ;
 
-pattern: aggregate alias
-             { join(' ', @_[1..$#_]) }
-       | aggregate
+pattern: proc_call alias
        | proc_call
        | column 'as' alias
              { join(' ', @_[1..$#_]) }
@@ -67,20 +65,7 @@ pattern: aggregate alias
        | string 'as' alias
              { join(' ', @_[1..$#_]) }
        | string
-
        ;
-
-aggregate: func '(' column ')'
-             { join(' ', @_[1..$#_]) }
-         | func '(' '*' ')'
-             { join(' ', @_[1..$#_]) }
-         ;
-
-func: 'max'
-    | 'min'
-    | 'count'
-    | 'sum'
-    ;
 
 proc_call: IDENT '(' parameter_list ')'
              { join(' ', @_[1..$#_]) }
@@ -92,6 +77,9 @@ parameter_list: parameter ',' parameter_list
               ;
 
 parameter: literal
+         | variable
+         | column
+         | '*'
          ;
 
 variable: VAR
@@ -210,13 +198,22 @@ conjunction: comparison 'and' comparison
            | comparison
            ;
 
-comparison: column operator literal
-                { join(' ', @_[1..$#_]) }
-          | column operator column
+comparison: lhs_atom operator rhs_atom
                 { join(' ', @_[1..$#_]) }
           | '(' condition ')'
                 { join(' ', @_[1..$#_]) }
           ;
+
+lhs_atom: column
+        | '(' condition ')'
+        | proc_call
+        ;
+
+rhs_atom: column
+        | literal
+        | '(' condition ')'
+        | proc_call
+        ;
 
 operator: '>'
         | '>='
@@ -320,7 +317,7 @@ sub _Lexer {
                 and return ('IDENT', $1);
         s/^\s*(\$(\w*)\$.*?\$\2\$)//
                 and return ('STRING', $1);
-        if (s/^\s*(\*|as|count|sum|max|min|select|and|or|from|where|delete|update|set|order\s+by|asc|desc|group\s+by|limit|offset|union\s+all|union|intersect|except)\b//is) {
+        if (s/^\s*(\*|as|select|and|or|from|where|delete|update|set|order\s+by|asc|desc|group\s+by|limit|offset|union\s+all|union|intersect|except)\b//is) {
             my $s = $1;
             (my $token = $s) =~ s/\s+/ /g;
             return (lc($token), lc($s));
