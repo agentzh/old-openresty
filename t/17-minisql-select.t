@@ -619,3 +619,12 @@ order_by=id
 --- sql: (select 3) union all (select 4)
 --- out: ( select 3 ) union all ( select 4 )
 
+
+
+=== TEST 53: date_part
+--- sql
+select id, title
+from Post
+where date_part('year', created) = 2008
+--- out: select "id" , "title" from "Post" where date_part ( $y$year$y$ , "created" ) = 2008
+
