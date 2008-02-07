@@ -53,7 +53,8 @@ pattern_list: pattern ',' pattern_list
             | pattern
             ;
 
-pattern: proc_call alias
+pattern: proc_call 'as' alias
+             { join(' ', @_[1..$#_]) }
        | proc_call
        | column 'as' alias
              { join(' ', @_[1..$#_]) }

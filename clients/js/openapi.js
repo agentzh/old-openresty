@@ -15,7 +15,7 @@ OpenAPI.Client = function (params) {
 };
 
 OpenAPI.Client.prototype.isSuccess = function (res) {
-    return (typeof res == 'object' && res.success == 0 && res.error);
+    return !(typeof res == 'object' && res.success == 0 && res.error);
 };
 
 OpenAPI.Client.prototype.login = function (user, password) {

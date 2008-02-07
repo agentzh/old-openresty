@@ -72,7 +72,7 @@
                 [%- IF (day > end_of_month) || (day == 1 && day_of_week < first_day_of_week) -%]
                     <td>&nbsp;</td>
                 [%- ELSE -%]
-                    <td>[% day %]</td>
+                    <td id="day-[% year %]-[% month %]-[% day %]">[% day %]</td>
                     [%- day = day + 1 %]
                 [%- END %]
                 [%- day_of_week = day_of_week + 1 %]

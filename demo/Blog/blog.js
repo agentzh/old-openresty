@@ -49,15 +49,26 @@ function getCalendar (year, month) {
             }
         )
     );
-    /*
     openapi.callback = function (res) {
         renderPostsInCalendar(res, year, month);
     };
-    openapi.get('/=/view/PostsByMonth', { year: year, month: month });
-    */
+    openapi.get('/=/view/PostsByMonth/~/~', { year: year, month: month + 1 });
 }
 
 function renderPostsInCalendar (res, year, month) {
+    if (!openapi.isSuccess(res)) {
+        error("Failed to fetch posts for calendar: " + JSON.stringify(res));
+    } else {
+        alert(JSON.stringify(res));
+        for (var i = 0; i < res.length; i++) {
+            var line = res[i];
+            var id = 'day-' + year + '-' + month + '-' + line.day;
+            alert("ID: " + id);
+            var cell = $("#" + id);
+            alert("cell html: " + cell.html());
+            cell.html('<a href="#post-' + line.id + '">' + cell.html() + '</a>');
+        }
+    }
 }
 
 function getRecentComments () {
@@ -71,7 +82,7 @@ function getRecentPosts () {
 }
 
 function renderRecentComments (res) {
-    if (openapi.isSuccess(res)) {
+    if (!openapi.isSuccess(res)) {
         error("Failed to get the recent comments: " + JSON.stringify(res));
     } else {
         //alert("Get the recent comments: " + JSON.stringify(res));
@@ -81,7 +92,7 @@ function renderRecentComments (res) {
 }
 
 function renderRecentPosts (res) {
-    if (openapi.isSuccess(res)) {
+    if (!openapi.isSuccess(res)) {
         error("Failed to get the recent posts: " + JSON.stringify(res));
     } else {
         //alert("Get the recent posts: " + JSON.stringify(res));
@@ -133,7 +144,7 @@ function postComment (form) {
 
 function afterPostComment (res) {
     //alert("HERE!!!");
-    if (openapi.isSuccess(res)) {
+    if (!openapi.isSuccess(res)) {
         error("Failed to post the comment: " + JSON.stringify(res));
     } else {
         //alert(JSON.stringify(res));
@@ -143,7 +154,7 @@ function afterPostComment (res) {
         var postId = spans.attr('post');
         openapi.get('/=/model/Comment/post/' + postId);
         openapi.callback = function (res) {
-            if (openapi.isSuccess(res)) {
+            if (!openapi.isSuccess(res)) {
                 error("Failed to increment the comment count for post " + postId + ": " + JSON.stringify(res));
             } else {
                 spans.text(commentCount + 1);
@@ -163,7 +174,7 @@ function goToPost (id) {
 
 function renderPost (res) {
     //alert(JSON.stringify(post));
-    if (openapi.isSuccess(res)) {
+    if (!openapi.isSuccess(res)) {
         error("Failed to render post: " + JSON.stringify(res));
     } else {
         var post = res[0];
@@ -181,7 +192,7 @@ function renderPost (res) {
 }
 
 function renderPrevNextPost (currentId, res) {
-    if (openapi.isSuccess(res)) {
+    if (!openapi.isSuccess(res)) {
         error("Failed to render prev next post navigation: " + JSON.stringify(res));
     } else {
         //alert("Going to render prev next post navigation: " + JSON.stringify(res));
@@ -194,7 +205,7 @@ function renderPrevNextPost (currentId, res) {
 
 function renderComments (res) {
     //alert("Comments: " + JSON.stringify(res));
-    if (openapi.isSuccess(res)) {
+    if (!openapi.isSuccess(res)) {
         error("Failed to render post list: " + JSON.stringify(data));
     } else {
         $(".comments-content").html(
@@ -205,7 +216,7 @@ function renderComments (res) {
 }
 
 function renderPostList (res) {
-    if (openapi.isSuccess(res)) {
+    if (!openapi.isSuccess(res)) {
         error("Failed to render post list: " + JSON.stringify(res));
     } else {
         //alert(JSON.stringify(data));

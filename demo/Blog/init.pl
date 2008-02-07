@@ -98,9 +98,11 @@ $openapi->put({ comments => 5 }, '/=/model/Post/id/2');
 
 $openapi->post({
     definition => <<'_EOC_',
-        select id, title
+        select id, title, date_part('day', created) day
         from Post
-        order by id asc
+        where date_part('year', created) = $year and
+              date_part('month', created) = $month
+        order by id desc
         limit 1
 _EOC_
 }, '/=/view/PostsByMonth');
@@ -148,6 +150,7 @@ $openapi->post([
     { method => "GET", url => '/=/view/RecentComments/~/~' },
     { method => "GET", url => '/=/view/RecentPosts/~/~' },
     { method => "GET", url => '/=/view/PrevNextPost/~/~' },
+    { method => "GET", url => '/=/view/PostsByMonth/~/~' },
     { method => "PUT", url => '/=/model/Post/id/~' },
     { method => "POST", url => '/=/model/Comment/~/~' },
 ], '/=/role/Public/~/~');

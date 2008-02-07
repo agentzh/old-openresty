@@ -143,14 +143,14 @@ where name='zhxj';
 
 === TEST 7: Group by
 --- sql
-select sum ( * )
+select sum ( * ) as blah
 from People, Blah
 where name='zhxj'
 group by name
 --- error
 --- models: People Blah
 --- cols: name name
---- out: select sum ( * ) from "People" , "Blah" where "name" = $y$zhxj$y$ group by "name"
+--- out: select sum ( * ) as blah from "People" , "Blah" where "name" = $y$zhxj$y$ group by "name"
 
 
 
@@ -623,8 +623,10 @@ order_by=id
 
 === TEST 53: date_part
 --- sql
-select id, title
+select id, title, date_part('day', created) as day
 from Post
 where date_part('year', created) = 2008
---- out: select "id" , "title" from "Post" where date_part ( $y$year$y$ , "created" ) = 2008
+--- out: select "id" , "title" , date_part ( $y$day$y$ , "created" ) as day from "Post" where date_part ( $y$year$y$ , "created" ) = 2008
+
+
 
