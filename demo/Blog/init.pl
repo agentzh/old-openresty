@@ -172,7 +172,7 @@ if ($cmd eq 'small') {
     $openapi->put({ comments => 1 }, '/=/model/Post/id/3');
     $openapi->put({ comments => 5 }, '/=/model/Post/id/2');
 } else {
-    my $infile = 'agentzh-live.json';
+    my $infile = shift @ARGV || 'agentzh-live.json';
     open my $in, $infile or die "Can't open $infile for reading: $!\n";
     my $json = do { local $/; <$in> };
     my $data = JSON::Syck::Load($json);
