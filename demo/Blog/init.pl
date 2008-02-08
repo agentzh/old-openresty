@@ -143,15 +143,25 @@ $openapi->post({
 _EOC_
 }, '/=/view/PrevNextPost');
 
+$openapi->post({
+    definition => <<'_EOC_',
+        select count(*)
+        from $model
+_EOC_
+}, '/=/view/RowCount');
+
 $openapi->post([
     { method => "GET", url => '/=/model/Post/~/~' },
     { method => "GET", url => '/=/model/Comment/~/~' },
+
     { method => "GET", url => '/=/view/RecentComments/~/~' },
     { method => "GET", url => '/=/view/RecentPosts/~/~' },
     { method => "GET", url => '/=/view/PrevNextPost/~/~' },
     { method => "GET", url => '/=/view/PostsByMonth/~/~' },
-    { method => "PUT", url => '/=/model/Post/id/~' },
+    { method => "GET", url => '/=/view/RowCount/~/~' },
+
     { method => "POST", url => '/=/model/Comment/~/~' },
+    { method => "PUT", url => '/=/model/Post/id/~' },
 ], '/=/role/Public/~/~');
 
 __DATA__

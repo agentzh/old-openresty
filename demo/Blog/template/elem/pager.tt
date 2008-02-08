@@ -1,7 +1,7 @@
 [% DEFAULT
     page = 1,
     page_count = undef,
-    title = 'Result page'
+    title = 'Pages'
 -%]
 
 [% IF page_count <= 10;
@@ -26,12 +26,13 @@
       [%- END %]
       </td>
 
-    [%- i = from;
+    [%- i = from; %]
     [%- WHILE i <= to %]
       [%- IF i == page %]
-        <td><b><% $i %></b></td>
+        <td><b>[% i %]</b></td>
       [%- ELSE %]
-        <td><a href="#post-list-[% i %]">[% i %]</a></td>
+        <td>&nbsp;<a href="#post-list-[% i %]">[% i %]</a>&nbsp;</td>
+      [%- END %]
       [%- i = i + 1 %]
     [%- END %]
 
