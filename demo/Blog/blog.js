@@ -127,21 +127,20 @@ function checkAnchor () {
         return;
     }
     match = hash.match(/^\#?(?:post-list|post-list-(\d+))$/);
-    if (match) {
-        var page = parseInt(match[1]) || 1;
-        openapi.callback = renderPostList;
-        //openapi.user = 'agentzh.Public';
-        openapi.get('/=/model/Post/~/~', {
-            count: itemsPerPage,
-            order_by: 'id:desc',
-            offset: itemsPerPage * (page - 1),
-            limit: itemsPerPage
-        });
-        openapi.callback = function (res) { renderPager(res, page); };
-        openapi.get('/=/view/RowCount/model/Post');
-        $(".blog-top").attr('id', 'post-list-' + page);
-        return;
-    }
+    var page = 1;
+    if (match)
+        page = parseInt(match[1]) || 1;
+    openapi.callback = renderPostList;
+    //openapi.user = 'agentzh.Public';
+    openapi.get('/=/model/Post/~/~', {
+        count: itemsPerPage,
+        order_by: 'id:desc',
+        offset: itemsPerPage * (page - 1),
+        limit: itemsPerPage
+    });
+    openapi.callback = function (res) { renderPager(res, page); };
+    openapi.get('/=/view/RowCount/model/Post');
+    $(".blog-top").attr('id', 'post-list-' + page);
 }
 
 function postComment (form) {
@@ -213,6 +212,7 @@ function renderPost (res) {
 
         openapi.callback = renderComments;
         openapi.get('/=/model/Comment/post/' + post.id);
+        $("#beta-pager.pkg").html('');
     }
 }
 

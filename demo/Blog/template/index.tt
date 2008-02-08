@@ -40,7 +40,7 @@
     <div id="banner-inner" class="pkg">
 
             <h1 id="banner-header">
-                <a href="#main" accesskey="1">Human & Machine</a>
+                <a href="#post-list" accesskey="1">Human & Machine</a>
             </h1>
 
         <h2 id="banner-description">The mad house for a Perl guy, agentzh</h2>

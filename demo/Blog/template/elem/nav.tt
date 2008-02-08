@@ -14,7 +14,7 @@
 </a>
 [% END %]
  |
-<a href="#main"> Main </a>
+<a href="#post-list"> Main </a>
  |
 [% IF prev_post %]
 <a href="#post-[% prev_post.id %]">

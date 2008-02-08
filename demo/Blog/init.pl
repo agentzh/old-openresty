@@ -6,9 +6,15 @@ use warnings;
 use lib '../../lib';
 use Time::HiRes 'sleep';
 use utf8;
+use JSON::Syck;
 use YAML 'Dump';
 use lib '/home/agentz/hack/openapi/trunk/lib';
 use WWW::OpenAPI::Simple;
+
+my $cmd = shift || 'small';
+if ($cmd ne 'small' and $cmd ne 'big') {
+    die "Unknown command: $cmd\n";
+}
 
 my $openapi = WWW::OpenAPI::Simple->new( { server => 'http://localhost' } );
 $openapi->login('agentzh', 4423037);
@@ -42,60 +48,6 @@ $openapi->post({
 print Dump($openapi->get('/=/model')), "\n";
 #print Dump($openapi->get('/=/model/Post')), "\n";
 #print Dump($openapi->get('/=/model/Comment')), "\n";
-
-my ($title, $created, $buffer);
-while (<DATA>) {
-    if (!$title) {
-        next if /^\s*$/;
-        $title = $_;
-        chop $title;
-    } elsif (!$created) {
-        next if /^\s*$/;
-        $created = $_;
-        chop $created;
-    } elsif (m{^////////+$}) {
-        warn $title, "\n";
-        $openapi->post({
-            author => '章亦春',
-            title => $title,
-            content => $buffer,
-            $created eq 'undef' ? () : (created => $created),
-        }, '/=/model/Post/~/~');
-        undef $title;
-        undef $buffer;
-        undef $created;
-    } else {
-        $buffer .= $_;
-    }
-}
-if ($title && $buffer) {
-    $openapi->post({
-        author => '章亦春',
-        title => $title,
-        content => $buffer,
-    }, '/=/model/Post/~/~');
-}
-
-#print Dump($openapi->get('/=/model/Post/~/~')), "\n";
-
-for my $i (1..5) {
-    warn "Comment $i\n";
-    $openapi->post([
-        { sender => 'bot', body => qq{This is a comment <b>\t<a href="">&nbsp;</a>\t</b>$i\n} x 20, post => 2 },
-    ], '/=/model/Comment/~/~');
-    #sleep(0.8);
-}
-
-$openapi->post([
-    { sender => 'laser', body => 'super cool!', url => 'www.pgsqldb.org', post => 4 },
-    { sender => 'ting', body => '呵呵。。。', url => 'http://agentzh.org', post => 4 },
-    { sender => 'clover', body => "yay!\nso great!", post => 3 },
-], '/=/model/Comment/~/~');
-
-$openapi->put({ comments => 2 }, '/=/model/Post/id/4');
-$openapi->put({ comments => 1 }, '/=/model/Post/id/3');
-$openapi->put({ comments => 5 }, '/=/model/Post/id/2');
-
 $openapi->post({
     definition => <<'_EOC_',
         select id, title, date_part('day', created) as day
@@ -163,6 +115,80 @@ $openapi->post([
     { method => "POST", url => '/=/model/Comment/~/~' },
     { method => "PUT", url => '/=/model/Post/id/~' },
 ], '/=/role/Public/~/~');
+
+################################################
+
+if ($cmd eq 'small') {
+    my ($title, $created, $buffer);
+    while (<DATA>) {
+        if (!$title) {
+            next if /^\s*$/;
+            $title = $_;
+            chop $title;
+        } elsif (!$created) {
+            next if /^\s*$/;
+            $created = $_;
+            chop $created;
+        } elsif (m{^////////+$}) {
+            warn $title, "\n";
+            $openapi->post({
+                author => '章亦春',
+                title => $title,
+                content => $buffer,
+                $created eq 'undef' ? () : (created => $created),
+            }, '/=/model/Post/~/~');
+            undef $title;
+            undef $buffer;
+            undef $created;
+        } else {
+            $buffer .= $_;
+        }
+    }
+    if ($title && $buffer) {
+        $openapi->post({
+            author => '章亦春',
+            title => $title,
+            content => $buffer,
+        }, '/=/model/Post/~/~');
+    }
+
+    #print Dump($openapi->get('/=/model/Post/~/~')), "\n";
+
+    for my $i (1..5) {
+        warn "Comment $i\n";
+        $openapi->post([
+            { sender => 'bot', body => qq{This is a comment <b>\t<a href="">&nbsp;</a>\t</b>$i\n} x 20, post => 2 },
+        ], '/=/model/Comment/~/~');
+        #sleep(0.8);
+    }
+
+    $openapi->post([
+        { sender => 'laser', body => 'super cool!', url => 'www.pgsqldb.org', post => 4 },
+        { sender => 'ting', body => '呵呵。。。', url => 'http://agentzh.org', post => 4 },
+        { sender => 'clover', body => "yay!\nso great!", post => 3 },
+    ], '/=/model/Comment/~/~');
+
+    $openapi->put({ comments => 2 }, '/=/model/Post/id/4');
+    $openapi->put({ comments => 1 }, '/=/model/Post/id/3');
+    $openapi->put({ comments => 5 }, '/=/model/Post/id/2');
+} else {
+    my $infile = 'agentzh-live.json';
+    open my $in, $infile or die "Can't open $infile for reading: $!\n";
+    my $json = do { local $/; <$in> };
+    my $data = JSON::Syck::Load($json);
+    for my $entry (@$data) {
+        my $title = $entry->{title};
+        my $body = $entry->{body};
+        my $date = $entry->{date};
+        warn $title, "\n";
+        $openapi->post({
+            author => '章亦春',
+            title => $title,
+            content => $body,
+            $date eq 'undef' ? () : (created => $date),
+        }, '/=/model/Post/~/~');
+    }
+}
 
 __DATA__
 
