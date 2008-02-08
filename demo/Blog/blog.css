@@ -1,5 +1,5 @@
 a.nav-arrow {
-    font-size: 12pt;
+    font-size: 10pt;
     font-weight: bold;
 }
 
@@ -10,7 +10,7 @@ table.paging {
 }
 
 table.paging td {
-    font-size: 95%;
+    font-size: 90%;
     white-space: nowrap;
 }
 
