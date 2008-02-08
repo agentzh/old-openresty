@@ -57,7 +57,8 @@ function getCalendar (year, month) {
 
 function renderPostsInCalendar (res, year, month) {
     if (!openapi.isSuccess(res)) {
-        error("Failed to fetch posts for calendar: " + JSON.stringify(res));
+        error("Failed to fetch posts for calendar: " +
+            JSON.stringify(res));
     } else {
         //alert(JSON.stringify(res));
         var prev_day = 0;
@@ -70,7 +71,8 @@ function renderPostsInCalendar (res, year, month) {
             var cell = $("#" + id);
             if (cell.length == 0) return;
             //alert("cell html: " + cell.html());
-            cell.html('<a href="#post-' + line.id + '">' + cell.html() + '</a>');
+            cell.html('<a href="#post-' + line.id + '">' +
+                cell.html() + '</a>');
         }
     }
 }
@@ -159,12 +161,16 @@ function afterPostComment (res) {
         openapi.get('/=/model/Comment/post/' + postId);
         openapi.callback = function (res) {
             if (!openapi.isSuccess(res)) {
-                error("Failed to increment the comment count for post " + postId + ": " + JSON.stringify(res));
+                error("Failed to increment the comment count for post " +
+                    postId + ": " + JSON.stringify(res));
             } else {
                 spans.text(commentCount + 1);
             }
         };
-        openapi.putByGet({ comments: commentCount + 1 }, '/=/model/Post/id/' + postId);
+        openapi.putByGet(
+            { comments: commentCount + 1 },
+            '/=/model/Post/id/' + postId
+        );
     }
 }
 
@@ -197,7 +203,8 @@ function renderPost (res) {
 
 function renderPrevNextPost (currentId, res) {
     if (!openapi.isSuccess(res)) {
-        error("Failed to render prev next post navigation: " + JSON.stringify(res));
+        error("Failed to render prev next post navigation: " +
+            JSON.stringify(res));
     } else {
         //alert("Going to render prev next post navigation: " + JSON.stringify(res));
         $(".content-nav").html(
@@ -224,7 +231,9 @@ function renderPostList (res) {
         error("Failed to render post list: " + JSON.stringify(res));
     } else {
         //alert(JSON.stringify(data));
-        $("#beta-inner.pkg").html(Jemplate.process('post-list.tt', { post_list: res }));
+        $("#beta-inner.pkg").html(
+            Jemplate.process('post-list.tt', { post_list: res })
+        );
     }
 }
 
