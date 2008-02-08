@@ -630,3 +630,10 @@ where date_part('year', created) = 2008
 
 
 
+=== TEST 54: bug
+--- sql
+select count(*)
+from $model
+--- out: select count ( * ) from ""
+--- models:
+

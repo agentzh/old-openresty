@@ -193,6 +193,7 @@ sub new_view {
     #
     my @models = @{ $res->{models} };
     foreach my $model (@models){
+        next if $model =~ /^\s*$/;
         if (!$self->has_model($model)) {
             die "Model \"$model\" not found.\n";
         }
