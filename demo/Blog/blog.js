@@ -1,5 +1,6 @@
 var openapi;
 var position;
+var itemsPerPage = 5;
 
 $(window).ready(init);
 
@@ -113,19 +114,33 @@ function checkAnchor () {
     if (position == hash) {
         return;
     }
+    if (hash.match(/^\#?\s*$/)) {
+        hash = 'post-list';
+        location.hash = 'post-list';
+    }
     position = hash;
-    var match = hash.match(/post-(\d+)(:comments|comment-(\d+))?/);
+    var match = hash.match(/^\#?post-(\d+)(:comments|comment-(\d+))?/);
     if (match) {
         var postId = match[1];
         //alert("Post ID: " + postId);
         goToPost(postId);
-    } else {
+        return;
+    }
+    match = hash.match(/^\#?(?:post-list|post-list-(\d+))$/);
+    if (match) {
+        var page = parseInt(match[1]) || 1;
         openapi.callback = renderPostList;
         //openapi.user = 'agentzh.Public';
         openapi.get('/=/model/Post/~/~', {
-            count: 5,
-            order_by: 'id:desc'
+            count: itemsPerPage,
+            order_by: 'id:desc',
+            offset: itemsPerPage * (page - 1),
+            limit: itemsPerPage
         });
+        openapi.callback = function (res) { renderPager(res, page); };
+        openapi.get('/=/view/RowCount/model/Post');
+        $(".blog-top").attr('id', 'post-list-' + page);
+        return;
     }
 }
 
@@ -234,6 +249,23 @@ function renderPostList (res) {
         $("#beta-inner.pkg").html(
             Jemplate.process('post-list.tt', { post_list: res })
         );
+    }
+    location.hash = location.hash;
+}
+
+function renderPager (res, page) {
+    if (!openapi.isSuccess(res)) {
+        error("Failed to render pager: " + JSON.stringify(res));
+    } else {
+        var pageCount = Math.ceil(res[0].count / itemsPerPage);
+        if (pageCount < 2) return;
+        $("#beta-pager.pkg").html(
+            Jemplate.process(
+                'pager.tt',
+                { page: page, page_count: pageCount, title: 'Pages' }
+            )
+        );
+        location.hash = location.hash;
     }
 }
 

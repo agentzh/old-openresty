@@ -181,10 +181,18 @@ This work is dedicated to the
                         <div id="beta-inner" class="pkg">
                             <!-- entries -->
                         </div>
+                        <div id="beta-pager" class="pkg">
+                        </div>
                     </div>
                 </div>
             </div>
 
+        </div>
+            <!--
+            <center>
+                <p>Copyright (c) 2008 by Yahoo! China EEEE works.</p>
+            </center>
+            -->
         </div>
     </div>
 
