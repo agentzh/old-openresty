@@ -176,7 +176,7 @@ if ($cmd eq 'small') {
     open my $in, $infile or die "Can't open $infile for reading: $!\n";
     my $json = do { local $/; <$in> };
     my $data = JSON::Syck::Load($json);
-    for my $entry (@$data) {
+    for my $entry (reverse @$data) {
         my $title = $entry->{title};
         my $body = $entry->{body};
         my $date = $entry->{date};

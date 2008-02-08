@@ -8,8 +8,8 @@
       from = 1;
       to = page_count;
    ELSE;
-      from = page - 10 >= 1 ? page - 10 : 1;
-      to = page + 9;
+      from = page - 10 >= 1 ? page - 10 : 1
+      to = page + 9 >= page_count ? page_count : page + 9;
    END -%]
 
 <center>
@@ -31,7 +31,7 @@
       [%- IF i == page %]
         <td><b>[% i %]</b></td>
       [%- ELSE %]
-        <td>&nbsp;<a href="#post-list-[% i %]">[% i %]</a>&nbsp;</td>
+        <td><a href="#post-list-[% i %]">[% i %]</a></td>
       [%- END %]
       [%- i = i + 1 %]
     [%- END %]

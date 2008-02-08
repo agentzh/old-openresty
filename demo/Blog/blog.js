@@ -257,7 +257,7 @@ function renderPager (res, page) {
     if (!openapi.isSuccess(res)) {
         error("Failed to render pager: " + JSON.stringify(res));
     } else {
-        var pageCount = Math.ceil(res[0].count / itemsPerPage);
+        var pageCount = Math.ceil(parseInt(res[0].count) / itemsPerPage);
         if (pageCount < 2) return;
         $("#beta-pager.pkg").html(
             Jemplate.process(
