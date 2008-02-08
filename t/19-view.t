@@ -704,3 +704,11 @@ GET /=/view/Foo/~/~?val=2&col=id
     {"title":"163","id":"6"}
 ]
 
+
+=== TEST 76: bug
+--- request
+POST /=/view/RowCount
+{ definition: "select count(*) from $model" }
+--- response
+{"success":1}
+
