@@ -95,7 +95,7 @@ sub new {
 		}
 	},
 	{#State 8
-		DEFAULT => -29
+		DEFAULT => -30
 	},
 	{#State 9
 		ACTIONS => {
@@ -119,7 +119,7 @@ sub new {
 		ACTIONS => {
 			"as" => 27
 		},
-		DEFAULT => -26
+		DEFAULT => -27
 	},
 	{#State 12
 		ACTIONS => {
@@ -131,7 +131,7 @@ sub new {
 		DEFAULT => -39
 	},
 	{#State 14
-		DEFAULT => -38
+		DEFAULT => -39
 	},
 	{#State 15
 		DEFAULT => -35
@@ -155,7 +155,7 @@ sub new {
 		ACTIONS => {
 			"as" => 37
 		},
-		DEFAULT => -21
+		DEFAULT => -22
 	},
 	{#State 19
 		ACTIONS => {
@@ -206,7 +206,7 @@ sub new {
 		ACTIONS => {
 			"|" => 40
 		},
-		DEFAULT => -47
+		DEFAULT => -48
 	},
 	{#State 24
 		ACTIONS => {
@@ -233,7 +233,7 @@ sub new {
 		}
 	},
 	{#State 26
-		DEFAULT => -30
+		DEFAULT => -31
 	},
 	{#State 27
 		DEFAULT => -2
@@ -245,7 +245,8 @@ sub new {
 		ACTIONS => {
 			"intersect" => 58,
 			"union" => 56,
-			"except" => 59
+			"except" => 59,
+			"union all" => 60
 		},
 		DEFAULT => -5,
 		GOTOS => {
@@ -322,7 +323,7 @@ sub new {
 		DEFAULT => -49
 	},
 	{#State 33
-		DEFAULT => -45
+		DEFAULT => -46
 	},
 	{#State 34
 		ACTIONS => {
@@ -377,7 +378,7 @@ sub new {
 		},
 		GOTOS => {
 			'symbol' => 34,
-			'alias' => 70
+			'alias' => 71
 		}
 	},
 	{#State 38
@@ -449,17 +450,17 @@ sub new {
 		},
 		GOTOS => {
 			'symbol' => 19,
-			'order_by_objects' => 78,
-			'column' => 79,
+			'order_by_objects' => 79,
+			'column' => 80,
 			'qualified_symbol' => 12,
-			'order_by_object' => 77
+			'order_by_object' => 78
 		}
 	},
 	{#State 45
-		DEFAULT => -51
+		DEFAULT => -52
 	},
 	{#State 46
-		DEFAULT => -52
+		DEFAULT => -53
 	},
 	{#State 47
 		ACTIONS => {
@@ -483,7 +484,7 @@ sub new {
 		}
 	},
 	{#State 45
-		DEFAULT => -56
+		DEFAULT => -57
 	},
 	{#State 49
 		ACTIONS => {
@@ -502,7 +503,7 @@ sub new {
 		DEFAULT => -10
 	},
 	{#State 52
-		DEFAULT => -54
+		DEFAULT => -55
 	},
 	{#State 51
 		ACTIONS => {
@@ -513,7 +514,7 @@ sub new {
 			"from" => 54,
 			"offset" => 49
 		},
-		DEFAULT => -50,
+		DEFAULT => -51,
 		GOTOS => {
 			'select_stmt' => 1,
 			'compound_select_stmt' => 94
@@ -553,15 +554,13 @@ sub new {
 		DEFAULT => -78
 	},
 	{#State 63
-		DEFAULT => -75
+		DEFAULT => -77
 	},
 	{#State 64
-		DEFAULT => -36
+		DEFAULT => -76
 	},
 	{#State 65
-		ACTIONS => {
-			")" => 97
-		}
+		DEFAULT => -37
 	},
 	{#State 65
 		DEFAULT => -30
@@ -586,12 +585,12 @@ sub new {
 		DEFAULT => -32
 	},
 	{#State 70
+		DEFAULT => -26
+	},
+	{#State 70
 		ACTIONS => {
 			")" => 97
 		}
-	},
-	{#State 70
-		DEFAULT => -20
 	},
 	{#State 71
 		DEFAULT => -25
@@ -612,15 +611,18 @@ sub new {
 		DEFAULT => -36
 	},
 	{#State 77
+		DEFAULT => -89
+	},
+	{#State 78
 		ACTIONS => {
 			"and" => 98
 		},
 		DEFAULT => -61
 	},
-	{#State 78
-		DEFAULT => -81
-	},
 	{#State 79
+		DEFAULT => -82
+	},
+	{#State 80
 		ACTIONS => {
 			"or" => 99
 		},
@@ -629,11 +631,8 @@ sub new {
 	{#State 73
 		DEFAULT => -66
 	},
-	{#State 81
-		DEFAULT => -57
-	},
 	{#State 82
-		DEFAULT => -89
+		DEFAULT => -57
 	},
 	{#State 83
 		ACTIONS => {
@@ -654,6 +653,9 @@ sub new {
 		}
 	},
 	{#State 84
+		DEFAULT => -50
+	},
+	{#State 85
 		ACTIONS => {
 			"<" => 101,
 			"like" => 102,
@@ -670,7 +672,7 @@ sub new {
 	{#State 84
 		DEFAULT => -64
 	},
-	{#State 85
+	{#State 86
 		DEFAULT => -56
 	},
 	{#State 86
@@ -777,12 +779,17 @@ sub new {
 		}
 	},
 	{#State 96
-		DEFAULT => -4
+		ACTIONS => {
+			")" => 119
+		}
 	},
 	{#State 97
 		DEFAULT => -27
 	},
 	{#State 98
+		DEFAULT => -34
+	},
+	{#State 99
 		ACTIONS => {
 			"(" => 75,
 			'VAR' => 53,
@@ -836,7 +843,7 @@ sub new {
 	{#State 104
 		DEFAULT => -72
 	},
-	{#State 105
+	{#State 106
 		ACTIONS => {
 			'NUM' => 15,
 			"(" => 122,
@@ -866,6 +873,9 @@ sub new {
 		DEFAULT => -71
 	},
 	{#State 109
+		DEFAULT => -70
+	},
+	{#State 110
 		ACTIONS => {
 			'NUM' => 70,
 			'STRING' => 69
@@ -894,6 +904,9 @@ sub new {
 		DEFAULT => -87
 	},
 	{#State 114
+		DEFAULT => -69
+	},
+	{#State 115
 		ACTIONS => {
 			'VAR' => 53,
 			'IDENT' => 52
@@ -905,7 +918,7 @@ sub new {
 			'qualified_symbol' => 13
 		}
 	},
-	{#State 115
+	{#State 116
 		ACTIONS => {
 			'VAR' => 53,
 			'IDENT' => 52
@@ -1030,6 +1043,9 @@ sub
 		 'set_operator', 1, undef
 	],
 	[#Rule 10
+		 'set_operator', 1, undef
+	],
+	[#Rule 11
 		 'select_stmt', 3,
 sub
 #line 38 "grammar/Select.yp"
@@ -1092,10 +1108,10 @@ sub
 #line 64 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
-	[#Rule 24
+	[#Rule 25
 		 'pattern', 1, undef
 	],
-	[#Rule 25
+	[#Rule 26
 		 'pattern', 3,
 sub
 #line 67 "grammar/Select.yp"
@@ -1113,7 +1129,7 @@ sub
 #line 72 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
-	[#Rule 28
+	[#Rule 29
 		 'parameter_list', 3,
 sub
 #line 76 "grammar/Select.yp"
@@ -1134,7 +1150,7 @@ sub
 	[#Rule 33
 		 'parameter', 1, undef
 	],
-	[#Rule 34
+	[#Rule 35
 		 'variable', 1,
 sub
 #line 87 "grammar/Select.yp"
@@ -1396,6 +1412,9 @@ sub
 		 'literal', 1, undef
 	],
 	[#Rule 74
+		 'literal', 1, undef
+	],
+	[#Rule 79
 		 'group_by_clause', 2,
 sub
 #line 234 "grammar/Select.yp"
