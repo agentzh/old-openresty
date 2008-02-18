@@ -95,9 +95,6 @@ sub new {
 		}
 	},
 	{#State 8
-		DEFAULT => -8
-	},
-	{#State 9
 		ACTIONS => {
 			"." => 24
 		},
@@ -131,7 +128,10 @@ sub new {
 		DEFAULT => -39
 	},
 	{#State 14
-		DEFAULT => -37
+		ACTIONS => {
+			"," => 28
+		},
+		DEFAULT => -16
 	},
 	{#State 15
 		DEFAULT => -35
@@ -197,9 +197,12 @@ sub new {
 		}
 	},
 	{#State 23
-		DEFAULT => -25
+		DEFAULT => -2
 	},
 	{#State 24
+		DEFAULT => 0
+	},
+	{#State 25
 		ACTIONS => {
 			'VAR' => 53,
 			'IDENT' => 52
@@ -219,10 +222,28 @@ sub new {
 		}
 	},
 	{#State 26
-		DEFAULT => 0
+		ACTIONS => {
+			'VAR' => 16,
+			'IDENT' => 45
+		},
+		GOTOS => {
+			'symbol' => 53
+		}
 	},
 	{#State 27
-		DEFAULT => -4
+		ACTIONS => {
+			'NUM' => 58,
+			'VAR' => 61,
+			'STRING' => 57
+		},
+		GOTOS => {
+			'parameter' => 60,
+			'literal' => 59,
+			'number' => 55,
+			'variable' => 54,
+			'string' => 56,
+			'parameter_list' => 62
+		}
 	},
 	{#State 28
 		ACTIONS => {
@@ -291,6 +312,12 @@ sub new {
 		}
 	},
 	{#State 31
+		DEFAULT => -49
+	},
+	{#State 33
+		DEFAULT => -10
+	},
+	{#State 34
 		ACTIONS => {
 			"(" => 75,
 			'VAR' => 53,
@@ -324,9 +351,6 @@ sub new {
 		DEFAULT => -48
 	},
 	{#State 35
-		DEFAULT => -9
-	},
-	{#State 36
 		ACTIONS => {
 			'NUM' => 15,
 			'VAR' => 81,
@@ -340,6 +364,9 @@ sub new {
 		}
 	},
 	{#State 36
+		DEFAULT => -48
+	},
+	{#State 38
 		ACTIONS => {
 			'VAR' => 53,
 			'IDENT' => 52
@@ -359,9 +386,6 @@ sub new {
 		DEFAULT => -49
 	},
 	{#State 39
-		DEFAULT => -47
-	},
-	{#State 40
 		ACTIONS => {
 			'VAR' => 53,
 			'IDENT' => 52
@@ -394,6 +418,7 @@ sub new {
 			'VAR' => 81,
 			'STRING' => 14
 		},
+		DEFAULT => -46,
 		GOTOS => {
 			'literal' => 91,
 			'number' => 56,
@@ -405,9 +430,15 @@ sub new {
 		DEFAULT => -51
 	},
 	{#State 44
-		DEFAULT => -49
+		DEFAULT => -44
 	},
 	{#State 45
+		DEFAULT => -41
+	},
+	{#State 46
+		DEFAULT => -17
+	},
+	{#State 47
 		ACTIONS => {
 			"where" => 31,
 			"order by" => 36,
@@ -445,6 +476,9 @@ sub new {
 		DEFAULT => -10
 	},
 	{#State 52
+		DEFAULT => -9
+	},
+	{#State 51
 		ACTIONS => {
 			"(" => 2,
 			"select" => 4
@@ -488,16 +522,16 @@ sub new {
 		DEFAULT => -78
 	},
 	{#State 63
-		ACTIONS => {
-			"and" => 87
-		},
-		DEFAULT => -59
+		DEFAULT => -15
 	},
 	{#State 64
+		DEFAULT => -42
+	},
+	{#State 65
 		ACTIONS => {
-			"or" => 88
+			"and" => 90
 		},
-		DEFAULT => -57
+		DEFAULT => -60
 	},
 	{#State 65
 		DEFAULT => -30
@@ -526,6 +560,9 @@ sub new {
 			")" => 97
 		}
 	},
+	{#State 70
+		DEFAULT => -55
+	},
 	{#State 71
 		DEFAULT => -25
 	},
@@ -550,8 +587,11 @@ sub new {
 		},
 		DEFAULT => -61
 	},
-	{#State 78
+	{#State 77
 		DEFAULT => -53
+	},
+	{#State 78
+		DEFAULT => -14
 	},
 	{#State 79
 		ACTIONS => {
@@ -566,6 +606,9 @@ sub new {
 		DEFAULT => -57
 	},
 	{#State 82
+		DEFAULT => -45
+	},
+	{#State 83
 		ACTIONS => {
 			"(" => 75,
 			'VAR' => 53,
@@ -582,9 +625,6 @@ sub new {
 			'condition' => 100,
 			'column' => 77
 		}
-	},
-	{#State 83
-		DEFAULT => -19
 	},
 	{#State 84
 		ACTIONS => {
@@ -656,6 +696,9 @@ sub new {
 		DEFAULT => -15
 	},
 	{#State 89
+		DEFAULT => -29
+	},
+	{#State 90
 		ACTIONS => {
 			"," => 115
 		},
@@ -702,10 +745,10 @@ sub new {
 		}
 	},
 	{#State 95
-		DEFAULT => -65
+		DEFAULT => -69
 	},
 	{#State 96
-		DEFAULT => -67
+		DEFAULT => -65
 	},
 	{#State 97
 		DEFAULT => -27
@@ -742,6 +785,12 @@ sub new {
 		}
 	},
 	{#State 108
+		DEFAULT => -82
+	},
+	{#State 104
+		DEFAULT => -80
+	},
+	{#State 105
 		ACTIONS => {
 			")" => 119
 		}
@@ -940,7 +989,7 @@ sub
 		 'compound_select_stmt', 1, undef
 	],
 	[#Rule 12
-		 'set_operator', 1, undef
+		 'compound_select_stmt', 1, undef
 	],
 	[#Rule 13
 		 'set_operator', 1, undef
@@ -952,6 +1001,9 @@ sub
 		 'set_operator', 1, undef
 	],
 	[#Rule 16
+		 'set_operator', 1, undef
+	],
+	[#Rule 10
 		 'select_stmt', 3,
 sub
 #line 38 "grammar/Select.yp"
@@ -1027,6 +1079,9 @@ sub
 		 'pattern', 1, undef
 	],
 	[#Rule 27
+		 'func', 1, undef
+	],
+	[#Rule 29
 		 'proc_call', 4,
 sub
 #line 72 "grammar/Select.yp"
@@ -1047,7 +1102,7 @@ sub
 	[#Rule 31
 		 'parameter', 1, undef
 	],
-	[#Rule 32
+	[#Rule 33
 		 'parameter', 1, undef
 	],
 	[#Rule 33
@@ -1276,7 +1331,10 @@ sub
 		 'rhs_atom', 1, undef
 	],
 	[#Rule 71
-		 'operator', 1, undef
+		 'comparison', 3,
+sub
+#line 211 "grammar/Select.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 72
 		 'operator', 1, undef
@@ -1297,7 +1355,7 @@ sub
 		 'operator', 1, undef
 	],
 	[#Rule 78
-		 'literal', 1, undef
+		 'operator', 1, undef
 	],
 	[#Rule 79
 		 'literal', 1, undef
@@ -1309,6 +1367,9 @@ sub
 		 'literal', 1, undef
 	],
 	[#Rule 68
+		 'literal', 1, undef
+	],
+	[#Rule 74
 		 'group_by_clause', 2,
 sub
 #line 234 "grammar/Select.yp"
