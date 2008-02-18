@@ -194,7 +194,6 @@ function goToPost (id) {
     //alert($(".blog-top").attr('id'));
     openapi.callback = renderPost;
     openapi.get('/=/model/Post/id/' + id);
-    position = location.hash;
 }
 
 function renderPost (res) {
