@@ -9,8 +9,8 @@ function error (msg) {
 }
 
 function init () {
-    //var host = 'http://10.62.136.86';
-    var host = 'http://127.0.0.1';
+    var host = 'http://10.62.136.86';
+    //var host = 'http://127.0.0.1';
     openapi = new OpenAPI.Client(
         { server: host, callback: 'display', user: 'agentzh.Public' }
     );
@@ -157,8 +157,8 @@ function postComment (form) {
     }
     //openapi.purge();
     openapi.callback = afterPostComment;
-    //openapi.formId = 'comment-form';
-    openapi.postByGet(data, '/=/model/Comment/~/~');
+    openapi.formId = 'comment-form';
+    openapi.post(data, '/=/model/Comment/~/~');
     return false;
 }
 

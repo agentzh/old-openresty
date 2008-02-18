@@ -54,11 +54,15 @@ OpenAPI.Client.prototype.post = function (content, url, args) {
     if (!this.callback) throw "No callback specified for OpenAPI.";
     var formId = this.formId;
     if (!formId) throw "No form specified.";
+
+    if (!args.user)
+        args.user = this.user;
+
+    args.rand = Math.round( Math.random() * 100000 );
+    args.session = this.session;
     content = JSON.stringify(content);
     //alert("type of content: " + typeof(content));
     //alert("content: " + content);
-    args.rand = Math.random();
-    args.session = this.session;
     //args.callback = this.callback;
     //args.as_html = 1;
 

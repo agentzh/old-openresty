@@ -10,6 +10,7 @@ use JSON::Syck;
 use YAML 'Dump';
 use lib '/home/agentz/hack/openapi/trunk/lib';
 use WWW::OpenAPI::Simple;
+use Date::Manip;
 
 my $cmd = shift || 'small';
 if ($cmd ne 'small' and $cmd ne 'big') {
@@ -145,7 +146,6 @@ if ($cmd eq 'small') {
         }
     }
     if ($title && $buffer) {
-        warn $title, "\n";
         $openapi->post({
             author => '章亦春',
             title => $title,
@@ -182,6 +182,9 @@ if ($cmd eq 'small') {
         my $body = $entry->{body};
         my $date = $entry->{date};
         warn $title, "\n";
+        if ($body =~ /.{1,55}c\.gif.{3,150}/) {
+            #warn $&, "\n";
+        }
         $openapi->post({
             author => '章亦春',
             title => $title,
@@ -189,75 +192,23 @@ if ($cmd eq 'small') {
             $date eq 'undef' ? () : (created => $date),
         }, '/=/model/Post/~/~');
     }
-}
-
-for my $i (1..5) {
-    warn "Comment $i\n";
     $openapi->post([
-        { sender => 'bot', body => qq{This is a comment <b>\t<a href="">&nbsp;</a>\t</b>$i\n} x 20, post => 2 },
+        { sender => 'lobatt', body => "过来回拜：）\n关于你负责测试这个事情，我是在YAPC上获得的信息...不准确么？我改我改...", url => 'http://www.perlfect.org/', post => 62, created => date('November 25 8:47 PM') },
+        { sender => 'agentzh', body => '呵呵，谢谢你的留言 :)', url => 'http://blog.agentzh.org', post => 62, created => date('November 27 8:43 PM') },
+        { sender => 'xinglan', body => '非常好的一篇文章。期待下次崩溃 ：）', url => 'http://i.cn.yahoo.com/shi_xinglan', post => 65, created => '2007-12-03 11:09:00+08' },
     ], '/=/model/Comment/~/~');
-    #sleep(0.8);
+    $openapi->put({ comments => 1 }, '/=/model/Post/id/65');
+    $openapi->put({ comments => 2 }, '/=/model/Post/id/62');
 }
 
-$openapi->post([
-    { sender => 'laser', body => 'super cool!', post => 4 },
-    { sender => 'ting', body => '呵呵。。。', post => 4 },
-    { sender => 'clover', body => "yay!\nso great!", post => 3 },
-], '/=/model/Comment/~/~');
-
-
-$openapi->post({
-    definition => <<'_EOC_',
-        select Comment.id as id, post, sender, title
-        from Post, Comment
-        where post = Post.id
-        order by Comment.id desc
-        offset $offset | 0
-        limit $limit | 10
-_EOC_
-}, '/=/view/RecentComments');
-
-$openapi->post({
-    definition => <<'_EOC_',
-        select id, title
-        from Post
-        order by id desc
-        offset $offset | 0
-        limit $limit | 10
-_EOC_
-}, '/=/view/RecentPosts');
-
-$openapi->post({
-    definition => <<'_EOC_',
-        (select id, title
-        from Post
-        where id < $current
-        order by id desc
-        limit 1)
-      union
-        (select 0, '')
-      union
-        (select id, title
-        from Post
-        where id > $current
-        order by id asc
-        limit 1)
-_EOC_
-}, '/=/view/PrevNextPost');
-
-$openapi->put({ comments => 2 }, '/=/model/Post/id/4');
-$openapi->put({ comments => 1 }, '/=/model/Post/id/3');
-$openapi->put({ comments => 5 }, '/=/model/Post/id/3');
-
-$openapi->post([
-    { method => "GET", url => '/=/model/Post/~/~' },
-    { method => "GET", url => '/=/model/Comment/~/~' },
-    { method => "GET", url => '/=/view/RecentComments/~/~' },
-    { method => "GET", url => '/=/view/RecentPosts/~/~' },
-    { method => "GET", url => '/=/view/PrevNextPost/~/~' },
-    { method => "PUT", url => '/=/model/Post/id/~' },
-    { method => "POST", url => '/=/model/Comment/~/~' },
-], '/=/role/Public/~/~');
+sub date {
+    my $date = shift;
+    $date  =~ s/([A-Za-z]+ \d{1,2}) (\d+:\d+)/$1 2007 $2/;
+    $date = ParseDate($date);
+    my $str = UnixDate($date,'%Y-%m-%d %H:%M:%S+0800');
+    print "$str\n";
+    $str;
+}
 
 __DATA__
 
