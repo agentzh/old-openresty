@@ -16,7 +16,7 @@ if (@ARGV == 1) {
 if ($arg eq 'product') {
     requires            ('FCGI');
     requires            ('CGI::Simple' => '1.103');
-    requires            ('YAML::Syck' => '1.00');
+    requires            ('YAML::Syck' => '1.04');
     requires            ('List::Util');
     requires            ('DBI' => '1.57');
     requires            ('Clone' => '0.22');
@@ -48,7 +48,7 @@ if ($arg eq 'product') {
     requires            ('Cookie::XS');
     requires            ('FCGI');
     requires            ('CGI::Simple' => '1.103');
-    requires            ('YAML::Syck' => '1.00');
+    requires            ('YAML::Syck' => '1.04');
     requires            ('List::Util');
     requires            ('DBI' => '1.57');
     requires            ('Clone' => '0.22');

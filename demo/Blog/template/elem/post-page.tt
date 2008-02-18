@@ -1,4 +1,3 @@
-<a name="post-[% post.id %]" id="post-[% post.id %]"></a>
 <p class="content-nav">
 </p>
 <!-- entry -->
@@ -15,7 +14,7 @@
 
     </div>
     <!-- comment form -->
-    <form id="comment-form" onsubmit="return false;">
+    <form id="comment-form" onsubmit="return false;" method="post">
         <input id="comment-for" type="hidden" value="[% post.id %]"></input>
 
         <div class="comments-open">

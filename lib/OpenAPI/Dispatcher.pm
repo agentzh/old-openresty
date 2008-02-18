@@ -111,6 +111,13 @@ sub process_request {
         return;
     }
     ### $http_meth
+    if ($OpenAPI::Config{'test_suite.use_http'}) {
+        require Clone;
+        #warn "------------------------------------------------\n";
+        warn "$http_meth ", $ENV{REQUEST_URI}, "\n";
+        warn JSON::Syck::Dump(Clone::clone($openapi->{_req_data})), "\n"
+            if $http_meth eq 'POST' or $http_meth eq 'PUT';
+    }
 
     # XXX hacks...
     my $cookies = Cookie::XS->fetch;
@@ -136,6 +143,7 @@ sub process_request {
     if ($http_meth eq 'GET' and @bits >= 2 and $bits[0] eq 'last' and $bits[1] eq 'response') {
         $openapi->{_bin_data} = $response_from_cookie . "\n";
         $openapi->response;
+        #warn "last_response: $response_from_cookie\n";
         return;
     }
 

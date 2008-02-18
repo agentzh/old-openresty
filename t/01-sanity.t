@@ -116,7 +116,7 @@ GET /=/model/Foo.js
 === TEST 12: insert a single record
 --- request
 POST /=/model/Bookmark/~/~
-{ title: "Yahoo Search", url: "http://www.yahoo.cn" }
+{ title: "Yahoo Search", url: 'http://www.yahoo.cn' }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/1"}
 
@@ -125,7 +125,7 @@ POST /=/model/Bookmark/~/~
 === TEST 13: insert another record
 --- request
 POST /=/model/Bookmark/~/~.js
-{ title: "Yahoo Search", url: "http://www.yahoo.cn" }
+{ title: "Yahoo Search", url: 'http://www.yahoo.cn' }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/2"}
 
