@@ -417,7 +417,7 @@ sub new {
 	{#State 47
 		DEFAULT => -10
 	},
-	{#State 48
+	{#State 52
 		ACTIONS => {
 			"(" => 2,
 			"select" => 4
@@ -427,40 +427,49 @@ sub new {
 			'compound_select_stmt' => 94
 		}
 	},
-	{#State 49
+	{#State 53
 		DEFAULT => -9
 	},
-	{#State 50
+	{#State 54
 		DEFAULT => -7
 	},
-	{#State 51
+	{#State 55
 		DEFAULT => -41
 	},
-	{#State 52
+	{#State 56
 		DEFAULT => -42
 	},
-	{#State 53
+	{#State 57
 		ACTIONS => {
 			"|" => 95
 		},
 		DEFAULT => -44
 	},
-	{#State 54
+	{#State 58
 		DEFAULT => -45
 	},
-	{#State 55
+	{#State 59
 		DEFAULT => -23
 	},
-	{#State 56
+	{#State 60
 		DEFAULT => -79
 	},
-	{#State 57
+	{#State 61
 		DEFAULT => -31
 	},
-	{#State 58
+	{#State 62
 		DEFAULT => -78
 	},
-	{#State 59
+	{#State 63
+		DEFAULT => -78
+	},
+	{#State 64
+		ACTIONS => {
+			"," => 92
+		},
+		DEFAULT => -73
+	},
+	{#State 65
 		DEFAULT => -30
 	},
 	{#State 60
@@ -469,7 +478,10 @@ sub new {
 		},
 		DEFAULT => -29
 	},
-	{#State 61
+	{#State 67
+		DEFAULT => -68
+	},
+	{#State 68
 		DEFAULT => -33
 	},
 	{#State 62
@@ -482,36 +494,39 @@ sub new {
 	{#State 63
 		DEFAULT => -32
 	},
-	{#State 64
+	{#State 70
 		ACTIONS => {
 			")" => 97
 		}
 	},
-	{#State 65
+	{#State 71
 		DEFAULT => -25
 	},
-	{#State 66
+	{#State 72
 		DEFAULT => -18
 	},
 	{#State 67
 		DEFAULT => -16
 	},
-	{#State 68
+	{#State 74
 		DEFAULT => -43
 	},
-	{#State 69
+	{#State 75
 		DEFAULT => -38
 	},
-	{#State 70
+	{#State 76
 		DEFAULT => -36
 	},
-	{#State 71
+	{#State 77
+		DEFAULT => -14
+	},
+	{#State 78
 		ACTIONS => {
 			"and" => 98
 		},
 		DEFAULT => -61
 	},
-	{#State 72
+	{#State 79
 		ACTIONS => {
 			"or" => 99
 		},
@@ -520,10 +535,10 @@ sub new {
 	{#State 73
 		DEFAULT => -66
 	},
-	{#State 74
+	{#State 81
 		DEFAULT => -57
 	},
-	{#State 75
+	{#State 82
 		ACTIONS => {
 			"(" => 75,
 			'VAR' => 53,
@@ -541,7 +556,7 @@ sub new {
 			'column' => 77
 		}
 	},
-	{#State 76
+	{#State 83
 		ACTIONS => {
 			"<" => 101,
 			"like" => 102,
@@ -555,34 +570,34 @@ sub new {
 			'operator' => 105
 		}
 	},
-	{#State 77
+	{#State 84
 		DEFAULT => -64
 	},
-	{#State 78
+	{#State 85
 		DEFAULT => -56
 	},
-	{#State 79
+	{#State 86
 		DEFAULT => -80
 	},
-	{#State 80
+	{#State 87
 		DEFAULT => -91
 	},
-	{#State 81
+	{#State 88
 		ACTIONS => {
 			"|" => 109
 		},
 		DEFAULT => -34
 	},
-	{#State 82
+	{#State 89
 		ACTIONS => {
 			"," => 110
 		},
 		DEFAULT => -86
 	},
-	{#State 83
+	{#State 90
 		DEFAULT => -84
 	},
-	{#State 84
+	{#State 91
 		ACTIONS => {
 			"desc" => 111,
 			"asc" => 112
@@ -601,7 +616,10 @@ sub new {
 		},
 		DEFAULT => -83
 	},
-	{#State 87
+	{#State 98
+		DEFAULT => -18
+	},
+	{#State 99
 		DEFAULT => -54
 	},
 	{#State 88
@@ -625,10 +643,10 @@ sub new {
 	{#State 93
 		DEFAULT => -20
 	},
-	{#State 94
+	{#State 104
 		DEFAULT => -4
 	},
-	{#State 95
+	{#State 105
 		ACTIONS => {
 			'IDENT' => 68
 		}
@@ -671,7 +689,7 @@ sub new {
 			'qualified_symbol' => 13
 		}
 	},
-	{#State 99
+	{#State 107
 		ACTIONS => {
 			"(" => 75,
 			'VAR' => 53,
@@ -687,7 +705,7 @@ sub new {
 			'qualified_symbol' => 13
 		}
 	},
-	{#State 100
+	{#State 108
 		ACTIONS => {
 			")" => 119
 		}
@@ -695,10 +713,13 @@ sub new {
 	{#State 101
 		DEFAULT => -74
 	},
-	{#State 102
+	{#State 110
+		DEFAULT => -69
+	},
+	{#State 111
 		DEFAULT => -77
 	},
-	{#State 103
+	{#State 112
 		DEFAULT => -76
 	},
 	{#State 104
@@ -927,7 +948,7 @@ sub
 #line 52 "grammar/Select.yp"
 { join(' ', @_[1..$#_]) }
 	],
-	[#Rule 17
+	[#Rule 18
 		 'pattern_list', 1, undef
 	],
 	[#Rule 18
@@ -1029,6 +1050,21 @@ sub
             }
 	],
 	[#Rule 37
+		 'number', 3,
+sub
+#line 94 "grammar/Select.yp"
+{
+                push @OutVars, $_[1];
+                my $val = $InVals->{$_[1]};
+                if (!defined $val) {
+                    my $default;
+                    $Defaults{$_[1]} = $default = $_[3];
+                    return $default;
+                }
+                $Quote->($val);
+            }
+	],
+	[#Rule 30
 		 'string', 1,
 sub
 #line 112 "grammar/Select.yp"
@@ -1234,6 +1270,9 @@ sub
 		 'literal', 1, undef
 	],
 	[#Rule 81
+		 'literal', 1, undef
+	],
+	[#Rule 68
 		 'group_by_clause', 2,
 sub
 #line 234 "grammar/Select.yp"

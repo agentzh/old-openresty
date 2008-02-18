@@ -145,6 +145,7 @@ if ($cmd eq 'small') {
         }
     }
     if ($title && $buffer) {
+        warn $title, "\n";
         $openapi->post({
             author => '章亦春',
             title => $title,
@@ -189,6 +190,54 @@ if ($cmd eq 'small') {
         }, '/=/model/Post/~/~');
     }
 }
+
+for my $i (1..5) {
+    warn "Comment $i\n";
+    $openapi->post([
+        { sender => 'bot', body => qq{This is a comment <b>\t<a href="">&nbsp;</a>\t</b>$i\n} x 20, post => 2 },
+    ], '/=/model/Comment/~/~');
+    #sleep(0.8);
+}
+
+$openapi->post([
+    { sender => 'laser', body => 'super cool!', post => 4 },
+    { sender => 'ting', body => '呵呵。。。', post => 4 },
+    { sender => 'clover', body => "yay!\nso great!", post => 3 },
+], '/=/model/Comment/~/~');
+
+
+$openapi->post({
+    definition =>
+        "select Comment.id as id, post, sender, title ".
+        "from Post, Comment ".
+        "where post = Post.id ".
+        "order by Comment.id desc ".
+        'offset $offset | 0 '.
+        'limit $limit | 10',
+}, '/=/view/RecentComments');
+
+$openapi->post({
+    definition =>
+        "select id, title ".
+        "from Post ".
+        "order by id desc ".
+        'offset $offset | 0 '.
+        'limit $limit | 10',
+}, '/=/view/RecentPosts');
+
+
+$openapi->put({ comments => 2 }, '/=/model/Post/id/4');
+$openapi->put({ comments => 1 }, '/=/model/Post/id/3');
+$openapi->put({ comments => 5 }, '/=/model/Post/id/3');
+
+$openapi->post([
+    { method => "GET", url => '/=/model/Post/~/~' },
+    { method => "GET", url => '/=/model/Comment/~/~' },
+    { method => "GET", url => '/=/view/RecentComments/~/~' },
+    { method => "GET", url => '/=/view/RecentPosts/~/~' },
+    { method => "PUT", url => '/=/model/Post/id/~' },
+    { method => "POST", url => '/=/model/Comment/~/~' },
+], '/=/role/Public/~/~');
 
 __DATA__
 
