@@ -108,7 +108,6 @@ function renderRecentPosts (res) {
     }
 }
 
-
 function checkAnchor () {
     var hash = location.hash;
     if (position == hash) {

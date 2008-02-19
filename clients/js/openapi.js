@@ -133,7 +133,6 @@ OpenAPI.Client.prototype.get = function (url, args) {
     //args.password = this.password || '';
     if (url.match(/\?/)) throw "URL should not contain '?'.";
     args.rand = Math.round( Math.random() * 100000 );
-    args.session = this.session;
     //alert(args.rand);
     //if (!isLogin) args.user = this.user;
     //args.password = this.password;
