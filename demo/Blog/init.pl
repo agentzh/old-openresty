@@ -8,7 +8,6 @@ use Time::HiRes 'sleep';
 use utf8;
 use JSON::Syck;
 use YAML 'Dump';
-use lib '/home/agentz/hack/openapi/trunk/lib';
 use WWW::OpenAPI::Simple;
 use Date::Manip;
 
