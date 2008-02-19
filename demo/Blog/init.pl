@@ -15,7 +15,7 @@ if ($cmd ne 'small' and $cmd ne 'big') {
     die "Unknown command: $cmd\n";
 }
 
-my $openapi = WWW::OpenAPI::Simple->new( { server => 'http://localhost' } );
+my $openapi = WWW::OpenAPI::Simple->new( { server => 'http://localhost:8080' } );
 $openapi->login('agentzh', 4423037);
 $openapi->delete("/=/model");
 $openapi->delete("/=/role/Public/~/~");
@@ -40,7 +40,7 @@ $openapi->post({
         { name => 'url', label => 'Sender homepage URL' },
         { name => 'body', label => 'Comment body' },
         { name => 'created', default => ['now()'], type => 'timestamp(0) with time zone', label => 'Comment creation time' },
-        { name => 'post', label => 'target post' },
+        { name => 'post', label => 'target post', type => 'integer' },
     ],
 }, '/=/model/Comment');
 

@@ -6,12 +6,10 @@
 
 <a id="post-[%post.id%]:comments" name="post-[%post.id%]-comments"></a>
     <div class="comments">
-
         <h3 class="comments-header">Comments</h3>
         <div class="comments-content">
         <!-- comment list -->
         </div>
-
     </div>
     <!-- comment form -->
     <form id="comment-form" onsubmit="return false;" method="post">
@@ -42,18 +40,13 @@
                 </p>
                 </div>
 
-    <p id="comments-open-text">
-
-
+                <p id="comments-open-text">
                     <label for="comment-text">Comments:</label>
-
                     <textarea id="comment-text" name="text" rows="10" cols="30" onkeyup="/* maxTextarea(this, 64000) */"></textarea>
                 </p>
             </div>
 
-    <div id="comments-open-footer" class="comments-open-footer">
-
-
+            <div id="comments-open-footer" class="comments-open-footer">
                 <button name="preview" id="comment-preview">&nbsp;Preview&nbsp;</button>
                 <button name="post" id="comment-post" onclick="postComment([% post.id %]);">&nbsp;Post&nbsp;</button>
             </div>
