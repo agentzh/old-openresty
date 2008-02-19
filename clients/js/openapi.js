@@ -55,11 +55,11 @@ OpenAPI.Client.prototype.post = function (content, url, args) {
     var formId = this.formId;
     if (!formId) throw "No form specified.";
 
-    if (!args.user)
+    if (this.session) args.session = this.session;
+    if (!this.session && !args.user)
         args.user = this.user;
 
     args.rand = Math.round( Math.random() * 100000 );
-    args.session = this.session;
     content = JSON.stringify(content);
     //alert("type of content: " + typeof(content));
     //alert("content: " + content);
@@ -125,8 +125,11 @@ OpenAPI.Client.prototype.get = function (url, args) {
     if (!this.callback) throw "No callback specified for OpenAPI.";
     if (!this.server) throw "No server specified for OpenAPI.";
     //if (!this.user) throw "No user specified for OpenAPI.";
-    if (!args.user)
+
+    if (this.session) args.session = this.session;
+    if (!this.session && !args.user)
         args.user = this.user;
+
     //args.password = this.password || '';
     if (url.match(/\?/)) throw "URL should not contain '?'.";
     args.rand = Math.round( Math.random() * 100000 );
