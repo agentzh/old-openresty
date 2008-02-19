@@ -4,6 +4,7 @@ use Test::Base -Base;
 
 #use Smart::Comments;
 my $client_module;
+use lib 'inc';
 use lib 'lib';
 use OpenAPI::Config;
 BEGIN {
