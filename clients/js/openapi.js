@@ -120,7 +120,7 @@ OpenAPI.Client.prototype.put = function (content, url, args) {
 };
 
 
-OpenAPI.Client.prototype.get = function (url, args, isLogin) {
+OpenAPI.Client.prototype.get = function (url, args) {
     if (!args) args = {};
     if (!this.callback) throw "No callback specified for OpenAPI.";
     if (!this.server) throw "No server specified for OpenAPI.";
