@@ -12,14 +12,49 @@ function init () {
     var host = 'http://10.62.136.86';
     //var host = 'http://127.0.0.1';
     openapi = new OpenAPI.Client(
-        { server: host, callback: 'display', user: 'agentzh.Public' }
+        { server: host, user: 'agentzh.Public' }
     );
     //openapi.formId = 'new_model';
-    setInterval(checkAnchor, 300);
-    checkAnchor();
+    setInterval(dispatchByAnchor, 300);
     getCalendar();
     getRecentPosts();
     getRecentComments();
+}
+
+function dispatchByAnchor () {
+    var hash = location.hash;
+    //alert(hash);
+    hash = hash.replace(/^\#/, '');
+    if (position == hash)
+        return;
+    if (hash == "") {
+        hash = 'main';
+        location.hash = 'main';
+    }
+    position = hash;
+
+    var match = hash.match(/^post-(\d+)(:comments|comment-(\d+))?/);
+    if (match) {
+        var postId = match[1];
+        //alert("Post ID: " + postId);
+        goToPost(postId);
+        return;
+    }
+    match = hash.match(/^(?:post-list|post-list-(\d+))$/);
+    var page = 1;
+    if (match)
+        page = parseInt(match[1]) || 1;
+    openapi.callback = renderPostList;
+    //openapi.user = 'agentzh.Public';
+    openapi.get('/=/model/Post/~/~', {
+        count: itemsPerPage,
+        order_by: 'id:desc',
+        offset: itemsPerPage * (page - 1),
+        limit: itemsPerPage
+    });
+    openapi.callback = function (res) { renderPager(res, page); };
+    openapi.get('/=/view/RowCount/model/Post');
+    $(".blog-top").attr('id', 'post-list-' + page);
 }
 
 function getCalendar (year, month) {
@@ -106,40 +141,6 @@ function renderRecentPosts (res) {
         var html = Jemplate.process('recent-posts.tt', { posts: res });
         $("#recent-posts").html(html);
     }
-}
-
-function checkAnchor () {
-    var hash = location.hash;
-    if (position == hash) {
-        return;
-    }
-    if (hash.match(/^\#?\s*$/)) {
-        hash = 'post-list';
-        location.hash = 'post-list';
-    }
-    position = hash;
-    var match = hash.match(/^\#?post-(\d+)(:comments|comment-(\d+))?/);
-    if (match) {
-        var postId = match[1];
-        //alert("Post ID: " + postId);
-        goToPost(postId);
-        return;
-    }
-    match = hash.match(/^\#?(?:post-list|post-list-(\d+))$/);
-    var page = 1;
-    if (match)
-        page = parseInt(match[1]) || 1;
-    openapi.callback = renderPostList;
-    //openapi.user = 'agentzh.Public';
-    openapi.get('/=/model/Post/~/~', {
-        count: itemsPerPage,
-        order_by: 'id:desc',
-        offset: itemsPerPage * (page - 1),
-        limit: itemsPerPage
-    });
-    openapi.callback = function (res) { renderPager(res, page); };
-    openapi.get('/=/view/RowCount/model/Post');
-    $(".blog-top").attr('id', 'post-list-' + page);
 }
 
 function postComment (form) {

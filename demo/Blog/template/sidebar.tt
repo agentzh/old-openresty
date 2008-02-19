@@ -1,0 +1,120 @@
+
+<div class="module-calendar module">
+    <!-- calendar.tt -->
+</div>
+
+<div class="module-archives module">
+    <h2 class="module-header">Recent Posts</h2>
+    <div class="module-content">
+        <ul id="recent-posts" class="module-list">
+        </ul>
+    </div>
+</div>
+
+<div class="module-recent-comments module">
+    <h2 class="module-header">Recent Comments</h2>
+    <div class="module-content">
+        <ul id="recent-comments" class="module-list">
+        </ul>
+    </div>
+</div>
+
+<div class="module-categories module">
+    <h2 class="module-header"><a href="http://pugs.blogs.com/pugs/archives.html">Categories</a></h2>
+    <div class="module-content">
+        <ul class="module-list">
+                    <!--
+                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/app/index.html">App</a></li>
+                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/backends/index.html">Backends</a></li>
+                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/doc/index.html">Doc</a></li>
+                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/event/index.html">Event</a></li>
+                    -->
+
+        </ul>
+    </div>
+</div>
+    <div class="module-archives module">
+        <h2 class="module-header"><a href="http://pugs.blogs.com/pugs/archives.html">Archives</a></h2>
+        <div class="module-content">
+                                                <ul class="module-list">
+
+                <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/10/index.html">October 2007</a></li>
+
+
+                <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/08/index.html">August 2007</a></li>
+
+                    </ul>
+                    <p class="module-more"><a href="http://pugs.blogs.com/pugs/archives.html">More...</a></p>
+
+        </div>
+    </div>
+
+<div class="module-feed module">
+    <h2 class="module-header">agentzh</h2>
+    <div class="module-content" id="feed-d6e3ea166d4156b0ee0935b704a55dbf5f52a212">
+    </div>
+</div>
+<!-- user photo -->
+    <div class="module-photo module">
+        <div class="module-content"><img src="me.jpg" alt="My Photo" /></div>
+                <br/>
+    </div>
+
+<!-- about page link -->
+<div class="module-about module">
+    <h2 class="module-header"><a
+        href="http://pugs.blogs.com/about.html">About</a></h2>
+</div>
+<div class="module-syndicate module">
+    <div class="module-content">
+        <a href="http://pugs.blogs.com/pugs/index.rdf">Subscribe to this blog's feed</a>
+    </div>
+</div>
+<div class="module-syndicate module">
+    <div class="module-content">
+        <a href="http://pugs.blogs.com/pugs/rss.xml">Subscribe to my Podcast</a>
+    </div>
+</div>
+<div class="module-widget module" id="widget-Site_Meter_s27audreyt">
+    <div class="module-content">
+    </div>
+</div>
+<div class="module-typelist module">
+    <h2 class="module-header">License</h2>
+    <div class="module-content">
+        <ul class="module-list">
+                            <li class="module-list-item"><a href=""></a><br /><!-- Creative Commons Public Domain -->
+
+<a href="http://creativecommons.org/licenses/publicdomain"><img alt="Public Domain Dedication" border="0"
+src="http://creativecommons.org/images/public/norights.gif" /></a><br />
+This work is dedicated to the
+<a href="http://creativecommons.org/licenses/publicdomain/">Public Domain</a>.
+<!-- /Creative Commons Public Domain -->
+
+
+<!--
+<rdf:RDF xmlns="http://web.resource.org/cc/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+
+<Work rdf:about="">
+<license rdf:resource="http://web.resource.org/cc/PublicDomain" />
+</Work>
+
+<License rdf:about="http://web.resource.org/cc/PublicDomain">
+   <permits rdf:resource="http://web.resource.org/cc/Reproduction" />
+
+   <permits rdf:resource="http://web.resource.org/cc/Distribution" />
+   <permits rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+
+</License>
+
+</rdf:RDF>
+-->
+</li>
+
+        </ul>
+    </div>
+</div>
+
+
