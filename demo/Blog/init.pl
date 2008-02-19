@@ -4,7 +4,6 @@ use strict;
 use warnings;
 
 use lib '../../lib';
-use Time::HiRes 'sleep';
 use utf8;
 use JSON::Syck;
 use YAML 'Dump';
