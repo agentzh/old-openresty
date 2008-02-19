@@ -8,6 +8,7 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use OpenAPI::Dispatcher;
 use OpenAPI::Limits;
+use Getopt::Std;
 
 my $cmd = lc(shift) || $ENV{OPENAPI_COMMAND} || 'fastcgi';
 $ENV{OPENAPI_COMMAND} = $cmd;
@@ -37,9 +38,13 @@ if ($cmd eq 'fastcgi') {
     OpenAPI::Dispatcher->process_request($cgi);
     exit;
 } elsif ($cmd eq 'start') {
+    my %opts;
+    getopts('p:', \%opts);
+    my $port = $opts{p} || 8000;
+
     require OpenAPI::Server;
     my $server = OpenAPI::Server->new;
-    #$server->port(8000);
+    $server->port($port);
     $server->run;
     exit;
 }
