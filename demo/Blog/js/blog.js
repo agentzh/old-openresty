@@ -136,8 +136,8 @@ function renderPostsInCalendar (res, year, month) {
             var cell = $("#" + id);
             if (cell.length == 0) return;
             //alert("cell html: " + cell.html());
-            cell.html('<a href="#post-' + line.id + '">' +
-                cell.html() + '</a>');
+            cell.html('<a href="#post-' + line.id + '"><b>' +
+                cell.html() + '</b></a>');
         }
     }
 }
