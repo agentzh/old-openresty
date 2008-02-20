@@ -3,7 +3,10 @@
       blog_desc  = 'This is my blog'
 -%]
 <div id="banner">
-    <div id="wait-message" style="display: none;">Loading...</div>
+    <div id="wait-message" style="display: none;">
+        <img src="loading.gif"/>
+        &nbsp; Loading...
+    </div>
     <div id="banner-inner" class="pkg">
             <h1 id="banner-header">
                 <a href="#" onclick="getSidebar()" accesskey="1">[% blog_name %]</a>

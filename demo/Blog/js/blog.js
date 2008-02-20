@@ -11,7 +11,7 @@ function error (msg) {
 
 function setStatus (isLoading) {
     if (isLoading) {
-        if (++loadingCount > 0)
+        if (++loadingCount == 1)
             $("#wait-message").show();
     } else {
         if (--loadingCount <= 0)
