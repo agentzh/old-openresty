@@ -2,6 +2,7 @@ var openapi;
 var position;
 var itemsPerPage = 5;
 var loadingCount = 0;
+var loadingDiv = null;
 
 $(window).ready(init);
 
@@ -12,14 +13,16 @@ function error (msg) {
 function setStatus (isLoading) {
     if (isLoading) {
         if (++loadingCount == 1)
-            $("#wait-message").show();
+            $(loadingDiv).show();
     } else {
         if (--loadingCount <= 0)
-            $("#wait-message").hide();
+            $(loadingDiv).hide();
     }
 }
 
 function init () {
+    loadingCount = 0;
+    loadingDiv = document.getElementById('wait-message');
     //var host = 'http://10.62.136.86';
     //var host = 'http://127.0.0.1';
     var host = 'http://ced02.search.cnb.yahoo.com';
@@ -105,14 +108,19 @@ function getCalendar (year, month) {
             }
         )
     );
-    openapi.callback = function (res) {
-        renderPostsInCalendar(res, year, month);
-    };
-    openapi.get('/=/view/PostsByMonth/~/~', { year: year, month: month + 1 });
+    setStatus(false);
+
+    // We need this 0 timeout hack for IE 6 :(
+    setTimeout( function () {
+        openapi.callback = function (res) {
+            renderPostsInCalendar(res, year, month);
+        };
+        openapi.get('/=/view/PostsByMonth/~/~', { year: year, month: month + 1 });
+    }, 0 );
 }
 
 function renderPostsInCalendar (res, year, month) {
-    setStatus(false);
+    //alert("hey!");
     if (!openapi.isSuccess(res)) {
         error("Failed to fetch posts for calendar: " +
             res.error);
@@ -283,6 +291,7 @@ function renderPostList (res) {
 }
 
 function renderPager (res, page) {
+    setStatus(false);
     if (!openapi.isSuccess(res)) {
         error("Failed to render pager: " + res.error);
     } else {
