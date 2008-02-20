@@ -192,9 +192,11 @@ if ($cmd eq 'small') {
         my $body = $entry->{body};
         my $date = $entry->{date};
         warn $title, "\n";
-        if ($body =~ /.{1,55}c\.gif.{3,150}/) {
-            #warn $&, "\n";
-        }
+        $body =~ s{"http://c\.services\.spaces\.live\.com/CollectionWebService/c\.gif\?[^"]*"}{""}g;
+        $body =~ s{"http://c\.live\.com/c\.gif\?[^"]*"}{""}g;
+        #if ($body =~ /.{1,55}c\.gif.{3,150}/) {
+        #warn $&, "\n";
+        #}
         $openapi->post({
             author => '章亦春',
             title => $title,
