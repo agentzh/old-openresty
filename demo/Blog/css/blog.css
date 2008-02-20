@@ -1,3 +1,14 @@
+div#wait-message {
+    color: white !important;
+    background: red !important;
+    font-size: 18px !important;
+    float: right;
+    padding: 5px;
+    border-width: 2px;
+    border-style: solid;
+    display: inline;
+}
+
 a.nav-arrow {
     font-size: 10pt;
     font-weight: bold;

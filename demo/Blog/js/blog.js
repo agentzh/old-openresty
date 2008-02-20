@@ -1,11 +1,22 @@
 var openapi;
 var position;
 var itemsPerPage = 5;
+var loadingCount = 0;
 
 $(window).ready(init);
 
 function error (msg) {
     alert(msg);
+}
+
+function setStatus (isLoading) {
+    if (isLoading) {
+        if (++loadingCount > 0)
+            $("#wait-message").show();
+    } else {
+        if (--loadingCount <= 0)
+            $("#wait-message").hide();
+    }
 }
 
 function init () {
@@ -17,9 +28,7 @@ function init () {
     );
     //openapi.formId = 'new_model';
     setInterval(dispatchByAnchor, 300);
-    getCalendar();
-    getRecentPosts();
-    getRecentComments();
+    getSidebar();
 }
 
 function dispatchByAnchor () {
@@ -33,6 +42,7 @@ function dispatchByAnchor () {
         location.hash = 'main';
     }
     position = hash;
+    loadingCount = 0;
 
     var match = hash.match(/^post-(\d+)(:comments|comment-(\d+))?/);
     if (match) {
@@ -45,6 +55,8 @@ function dispatchByAnchor () {
     var page = 1;
     if (match)
         page = parseInt(match[1]) || 1;
+
+    setStatus(true);
     openapi.callback = renderPostList;
     //openapi.user = 'agentzh.Public';
     openapi.get('/=/model/Post/~/~', {
@@ -58,7 +70,14 @@ function dispatchByAnchor () {
     $(".blog-top").attr('id', 'post-list-' + page);
 }
 
+function getSidebar () {
+    getCalendar();
+    getRecentPosts();
+    getRecentComments();
+}
+
 function getCalendar (year, month) {
+    setStatus(true);
     if (year == undefined || month == undefined) {
         var now = new Date();
         year = now.getFullYear();
@@ -93,6 +112,7 @@ function getCalendar (year, month) {
 }
 
 function renderPostsInCalendar (res, year, month) {
+    setStatus(false);
     if (!openapi.isSuccess(res)) {
         error("Failed to fetch posts for calendar: " +
             res.error);
@@ -157,6 +177,7 @@ function postComment (form) {
         return false;
     }
     //openapi.purge();
+    setStatus(true);
     openapi.callback = afterPostComment;
     openapi.formId = 'comment-form';
     openapi.post(data, '/=/model/Comment/~/~');
@@ -164,11 +185,13 @@ function postComment (form) {
 }
 
 function afterPostComment (res) {
+    setStatus(false);
     //alert("HERE!!!");
     if (!openapi.isSuccess(res)) {
         error("Failed to post the comment: " + res.error);
     } else {
         //alert(res.error);
+        setStatus(true);
         openapi.callback = renderComments;
         var spans = $(".comment-count");
         var commentCount = parseInt(spans.text());
@@ -193,11 +216,13 @@ function goToPost (id) {
     //alert("Go to Post " + id);
     $(".blog-top").attr('id', 'post-' + id);
     //alert($(".blog-top").attr('id'));
+    setStatus(true);
     openapi.callback = renderPost;
     openapi.get('/=/model/Post/id/' + id);
 }
 
 function renderPost (res) {
+    setStatus(false);
     //alert(JSON.stringify(post));
     if (!openapi.isSuccess(res)) {
         error("Failed to render post: " + res.error);
@@ -211,6 +236,7 @@ function renderPost (res) {
         };
         openapi.get('/=/view/PrevNextPost/current/' + post.id);
 
+        setStatus(true);
         openapi.callback = renderComments;
         openapi.get('/=/model/Comment/post/' + post.id);
         $("#beta-pager.pkg").html('');
@@ -231,6 +257,7 @@ function renderPrevNextPost (currentId, res) {
 }
 
 function renderComments (res) {
+    setStatus(false);
     //alert("Comments: " + res.error);
     if (!openapi.isSuccess(res)) {
         error("Failed to render post list: " + res.error);
@@ -243,6 +270,7 @@ function renderComments (res) {
 }
 
 function renderPostList (res) {
+    setStatus(false);
     if (!openapi.isSuccess(res)) {
         error("Failed to render post list: " + res.error);
     } else {

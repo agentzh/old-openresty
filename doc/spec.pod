@@ -251,9 +251,9 @@ I<POST body>
         description: "我的书签",
         columns:
           [
-            { name: "url",   type: "string", label: "书签网址" },
-            { name: "title", type: "string", label: "书签标题" },
-            { name: "description", type: "string", label: "书签描述" }
+            { name: "url",   type: "text", label: "书签网址" },
+            { name: "title", type: "text", label: "书签标题" },
+            { name: "description", type: "text", label: "书签描述" }
           ]
     }
 
@@ -410,9 +410,9 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
       columns:
         [
           { name: "id", type: "serial", src: "/=/model/Bookmark/id" },
-          { name: "title", type: "string", src: "/=/model/Bookmark/string" },
-          { name: "url", type: "string", src: "/=/model/Bookmark/url" },
-          { name: "description", type: "string", src: "/=/model/Bookmark/description" },
+          { name: "title", type: "text", src: "/=/model/Bookmark/title" },
+          { name: "url", type: "text", src: "/=/model/Bookmark/url" },
+          { name: "description", type: "text", src: "/=/model/Bookmark/description" },
         ]
     }
 
@@ -426,7 +426,7 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
 返回
 
-    { name: "title", type: "string", src: "/=/model/Bookmark/string" },
+    { name: "title", type: "text", src: "/=/model/Bookmark/title" },
 
 =back
 
@@ -717,7 +717,7 @@ minisql 与 SQL 的语法非常近似，不同的是它是大小写敏感的。
 
     GET /=/action/WebSearch
     [
-        { name: "query", type: "string" }
+        { name: "query", type: "text" }
     ]
 
     GET /=/action/WebSearch/query/Hello,world

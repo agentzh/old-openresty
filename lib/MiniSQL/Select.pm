@@ -1406,7 +1406,7 @@ sub parse {
     @Columns = ();
     @OutVars = ();
     %Defaults = ();
-    my $sql = $self->YYParse( yydebug => 0 & 0x1F, yylex => \&_Lexer, yyerror => \&_Error );
+    $sql = $self->YYParse( yydebug => 0 & 0x1F, yylex => \&_Lexer, yyerror => \&_Error );
     close $source;
     return {
         limit   => $yydata->{limit},
