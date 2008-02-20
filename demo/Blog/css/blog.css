@@ -2,7 +2,9 @@ div#wait-message {
     color: white !important;
     background: red !important;
     font-size: 18px !important;
-    float: right;
+    position: fixed;
+    top: 2px;
+    right: 30px;
     padding: 5px;
     border-width: 2px;
     border-style: solid;

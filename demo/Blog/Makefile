@@ -16,6 +16,6 @@ all:
 	gzip --best site-binary.tar
 	mv site-binary.tar.gz out/
 
-upload:
+upload: all
 	script/upload
 
