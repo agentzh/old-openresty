@@ -89,9 +89,9 @@
     <h2 class="module-header">License</h2>
     <div class="module-content">
         <ul class="module-list">
-            <li class="module-list-item"><a href=""></a><br />
+            <li class="module-list-item">
                 This work is licensed under
-                <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">
+                <a href="http://en.wikipedia.org/wiki/MIT_License">
                     the MIT License
                 </a>.
             </li>
