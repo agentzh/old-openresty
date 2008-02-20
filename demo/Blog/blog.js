@@ -9,8 +9,9 @@ function error (msg) {
 }
 
 function init () {
-    var host = 'http://10.62.136.86';
+    //var host = 'http://10.62.136.86';
     //var host = 'http://127.0.0.1';
+    var host = 'http://ced02.search.cnb.yahoo.com';
     openapi = new OpenAPI.Client(
         { server: host, user: 'agentzh.Public' }
     );
