@@ -12,4 +12,10 @@ all:
 	cp css/*.css out/
 	cp -r css/themes out/
 	cp -r image/*.* out/
+	tar cvf site-binary.tar out
+	gzip --best site-binary.tar
+	mv site-binary.tar.gz out/
+
+upload:
+	script/upload
 
