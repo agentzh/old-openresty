@@ -90,35 +90,10 @@
     <div class="module-content">
         <ul class="module-list">
             <li class="module-list-item"><a href=""></a><br />
-            <!-- Creative Commons Public Domain -->
-            <a href="http://creativecommons.org/licenses/publicdomain">
-                <img alt="Public Domain Dedication" border="0" src="http://creativecommons.org/images/public/norights.gif" />
-            </a>
-            <br />
-            This work is dedicated to the
-            <a href="http://creativecommons.org/licenses/publicdomain/">
-                Public Domain
-            </a>.
-            <!-- /Creative Commons Public Domain -->
-<!--
-<rdf:RDF xmlns="http://web.resource.org/cc/"
-    xmlns:dc="http://purl.org/dc/elements/1.1/"
-    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
-
-<Work rdf:about="">
-<license rdf:resource="http://web.resource.org/cc/PublicDomain" />
-</Work>
-
-<License rdf:about="http://web.resource.org/cc/PublicDomain">
-   <permits rdf:resource="http://web.resource.org/cc/Reproduction" />
-
-   <permits rdf:resource="http://web.resource.org/cc/Distribution" />
-   <permits rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
-
-</License>
-
-</rdf:RDF>
--->
+                This work is licensed under
+                <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">
+                    the MIT License
+                </a>.
             </li>
         </ul>
     </div>
