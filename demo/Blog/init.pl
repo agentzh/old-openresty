@@ -15,7 +15,7 @@ if ($cmd ne 'small' and $cmd ne 'big') {
     die "Unknown command: $cmd\n";
 }
 
-my $openapi = WWW::OpenAPI::Simple->new( { server => 'http://localhost:8080' } );
+my $openapi = WWW::OpenAPI::Simple->new( { server => 'http://ced02.search.cnb.yahoo.com' } );
 $openapi->login('agentzh', 4423037);
 $openapi->delete("/=/model");
 $openapi->delete("/=/role/Public/~/~");
