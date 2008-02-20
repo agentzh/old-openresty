@@ -9,14 +9,26 @@ use JSON::Syck;
 use YAML 'Dump';
 use WWW::OpenAPI::Simple;
 use Date::Manip;
+use Getopt::Std;
+
+my %opts;
+getopts('u:s:p:h', \%opts);
+if ($opts{h}) {
+    die "Usage: $0 -u <user> -p <password> -s <openapi_server>\n";
+}
+my $user = $opts{u} or
+    die "No OpenAPI account name specified via option -u\n";
+my $password = $opts{p} or
+    die "No OpenAPI account's Admin password specified via option -p\n";
+my $server = $opts{s} || 'http://ced02.search.cnb.yahoo.com';
 
 my $cmd = shift || 'small';
 if ($cmd ne 'small' and $cmd ne 'big') {
     die "Unknown command: $cmd\n";
 }
 
-my $openapi = WWW::OpenAPI::Simple->new( { server => 'http://ced02.search.cnb.yahoo.com' } );
-$openapi->login('agentzh', 4423037);
+my $openapi = WWW::OpenAPI::Simple->new( { server => $server } );
+$openapi->login($user, $password);
 $openapi->delete("/=/model");
 $openapi->delete("/=/role/Public/~/~");
 $openapi->delete("/=/view");

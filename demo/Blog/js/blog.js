@@ -95,9 +95,9 @@ function getCalendar (year, month) {
 function renderPostsInCalendar (res, year, month) {
     if (!openapi.isSuccess(res)) {
         error("Failed to fetch posts for calendar: " +
-            JSON.stringify(res));
+            res.error);
     } else {
-        //alert(JSON.stringify(res));
+        //alert(res.error);
         var prev_day = 0;
         for (var i = 0; i < res.length; i++) {
             var line = res[i];
@@ -126,9 +126,9 @@ function getRecentPosts () {
 
 function renderRecentComments (res) {
     if (!openapi.isSuccess(res)) {
-        error("Failed to get the recent comments: " + JSON.stringify(res));
+        error("Failed to get the recent comments: " + res.error);
     } else {
-        //alert("Get the recent comments: " + JSON.stringify(res));
+        //alert("Get the recent comments: " + res.error);
         var html = Jemplate.process('recent-comments.tt', { comments: res });
         $("#recent-comments").html(html);
     }
@@ -136,9 +136,9 @@ function renderRecentComments (res) {
 
 function renderRecentPosts (res) {
     if (!openapi.isSuccess(res)) {
-        error("Failed to get the recent posts: " + JSON.stringify(res));
+        error("Failed to get the recent posts: " + res.error);
     } else {
-        //alert("Get the recent posts: " + JSON.stringify(res));
+        //alert("Get the recent posts: " + res.error);
         var html = Jemplate.process('recent-posts.tt', { posts: res });
         $("#recent-posts").html(html);
     }
@@ -166,9 +166,9 @@ function postComment (form) {
 function afterPostComment (res) {
     //alert("HERE!!!");
     if (!openapi.isSuccess(res)) {
-        error("Failed to post the comment: " + JSON.stringify(res));
+        error("Failed to post the comment: " + res.error);
     } else {
-        //alert(JSON.stringify(res));
+        //alert(res.error);
         openapi.callback = renderComments;
         var spans = $(".comment-count");
         var commentCount = parseInt(spans.text());
@@ -177,7 +177,7 @@ function afterPostComment (res) {
         openapi.callback = function (res) {
             if (!openapi.isSuccess(res)) {
                 error("Failed to increment the comment count for post " +
-                    postId + ": " + JSON.stringify(res));
+                    postId + ": " + res.error);
             } else {
                 spans.text(commentCount + 1);
             }
@@ -200,7 +200,7 @@ function goToPost (id) {
 function renderPost (res) {
     //alert(JSON.stringify(post));
     if (!openapi.isSuccess(res)) {
-        error("Failed to render post: " + JSON.stringify(res));
+        error("Failed to render post: " + res.error);
     } else {
         var post = res[0];
         $("#beta-inner.pkg").html(
@@ -220,9 +220,9 @@ function renderPost (res) {
 function renderPrevNextPost (currentId, res) {
     if (!openapi.isSuccess(res)) {
         error("Failed to render prev next post navigation: " +
-            JSON.stringify(res));
+            res.error);
     } else {
-        //alert("Going to render prev next post navigation: " + JSON.stringify(res));
+        //alert("Going to render prev next post navigation: " + res.error);
         $(".content-nav").html(
             Jemplate.process('nav.tt', { posts: res, current: currentId })
         );
@@ -231,9 +231,9 @@ function renderPrevNextPost (currentId, res) {
 }
 
 function renderComments (res) {
-    //alert("Comments: " + JSON.stringify(res));
+    //alert("Comments: " + res.error);
     if (!openapi.isSuccess(res)) {
-        error("Failed to render post list: " + JSON.stringify(data));
+        error("Failed to render post list: " + res.error);
     } else {
         $(".comments-content").html(
             Jemplate.process('comments.tt', { comments: res })
@@ -244,7 +244,7 @@ function renderComments (res) {
 
 function renderPostList (res) {
     if (!openapi.isSuccess(res)) {
-        error("Failed to render post list: " + JSON.stringify(res));
+        error("Failed to render post list: " + res.error);
     } else {
         //alert(JSON.stringify(data));
         $("#beta-inner.pkg").html(
@@ -256,7 +256,7 @@ function renderPostList (res) {
 
 function renderPager (res, page) {
     if (!openapi.isSuccess(res)) {
-        error("Failed to render pager: " + JSON.stringify(res));
+        error("Failed to render pager: " + res.error);
     } else {
         var pageCount = Math.ceil(parseInt(res[0].count) / itemsPerPage);
         if (pageCount < 2) return;
