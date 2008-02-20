@@ -19,7 +19,7 @@
 </div>
 
 <div class="module-categories module">
-    <h2 class="module-header"><a href="#">Categories</a></h2>
+    <h2 class="module-header">Categories</h2>
     <div class="module-content">
         <ul class="module-list">
                     <!--
@@ -33,7 +33,7 @@
     </div>
 </div>
     <div class="module-archives module">
-        <h2 class="module-header"><a href="#">Archives</a></h2>
+        <h2 class="module-header">Archives</h2>
         <div class="module-content">
             <!--
                                                 <ul class="module-list">
@@ -60,15 +60,28 @@
                 <br/>
     </div>
 
-<div class="module-feed module">
-    <h2 class="module-header"><a
-        href="#">RSS feed</a></h2>
-</div>
-
 <div class="module-syndicate module">
+    <h2 class="module-header">RSS feed</h2>
     <div class="module-content">
         <!-- this is a hack; we'll use OpenAPI's own RSS feed support later -->
         <a href="http://agentzh.spaces.live.com/feed.rss">Subscribe to this blog's feed</a>
+    </div>
+</div>
+
+<div class="module-download module">
+    <h2 class="module-header"><a
+        href="site-binary.tar.gz">Download this site</a></h2>
+    <div class="module-content">
+        <ul class="module-list">
+            <li class="module-list-item">
+                <a href="site-binary.tar.gz">Binary form (.tar.gz file)</a>
+            </li>
+            <li class="module-list-item">
+                <a target="_blank" href="http://svn.openfoundry.org/openapi/trunk/demo/Blog/">
+                    Source code (Subversion)
+                </a>
+            </li>
+        </ul>
     </div>
 </div>
 
@@ -106,8 +119,7 @@
 
 </rdf:RDF>
 -->
-</li>
-
+            </li>
         </ul>
     </div>
 </div>
