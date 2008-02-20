@@ -47,7 +47,7 @@
             </div>
 
             <div id="comments-open-footer" class="comments-open-footer">
-                <button name="preview" id="comment-preview">&nbsp;Preview&nbsp;</button>
+                <!-- <button name="preview" id="comment-preview">&nbsp;Preview&nbsp;</button> -->
                 <button name="post" id="comment-post" onclick="postComment([% post.id %]);">&nbsp;Post&nbsp;</button>
             </div>
 
