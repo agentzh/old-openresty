@@ -14,7 +14,7 @@ use Getopt::Std;
 my %opts;
 getopts('u:s:p:h', \%opts);
 if ($opts{h}) {
-    die "Usage: $0 -u <user> -p <password> -s <openapi_server>\n";
+    die "Usage: $0 -u <user> -p <password> -s <openapi_server> [big|small] [<json_file>]\n";
 }
 my $user = $opts{u} or
     die "No OpenAPI account name specified via option -u\n";
@@ -183,7 +183,7 @@ if ($cmd eq 'small') {
     $openapi->put({ comments => 1 }, '/=/model/Post/id/3');
     $openapi->put({ comments => 5 }, '/=/model/Post/id/2');
 } else {
-    my $infile = shift @ARGV || 'agentzh-live.json';
+    my $infile = shift @ARGV || 'script/agentzh-live.json';
     open my $in, $infile or die "Can't open $infile for reading: $!\n";
     my $json = do { local $/; <$in> };
     my $data = JSON::Syck::Load($json);
