@@ -74,11 +74,11 @@
     <div class="module-content">
         <ul class="module-list">
             <li class="module-list-item">
-                <a href="site-binary.tar.gz">Binary form (.tar.gz file)</a>
+                <a href="site-binary.tar.gz">Compiled form (.tar.gz)</a>
             </li>
             <li class="module-list-item">
                 <a target="_blank" href="http://svn.openfoundry.org/openapi/trunk/demo/Blog/">
-                    Source code (Subversion)
+                    Source code (SVN)
                 </a>
             </li>
         </ul>
