@@ -1,15 +1,16 @@
 div#wait-message {
-    color: white !important;
-    background: red !important;
+    color: red !important;
+    background: white !important;
     font-size: 18px !important;
     float: right;
     position: fixed;
     top: 2px;
     right: 30px;
-    padding: 5px;
+    padding: 4px;
     border-width: 2px;
-    border-style: solid;
-    display: inline;
+    border-style: outset;
+    border-color: white;
+    display: block;
 }
 
 ins.item-body {
@@ -26,7 +27,6 @@ ins {
 }
 
 table.paging {
-    align: center;
     border: 0;
     width: 1%;
 }

@@ -10,19 +10,32 @@ function error (msg) {
     alert(msg);
 }
 
-function setStatus (isLoading) {
+function debug (msg) {
+    $("#copyright").append(msg + "<br/>");
+}
+
+//var count = 0;;
+function setStatus (isLoading, category) {
     if (isLoading) {
         if (++loadingCount == 1)
-            $(loadingDiv).show();
+            $("#wait-message").css('top', '2px');
     } else {
-        if (--loadingCount <= 0)
-            $(loadingDiv).hide();
+        loadingCount--;
+        if (loadingCount < 0) loadingCount = 0;
+        if (loadingCount == 0) {
+            // the reason we use this hack is to work around
+            // a rendering bug in Win32 build of Opera
+            // (at least 9.25 and 9.26)
+            $("#wait-message").css('top', '-200px');
+        }
     }
+    //count++;
+    //debug("[" + count + "] setStatus: " + category + ": " + loadingCount + "(" + isLoading + ")");
 }
 
 function init () {
     loadingCount = 0;
-    loadingDiv = document.getElementById('wait-message');
+    loadingDiv = document.getElementById('');
     //var host = 'http://10.62.136.86';
     //var host = 'http://127.0.0.1';
     var host = 'http://ced02.search.cnb.yahoo.com';
@@ -59,7 +72,7 @@ function dispatchByAnchor () {
     if (match)
         page = parseInt(match[1]) || 1;
 
-    setStatus(true);
+    setStatus(true, 'renderPostList');
     openapi.callback = renderPostList;
     //openapi.user = 'agentzh.Public';
     openapi.get('/=/model/Post/~/~', {
@@ -68,6 +81,7 @@ function dispatchByAnchor () {
         offset: itemsPerPage * (page - 1),
         limit: itemsPerPage
     });
+    setStatus(true, 'renderPager');
     openapi.callback = function (res) { renderPager(res, page); };
     openapi.get('/=/view/RowCount/model/Post');
     $(".blog-top").attr('id', 'post-list-' + page);
@@ -80,7 +94,6 @@ function getSidebar () {
 }
 
 function getCalendar (year, month) {
-    setStatus(true);
     if (year == undefined || month == undefined) {
         var now = new Date();
         year = now.getFullYear();
@@ -108,10 +121,10 @@ function getCalendar (year, month) {
             }
         )
     );
-    setStatus(false);
 
     // We need this 0 timeout hack for IE 6 :(
     setTimeout( function () {
+        setStatus(true, 'renderPostsInCalendar');
         openapi.callback = function (res) {
             renderPostsInCalendar(res, year, month);
         };
@@ -120,6 +133,7 @@ function getCalendar (year, month) {
 }
 
 function renderPostsInCalendar (res, year, month) {
+    setStatus(false, 'renderPostsInCalendar');
     //alert("hey!");
     if (!openapi.isSuccess(res)) {
         error("Failed to fetch posts for calendar: " +
@@ -185,7 +199,7 @@ function postComment (form) {
         return false;
     }
     //openapi.purge();
-    setStatus(true);
+    setStatus(true, 'afterPostComment');
     openapi.callback = afterPostComment;
     openapi.formId = 'comment-form';
     openapi.post(data, '/=/model/Comment/~/~');
@@ -193,13 +207,13 @@ function postComment (form) {
 }
 
 function afterPostComment (res) {
-    setStatus(false);
+    setStatus(false, 'afterPostComment');
     //alert("HERE!!!");
     if (!openapi.isSuccess(res)) {
         error("Failed to post the comment: " + res.error);
     } else {
         //alert(res.error);
-        setStatus(true);
+        setStatus(true, 'renderComments');
         openapi.callback = renderComments;
         var spans = $(".comment-count");
         var commentCount = parseInt(spans.text());
@@ -224,13 +238,13 @@ function goToPost (id) {
     //alert("Go to Post " + id);
     $(".blog-top").attr('id', 'post-' + id);
     //alert($(".blog-top").attr('id'));
-    setStatus(true);
+    setStatus(true, 'renderPost');
     openapi.callback = renderPost;
     openapi.get('/=/model/Post/id/' + id);
 }
 
 function renderPost (res) {
-    setStatus(false);
+    setStatus(false, 'renderPost');
     //alert(JSON.stringify(post));
     if (!openapi.isSuccess(res)) {
         error("Failed to render post: " + res.error);
@@ -244,7 +258,7 @@ function renderPost (res) {
         };
         openapi.get('/=/view/PrevNextPost/current/' + post.id);
 
-        setStatus(true);
+        setStatus(true, 'renderComments');
         openapi.callback = renderComments;
         openapi.get('/=/model/Comment/post/' + post.id);
         $("#beta-pager.pkg").html('');
@@ -265,7 +279,7 @@ function renderPrevNextPost (currentId, res) {
 }
 
 function renderComments (res) {
-    setStatus(false);
+    setStatus(false, 'renderComments');
     //alert("Comments: " + res.error);
     if (!openapi.isSuccess(res)) {
         error("Failed to render post list: " + res.error);
@@ -278,7 +292,7 @@ function renderComments (res) {
 }
 
 function renderPostList (res) {
-    setStatus(false);
+    setStatus(false, 'renderPostList');
     if (!openapi.isSuccess(res)) {
         error("Failed to render post list: " + res.error);
     } else {
@@ -291,7 +305,7 @@ function renderPostList (res) {
 }
 
 function renderPager (res, page) {
-    setStatus(false);
+    setStatus(false, 'renderPager');
     if (!openapi.isSuccess(res)) {
         error("Failed to render pager: " + res.error);
     } else {
