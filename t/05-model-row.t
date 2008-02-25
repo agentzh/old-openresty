@@ -95,3 +95,19 @@ PUT /=/model/Address/id/3
 --- response
 {"success":0,"error":"Column \"id\" reserved."}
 
+
+
+=== TEST 9: Use special chars
+--- request
+PUT /=/model/Address/id/1
+{ name: "\"'\\\n" }
+--- response
+{"success":1,"rows_affected":1}
+
+
+=== TEST 10: Check the new name
+--- request
+GET /=/model/Address/id/1
+--- response
+[{"name":"\"'\\\n","id":"1","addr":"http://www.google.cn"}]
+

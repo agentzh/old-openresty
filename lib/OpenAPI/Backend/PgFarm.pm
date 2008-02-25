@@ -54,7 +54,13 @@ sub select {
     my $dbh = $self->{dbh};
     my $res = $dbh->selectall_arrayref($sql_cmd);
     ### JSON: $res->[0][0]
-    $res = Load($res->[0][0]);
+    my $json = $res->[0][0];
+    eval {
+        $res = Load($json);
+    };
+    if ($@) {
+        die "Failed to load JSON from PgFarm: $@\n$json";
+    }
     return $res;
 }
 
@@ -62,6 +68,7 @@ sub do {
     my ($self, $sql) = @_;
     $sql = $self->quote($sql);
     my $sql_cmd = "select xdo('$self->{user}', $sql)";
+    warn "SQL: $sql_cmd\n";
     my $res = $self->{dbh}->selectall_arrayref($sql_cmd);
     ### $res
     return $res->[0][0]+0;
@@ -69,7 +76,9 @@ sub do {
 
 sub quote {
     my ($self, $val) = @_;
-    return $self->{dbh}->quote($val);
+    $self->{dbh}->quote($val);
+    #$s =~ s/\n/\\n/g;
+    #$s =~ s/\t/\\t/g;
 }
 
 sub quote_identifier {
