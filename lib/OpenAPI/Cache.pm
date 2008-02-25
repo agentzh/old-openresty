@@ -9,25 +9,14 @@ use FindBin;
 sub new {
     my $class = ref $_[0] ? ref shift : shift;
     my $params = shift;
-    my $expire_time = $params->{expired};
     my $type = $OpenAPI::Config{'cache.type'} or
         die "No cache.type specified in the config files.\n";
     my $obj;
     my $self = bless {}, $class;
-    my $share_file = "/tmp/openapi-mmap.dat";
-    if (-e $share_file && (!-r $share_file || !-w $share_file)) {
-        $share_file = "$FindBin::Bin/openapi-mmap.dat";
-    }
     if ($type eq 'filecache') {
         require Cache::FileCache;
         $obj = Cache::FileCache->new(
             { namespace => 'OpenAPI', default_expires_in => 60 * 60 * 24 }
-        );
-    } elsif ($type eq 'mmap') {
-        require Cache::FastMmap;
-        $obj = Cache::FastMmap->new(
-            share_file => $share_file,
-            expire_time => $expire_time,
         );
     } elsif ($type eq 'memcached') {
         my $list = $OpenAPI::Config{'cache.servers'} or
@@ -42,7 +31,6 @@ sub new {
         });
         #$obj->set(dog => 32);
         #die "Dog value: ", $obj->get('dog');
-        $self->{expire_time} = $expire_time;
         #die $obj;
     } else {
         die "Invalid cache.type value: $type\n";
@@ -51,10 +39,10 @@ sub new {
     return $self;
 }
 
+# expire_in is in seconds...
 sub set {
-    my ($self, $key, $val) = @_;
-    my $expire_time = $self->{expire_time};
-    $self->{obj}->set($key, $val, $expire_time ? $expire_time : ());
+    my ($self, $key, $val, $expire_in) = @_;
+    $self->{obj}->set($key, $val, $expire_in);
 }
 
 sub get {

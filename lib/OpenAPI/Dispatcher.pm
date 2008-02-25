@@ -121,7 +121,7 @@ sub process_request {
 
     # XXX hacks...
     my $cookies = Cookie::XS->fetch;
-    my ($session_from_cookie, $captcha_from_cookie, $response_from_cookie);
+    my ($session_from_cookie, $captcha_from_cookie);
     my $session;
     if ($cookies) {
         my $cookie = $cookies->{session};
@@ -135,13 +135,20 @@ sub process_request {
                 $captcha_from_cookie = $cookie->[-1];
             #$OpenAPI::Cache->remove($captcha_from_cookie);
         }
-        if ($cookie = $cookies->{last_response}) {
-            $response_from_cookie = $cookie->[-1];
-        }
     }
 
     if ($http_meth eq 'GET' and @bits >= 2 and $bits[0] eq 'last' and $bits[1] eq 'response') {
-        $openapi->{_bin_data} = $response_from_cookie . "\n";
+        my $last_res_id = $bits[2];
+        if (!$last_res_id) {
+            $openapi->fatal("No last response ID specified.");
+            return;
+        }
+        my $res = $OpenAPI::Cache->get("lastres:".$last_res_id);
+        if (!defined $res) {
+            $openapi->fatal("No last response found for ID $last_res_id");
+            return;
+        }
+        $openapi->{_bin_data} = $res . "\n";
         $openapi->response;
         #warn "last_response: $response_from_cookie\n";
         return;

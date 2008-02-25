@@ -705,6 +705,7 @@ GET /=/view/Foo/~/~?val=2&col=id
 ]
 
 
+
 === TEST 76: bug
 --- request
 POST /=/view/RowCount
