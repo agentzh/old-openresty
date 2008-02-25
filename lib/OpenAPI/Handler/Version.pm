@@ -24,7 +24,7 @@ sub GET_version {
         }
         $backend .= " ($host)";
     }
-    return "Yahoo! EEEE OpenAPI $VERSION (revision $Revision) with the $backend backend.\nCopyright (c) 2007-2008 by Yahoo! China EEEE works.\n";
+    return "EEEE OpenAPI $VERSION (revision $Revision) with the $backend backend.\nCopyright (c) 2007-2008 by Yahoo! China EEEE works.\n";
 }
 
 1;
