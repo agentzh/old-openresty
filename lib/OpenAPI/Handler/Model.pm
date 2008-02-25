@@ -836,7 +836,7 @@ sub update_records {
 
     if (defined $val and $val ne '~') {
         # XXX SQL injection point
-        $update->where(QI($user_col) => $val);
+        $update->where(QI($user_col) => Q($val));
     }
     ### SQL: "$update"
     my $retval = $Backend->do("$update") + 0;

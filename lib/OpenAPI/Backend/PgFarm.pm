@@ -68,7 +68,7 @@ sub do {
     my ($self, $sql) = @_;
     $sql = $self->quote($sql);
     my $sql_cmd = "select xdo('$self->{user}', $sql)";
-    warn "SQL: $sql_cmd\n";
+    #warn "SQL: $sql_cmd\n";
     my $res = $self->{dbh}->selectall_arrayref($sql_cmd);
     ### $res
     return $res->[0][0]+0;
