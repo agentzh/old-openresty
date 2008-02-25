@@ -129,3 +129,21 @@ GET /=/model/Address/id/1
 --- response
 [{"name":"\"\\\"","id":"1","addr":"\t\\\n"}]
 
+
+
+=== TEST 13: PUT by selector
+--- request
+PUT /=/model/Address/name/Perl?op=contain
+{"name":"Haskell"}
+--- response
+{"success":1,"rows_affected":1}
+
+
+
+=== TEST 14: PUT by selector (again)
+--- request
+PUT /=/model/Address/name/Perl?op=contain
+{"name":"Haskell"}
+--- response
+{"success":0,"rows_affected":0}
+
