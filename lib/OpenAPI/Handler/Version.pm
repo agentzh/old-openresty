@@ -15,7 +15,12 @@ sub trim {
 
 sub GET_version {
     my ($self, $bits) = @_;
-    $Revision ||= trim(slurp("$FindBin::Bin/../revision")) || 'Unknown';
+    my $s;
+    eval {
+            $s = slurp("$FindBin::Bin/../revision")
+    };
+    if ($@) { $Revision = 'Unknown'; }
+    else { $Revision ||= trim($s) || 'Unknown'; }
     my $backend = $OpenAPI::BackendName;
     if ($backend eq 'PgFarm') {
         my $host = $OpenAPI::Backend::PgFarm::Host;
