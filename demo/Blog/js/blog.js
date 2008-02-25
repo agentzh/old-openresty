@@ -1,8 +1,9 @@
-var openapi;
-var position;
+var openapi = null;
+var savedAnchor = null;
 var itemsPerPage = 5;
 var loadingCount = 0;
-var loadingDiv = null;
+var waitMessage = null;
+var timer = null;
 
 $(window).ready(init);
 
@@ -14,11 +15,23 @@ function debug (msg) {
     $("#copyright").append(msg + "<br/>");
 }
 
+$.fn.postprocess = function (clas, options) {
+    return this.find("a[@href^='#']").each( function () {
+        var anchor = $(this).attr('href').replace(/^\#/, '');
+        //debug("Anchor: " + anchor);
+        $(this).click( function () {
+            location.hash = anchor;
+            savedAnchor = null;
+            dispatchByAnchor();
+        } );
+    } );
+};
+
 //var count = 0;;
 function setStatus (isLoading, category) {
     if (isLoading) {
         if (++loadingCount == 1)
-            $("#wait-message").css('top', '2px');
+            $(waitMessage).css('top', '2px');
     } else {
         loadingCount--;
         if (loadingCount < 0) loadingCount = 0;
@@ -26,7 +39,7 @@ function setStatus (isLoading, category) {
             // the reason we use this hack is to work around
             // a rendering bug in Win32 build of Opera
             // (at least 9.25 and 9.26)
-            $("#wait-message").css('top', '-200px');
+            $(waitMessage).css('top', '-200px');
         }
     }
     //count++;
@@ -35,15 +48,18 @@ function setStatus (isLoading, category) {
 
 function init () {
     loadingCount = 0;
-    loadingDiv = document.getElementById('');
+    waitMessage = document.getElementById('wait-message');
     //var host = 'http://10.62.136.86';
     //var host = 'http://127.0.0.1';
-    var host = 'http://ced02.search.cnb.yahoo.com';
+    var host = 'http://openapi.eeeeworks.org';
     openapi = new OpenAPI.Client(
         { server: host, user: 'agentzh.Public' }
     );
     //openapi.formId = 'new_model';
-    setInterval(dispatchByAnchor, 300);
+    if (timer) {
+        clearInterval(timer);
+    }
+    timer = setInterval(dispatchByAnchor, 500);
     getSidebar();
 }
 
@@ -53,25 +69,25 @@ function resetAnchor () {
 }
 
 function dispatchByAnchor () {
-    var hash = location.hash;
-    hash = hash.replace(/^\#/, '');
-    if (position == hash)
+    var anchor = location.hash;
+    anchor = anchor.replace(/^\#/, '');
+    if (savedAnchor == anchor)
         return;
-    if (hash == "") {
-        hash = 'main';
+    if (anchor == "") {
+        anchor = 'main';
         location.hash = 'main';
     }
-    position = hash;
+    savedAnchor = anchor;
     loadingCount = 0;
 
-    var match = hash.match(/^post-(\d+)(:comments|comment-(\d+))?/);
+    var match = anchor.match(/^post-(\d+)(:comments|comment-(\d+))?/);
     if (match) {
         var postId = match[1];
         //alert("Post ID: " + postId);
         goToPost(postId);
         return;
     }
-    match = hash.match(/^(?:post-list|post-list-(\d+))$/);
+    match = anchor.match(/^(?:post-list|post-list-(\d+))$/);
     var page = 1;
     if (match)
         page = parseInt(match[1]) || 1;
@@ -124,7 +140,7 @@ function getCalendar (year, month) {
                 end_of_month: end_of_month
             }
         )
-    );
+    ).postprocess();
 
     // We need this 0 timeout hack for IE 6 :(
     setTimeout( function () {
@@ -155,7 +171,7 @@ function renderPostsInCalendar (res, year, month) {
             if (cell.length == 0) return;
             //alert("cell html: " + cell.html());
             cell.html('<a href="#post-' + line.id + '"><b>' +
-                cell.html() + '</b></a>');
+                cell.html() + '</b></a>').postprocess();
         }
     }
 }
@@ -176,7 +192,7 @@ function renderRecentComments (res) {
     } else {
         //alert("Get the recent comments: " + res.error);
         var html = Jemplate.process('recent-comments.tt', { comments: res });
-        $("#recent-comments").html(html);
+        $("#recent-comments").html(html).postprocess();
     }
 }
 
@@ -186,7 +202,7 @@ function renderRecentPosts (res) {
     } else {
         //alert("Get the recent posts: " + res.error);
         var html = Jemplate.process('recent-posts.tt', { posts: res });
-        $("#recent-posts").html(html);
+        $("#recent-posts").html(html).postprocess();
     }
 }
 
@@ -277,7 +293,7 @@ function renderPrevNextPost (currentId, res) {
         //alert("Going to render prev next post navigation: " + res.error);
         $(".content-nav").html(
             Jemplate.process('nav.tt', { posts: res, current: currentId })
-        );
+        ).postprocess();
         resetAnchor();
     }
 }
