@@ -59,7 +59,7 @@ OpenAPI.Client.prototype.post = function (content, url, args) {
     if (!this.session && !args.user)
         args.user = this.user;
 
-    args.rand = Math.round( Math.random() * 100000 );
+    args.last_response = Math.round( Math.random() * 1000000 );
     content = JSON.stringify(content);
     //alert("type of content: " + typeof(content));
     //alert("content: " + content);
@@ -76,8 +76,11 @@ OpenAPI.Client.prototype.post = function (content, url, args) {
     //
     //
     var self = this;
+    var form = document.getElementById(formId);
+    form.method = 'POST';
+    var last_res_id = args.rand;
     var ts = dojo.io.iframe.send({
-        form: document.getElementById(formId),
+        form: form,
         url: this.server + url,
         content: { data: content },
         preventCache: true,
@@ -85,7 +88,7 @@ OpenAPI.Client.prototype.post = function (content, url, args) {
         handleAs: 'html',
         handle: function () {
             //alert("Getting last response!");
-            self.get('/=/last/response');
+            self.get('/=/last/response/' + last_res_id);
         }
     });
 

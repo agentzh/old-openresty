@@ -47,9 +47,13 @@ function init () {
     getSidebar();
 }
 
+function resetAnchor () {
+    var anchor = location.hash;
+    location.hash = anchor.replace(/^\#/, '');
+}
+
 function dispatchByAnchor () {
     var hash = location.hash;
-    //alert(hash);
     hash = hash.replace(/^\#/, '');
     if (position == hash)
         return;
@@ -201,8 +205,8 @@ function postComment (form) {
     //openapi.purge();
     setStatus(true, 'afterPostComment');
     openapi.callback = afterPostComment;
-    openapi.formId = 'comment-form';
-    openapi.post(data, '/=/model/Comment/~/~');
+    //openapi.formId = 'comment-form';
+    openapi.postByGet(data, '/=/model/Comment/~/~');
     return false;
 }
 
@@ -274,7 +278,7 @@ function renderPrevNextPost (currentId, res) {
         $(".content-nav").html(
             Jemplate.process('nav.tt', { posts: res, current: currentId })
         );
-        location.hash = location.hash;
+        resetAnchor();
     }
 }
 
@@ -287,7 +291,7 @@ function renderComments (res) {
         $(".comments-content").html(
             Jemplate.process('comments.tt', { comments: res })
         );
-        location.hash = location.hash;
+        resetAnchor();
     }
 }
 
@@ -301,7 +305,7 @@ function renderPostList (res) {
             Jemplate.process('post-list.tt', { post_list: res })
         );
     }
-    location.hash = location.hash;
+    resetAnchor();
 }
 
 function renderPager (res, page) {
@@ -317,7 +321,7 @@ function renderPager (res, page) {
                 { page: page, page_count: pageCount, title: 'Pages' }
             )
         );
-        location.hash = location.hash;
+        resetAnchor();
     }
 }
 
