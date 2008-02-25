@@ -243,7 +243,7 @@ GET /=/model/Bookmark/id/3.js
 
 === TEST 25: update an existent record using POST
 --- request
-POST /=/put/model/Bookmark/id/3.js
+POST /=/put/model/Bookmark/id/3.js?last_response=1234
 { title: "Howdy!" }
 --- response
 {"success":1,"rows_affected":1}
@@ -252,62 +252,78 @@ POST /=/put/model/Bookmark/id/3.js
 
 === TEST 26: Check the last response
 --- request
-GET /=/last/response
+GET /=/last/response/1234
 --- response
 {"success":1,"rows_affected":1}
 
 
 
-=== TEST 27: Check the last response (with callback)
+=== TEST 27: Check the last response with a wrong ID
 --- request
-GET /=/last/response?callback=foo
+GET /=/last/response/567
+--- response
+{"success":0,"error":"No last response found for ID 567"}
+
+
+
+=== TEST 28: Check the last response with no ID
+--- request
+GET /=/last/response
+--- response
+{"success":0,"error":"No last response ID specified."}
+
+
+
+=== TEST 29: Check the last response (with callback)
+--- request
+GET /=/last/response/1234?callback=foo
 --- response
 foo({"success":1,"rows_affected":1});
 
 
 
-=== TEST 28: Check the last response again
+=== TEST 30: Check the last response again
 --- request
-GET /=/last/response
+GET /=/last/response/1234
 --- response
 {"success":1,"rows_affected":1}
 
 
 
-=== TEST 29: check if the record is indeed changed
+=== TEST 31: check if the record is indeed changed
 --- request
-GET /=/model/Bookmark/id/3.js
+GET /=/model/Bookmark/id/3.js?last_response=1234
 --- response
 [{"url":"http://www.google.cn","title":"Howdy!","id":"3"}]
 
 
 
-=== TEST 30: Check the last response again (GET has no effect)
+=== TEST 32: Check the last response again (GET has effect too)
 --- request
-GET /=/last/response
+GET /=/last/response/1234
 --- response
-{"success":1,"rows_affected":1}
+[{"url":"http://www.google.cn","title":"Howdy!","id":"3"}]
 
 
 
-=== TEST 31: Change the name of the model
+=== TEST 33: Change the name of the model
 --- request
-PUT /=/model/Bookmark.js
+PUT /=/model/Bookmark.js?last_response=hello,world
 { name: "MyFavorites", description: "我的最爱" }
 --- response
 {"success":1}
 
 
 
-=== TEST 32: Check the last response again (PUT has effect)
+=== TEST 34: Check the last response again (PUT has effect)
 --- request
-GET /=/last/response
+GET /=/last/response/hello,world
 --- response
 {"success":1}
 
 
 
-=== TEST 33: Check the new model
+=== TEST 35: Check the new model
 --- request
 GET /=/model/MyFavorites.js
 --- response
@@ -324,7 +340,7 @@ GET /=/model/MyFavorites.js
 
 
 
-=== TEST 34: Change the name and type of title
+=== TEST 36: Change the name and type of title
 --- request
 PUT /=/model/MyFavorites/title
 { name: "count", type: "text" }
@@ -333,7 +349,7 @@ PUT /=/model/MyFavorites/title
 
 
 
-=== TEST 35: Get model list
+=== TEST 37: Get model list
 --- request
 GET /=/model.js
 --- response
@@ -341,7 +357,7 @@ GET /=/model.js
 
 
 
-=== TEST 36: Check the new column
+=== TEST 38: Check the new column
 --- request
 GET /=/model/MyFavorites/count
 --- response
@@ -349,7 +365,7 @@ GET /=/model/MyFavorites/count
 
 
 
-=== TEST 37: Change the name and type of title to incompactible types
+=== TEST 39: Change the name and type of title to incompactible types
 --- debug: 1
 --- request
 PUT /=/model/MyFavorites/count
@@ -359,7 +375,7 @@ PUT /=/model/MyFavorites/count
 
 
 
-=== TEST 38: Change the name and type of title to incompactible types
+=== TEST 40: Change the name and type of title to incompactible types
 --- debug: 0
 --- request
 PUT /=/model/MyFavorites/count
@@ -369,7 +385,7 @@ PUT /=/model/MyFavorites/count
 
 
 
-=== TEST 39: Change the name and type of title to incompactible types
+=== TEST 41: Change the name and type of title to incompactible types
 --- debug: 1
 --- request
 PUT /=/model/MyFavorites/count
@@ -379,7 +395,7 @@ PUT /=/model/MyFavorites/count
 
 
 
-=== TEST 40: Change the name and type of title to incompactible types
+=== TEST 42: Change the name and type of title to incompactible types
 --- debug: 0
 --- request
 PUT /=/model/MyFavorites/count

@@ -346,11 +346,11 @@ sub response {
     }
 
     my $meth = $self->{_http_method};
-    if ($meth && $meth =~ /^(?:PUT|POST)$/) {
-        push @cookies, CGI::Simple::Cookie->new(
-            -name => 'last_response',
-            -value => length($str) > 1024 ? substr($str, 0, 1024) : $str,
-        );
+    my $last_res_id = $cgi->param('last_response');
+    ### $last_res_id;
+    ### $meth;
+    if ($last_res_id) {
+        $Cache->set("lastres:".$last_res_id, $str, 2 * 60); # expire in 3 min
     }
     #warn ">>>>>>>>>>>>Cookies<<<<<<<<<<<<<<: @cookies\n";
     print $cgi->header(
