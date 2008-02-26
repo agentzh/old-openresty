@@ -184,32 +184,44 @@ function renderPostsInCalendar (res, year, month) {
     }
 }
 
-function getRecentComments () {
-    openapi.callback = renderRecentComments;
-    openapi.get('/=/view/RecentComments/limit/6');
+function getRecentComments (offset) {
+    if (!offset) offset = 0;
+    setStatus(true, 'renderRecentComments');
+    openapi.callback = function (res) { renderRecentComments(res, offset, 6) };
+    openapi.get('/=/view/RecentComments/limit/6', { offset: offset });
 }
 
-function getRecentPosts () {
-    openapi.callback = renderRecentPosts;
-    openapi.get('/=/view/RecentPosts/limit/6');
-}
-
-function renderRecentComments (res) {
+function renderRecentComments (res, offset, count) {
+    setStatus(false, 'renderRecentComments');
     if (!openapi.isSuccess(res)) {
         error("Failed to get the recent comments: " + res.error);
     } else {
         //alert("Get the recent comments: " + res.error);
-        var html = Jemplate.process('recent-comments.tt', { comments: res });
+        var html = Jemplate.process(
+            'recent-comments.tt',
+            { comments: res, offset: offset, count: count  }
+        );
         $("#recent-comments").html(html).postprocess();
     }
 }
 
-function renderRecentPosts (res) {
+function getRecentPosts (offset) {
+    if (!offset) offset = 0;
+    setStatus(true, 'renderRecentPosts');
+    openapi.callback = function (res) { renderRecentPosts(res, offset, 6) };
+    openapi.get('/=/view/RecentPosts/limit/6', { offset: offset });
+}
+
+function renderRecentPosts (res, offset, count) {
+    setStatus(false, 'renderRecentPosts');
     if (!openapi.isSuccess(res)) {
         error("Failed to get the recent posts: " + res.error);
     } else {
-        //alert("Get the recent posts: " + res.error);
-        var html = Jemplate.process('recent-posts.tt', { posts: res });
+        //alert("Get the recent comments: " + res.error);
+        var html = Jemplate.process(
+            'recent-posts.tt',
+            { posts: res, offset: offset, count: count  }
+        );
         $("#recent-posts").html(html).postprocess();
     }
 }
@@ -250,7 +262,6 @@ function afterPostComment (res) {
         error("Failed to post the comment: " + res.error);
     } else {
         //alert(res.error);
-        setStatus(true, 'renderComments');
         $("#comment-text").val('');
         var spans = $(".comment-count");
         var commentCount = parseInt(spans.text());
@@ -274,6 +285,7 @@ function afterPostComment (res) {
             { comments: commentCount + 1 },
             '/=/model/Post/id/' + postId
         );
+        getRecentComments(0);
     }
 }
 

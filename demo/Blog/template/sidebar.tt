@@ -4,17 +4,13 @@
 
 <div class="module-archives module">
     <h2 class="module-header">Recent Posts</h2>
-    <div class="module-content">
-        <ul id="recent-posts" class="module-list">
-        </ul>
+    <div id="recent-posts" class="module-content">
     </div>
 </div>
 
 <div class="module-recent-comments module">
     <h2 class="module-header">Recent Comments</h2>
-    <div class="module-content">
-        <ul id="recent-comments" class="module-list">
-        </ul>
+    <div class="module-content" id="recent-comments">
     </div>
 </div>
 

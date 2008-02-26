@@ -22,8 +22,7 @@
             <a class="permalink" href="#post-[% post.id %]">Permalink</a>
             <span class="separator">|</span>
             <a href="#post-[% post.id %]:comments">Comments
-                (<span class="comment-count" post="[% post.id %]">
-                    [% post.comments %]</span>)
+                (<span class="comment-count" post="[% post.id %]">[% post.comments %]</span>)
             </a>
         </p>
         <!-- technorati tags -->
