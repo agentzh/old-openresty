@@ -13,6 +13,10 @@ div#wait-message {
     display: block;
 }
 
+input.required {
+    background: #ffa;
+}
+
 ins.item-body {
     text-decoration: none;
 }
