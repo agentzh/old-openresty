@@ -346,11 +346,12 @@ sub response {
     }
 
     my $meth = $self->{_http_method};
-    my $last_res_id = $cgi->param('last_response');
+    my $last_res_id = $cgi->url_param('last_response');
     ### $last_res_id;
     ### $meth;
-    if ($last_res_id) {
-        $Cache->set("lastres:".$last_res_id, $str, 2 * 60); # expire in 3 min
+    if (defined $last_res_id) {
+        #warn "!!!!!!!!!!!!!!!!!!!!!!!!!!wdy!";
+        $Cache->set("lastres:".$last_res_id, $str); # expire in 3 min
     }
     #warn ">>>>>>>>>>>>Cookies<<<<<<<<<<<<<<: @cookies\n";
     print $cgi->header(
