@@ -205,6 +205,12 @@ if ($cmd eq 'small') {
         }, '/=/model/Post/~/~');
     }
     $openapi->post([
+        { sender => 'bobby', body => '后来怎么样了？我很想知道：）', post => 6, created => date('October 25 2007 11:28 AM'), url => 'http://bobby316.spaces.live.com/' },
+        { sender => '光磊', body => '你好，请问您是不是对CLIPS比较熟悉。我也是刚开始学习这门语言，可是资料非常少，从网上搜索，发现学习这门语言的人也不是太多，希望与你交流一下。如果可能，可以用邮箱和我联系，谢谢。', email => 'guanglei9@yahoo.com.cn', post => 11, created => date('February 10 2006 12:04 PM') },
+        { sender => '光磊', body => '我的邮箱是guanglei9@yahoo.com.cn', post => 11, created => date('February 10 2006 12:05 PM') },
+        { sender => '李鲁', body => '感觉你看问题有点消极！', url => 'http://lvbuzhang2000.spaces.live.com/', post => 12, created => date('December 19 2006 2:23 PM') },
+        { sender => 'agentzh', body => "李鲁，真的消极么？不会吧？\n\n我一直觉得这才是一个人静下心来*应该*去思索的东西。;-)\n\n 激情、快乐，欢笑大多是留给学习、工作、以及身边的朋友和亲人的；\n至于严肃的人生课题和深入的冥想，那应该是属于自己的。呵呵。\n\n好，下回再写几篇激情似火的，哈哈。\n\n别忘了我是双重性格哦……呵呵……", post => 12, created => date('December 19 2006 3:30 PM') },
+        { sender => 'agentzh', body => '沈 Jack 推荐的 MPlayer 比 RealPlayer 好多了（RealPlayer 在播放时很不稳定，经常崩溃），尽管 MPlayer 的解码器和显卡驱动的配置花了我不少额外的工夫，呵呵。', post => 22, created => date('April 18 1:58 PM') },
         { sender => 'lobatt', body => "过来回拜：）\n关于你负责测试这个事情，我是在YAPC上获得的信息...不准确么？我改我改...", url => 'http://www.perlfect.org/', post => 62, created => date('November 25 8:47 PM') },
         { sender => 'agentzh', body => '呵呵，谢谢你的留言 :)', url => 'http://blog.agentzh.org', post => 62, created => date('November 27 8:43 PM') },
         { sender => 'xinglan', body => '非常好的一篇文章。期待下次崩溃 ：）', url => 'http://i.cn.yahoo.com/shi_xinglan', post => 65, created => '2007-12-03 11:09:00+08' },
@@ -214,6 +220,11 @@ if ($cmd eq 'small') {
     ], '/=/model/Comment/~/~');
     $openapi->put({ comments => 1 }, '/=/model/Post/id/65');
     $openapi->put({ comments => 2 }, '/=/model/Post/id/62');
+    $openapi->put({ comments => 3 }, '/=/model/Post/id/70');
+    $openapi->put({ comments => 1 }, '/=/model/Post/id/22');
+    $openapi->put({ comments => 2 }, '/=/model/Post/id/12');
+    $openapi->put({ comments => 2 }, '/=/model/Post/id/11');
+    $openapi->put({ comments => 1 }, '/=/model/Post/id/6');
 }
 
 sub date {
