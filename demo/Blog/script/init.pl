@@ -210,7 +210,7 @@ if ($cmd eq 'small') {
         { sender => 'xinglan', body => '非常好的一篇文章。期待下次崩溃 ：）', url => 'http://i.cn.yahoo.com/shi_xinglan', post => 65, created => '2007-12-03 11:09:00+08' },
         { sender => 'cnhackTNT', body => "太COOL了！有才。。。", url => 'http://wanghui.org', post => 70, created => '2008-02-19 09:17:32+08' },
         { sender => 'laye', body => "Wow, now I see it fully works,\ncool~", url => 'http://layesuen.spaces.live.com', post => 70, created => '2008-02-20 21:02:23+08' },
-        { sender => 'laye', body => ' laye wanna has his blog like this, too @@', url => 'http://layesuen.spaces.live.com', post => 70, created => '' },
+        { sender => 'laye', body => ' laye wanna has his blog like this, too @@', url => 'http://layesuen.spaces.live.com', post => 70, created => '2008-02-20 21:06:56+08' },
     ], '/=/model/Comment/~/~');
     $openapi->put({ comments => 1 }, '/=/model/Post/id/65');
     $openapi->put({ comments => 2 }, '/=/model/Post/id/62');

@@ -21,7 +21,7 @@ $.fn.postprocess = function (clas, options) {
         //debug("Anchor: " + anchor);
         $(this).click( function () {
             location.hash = anchor;
-            savedAnchor = null;
+            if (savedAnchor == anchor) savedAnchor = null;
             dispatchByAnchor();
         } );
     } );
@@ -30,8 +30,12 @@ $.fn.postprocess = function (clas, options) {
 //var count = 0;;
 function setStatus (isLoading, category) {
     if (isLoading) {
-        if (++loadingCount == 1)
-            $(waitMessage).css('top', '2px');
+        if (++loadingCount == 1) {
+            if (jQuery.browser.opera)
+                $(waitMessage).css('top', '2px');
+            else
+                $(waitMessage).show();
+        }
     } else {
         loadingCount--;
         if (loadingCount < 0) loadingCount = 0;
@@ -39,7 +43,11 @@ function setStatus (isLoading, category) {
             // the reason we use this hack is to work around
             // a rendering bug in Win32 build of Opera
             // (at least 9.25 and 9.26)
-            $(waitMessage).css('top', '-200px');
+            if (jQuery.browser.opera)
+                $(waitMessage).css('top', '-200px');
+            else
+                $(waitMessage).hide();
+
         }
     }
     //count++;
@@ -214,10 +222,19 @@ function postComment (form) {
     data.body = $("#comment-text").val();
     data.post = $("#comment-for").val();
     //alert(JSON.stringify(data));
-    if (!data.body) {
-        error("Comment text cannot be empty :)");
+    if (!data.sender) {
+        error("Name is required.");
         return false;
     }
+    if (!data.email) {
+        error("Email address is required.");
+        return false;
+    }
+    if (!data.body) {
+        error("Comment body is required.");
+        return false;
+    }
+
     //openapi.purge();
     setStatus(true, 'afterPostComment');
     openapi.callback = afterPostComment;
@@ -234,11 +251,17 @@ function afterPostComment (res) {
     } else {
         //alert(res.error);
         setStatus(true, 'renderComments');
-        openapi.callback = renderComments;
+        $("#comment-text").val('');
         var spans = $(".comment-count");
         var commentCount = parseInt(spans.text());
         var postId = spans.attr('post');
-        openapi.get('/=/model/Comment/post/' + postId);
+
+        //debug(JSON.stringify(res));
+        var commentId;
+        var match = res.last_row.match(/\d+$/);
+        if (match.length) commentId = match[0];
+        location.hash = 'post-' + postId + ':' +
+            (commentId ? 'comment-' + commentId : 'comments');
         openapi.callback = function (res) {
             if (!openapi.isSuccess(res)) {
                 error("Failed to increment the comment count for post " +
@@ -272,7 +295,8 @@ function renderPost (res) {
         var post = res[0];
         $("#beta-inner.pkg").html(
             Jemplate.process('post-page.tt', { post: post })
-        );
+        ).postprocess();
+
         openapi.callback = function (res) {
             renderPrevNextPost(post.id, res);
         };
@@ -319,7 +343,7 @@ function renderPostList (res) {
         //alert(JSON.stringify(data));
         $("#beta-inner.pkg").html(
             Jemplate.process('post-list.tt', { post_list: res })
-        );
+        ).postprocess();
     }
     resetAnchor();
 }
@@ -336,7 +360,7 @@ function renderPager (res, page) {
                 'pager.tt',
                 { page: page, page_count: pageCount, title: 'Pages' }
             )
-        );
+        ).postprocess();
         resetAnchor();
     }
 }
