@@ -29,7 +29,7 @@
     [%- i = from; %]
     [%- WHILE i <= to %]
       [%- IF i == page %]
-        <td><b>[% i %]</b></td>
+        <td class="highlight">[% i %]</td>
       [%- ELSE %]
         <td><a href="#post-list-[% i %]">[% i %]</a></td>
       [%- END %]
