@@ -205,26 +205,38 @@ if ($cmd eq 'small') {
         }, '/=/model/Post/~/~');
     }
     $openapi->post([
+        { sender => 'Cherry', body => '期待下一个完美之夜,我们又可以新的完美之旅了~~~', post => 1, url => 'http://cherrychuxinyun.spaces.msn.com' },
+        { sender => 'agentzh', body => 'Woot!', created => date('July 08 2006 3:53 PM'), post => 1 },
+        { sender => '咩咩', body => '你是第一个读到我心情短文的朋友，谢谢你的支持呢！加油加油，再加油！即立志，后面一句话怎么说的来着？ 总之就是要坚持的意思的啦！：）  我看了你对TUIT的解释，很受用，记下了，而且可以在适当场合小炫一下哦！我保准我周围没有什么人知道呢！嘿嘿...  对了，告诉我一下，空间的版面颜色如何更改吧，虽然绿色心情不错，但是我更希望颜色能温婉一些呢！   还有，沈同学的工作快完成了，他现在去上海学习，也正好可以再思考一下如何做的更完善呢，你看到他做的东西了吗，有什么好的建议和意见，可千万不要保守哦！ 好像我都把这个本应做评论的地方当成写电邮的地方了，不过，言及其意就好了，祝你过的好啰！', post => 2, created => date('July 11 2006 1:43 PM'), url => 'http://rebeccanewworld.spaces.msn.com' },
+        { sender => 'laye', body => "Learning by copying,\nMaybe I should try, :=D\n\nMy special field now is Natural Language Process (NLP),\nThis field utilizes Perl much as a powerful tool, maybe it's a good chance for me to get familiar with Perl :-)", post => 3, created => date('July 22 2006 11:44 PM'), url => 'http://layesuen.spaces.msn.com' },
+        { sender => 'agentzh', body => "Woot! NLP is a charming area...\n\nHappy hacking with Perl!", post => 3, created => date('August 10 2006 2:22 PM') },
         { sender => 'bobby', body => '后来怎么样了？我很想知道：）', post => 6, created => date('October 25 2007 11:28 AM'), url => 'http://bobby316.spaces.live.com/' },
         { sender => '光磊', body => '你好，请问您是不是对CLIPS比较熟悉。我也是刚开始学习这门语言，可是资料非常少，从网上搜索，发现学习这门语言的人也不是太多，希望与你交流一下。如果可能，可以用邮箱和我联系，谢谢。', email => 'guanglei9@yahoo.com.cn', post => 11, created => date('February 10 2006 12:04 PM') },
         { sender => '光磊', body => '我的邮箱是guanglei9@yahoo.com.cn', post => 11, created => date('February 10 2006 12:05 PM') },
         { sender => '李鲁', body => '感觉你看问题有点消极！', url => 'http://lvbuzhang2000.spaces.live.com/', post => 12, created => date('December 19 2006 2:23 PM') },
         { sender => 'agentzh', body => "李鲁，真的消极么？不会吧？\n\n我一直觉得这才是一个人静下心来*应该*去思索的东西。;-)\n\n 激情、快乐，欢笑大多是留给学习、工作、以及身边的朋友和亲人的；\n至于严肃的人生课题和深入的冥想，那应该是属于自己的。呵呵。\n\n好，下回再写几篇激情似火的，哈哈。\n\n别忘了我是双重性格哦……呵呵……", post => 12, created => date('December 19 2006 3:30 PM') },
         { sender => 'agentzh', body => '沈 Jack 推荐的 MPlayer 比 RealPlayer 好多了（RealPlayer 在播放时很不稳定，经常崩溃），尽管 MPlayer 的解码器和显卡驱动的配置花了我不少额外的工夫，呵呵。', post => 22, created => date('April 18 1:58 PM') },
+        { sender => 'Anonymous', body => 'OMFG. I was getting so frustrated trying to set this up on my own. Thank you very much.', created => date('August 9, 2007 9:02:00 AM CST'), post => 50 },
         { sender => 'lobatt', body => "过来回拜：）\n关于你负责测试这个事情，我是在YAPC上获得的信息...不准确么？我改我改...", url => 'http://www.perlfect.org/', post => 62, created => date('November 25 8:47 PM') },
         { sender => 'agentzh', body => '呵呵，谢谢你的留言 :)', url => 'http://blog.agentzh.org', post => 62, created => date('November 27 8:43 PM') },
         { sender => 'xinglan', body => '非常好的一篇文章。期待下次崩溃 ：）', url => 'http://i.cn.yahoo.com/shi_xinglan', post => 65, created => '2007-12-03 11:09:00+08' },
         { sender => 'cnhackTNT', body => "太COOL了！有才。。。", url => 'http://wanghui.org', post => 70, created => '2008-02-19 09:17:32+08' },
         { sender => 'laye', body => "Wow, now I see it fully works,\ncool~", url => 'http://layesuen.spaces.live.com', post => 70, created => '2008-02-20 21:02:23+08' },
         { sender => 'laye', body => ' laye wanna has his blog like this, too @@', url => 'http://layesuen.spaces.live.com', post => 70, created => '2008-02-20 21:06:56+08' },
+        { sender => 'laser', body => '还是。。。很好玩滴。。。。', email => 'laser@henry', created => '2008-02-26 18:17:46+08', post => 67 },
     ], '/=/model/Comment/~/~');
+    $openapi->put({ comments => 3 }, '/=/model/Post/id/70');
+    $openapi->put({ comments => 1 }, '/=/model/Post/id/67');
     $openapi->put({ comments => 1 }, '/=/model/Post/id/65');
     $openapi->put({ comments => 2 }, '/=/model/Post/id/62');
-    $openapi->put({ comments => 3 }, '/=/model/Post/id/70');
+    $openapi->put({ comments => 1 }, '/=/model/Post/id/50');
     $openapi->put({ comments => 1 }, '/=/model/Post/id/22');
     $openapi->put({ comments => 2 }, '/=/model/Post/id/12');
     $openapi->put({ comments => 2 }, '/=/model/Post/id/11');
     $openapi->put({ comments => 1 }, '/=/model/Post/id/6');
+    $openapi->put({ comments => 2 }, '/=/model/Post/id/3');
+    $openapi->put({ comments => 1 }, '/=/model/Post/id/2');
+    $openapi->put({ comments => 2 }, '/=/model/Post/id/1');
 }
 
 sub date {

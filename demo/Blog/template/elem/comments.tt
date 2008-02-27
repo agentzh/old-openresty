@@ -7,7 +7,7 @@
                 .replace("<", '&lt;')
                 .replace(">", '&gt;')
                 .replace("\n", "<br/>")
-                .replace(" ", '&nbsp;')
+                .replace("  ", '&nbsp; ')
                 .replace("\t", '&nbsp;&nbsp;&nbsp;&nbsp;')
             %]
         </div>
