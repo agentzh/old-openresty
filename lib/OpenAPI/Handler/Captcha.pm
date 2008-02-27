@@ -180,7 +180,7 @@ sub GET_captcha_column {
         }
 
         my $id = $UUID->create_str;
-        $Cache->set($id => 1);
+        $Cache->set($id => 1, 2 * 3600);  # expire in 2 h
 
         $self->{_cookie} = { captcha => $id };
         return $id;
@@ -218,7 +218,7 @@ sub GET_captcha_value {
             } else {
                 die "Unsupported lang (only cn and en allowed): $lang\n";
             }
-            $Cache->set($id => $solution);
+            $Cache->set($id => $solution, 2 * 3600);  # expire in 2 h
             return;
         } else {
             die "Invalid captcha ID: $id\n";

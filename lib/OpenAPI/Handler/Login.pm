@@ -105,7 +105,7 @@ sub login_by_sql {
     if ($self->{_use_cookie}) {
         $self->{_cookie} = { session => $uuid };
     }
-    $Cache->set($uuid => "$account.$role");
+    $Cache->set($uuid => "$account.$role", 8 * 3600);  # expire in 8 h
 
     return {
         success => 1,
@@ -219,7 +219,7 @@ sub login_by_perl {
     if ($self->{_use_cookie}) {
         $self->{_cookie} = { session => $uuid };
     }
-    $Cache->set($uuid => "$account.$role");
+    $Cache->set($uuid => "$account.$role", 8 * 3600);  # expire in 8 h
 
     return {
         success => 1,
