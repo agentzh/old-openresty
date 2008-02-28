@@ -121,6 +121,7 @@ A typical response from the server is
 
     {
         "columns":[
+            {"name":"id","label":Rule ID"","type":"serial"}
             {"name":"method","label":"HTTP method","type":"text"},
             {"name":"url","label":"Resource","type":"text"}
         ],
@@ -158,4 +159,14 @@ For instance,
 removes the C<Poster> role (as well as its associative ACL rules) completely.
 
 =head2 Operations on a role's access rules
+
+One can manipulate a role's ACL rules with the same interface as model rows. Every role can be considered a special model with three columns, C<id>, C<method> and C<url>.
+
+=head2 Insert new ACL rules
+
+=head2 Query existing ACL rules
+
+=head2 Modify 
+
+=head2 Delete existing ACL rules
 
