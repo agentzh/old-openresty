@@ -198,6 +198,16 @@ This request inserts 3 ACL rules for the C<Public> role. Tild C<~> is a match-an
 
 =head2 Query existing ACL rules
 
+One can obtain all the ACL rules by using
+
+    GET /=/role/<role_name>/~/~
+
+or limit the rules by a rule column
+
+    GET /=/role/<role_name>/<column>/<value>
+
+which only returns the rules with column C<column> equal to C<value>.
+
 =head2 Modify
 
 =head2 Delete existing ACL rules
