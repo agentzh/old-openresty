@@ -41,7 +41,31 @@ This document defines the REST API for the EEEE OpenAPI protocol, an web service
 
 =head1 Roles
 
+Roles are first-order objects in EEEE OpenAPI, just as models, views, and actions. Roles have very similar interface to models, in particular. You'll notice the strong parallels between these two.
+
 =head2 Operations on the role list
+
+=head3 Read all the existing roles
+
+    GET /=/role
+
+The server returns a list of hashes for all the roles available in the account. Each hash corresponds to a role, containing the fields C<src>, C<name>, and C<description>. A sample response is given below:
+
+  [
+    {"src":"/=/role/Admin","name":"Admin","description":"Administrator"},
+    {"src":"/=/role/Public","name":"Public","description":"Anonymous"},
+    {"src":"/=/role/Newposter","name":"Newposter","description":"Comment poster"}
+  ]
+
+Note that built-in roles C<Admin> and C<Public> are reserved and will always get shown here.
+
+=head3 Delete all the roles
+
+    DELETE /=/role
+
+Note that built-in roles C<Admin> and C<Public> will always be skipped. A typical server response is
+
+    {"success":1,"warning":"Predefined roles skipped."}
 
 =head2 Operations on a role
 
@@ -62,6 +86,20 @@ The C<password> field in the JSON body for creating a new role can only appear w
 =head3 Read a role's meta info
 
     GET /=/role/<role_name>
+
+A typical response from the server is
+
+    {
+        "columns":[
+            {"name":"method","label":"HTTP method","type":"text"},
+            {"name":"url","label":"Resource","type":"text"}
+        ],
+        "name":"Poster",
+        "description":"My Poster Role",
+        "login":"password"
+    }
+
+Note that the C<password> field won't get shown even if the C<login> field is "C<password>".
 
 =head3 Update a role's meta info
 
