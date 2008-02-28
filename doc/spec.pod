@@ -31,11 +31,49 @@ This document defines the REST API for the EEEE OpenAPI protocol, an web service
 
 =head1 Login
 
+=head2 Anonymous login
+
+=head2 Login by password
+
+=head2 Per-request-login
+
+=head2 Login by captchas
+
 =head1 Roles
+
+=head2 Operations on the role list
+
+=head2 Operations on a role
+
+=head2 Operations on a role's access rules
 
 =head1 Models
 
+=head2 Operations on the model list
+
+=head2 Operations on a model
+
+=head2 Operations on a model column
+
+=head2 Operations on model rows
+
 =head1 Views
 
+=head2 Operations on the view list
+
+=head2 Operations on a view
+
+=head2 Operations on a view param
+
+=head2 Invoking a view
+
 =head1 Actions
+
+=head2 Operations on the action list
+
+=head2 Operations on an action
+
+=head2 Operations on an action param
+
+=head2 Invoking an action
 
