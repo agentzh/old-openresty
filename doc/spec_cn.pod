@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-OpenAPI REST Protocol Specification [draft] - OpenAPI REST 协议白皮书（草案）
+EEEE OpenAPI REST Protocol Specification [draft] - OpenAPI REST 协议白皮书（草案）
 
 =head1 AUTHOR
 
@@ -12,7 +12,7 @@ Agent Zhang (章亦春) <agentzh@yahoo.cn>
 
     CREATED:            Nov 19, 2007
     LAST MODIFIED:      Dec 28, 2007
-    VERSION:            0.16
+    VERSION:            0.17
 
 =head1 LICENSE
 
