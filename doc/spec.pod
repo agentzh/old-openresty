@@ -45,6 +45,32 @@ This document defines the REST API for the EEEE OpenAPI protocol, an web service
 
 =head2 Operations on a role
 
+    GET /=/role/<role_name>
+
+    POST /=/role/<role_name>
+
+Update some properties (C<name>, C<login>, C<password>, and etc.) for role C<< <role_name> >>:
+
+    PUT /=/role/<role_name>
+    { <key>:<new_value>, ... }
+
+The following example
+
+    PUT /=/role/Poster
+    { name: "NewPoster", password: 5906438 }
+
+changes the name of the C<Poster> role to C<NewPoster> I<and> also changes its password to C<5906438>.
+
+Delete a role named C<< <role_name> >>:
+
+    DELETE /=/role/<role_name>
+
+For instance,
+
+    DELETE /=/role/Poster
+
+removes the C<Poster> role (as well as its associative ACL rules) completely.
+
 =head2 Operations on a role's access rules
 
 =head1 Models
