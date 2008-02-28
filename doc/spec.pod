@@ -45,9 +45,25 @@ This document defines the REST API for the EEEE OpenAPI protocol, an web service
 
 =head2 Operations on a role
 
+=head3 Create a role
+
+    POST /=/role/~
+    {
+        name:        <role_name>,
+        description: <role_description>,
+        login:       <login_method>,
+        password:    <password>,
+    }
+
+C<< <login_method> >> can be one of the following: C<anonymous>, C<password>, and C<captcha>. See the L</Login> section for more information regarding these different login methods.
+
+The C<password> field in the JSON body for creating a new role can only appear when the C<login> field is of the value C<"password">.
+
+=head3 Read a role's meta info
+
     GET /=/role/<role_name>
 
-    POST /=/role/<role_name>
+=head3 Update a role's meta info
 
 Update some properties (C<name>, C<login>, C<password>, and etc.) for role C<< <role_name> >>:
 
@@ -60,6 +76,8 @@ The following example
     { name: "NewPoster", password: 5906438 }
 
 changes the name of the C<Poster> role to C<NewPoster> I<and> also changes its password to C<5906438>.
+
+=head3 Delete a role
 
 Delete a role named C<< <role_name> >>:
 
