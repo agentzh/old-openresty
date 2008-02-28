@@ -1,0 +1,41 @@
+=encoding UTF-8
+
+=head1 NAME
+
+spec - EEEE OpenAPI REST Protocol Specification [draft]
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) <agentzh@yahoo.cn>
+
+=head1 VERSION
+
+    CREATED:            Nov 19, 2007
+    LAST MODIFIED:      Feb 28, 2008
+    VERSION:            1.00
+
+=head1 LICENSE
+
+  Copyright (c)  2007, 2008  Yahoo! China, Alibaba Inc.
+  Permission is granted to copy, distribute and/or modify this document
+  under the terms of the GNU Free Documentation License, Version 1.2
+  or any later version published by the Free Software Foundation;
+  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+  Texts. A copy of the license can be found at
+
+    http://www.gnu.org/licenses/fdl.html
+
+=head1 DESCRIPTION
+
+This document defines the REST API for the EEEE OpenAPI protocol, an web service interface to relational databases.
+
+=head1 Login
+
+=head1 Roles
+
+=head1 Models
+
+=head1 Views
+
+=head1 Actions
+
