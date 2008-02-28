@@ -164,9 +164,41 @@ One can manipulate a role's ACL rules with the same interface as model rows. Eve
 
 =head2 Insert new ACL rules
 
+One can insert one rule at a time:
+
+    POST /=/role/<role_name>/~/~
+    { method: <HTTP_method_allowed>, url: <url_pattern_allowed> }
+
+or insert multiple rules in a single request:
+
+
+    POST /=/role/<role_name>/~/~
+    [
+        { method: <HTTP_method_allowed>, url: <url_allowed> },
+        ...
+    ]
+
+Here is an example:
+
+    POST /=/role/Public/~/~
+    [
+        {"method":"POST","url":"/=/model/~"},
+        {"method":"GET","url":"/=/model/A/~/~"},
+        {"method":"DELETE","url":"/=/model/A/id/~"}
+    ]
+
+This request inserts 3 ACL rules for the C<Public> role. Tild C<~> is a match-any wildcard. And at least the following requests are allowed for the C<Public> role:
+
+    POST /=/model/~
+    POST /=/model/Moose
+    GET /=/model/A/id/3
+    GET /=/model/A/~/~
+    DELETE /=/model/A/id/2
+    DELETE /=/model/A/id/52
+
 =head2 Query existing ACL rules
 
-=head2 Modify 
+=head2 Modify
 
 =head2 Delete existing ACL rules
 
