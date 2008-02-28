@@ -92,7 +92,7 @@ function dispatchByAnchor () {
     if (match) {
         var postId = match[1];
         //alert("Post ID: " + postId);
-        goToPost(postId);
+        getPost(postId);
         return;
     }
     match = anchor.match(/^(?:post-list|post-list-(\d+))$/);
@@ -289,7 +289,7 @@ function afterPostComment (res) {
     }
 }
 
-function goToPost (id) {
+function getPost (id) {
     //alert("Go to Post " + id);
     $(".blog-top").attr('id', 'post-' + id);
     //alert($(".blog-top").attr('id'));
