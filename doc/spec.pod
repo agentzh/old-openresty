@@ -39,6 +39,36 @@ This document defines the REST API for the EEEE OpenAPI protocol, an web service
 
 =head2 Login by captchas
 
+=head1 Models
+
+=head2 Operations on the model list
+
+=head2 Operations on a model
+
+=head2 Operations on a model column
+
+=head2 Operations on model rows
+
+=head1 Views
+
+=head2 Operations on the view list
+
+=head2 Operations on a view
+
+=head2 Operations on a view param
+
+=head2 Invoking a view
+
+=head1 Actions
+
+=head2 Operations on the action list
+
+=head2 Operations on an action
+
+=head2 Operations on an action param
+
+=head2 Invoking an action
+
 =head1 Roles
 
 Roles are first-order objects in EEEE OpenAPI, just as models, views, and actions. Roles have very similar interface to models, in particular. You'll notice the strong parallels between these two.
@@ -128,34 +158,4 @@ For instance,
 removes the C<Poster> role (as well as its associative ACL rules) completely.
 
 =head2 Operations on a role's access rules
-
-=head1 Models
-
-=head2 Operations on the model list
-
-=head2 Operations on a model
-
-=head2 Operations on a model column
-
-=head2 Operations on model rows
-
-=head1 Views
-
-=head2 Operations on the view list
-
-=head2 Operations on a view
-
-=head2 Operations on a view param
-
-=head2 Invoking a view
-
-=head1 Actions
-
-=head2 Operations on the action list
-
-=head2 Operations on an action
-
-=head2 Operations on an action param
-
-=head2 Invoking an action
 
