@@ -8,10 +8,10 @@ define CMDS
     bin/perf
 endef
 
-all: doc/spec.html lib/MiniSQL/Select.pm
+all: doc/spec.html doc/spec_cn.html lib/MiniSQL/Select.pm
 
-doc/spec.html: doc/spec.pod
-	cd doc && podhtm.pl --index --charset UTF-8 --css perl.css -o spec.html spec.pod
+doc/%.html: doc/%.pod
+	cd doc && podhtm.pl --index --charset UTF-8 --css perl.css -o $@ $<
 
 lib/MiniSQL/Select.pm: grammar/Select.yp
 	yapp -m MiniSQL::Select -o $@ $<
