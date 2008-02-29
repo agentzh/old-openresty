@@ -1,4 +1,4 @@
-package OpenAPI::Backend::PgFarm;
+package OpenResty::Backend::PgFarm;
 
 use strict;
 use warnings;
@@ -7,7 +7,7 @@ use warnings;
 use DBI;
 use JSON::Syck 'Load';
 use Encode 'encode';
-use base 'OpenAPI::Backend::Base';
+use base 'OpenResty::Backend::Base';
 
 $YAML::Syck::ImplicitUnicode = 1;
 $JSON::Syck::ImplicitUnicode = 1;
@@ -20,12 +20,12 @@ sub new {
     #
     my $class = shift;
     my $opts = shift || {};
-    $Host ||= $OpenAPI::Config{'backend.host'}  or
+    $Host ||= $OpenResty::Config{'backend.host'}  or
         die "No backend.host specified in the config files.\n";
-    $User ||= $OpenAPI::Config{'backend.user'} or
+    $User ||= $OpenResty::Config{'backend.user'} or
         die "No backend.user specified in the config files.\n";
-    $Password ||= $OpenAPI::Config{'backend.password'} || '';
-    $Port ||= $OpenAPI::Config{'backend.port'};
+    $Password ||= $OpenResty::Config{'backend.password'} || '';
+    $Port ||= $OpenResty::Config{'backend.port'};
     my $dbh = DBI->connect(
         "dbi:Pg:dbname=proxy host=$Host".
             ($Port ? ";port=$Port" : ""),

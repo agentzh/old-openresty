@@ -1,4 +1,4 @@
-package WWW::OpenAPI::Embedded;
+package WWW::OpenResty::Embedded;
 
 use strict;
 use warnings;
@@ -6,7 +6,7 @@ use warnings;
 #use Smart::Comments;
 use Carp;
 use Params::Util qw( _HASH0 );
-use OpenAPI::Dispatcher;
+use OpenResty::Dispatcher;
 use Data::Dumper;
 use Class::Prototyped;
 use HTTP::Request;
@@ -30,7 +30,7 @@ sub new {
     my $server = delete $params->{server} or
         croak "No server specified.";
     my $timer = delete $params->{timer};
-    OpenAPI::Dispatcher->init;
+    OpenResty::Dispatcher->init;
     tie_output(*STDOUT, $Buffer);
     bless {
         server => $server,
@@ -132,7 +132,7 @@ sub _request {
 
     my $cgi = new_cgi($uri, $req);
     $Buffer = undef;
-    OpenAPI::Dispatcher->process_request($cgi);
+    OpenResty::Dispatcher->process_request($cgi);
     my $code;
     if (is_utf8($Buffer)) {
         $Buffer = encode('UTF-8', $Buffer);

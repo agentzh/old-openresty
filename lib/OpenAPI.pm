@@ -1,4 +1,4 @@
-package OpenAPI;
+package OpenResty;
 
 our $VERSION = '0.0.4';
 
@@ -18,21 +18,21 @@ use SQL::Select;
 use SQL::Update;
 use SQL::Insert;
 
-use OpenAPI::Backend;
-use OpenAPI::Limits;
+use OpenResty::Backend;
+use OpenResty::Limits;
 
 use MiniSQL::Select;
 #use encoding "utf8";
 
-use OpenAPI::Util;
-use OpenAPI::Handler::Model;
-use OpenAPI::Handler::View;
-use OpenAPI::Handler::Action;
-use OpenAPI::Handler::Role;
-use OpenAPI::Handler::Admin;
-use OpenAPI::Handler::Login;
-use OpenAPI::Handler::Captcha;
-use OpenAPI::Handler::Version;
+use OpenResty::Util;
+use OpenResty::Handler::Model;
+use OpenResty::Handler::View;
+use OpenResty::Handler::Action;
+use OpenResty::Handler::Role;
+use OpenResty::Handler::Admin;
+use OpenResty::Handler::Login;
+use OpenResty::Handler::Captcha;
+use OpenResty::Handler::Version;
 use Encode::Guess;
 
 $YAML::Syck::ImplicitUnicode = 1;
@@ -100,8 +100,8 @@ sub init {
     my $db_state = $Backend->state;
     if ($db_state && $db_state =~ /^(?:08|57)/) {
         eval { $Backend->disconnect };
-        my $backend = $OpenAPI::Config{'backend.type'};
-        OpenAPI->connect($backend);
+        my $backend = $OpenResty::Config{'backend.type'};
+        OpenResty->connect($backend);
         #die "Backend connection lost: ", $db_state, "\n";
     }
 
@@ -263,7 +263,7 @@ sub fatal {
 
 sub error {
     my ($self, $s) = @_;
-    if (!$OpenAPI::Config{'frontend.debug'} && $s =~ /^DBD::Pg::(?:db|st) \w+ failed:/) {
+    if (!$OpenResty::Config{'frontend.debug'} && $s =~ /^DBD::Pg::(?:db|st) \w+ failed:/) {
         $s = 'Operation failed.';
     }
     $s =~ s/^Syck parser \(line (\d+), column (\d+)\): syntax error at .+/Syntax error found in the JSON input: line $1, column $2./;
@@ -373,7 +373,7 @@ sub connect {
     my $self = shift;
     my $name = shift || $BackendName;
     $BackendName = $name;
-    $Backend = OpenAPI::Backend->new($name);
+    $Backend = OpenResty::Backend->new($name);
     #$Backend->select("");
 }
 

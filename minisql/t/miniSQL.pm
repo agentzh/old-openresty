@@ -3,7 +3,7 @@ use warnings;
 
 package t::miniSQL;
 
-use OpenAPI::miniSQL;
+use OpenResty::miniSQL;
 
 use Test::More qw(no_plan);
 use Data::Dumper;
@@ -18,8 +18,8 @@ sub import() {
 sub rule(@) {
     my ($rule, $in) = @_;
     no strict 'refs';
-    my $r = *{"OpenAPI::miniSQL::$rule"};
-    return $r->("OpenAPI::miniSQL", $in);
+    my $r = *{"OpenResty::miniSQL::$rule"};
+    return $r->("OpenResty::miniSQL", $in);
 }
 
 sub rule_capture(@) {

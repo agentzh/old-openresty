@@ -1,4 +1,4 @@
-package t::OpenAPI;
+package t::OpenResty;
 
 use lib 'inc';
 use lib 'lib';
@@ -7,16 +7,16 @@ use Test::Base -Base;
 
 #use Smart::Comments;
 my $client_module;
-use OpenAPI::Config;
+use OpenResty::Config;
 BEGIN {
-    OpenAPI::Config->init;
-    my $use_http = $OpenAPI::Config{'test_suite.use_http'};
+    OpenResty::Config->init;
+    my $use_http = $OpenResty::Config{'test_suite.use_http'};
     if ($use_http) {
-        $client_module = 'WWW::OpenAPI';
-        require WWW::OpenAPI;
+        $client_module = 'WWW::OpenResty';
+        require WWW::OpenResty;
     } else {
-        $client_module = 'WWW::OpenAPI::Embedded';
-        require WWW::OpenAPI::Embedded;
+        $client_module = 'WWW::OpenResty::Embedded';
+        require WWW::OpenResty::Embedded;
     }
 }
 use Test::LongString;
@@ -29,7 +29,7 @@ my $timer = Benchmark::Timer->new();
 my $SavedCapture;
 
 our $server = $ENV{'OPENAPI_TEST_SERVER'} ||
-    $OpenAPI::Config{'test_suite.server'} or
+    $OpenResty::Config{'test_suite.server'} or
     die "No server specified.\n";
 our ($user, $password, $host);
 if ($server =~ /^(\w+):(\S+)\@(\S+)$/) {
@@ -41,7 +41,7 @@ if ($server =~ /^(\w+):(\S+)\@(\S+)$/) {
 $host = "http://$host" if $host !~ m{^http://};
 
 our $client = $client_module->new({ server => $host, timer => $timer });
-our $debug = $OpenAPI::Config{'frontend.debug'};
+our $debug = $OpenResty::Config{'frontend.debug'};
 
 #init();
 

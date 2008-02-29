@@ -1,4 +1,4 @@
-package OpenAPI::Config;
+package OpenResty::Config;
 
 use strict;
 use warnings;
@@ -25,24 +25,24 @@ sub init {
     while (my ($key, $val) = each %$vars) {
         $val = '' if !defined $val;
         warn "$key=$val\n" if $do_echo;
-        $OpenAPI::Config ||= {};
-        $OpenAPI::Config{$key} = $val;
+        $OpenResty::Config ||= {};
+        $OpenResty::Config{$key} = $val;
     }
     ### $vars
-    if (!$OpenAPI::Config{'backend.type'}) {
+    if (!$OpenResty::Config{'backend.type'}) {
         warn "backend.type=Pg\n" if $do_echo;
-        $OpenAPI::Config{'backend.type'} = 'Pg';
+        $OpenResty::Config{'backend.type'} = 'Pg';
     }
-    if (!$OpenAPI::Config{'cache.type'}) {
+    if (!$OpenResty::Config{'cache.type'}) {
         warn "backend.type=mmap\n" if $do_echo;
-        $OpenAPI::Config{'cache.type'} = 'mmap';
+        $OpenResty::Config{'cache.type'} = 'mmap';
     }
-    $OpenAPI::Limits::RECORD_LIMIT = $OpenAPI::Config{'frontend.row_limit'};
-    $OpenAPI::Limits::COLUMN_LIMIT = $OpenAPI::Config{'frontend.column_limit'};
-    $OpenAPI::Limits::MODEL_LIMIT = $OpenAPI::Config{'frontend.model_limit'};
-    $OpenAPI::Limits::POST_LEN_LIMIT = $OpenAPI::Config{'frontend.post_len_limit'};
+    $OpenResty::Limits::RECORD_LIMIT = $OpenResty::Config{'frontend.row_limit'};
+    $OpenResty::Limits::COLUMN_LIMIT = $OpenResty::Config{'frontend.column_limit'};
+    $OpenResty::Limits::MODEL_LIMIT = $OpenResty::Config{'frontend.model_limit'};
+    $OpenResty::Limits::POST_LEN_LIMIT = $OpenResty::Config{'frontend.post_len_limit'};
 
-    $CGI::Simple::POST_MAX = $OpenAPI::Limits::POST_LEN_LIMIT;  # max 100 K posts
+    $CGI::Simple::POST_MAX = $OpenResty::Limits::POST_LEN_LIMIT;  # max 100 K posts
     $CGI::Simple::DISABLE_UPLOADS = 1;  # no uploads
 }
 

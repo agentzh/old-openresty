@@ -1,4 +1,4 @@
-package OpenAPI;
+package OpenResty;
 
 #use Smart::Comments;
 use strict;

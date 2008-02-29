@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-package OpenAPI::miniSQL::Compile;
+package OpenResty::miniSQL::Compile;
 
 use Module::Compile -base;
 use Pugs::Compiler::Grammar;

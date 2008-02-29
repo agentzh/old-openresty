@@ -1,4 +1,4 @@
-package OpenAPI::FastCGI;
+package OpenResty::FastCGI;
 
 $CGI::Fast::VERSION='1.07';
 

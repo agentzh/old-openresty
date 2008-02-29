@@ -1,11 +1,11 @@
-package WWW::OpenAPI::Simple;
+package WWW::OpenResty::Simple;
 
 use strict;
 use warnings;
 
 #use Carp 'confess';
 use JSON::Syck ();
-use base 'WWW::OpenAPI';
+use base 'WWW::OpenResty';
 use Params::Util qw( _HASH );
 
 sub request {

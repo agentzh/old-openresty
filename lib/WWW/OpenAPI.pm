@@ -1,4 +1,4 @@
-package WWW::OpenAPI;
+package WWW::OpenResty;
 
 use strict;
 use warnings;
