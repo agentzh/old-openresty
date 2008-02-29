@@ -1,6 +1,6 @@
 # vi:filetype=
 
-use t::OpenAPI;
+use t::OpenResty;
 
 plan tests => 3 * blocks();
 
@@ -12,5 +12,5 @@ __DATA__
 --- request
 GET /=/version
 --- response_like
-^"EEEE OpenAPI \d+\.\d+\.\d+ \(revision \d+\) with the (?:Pg|PgFarm) (?:\([-\w]+\) )?backend\.\\nCopyright \(c\) 2007-2008 by Yahoo! China EEEE Works\.\\n"$
+^"EEEE OpenResty \d+\.\d+\.\d+ \(revision \d+\) with the (?:Pg|PgFarm) (?:\([-\w]+\) )?backend\.\\nCopyright \(c\) 2007-2008 by Yahoo! China EEEE Works\.\\n"$
 

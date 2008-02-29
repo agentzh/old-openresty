@@ -1,6 +1,6 @@
 # vi:filetype=
 
-use t::OpenAPI 'no_plan';
+use t::OpenResty 'no_plan';
 
 =pod
 
