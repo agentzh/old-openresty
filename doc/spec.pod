@@ -208,7 +208,7 @@ or limit the rules by a rule column
 
 which only returns the rules with column C<column> equal to C<value>.
 
-=head2 Modify
+=head2 Update existing ACL rules
 
 =head2 Delete existing ACL rules
 
