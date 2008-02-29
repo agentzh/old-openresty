@@ -1,6 +1,6 @@
 SETUP TEST ENVIRONMENT:
 
-This is a basic guideline for settting up an OpenAPI server on your own machine. Someone has succeeded in setting up one on Windows XP using ActivePerl 5.8.8. The normal development environment is Linux though. If you have any particular question, feel free to ask us by sending mails to agentzh@yahoo.cn :)
+This is a basic guideline for settting up an OpenResty server on your own machine. Someone has succeeded in setting up one on Windows XP using ActivePerl 5.8.8. The normal development environment is Linux though. If you have any particular question, feel free to ask us by sending mails to agentzh@yahoo.cn :)
 
 1. Grab the openapi package and unpack it in some place, let's say it's openapi, and install Cookie::XS from the following SVN repository:
 
@@ -43,7 +43,7 @@ Most of the time, you need to change the last 3 lines unless you're using exactl
 
     $ createuser anonymouse test
 
-6. Create a "tester" user account for our test suite in OpenAPI (drop it if it already exists):
+6. Create a "tester" user account for our test suite in OpenResty (drop it if it already exists):
 
     $ bin/openapi.pl deluser tester
     $ bin/openapi.pl adduser tester
@@ -95,11 +95,11 @@ It's also possible to debug a simple .t file, for instance,
 
     make t/01-sanity.t
 
-Or use prove to test a remote OpenAPI server, for example:
+Or use prove to test a remote OpenResty server, for example:
 
     OPENAPI_FRONTEND=10.62.136.86 prove t/0*.t
 
-where 10.62.136.86 is the IP (or hostname or URL) of your OpenAPI server
+where 10.62.136.86 is the IP (or hostname or URL) of your OpenResty server
 being tested.
 
 To test the Pg cluster rather than the desktop Pg, change your etc/site_openapi.conf:
@@ -112,15 +112,15 @@ and also set other items in the same group if necessary.
 FOR DEVELOPER:
 
 bin/ directory is the where CGI entry openapi.pl located
-doc/ directory containing OpenAPI spec
-lib/OpenAPI/ directory contain all the code needed to run OpenAPI
-lib/OpenAPI/OpenAPI.pm contain the code stub for OpenAPI protocol
-lib/OpenAPI/Limits.pm are those hard limits located, we limit the number of different objects (model, row, view etc.) a user could create by default
-lib/OpenAPI/Backend contain all the code to initialize OpenAPI meta tables and code to access different database, for now we support Postgres stand alone database and 
+doc/ directory containing OpenResty spec
+lib/OpenResty/ directory contain all the code needed to run OpenResty
+lib/OpenResty/OpenResty.pm contain the code stub for OpenResty protocol
+lib/OpenResty/Limits.pm are those hard limits located, we limit the number of different objects (model, row, view etc.) a user could create by default
+lib/OpenResty/Backend contain all the code to initialize OpenResty meta tables and code to access different database, for now we support Postgres stand alone database and 
 PostgreSQL cluster
-lib/OpenAPI/Backend/Pg.pm OpenAPI PostgreSQL stand alone database access code
-lib/OpenAPI/Backend/PgFarm.pm OpenAPI PostgreSQL cluster database access code
-lib/OpenAPI/Handler contain all handler methods OpenAPI supported, these methods are moved from lib/OpenAPI.pm due to code refactor; 
+lib/OpenResty/Backend/Pg.pm OpenResty PostgreSQL stand alone database access code
+lib/OpenResty/Backend/PgFarm.pm OpenResty PostgreSQL cluster database access code
+lib/OpenResty/Handler contain all handler methods OpenResty supported, these methods are moved from lib/OpenResty.pm due to code refactor; 
                     method name looks like HTTP_METHOD_some_sub_name.
 lib/SQL classes/methods to generate SQL query (in string form), use OO to encapsulate SQL query generation
 lib/SQL/Statement.pm base class
@@ -128,6 +128,5 @@ lib/SQL/Select.pm class and methods to generate SELECT statement
 lib/SQL/Insert.pm class and methods to generate INSERT statement
 lib/SQL/Update.pm class and methods to generate UPDATE statement
 lib/MiniSQL/ directory conatining our mini-sql parser code, now only SELECT support
-t/ directory containing OpenAPI test suite, use `make test' to run the test, read above on how to setup test environment
-
+t/ directory containing OpenResty test suite, use `make test' to run the test, read above on how to setup test environment
 
