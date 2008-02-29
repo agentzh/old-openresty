@@ -25,11 +25,11 @@
     <link rel="stylesheet" href="blog.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="styles.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="themes/common/print.css" type="text/css" media="print" />
-    <link rel="alternate" type="application/atom+xml" title="Posts on 'Pugs' (Atom)" href="http://pugs.blogs.com/pugs/atom.xml" />
-    <link rel="alternate" type="application/rss+xml" title="Posts on 'Pugs' (RSS 1.0)" href="http://pugs.blogs.com/pugs/index.rdf" />
-    <link rel="alternate" type="application/rss+xml" title="Posts on 'Pugs' (RSS 2.0)" href="http://pugs.blogs.com/pugs/rss.xml" />
-    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://ced02.search.cnb.yahoo.com/=/feed/BlogPost" />
-    <link rel="meta" type="application/rdf+xml" title="FOAF" href="http://pugs.blogs.com/foaf.rdf" />
+    <!-- <link rel="alternate" type="application/atom+xml" title="Posts on 'Human & Machine' (Atom)" href="http://agentzh.spaces.live.com/feed.atom" /> -->
+    <link rel="alternate" type="application/rss+xml" title="Posts on 'Human & Machine' (RSS 1.0)" href="http://agentzh.spaces.live.com/feed.rss" />
+    <!-- <link rel="alternate" type="application/rss+xml" title="Posts on 'Pugs' (RSS 2.0)" href="http://pugs.blogs.com/pugs/rss.xml" /> -->
+    <!-- <link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://ced02.search.cnb.yahoo.com/=/feed/BlogPost" /> -->
+    <link rel="meta" type="application/rdf+xml" title="FOAF" href="http://agentzh.spaces.live.com/feed.rss" />
 
 </head>
 
