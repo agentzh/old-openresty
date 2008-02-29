@@ -1,4 +1,4 @@
-package OpenAPI::Dispatcher;
+package OpenResty::Dispatcher;
 
 use strict;
 use warnings;
@@ -6,10 +6,10 @@ use warnings;
 #use Smart::Comments;
 use Cookie::XS;
 use Data::UUID;
-use OpenAPI::Limits;
-use OpenAPI::Cache;
-use OpenAPI;
-use OpenAPI::Config;
+use OpenResty::Limits;
+use OpenResty::Cache;
+use OpenResty;
+use OpenResty::Config;
 
 our $InitFatal;
 
@@ -45,11 +45,11 @@ if ($url_prefix) {
 }
 
 sub init {
-    OpenAPI::Config->init;
-    my $backend = $OpenAPI::Config{'backend.type'};
+    OpenResty::Config->init;
+    my $backend = $OpenResty::Config{'backend.type'};
     eval {
-        $OpenAPI::Cache = OpenAPI::Cache->new;
-        OpenAPI->connect($backend);
+        $OpenResty::Cache = OpenResty::Cache->new;
+        OpenResty->connect($backend);
     };
     if ($@) {
         $InitFatal = $@;
@@ -68,7 +68,7 @@ sub process_request {
 
     $url =~ s{^\Q$url_prefix\E/+}{}g if $url_prefix;    ### New URL: $url
 
-    my $openapi = OpenAPI->new($cgi);
+    my $openapi = OpenResty->new($cgi);
     if ($InitFatal) {
         $openapi->fatal($InitFatal);
         return;
@@ -111,7 +111,7 @@ sub process_request {
         return;
     }
     ### $http_meth
-    if ($OpenAPI::Config{'test_suite.use_http'}) {
+    if ($OpenResty::Config{'test_suite.use_http'}) {
         require Clone;
         #warn "------------------------------------------------\n";
         warn "$http_meth ", $ENV{REQUEST_URI}, "\n";
@@ -133,7 +133,7 @@ sub process_request {
         if ($cookie) {
             $openapi->{_captcha_from_cookie} =
                 $captcha_from_cookie = $cookie->[-1];
-            #$OpenAPI::Cache->remove($captcha_from_cookie);
+            #$OpenResty::Cache->remove($captcha_from_cookie);
         }
     }
 
@@ -143,7 +143,7 @@ sub process_request {
             $openapi->fatal("No last response ID specified.");
             return;
         }
-        my $res = $OpenAPI::Cache->get("lastres:".$last_res_id);
+        my $res = $OpenResty::Cache->get("lastres:".$last_res_id);
         if (!defined $res) {
             $openapi->fatal("No last response found for ID $last_res_id");
             return;
@@ -158,7 +158,7 @@ sub process_request {
     if ($bits[0] eq 'logout') {
         ### Yeah yeah yeah!
         if ($session) {
-            $OpenAPI::Cache->remove($session);
+            $OpenResty::Cache->remove($session);
         }
         $openapi->{_bin_data} = "{\"success\":1}\n";
         $openapi->response;
@@ -171,7 +171,7 @@ sub process_request {
             # XXX this part is lame...
             my $user = $cgi->url_param('user');
             if (defined $user) {
-                #$OpenAPI::Cache->remove($uuid);
+                #$OpenResty::Cache->remove($uuid);
                 my $captcha = $cgi->url_param('captcha');
                 ### URL param capture: $captcha
                 my $res = $openapi->login($user, {
@@ -186,7 +186,7 @@ sub process_request {
             } else {
                 ### First bit: $bits[0]
                 if ($session) {
-                    my $user = $OpenAPI::Cache->get($session);
+                    my $user = $OpenResty::Cache->get($session);
                     ### User from cookie: $user
                     if ($user) {
                         ($account, $role) = split /\./, $user, 2;

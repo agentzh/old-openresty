@@ -1,4 +1,4 @@
-package OpenAPI;
+package OpenResty;
 
 #use Smart::Comments;
 use strict;
@@ -176,7 +176,7 @@ sub GET_captcha_column {
     if ($col eq 'id') {
         my $captcha_from_cookie = $self->{_captcha_from_cookie};
         if ($captcha_from_cookie) {
-            $OpenAPI::Cache->remove($captcha_from_cookie);
+            $OpenResty::Cache->remove($captcha_from_cookie);
         }
 
         my $id = $UUID->create_str;

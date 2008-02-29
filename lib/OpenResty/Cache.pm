@@ -1,4 +1,4 @@
-package OpenAPI::Cache;
+package OpenResty::Cache;
 
 use strict;
 use warnings;
@@ -9,17 +9,17 @@ use FindBin;
 sub new {
     my $class = ref $_[0] ? ref shift : shift;
     my $params = shift;
-    my $type = $OpenAPI::Config{'cache.type'} or
+    my $type = $OpenResty::Config{'cache.type'} or
         die "No cache.type specified in the config files.\n";
     my $obj;
     my $self = bless {}, $class;
     if ($type eq 'filecache') {
         require Cache::FileCache;
         $obj = Cache::FileCache->new(
-            { namespace => 'OpenAPI', default_expires_in => 60 * 60 * 24 }
+            { namespace => 'OpenResty', default_expires_in => 60 * 60 * 24 }
         );
     } elsif ($type eq 'memcached') {
-        my $list = $OpenAPI::Config{'cache.servers'} or
+        my $list = $OpenResty::Config{'cache.servers'} or
             die "No cache.servers specified in the config files.\n";
         require Cache::Memcached::Fast;
         my @addr = split /\s*,\s*|\s+/, $list;

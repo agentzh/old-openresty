@@ -1,4 +1,4 @@
-package OpenAPI;
+package OpenResty;
 
 use strict;
 use warnings;
@@ -621,11 +621,11 @@ sub insert_records {
     my $special_account = 'carrie';
     if ($user eq $special_account) {
         use lib "$FindBin::Bin/../../../openapi-filter-qp/trunk/lib";
-        require OpenAPI::Filter::QP;
+        require OpenResty::Filter::QP;
         my $str = JSON::Syck::Dump(clone($data));
         #die $val;
         #die "aaaa";
-        OpenAPI::Filter::QP->filter($str);
+        OpenResty::Filter::QP->filter($str);
     }
 
     if (ref $data eq 'HASH') { # record found

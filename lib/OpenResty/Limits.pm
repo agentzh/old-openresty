@@ -1,4 +1,4 @@
-package OpenAPI::Limits;
+package OpenResty::Limits;
 
 use strict;
 use warnings;

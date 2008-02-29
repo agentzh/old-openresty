@@ -1,4 +1,4 @@
-package OpenAPI;
+package OpenResty;
 
 #use Smart::Comments;
 use strict;
@@ -75,8 +75,8 @@ sub login_by_sql {
         }
         # XXX for testing purpose...
         ### Account:  $account;
-        my $server = $ENV{OPENAPI_TEST_SERVER} || $OpenAPI::Config{'test_suite.server'};
-        if ($OpenAPI::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
+        my $server = $ENV{OPENAPI_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
+        if ($OpenResty::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
             if ($true_sol =~ /[a-z]/) {
                 $true_sol = 'hello world ';
             } else {
@@ -93,12 +93,12 @@ sub login_by_sql {
     my $session_from_cookie = $self->{_session_from_cookie};
     ### Get session ID from cookie: $session_from_cookie
     if ($session_from_cookie) {
-        $OpenAPI::Cache->remove($session_from_cookie)
+        $OpenResty::Cache->remove($session_from_cookie)
     }
 
     my $captcha_from_cookie = $self->{_captcha_from_cookie};
     if ($captcha_from_cookie) {
-        $OpenAPI::Cache->remove($captcha_from_cookie);
+        $OpenResty::Cache->remove($captcha_from_cookie);
     }
 
     my $uuid = $UUID->create_str;
@@ -176,8 +176,8 @@ sub login_by_perl {
         }
         # XXX for testing purpose...
         ### Account:  $account;
-        my $server = $ENV{OPENAPI_TEST_SERVER} || $OpenAPI::Config{'test_suite.server'};
-        if ($OpenAPI::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
+        my $server = $ENV{OPENAPI_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
+        if ($OpenResty::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
             if ($true_sol =~ /[a-z]/) {
                 $true_sol = 'hello world ';
             } else {
@@ -207,12 +207,12 @@ sub login_by_perl {
     my $session_from_cookie = $self->{_session_from_cookie};
     ### Get session ID from cookie: $session_from_cookie
     if ($session_from_cookie) {
-        $OpenAPI::Cache->remove($session_from_cookie)
+        $OpenResty::Cache->remove($session_from_cookie)
     }
 
     my $captcha_from_cookie = $self->{_captcha_from_cookie};
     if ($captcha_from_cookie) {
-        $OpenAPI::Cache->remove($captcha_from_cookie);
+        $OpenResty::Cache->remove($captcha_from_cookie);
     }
 
     my $uuid = $UUID->create_str;

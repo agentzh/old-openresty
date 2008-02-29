@@ -1,11 +1,11 @@
 use strict;
 use warnings;
 
-package OpenAPI::miniSQL;
+package OpenResty::miniSQL;
 
-use OpenAPI::miniSQL::Compile; 
+use OpenResty::miniSQL::Compile; 
 
-grammar OpenAPI::miniSQL;
+grammar OpenResty::miniSQL;
 
 %{
 

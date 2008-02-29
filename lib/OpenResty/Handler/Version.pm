@@ -1,10 +1,10 @@
-package OpenAPI;
+package OpenResty;
 
 use strict;
 use warnings;
 
 use FindBin;
-use OpenAPI;
+use OpenResty;
 
 use vars qw($VERSION $Revision);
 
@@ -21,15 +21,15 @@ sub GET_version {
     };
     if ($@) { $Revision = 'Unknown'; }
     else { $Revision ||= trim($s) || 'Unknown'; }
-    my $backend = $OpenAPI::BackendName;
+    my $backend = $OpenResty::BackendName;
     if ($backend eq 'PgFarm') {
-        my $host = $OpenAPI::Backend::PgFarm::Host;
+        my $host = $OpenResty::Backend::PgFarm::Host;
         if ($host =~ /[-\w]+/) {
             $host = $&;
         }
         $backend .= " ($host)";
     }
-    return "EEEE OpenAPI $VERSION (revision $Revision) with the $backend backend.\nCopyright (c) 2007-2008 by Yahoo! China EEEE Works.\n";
+    return "EEEE OpenResty $VERSION (revision $Revision) with the $backend backend.\nCopyright (c) 2007-2008 by Yahoo! China EEEE Works.\n";
 }
 
 1;

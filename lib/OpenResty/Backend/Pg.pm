@@ -1,10 +1,10 @@
-package OpenAPI::Backend::Pg;
+package OpenResty::Backend::Pg;
 
 use strict;
 use warnings;
 use DBI;
 use SQL::Select;
-use base 'OpenAPI::Backend::Base';
+use base 'OpenResty::Backend::Base';
 use Encode 'from_to';
 
 our ($Host, $User, $Password, $Port, $Database);
@@ -13,13 +13,13 @@ sub new {
     my $class = shift;
     my $opts = shift || {};
 
-    $Host ||= $OpenAPI::Config{'backend.host'}  or
+    $Host ||= $OpenResty::Config{'backend.host'}  or
         die "No backend.host specified in the config files.\n";
-    $User ||= $OpenAPI::Config{'backend.user'} or
+    $User ||= $OpenResty::Config{'backend.user'} or
         die "No backend.user specified in the config files.\n";
-    $Password ||= $OpenAPI::Config{'backend.password'} || '';
-    $Port ||= $OpenAPI::Config{'backend.port'};
-    $Database ||= $OpenAPI::Config{'backend.database'} or
+    $Password ||= $OpenResty::Config{'backend.password'} || '';
+    $Port ||= $OpenResty::Config{'backend.port'};
+    $Database ||= $OpenResty::Config{'backend.database'} or
         die "No backend.database specified in the config files.\n";
 
     my $dbh = DBI->connect(

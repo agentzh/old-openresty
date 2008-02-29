@@ -1,4 +1,4 @@
-package OpenAPI::Backend::Base;
+package OpenResty::Backend::Base;
 
 use strict;
 use warnings;
