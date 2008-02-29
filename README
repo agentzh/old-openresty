@@ -1,72 +1,89 @@
 SETUP TEST ENVIRONMENT:
 
-1, grab the openapi package and unpack it in some place, let's say it's openapi;
+1. grab the openapi package and unpack it in some place, let's say it's openapi;
 
-2, enter openapi directory, run "perl Makefile.PL" to check missing dependencies:
-   
+2. enter the openapi directory, run "perl Makefile.PL" to check missing dependencies:
+
     $ cd openapi
     $ perl Makefile.PL
     $ sudo make -f Makefile  # This will install missing dependencies
 
 To run "make test" or "make debug", you need to have lighttpd and PostgreSQL database installed.
-for PostgreSQL database, you need to prepare a PostgreSQL account, name 'agentzh'; and you need
-to create an empty database named 'test', and you need to create a store precedure language plpgsql
-for that database, contact your PostgreSQL DBA for it or read PostgreSQL manuel. The password for
-PostgreSQL user 'agentzh' should be 'agentzh' too if needed. Basically, they are command like:
+
+for PostgreSQL database, you need to prepare a PostgreSQL account (i.e., 'agentzh); and you need to create an empty database (i.e. test), and you need to create a store precedure language plpgsql for that database, contact your PostgreSQL DBA for it or read PostgreSQL manuel.
+
+Basically, they are command like:
 
     $ createdb test
     $ createuser -P agnetzh
     $ createlang plpgsql test
 
-3, give read/write access to lighttpd's log file (optional):
+3. Edit your etc/site_openapi.conf file, change the configure settings
+under [backend] section according to your previous settings. The default settings look like this:
+
+    [backend]
+    type=Pg
+    host=localhost
+    user=agentzh
+    password=agentzh
+    database=test
+
+Most of the time, you need to change the last 3 lines unless you're using exactly the same user, password, and database name.
+
+4. Give read/write access to lighttpd's log file (optional):
 
     $ chmod 777 /var/log/lighttpd/error.log
     $ chmod 777 /var/log/lighttpd
 
-
-4, For the Pg backend, one need to create the "anonymous" role in the "test"
-database.
+5. For the Pg backend, one need to create the "anonymous" role in your database (like "test"):
 
     $ createuser anonymouse test
 
-5, Create a "peee" user account for our test suite in OpenAPI (drop it if it already exists):
+6. Create a "tester" user account for our test suite in OpenAPI (drop it if it already exists):
 
-    $ bin/openapi.pl deluser peee 
-    $ bin/openapi.pl adduser peee
+    $ bin/openapi.pl deluser tester
+    $ bin/openapi.pl adduser tester
 
-Give the password 4423037 to its Admin role.
+Give a password (say, blahblahblah) to its Admin role. Update your etc/site_openapi.conf to reflect your these settings:
 
-6, Sample lighttpd configuration:
+    [test_suite]
+    use_http=0
+    server=tester:blahblahblah@localhost
 
-# lighttpd.conf
+Now you can already run the test suite without a lighttpd server:
 
-server.modules              = (
-            "mod_fastcgi",
-            ...
-  )
+    $ prove -Ilib -Iinc -r t
 
-fastcgi.server = (
-    "/=" => (
-        "openapi" => (
-            "socket"       => "/tmp/openapi.socket",
-            "check-local"  => "disable",
-            "bin-path"     => "/PATH/TO/YOUR/bin/openapi.pl",
-            "bin-environment" => (
-                "OPENAPI_URL_PREFIX" => "",
-                "OPENAPI_COMMAND" => "fastcgi",
-            ),
-            "min-procs"    => 1,
-            "max-procs"    => 5,
-            "max-load-per-proc" => 1,
-            "idle-timeout" => 20,
+7. Sample lighttpd configuration:
+
+    # lighttpd.conf
+
+    server.modules              = (
+                "mod_fastcgi",
+                ...
+    )
+
+    fastcgi.server = (
+        "/=" => (
+            "openapi" => (
+                "socket"       => "/tmp/openapi.socket",
+                "check-local"  => "disable",
+                "bin-path"     => "/PATH/TO/YOUR/bin/openapi.pl",
+                "bin-environment" => (
+                    "OPENAPI_URL_PREFIX" => "",
+                    "OPENAPI_COMMAND" => "fastcgi",
+                ),
+                "min-procs"    => 1,
+                "max-procs"    => 5,
+                "max-load-per-proc" => 1,
+                "idle-timeout" => 20,
+            )
         )
     )
-)
 
-# Also make sure the following line is commented out:
-# url.access-deny            = ( "~", ".inc" )
+And also make sure the following line is commented out:
 
-# END
+    # url.access-deny            = ( "~", ".inc" )
 
 HOW TO TEST ONE SPECIFIC TEST SUITE FILE
 
@@ -81,14 +98,12 @@ Or use prove to test a remote OpenAPI server, for example:
 where 10.62.136.86 is the IP (or hostname or URL) of your OpenAPI server
 being tested.
 
-To test the Pg cluster rather than the desktop Pg, replace the following line in your lighttpd.conf
+To test the Pg cluster rather than the desktop Pg, change your etc/site_openapi.conf:
 
-        "bin-environment" => ( "OPENAPI_BACKEND" => "Pg", "OPENAPI_URL_PREFIX" => "" ),
+    [backend]
+    type=PgFarm
 
-with
-
-        "bin-environment" => ( "OPENAPI_BACKEND" => "PgFarm", "OPENAPI_URL_PREFIX" => "" ),
-
+and also set other items in the same group if necessary.
 
 FOR DEVELOPER:
 
