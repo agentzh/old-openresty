@@ -78,7 +78,6 @@ OpenAPI.Client.prototype.post = function (content, url, args) {
     var self = this;
     var form = document.getElementById(formId);
     form.method = 'POST';
-    var last_res_id = args.rand;
     var ts = dojo.io.iframe.send({
         form: form,
         url: this.server + url,
@@ -88,7 +87,7 @@ OpenAPI.Client.prototype.post = function (content, url, args) {
         handleAs: 'html',
         handle: function () {
             //alert("Getting last response!");
-            self.get('/=/last/response/' + last_res_id);
+            self.get('/=/last/response/' + args.last_response);
         }
     });
 
