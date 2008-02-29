@@ -1,11 +1,13 @@
+blog_name=Human & Machine
+blog_desc=The mad house for a Perl guy, agentzh
 all:
 	-rm -rf out
 	-mkdir out
 	-cp ../../clients/js/*.js out/
 	jemplate --compile template/elem/ > out/jemplates.js
 	jemplate --runtime > out/Jemplate.js
-	tpage --define 'blog_name=Human & Machine' \
-	    --define 'blog_desc=The mad house for a Perl guy, agentzh' \
+	tpage --define 'blog_name=$(blog_name)' \
+	    --define 'blog_desc=$(blog_desc)' \
 	    --include_path=template template/index.tt > out/index.html
 	cp js/*.js out/
 	cp js/*/*.js out/
