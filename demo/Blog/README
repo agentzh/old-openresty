@@ -1,0 +1,9 @@
+This is the source for the blog site http://blog.agentzh.org .
+
+How to setup the site:
+
+    $ sudo cpan Jemplate Date::Manip JSON::Syck
+    $ script/init.pl -u your_account -p your_password
+    $ make
+    $ firefox out/index.html &
+
