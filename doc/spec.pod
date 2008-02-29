@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-spec - EEEE OpenAPI REST Protocol Specification [draft]
+spec - OpenResty REST Protocol Specification [draft]
 
 =head1 AUTHOR
 
@@ -27,7 +27,7 @@ Agent Zhang (agentzh) <agentzh@yahoo.cn>
 
 =head1 DESCRIPTION
 
-This document defines the REST API for the EEEE OpenAPI protocol, an web service interface to relational databases.
+This document defines the REST API for the OpenResty protocol, an web service interface to relational databases.
 
 =head1 Login
 
@@ -71,7 +71,7 @@ This document defines the REST API for the EEEE OpenAPI protocol, an web service
 
 =head1 Roles
 
-Roles are first-order objects in EEEE OpenAPI, just as models, views, and actions. Roles have very similar interface to models, in particular. You'll notice the strong parallels between these two.
+Roles are first-order objects in OpenResty, just as models, views, and actions. Roles have very similar interface to models, in particular. You'll notice the strong parallels between these two.
 
 =head2 Operations on the role list
 
