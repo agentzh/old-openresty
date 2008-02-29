@@ -2,6 +2,10 @@ This is the source for the blog site http://blog.agentzh.org .
 
 How to setup the site:
 
+* First of all, ask agentzh for an OpenAPI account by writing to agentzh@yahoo.cn
+
+* cd into this directory and enter the following commands:
+
     $ sudo cpan Jemplate Date::Manip JSON::Syck
     $ script/init.pl -u your_account -p your_password
     $ vim js/blog.js  # change "agentzh" to your account name
