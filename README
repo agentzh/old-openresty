@@ -1,5 +1,7 @@
 SETUP TEST ENVIRONMENT:
 
+This is a basic guideline for settting up an OpenAPI server on your own machine. Someone has succeeded in setting up one on Windows XP using ActivePerl 5.8.8. The normal development environment is Linux though. If you have any particular question, feel free to ask us by sending mails to agentzh@yahoo.cn :)
+
 1. grab the openapi package and unpack it in some place, let's say it's openapi;
 
 2. enter the openapi directory, run "perl Makefile.PL" to check missing dependencies:
