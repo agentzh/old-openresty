@@ -1,3 +1,6 @@
+var account = 'agentzh';
+var host = 'http://openapi.eeeeworks.org';
+
 var openapi = null;
 var savedAnchor = null;
 var itemsPerPage = 5;
@@ -59,9 +62,8 @@ function init () {
     waitMessage = document.getElementById('wait-message');
     //var host = 'http://10.62.136.86';
     //var host = 'http://127.0.0.1';
-    var host = 'http://openapi.eeeeworks.org';
     openapi = new OpenAPI.Client(
-        { server: host, user: 'agentzh.Public' }
+        { server: host, user: account + '.Public' }
     );
     //openapi.formId = 'new_model';
     if (timer) {
@@ -102,7 +104,6 @@ function dispatchByAnchor () {
 
     setStatus(true, 'renderPostList');
     openapi.callback = renderPostList;
-    //openapi.user = 'agentzh.Public';
     openapi.get('/=/model/Post/~/~', {
         count: itemsPerPage,
         order_by: 'id:desc',
