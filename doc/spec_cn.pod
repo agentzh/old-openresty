@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-EEEE OpenAPI REST Protocol Specification [draft] - OpenAPI REST 协议白皮书（草案）
+OpenResty REST Protocol Specification [draft] - OpenResty REST 协议白皮书（草案）
 
 =head1 AUTHOR
 
@@ -27,7 +27,7 @@ Agent Zhang (章亦春) <agentzh@yahoo.cn>
 
 =head1 DESCRIPTION
 
-本文定义了 OpenAPI 基于 REST 风格的 web service API 协议组。
+本文定义了 OpenResty 基于 REST 风格的 web service API 协议组。
 
 =head2 DESIGN GOALS
 
@@ -117,7 +117,7 @@ C<update> 和 C<alter> 语句.
 =back
 
 由于一些防火墙阻止 PUT 和 DELETE 请求，而且对于跨域 AJAX 调用而言，
-DELETE 和 PUT 也较难实现，OpenAPI 为 PUT 和 DELETE 提供了相应的变形接口。
+DELETE 和 PUT 也较难实现，OpenResty 为 PUT 和 DELETE 提供了相应的变形接口。
 例如
 
     PUT /=/model/Foo
@@ -210,7 +210,7 @@ L<http://oauth.net/>
 
 =head3 角色登录
 
-OpenAPI 支持所谓的“角色”概念。一个 OpenAPI 用户在注册时可以定义若干个“角色”,每个“角色”的权限各不相同，而都可以单独登录，并拥有不同的密码。
+OpenResty 支持所谓的“角色”概念。一个 OpenResty 用户在注册时可以定义若干个“角色”,每个“角色”的权限各不相同，而都可以单独登录，并拥有不同的密码。
 
 例如注册用户 marry 可以拥有 C<Admin>, C<Reader>, C<User> 等多种角色，
 每个角色都可以单独登录。当 marry 的 C<Reader> 角色登录时，使用的帐户名为 C<marry.Reader>. 事实上，C<marry> 在作为帐户名使用时，就相当于以 C<marry.User> 角色登录，因为 C<admin> 角色拥有最高的权限。
@@ -658,7 +658,7 @@ Action 亦可分为内建 Action (如 C<WebSearch> 和 C<Select> ) 和用户自�
 
 =head3 Create Actions
 
-用户自定义的 Action 在概念上类似于数据库中存储过程，并将通过 OpenAPI 自己定义的 minisql 语言中的 C<update> 和 C<delete> 语句来表达其功能.
+用户自定义的 Action 在概念上类似于数据库中存储过程，并将通过 OpenResty 自己定义的 minisql 语言中的 C<update> 和 C<delete> 语句来表达其功能.
 
 示例：
 
@@ -732,12 +732,12 @@ minisql 与 SQL 的语法非常近似，不同的是它是大小写敏感的。
 
 =head2 Views
 
-OpenAPI 中的视图 (Views) 与数据库中的视图比较近似，但不同的是它是可以带参数的。比如：
+OpenResty 中的视图 (Views) 与数据库中的视图比较近似，但不同的是它是可以带参数的。比如：
 
     POST /=/view/MyQuery
     "select * from CComment where name = $name and parent_id = $parent_id"
 
-此时便创建了一个名为 MyQuery 的 OpenAPI 视图对象。
+此时便创建了一个名为 MyQuery 的 OpenResty 视图对象。
 该视图返回的结果是由一个带特殊变量的 minisql 语句来指定的。
 由 C<$> 起始的变量都是 MyQuery 这个视图的参数。例如上面这个例子中，
 C<$name> 和 C<$parent_id> 都是参数变量。
@@ -782,12 +782,12 @@ C<$name> 和 C<$parent_id> 都是参数变量。
 
 =head2 Roles
 
-OpenAPI 通过角色 (Role) 来实现子用户和权限分配功能。
-一个 OpenAPI 注册用户可以拥有多个角色，她可以通过 /=/role 这个 URL
+OpenResty 通过角色 (Role) 来实现子用户和权限分配功能。
+一个 OpenResty 注册用户可以拥有多个角色，她可以通过 /=/role 这个 URL
 对她的角色进行管理，其中包括添加和删除角色，对角色权限进行分配，
 指定角色的登录方式（是通过口令，验证码图片，还是匿名）。
 
-在 OpenAPI 中，角色对象是一种特殊的 Model，/=/role 与 /=/model
+在 OpenResty 中，角色对象是一种特殊的 Model，/=/role 与 /=/model
 在接口上有许多相似之处。
 
 每一个角色实体都被视为一个规则 Model. 所有 Model 的查询，修改，
@@ -807,7 +807,7 @@ OpenAPI 通过角色 (Role) 来实现子用户和权限分配功能。
     { name: "Commenter", description: "评论用户", src: "/=/role/Commenter" }
   ]
 
-其中 Admin, User, 和 Anonymous 这三个角色是 OpenAPI 用户在注册时
+其中 Admin, User, 和 Anonymous 这三个角色是 OpenResty 用户在注册时
 自动分配的，而且不能删除。用户直接使用用户名，比如 marry 登录时，
 相当于使用 marry.User 帐户来登录。本文档中表的删除和修改操作都需要以
 Admin 角色的权限。User 默认是没具有这些权限的。
