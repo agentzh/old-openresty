@@ -1,5 +1,6 @@
 blog_name=Human & Machine
 blog_desc=The mad house for a Perl guy, agentzh
+
 all:
 	-rm -rf out
 	-mkdir out
