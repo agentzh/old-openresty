@@ -1,6 +1,6 @@
 # vi:filetype=
 
-use t::OpenAPI;
+use t::OpenResty;
 
 =pod
 

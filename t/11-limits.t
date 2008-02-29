@@ -2,12 +2,12 @@ use Test::More 'no_plan';
 #use Smart::Comments;
 use lib 'lib';
 use JSON::Syck 'Dump';
-use OpenAPI::Limits;
-use t::OpenAPI;
+use OpenResty::Limits;
+use t::OpenResty;
 
-my $host = $t::OpenAPI::host;
-my $client = $t::OpenAPI::client;
-my $res = $client->delete("/=/model?user=$t::OpenAPI::user\&password=$t::OpenAPI::password\&use_cookie=1");
+my $host = $t::OpenResty::host;
+my $client = $t::OpenResty::client;
+my $res = $client->delete("/=/model?user=$t::OpenResty::user\&password=$t::OpenResty::password\&use_cookie=1");
 ok $res->is_success, 'response OK';
 
 for (1..$MODEL_LIMIT + 1) {
