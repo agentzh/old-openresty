@@ -20,7 +20,7 @@ my $user = $opts{u} or
     die "No OpenAPI account name specified via option -u\n";
 my $password = $opts{p} or
     die "No OpenAPI account's Admin password specified via option -p\n";
-my $server = $opts{s} || 'http://ced02.search.cnb.yahoo.com';
+my $server = $opts{s} || 'http://openapi.eeeeworks.org';
 
 my $cmd = shift || 'small';
 if ($cmd ne 'small' and $cmd ne 'big') {
