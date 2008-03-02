@@ -7,7 +7,7 @@ use lib '../../lib';
 use utf8;
 use JSON::Syck;
 use YAML 'Dump';
-use WWW::OpenAPI::Simple;
+use WWW::OpenResty::Simple;
 use Date::Manip;
 use Getopt::Std;
 
@@ -17,9 +17,9 @@ if ($opts{h}) {
     die "Usage: $0 -u <user> -p <password> -s <openapi_server> [big|small] [<json_file>]\n";
 }
 my $user = $opts{u} or
-    die "No OpenAPI account name specified via option -u\n";
+    die "No OpenResty account name specified via option -u\n";
 my $password = $opts{p} or
-    die "No OpenAPI account's Admin password specified via option -p\n";
+    die "No OpenResty account's Admin password specified via option -p\n";
 my $server = $opts{s} || 'http://openapi.eeeeworks.org';
 
 my $cmd = shift || 'small';
@@ -27,7 +27,7 @@ if ($cmd ne 'small' and $cmd ne 'big') {
     die "Unknown command: $cmd\n";
 }
 
-my $openapi = WWW::OpenAPI::Simple->new( { server => $server } );
+my $openapi = WWW::OpenResty::Simple->new( { server => $server } );
 $openapi->login($user, $password);
 $openapi->delete("/=/model");
 $openapi->delete("/=/role/Public/~/~");
@@ -191,6 +191,7 @@ if ($cmd eq 'small') {
         my $title = $entry->{title};
         my $body = $entry->{body};
         my $date = $entry->{date};
+        $date =~ s/\s*\(\d+ days? ago\)//g;
         warn $title, "\n";
         $body =~ s{"http://c\.services\.spaces\.live\.com/CollectionWebService/c\.gif\?[^"]*"}{""}g;
         $body =~ s{"http://c\.live\.com/c\.gif\?[^"]*"}{""}g;
@@ -293,7 +294,7 @@ Yahoo! 4e team 贺岁语录
 作秀中...
 2008-02-01 02:05
 最近又写了一篇东西到"<a href="http://ysearchblog.cn/">雅虎搜索日志</a>"，题为"从SearchAll看搜索引擎DNA":<br><br>&nbsp;&nbsp;&nbsp; <a href="http://ysearchblog.cn/2008/01/searchalldna.html">http://ysearchblog.cn/2008/01/searchalldna.html</a><br><br>感谢杏岚的编辑工作 :)<br>
-<br>我的下一篇东西可能题为"装在口袋里的网站"；我一直打算介绍一下我们的基于 OpenAPI 的纯客户端应用的开发技术。<br><br>我们的 M，yuting++，已经怪我"染上了作秀不良风气"了，哈哈。我看来是很难改正了，呵呵。tingting 一定要原谅我哦 ;)<br><br>-agentzh
+<br>我的下一篇东西可能题为"装在口袋里的网站"；我一直打算介绍一下我们的基于 OpenResty 的纯客户端应用的开发技术。<br><br>我们的 M，yuting++，已经怪我"染上了作秀不良风气"了，哈哈。我看来是很难改正了，呵呵。tingting 一定要原谅我哦 ;)<br><br>-agentzh
 
 /////////////////////////////
 
