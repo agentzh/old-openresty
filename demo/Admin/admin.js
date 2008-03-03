@@ -1,4 +1,4 @@
-var openapi;
+var openresty;
 
 var display = function (res) {
     $("#output").text(JSON.stringify(res));
@@ -8,15 +8,15 @@ function get_model_list (res) {
     //alert("Res: " + JSON.stringify(res));
     if (res) display(res);
     //return;
-    openapi.callback = render_model_list;
-    openapi.get('/=/model');
+    openresty.callback = render_model_list;
+    openresty.get('/=/model');
 }
 
 function delete_model (model) {
     if (confirm("Do you really want to remove model " + model + "?")) {
         //alert("Deleting...");
-        openapi.callback = 'get_model_list';
-        openapi.del("/=/model/" + model);
+        openresty.callback = 'get_model_list';
+        openresty.del("/=/model/" + model);
     }
 }
 
@@ -36,9 +36,9 @@ function render_model_list (data) {
         //alert("New desc: " + new_desc);
         //alert(new_desc);
         //alert("Changing model desciption from " + old_desc + " to " + new_desc);
-        openapi.callback = 'handle_put_model';
-        openapi.purge();
-        openapi.put({ description: new_desc }, '/=/model/' + model_name);
+        openresty.callback = 'handle_put_model';
+        openresty.purge();
+        openresty.put({ description: new_desc }, '/=/model/' + model_name);
         return "Saving...";
     }, {
         //type    : "textarea",
@@ -58,9 +58,9 @@ function render_model_list (data) {
         var old_name = this.revert;
         var new_name = value;
         //alert("Changing model name from " + old_name + " to " + new_name);
-        openapi.callback = 'handle_put_model';
-        openapi.purge();
-        openapi.put({ name: new_name }, '/=/model/' + old_name);
+        openresty.callback = 'handle_put_model';
+        openresty.purge();
+        openresty.put({ name: new_name }, '/=/model/' + old_name);
         return "Saving...";
     }, {
         //type    : "textarea",
@@ -89,18 +89,18 @@ $(document).ready( function () {
             name: name,
             description: desc
         };
-        openapi.callback = get_model_list;
-        openapi.purge();
-        openapi.post(data, "/=/model/~");
+        openresty.callback = get_model_list;
+        openresty.purge();
+        openresty.post(data, "/=/model/~");
         return false;
     });
     var host = 'http://10.62.136.86';
-    openapi = new OpenAPI.Client(
+    openresty = new OpenAPI.Client(
         { server: host, callback: 'display' }
     );
-    openapi.formId = 'new_model';
-    openapi.callback = init;
-    openapi.login('admin', '4423037');
+    openresty.formId = 'new_model';
+    openresty.callback = init;
+    openresty.login('admin', '4423037');
 } );
 
 function init (data) {
