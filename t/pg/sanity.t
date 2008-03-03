@@ -2,22 +2,22 @@ use strict;
 use warnings;
 
 use lib 'lib';
-use OpenAPI::Backend::Pg;
-use OpenAPI::Config;
+use OpenResty::Backend::Pg;
+use OpenResty::Config;
 use Data::Dumper;
 use subs 'dump';
 
 my $reason;
 BEGIN {
-    OpenAPI::Config->init('.');
-    if ($OpenAPI::Config{'backend.type'} ne 'Pg') {
+    OpenResty::Config->init('.');
+    if ($OpenResty::Config{'backend.type'} ne 'Pg') {
         $reason = 'backend.type in the config files is not Pg.';
     }
 }
 use Test::More $reason ? (skip_all => $reason) : 'no_plan';
 
-OpenAPI::Config->init('.');
-my $backend = OpenAPI::Backend::Pg->new({ RaiseError => 0 });
+OpenResty::Config->init('.');
+my $backend = OpenResty::Backend::Pg->new({ RaiseError => 0 });
 ok $backend, "database handle okay";
 if ($backend->has_user("agentz")) {
 #    $backend->do("drop table test cascade");
