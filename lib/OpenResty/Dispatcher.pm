@@ -68,18 +68,18 @@ sub process_request {
 
     $url =~ s{^\Q$url_prefix\E/+}{}g if $url_prefix;    ### New URL: $url
 
-    my $openapi = OpenResty->new($cgi);
+    my $openresty = OpenResty->new($cgi);
     if ($InitFatal) {
-        $openapi->fatal($InitFatal);
+        $openresty->fatal($InitFatal);
         return;
     }
 
     eval {
-        $openapi->init(\$url);
+        $openresty->init(\$url);
     };
     if ($@) {
         ### Exception in new: $@
-        $openapi->fatal($@);
+        $openresty->fatal($@);
         return;
     }
 
@@ -92,7 +92,7 @@ sub process_request {
 
     if (!@bits) {
         ### Unknown URL: $url
-        $openapi->fatal("Unknown URL: $url");
+        $openresty->fatal("Unknown URL: $url");
         return;
     }
 
@@ -101,13 +101,13 @@ sub process_request {
 
     my $fst = shift @bits;
     if ($fst ne '=') {
-        $openapi->fatal("URLs must be led by '=': $url");
+        $openresty->fatal("URLs must be led by '=': $url");
         return;
     }
 
-    my $http_meth = $openapi->{'_http_method'};
+    my $http_meth = $openresty->{'_http_method'};
     if (!$http_meth) {
-        $openapi->fatal("HTTP method not detected.");
+        $openresty->fatal("HTTP method not detected.");
         return;
     }
     ### $http_meth
@@ -115,7 +115,7 @@ sub process_request {
         require Clone;
         #warn "------------------------------------------------\n";
         warn "$http_meth ", $ENV{REQUEST_URI}, "\n";
-        warn JSON::Syck::Dump(Clone::clone($openapi->{_req_data})), "\n"
+        warn JSON::Syck::Dump(Clone::clone($openresty->{_req_data})), "\n"
             if $http_meth eq 'POST' or $http_meth eq 'PUT';
     }
 
@@ -126,12 +126,12 @@ sub process_request {
     if ($cookies) {
         my $cookie = $cookies->{session};
         if ($cookie) {
-            $openapi->{_session_from_cookie} =
+            $openresty->{_session_from_cookie} =
                 $session_from_cookie = $cookie->[-1];
         }
         $cookie = $cookies->{captcha};
         if ($cookie) {
-            $openapi->{_captcha_from_cookie} =
+            $openresty->{_captcha_from_cookie} =
                 $captcha_from_cookie = $cookie->[-1];
             #$OpenResty::Cache->remove($captcha_from_cookie);
         }
@@ -140,28 +140,28 @@ sub process_request {
     if ($http_meth eq 'GET' and @bits >= 2 and $bits[0] eq 'last' and $bits[1] eq 'response') {
         my $last_res_id = $bits[2];
         if (!$last_res_id) {
-            $openapi->fatal("No last response ID specified.");
+            $openresty->fatal("No last response ID specified.");
             return;
         }
         my $res = $OpenResty::Cache->get("lastres:".$last_res_id);
         if (!defined $res) {
-            $openapi->fatal("No last response found for ID $last_res_id");
+            $openresty->fatal("No last response found for ID $last_res_id");
             return;
         }
-        $openapi->{_bin_data} = $res . "\n";
-        $openapi->response;
+        $openresty->{_bin_data} = $res . "\n";
+        $openresty->response;
         #warn "last_response: $response_from_cookie\n";
         return;
     }
 
-    $session = $openapi->{_session} || $session_from_cookie;
+    $session = $openresty->{_session} || $session_from_cookie;
     if ($bits[0] eq 'logout') {
         ### Yeah yeah yeah!
         if ($session) {
             $OpenResty::Cache->remove($session);
         }
-        $openapi->{_bin_data} = "{\"success\":1}\n";
-        $openapi->response;
+        $openresty->{_bin_data} = "{\"success\":1}\n";
+        $openresty->response;
         return;
     }
 
@@ -174,7 +174,7 @@ sub process_request {
                 #$OpenResty::Cache->remove($uuid);
                 my $captcha = $cgi->url_param('captcha');
                 ### URL param capture: $captcha
-                my $res = $openapi->login($user, {
+                my $res = $openresty->login($user, {
                     password => scalar($cgi->url_param('password')),
                     captcha => $captcha,
                 });
@@ -200,30 +200,30 @@ sub process_request {
             if (!$account) {
                 die "Login required.\n";
             }
-            if (!$openapi->has_user($account)) {
+            if (!$openresty->has_user($account)) {
                 ### Found user: $user
                 die "Account \"$account\" does not exist.\n";
             }
-            $openapi->set_user($account);
+            $openresty->set_user($account);
 
             $role ||= 'Admin';
-            if (!$openapi->has_role($role)) {
+            if (!$openresty->has_role($role)) {
                 ### Found user: $user
                 die "Role \"$role\" does not exist.\n";
             }
-            $openapi->set_role($role);
+            $openresty->set_role($role);
         };
         if ($@) {
-            $openapi->fatal($@);
+            $openresty->fatal($@);
             return;
         }
     }
 
     # XXX check ACL rules...
     if ($bits[0] and $bits[0] !~ /^(?:login|logout|captcha|version)$/) {
-        my $res = $openapi->current_user_can($http_meth => \@bits);
+        my $res = $openresty->current_user_can($http_meth => \@bits);
         if (!$res) {
-            $openapi->fatal("Permission denied for the \"$role\" role.");
+            $openresty->fatal("Permission denied for the \"$role\" role.");
             return;
         }
     } else {
@@ -234,32 +234,32 @@ sub process_request {
         my $object = $category->[$#bits];
         ### $object
         if (!defined $object) {
-            $openapi->fatal("Unknown URL level: $url");
+            $openresty->fatal("Unknown URL level: $url");
             return;
         }
         my $meth = $http_meth . '_' . $object;
         $meth =~ s/\./_/g;
-        if (!$openapi->can($meth)) {
+        if (!$openresty->can($meth)) {
             $object =~ s/_/ /g;
-            $openapi->fatal("HTTP $http_meth method not supported for $object.");
+            $openresty->fatal("HTTP $http_meth method not supported for $object.");
             return;
         }
         my $data;
         eval {
             if ($bits[0] eq 'model') {
-                $openapi->global_model_check(\@bits, $http_meth);
+                $openresty->global_model_check(\@bits, $http_meth);
             }
 
-            $data = $openapi->$meth(\@bits);
+            $data = $openresty->$meth(\@bits);
         };
         if ($@) {
-            $openapi->fatal($@);
+            $openresty->fatal($@);
             return;
         }
-        $openapi->data($data);
-        $openapi->response();
+        $openresty->data($data);
+        $openresty->response();
     } else {
-        $openapi->fatal("Unknown URL catagory: $bits[0]");
+        $openresty->fatal("Unknown URL catagory: $bits[0]");
     }
 }
 

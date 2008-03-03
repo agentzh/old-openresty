@@ -74,25 +74,25 @@ if ($arg eq 'product') {
     die "Unknown Makefile.PL argument: \"$arg\"\n";
 }
 
-install_script('bin/openapi.pl');
+install_script('bin/openresty.pl');
 use_test_base();
 no_index( directory => qw< etc tmp > );
 
 auto_install();
 
 # XXX This is not Windows friendly...
-my $site_conf = 'etc/site_openapi.conf';
+my $site_conf = 'etc/site_openresty.conf';
 if (!-e $site_conf) {
-    warn "cp etc/openapi.conf $site_conf\n";
+    warn "cp etc/openresty.conf $site_conf\n";
     #print $^O;
     eval {
         require File::Copy;
     };
     if ($@) {
         my $cmd = 'cp';
-        system("$cmd etc/openapi.conf $site_conf");
+        system("$cmd etc/openresty.conf $site_conf");
     } else {
-        File::Copy::copy("etc/openapi.conf", $site_conf);
+        File::Copy::copy("etc/openresty.conf", $site_conf);
     }
 }
 

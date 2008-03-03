@@ -10,11 +10,11 @@ use Hash::Merge;
 sub init {
     my ($class, $root_path) = @_;
     $root_path ||= "$FindBin::Bin/..";
-    my $path = "$root_path/etc/openapi.conf";
+    my $path = "$root_path/etc/openresty.conf";
     my $config = new Config::Simple($path) or
         die "Cannot open config file $path\n";
     my $default_vars = $config->vars;
-    $path = "$root_path/etc/site_openapi.conf";
+    $path = "$root_path/etc/site_openresty.conf";
     $config = new Config::Simple($path) or
         die "Cannot open config file $path\n";
     my $site_vars = $config->vars;
