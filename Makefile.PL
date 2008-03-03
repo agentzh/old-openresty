@@ -2,11 +2,11 @@ use strict;
 use lib '.';
 use inc::Module::Install;
 
-name                ('OpenAPI');
+name                ('OpenResty');
 license             ('perl');
 author              ('Agent Zhang <agentzh@yahoo.cn>');
 perl_version        ('5.006001');
-all_from            ('lib/OpenAPI.pm');
+all_from            ('lib/OpenResty.pm');
 
 my $arg = 'devel';
 if (@ARGV == 1) {
@@ -28,7 +28,7 @@ if ($arg eq 'product') {
     requires            ('Cache::Memcached::Fast' => '0.06');
     requires            ('Hash::Merge');
     requires            ('Config::Simple');
-    requires            ('Cookie::XS');
+    requires            ('Cookie::XS' => '0.05');
 
     features(
         'Test suite' => [

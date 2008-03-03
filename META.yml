@@ -1,0 +1,45 @@
+--- 
+abstract: ~
+author: Agent Zhang <agentzh@yahoo.cn>
+build_requires: 
+  CGI: 3.33
+  Class::Prototyped: 0
+  LWP::UserAgent: 0
+  Test::LongString: 0.11
+distribution_type: module
+generated_by: Module::Install version 0.67
+license: perl
+meta-spec: 
+  url: http://module-build.sourceforge.net/META-spec-v1.3.html
+  version: 1.3
+name: OpenResty
+no_index: 
+  directory: 
+    - etc
+    - tmp
+    - inc
+    - t
+recommends: 
+  Benchmark::Timer: 0
+  Cache::Cache: 1.05
+  Cache::FastMmap: 1.24
+  HTTP::Server::Simple: 0.27
+  Smart::Comments: 0
+requires: 
+  CGI::Simple: 1.103
+  Clone: 0.22
+  Config::Simple: 0
+  Cookie::XS: 0
+  DBD::Pg: 1.49
+  DBI: 1.57
+  Data::UUID: 1.148
+  FCGI: 0
+  GD::SecurityImage: 1.64
+  Hash::Merge: 0
+  List::Util: 0
+  Params::Util: 0.22
+  Parse::Yapp: 0
+  Term::ReadKey: 2.30
+  YAML::Syck: 1.04
+  perl: 5.6.1
+version: 0.000005
