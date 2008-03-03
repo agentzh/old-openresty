@@ -3,8 +3,8 @@
       blog_desc  = 'This is my blog'
       js_files = [
         'JSON.js',
-        'dojo.openapi.js',
-        'openapi.js',
+        'dojo.openresty.js',
+        'openresty.js',
         'jquery.js',
         'Jemplate.js',
         'jemplates.js',

@@ -1,7 +1,7 @@
 var account = 'agentzh';
-var host = 'http://openapi.eeeeworks.org';
+var host = 'http://resty.eeeeworks.org';
 
-var openapi = null;
+var openresty = null;
 var savedAnchor = null;
 var itemsPerPage = 5;
 var loadingCount = 0;
@@ -62,10 +62,10 @@ function init () {
     waitMessage = document.getElementById('wait-message');
     //var host = 'http://10.62.136.86';
     //var host = 'http://127.0.0.1';
-    openapi = new OpenAPI.Client(
+    openresty = new OpenAPI.Client(
         { server: host, user: account + '.Public' }
     );
-    //openapi.formId = 'new_model';
+    //openresty.formId = 'new_model';
     if (timer) {
         clearInterval(timer);
     }
@@ -103,16 +103,16 @@ function dispatchByAnchor () {
         page = parseInt(match[1]) || 1;
 
     setStatus(true, 'renderPostList');
-    openapi.callback = renderPostList;
-    openapi.get('/=/model/Post/~/~', {
+    openresty.callback = renderPostList;
+    openresty.get('/=/model/Post/~/~', {
         count: itemsPerPage,
         order_by: 'id:desc',
         offset: itemsPerPage * (page - 1),
         limit: itemsPerPage
     });
     setStatus(true, 'renderPager');
-    openapi.callback = function (res) { renderPager(res, page); };
-    openapi.get('/=/view/RowCount/model/Post');
+    openresty.callback = function (res) { renderPager(res, page); };
+    openresty.get('/=/view/RowCount/model/Post');
     $(".blog-top").attr('id', 'post-list-' + page);
 }
 
@@ -154,17 +154,17 @@ function getCalendar (year, month) {
     // We need this 0 timeout hack for IE 6 :(
     setTimeout( function () {
         setStatus(true, 'renderPostsInCalendar');
-        openapi.callback = function (res) {
+        openresty.callback = function (res) {
             renderPostsInCalendar(res, year, month);
         };
-        openapi.get('/=/view/PostsByMonth/~/~', { year: year, month: month + 1 });
+        openresty.get('/=/view/PostsByMonth/~/~', { year: year, month: month + 1 });
     }, 0 );
 }
 
 function renderPostsInCalendar (res, year, month) {
     setStatus(false, 'renderPostsInCalendar');
     //alert("hey!");
-    if (!openapi.isSuccess(res)) {
+    if (!openresty.isSuccess(res)) {
         error("Failed to fetch posts for calendar: " +
             res.error);
     } else {
@@ -188,13 +188,13 @@ function renderPostsInCalendar (res, year, month) {
 function getRecentComments (offset) {
     if (!offset) offset = 0;
     setStatus(true, 'renderRecentComments');
-    openapi.callback = function (res) { renderRecentComments(res, offset, 6) };
-    openapi.get('/=/view/RecentComments/limit/6', { offset: offset });
+    openresty.callback = function (res) { renderRecentComments(res, offset, 6) };
+    openresty.get('/=/view/RecentComments/limit/6', { offset: offset });
 }
 
 function renderRecentComments (res, offset, count) {
     setStatus(false, 'renderRecentComments');
-    if (!openapi.isSuccess(res)) {
+    if (!openresty.isSuccess(res)) {
         error("Failed to get the recent comments: " + res.error);
     } else {
         //alert("Get the recent comments: " + res.error);
@@ -209,13 +209,13 @@ function renderRecentComments (res, offset, count) {
 function getRecentPosts (offset) {
     if (!offset) offset = 0;
     setStatus(true, 'renderRecentPosts');
-    openapi.callback = function (res) { renderRecentPosts(res, offset, 6) };
-    openapi.get('/=/view/RecentPosts/limit/6', { offset: offset });
+    openresty.callback = function (res) { renderRecentPosts(res, offset, 6) };
+    openresty.get('/=/view/RecentPosts/limit/6', { offset: offset });
 }
 
 function renderRecentPosts (res, offset, count) {
     setStatus(false, 'renderRecentPosts');
-    if (!openapi.isSuccess(res)) {
+    if (!openresty.isSuccess(res)) {
         error("Failed to get the recent posts: " + res.error);
     } else {
         //alert("Get the recent comments: " + res.error);
@@ -248,18 +248,18 @@ function postComment (form) {
         return false;
     }
 
-    //openapi.purge();
+    //openresty.purge();
     setStatus(true, 'afterPostComment');
-    openapi.callback = afterPostComment;
-    //openapi.formId = 'comment-form';
-    openapi.postByGet(data, '/=/model/Comment/~/~');
+    openresty.callback = afterPostComment;
+    //openresty.formId = 'comment-form';
+    openresty.postByGet(data, '/=/model/Comment/~/~');
     return false;
 }
 
 function afterPostComment (res) {
     setStatus(false, 'afterPostComment');
     //alert("HERE!!!");
-    if (!openapi.isSuccess(res)) {
+    if (!openresty.isSuccess(res)) {
         error("Failed to post the comment: " + res.error);
     } else {
         //alert(res.error);
@@ -274,15 +274,15 @@ function afterPostComment (res) {
         if (match.length) commentId = match[0];
         location.hash = 'post-' + postId + ':' +
             (commentId ? 'comment-' + commentId : 'comments');
-        openapi.callback = function (res) {
-            if (!openapi.isSuccess(res)) {
+        openresty.callback = function (res) {
+            if (!openresty.isSuccess(res)) {
                 error("Failed to increment the comment count for post " +
                     postId + ": " + res.error);
             } else {
                 spans.text(commentCount + 1);
             }
         };
-        openapi.putByGet(
+        openresty.putByGet(
             { comments: commentCount + 1 },
             '/=/model/Post/id/' + postId
         );
@@ -295,14 +295,14 @@ function getPost (id) {
     $(".blog-top").attr('id', 'post-' + id);
     //alert($(".blog-top").attr('id'));
     setStatus(true, 'renderPost');
-    openapi.callback = renderPost;
-    openapi.get('/=/model/Post/id/' + id);
+    openresty.callback = renderPost;
+    openresty.get('/=/model/Post/id/' + id);
 }
 
 function renderPost (res) {
     setStatus(false, 'renderPost');
     //alert(JSON.stringify(post));
-    if (!openapi.isSuccess(res)) {
+    if (!openresty.isSuccess(res)) {
         error("Failed to render post: " + res.error);
     } else {
         var post = res[0];
@@ -310,20 +310,20 @@ function renderPost (res) {
             Jemplate.process('post-page.tt', { post: post })
         ).postprocess();
 
-        openapi.callback = function (res) {
+        openresty.callback = function (res) {
             renderPrevNextPost(post.id, res);
         };
-        openapi.get('/=/view/PrevNextPost/current/' + post.id);
+        openresty.get('/=/view/PrevNextPost/current/' + post.id);
 
         setStatus(true, 'renderComments');
-        openapi.callback = renderComments;
-        openapi.get('/=/model/Comment/post/' + post.id);
+        openresty.callback = renderComments;
+        openresty.get('/=/model/Comment/post/' + post.id);
         $("#beta-pager.pkg").html('');
     }
 }
 
 function renderPrevNextPost (currentId, res) {
-    if (!openapi.isSuccess(res)) {
+    if (!openresty.isSuccess(res)) {
         error("Failed to render prev next post navigation: " +
             res.error);
     } else {
@@ -338,7 +338,7 @@ function renderPrevNextPost (currentId, res) {
 function renderComments (res) {
     setStatus(false, 'renderComments');
     //alert("Comments: " + res.error);
-    if (!openapi.isSuccess(res)) {
+    if (!openresty.isSuccess(res)) {
         error("Failed to render post list: " + res.error);
     } else {
         $(".comments-content").html(
@@ -350,7 +350,7 @@ function renderComments (res) {
 
 function renderPostList (res) {
     setStatus(false, 'renderPostList');
-    if (!openapi.isSuccess(res)) {
+    if (!openresty.isSuccess(res)) {
         error("Failed to render post list: " + res.error);
     } else {
         //alert(JSON.stringify(data));
@@ -363,7 +363,7 @@ function renderPostList (res) {
 
 function renderPager (res, page) {
     setStatus(false, 'renderPager');
-    if (!openapi.isSuccess(res)) {
+    if (!openresty.isSuccess(res)) {
         error("Failed to render pager: " + res.error);
     } else {
         var pageCount = Math.ceil(parseInt(res[0].count) / itemsPerPage);
