@@ -29,6 +29,7 @@ if ($arg eq 'product') {
     requires            ('Hash::Merge');
     requires            ('Config::Simple');
     requires            ('Cookie::XS' => '0.05');
+    requires            ('WWW::OpenResty' => '0.01');
 
     features(
         'Test suite' => [
