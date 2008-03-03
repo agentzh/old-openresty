@@ -14,26 +14,26 @@ use Getopt::Std;
 my %opts;
 getopts('u:s:p:h', \%opts);
 if ($opts{h}) {
-    die "Usage: $0 -u <user> -p <password> -s <openapi_server> [big|small] [<json_file>]\n";
+    die "Usage: $0 -u <user> -p <password> -s <openresty_server> [big|small] [<json_file>]\n";
 }
 my $user = $opts{u} or
     die "No OpenResty account name specified via option -u\n";
 my $password = $opts{p} or
     die "No OpenResty account's Admin password specified via option -p\n";
-my $server = $opts{s} || 'http://openapi.eeeeworks.org';
+my $server = $opts{s} || 'http://resty.eeeeworks.org';
 
 my $cmd = shift || 'small';
 if ($cmd ne 'small' and $cmd ne 'big') {
     die "Unknown command: $cmd\n";
 }
 
-my $openapi = WWW::OpenResty::Simple->new( { server => $server } );
-$openapi->login($user, $password);
-$openapi->delete("/=/model");
-$openapi->delete("/=/role/Public/~/~");
-$openapi->delete("/=/view");
+my $openresty = WWW::OpenResty::Simple->new( { server => $server } );
+$openresty->login($user, $password);
+$openresty->delete("/=/model");
+$openresty->delete("/=/role/Public/~/~");
+$openresty->delete("/=/view");
 
-$openapi->post({
+$openresty->post({
     description => "Blog post",
     columns => [
         { name => 'title', label => 'Post title' },
@@ -44,7 +44,7 @@ $openapi->post({
     ],
 }, '/=/model/Post');
 
-$openapi->post({
+$openresty->post({
     description => "Blog comment",
     columns => [
         { name => 'sender', label => 'Comment sender' },
@@ -56,10 +56,10 @@ $openapi->post({
     ],
 }, '/=/model/Comment');
 
-print Dump($openapi->get('/=/model')), "\n";
-#print Dump($openapi->get('/=/model/Post')), "\n";
-#print Dump($openapi->get('/=/model/Comment')), "\n";
-$openapi->post({
+print Dump($openresty->get('/=/model')), "\n";
+#print Dump($openresty->get('/=/model/Post')), "\n";
+#print Dump($openresty->get('/=/model/Comment')), "\n";
+$openresty->post({
     definition => <<'_EOC_',
         select id, title, date_part('day', created) as day
         from Post
@@ -69,7 +69,7 @@ $openapi->post({
 _EOC_
 }, '/=/view/PostsByMonth');
 
-$openapi->post({
+$openresty->post({
     definition => <<'_EOC_',
         select Comment.id as id, post, sender, title
         from Post, Comment
@@ -80,7 +80,7 @@ $openapi->post({
 _EOC_
 }, '/=/view/RecentComments');
 
-$openapi->post({
+$openresty->post({
     definition => <<'_EOC_',
         select id, title
         from Post
@@ -90,7 +90,7 @@ $openapi->post({
 _EOC_
 }, '/=/view/RecentPosts');
 
-$openapi->post({
+$openresty->post({
     definition => <<'_EOC_',
         (select id, title
         from Post
@@ -106,14 +106,14 @@ $openapi->post({
 _EOC_
 }, '/=/view/PrevNextPost');
 
-$openapi->post({
+$openresty->post({
     definition => <<'_EOC_',
         select count(*)
         from $model
 _EOC_
 }, '/=/view/RowCount');
 
-$openapi->post([
+$openresty->post([
     { method => "GET", url => '/=/model/Post/~/~' },
     { method => "GET", url => '/=/model/Comment/~/~' },
 
@@ -142,7 +142,7 @@ if ($cmd eq 'small') {
             chop $created;
         } elsif (m{^////////+$}) {
             warn $title, "\n";
-            $openapi->post({
+            $openresty->post({
                 author => '章亦春',
                 title => $title,
                 content => $buffer,
@@ -156,32 +156,32 @@ if ($cmd eq 'small') {
         }
     }
     if ($title && $buffer) {
-        $openapi->post({
+        $openresty->post({
             author => '章亦春',
             title => $title,
             content => $buffer,
         }, '/=/model/Post/~/~');
     }
 
-    #print Dump($openapi->get('/=/model/Post/~/~')), "\n";
+    #print Dump($openresty->get('/=/model/Post/~/~')), "\n";
 
     for my $i (1..5) {
         warn "Comment $i\n";
-        $openapi->post([
+        $openresty->post([
             { sender => 'bot', body => qq{This is a comment <b>\t<a href="">&nbsp;</a>\t</b>$i\n} x 20, post => 2 },
         ], '/=/model/Comment/~/~');
         #sleep(0.8);
     }
 
-    $openapi->post([
+    $openresty->post([
         { sender => 'laser', body => 'super cool!', url => 'www.pgsqldb.org', post => 4 },
         { sender => 'ting', body => '呵呵。。。', url => 'http://agentzh.org', post => 4 },
         { sender => 'clover', body => "yay!\nso great!", post => 3 },
     ], '/=/model/Comment/~/~');
 
-    $openapi->put({ comments => 2 }, '/=/model/Post/id/4');
-    $openapi->put({ comments => 1 }, '/=/model/Post/id/3');
-    $openapi->put({ comments => 5 }, '/=/model/Post/id/2');
+    $openresty->put({ comments => 2 }, '/=/model/Post/id/4');
+    $openresty->put({ comments => 1 }, '/=/model/Post/id/3');
+    $openresty->put({ comments => 5 }, '/=/model/Post/id/2');
 } else {
     my $infile = shift @ARGV || 'script/agentzh-live.json';
     open my $in, $infile or die "Can't open $infile for reading: $!\n";
@@ -198,14 +198,14 @@ if ($cmd eq 'small') {
         #if ($body =~ /.{1,55}c\.gif.{3,150}/) {
         #warn $&, "\n";
         #}
-        $openapi->post({
+        $openresty->post({
             author => '章亦春',
             title => $title,
             content => $body,
             $date eq 'undef' ? () : (created => $date),
         }, '/=/model/Post/~/~');
     }
-    $openapi->post([
+    $openresty->post([
         { sender => 'Cherry', body => '期待下一个完美之夜,我们又可以新的完美之旅了~~~', post => 1, url => 'http://cherrychuxinyun.spaces.msn.com' },
         { sender => 'agentzh', body => 'Woot!', created => date('July 08 2006 3:53 PM'), post => 1 },
         { sender => '咩咩', body => '你是第一个读到我心情短文的朋友，谢谢你的支持呢！加油加油，再加油！即立志，后面一句话怎么说的来着？ 总之就是要坚持的意思的啦！：）  我看了你对TUIT的解释，很受用，记下了，而且可以在适当场合小炫一下哦！我保准我周围没有什么人知道呢！嘿嘿...  对了，告诉我一下，空间的版面颜色如何更改吧，虽然绿色心情不错，但是我更希望颜色能温婉一些呢！   还有，沈同学的工作快完成了，他现在去上海学习，也正好可以再思考一下如何做的更完善呢，你看到他做的东西了吗，有什么好的建议和意见，可千万不要保守哦！ 好像我都把这个本应做评论的地方当成写电邮的地方了，不过，言及其意就好了，祝你过的好啰！', post => 2, created => date('July 11 2006 1:43 PM'), url => 'http://rebeccanewworld.spaces.msn.com' },
@@ -226,18 +226,18 @@ if ($cmd eq 'small') {
         { sender => 'laye', body => ' laye wanna has his blog like this, too @@', url => 'http://layesuen.spaces.live.com', post => 70, created => '2008-02-20 21:06:56+08' },
         { sender => 'laser', body => '还是。。。很好玩滴。。。。', email => 'laser@henry', created => '2008-02-26 18:17:46+08', post => 67 },
     ], '/=/model/Comment/~/~');
-    $openapi->put({ comments => 3 }, '/=/model/Post/id/70');
-    $openapi->put({ comments => 1 }, '/=/model/Post/id/67');
-    $openapi->put({ comments => 1 }, '/=/model/Post/id/65');
-    $openapi->put({ comments => 2 }, '/=/model/Post/id/62');
-    $openapi->put({ comments => 1 }, '/=/model/Post/id/50');
-    $openapi->put({ comments => 1 }, '/=/model/Post/id/22');
-    $openapi->put({ comments => 2 }, '/=/model/Post/id/12');
-    $openapi->put({ comments => 2 }, '/=/model/Post/id/11');
-    $openapi->put({ comments => 1 }, '/=/model/Post/id/6');
-    $openapi->put({ comments => 2 }, '/=/model/Post/id/3');
-    $openapi->put({ comments => 1 }, '/=/model/Post/id/2');
-    $openapi->put({ comments => 2 }, '/=/model/Post/id/1');
+    $openresty->put({ comments => 3 }, '/=/model/Post/id/70');
+    $openresty->put({ comments => 1 }, '/=/model/Post/id/67');
+    $openresty->put({ comments => 1 }, '/=/model/Post/id/65');
+    $openresty->put({ comments => 2 }, '/=/model/Post/id/62');
+    $openresty->put({ comments => 1 }, '/=/model/Post/id/50');
+    $openresty->put({ comments => 1 }, '/=/model/Post/id/22');
+    $openresty->put({ comments => 2 }, '/=/model/Post/id/12');
+    $openresty->put({ comments => 2 }, '/=/model/Post/id/11');
+    $openresty->put({ comments => 1 }, '/=/model/Post/id/6');
+    $openresty->put({ comments => 2 }, '/=/model/Post/id/3');
+    $openresty->put({ comments => 1 }, '/=/model/Post/id/2');
+    $openresty->put({ comments => 2 }, '/=/model/Post/id/1');
 }
 
 sub date {
