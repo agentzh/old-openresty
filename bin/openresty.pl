@@ -6,23 +6,23 @@ use warnings;
 #use Smart::Comments;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
-use OpenAPI::Dispatcher;
-use OpenAPI::Limits;
+use OpenResty::Dispatcher;
+use OpenResty::Limits;
 use Getopt::Std;
 
 my $cmd = lc(shift) || $ENV{OPENAPI_COMMAND} || 'fastcgi';
 $ENV{OPENAPI_COMMAND} = $cmd;
 
 eval {
-    OpenAPI::Dispatcher->init;
+    OpenResty::Dispatcher->init;
 };
 warn $@ if $@;
 
 if ($cmd eq 'fastcgi') {
-    require OpenAPI::FastCGI;
-    while (my $cgi = new OpenAPI::FastCGI) {
+    require OpenResty::FastCGI;
+    while (my $cgi = new OpenResty::FastCGI) {
         eval {
-            OpenAPI::Dispatcher->process_request($cgi);
+            OpenResty::Dispatcher->process_request($cgi);
         };
         if ($@) {
             warn $@;
@@ -35,25 +35,25 @@ if ($cmd eq 'fastcgi') {
 } elsif ($cmd eq 'cgi') {
     require CGI::Simple;
     my $cgi = CGI::Simple->new;
-    OpenAPI::Dispatcher->process_request($cgi);
+    OpenResty::Dispatcher->process_request($cgi);
     exit;
 } elsif ($cmd eq 'start') {
     my %opts;
     getopts('p:', \%opts);
     my $port = $opts{p} || 8000;
 
-    require OpenAPI::Server;
-    my $server = OpenAPI::Server->new;
+    require OpenResty::Server;
+    my $server = OpenResty::Server->new;
     $server->port($port);
     $server->run;
     exit;
 }
 
-my $error = $OpenAPI::Dispatcher::InitFatal;
+my $error = $OpenResty::Dispatcher::InitFatal;
 if ($error) {
     die $error;
 }
-my $backend = $OpenAPI::Backend;
+my $backend = $OpenResty::Backend;
 
 if ($cmd eq 'adduser') {
     my $user = shift or
@@ -79,7 +79,7 @@ if ($cmd eq 'adduser') {
 
     my $saved_key = $key;
     #warn "Password: $password\n";
-    OpenAPI::check_password($saved_key);
+    OpenResty::check_password($saved_key);
 
     print "Re Enter the password for the Admin role: ";
 
@@ -96,8 +96,8 @@ if ($cmd eq 'adduser') {
     }
     $password = $key;
 
-    $OpenAPI::Backend->add_user($user, $password);
-    my $machine = $OpenAPI::Backend->has_user($user);
+    $OpenResty::Backend->add_user($user, $password);
+    my $machine = $OpenResty::Backend->has_user($user);
     if ($machine) {
         warn "User $user created on node $machine.\n";
     }
@@ -105,7 +105,7 @@ if ($cmd eq 'adduser') {
     my $user = shift or
         die "No user specified.\n";
     if ($backend->has_user($user)) {
-        $OpenAPI::Backend->drop_user($user);
+        $OpenResty::Backend->drop_user($user);
     } else {
         die "User $user does not exist.\n";
     }
