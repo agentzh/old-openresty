@@ -2,13 +2,11 @@ SETUP TEST ENVIRONMENT:
 
 This is a basic guideline for settting up an OpenResty server on your own machine. Someone has succeeded in setting up one on Windows XP using ActivePerl 5.8.8. The normal development environment is Linux though. If you have any particular question, feel free to ask us by sending mails to agentzh@yahoo.cn :)
 
-1. Grab the openapi package and unpack it in some place, let's say it's openapi, and install Cookie::XS from the following SVN repository:
+1. Grab the openresty package and unpack it in some place, let's say it's openresty.
 
-    http://svn.openfoundry.org/cookieparser/
+2. Enter the openresty directory, run "perl Makefile.PL" to check missing dependencies:
 
-2. Enter the openapi directory, run "perl Makefile.PL" to check missing dependencies:
-
-    $ cd openapi
+    $ cd openresty
     $ perl Makefile.PL
     $ sudo make -f Makefile  # This will install missing dependencies
 
@@ -22,7 +20,7 @@ Basically, they are command like:
     $ createuser -P agnetzh
     $ createlang plpgsql test
 
-3. Edit your etc/site_openapi.conf file, change the configure settings
+3. Edit your etc/site_openresty.conf file, change the configure settings
 under [backend] section according to your previous settings. The default settings look like this:
 
     [backend]
@@ -45,10 +43,10 @@ Most of the time, you need to change the last 3 lines unless you're using exactl
 
 6. Create a "tester" user account for our test suite in OpenResty (drop it if it already exists):
 
-    $ bin/openapi.pl deluser tester
-    $ bin/openapi.pl adduser tester
+    $ bin/openresty.pl deluser tester
+    $ bin/openresty.pl adduser tester
 
-Give a password (say, blahblahblah) to its Admin role. Update your etc/site_openapi.conf to reflect your these settings:
+Give a password (say, blahblahblah) to its Admin role. Update your etc/site_openresty.conf to reflect your these settings:
 
     [test_suite]
     use_http=0
@@ -69,10 +67,10 @@ Now you can already run the test suite without a lighttpd server:
 
     fastcgi.server = (
         "/=" => (
-            "openapi" => (
-                "socket"       => "/tmp/openapi.socket",
+            "openresty" => (
+                "socket"       => "/tmp/openresty.socket",
                 "check-local"  => "disable",
-                "bin-path"     => "/PATH/TO/YOUR/bin/openapi.pl",
+                "bin-path"     => "/PATH/TO/YOUR/bin/openresty.pl",
                 "bin-environment" => (
                     "OPENAPI_URL_PREFIX" => "",
                     "OPENAPI_COMMAND" => "fastcgi",
@@ -102,7 +100,7 @@ Or use prove to test a remote OpenResty server, for example:
 where 10.62.136.86 is the IP (or hostname or URL) of your OpenResty server
 being tested.
 
-To test the Pg cluster rather than the desktop Pg, change your etc/site_openapi.conf:
+To test the Pg cluster rather than the desktop Pg, change your etc/site_openresty.conf:
 
     [backend]
     type=PgFarm
@@ -111,7 +109,7 @@ and also set other items in the same group if necessary.
 
 FOR DEVELOPER:
 
-bin/ directory is the where CGI entry openapi.pl located
+bin/ directory is the where CGI entry openresty.pl located
 doc/ directory containing OpenResty spec
 lib/OpenResty/ directory contain all the code needed to run OpenResty
 lib/OpenResty/OpenResty.pm contain the code stub for OpenResty protocol
