@@ -29,7 +29,8 @@ sub GET_version {
         }
         $backend .= " ($host)";
     }
-    return "EEEE OpenResty $VERSION (revision $Revision) with the $backend backend.\nCopyright (c) 2007-2008 by Yahoo! China EEEE Works.\n";
+    (my $ver = $VERSION) =~ s/(\d+)\.0*(\d+).0*(\d+)/$1\.$2\.$3/;
+    return "OpenResty $ver (revision $Revision) with the $backend backend.\nCopyright (c) 2007-2008 by Yahoo! China EEEE Works, Alibaba Inc.\n";
 }
 
 1;
