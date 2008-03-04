@@ -111,7 +111,7 @@ sub process_request {
         return;
     }
     ### $http_meth
-    if ($OpenResty::Config{'test_suite.use_http'}) {
+    if ($OpenResty::Config{'frontend.log'}) {
         require Clone;
         #warn "------------------------------------------------\n";
         warn "$http_meth ", $ENV{REQUEST_URI}, "\n";
