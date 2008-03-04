@@ -3,7 +3,7 @@ package OpenResty;
 use strict;
 use warnings;
 #use Smart::Comments;
-use vars qw($Dumper %OpMap);
+use vars qw($Dumper %OpMap %AccountFiltered);
 use Clone 'clone';
 
 sub check_type {
@@ -618,10 +618,8 @@ sub insert_records {
     my $insert = SQL::Insert->new(QI($table));
 
     my $user = $self->current_user;
-    my $special_account = 'carrie';
-    if ($user eq $special_account) {
-        use lib "$FindBin::Bin/../../../openapi-filter-qp/trunk/lib";
-        require OpenResty::Filter::QP;
+    ### %AccountFiltered
+    if ($AccountFiltered{$user}) {
         my $str = JSON::Syck::Dump(clone($data));
         #die $val;
         #die "aaaa";

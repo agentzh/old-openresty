@@ -39,6 +39,7 @@ $YAML::Syck::ImplicitUnicode = 1;
 #$YAML::Syck::ImplicitBinary = 1;
 
 our ($Backend, $BackendName);
+our %AccountFiltered;
 our $Cache;
 our $UUID = Data::UUID->new;
 
