@@ -257,6 +257,7 @@ GET /=/last/response/1234
 {"success":1,"rows_affected":1}
 
 
+
 === TEST 27: Check the last response with a wrong ID
 --- request
 GET /=/last/response/567
