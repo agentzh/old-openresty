@@ -105,6 +105,9 @@ sub process_request {
         return;
     }
 
+    my $key = $bits[0];
+    if (!defined $key) { $key = $bits[0] = 'version'; }
+
     my $http_meth = $openresty->{'_http_method'};
     if (!$http_meth) {
         $openresty->fatal("HTTP method not detected.");
@@ -155,7 +158,7 @@ sub process_request {
     }
 
     $session = $openresty->{_session} || $session_from_cookie;
-    if ($bits[0] eq 'logout') {
+    if ($key eq 'logout') {
         ### Yeah yeah yeah!
         if ($session) {
             $OpenResty::Cache->remove($session);
@@ -166,7 +169,7 @@ sub process_request {
     }
 
     my ($account, $role);
-    if ($bits[0] and $bits[0] !~ /^(?:login|captcha|version)$/) {
+    if ($key !~ /^(?:login|captcha|version)$/) {
         eval {
             # XXX this part is lame...
             my $user = $cgi->url_param('user');
@@ -220,7 +223,7 @@ sub process_request {
     }
 
     # XXX check ACL rules...
-    if ($bits[0] and $bits[0] !~ /^(?:login|logout|captcha|version)$/) {
+    if ($key !~ /^(?:login|logout|captcha|version)$/) {
         my $res = $openresty->current_user_can($http_meth => \@bits);
         if (!$res) {
             $openresty->fatal("Permission denied for the \"$role\" role.");
@@ -229,8 +232,6 @@ sub process_request {
     } else {
     }
 
-    my $key = $bits[0];
-    if (!defined $key) { $key = $bits[0] = 'version'; }
     my $category = $Dispatcher{$key};
     if ($category) {
         my $object = $category->[$#bits];
@@ -248,7 +249,7 @@ sub process_request {
         }
         my $data;
         eval {
-            if ($bits[0] eq 'model') {
+            if ($key eq 'model') {
                 $openresty->global_model_check(\@bits, $http_meth);
             }
 
