@@ -229,7 +229,9 @@ sub process_request {
     } else {
     }
 
-    my $category = $Dispatcher{$bits[0]};
+    my $key = $bits[0];
+    if (!defined $key) { $key = $bits[0] = 'version'; }
+    my $category = $Dispatcher{$key};
     if ($category) {
         my $object = $category->[$#bits];
         ### $object
