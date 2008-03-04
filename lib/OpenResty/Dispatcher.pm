@@ -261,7 +261,7 @@ sub process_request {
         $openresty->data($data);
         $openresty->response();
     } else {
-        $openresty->fatal("Unknown URL catagory: $bits[0]");
+        $openresty->fatal("Unknown URL catagory: $key");
     }
 }
 
