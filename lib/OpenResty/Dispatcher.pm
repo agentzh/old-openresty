@@ -3,7 +3,7 @@ package OpenResty::Dispatcher;
 use strict;
 use warnings;
 
-#use Smart::Comments;
+#use Smart::Comments '####';
 use Cookie::XS;
 use Data::UUID;
 use OpenResty::Limits;
@@ -51,6 +51,17 @@ sub init {
         $OpenResty::Cache = OpenResty::Cache->new;
         OpenResty->connect($backend);
     };
+    if (my $filtered = $OpenResty::Config{'frontend.filtered'}) {
+        #warn "HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+        use lib "$FindBin::Bin/../../../openresty-filter-qp/trunk/lib";
+        require OpenResty::Filter::QP;
+        my @accounts = split /\s+/, $filtered;
+        for my $account (@accounts) {
+            $OpenResty::AccountFiltered{$account} = 1;
+        }
+        #### %OpenResty::AccountFiltered
+        ### $filtered
+    }
     if ($@) {
         $InitFatal = $@;
     }
