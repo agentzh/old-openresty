@@ -123,7 +123,6 @@ lib/SQL/Statement.pm
 lib/SQL/Update.pm
 lib/WWW/OpenResty/Embedded.pm
 log.conf
-Makefile
 Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
@@ -157,7 +156,6 @@ t/21-captcha.t
 t/22-version.t
 t/23-sanity-callback.t
 t/24-session.t
-t/25-filter.t
 t/OpenResty.pm
 t/pg-farm/sanity.t
 t/pg-farm/user-dist.t
