@@ -10,6 +10,7 @@ bin/repeat
 bin/revision.pl
 carrie_init.pl
 ChangeLogs
+Changes
 clients/js/dojo.openresty.js
 clients/js/JSON.js
 clients/js/openresty.js
@@ -156,6 +157,8 @@ t/21-captcha.t
 t/22-version.t
 t/23-sanity-callback.t
 t/24-session.t
+t/99-pod-coverage.t
+t/99-pod.t
 t/OpenResty.pm
 t/pg-farm/sanity.t
 t/pg-farm/user-dist.t

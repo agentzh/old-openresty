@@ -191,17 +191,6 @@ sub new_cgi {
         header => sub {
             my $self = shift;
             return $Cgi->header(@_);
-
-=pod
-            my $s;
-            while (@_) {
-                my $key = shift;
-                my $val = shift;
-                if ($key eq '-type') {
-                    $s .= "Content-type: $val\n";
-                }
-            }
-=cut
         },
     );
 }
