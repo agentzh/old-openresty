@@ -75,7 +75,7 @@ if ($arg eq 'product') {
     die "Unknown Makefile.PL argument: \"$arg\"\n";
 }
 
-install_script('bin/openresty.pl');
+install_script('bin/openresty');
 use_test_base();
 no_index( directory => qw< etc tmp > );
 
