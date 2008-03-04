@@ -8,7 +8,7 @@ This is a basic guideline for settting up an OpenResty server on your own machin
 
     $ cd openresty
     $ perl Makefile.PL
-    $ sudo make -f Makefile  # This will install missing dependencies
+    $ sudo make  # This will install missing dependencies
 
 To run "make test" or "make debug", you need to have lighttpd and PostgreSQL database installed.
 
@@ -43,8 +43,8 @@ Most of the time, you need to change the last 3 lines unless you're using exactl
 
 6. Create a "tester" user account for our test suite in OpenResty (drop it if it already exists):
 
-    $ bin/openresty.pl deluser tester
-    $ bin/openresty.pl adduser tester
+    $ bin/openresty deluser tester
+    $ bin/openresty adduser tester
 
 Give a password (say, blahblahblah) to its Admin role. Update your etc/site_openresty.conf to reflect your these settings:
 
@@ -70,7 +70,7 @@ Now you can already run the test suite without a lighttpd server:
             "openresty" => (
                 "socket"       => "/tmp/openresty.socket",
                 "check-local"  => "disable",
-                "bin-path"     => "/PATH/TO/YOUR/bin/openresty.pl",
+                "bin-path"     => "/PATH/TO/YOUR/bin/openresty",
                 "bin-environment" => (
                     "OPENAPI_URL_PREFIX" => "",
                     "OPENAPI_COMMAND" => "fastcgi",
@@ -91,7 +91,7 @@ HOW TO TEST ONE SPECIFIC TEST SUITE FILE
 
 It's also possible to debug a simple .t file, for instance,
 
-    make t/01-sanity.t
+    make t/01-sanity.t -f dev.mk
 
 Or use prove to test a remote OpenResty server, for example:
 
@@ -109,7 +109,7 @@ and also set other items in the same group if necessary.
 
 FOR DEVELOPER:
 
-bin/ directory is the where CGI entry openresty.pl located
+bin/ directory is the where CGI entry openresty located
 doc/ directory containing OpenResty spec
 lib/OpenResty/ directory contain all the code needed to run OpenResty
 lib/OpenResty/OpenResty.pm contain the code stub for OpenResty protocol
