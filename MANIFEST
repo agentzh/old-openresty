@@ -9,7 +9,6 @@ bin/reindex
 bin/repeat
 bin/revision.pl
 carrie_init.pl
-ChangeLogs
 Changes
 clients/js/dojo.openresty.js
 clients/js/JSON.js

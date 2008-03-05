@@ -31,4 +31,5 @@ bin/.*\.dat
 ^util/
 ^YisouComments.*\.yml
 ^t/25-filter\.t$
+^ChangeLogs$
 

@@ -1,3 +1,10 @@
-0.000005 Mar 4 2008
-* initial CPAN release
+0.0.5 Mar 4 2008
+* Initial CPAN release
+
+0.0.4 Dec 28 2007
+* Finished first draf of view support [laser]
+* Added Backend directory to put database access layer code. [laser]
+* Added Changes files,
+* Updated README
+* lib/OpenResty.pm: change $Backend->select to $self->select to reduce confision
 
