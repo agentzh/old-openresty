@@ -1,3 +1,6 @@
+0.0.8 Mar 5 2008
+* minor tweaks in POD
+
 0.0.7 Mar 5 2008
 * Renamed yuting++'s opensearch.pod to OpenResty::Spec::Arch_cn.
 
