@@ -454,15 +454,45 @@ OpenResty - General-Purpose Web Services for Web Applications
 
 =head1 DESCRIPTION
 
-=head1 INSTALL
+This module implements the server-side OpenResty web service protocol. It provides scriptable and extensible web services for both server-side and client-side (AJAX only) web applications.
+
+Currently this module can serve as a public web interface to a distributive or desktop PostgreSQL databases. In particular, it provides models, views, roles, captchas to the users.
+
+We're already running an instance of the OpenResty server on our Yahoo! China's production machines:
+
+    http://resty.eeeeworks.org/=/version
+
+And there're several (pure-client-side) web sites alreadying taking advantage of the services:
+
+=over
+
+=item agentzh's blog site
+
+L<http://blog.agentzh.org>
+
+=item Yisou.com's BBS
+
+L<http://www.yisou.com/opi/post.html>
+
+=back
+
+This library is still in B<pre-alpha> stage and the API is still in flux. We're just following the "release early, releaes often" guideline. So please check back often ;)
+
+=head1 INSTALLATION
 
 SETUP TEST ENVIRONMENT:
 
 This is a basic guideline for settting up an OpenResty server on your own machine. Someone has succeeded in setting up one on Windows XP using ActivePerl 5.8.8. The normal development environment is Linux though. If you have any particular question, feel free to ask us by sending mails to agentzh@yahoo.cn :)
 
-1. Grab the openresty package and unpack it in some place, let's say it's openresty.
+=over
 
-2. Enter the openresty directory, run "perl Makefile.PL" to check missing dependencies:
+=item 1.
+
+Grab the openresty package and unpack it in some place, let's say it's openresty.
+
+=item 2.
+
+Enter the openresty directory, run "perl Makefile.PL" to check missing dependencies:
 
     $ cd openresty
     $ perl Makefile.PL
@@ -478,7 +508,9 @@ Basically, they are command like:
     $ createuser -P agnetzh
     $ createlang plpgsql test
 
-3. Edit your etc/site_openresty.conf file, change the configure settings
+=item 3.
+
+Edit your etc/site_openresty.conf file, change the configure settings
 under [backend] section according to your previous settings. The default settings look like this:
 
     [backend]
@@ -490,16 +522,22 @@ under [backend] section according to your previous settings. The default setting
 
 Most of the time, you need to change the last 3 lines unless you're using exactly the same user, password, and database name.
 
-4. Give read/write access to lighttpd's log file (optional):
+=item 4.
+
+Give read/write access to lighttpd's log file (optional):
 
     $ chmod 777 /var/log/lighttpd/error.log
     $ chmod 777 /var/log/lighttpd
 
-5. For the Pg backend, one need to create the "anonymous" role in your database (like "test"):
+=item 5.
+
+For the Pg backend, one need to create the "anonymous" role in your database (like "test"):
 
     $ createuser anonymouse test
 
-6. Create a "tester" user account for our test suite in OpenResty (drop it if it already exists):
+=item 6.
+
+Create a "tester" user account for our test suite in OpenResty (drop it if it already exists):
 
     $ bin/openresty deluser tester
     $ bin/openresty adduser tester
@@ -514,7 +552,9 @@ Now you can already run the test suite without a lighttpd server:
 
     $ prove -Ilib -Iinc -r t
 
-7. Sample lighttpd configuration:
+=item 7.
+
+Sample lighttpd configuration:
 
     # lighttpd.conf
 
@@ -544,6 +584,8 @@ Now you can already run the test suite without a lighttpd server:
 And also make sure the following line is commented out:
 
     # url.access-deny            = ( "~", ".inc" )
+
+=back
 
 HOW TO TEST ONE SPECIFIC TEST SUITE FILE
 
@@ -585,4 +627,33 @@ FOR DEVELOPER:
     lib/SQL/Update.pm class and methods to generate UPDATE statement
     lib/MiniSQL/ directory conatining our mini-sql parser code, now only SELECT support
     t/ directory containing OpenResty test suite, use `make test' to run the test, read above on how to setup test environment
+
+=head1 SEE ALSO
+
+L<WWW::OpenResty>, L<WWW::OpenResty::Simple>.
+
+=head1 AUTHOR
+
+=over
+
+=item agentzh C<< <agentzh at yahoo.cn> >>
+
+=item leiyh
+
+=item Laser Henry
+
+=item yuting C<< <yuting at alibaba-inc.com> >>
+
+=back
+
+For a complete list of the contributors, please see L<http://svn.openfoundry.org/openapi/trunk/AUTHORS>.
+
+=head1 License and Copyright
+
+Copyright (c) 2008 by Yahoo! China EEEE Works, Alibaba Inc.
+
+This module is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself. See L<perlartistic>.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 

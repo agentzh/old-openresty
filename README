@@ -2,7 +2,33 @@ NAME
     OpenResty - General-Purpose Web Services for Web Applications
 
 DESCRIPTION
-INSTALL
+    This module implements the server-side OpenResty web service protocol.
+    It provides scriptable and extensible web services for both server-side
+    and client-side (AJAX only) web applications.
+
+    Currently this module can serve as a public web interface to a
+    distributive or desktop PostgreSQL databases. In particular, it provides
+    models, views, roles, captchas to the users.
+
+    We're already running an instance of the OpenResty server on our Yahoo!
+    China's production machines:
+
+        http://resty.eeeeworks.org/=/version
+
+    And there're several (pure-client-side) web sites alreadying taking
+    advantage of the services:
+
+    agentzh's blog site
+        <http://blog.agentzh.org>
+
+    Yisou.com's BBS
+        <http://www.yisou.com/opi/post.html>
+
+    This library is still in pre-alpha stage and the API is still in flux.
+    We're just following the "release early, releaes often" guideline. So
+    please check back often ;)
+
+INSTALLATION
     SETUP TEST ENVIRONMENT:
 
     This is a basic guideline for settting up an OpenResty server on your
@@ -11,101 +37,102 @@ INSTALL
     you have any particular question, feel free to ask us by sending mails
     to agentzh@yahoo.cn :)
 
-    1. Grab the openresty package and unpack it in some place, let's say
-    it's openresty.
+    1.  Grab the openresty package and unpack it in some place, let's say
+        it's openresty.
 
-    2. Enter the openresty directory, run "perl Makefile.PL" to check
-    missing dependencies:
+    2.  Enter the openresty directory, run "perl Makefile.PL" to check
+        missing dependencies:
 
-        $ cd openresty
-        $ perl Makefile.PL
-        $ sudo make  # This will install missing dependencies
+            $ cd openresty
+            $ perl Makefile.PL
+            $ sudo make  # This will install missing dependencies
 
-    To run "make test" or "make debug", you need to have lighttpd and
-    PostgreSQL database installed.
+        To run "make test" or "make debug", you need to have lighttpd and
+        PostgreSQL database installed.
 
-    for PostgreSQL database, you need to prepare a PostgreSQL account (i.e.,
-    'agentzh); and you need to create an empty database (i.e. test), and you
-    need to create a store precedure language plpgsql for that database,
-    contact your PostgreSQL DBA for it or read PostgreSQL manuel.
+        for PostgreSQL database, you need to prepare a PostgreSQL account
+        (i.e., 'agentzh); and you need to create an empty database (i.e.
+        test), and you need to create a store precedure language plpgsql for
+        that database, contact your PostgreSQL DBA for it or read PostgreSQL
+        manuel.
 
-    Basically, they are command like:
+        Basically, they are command like:
 
-        $ createdb test
-        $ createuser -P agnetzh
-        $ createlang plpgsql test
+            $ createdb test
+            $ createuser -P agnetzh
+            $ createlang plpgsql test
 
-    3. Edit your etc/site_openresty.conf file, change the configure settings
-    under [backend] section according to your previous settings. The default
-    settings look like this:
+    3.  Edit your etc/site_openresty.conf file, change the configure
+        settings under [backend] section according to your previous
+        settings. The default settings look like this:
 
-        [backend]
-        type=Pg
-        host=localhost
-        user=agentzh
-        password=agentzh
-        database=test
+            [backend]
+            type=Pg
+            host=localhost
+            user=agentzh
+            password=agentzh
+            database=test
 
-    Most of the time, you need to change the last 3 lines unless you're
-    using exactly the same user, password, and database name.
+        Most of the time, you need to change the last 3 lines unless you're
+        using exactly the same user, password, and database name.
 
-    4. Give read/write access to lighttpd's log file (optional):
+    4.  Give read/write access to lighttpd's log file (optional):
 
-        $ chmod 777 /var/log/lighttpd/error.log
-        $ chmod 777 /var/log/lighttpd
+            $ chmod 777 /var/log/lighttpd/error.log
+            $ chmod 777 /var/log/lighttpd
 
-    5. For the Pg backend, one need to create the "anonymous" role in your
-    database (like "test"):
+    5.  For the Pg backend, one need to create the "anonymous" role in your
+        database (like "test"):
 
-        $ createuser anonymouse test
+            $ createuser anonymouse test
 
-    6. Create a "tester" user account for our test suite in OpenResty (drop
-    it if it already exists):
+    6.  Create a "tester" user account for our test suite in OpenResty (drop
+        it if it already exists):
 
-        $ bin/openresty deluser tester
-        $ bin/openresty adduser tester
+            $ bin/openresty deluser tester
+            $ bin/openresty adduser tester
 
-    Give a password (say, blahblahblah) to its Admin role. Update your
-    etc/site_openresty.conf to reflect your these settings:
+        Give a password (say, blahblahblah) to its Admin role. Update your
+        etc/site_openresty.conf to reflect your these settings:
 
-        [test_suite]
-        use_http=0
-        server=tester:blahblahblah@localhost
+            [test_suite]
+            use_http=0
+            server=tester:blahblahblah@localhost
 
-    Now you can already run the test suite without a lighttpd server:
+        Now you can already run the test suite without a lighttpd server:
 
-        $ prove -Ilib -Iinc -r t
+            $ prove -Ilib -Iinc -r t
 
-    7. Sample lighttpd configuration:
+    7.  Sample lighttpd configuration:
 
-        # lighttpd.conf
+            # lighttpd.conf
 
-        server.modules              = (
-                    "mod_fastcgi",
-                    ...
-        )
+            server.modules              = (
+                        "mod_fastcgi",
+                        ...
+            )
 
-        fastcgi.server = (
-            "/=" => (
-                "openresty" => (
-                    "socket"       => "/tmp/openresty.socket",
-                    "check-local"  => "disable",
-                    "bin-path"     => "/PATH/TO/YOUR/bin/openresty",
-                    "bin-environment" => (
-                        "OPENAPI_URL_PREFIX" => "",
-                        "OPENAPI_COMMAND" => "fastcgi",
-                    ),
-                    "min-procs"    => 1,
-                    "max-procs"    => 5,
-                    "max-load-per-proc" => 1,
-                    "idle-timeout" => 20,
+            fastcgi.server = (
+                "/=" => (
+                    "openresty" => (
+                        "socket"       => "/tmp/openresty.socket",
+                        "check-local"  => "disable",
+                        "bin-path"     => "/PATH/TO/YOUR/bin/openresty",
+                        "bin-environment" => (
+                            "OPENAPI_URL_PREFIX" => "",
+                            "OPENAPI_COMMAND" => "fastcgi",
+                        ),
+                        "min-procs"    => 1,
+                        "max-procs"    => 5,
+                        "max-load-per-proc" => 1,
+                        "idle-timeout" => 20,
+                    )
                 )
             )
-        )
 
-    And also make sure the following line is commented out:
+        And also make sure the following line is commented out:
 
-        # url.access-deny            = ( "~", ".inc" )
+            # url.access-deny            = ( "~", ".inc" )
 
     HOW TO TEST ONE SPECIFIC TEST SUITE FILE
 
@@ -148,4 +175,30 @@ INSTALL
         lib/SQL/Update.pm class and methods to generate UPDATE statement
         lib/MiniSQL/ directory conatining our mini-sql parser code, now only SELECT support
         t/ directory containing OpenResty test suite, use `make test' to run the test, read above on how to setup test environment
+
+SEE ALSO
+    WWW::OpenResty, WWW::OpenResty::Simple.
+
+AUTHOR
+    agentzh "<agentzh at yahoo.cn>"
+    leiyh
+    Laser Henry
+    yuting "<yuting at alibaba-inc.com>"
+
+    For a complete list of the contributors, please see
+    <http://svn.openfoundry.org/openapi/trunk/AUTHORS>.
+
+License and Copyright
+    Copyright (c) 2008 by Yahoo! China EEEE Works, Alibaba Inc.
+
+    This module is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself. See perlartistic.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 

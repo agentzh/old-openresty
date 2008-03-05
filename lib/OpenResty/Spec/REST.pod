@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-spec - OpenResty REST Protocol Specification [draft]
+OpenResty::Spec::REST - OpenResty REST Service Specification [draft]
 
 =head1 AUTHOR
 

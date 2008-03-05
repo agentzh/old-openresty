@@ -72,10 +72,6 @@ doc/api.html
 doc/cheat-sheet.txt
 doc/opensearch.pod
 doc/perl.css
-doc/spec.html
-doc/spec.pod
-doc/spec_cn.html
-doc/spec_cn.pod
 etc/openresty.conf
 grammar/Select.yp
 inc/Module/AutoInstall.pm
@@ -117,6 +113,8 @@ lib/OpenResty/Handler/View.pm
 lib/OpenResty/Limits.pm
 lib/OpenResty/MiniSQL/Select.pm
 lib/OpenResty/Server.pm
+lib/OpenResty/Spec/REST.pod
+lib/OpenResty/Spec/REST_cn.pod
 lib/OpenResty/SQL/Insert.pm
 lib/OpenResty/SQL/Select.pm
 lib/OpenResty/SQL/Statement.pm
