@@ -1,12 +1,15 @@
-package OpenResty;
+package OpenResty::Handler::View;
 
 use strict;
 use warnings;
-use vars qw($Dumper);
+
+use OpenResty::Util;
+use Params::Util qw( _HASH _STRING );
+use OpenResty::Limits;
 
 sub POST_view {
-    my ($self, $bits) = @_;
-    my $data = _HASH($self->{_req_data}) or
+    my ($self, $openresty, $bits) = @_;
+    my $data = _HASH($openresty->{_req_data}) or
         die "The view schema must be a HASH.\n";
     my $view = $bits->[1];
 
@@ -16,24 +19,24 @@ sub POST_view {
     }
 
     if ($name = delete $data->{name} and $name ne $view) {
-        $self->warning("name \"$name\" in POST content ignored.");
+        $openresty->warning("name \"$name\" in POST content ignored.");
     }
 
     $data->{name} = $view;
-    return $self->new_view($data);
+    return $self->new_view($openresty, $data);
 }
 
 sub get_views {
-    my ($self, $params) = @_;
+    my ($self, $openresty, $params) = @_;
     my $select = OpenResty::SQL::Select->new(
         qw< name description >
     )->from('_views');
-    return $self->select("$select", { use_hash => 1 });
+    return $openresty->select("$select", { use_hash => 1 });
 }
 
 sub GET_view_list {
-    my ($self, $bits) = @_;
-    my $views = $self->get_views;
+    my ($self, $openresty, $bits) = @_;
+    my $views = $self->get_views($openresty);
     $views ||= [];
 
     map { $_->{src} = "/=/view/$_->{name}" } @$views;
@@ -41,30 +44,30 @@ sub GET_view_list {
 }
 
 sub GET_view {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $view = $bits->[1];
 
     if ($view eq '~') {
-        return $self->get_views;
+        return $self->get_views($openresty);
     }
-    if (!$self->has_view($view)) {
+    if (!$openresty->has_view($view)) {
         die "View \"$view\" not found.\n";
     }
     my $select = OpenResty::SQL::Select->new( qw< name definition description > )
         ->from('_views')
         ->where(name => Q($view));
 
-    return $self->select("$select", {use_hash => 1})->[0];
+    return $openresty->select("$select", {use_hash => 1})->[0];
 }
 
 sub PUT_view {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $view = $bits->[1];
-    my $data = _HASH($self->{_req_data}) or
+    my $data = _HASH($openresty->{_req_data}) or
         die "column spec must be a non-empty HASH.\n";
     ### $view
     ### $data
-    die "View \"$view\" not found.\n" unless $self->has_view($view);
+    die "View \"$view\" not found.\n" unless $openresty->has_view($view);
 
     my $update = OpenResty::SQL::Update->new('_views');
     $update->where(name => Q($view));
@@ -72,20 +75,20 @@ sub PUT_view {
     my $new_name = delete $data->{name};
     if (defined $new_name) {
         _IDENT($new_name) or
-            die "Bad view name: ", $Dumper->($new_name), "\n";
+            die "Bad view name: ", $OpenResty::Dumper->($new_name), "\n";
         $update->set( name => Q($new_name) );
     }
 
     my $new_def = delete $data->{definition};
     if (defined $new_def) {
         _STRING($new_def) or
-            die "Bad view definition: ", $Dumper->($new_def), "\n";
+            die "Bad view definition: ", $OpenResty::Dumper->($new_def), "\n";
         $update->set(definition => Q($new_def));
     }
 
     my $new_desc = delete $data->{description};
     if (defined $new_desc) {
-        _STRING($new_desc) or die "Bad view description: ", $Dumper->($new_desc), "\n";
+        _STRING($new_desc) or die "Bad view description: ", $OpenResty::Dumper->($new_desc), "\n";
         $update->set(description => Q($new_desc));
     }
     ### Update SQL: "$update"
@@ -93,18 +96,18 @@ sub PUT_view {
         die "Unknown keys in POST data: ", join(' ', keys %$data), "\n";
     }
 
-    my $retval = $self->do("$update") + 0;
+    my $retval = $openresty->do("$update") + 0;
     return { success => $retval >= 0 ? 1 : 0 };
 }
 
 sub exec_view {
-    my ($self,$view, $bits, $cgi) = @_;
+    my ($self, $openresty,$view, $bits, $cgi) = @_;
     my $select = OpenResty::MiniSQL::Select->new;
     my $sql = "select definition from _views where name = " . Q($view);
     ### laser exec_view: "$sql"
-    my $view_def = $self->select($sql)->[0][0];
+    my $view_def = $openresty->select($sql)->[0][0];
     my $fix_var = $bits->[2];
-    _IDENT($fix_var) or $fix_var eq '~' or die "Bad parameter name: ", $Dumper->($fix_var), "\n";
+    _IDENT($fix_var) or $fix_var eq '~' or die "Bad parameter name: ", $OpenResty::Dumper->($fix_var), "\n";
     my $fix_var_value = $bits->[3];
     my $exists;
     my %vars;
@@ -132,26 +135,26 @@ sub exec_view {
     if (@unbound) {
         die "Parameters required: @unbound\n";
     }
-    return $self->select($res->{sql}, { use_hash=>1, read_only=>1 });
+    return $openresty->select($res->{sql}, { use_hash=>1, read_only=>1 });
 
 }
 
 sub GET_view_exec {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $view = $bits->[1];
 
-    die "View \"$view\" not found.\n" unless $self->has_view($view);
-    return $self->exec_view($view, $bits, $self->{_cgi});
+    die "View \"$view\" not found.\n" unless $openresty->has_view($view);
+    return $self->exec_view($openresty, $view, $bits, $openresty->{_cgi});
 }
 
 sub view_count {
-    my $self = shift;
-    return $self->select("select count(*) from _views")->[0][0];
+    my ($self, $openresty) = @_;
+    return $openresty->select("select count(*) from _views")->[0][0];
 }
 
 sub new_view {
-    my ($self, $data) = @_;
-    my $nviews = $self->view_count;
+    my ($self, $openresty, $data) = @_;
+    my $nviews = $self->view_count($openresty);
     my $res;
     if ($nviews >= $VIEW_LIMIT) {
         #warn "===================================> $num\n";
@@ -160,13 +163,13 @@ sub new_view {
 
     my $name = delete $data->{name} or
         die "No 'name' specified.\n";
-    _IDENT($name) or die "Bad view name: ", $Dumper->($name), "\n";
+    _IDENT($name) or die "Bad view name: ", $OpenResty::Dumper->($name), "\n";
 
     my $minisql = delete $data->{definition};
     if (!defined $minisql) {
         die "No 'definition' specified.\n";
     }
-    _STRING($minisql) or die "Bad definition: ", $Dumper->($minisql), "\n";
+    _STRING($minisql) or die "Bad definition: ", $OpenResty::Dumper->($minisql), "\n";
 
     my $desc = delete $data->{description};
     if (defined $desc) {
@@ -194,7 +197,7 @@ sub new_view {
     my @models = @{ $res->{models} };
     foreach my $model (@models){
         next if $model =~ /^\s*$/;
-        if (!$self->has_model($model)) {
+        if (!$openresty->has_model($model)) {
             die "Model \"$model\" not found.\n";
         }
     }
@@ -204,41 +207,29 @@ sub new_view {
         ->cols( qw<name definition description> )
         ->values( Q($name, $minisql, $desc) );
 
-    return { success => $self->do($insert) ? 1 : 0 };
+    return { success => $openresty->do($insert) ? 1 : 0 };
 
 }
 
 sub DELETE_view {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $view = $bits->[1];
     _IDENT($view) or $view eq '~' or
-        die "Bad view name: ", $Dumper->($view), "\n";
+        die "Bad view name: ", $OpenResty::Dumper->($view), "\n";
     if ($view eq '~') {
-        return $self->DELETE_view_list;
+        return $self->DELETE_view_list($openresty);
     }
-    if (!$self->has_view($view)) {
+    if (!$openresty->has_view($view)) {
         die "View \"$view\" not found.\n";
     }
     my $sql = "delete from _views where name = " . Q($view);
-    return { success => $self->do($sql) >= 0 ? 1 : 0 };
+    return { success => $openresty->do($sql) >= 0 ? 1 : 0 };
 }
 
 sub DELETE_view_list {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $sql = "truncate _views;";
-    return { success => $self->do($sql) >= 0 ? 1 : 0 };
-}
-
-sub has_view {
-    my ($self, $view) = @_;
-
-    _IDENT($view) or die "Bad view name: $view\n";
-
-    my $select = OpenResty::SQL::Select->new('count(name)')
-        ->from('_views')
-        ->where(name => Q($view))
-        ->limit(1);
-    return $self->select("$select",)->[0][0];
+    return { success => $openresty->do($sql) >= 0 ? 1 : 0 };
 }
 
 1;

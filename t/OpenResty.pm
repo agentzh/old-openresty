@@ -109,7 +109,11 @@ sub run_test ($) {
             is $res->content, $expected_res, "response content OK - $name";
         }
         if ($res_type) {
-            is $res->header('Content-Type'), $res_type, "Content-Type in response ok - $name";
+            my $true_res_type = $res->header('Content-Type');
+            is $true_res_type, $res_type, "Content-Type in response ok - $name";
+            if ($true_res_type ne $res_type and $true_res_type =~ m{text/plain}) {
+                warn $res->content;
+            }
         } else {
             like $res->header('Content-Type'), qr/\Q; charset=$charset\E$/, "charset okay - $name";
         }

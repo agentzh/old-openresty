@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-OpenResty REST Protocol Specification [draft] - OpenResty REST 协议白皮书（草案）
+OpenResty::Spec::REST_cn - OpenResty REST 协议白皮书（草案）
 
 =head1 AUTHOR
 

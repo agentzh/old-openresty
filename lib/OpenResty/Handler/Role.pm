@@ -1,45 +1,36 @@
-package OpenResty;
+package OpenResty::Handler::Role;
 
 #use Smart::Comments;
 use strict;
 use warnings;
 
-use vars qw($Dumper);
-
-sub has_role {
-    my ($self, $role) = @_;
-    _IDENT($role) or
-        die "Bad role name: ", $Dumper->($role), "\n";
-    my $select = OpenResty::SQL::Select->new('count(*)')
-        ->from('_roles')
-        ->where(name => Q($role))
-        ->limit(1);
-    return $self->select("$select")->[0][0];
-}
+use Params::Util qw( _HASH _STRING _ARRAY );
+use OpenResty::Util;
+use OpenResty::Limits;
 
 sub DELETE_role {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $role = $bits->[1];
     if ($role eq '~') {
-        return $self->DELETE_role_list;
+        return $self->DELETE_role_list($openresty);
     }
     if ($role eq 'Admin' or $role eq 'Public') {
         die "Role \"$role\" reserved.\n";
     }
-    if (!$self->has_role($role)) {
+    if (!$openresty->has_role($role)) {
         die "Role \"$role\" not found.\n";
     }
     my $sql = "delete from _access_rules where role = ".Q($role).";\n".
         "delete from _roles where name = ".Q($role);
-    return { success => $self->do($sql) >= 0 ? 1 : 0 };
+    return { success => $openresty->do($sql) >= 0 ? 1 : 0 };
 }
 
 sub DELETE_access_rule {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $role = $bits->[1];
     my $col = $bits->[2];
     my $value = $bits->[3];
-    if (!$self->has_role($role)) {
+    if (!$openresty->has_role($role)) {
         die "Role \"$role\" not found.\n";
     }
     if ($col ne '~' and $col ne 'method' and $col ne 'url' and $col ne 'id') {
@@ -59,17 +50,17 @@ sub DELETE_access_rule {
         $sql = "delete from _access_rules where role = '$role' and $col = $quoted;";
     }
     ### DELETE access rules: $sql
-    my $res = $self->do($sql);
+    my $res = $openresty->do($sql);
     return { success => $res >= 0 ? 1 : 0 };
 }
 
 sub GET_access_rule {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $role = $bits->[1];
     my $col = $bits->[2];
     my $value = $bits->[3];
     ### $bits
-    if (!$self->has_role($role)) {
+    if (!$openresty->has_role($role)) {
         die "Role \"$role\" not found.\n";
     }
     if ($col ne '~' and $col ne 'method' and $col ne 'url' and $col ne 'id') {
@@ -80,8 +71,8 @@ sub GET_access_rule {
     if ($value eq '~') {
         $sql = "select id,method,url from _access_rules where role = '$role';";
     } else {
-        my $op = $self->{_cgi}->url_param('op') || 'eq';
-        $op = $OpMap{$op};
+        my $op = $openresty->{_cgi}->url_param('op') || 'eq';
+        $op = $OpenResty::OpMap{$op};
         if ($op eq 'like') {
             $value = "%$value%";
         }
@@ -94,18 +85,18 @@ sub GET_access_rule {
         }
     }
     ### $sql
-    my $res = $self->select($sql, { use_hash => 1 });
+    my $res = $openresty->select($sql, { use_hash => 1 });
     $res ||= [];
     return $res;
 }
 
 sub PUT_access_rule {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $role = $bits->[1];
     my $col = $bits->[2];
     my $value = $bits->[3];
     ### $bits
-    if (!$self->has_role($role)) {
+    if (!$openresty->has_role($role)) {
         die "Role \"$role\" not found.\n";
     }
     if ($role eq 'Admin') {
@@ -116,7 +107,7 @@ sub PUT_access_rule {
     }
 
     my $update = OpenResty::SQL::Update->new('_access_rules');
-    my $data = $self->{_req_data};
+    my $data = $openresty->{_req_data};
     _HASH($data) or die "Only non-empty HASH expected.\n";
     while (my ($key, $val) = each %$data) {
         my $col = $key;
@@ -129,8 +120,8 @@ sub PUT_access_rule {
     if ($value eq '~') {
         $update->where(role => Q($role));
     } else {
-        my $op = $self->{_cgi}->url_param('op') || 'eq';
-        $op = $OpMap{$op};
+        my $op = $openresty->{_cgi}->url_param('op') || 'eq';
+        $op = $OpenResty::OpMap{$op};
         if ($op eq 'like') {
             $value = "%$value%";
         }
@@ -148,31 +139,31 @@ sub PUT_access_rule {
         }
     }
     ### Put rule SQL: "$update"
-    my $res = $self->do("$update");
+    my $res = $openresty->do("$update");
     return { success => $res >= 0 ? 1 : 0 };
 
 }
 
 sub POST_access_rule {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $role = $bits->[1];
     my $col = $bits->[2];
     my $value = $bits->[3];
-    if (!$self->has_role($role)) {
+    if (!$openresty->has_role($role)) {
         die "Role \"$role\" not found.\n";
     }
     my $rows_affected = 0;
     my ($success, $last_insert_id);
-    my $data = $self->{_req_data};
+    my $data = $openresty->{_req_data};
     if (_HASH($data)) {
-        $rows_affected = $self->insert_rule($role, $data, 1);
+        $rows_affected = $self->insert_rule($openresty, $role, $data, 1);
         $success = $rows_affected >= 1 ? 1 : 0;
     } elsif (_ARRAY($data)) {
         my $i = 1;
         for my $elem (@$data) {
             _HASH($elem) or
-                die "Access rule is not of hash: ", $Dumper->($elem), "\n";
-            $rows_affected += $self->insert_rule($role, $elem, $i);
+                die "Access rule is not of hash: ", $OpenResty::Dumper->($elem), "\n";
+            $rows_affected += $self->insert_rule($openresty, $role, $elem, $i);
         } continue {
             $i++;
         }
@@ -180,7 +171,7 @@ sub POST_access_rule {
     } else {
         die "Only non-empty hashes or arrays are expected.\n";
     }
-    my $last_id = $self->last_insert_id('_access_rules');
+    my $last_id = $openresty->last_insert_id('_access_rules');
     return {
         success => $success,
         rows_affected => $rows_affected >= 0 ? $rows_affected : 0,
@@ -189,14 +180,14 @@ sub POST_access_rule {
 }
 
 sub insert_rule {
-    my ($self, $role, $data, $row) = @_;
+    my ($self, $openresty, $role, $data, $row) = @_;
     my $id = delete $data->{id};
     if (defined $id) {
-        $self->warn("row $row: Column \"id\" ignored.");
+        $openresty->warn("row $row: Column \"id\" ignored.");
     }
     my $method = delete $data->{method} || 'GET';
     _STRING($method) or
-        die "row $row: Column \"method\" is not a string: ", $Dumper->($method), "\n";
+        die "row $row: Column \"method\" is not a string: ", $OpenResty::Dumper->($method), "\n";
     if ($method !~ /^(?:GET|POST|PUT|DELETE|HEAD)$/) {
         die "row $row: Unrecognized HTTP method: $method\n";
     }
@@ -215,15 +206,15 @@ sub insert_rule {
     my $insert = OpenResty::SQL::Insert->new("_access_rules")
         ->cols( qw< role method url > )
         ->values( Q( $role, $method, $url ) );
-    return $self->do($insert);
+    return $openresty->do($insert);
 }
 
 sub GET_role_list {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $select = OpenResty::SQL::Select->new(
         qw< name description >
     )->from('_roles');
-    my $roles = $self->select("$select", { use_hash => 1 });
+    my $roles = $openresty->select("$select", { use_hash => 1 });
 
     $roles ||= [];
     map { $_->{src} = "/=/role/$_->{name}" } @$roles;
@@ -231,12 +222,12 @@ sub GET_role_list {
 }
 
 sub GET_role {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $role = $bits->[1];
     if ($role eq '~') {
-        return $self->GET_role_list;
+        return $self->GET_role_list($openresty);
     }
-    my $role_id = $self->has_role($role);
+    my $role_id = $openresty->has_role($role);
     if (!$role_id) {
         die "Role \"$role\" not found.\n";
     }
@@ -244,7 +235,7 @@ sub GET_role {
         ->from('_roles')
         ->where(name => Q($role));
 
-    my $res = $self->select("$select", {use_hash => 1})->[0];
+    my $res = $openresty->select("$select", {use_hash => 1})->[0];
     $res->{columns} = [
         { name => "method", type => "text", label => "HTTP method" },
         { name => "url", type => "text", label => "Resource"}
@@ -253,37 +244,16 @@ sub GET_role {
 }
 
 sub DELETE_role_list {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $sql = "delete from _access_rules where role <> 'Admin' and role <> 'Public';\n".
         "delete from _roles where name <> 'Admin' and name <> 'Public'";
-    $self->warning("Predefined roles skipped.");
-    return { success => $self->do($sql) >= 0 ? 1 : 0 };
-}
-
-sub current_user_can {
-    my ($self, $meth, $bits) = @_;
-    my @urls = $bits;
-    my $role = $self->{_role};
-    my $max_i = @$bits - 1;
-    while ($max_i >= 1) {
-        my @last_bits = @{ $urls[-1] };
-        if ($last_bits[$max_i] ne '~') {
-            $last_bits[$max_i] = '~';
-            push @urls, \@last_bits;
-        }
-    } continue { $max_i-- }
-    map { $_ = '/=/' . join '/', @$_ } @urls;
-    my $or_clause = join ' or ', map { "url = ".Q($_) } @urls;
-    my $sql = "select count(*) from _access_rules where role = ".
-        Q($role) . " and method = " . Q($meth) . " and ($or_clause);";
-    ### $sql
-    my $res = $self->select($sql);
-    return do { $res->[0][0] };
+    $openresty->warning("Predefined roles skipped.");
+    return { success => $openresty->do($sql) >= 0 ? 1 : 0 };
 }
 
 sub POST_role {
-    my ($self, $bits) = @_;
-    my $data = _HASH($self->{_req_data}) or
+    my ($self, $openresty, $bits) = @_;
+    my $data = _HASH($openresty->{_req_data}) or
         die "The role schema must be a HASH.\n";
     my $role = $bits->[1];
 
@@ -293,21 +263,21 @@ sub POST_role {
     }
 
     if ($name = delete $data->{name} and $name ne $role) {
-        $self->warning("name \"$name\" in POST content ignored.");
+        $openresty->warning("name \"$name\" in POST content ignored.");
     }
 
     $data->{name} = $role;
-    return $self->new_role($data);
+    return $self->new_role($openresty, $data);
 }
 
 sub role_count {
-    my $self = shift;
-    return $self->select("select count(*) from _roles")->[0][0];
+    my ($self, $openresty) = @_;
+    return $openresty->select("select count(*) from _roles")->[0][0];
 }
 
 sub new_role {
-    my ($self, $data) = @_;
-    my $nroles = $self->role_count;
+    my ($self, $openresty, $data) = @_;
+    my $nroles = $self->role_count($openresty);
     my $res;
     if ($nroles >= $ROLE_LIMIT) {
         die "Exceeded role count limit $ROLE_LIMIT.\n";
@@ -315,8 +285,8 @@ sub new_role {
 
     my $name = delete $data->{name} or
         die "No 'name' specified.\n";
-    _IDENT($name) or die "Bad role name: ", $Dumper->($name), "\n";
-    if ($self->has_role($name)) {
+    _IDENT($name) or die "Bad role name: ", $OpenResty::Dumper->($name), "\n";
+    if ($openresty->has_role($name)) {
         die "Role \"$name\" already exists.\n";
     }
 
@@ -330,7 +300,7 @@ sub new_role {
     if (!defined $login) {
         die "No 'login' field specified.\n";
     }
-    _STRING($login) or die "Bad 'login' value: ", $Dumper->($login), "\n";
+    _STRING($login) or die "Bad 'login' value: ", $OpenResty::Dumper->($login), "\n";
 
     if ($login !~ /^(?:password|captcha|anonymous)$/) {
         die "Unknown login method: $login\n";
@@ -338,7 +308,7 @@ sub new_role {
 
     my $password = delete $data->{password};
     if (defined $password and $login ne 'password') {
-        $self->warning("Field 'password' ignored.");
+        $openresty->warning("Field 'password' ignored.");
     }
 
     if ($login eq 'password') {
@@ -358,16 +328,16 @@ sub new_role {
         ->cols( qw<name description login password> )
         ->values( Q($name, $desc, $login, $password) );
 
-    return { success => $self->do($insert) ? 1 : 0 };
+    return { success => $openresty->do($insert) ? 1 : 0 };
 }
 
 sub PUT_role {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $role = $bits->[1];
-    my $data = _HASH($self->{_req_data}) or
+    my $data = _HASH($openresty->{_req_data}) or
         die "column spec must be a non-empty HASH.\n";
     ### $data
-    die "Role \"$role\" not found.\n" unless $self->has_role($role);
+    die "Role \"$role\" not found.\n" unless $openresty->has_role($role);
     my $extra_sql = '';
 
     my $update = OpenResty::SQL::Update->new('_roles');
@@ -375,7 +345,7 @@ sub PUT_role {
 
     my $new_name = delete $data->{name};
     if (defined $new_name) {
-        _IDENT($new_name) or die "Bad role name: ", $Dumper->($new_name);
+        _IDENT($new_name) or die "Bad role name: ", $OpenResty::Dumper->($new_name);
         $update->set( name => Q($new_name) );
         $extra_sql .= 'update _access_rules set role='.Q($new_name).' where role='.Q($role).';';
     }
@@ -383,7 +353,7 @@ sub PUT_role {
     my $new_login = delete $data->{login};
     if (defined $new_login) {
         _STRING($new_login) or
-            die "Bad login method: ", $Dumper->($new_login), "\n";
+            die "Bad login method: ", $OpenResty::Dumper->($new_login), "\n";
         if ($new_login !~ /^(?:password|anonymous|captcha)$/) {
             die "Bad login method: $new_login\n";
         }
@@ -396,7 +366,7 @@ sub PUT_role {
             die "Password given when 'login' is not 'password'.\n";
         }
         _STRING($new_password) or
-            die "Bad password: ", $Dumper->($new_password), "\n";
+            die "Bad password: ", $OpenResty::Dumper->($new_password), "\n";
         check_password($new_password);
         $update->set(password => Q($new_password));
     }
@@ -407,14 +377,14 @@ sub PUT_role {
 
     my $new_desc = delete $data->{description};
     if (defined $new_desc) {
-        _STRING($new_desc) or die "Bad role definition: ", $Dumper->($new_desc), "\n";
+        _STRING($new_desc) or die "Bad role definition: ", $OpenResty::Dumper->($new_desc), "\n";
         $update->set(description => Q($new_desc));
     }
     ### Update SQL: "$update"
     if (%$data) {
         die "Unknown keys in POST data: ", join(' ', keys %$data), "\n";
     }
-    my $retval = $self->do("$update" . $extra_sql) + 0;
+    my $retval = $openresty->do("$update" . $extra_sql) + 0;
     return { success => $retval >= 0 ? 1 : 0 };
 }
 

@@ -188,7 +188,7 @@ sub process_request {
                 #$OpenResty::Cache->remove($uuid);
                 my $captcha = $cgi->url_param('captcha');
                 ### URL param capture: $captcha
-                my $res = $openresty->login($user, {
+                my $res = OpenResty::Handler::Login->login($openresty, $user, {
                     password => scalar($cgi->url_param('password')),
                     captcha => $captcha,
                 });
@@ -251,9 +251,15 @@ sub process_request {
             $openresty->fatal("Unknown URL level: $url");
             return;
         }
+        my $package = 'OpenResty::Handler::' . ucfirst($key);
+        eval "use $package";
+        if ($@) {
+            $openresty->fatal("Failed to load $package");
+            return;
+        }
         my $meth = $http_meth . '_' . $object;
         $meth =~ s/\./_/g;
-        if (!$openresty->can($meth)) {
+        if (!$package->can($meth)) {
             $object =~ s/_/ /g;
             $openresty->fatal("HTTP $http_meth method not supported for $object.");
             return;
@@ -261,10 +267,10 @@ sub process_request {
         my $data;
         eval {
             if ($key eq 'model') {
-                $openresty->global_model_check(\@bits, $http_meth);
+                $package->global_model_check($openresty, \@bits, $http_meth);
             }
 
-            $data = $openresty->$meth(\@bits);
+            $data = $package->$meth($openresty, \@bits);
         };
         if ($@) {
             $openresty->fatal($@);
