@@ -99,7 +99,7 @@ sub PUT_view {
 
 sub exec_view {
     my ($self,$view, $bits, $cgi) = @_;
-    my $select = MiniSQL::Select->new;
+    my $select = OpenResty::MiniSQL::Select->new;
     my $sql = "select definition from _views where name = " . Q($view);
     ### laser exec_view: "$sql"
     my $view_def = $self->select($sql)->[0][0];
@@ -177,7 +177,7 @@ sub new_view {
         die "Unknown keys: ", join(" ", keys %$data), "\n";
     }
 
-    my $select = MiniSQL::Select->new;
+    my $select = OpenResty::MiniSQL::Select->new;
     eval {
         $res = $select->parse(
             $minisql,

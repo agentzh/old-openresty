@@ -4,7 +4,7 @@ use Test::Base;
 
 use Smart::Comments;
 use lib 'lib';
-use MiniSQL::Select;
+use OpenResty::MiniSQL::Select;
 
 #plan tests => 3 * blocks();
 
@@ -37,7 +37,7 @@ run {
         } @ln;
     }
 
-    my $select = MiniSQL::Select->new;
+    my $select = OpenResty::MiniSQL::Select->new;
     my $sql = $block->sql or die "$name - No --- sql section found.\n";
     my $res;
     eval {
