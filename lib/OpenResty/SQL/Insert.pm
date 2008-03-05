@@ -1,8 +1,8 @@
-package SQL::Insert;
+package OpenResty::SQL::Insert;
 
 use strict;
 use warnings;
-use base 'SQL::Statement';
+use base 'OpenResty::SQL::Statement';
 
 sub new {
     my $class = ref $_[0] ? ref shift : shift;

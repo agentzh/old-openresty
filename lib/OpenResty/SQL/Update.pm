@@ -1,8 +1,8 @@
-package SQL::Update;
+package OpenResty::SQL::Update;
 
 use strict;
 use warnings;
-use base 'SQL::Statement';
+use base 'OpenResty::SQL::Statement';
 
 sub new {
     my $class = ref $_[0] ? ref shift : shift;

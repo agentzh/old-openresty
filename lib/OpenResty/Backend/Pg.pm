@@ -3,7 +3,7 @@ package OpenResty::Backend::Pg;
 use strict;
 use warnings;
 use DBI;
-use SQL::Select;
+use OpenResty::SQL::Select;
 use base 'OpenResty::Backend::Base';
 use Encode 'from_to';
 
@@ -74,7 +74,7 @@ sub last_insert_id {
 
 sub has_user {
     my ($self, $user) = @_;
-    my $select = SQL::Select->new('nspname')
+    my $select = OpenResty::SQL::Select->new('nspname')
         ->from('pg_namespace')
         ->where(nspname => $self->quote($user))
         ->limit(1);

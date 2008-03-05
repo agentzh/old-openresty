@@ -99,7 +99,7 @@ sub GET_model_column {
 
     my $table_name = $model;
 
-    my $select = SQL::Select->new(qw< name type label >, '"default"')
+    my $select = OpenResty::SQL::Select->new(qw< name type label >, '"default"')
             ->from('_columns')
             ->where(table_name => Q($table_name))
             ->order_by('id');
@@ -151,7 +151,7 @@ sub POST_model_column {
     my $label = $data->{label} or
         die "No 'label' specified for column \"$col\" in model \"$model\".\n";
     $type = check_type($type);
-    my $insert = SQL::Insert->new('_columns')
+    my $insert = OpenResty::SQL::Insert->new('_columns')
         ->cols(qw< name label type table_name >)
         ->values( Q($col, $label, $type, $table_name) );
 
@@ -189,7 +189,7 @@ sub PUT_model_column {
     # type defaults to 'text' if not specified.
     my $sql;
     my $new_col = delete $data->{name};
-    my $update_meta = SQL::Update->new('_columns');
+    my $update_meta = OpenResty::SQL::Update->new('_columns');
     if ($new_col) {
         _IDENT($new_col) or die "Bad column name: ",
                 $Dumper->($new_col), "\n";
@@ -364,7 +364,7 @@ sub new_model {
     if ($self->has_model($model)) {
         die "Model \"$model\" already exists.\n";
     }
-    my $insert = SQL::Insert->new('_models')
+    my $insert = OpenResty::SQL::Insert->new('_models')
         ->cols(qw< name table_name description >)
         ->values( Q($model, $table, $description) );
 
@@ -457,7 +457,7 @@ sub has_model {
     my ($self, $model) = @_;
     _IDENT($model) or die "Bad model name: $model\n";
     my $retval;
-    my $select = SQL::Select->new('count(name)')
+    my $select = OpenResty::SQL::Select->new('count(name)')
         ->from('_models')
         ->where(name => Q($model))
         ->limit(1);
@@ -512,7 +512,7 @@ sub global_model_check {
 sub get_tables {
     #my ($self, $user) = @_;
     my $self = shift;
-    my $select = SQL::Select->new('name')->from('_models');
+    my $select = OpenResty::SQL::Select->new('name')->from('_models');
     return $self->select("$select");
 }
 
@@ -533,7 +533,7 @@ sub row_count {
 
 sub get_models {
     my $self = shift;
-    my $select = SQL::Select->new('name','description')->from('_models')->order_by('id');
+    my $select = OpenResty::SQL::Select->new('name','description')->from('_models')->order_by('id');
     return $self->select("$select", { use_hash => 1 });
 }
 
@@ -543,7 +543,7 @@ sub get_model_cols {
         die "Model \"$model\" not found.\n";
     }
     my $table = $model;
-    my $select = SQL::Select->new('description')
+    my $select = OpenResty::SQL::Select->new('description')
         ->from('_models')
         ->where(name => Q($model));
     my $list = $self->select("$select");
@@ -565,7 +565,7 @@ sub get_model_col_names {
         die "Model \"$model\" not found.\n";
     }
     my $table = $model;
-    my $select = SQL::Select->new('name')
+    my $select = OpenResty::SQL::Select->new('name')
         ->from('_columns')
         ->where(table_name => Q($table));
 
@@ -582,7 +582,7 @@ sub has_model_col {
 
     return 1 if $col eq 'id';
     my $res;
-    my $select = SQL::Select->new('count(name)')
+    my $select = OpenResty::SQL::Select->new('count(name)')
         ->from('_columns')
         ->where(table_name => Q($table_name))
         ->where(name => Q($col))
@@ -615,7 +615,7 @@ sub insert_records {
 
     my $cols = $self->get_model_col_names($model);
     my $sql;
-    my $insert = SQL::Insert->new(QI($table));
+    my $insert = OpenResty::SQL::Insert->new(QI($table));
 
     my $user = $self->current_user;
     ### %AccountFiltered
@@ -722,7 +722,7 @@ sub select_records {
         }
         if (!$found) { die "Column $user_col not available.\n"; }
     }
-    my $select = SQL::Select->new;
+    my $select = OpenResty::SQL::Select->new;
     $select->from(QI($table));
     if (defined $val and $val ne '~') {
         my $op = $self->{_cgi}->url_param('op') || 'eq';
@@ -761,7 +761,7 @@ sub select_all_records {
     }
 
     my $table = $model;
-    my $select = SQL::Select->new('*')->from(QI($table));
+    my $select = OpenResty::SQL::Select->new('*')->from(QI($table));
 
     $self->process_order_by($select, $model);
     $self->process_offset($select);
@@ -823,7 +823,7 @@ sub update_records {
     if (!ref $data || ref $data ne 'HASH') {
         die "HASH data expected in the content body.\n";
     }
-    my $update = SQL::Update->new(QI($table));
+    my $update = OpenResty::SQL::Update->new(QI($table));
     while (my ($key, $val) = each %$data) {
         my $col = $key;
         if (lc($col) eq 'id') {

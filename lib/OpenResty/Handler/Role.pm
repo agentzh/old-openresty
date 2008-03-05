@@ -10,7 +10,7 @@ sub has_role {
     my ($self, $role) = @_;
     _IDENT($role) or
         die "Bad role name: ", $Dumper->($role), "\n";
-    my $select = SQL::Select->new('count(*)')
+    my $select = OpenResty::SQL::Select->new('count(*)')
         ->from('_roles')
         ->where(name => Q($role))
         ->limit(1);
@@ -115,7 +115,7 @@ sub PUT_access_rule {
         die "Unknown access rule field: $col\n";
     }
 
-    my $update = SQL::Update->new('_access_rules');
+    my $update = OpenResty::SQL::Update->new('_access_rules');
     my $data = $self->{_req_data};
     _HASH($data) or die "Only non-empty HASH expected.\n";
     while (my ($key, $val) = each %$data) {
@@ -212,7 +212,7 @@ sub insert_rule {
             join(" ", keys %$data),
             "\n";
     }
-    my $insert = SQL::Insert->new("_access_rules")
+    my $insert = OpenResty::SQL::Insert->new("_access_rules")
         ->cols( qw< role method url > )
         ->values( Q( $role, $method, $url ) );
     return $self->do($insert);
@@ -220,7 +220,7 @@ sub insert_rule {
 
 sub GET_role_list {
     my ($self, $bits) = @_;
-    my $select = SQL::Select->new(
+    my $select = OpenResty::SQL::Select->new(
         qw< name description >
     )->from('_roles');
     my $roles = $self->select("$select", { use_hash => 1 });
@@ -240,7 +240,7 @@ sub GET_role {
     if (!$role_id) {
         die "Role \"$role\" not found.\n";
     }
-    my $select = SQL::Select->new( qw< name description login > )
+    my $select = OpenResty::SQL::Select->new( qw< name description login > )
         ->from('_roles')
         ->where(name => Q($role));
 
@@ -353,7 +353,7 @@ sub new_role {
         die "Unknown keys: ", join(" ", keys %$data), "\n";
     }
 
-    my $insert = SQL::Insert
+    my $insert = OpenResty::SQL::Insert
         ->new('_roles')
         ->cols( qw<name description login password> )
         ->values( Q($name, $desc, $login, $password) );
@@ -370,7 +370,7 @@ sub PUT_role {
     die "Role \"$role\" not found.\n" unless $self->has_role($role);
     my $extra_sql = '';
 
-    my $update = SQL::Update->new('_roles');
+    my $update = OpenResty::SQL::Update->new('_roles');
     $update->where(name => Q($role));
 
     my $new_name = delete $data->{name};

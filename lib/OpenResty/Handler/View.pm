@@ -25,7 +25,7 @@ sub POST_view {
 
 sub get_views {
     my ($self, $params) = @_;
-    my $select = SQL::Select->new(
+    my $select = OpenResty::SQL::Select->new(
         qw< name description >
     )->from('_views');
     return $self->select("$select", { use_hash => 1 });
@@ -50,7 +50,7 @@ sub GET_view {
     if (!$self->has_view($view)) {
         die "View \"$view\" not found.\n";
     }
-    my $select = SQL::Select->new( qw< name definition description > )
+    my $select = OpenResty::SQL::Select->new( qw< name definition description > )
         ->from('_views')
         ->where(name => Q($view));
 
@@ -66,7 +66,7 @@ sub PUT_view {
     ### $data
     die "View \"$view\" not found.\n" unless $self->has_view($view);
 
-    my $update = SQL::Update->new('_views');
+    my $update = OpenResty::SQL::Update->new('_views');
     $update->where(name => Q($view));
 
     my $new_name = delete $data->{name};
@@ -199,7 +199,7 @@ sub new_view {
         }
     }
 
-    my $insert = SQL::Insert
+    my $insert = OpenResty::SQL::Insert
         ->new('_views')
         ->cols( qw<name definition description> )
         ->values( Q($name, $minisql, $desc) );
@@ -234,7 +234,7 @@ sub has_view {
 
     _IDENT($view) or die "Bad view name: $view\n";
 
-    my $select = SQL::Select->new('count(name)')
+    my $select = OpenResty::SQL::Select->new('count(name)')
         ->from('_views')
         ->where(name => Q($view))
         ->limit(1);

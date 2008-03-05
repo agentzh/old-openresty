@@ -1,4 +1,4 @@
-package SQL::Statement;
+package OpenResty::SQL::Statement;
 
 use strict;
 use warnings;
