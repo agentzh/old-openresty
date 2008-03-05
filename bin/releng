@@ -1,0 +1,156 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use File::Slurp;
+use List::Util 'first';
+use IPC::Run3;
+
+my ($stdout, $stderr);
+
+sub run ($);
+sub run_and_check ($);
+sub file_found ($@);
+sub file_contains ($$);
+
+##
+# check missing files
+file_found 'Makefile.PL';
+file_found 'MANIFEST';
+file_found 'Changes', 'ChangeLog';
+file_found 't/pod.t', 't/00-pod.t', 't/99-pod.t';
+file_found 't/pod-coverage.t', 't/00-pod-coverage.t', 't/99-pod-coverage.t';
+
+##
+# check META.yml related issues
+system('rm *.tar.gz');
+run 'make veryclean';
+run_and_check 'perl Makefile.PL releng';
+file_found 'META.yml';
+
+##
+# check missing items in MENIFEST:
+run_and_check 'make distcheck';
+#print $stderr;
+my @lines = grep {
+    !/\.swp$/ and !/\.vim/
+} split '\n', $stderr;
+warn join("\n", @lines), "\n" if @lines;
+
+my $main_pm;
+{ # get main .pm file from Makefile.PL
+    open my $in, 'Makefile.PL' or
+        die "ERROR: Can't open Makefile.PL for reading: $!";
+    my @lines = <$in>;
+    close $in;
+
+    my $line = first {
+        m{(?x) ^ \s* \w+_from .*? \b(lib/[\w\/]+\.pm)} && ($main_pm = $1)
+    } @lines;
+    if (!$main_pm) {
+        die "ERROR: Can't find the main .pm file for your distribution from your Makefile.PL. It's often serve as an argument to functions like 'all_from'.\n";
+    }
+    #warn $main_pm;
+}
+
+my $version;
+for my $file (map glob, qw{ lib/*.pm lib/*/*.pm lib/*/*/*.pm lib/*/*/*/*.pm lib/*/*/*/*/*.pm META.yml }) {
+    # Check the sanity of each .pm file
+    open my $in, $file or
+        die "ERROR: Can't open $file for reading: $!\n";
+    while (<$in>) {
+        my $ver;
+        if (/(?x) \$VERSION \s* = .*? ([\d\.]*\d+)/) {
+            $ver = $1;
+            warn "$file: $ver\n";
+        } elsif (/This document describes \S+ ([\d\.]*\d+)/) {
+            $ver = $1;
+            warn "$file: $ver\n";
+        } elsif (/^version: (\d+.*)$/) {
+            $ver = $1;
+            warn "$file: $ver\n";
+            $ver =~ s/(\d+)\.(\d+)\.(\d+)/sprintf("%d.%03d%03d", $1, $2, $3)/ge;
+        }
+
+        if ($ver and $version) {
+            if ($version ne $ver) {
+                die "$file: $ver != $version\n";
+            }
+        } elsif ($ver and !$version) {
+            $version = $ver;
+        }
+    }
+    close $in;
+}
+
+$version =~ s{^(\d+)\.(\d{3})(\d{3})?$}{join '.', int($1), int($2), int($3||0)}e;
+if (! file_contains 'Changes', qr/\b\Q$version\E\b/) {
+    die "ERROR: File 'Changes' has nothing regarding release $version\n";
+}
+
+run_and_check "pod2text $main_pm > README";
+
+my ($tests, $dist_tests);
+
+##
+# make test
+run_and_check 'make test';
+# print $stdout;
+if ($stdout =~ /(?xms) \n Files=\d+, \s+ Tests=(\d+)/) {
+    $tests = $1;
+} else {
+    die "ERROR: Unknown 'make test' output format: '$stdout'\n";
+}
+
+##
+# make disttest
+run_and_check 'make disttest';
+if ($stdout =~ /(?xms) \n Files=\d+, \s+ Tests=(\d+)/) {
+    $dist_tests = $1;
+} else {
+    die "ERROR: Unknown 'make disttest' output format: '$stdout'\n";
+}
+
+##
+# check if test counts mismatch
+if ($tests != $dist_tests) {
+    my $diff = $dist_tests - $tests;
+    warn "WARNING: The number of tests from 'make test' doesn't match the one from 'make disttest': $tests <> $dist_tests ($diff)\n";
+}
+
+run_and_check "make dist";
+
+##############################################
+# utility functions
+#
+sub run_and_check ($) {
+    my $cmd = shift;
+    run($cmd);
+    if ($? != 0) {
+        warn $stderr;
+        die "ERROR: command '$cmd' returns non-zero code.\n";
+    }
+}
+
+sub run ($) {
+    my $cmd = shift;
+    run3 $cmd, \undef, \$stdout, \$stderr;
+}
+
+sub file_found ($@) {
+    my ($missing, $empty);
+    for my $file (@_) {
+        $missing++ if !-f $file;
+        $empty++ if !-s $file;
+    }
+    die "ERROR: File(s) @_ are missing.\n" if $missing && $missing == @_;
+    die "ERROR: File(s) @_ are empty.\n" if $missing && $empty == @_;
+}
+
+sub file_contains ($$) {
+    my ($file, $regex) = @_;
+    my $content = read_file($file);
+    return $content =~ /$regex/ms;
+}
+
