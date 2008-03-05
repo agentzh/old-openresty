@@ -1,0 +1,72 @@
+=head1 NAME
+
+OpenResty::CheatSheet - Cheet sheet for OpenResty
+
+=head1 DESCRIPTION
+
+This 'cheat sheet' is a handy reference, meant for beginning OpenResty users. Not everything is mentioned, but all the main features may already be included.
+
+=over
+
+=item Model Lists
+
+    GET /=/model                    Read model list
+    DELETE /=/model                 Delete all models
+
+=item Models
+
+    GET /=/model/MyModel            Read the info for MyModel
+    POST /=/model/MyModel           Create a model MyModel
+        { description:"",
+          columns:[
+            { name:"", label:"", type:"" }
+            ...
+          ] }
+    PUT /=/model/MyModel            Alter the model MyModel
+        { name:"", description:"" }
+    DELETE /=/model/MyModel         Delete model MyModel
+
+=item Columns
+
+    GET /=/model/MyModel/mycol      Read the info for MyModel's mycol
+    POST /=/model/MyModel/mycol     Add a new column named mycol
+        { label:"", type:"" }
+    PUT /=/model/MyModel/mycol      Alter the column mycol
+        { name:"", type:"" }
+    DELETE /=/model/MyModel/mycol   Remove column mycol
+
+=item Rows
+
+    GET /=/model/MyModel/id/3       Read the row with id 3
+    POST /=/model/MyModel/~/~       Insert new rows
+        [ { col1:"", col2:"", ... }, ... ]
+    POST /=/model/MyModel/~/~       Insert a single new row
+        { col1:"", col2:"", ... }
+    PUT /=/model/MyModel/id/2       Update the row with id 2
+        { col1:"", col2:"", ... }
+    DELETE /=/model/MyModel/id/2    Delete the row with id 2
+    DELETE /=/model/MyModel/~/~     Delete all the rows
+
+=item Parameters
+
+    GET /=/model/MyModel/~/~?order_by=col1              order by col1
+    GET /=/model/MyModel/~/~?order_by=col1,col2         order by col1, col2
+    GET /=/model/MyModel/~/~?order_by=col1:asc,col2:desc
+                                                order by col1 asc, col2 desc
+
+=item Suffixes
+
+    GET /=/model.json           Get model list in JSON format (the default)
+    GET /=/model.yaml           ditto, but in YAML format
+    GET /=/model.yml            .yml is an alias for .yaml
+
+=back
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh at yahoo.cn> >>.
+
+=head1 SEE ALSO
+
+L<OpenResty::Spec::REST>.
+
