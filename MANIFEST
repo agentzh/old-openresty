@@ -95,6 +95,7 @@ lib/OpenResty/Backend/Base.pm
 lib/OpenResty/Backend/Pg.pm
 lib/OpenResty/Backend/PgFarm.pm
 lib/OpenResty/Cache.pm
+lib/OpenResty/CheatSheet.pod
 lib/OpenResty/Config.pm
 lib/OpenResty/Dispatcher.pm
 lib/OpenResty/FastCGI.pm
