@@ -1,5 +1,5 @@
 --- 
-abstract: ~
+abstract: General-Purpose Web Services for Web Applications
 author: Agent Zhang <agentzh@yahoo.cn>
 build_requires: 
   CGI: 3.33
@@ -42,4 +42,4 @@ requires:
   Term::ReadKey: 2.30
   YAML::Syck: 1.04
   perl: 5.6.1
-version: 0.000005
+version: 0.0.5

@@ -13,6 +13,11 @@ if (@ARGV == 1 && $ARGV[0] ne 'releng') {
     $arg = shift;
 }
 
+my $version = version();
+$version .= 0 until length($version) >= length('0.123456');
+$version =~ s{^(\d+)\.(\d{3})(\d{3})?$}{join '.', int($1), int($2), int($3||0)}e;
+version($version);
+
 if ($arg eq 'product') {
     requires            ('FCGI');
     requires            ('CGI::Simple' => '1.103');
