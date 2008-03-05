@@ -516,6 +516,8 @@ This module implements the server-side OpenResty web service protocol. It provid
 
 Currently this module can serve as a public web interface to a distributive or desktop PostgreSQL databases. In particular, it provides models, views, roles, captchas to the users.
 
+But note that OpenResty is I<not> a web application framework like L<Jifty>.
+
 We're already running an instance of the OpenResty server on our Yahoo! China's production machines:
 
     http://resty.eeeeworks.org/=/version
