@@ -24,7 +24,7 @@ sub POST_action_exec {
     _STRING($sql) or
         die "miniSQL must be an non-empty literal string: ", $Dumper->($sql), "\n";
    #warn "SQL 1: $sql\n";
-    my $select = MiniSQL::Select->new;
+    my $select = OpenResty::MiniSQL::Select->new;
     my $res = $select->parse(
         $sql,
         {
