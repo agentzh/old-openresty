@@ -3,11 +3,11 @@ use strict;
 use warnings;
 
 use Test::More tests => 9;
-BEGIN { use_ok('SQL::Select'); }
+BEGIN { use_ok('OpenResty::SQL::Select'); }
 
 sub _Q { "'$_[0]'" }
 
-my $select = SQL::Select->new;
+my $select = OpenResty::SQL::Select->new;
 $select->select( qw<name type label> )
        ->from( '_columns' );
 

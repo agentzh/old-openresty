@@ -20,6 +20,8 @@ bin/.*\.dat
 ^grammar/Select\.pm$
 ^minisql
 ^print\.txt$
+^lib/SQL
+^lib/MiniSQL
 ^smerge
 \.sh$
 \.dat$

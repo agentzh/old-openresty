@@ -3,9 +3,9 @@ use strict;
 use warnings;
 
 use Test::More tests => 4;
-BEGIN { use_ok('SQL::Insert'); }
+BEGIN { use_ok('OpenResty::SQL::Insert'); }
 
-my $insert = SQL::Insert->new;
+my $insert = OpenResty::SQL::Insert->new;
 $insert->insert( 'models' )
        ->values( 'abc' => '"howdy"' );
 
