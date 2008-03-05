@@ -2,7 +2,7 @@ NAME
     OpenResty - General-Purpose Web Services for Web Applications
 
 VERSION
-    This document describes OpenResty 0.0.6 released on Mar 5, 2008.
+    This document describes OpenResty 0.0.7 released on Mar 5, 2008.
 
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
@@ -179,14 +179,20 @@ INSTALLATION
         lib/MiniSQL/ directory conatining our mini-sql parser code, now only SELECT support
         t/ directory containing OpenResty test suite, use `make test' to run the test, read above on how to setup test environment
 
-SEE ALSO
-    WWW::OpenResty, WWW::OpenResty::Simple.
+SOURCE CONTROL
+    For the very latest version of this module, check out the source from
+    the SVN repos below:
+
+    <http://svn.openfoundry.org/openapi/trunk>
+
+    There is anonymous access to all. If you'd like a commit bit, please let
+    us know. :)
 
 AUTHOR
     agentzh "<agentzh at yahoo.cn>"
     leiyh
     Laser Henry
-    yuting "<yuting at alibaba-inc.com>"
+    yuting "<yuting at yahoo.cn>"
 
     For a complete list of the contributors, please see
     <http://svn.openfoundry.org/openapi/trunk/AUTHORS>.
@@ -204,4 +210,7 @@ License and Copyright
     CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+SEE ALSO
+    WWW::OpenResty, WWW::OpenResty::Simple.
 
