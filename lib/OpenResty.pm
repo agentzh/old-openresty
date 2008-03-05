@@ -1,6 +1,6 @@
 package OpenResty;
 
-our $VERSION = '0.000007';
+our $VERSION = '0.000008';
 
 use strict;
 use warnings;
@@ -504,11 +504,11 @@ __END__
 
 =head1 NAME
 
-OpenResty - Scriptable web service platform for web applications
+OpenResty - General-purpose web service platform for web applications
 
 =head1 VERSION
 
-This document describes OpenResty 0.0.7 released on Mar 5, 2008.
+This document describes OpenResty 0.0.8 released on Mar 5, 2008.
 
 =head1 DESCRIPTION
 
