@@ -1,6 +1,6 @@
 package OpenResty;
 
-our $VERSION = '0.000005';
+our $VERSION = '0.000006';
 
 use strict;
 use warnings;
@@ -505,6 +505,10 @@ __END__
 =head1 NAME
 
 OpenResty - General-Purpose Web Services for Web Applications
+
+=head1 VERSION
+
+This document describes OpenResty 0.0.6 released on Mar 5, 2008.
 
 =head1 DESCRIPTION
 

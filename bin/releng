@@ -62,15 +62,16 @@ for my $file (map glob, qw{ lib/*.pm lib/*/*.pm lib/*/*/*.pm lib/*/*/*/*.pm lib/
     while (<$in>) {
         my $ver;
         if (/(?x) \$VERSION \s* = .*? ([\d\.]*\d+)/) {
-            $ver = $1;
-            warn "$file: $ver\n";
+            my $orig_ver = $ver = $1;
+            $ver =~ s{^(\d+)\.(\d{3})(\d{3})?$}{join '.', int($1), int($2), int($3||0)}e;
+            warn "$file: $orig_ver ($ver)\n";
         } elsif (/This document describes \S+ ([\d\.]*\d+)/) {
-            $ver = $1;
-            warn "$file: $ver\n";
+            my $orig_ver = $ver = $1;
+            $ver =~ s{^(\d+)\.(\d{3})(\d{3})?$}{join '.', int($1), int($2), int($3||0)}e;
+            warn "$file: $orig_ver ($ver)\n";
         } elsif (/^version: (\d+.*)$/) {
             $ver = $1;
             warn "$file: $ver\n";
-            $ver =~ s/(\d+)\.(\d+)\.(\d+)/sprintf("%d.%03d%03d", $1, $2, $3)/ge;
         }
 
         if ($ver and $version) {
