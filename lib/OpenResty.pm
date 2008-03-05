@@ -383,6 +383,64 @@ sub emit_data {
     return $Dumper->($data);
 }
 
+sub has_role {
+    my ($self, $role) = @_;
+    _IDENT($role) or
+        die "Bad role name: ", $OpenResty::Dumper->($role), "\n";
+    my $select = OpenResty::SQL::Select->new('count(*)')
+        ->from('_roles')
+        ->where(name => Q($role))
+        ->limit(1);
+    return $self->select("$select")->[0][0];
+}
+
+sub current_user_can {
+    my ($self, $meth, $bits) = @_;
+    my @urls = $bits;
+    my $role = $self->{_role};
+    my $max_i = @$bits - 1;
+    while ($max_i >= 1) {
+        my @last_bits = @{ $urls[-1] };
+        if ($last_bits[$max_i] ne '~') {
+            $last_bits[$max_i] = '~';
+            push @urls, \@last_bits;
+        }
+    } continue { $max_i-- }
+    map { $_ = '/=/' . join '/', @$_ } @urls;
+    my $or_clause = join ' or ', map { "url = ".Q($_) } @urls;
+    my $sql = "select count(*) from _access_rules where role = ".
+        Q($role) . " and method = " . Q($meth) . " and ($or_clause);";
+    ### $sql
+    my $res = $self->select($sql);
+    return do { $res->[0][0] };
+}
+
+sub has_view {
+    my ($self, $view) = @_;
+
+    _IDENT($view) or die "Bad view name: $view\n";
+
+    my $select = OpenResty::SQL::Select->new('count(name)')
+        ->from('_views')
+        ->where(name => Q($view))
+        ->limit(1);
+    return $self->select("$select",)->[0][0];
+}
+
+sub has_model {
+    my ($self, $model) = @_;
+    _IDENT($model) or die "Bad model name: $model\n";
+    my $retval;
+    my $select = OpenResty::SQL::Select->new('count(name)')
+        ->from('_models')
+        ->where(name => Q($model))
+        ->limit(1);
+    eval {
+        $retval = $self->select("$select")->[0][0];
+    };
+    return $retval + 0;
+}
+
 sub has_user {
     my ($self, $user) = @_;
     return $Backend->has_user($user);
@@ -396,10 +454,6 @@ sub add_user {
 sub drop_user {
     my ($self, $user) = @_;
     $Backend->drop_user($user);
-}
-
-sub _IDENT {
-    (defined $_[0] && $_[0] =~ /^[A-Za-z]\w*$/) ? $_[0] : undef;
 }
 
 sub set_user {
@@ -650,7 +704,7 @@ For a complete list of the contributors, please see L<http://svn.openfoundry.org
 
 =head1 License and Copyright
 
-Copyright (c) 2008 by Yahoo! China EEEE Works, Alibaba Inc.
+Copyright (c) 2007, 2008 by Yahoo! China EEEE Works, Alibaba Inc.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.

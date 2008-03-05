@@ -1,10 +1,9 @@
-package OpenResty;
+package OpenResty::Handler::Captcha;
 
 #use Smart::Comments;
 use strict;
 use warnings;
 
-use vars qw( $UUID $Cache );
 use utf8;
 use Encode 'encode';
 
@@ -171,18 +170,18 @@ my @WordList = qw(
 
 # Create a normal image
 sub GET_captcha_column {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $col = $bits->[1];
     if ($col eq 'id') {
-        my $captcha_from_cookie = $self->{_captcha_from_cookie};
+        my $captcha_from_cookie = $openresty->{_captcha_from_cookie};
         if ($captcha_from_cookie) {
             $OpenResty::Cache->remove($captcha_from_cookie);
         }
 
-        my $id = $UUID->create_str;
-        $Cache->set($id => 1, 2 * 3600);  # expire in 2 h
+        my $id = $OpenResty::UUID->create_str;
+        $OpenResty::Cache->set($id => 1, 2 * 3600);  # expire in 2 h
 
-        $self->{_cookie} = { captcha => $id };
+        $openresty->{_cookie} = { captcha => $id };
         return $id;
     } else {
         die "Unknown captcha column: $col\n";
@@ -190,7 +189,7 @@ sub GET_captcha_column {
 }
 
 sub GET_captcha_value {
-    my ($self, $bits) = @_;
+    my ($self, $openresty, $bits) = @_;
     my $col = $bits->[1];
     my $value = $bits->[2];
 
@@ -205,20 +204,20 @@ sub GET_captcha_value {
     }
     if ($col eq 'id') {
         my $id = $value;
-        my $solution = $Cache->get($id);
+        my $solution = $OpenResty::Cache->get($id);
         if (defined $solution) {
-            my $lang = lc($self->{_cgi}->url_param('lang')) || 'en';
+            my $lang = lc($openresty->{_cgi}->url_param('lang')) || 'en';
             if ($lang eq 'cn') {
             #if ($solution eq '1') { # new ID, no solution yet
-                $solution = $self->gen_cn_solution;
-                $self->gen_cn_image($solution);
+                $solution = $self->gen_cn_solution($openresty);
+                $self->gen_cn_image($openresty, $solution);
             } elsif ($lang eq 'en') {
-                $solution = $self->gen_en_solution;
-                $self->gen_en_image($solution);
+                $solution = $self->gen_en_solution($openresty);
+                $self->gen_en_image($openresty, $solution);
             } else {
                 die "Unsupported lang (only cn and en allowed): $lang\n";
             }
-            $Cache->set($id => $solution, 2 * 3600);  # expire in 2 h
+            $OpenResty::Cache->set($id => $solution, 2 * 3600);  # expire in 2 h
             return;
         } else {
             die "Invalid captcha ID: $id\n";
@@ -229,7 +228,7 @@ sub GET_captcha_value {
 }
 
 sub gen_en_solution {
-    my ($self) = @_;
+    my ($self, $openresty) = @_;
     my $str = '';
     my $list = \@WordList;
     my ($i, $j) = (0, 0);
@@ -251,7 +250,7 @@ sub gen_en_solution {
 }
 
 sub gen_cn_solution {
-    my ($self) = @_;
+    my ($self, $openresty) = @_;
     my $str = '';
     my $list = \@CnWordList;
     my ($i, $j) = (0, 0);
@@ -274,7 +273,7 @@ sub gen_cn_solution {
 }
 
 sub gen_cn_image {
-    my ($self, $str) = @_;
+    my ($self, $openresty, $str) = @_;
     my $angle = int rand 4;
     my $captcha = GD::SecurityImage->new(
         width   => 100,
@@ -295,13 +294,13 @@ sub gen_cn_image {
     die "Failed to load ttf font for GD: $@\n" if $captcha->gdbox_empty;
     $captcha->particle(300); # : 1732);
     my ($image_data, $mime_type) = $captcha->out(compress => 1);
-    $self->{_bin_data} = $image_data;
-    $self->{_type} = "image/$mime_type";
+    $openresty->{_bin_data} = $image_data;
+    $openresty->{_type} = "image/$mime_type";
     ### $mime_type
 }
 
 sub gen_en_image {
-    my ($self, $str) = @_;
+    my ($self, $openresty, $str) = @_;
     my $angle = 2 + int rand 4;
     my $captcha = GD::SecurityImage->new(
         width   => 120,
@@ -323,8 +322,8 @@ sub gen_en_image {
     die "Failed to load ttf font for GD: $@\n" if $captcha->gdbox_empty;
     $captcha->particle(100); # : 1732);
     my ($image_data, $mime_type) = $captcha->out(compress => 1);
-    $self->{_bin_data} = $image_data;
-    $self->{_type} = "image/$mime_type";
+    $openresty->{_bin_data} = $image_data;
+    $openresty->{_type} = "image/$mime_type";
     ### $mime_type
 }
 

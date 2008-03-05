@@ -1,22 +1,30 @@
-package OpenResty;
+package OpenResty::Util;
 
 use strict;
 use warnings;
-use vars qw($Backend);
+
+use OpenResty::Limits;
+use base 'Exporter';
+
+our @EXPORT = qw( _IDENT  Q QI check_password slurp );
+
+sub _IDENT {
+    (defined $_[0] && $_[0] =~ /^[A-Za-z]\w*$/) ? $_[0] : undef;
+}
 
 sub Q (@) {
     if (@_ == 1) {
-        return $Backend->quote($_[0]);
+        return $OpenResty::Backend->quote($_[0]);
     } else {
-        return map { $Backend->quote($_) } @_;
+        return map { $OpenResty::Backend->quote($_) } @_;
     }
 }
 
 sub QI (@) {
     if (@_ == 1) {
-        return $Backend->quote_identifier($_[0]);
+        return $OpenResty::Backend->quote_identifier($_[0]);
     } else {
-        return map { $Backend->quote_identifier($_) } @_;
+        return map { $OpenResty::Backend->quote_identifier($_) } @_;
     }
 }
 

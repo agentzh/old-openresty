@@ -1,3 +1,6 @@
+0.0.6 Mar 5 2008
+* Restricted OpenResty::Handler::* within their own packages to help CPAN indexer.
+
 0.0.5 Mar 4 2008
 * Initial CPAN release
 
