@@ -18,6 +18,7 @@ bin/.*\.dat
 ^filter$
 ^font/wqy-zenhei.ttf
 ^grammar/Select\.pm$
+^doc/spec*
 ^minisql
 ^print\.txt$
 ^log.conf$
