@@ -1,8 +1,8 @@
 NAME
-    OpenResty - General-Purpose Web Services for Web Applications
+    OpenResty - General-purpose web service platform for web applications
 
 VERSION
-    This document describes OpenResty 0.0.7 released on Mar 5, 2008.
+    This document describes OpenResty 0.0.8 released on Mar 5, 2008.
 
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
@@ -13,10 +13,12 @@ DESCRIPTION
     distributive or desktop PostgreSQL databases. In particular, it provides
     models, views, roles, captchas to the users.
 
+    But note that OpenResty is *not* a web application framework like Jifty.
+
     We're already running an instance of the OpenResty server on our Yahoo!
     China's production machines:
 
-        http://resty.eeeeworks.org/=/version
+    <http://resty.eeeeworks.org/=/version>
 
     And there're several (pure-client-side) web sites alreadying taking
     advantage of the services:
