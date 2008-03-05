@@ -1,3 +1,6 @@
+0.0.7 Mar 5 2008
+* Renamed yuting++'s opensearch.pod to OpenResty::Spec::Arch_cn.
+
 0.0.6 Mar 5 2008
 * Restricted OpenResty::Handler::* within their own packages to help CPAN indexer.
 

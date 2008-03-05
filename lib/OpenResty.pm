@@ -1,6 +1,6 @@
 package OpenResty;
 
-our $VERSION = '0.000006';
+our $VERSION = '0.000007';
 
 use strict;
 use warnings;
@@ -508,7 +508,7 @@ OpenResty - General-Purpose Web Services for Web Applications
 
 =head1 VERSION
 
-This document describes OpenResty 0.0.6 released on Mar 5, 2008.
+This document describes OpenResty 0.0.7 released on Mar 5, 2008.
 
 =head1 DESCRIPTION
 
@@ -686,9 +686,15 @@ FOR DEVELOPER:
     lib/MiniSQL/ directory conatining our mini-sql parser code, now only SELECT support
     t/ directory containing OpenResty test suite, use `make test' to run the test, read above on how to setup test environment
 
-=head1 SEE ALSO
+=head1 SOURCE CONTROL
 
-L<WWW::OpenResty>, L<WWW::OpenResty::Simple>.
+For the very latest version of this module, check out the source from
+the SVN repos below:
+
+L<http://svn.openfoundry.org/openapi/trunk>
+
+There is anonymous access to all. If you'd like a commit bit, please let
+us know. :)
 
 =head1 AUTHOR
 
@@ -700,7 +706,7 @@ L<WWW::OpenResty>, L<WWW::OpenResty::Simple>.
 
 =item Laser Henry
 
-=item yuting C<< <yuting at alibaba-inc.com> >>
+=item yuting C<< <yuting at yahoo.cn> >>
 
 =back
 
@@ -714,4 +720,8 @@ This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+=head1 SEE ALSO
+
+L<WWW::OpenResty>, L<WWW::OpenResty::Simple>.
 

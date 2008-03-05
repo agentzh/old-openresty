@@ -40,13 +40,13 @@ OpenSearch 结构化数据存储和查询部分是完全由 PostgreSQL 支持的
 
 系统本身要是可扩充的,每个用户拥有其各自的独立空间,用户在系统内部是可迁移的(在节点之间是可迁移.)
 
+=back
 
 =head2 DESIGN BACKGROUND
 
-PE Team 长期对于理想Search系统的孜孜不倦的追求.  这个理想的系统具备的特征是, 高度可扩展的,支持丰富索引类型的,数据之间在系统内部可以建立关系的,容易运维的系统. 
+PE Team 长期对于理想Search系统的孜孜不倦的追求.  这个理想的系统具备的特征是, 高度可扩展的,支持丰富索引类型的,数据之间在系统内部可以建立关系的,容易运维的系统.
 
-
-=head1 Data stream 
+=head1 Data stream
 
 =head1 System operate type.
 
