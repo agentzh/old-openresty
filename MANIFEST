@@ -123,7 +123,6 @@ lib/OpenResty/SQL/Statement.pm
 lib/OpenResty/SQL/Update.pm
 lib/OpenResty/Util.pm
 lib/WWW/OpenResty/Embedded.pm
-log.conf
 Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
