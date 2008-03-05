@@ -3,11 +3,11 @@ use strict;
 use warnings;
 
 use Test::More tests => 6;
-BEGIN { use_ok('SQL::Update'); }
+BEGIN { use_ok('OpenResty::SQL::Update'); }
 
 sub _Q { "'$_[0]'" }
 
-my $update = SQL::Update->new;
+my $update = OpenResty::SQL::Update->new;
 $update->update( 'models' )
        ->set( 'abc' => '"howdy"' );
 

@@ -97,7 +97,6 @@ inc/Test/Base/Filter.pm
 inc/Test/Builder.pm
 inc/Test/Builder/Module.pm
 inc/Test/More.pm
-lib/MiniSQL/Select.pm
 lib/OpenResty.pm
 lib/OpenResty/Backend.pm
 lib/OpenResty/Backend/Base.pm
@@ -116,12 +115,13 @@ lib/OpenResty/Handler/Role.pm
 lib/OpenResty/Handler/Version.pm
 lib/OpenResty/Handler/View.pm
 lib/OpenResty/Limits.pm
+lib/OpenResty/MiniSQL/Select.pm
 lib/OpenResty/Server.pm
+lib/OpenResty/SQL/Insert.pm
+lib/OpenResty/SQL/Select.pm
+lib/OpenResty/SQL/Statement.pm
+lib/OpenResty/SQL/Update.pm
 lib/OpenResty/Util.pm
-lib/SQL/Insert.pm
-lib/SQL/Select.pm
-lib/SQL/Statement.pm
-lib/SQL/Update.pm
 lib/WWW/OpenResty/Embedded.pm
 log.conf
 Makefile.PL
