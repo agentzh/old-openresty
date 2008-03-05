@@ -6,6 +6,7 @@ bin/import-model.pl
 bin/openresty
 bin/perf
 bin/reindex
+bin/releng
 bin/repeat
 bin/revision.pl
 carrie_init.pl
