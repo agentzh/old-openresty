@@ -1,5 +1,0 @@
-2007-12-28	 finished first draf of view support [laser]
- 		 added Backend directory to put database access layer code. [laser]
-		 added ChangeLogs files,
-		 changed README
-		 in lib/OpenAPI.pm: change $Backend->select to $self->select to make less confision
