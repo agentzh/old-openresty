@@ -520,7 +520,7 @@ But note that OpenResty is I<not> a web application framework like L<Jifty>.
 
 We're already running an instance of the OpenResty server on our Yahoo! China's production machines:
 
-    http://resty.eeeeworks.org/=/version
+L<http://resty.eeeeworks.org/=/version>
 
 And there're several (pure-client-side) web sites alreadying taking advantage of the services:
 
