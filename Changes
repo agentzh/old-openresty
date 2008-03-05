@@ -1,3 +1,6 @@
+0.0.9 Mar 5 2008
+* Renamed doc/cheat-sheet.txt to OpenResty::CheatSheet.
+
 0.0.8 Mar 5 2008
 * minor tweaks in POD
 
