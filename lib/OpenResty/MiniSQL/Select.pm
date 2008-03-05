@@ -7,7 +7,7 @@
 #             ANY CHANGE MADE HERE WILL BE LOST !
 #
 ####################################################################
-package MiniSQL::Select;
+package OpenResty::MiniSQL::Select;
 use vars qw ( @ISA );
 use strict;
 

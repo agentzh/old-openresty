@@ -8,13 +8,13 @@ define CMDS
     bin/perf
 endef
 
-all: doc/spec.html doc/spec_cn.html lib/MiniSQL/Select.pm
+all: doc/spec.html doc/spec_cn.html lib/OpenResty/MiniSQL/Select.pm
 
 doc/%.html: doc/%.pod
 	podhtm.pl --index --charset UTF-8 --css perl.css -o $@ $<
 
-lib/MiniSQL/Select.pm: grammar/Select.yp
-	yapp -m MiniSQL::Select -o $@ $<
+lib/OpenResty/MiniSQL/Select.pm: grammar/Select.yp
+	yapp -m OpenResty::MiniSQL::Select -o $@ $<
 
 test: all
 	$(CMDS)
@@ -28,7 +28,7 @@ debug: all
 	sudo echo > /var/log/lighttpd/error.log
 	perl -c bin/openresty.pl
 	sudo /etc/init.d/lighttpd restart
-	-time prove -Ilib $@ 
+	-time prove -Ilib $@
 	cat /var/log/lighttpd/error.log | egrep -v '^$$'
 
 force:
