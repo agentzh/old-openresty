@@ -702,7 +702,7 @@ us know. :)
 
 =over
 
-=item agentzh C<< <agentzh at yahoo.cn> >>
+=item Agent Zhang (agentzh) C<< <agentzh at yahoo.cn> >>
 
 =item leiyh
 
@@ -725,5 +725,5 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 =head1 SEE ALSO
 
-L<WWW::OpenResty>, L<WWW::OpenResty::Simple>.
+L<OpenResty::Spec::REST>, L<OpenResty::CheatSheet>, L<WWW::OpenResty>, L<WWW::OpenResty::Simple>.
 
