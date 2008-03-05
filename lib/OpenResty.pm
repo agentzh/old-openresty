@@ -504,7 +504,7 @@ __END__
 
 =head1 NAME
 
-OpenResty - General-Purpose Web Services for Web Applications
+OpenResty - Scriptable web service platform for web applications
 
 =head1 VERSION
 
