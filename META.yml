@@ -17,6 +17,11 @@ no_index:
   directory: 
     - etc
     - tmp
+    - demo
+    - minisql
+    - clients
+    - doc
+    - t
     - inc
     - t
 recommends: 
@@ -27,9 +32,10 @@ recommends:
   Smart::Comments: 0
 requires: 
   CGI::Simple: 1.103
+  Cache::Memcached::Fast: 0.06
   Clone: 0.22
   Config::Simple: 0
-  Cookie::XS: 0
+  Cookie::XS: 0.06
   DBD::Pg: 1.49
   DBI: 1.57
   Data::UUID: 1.148
@@ -39,7 +45,6 @@ requires:
   List::Util: 0
   Params::Util: 0.22
   Parse::Yapp: 0
-  Term::ReadKey: 2.30
   YAML::Syck: 1.04
   perl: 5.6.1
-version: 0.0.5
+version: 0.0.6

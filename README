@@ -1,6 +1,9 @@
 NAME
     OpenResty - General-Purpose Web Services for Web Applications
 
+VERSION
+    This document describes OpenResty 0.0.6 released on Mar 5, 2008.
+
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
     It provides scriptable and extensible web services for both server-side
@@ -189,7 +192,7 @@ AUTHOR
     <http://svn.openfoundry.org/openapi/trunk/AUTHORS>.
 
 License and Copyright
-    Copyright (c) 2008 by Yahoo! China EEEE Works, Alibaba Inc.
+    Copyright (c) 2007, 2008 by Yahoo! China EEEE Works, Alibaba Inc.
 
     This module is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself. See perlartistic.

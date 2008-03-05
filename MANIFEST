@@ -68,10 +68,7 @@ demo/YisouComments/print.txt
 demo/YisouComments/storage.js
 demo/YisouComments/style3.css
 dev.mk
-doc/api.html
 doc/cheat-sheet.txt
-doc/opensearch.pod
-doc/perl.css
 etc/openresty.conf
 grammar/Select.yp
 inc/Module/AutoInstall.pm
@@ -113,6 +110,7 @@ lib/OpenResty/Handler/View.pm
 lib/OpenResty/Limits.pm
 lib/OpenResty/MiniSQL/Select.pm
 lib/OpenResty/Server.pm
+lib/OpenResty/Spec/Arch_cn.pod
 lib/OpenResty/Spec/REST.pod
 lib/OpenResty/Spec/REST_cn.pod
 lib/OpenResty/SQL/Insert.pm
