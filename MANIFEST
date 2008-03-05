@@ -68,7 +68,6 @@ demo/YisouComments/print.txt
 demo/YisouComments/storage.js
 demo/YisouComments/style3.css
 dev.mk
-doc/cheat-sheet.txt
 etc/openresty.conf
 grammar/Select.yp
 inc/Module/AutoInstall.pm
