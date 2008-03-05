@@ -14,9 +14,9 @@ use Params::Util qw(_HASH _STRING _ARRAY0 _ARRAY _SCALAR);
 use Encode qw(from_to encode decode);
 use DBI;
 
-use SQL::Select;
-use SQL::Update;
-use SQL::Insert;
+use OpenResty::SQL::Select;
+use OpenResty::SQL::Update;
+use OpenResty::SQL::Insert;
 
 use OpenResty::Backend;
 use OpenResty::Limits;

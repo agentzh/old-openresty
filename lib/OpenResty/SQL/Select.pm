@@ -1,8 +1,8 @@
-package SQL::Select;
+package OpenResty::SQL::Select;
 
 use strict;
 use warnings;
-use base 'SQL::Statement';
+use base 'OpenResty::SQL::Statement';
 #use Smart::Comments;
 
 sub new {

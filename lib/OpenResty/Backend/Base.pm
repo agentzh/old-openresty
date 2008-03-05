@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 #use Smart::Comments;
-use SQL::Insert;
+use OpenResty::SQL::Insert;
 
 my %DefaultRules = (
     Admin => [
@@ -131,7 +131,7 @@ values ('Public', 'Anonymous', 'anonymous');
 _EOC_
     while (my ($role, $rules) = each %DefaultRules) {
         for my $rule (@$rules) {
-            my $insert = SQL::Insert->new("$user._access_rules")
+            my $insert = OpenResty::SQL::Insert->new("$user._access_rules")
                 ->cols(qw< role method url >)
                 ->values("'$role'", "'$rule->[0]'", "'/=/$rule->[1]'");
             $sql .= $insert;
