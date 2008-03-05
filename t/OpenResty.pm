@@ -24,8 +24,11 @@ use Encode 'from_to';
 
 our @EXPORT = qw(init do_request run_tests run_test);
 
-use Benchmark::Timer;
-my $timer = Benchmark::Timer->new();
+my $timer;
+eval {
+    require Benchmark::Timer;
+    $timer = Benchmark::Timer->new();
+};
 my $SavedCapture;
 
 our $server = $ENV{'OPENAPI_TEST_SERVER'} ||
@@ -128,18 +131,20 @@ END {
     use Hash::Merge 'merge';
     #use Data::Dumper;
     #warn scalar $timer->reports;
-    my $file = "t/cur-timer.dat";
-    my $cur_data = $timer->data;
-    if (!$cur_data) {
-        return;
+    if ($timer) {
+        my $file = "t/cur-timer.dat";
+        my $cur_data = $timer->data;
+        if (!$cur_data) {
+            return;
+        }
+        $cur_data = { @$cur_data };
+        #warn Dumper($cur_data);
+        if (-f $file) {
+            my $last_data = LoadFile($file);
+            $cur_data = merge($cur_data, $last_data);
+        }
+        DumpFile($file, $cur_data);
     }
-    $cur_data = { @$cur_data };
-    #warn Dumper($cur_data);
-    if (-f $file) {
-        my $last_data = LoadFile($file);
-        $cur_data = merge($cur_data, $last_data);
-    }
-    DumpFile($file, $cur_data);
 }
 
 1;

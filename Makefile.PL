@@ -55,9 +55,9 @@ if ($arg eq 'product') {
     build_requires      ('Class::Prototyped');
     build_requires      ('Test::LongString' => 0.11);
     build_requires      ('LWP::UserAgent');
+    build_requires      ('Cache::Cache' => '1.05');
     recommends          ('Cache::FastMmap' => '1.24');
     recommends          ('Benchmark::Timer');
-    recommends          ('Cache::Cache' => '1.05');
     recommends          ('Smart::Comments');
     recommends          ('HTTP::Server::Simple' => '0.27');
 } else {
