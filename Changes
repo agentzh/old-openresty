@@ -1,6 +1,9 @@
 0.0.10 Mar 6 2008
 * No longer croak on the INSTALLDIRS=site argument and others fed to Makefile.PL
 * Various improments to the POD.
+* Moved "use Data::UUID" from OpenResty::Dispatcher to OpenResty.pm.
+* Fixed the InitalFatal in OpenResty::connect bug.
+* Fixed a bug in WWW::OpenResty::Embedded by requiring HTTP::Response 1.53
 
 0.0.9 Mar 5 2008
 * Renamed doc/cheat-sheet.txt to OpenResty::CheatSheet.
