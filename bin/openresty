@@ -10,8 +10,8 @@ use OpenResty::Dispatcher;
 use OpenResty::Limits;
 use Getopt::Std;
 
-my $cmd = lc(shift) || $ENV{OPENAPI_COMMAND} || 'fastcgi';
-$ENV{OPENAPI_COMMAND} = $cmd;
+my $cmd = lc(shift) || $ENV{OPENRESTY_COMMAND} || 'fastcgi';
+$ENV{OPENRESTY_COMMAND} = $cmd;
 
 eval {
     OpenResty::Dispatcher->init;

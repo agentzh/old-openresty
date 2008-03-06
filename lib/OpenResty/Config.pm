@@ -19,7 +19,7 @@ sub init {
         die "Cannot open config file $path\n";
     my $site_vars = $config->vars;
     my $vars = Hash::Merge::merge($site_vars, $default_vars);
-    my $cmd = $ENV{OPENAPI_COMMAND};
+    my $cmd = $ENV{OPENRESTY_COMMAND};
     my $do_echo;
     if ($cmd and $cmd eq 'start') { $do_echo = 1; }
     while (my ($key, $val) = each %$vars) {

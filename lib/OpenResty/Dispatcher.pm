@@ -38,7 +38,7 @@ my %Dispatcher = (
     version => [ qw< version > ],
 );
 
-my $url_prefix = $ENV{OPENAPI_URL_PREFIX};
+my $url_prefix = $ENV{OPENRESTY_URL_PREFIX};
 if ($url_prefix) {
     $url_prefix =~ s{^/+|/+$}{}g;
 }
