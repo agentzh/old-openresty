@@ -45,10 +45,11 @@ if ($arg eq 'product') {
                 recommends    ('Class::Prototyped'),
                 recommends    ('Test::LongString'),
                 recommends    ('LWP::UserAgent'),
+                recommends    ('HTTP::Response' => '1.53'),
                 recommends    ('Benchmark::Timer'),
                 recommends    ('HTTP::Server::Simple' => '0.27'),
                 recommends    ('WWW::OpenResty' => '0.01'),
-                recommends    ('Text::Diff');
+                recommends    ('Text::Diff'),
         ]
     );
 } elsif ($arg eq 'devel') {
@@ -57,6 +58,7 @@ if ($arg eq 'product') {
     build_requires      ('Test::LongString');
     build_requires      ('Text::Diff');
     build_requires      ('LWP::UserAgent');
+    build_requires      ('HTTP::Response' => '1.53');
     build_requires      ('Cache::Cache' => '1.05');
     recommends          ('Cache::FastMmap' => '1.24');
     recommends          ('Benchmark::Timer');
