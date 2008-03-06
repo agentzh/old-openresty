@@ -51,6 +51,8 @@ sub init {
         $OpenResty::Cache = OpenResty::Cache->new;
         OpenResty->connect($backend);
     };
+    if ($@) { $InitFatal = $@; }
+
     if (my $filtered = $OpenResty::Config{'frontend.filtered'}) {
         #warn "HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
         use lib "$FindBin::Bin/../../../openresty-filter-qp/trunk/lib";
@@ -61,9 +63,6 @@ sub init {
         }
         #### %OpenResty::AccountFiltered
         ### $filtered
-    }
-    if ($@) {
-        $InitFatal = $@;
     }
 }
 
