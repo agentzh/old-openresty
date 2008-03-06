@@ -30,7 +30,7 @@ sub GET_version {
         }
         $backend .= " ($host)";
     }
-    (my $ver = $OpenResty::VERSION) =~ s/(\d+)\.0*(\d+).0*(\d+)/$1\.$2\.$3/;
+    (my $ver = $OpenResty::VERSION) =~ s{^(\d+)\.(\d{3})(\d{3})?$}{join '.', int($1), int($2), int($3||0)}e;
     return "OpenResty $ver (revision $Revision) with the $backend backend.\nCopyright (c) 2007-2008 by Yahoo! China EEEE Works, Alibaba Inc.\n";
 }
 
