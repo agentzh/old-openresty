@@ -9,7 +9,7 @@ perl_version        ('5.006001');
 all_from            ('lib/OpenResty.pm');
 
 my $arg = 'devel';
-if ($ARGV[0] ne 'releng' && $ARGV[0] !~ /^[A-Za-z]+=\S+/) {
+if (@ARGV && $ARGV[0] ne 'releng' && $ARGV[0] !~ /^[A-Za-z]+=\S+/) {
     $arg = shift;
 }
 
@@ -43,17 +43,19 @@ if ($arg eq 'product') {
                 recommends    ('Cache::Cache' => '1.05'),
                 recommends    ('Smart::Comments'),
                 recommends    ('Class::Prototyped'),
-                recommends    ('Test::LongString' => 0.11),
+                recommends    ('Test::LongString'),
                 recommends    ('LWP::UserAgent'),
                 recommends    ('Benchmark::Timer'),
                 recommends    ('HTTP::Server::Simple' => '0.27'),
                 recommends    ('WWW::OpenResty' => '0.01'),
+                recommends    ('Text::Diff');
         ]
     );
 } elsif ($arg eq 'devel') {
     build_requires      ('CGI' => '3.33');
     build_requires      ('Class::Prototyped');
-    build_requires      ('Test::LongString' => 0.11);
+    build_requires      ('Test::LongString');
+    build_requires      ('Text::Diff');
     build_requires      ('LWP::UserAgent');
     build_requires      ('Cache::Cache' => '1.05');
     recommends          ('Cache::FastMmap' => '1.24');
