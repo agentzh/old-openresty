@@ -1,3 +1,7 @@
+0.0.10 Mar 6 2008
+* No longer croak on the INSTALLDIRS=site argument and others fed to Makefile.PL
+* Various improments to the POD.
+
 0.0.9 Mar 5 2008
 * Renamed doc/cheat-sheet.txt to OpenResty::CheatSheet.
 

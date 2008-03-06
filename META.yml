@@ -3,6 +3,7 @@ abstract: General-purpose web service platform for web applications
 author: Agent Zhang <agentzh@yahoo.cn>
 build_requires: 
   CGI: 3.33
+  Cache::Cache: 1.05
   Class::Prototyped: 0
   LWP::UserAgent: 0
   Test::LongString: 0.11
@@ -26,7 +27,6 @@ no_index:
     - t
 recommends: 
   Benchmark::Timer: 0
-  Cache::Cache: 1.05
   Cache::FastMmap: 1.24
   HTTP::Server::Simple: 0.27
   Smart::Comments: 0
@@ -47,4 +47,4 @@ requires:
   Parse::Yapp: 0
   YAML::Syck: 1.04
   perl: 5.6.1
-version: 0.0.9
+version: 0.0.10
