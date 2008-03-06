@@ -9,7 +9,7 @@ perl_version        ('5.006001');
 all_from            ('lib/OpenResty.pm');
 
 my $arg = 'devel';
-if (@ARGV && $ARGV[0] ne 'releng' && $ARGV[0] !~ /^[A-Za-z]+=\S+/) {
+if (@ARGV && $ARGV[0] ne 'releng' && $ARGV[0] !~ /=/) {
     $arg = shift;
 }
 
