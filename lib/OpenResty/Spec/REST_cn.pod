@@ -735,7 +735,10 @@ minisql 与 SQL 的语法非常近似，不同的是它是大小写敏感的。
 OpenResty 中的视图 (Views) 与数据库中的视图比较近似，但不同的是它是可以带参数的。比如：
 
     POST /=/view/MyQuery
-    "select * from CComment where name = $name and parent_id = $parent_id"
+    {
+      description: "This is my first view",
+      definition: "select * from CComment where name = $name and parent_id = $parent_id"
+    }
 
 此时便创建了一个名为 MyQuery 的 OpenResty 视图对象。
 该视图返回的结果是由一个带特殊变量的 minisql 语句来指定的。
@@ -753,7 +756,10 @@ C<$name> 和 C<$parent_id> 都是参数变量。
 视图参量可以带缺省值，例如：
 
     POST /=/view/MyQuery
-    "select * from CComment where name = $name|'Foo' and parent_id = $parent_id|'Blah'"
+    {
+      description: "This is my second view",
+      definition: "select * from CComment where name = $name|'Foo' and parent_id = $parent_id|'Blah'"
+    }
 
 这样调用 MyQuery 的时候如果不提供参量，也不会报错：
 
