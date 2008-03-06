@@ -7,6 +7,7 @@
 * Fixed the view creation syntax in REST_cn.pod.
 * Fixed bin/openresty in dev.mk
 * Fixed a bug in the Version handler (regarding the version number with 3 fields)
+* Renamed the various OPENAPI_* environments to OPENRESTY_*
 
 0.0.9 Mar 5 2008
 * Renamed doc/cheat-sheet.txt to OpenResty::CheatSheet.
