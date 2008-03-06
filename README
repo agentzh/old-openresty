@@ -7,13 +7,16 @@ VERSION
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
     It provides scriptable and extensible web services for both server-side
-    and client-side (AJAX only) web applications.
+    and client-side (pure AJAX) web applications.
 
     Currently this module can serve as a public web interface to a
-    distributive or desktop PostgreSQL databases. In particular, it provides
-    models, views, roles, captchas to the users.
+    distributive or desktop PostgreSQL database system. In particular, it
+    provides roles, models, views, actions, captchas, the minisql language,
+    and many more to the web users.
 
-    But note that OpenResty is *not* a web application framework like Jifty.
+    Note that OpenResty is *not* a web application framework like Jifty.
+    Rather, it can serve as a component in many existing web application
+    frameworks.
 
     We're already running an instance of the OpenResty server on our Yahoo!
     China's production machines:
@@ -34,13 +37,11 @@ DESCRIPTION
     please check back often ;)
 
 INSTALLATION
-    SETUP TEST ENVIRONMENT:
-
     This is a basic guideline for settting up an OpenResty server on your
     own machine. Someone has succeeded in setting up one on Windows XP using
     ActivePerl 5.8.8. The normal development environment is Linux though. If
-    you have any particular question, feel free to ask us by sending mails
-    to agentzh@yahoo.cn :)
+    you have any particular question, feel free to ask us by sending an
+    email to the authors.
 
     1.  Grab the openresty package and unpack it in some place, let's say
         it's openresty.
@@ -52,14 +53,14 @@ INSTALLATION
             $ perl Makefile.PL
             $ sudo make  # This will install missing dependencies
 
-        To run "make test" or "make debug", you need to have lighttpd and
-        PostgreSQL database installed.
+        To run "make test" or "make debug -f dev.mk", you need to have
+        lighttpd and PostgreSQL database installed.
 
         for PostgreSQL database, you need to prepare a PostgreSQL account
-        (i.e., 'agentzh); and you need to create an empty database (i.e.
-        test), and you need to create a store precedure language plpgsql for
-        that database, contact your PostgreSQL DBA for it or read PostgreSQL
-        manuel.
+        (e.g. "agentzh"); and you need to create an empty database (e.g.,
+        "test"), and you need to create a store precedure language named
+        "plpgsql" for that database, contact your PostgreSQL DBA for it or
+        read PostgreSQL manuel.
 
         Basically, they are command like:
 
@@ -97,16 +98,16 @@ INSTALLATION
             $ bin/openresty deluser tester
             $ bin/openresty adduser tester
 
-        Give a password (say, blahblahblah) to its Admin role. Update your
+        Give a password (say, "password") to its Admin role. Update your
         etc/site_openresty.conf to reflect your these settings:
 
             [test_suite]
             use_http=0
-            server=tester:blahblahblah@localhost
+            server=tester:password@localhost
 
         Now you can already run the test suite without a lighttpd server:
 
-            $ prove -Ilib -Iinc -r t
+            $ make test
 
     7.  Sample lighttpd configuration:
 
@@ -147,12 +148,12 @@ INSTALLATION
 
     Or use prove to test a remote OpenResty server, for example:
 
-        OPENAPI_FRONTEND=10.62.136.86 prove t/0*.t
+        OPENAPI_FRONTEND=teser:password@10.62.136.86 prove -Ilib -r t
 
     where 10.62.136.86 is the IP (or hostname or URL) of your OpenResty
     server being tested.
 
-    To test the Pg cluster rather than the desktop Pg, change your
+    To test the Pg cluster rather than the desktop Pg, update your
     etc/site_openresty.conf:
 
         [backend]
@@ -160,8 +161,7 @@ INSTALLATION
 
     and also set other items in the same group if necessary.
 
-    FOR DEVELOPER:
-
+SOURCE TREE STRUCTURE
         bin/ directory is the where CGI entry openresty located
         doc/ directory containing OpenResty spec
         lib/OpenResty/ directory contain all the code needed to run OpenResty
@@ -190,11 +190,22 @@ SOURCE CONTROL
     There is anonymous access to all. If you'd like a commit bit, please let
     us know. :)
 
+TODO
+    For the project's TODO list, please check out
+    <http://svn.openfoundry.org/openapi/trunk/TODO>
+
+BUGS
+    There must be some serious bugs lurking somewhere given the current
+    status of the implementation and test suite.
+
+    Please report bugs or send wish-list to
+    <http://rt.cpan.org/NoAuth/Bugs.html?Dist=OpenResty>.
+
 AUTHOR
     Agent Zhang (agentzh) "<agentzh at yahoo.cn>"
-    leiyh
-    Laser Henry
-    yuting "<yuting at yahoo.cn>"
+    Lei Yonghua (leiyh)
+    Laser Henry (laser)
+    Yu Ting (yuting) "<yuting at yahoo.cn>"
 
     For a complete list of the contributors, please see
     <http://svn.openfoundry.org/openapi/trunk/AUTHORS>.
@@ -203,7 +214,7 @@ License and Copyright
     Copyright (c) 2007, 2008 by Yahoo! China EEEE Works, Alibaba Inc.
 
     This module is free software; you can redistribute it and/or modify it
-    under the same terms as Perl itself. See perlartistic.
+    under the same terms as Perl itself.
 
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
     OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

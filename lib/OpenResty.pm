@@ -512,11 +512,11 @@ This document describes OpenResty 0.0.9 released on Mar 5, 2008.
 
 =head1 DESCRIPTION
 
-This module implements the server-side OpenResty web service protocol. It provides scriptable and extensible web services for both server-side and client-side (AJAX only) web applications.
+This module implements the server-side OpenResty web service protocol. It provides scriptable and extensible web services for both server-side and client-side (pure AJAX) web applications.
 
-Currently this module can serve as a public web interface to a distributive or desktop PostgreSQL databases. In particular, it provides models, views, roles, captchas to the users.
+Currently this module can serve as a public web interface to a distributive or desktop PostgreSQL database system. In particular, it provides roles, models, views, actions, captchas, the minisql language, and many more to the web users.
 
-But note that OpenResty is I<not> a web application framework like L<Jifty>.
+Note that OpenResty is I<not> a web application framework like L<Jifty>. Rather, it can serve as a component in many existing web application frameworks.
 
 We're already running an instance of the OpenResty server on our Yahoo! China's production machines:
 
@@ -540,9 +540,7 @@ This library is still in B<pre-alpha> stage and the API is still in flux. We're 
 
 =head1 INSTALLATION
 
-SETUP TEST ENVIRONMENT:
-
-This is a basic guideline for settting up an OpenResty server on your own machine. Someone has succeeded in setting up one on Windows XP using ActivePerl 5.8.8. The normal development environment is Linux though. If you have any particular question, feel free to ask us by sending mails to agentzh@yahoo.cn :)
+This is a basic guideline for settting up an OpenResty server on your own machine. Someone has succeeded in setting up one on Windows XP using ActivePerl 5.8.8. The normal development environment is Linux though. If you have any particular question, feel free to ask us by sending an email to the authors.
 
 =over
 
@@ -558,9 +556,10 @@ Enter the openresty directory, run "perl Makefile.PL" to check missing dependenc
     $ perl Makefile.PL
     $ sudo make  # This will install missing dependencies
 
-To run "make test" or "make debug", you need to have lighttpd and PostgreSQL database installed.
+To run "make test" or "make debug -f dev.mk", you need to have lighttpd and PostgreSQL database installed.
 
-for PostgreSQL database, you need to prepare a PostgreSQL account (i.e., 'agentzh); and you need to create an empty database (i.e. test), and you need to create a store precedure language plpgsql for that database, contact your PostgreSQL DBA for it or read PostgreSQL manuel.
+for PostgreSQL database, you need to prepare a PostgreSQL account (e.g.
+"agentzh"); and you need to create an empty database (e.g., "test"), and you need to create a store precedure language named "plpgsql" for that database, contact your PostgreSQL DBA for it or read PostgreSQL manuel.
 
 Basically, they are command like:
 
@@ -570,7 +569,7 @@ Basically, they are command like:
 
 =item 3.
 
-Edit your etc/site_openresty.conf file, change the configure settings
+Edit your F<etc/site_openresty.conf> file, change the configure settings
 under [backend] section according to your previous settings. The default settings look like this:
 
     [backend]
@@ -602,15 +601,15 @@ Create a "tester" user account for our test suite in OpenResty (drop it if it al
     $ bin/openresty deluser tester
     $ bin/openresty adduser tester
 
-Give a password (say, blahblahblah) to its Admin role. Update your etc/site_openresty.conf to reflect your these settings:
+Give a password (say, "password") to its Admin role. Update your F<etc/site_openresty.conf> to reflect your these settings:
 
     [test_suite]
     use_http=0
-    server=tester:blahblahblah@localhost
+    server=tester:password@localhost
 
 Now you can already run the test suite without a lighttpd server:
 
-    $ prove -Ilib -Iinc -r t
+    $ make test
 
 =item 7.
 
@@ -655,19 +654,19 @@ It's also possible to debug a simple .t file, for instance,
 
 Or use prove to test a remote OpenResty server, for example:
 
-    OPENAPI_FRONTEND=10.62.136.86 prove t/0*.t
+    OPENAPI_FRONTEND=teser:password@10.62.136.86 prove -Ilib -r t
 
 where 10.62.136.86 is the IP (or hostname or URL) of your OpenResty server
 being tested.
 
-To test the Pg cluster rather than the desktop Pg, change your etc/site_openresty.conf:
+To test the Pg cluster rather than the desktop Pg, update your F<etc/site_openresty.conf>:
 
     [backend]
     type=PgFarm
 
 and also set other items in the same group if necessary.
 
-FOR DEVELOPER:
+=head1 SOURCE TREE STRUCTURE
 
     bin/ directory is the where CGI entry openresty located
     doc/ directory containing OpenResty spec
@@ -698,17 +697,28 @@ L<http://svn.openfoundry.org/openapi/trunk>
 There is anonymous access to all. If you'd like a commit bit, please let
 us know. :)
 
+=head1 TODO
+
+For the project's TODO list, please check out L<http://svn.openfoundry.org/openapi/trunk/TODO>
+
+=head1 BUGS
+
+There must be some serious bugs lurking somewhere given the current status of the implementation and test suite.
+
+Please report bugs or send wish-list to
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=OpenResty>.
+
 =head1 AUTHOR
 
 =over
 
 =item Agent Zhang (agentzh) C<< <agentzh at yahoo.cn> >>
 
-=item leiyh
+=item Lei Yonghua (leiyh)
 
-=item Laser Henry
+=item Laser Henry (laser)
 
-=item yuting C<< <yuting at yahoo.cn> >>
+=item Yu Ting (yuting) C<< <yuting at yahoo.cn> >>
 
 =back
 
@@ -719,7 +729,7 @@ For a complete list of the contributors, please see L<http://svn.openfoundry.org
 Copyright (c) 2007, 2008 by Yahoo! China EEEE Works, Alibaba Inc.
 
 This module is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself. See L<perlartistic>.
+modify it under the same terms as Perl itself.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
