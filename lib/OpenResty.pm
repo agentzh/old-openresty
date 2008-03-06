@@ -630,8 +630,8 @@ Sample lighttpd configuration:
                 "check-local"  => "disable",
                 "bin-path"     => "/PATH/TO/YOUR/bin/openresty",
                 "bin-environment" => (
-                    "OPENAPI_URL_PREFIX" => "",
-                    "OPENAPI_COMMAND" => "fastcgi",
+                    "OPENRESTY_URL_PREFIX" => "",
+                    "OPENRESTY_COMMAND" => "fastcgi",
                 ),
                 "min-procs"    => 1,
                 "max-procs"    => 5,
@@ -653,9 +653,9 @@ It's also possible to debug a simple .t file, for instance,
 
     make t/01-sanity.t -f dev.mk
 
-Or use prove to test a remote OpenResty server, for example:
+Or use the OPENRESTY_TEST_SERVER environment to test a remote OpenResty server, for example:
 
-    OPENAPI_FRONTEND=teser:password@10.62.136.86 prove -Ilib -r t
+    OPENRESTY_TEST_SERVER=teser:password@10.62.136.86 prove -Ilib -r t
 
 where 10.62.136.86 is the IP (or hostname or URL) of your OpenResty server
 being tested.

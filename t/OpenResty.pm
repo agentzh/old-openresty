@@ -31,7 +31,7 @@ eval {
 };
 my $SavedCapture;
 
-our $server = $ENV{'OPENAPI_TEST_SERVER'} ||
+our $server = $ENV{'OPENRESTY_TEST_SERVER'} ||
     $OpenResty::Config{'test_suite.server'} or
     die "No server specified.\n";
 our ($user, $password, $host);

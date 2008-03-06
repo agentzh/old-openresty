@@ -77,7 +77,7 @@ sub login_by_sql {
         }
         # XXX for testing purpose...
         ### Account:  $account;
-        my $server = $ENV{OPENAPI_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
+        my $server = $ENV{OPENRESTY_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
         if ($OpenResty::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
             if ($true_sol =~ /[a-z]/) {
                 $true_sol = 'hello world ';
@@ -178,7 +178,7 @@ sub login_by_perl {
         }
         # XXX for testing purpose...
         ### Account:  $account;
-        my $server = $ENV{OPENAPI_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
+        my $server = $ENV{OPENRESTY_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
         if ($OpenResty::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
             if ($true_sol =~ /[a-z]/) {
                 $true_sol = 'hello world ';
