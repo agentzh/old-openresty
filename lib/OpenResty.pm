@@ -6,6 +6,7 @@ use strict;
 use warnings;
 
 #use Smart::Comments;
+use Data::UUID;
 use YAML::Syck ();
 use JSON::Syck ();
 

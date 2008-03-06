@@ -5,7 +5,6 @@ use warnings;
 
 #use Smart::Comments '####';
 use Cookie::XS;
-use Data::UUID;
 use OpenResty::Limits;
 use OpenResty::Cache;
 use OpenResty;
