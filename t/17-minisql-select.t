@@ -2,7 +2,7 @@
 
 use Test::Base;
 
-use Smart::Comments;
+#use Smart::Comments;
 use lib 'lib';
 use OpenResty::MiniSQL::Select;
 
