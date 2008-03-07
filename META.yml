@@ -5,8 +5,10 @@ build_requires:
   CGI: 3.33
   Cache::Cache: 1.05
   Class::Prototyped: 0
+  HTTP::Response: 1.53
   LWP::UserAgent: 0
-  Test::LongString: 0.11
+  Test::LongString: 0
+  Text::Diff: 0
 distribution_type: module
 generated_by: Module::Install version 0.67
 license: perl
@@ -47,4 +49,4 @@ requires:
   Parse::Yapp: 0
   YAML::Syck: 1.04
   perl: 5.6.1
-version: 0.0.10
+version: 0.0.11

@@ -89,8 +89,9 @@ $version =~ s{^(\d+)\.(\d{3})(\d{3})?$}{join '.', int($1), int($2), int($3||0)}e
 if (! file_contains 'Changes', qr/\b\Q$version\E\b/) {
     die "ERROR: File 'Changes' has nothing regarding release $version\n";
 }
-
 run_and_check "pod2text $main_pm > README";
+
+system(q{grep -E '^\\s*use Smart::Comments' `ls bin/* | grep -v '~$' | grep -v '.swp$'` `find -name '*.pm'` `find -name '*.t'`});
 
 my ($tests, $dist_tests);
 
