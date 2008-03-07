@@ -63,11 +63,11 @@ for my $file (map glob, qw{ lib/*.pm lib/*/*.pm lib/*/*/*.pm lib/*/*/*/*.pm lib/
         my $ver;
         if (/(?x) \$VERSION \s* = .*? ([\d\.]*\d+)/) {
             my $orig_ver = $ver = $1;
-            $ver =~ s{^(\d+)\.(\d{3})(\d{3})?$}{join '.', int($1), int($2), int($3||0)}e;
+            $ver =~ s{^(\d+)\.(\d{3})(\d{3})$}{join '.', int($1), int($2), int($3)}e;
             warn "$file: $orig_ver ($ver)\n";
         } elsif (/This document describes \S+ ([\d\.]*\d+)/) {
             my $orig_ver = $ver = $1;
-            $ver =~ s{^(\d+)\.(\d{3})(\d{3})?$}{join '.', int($1), int($2), int($3||0)}e;
+            $ver =~ s{^(\d+)\.(\d{3})(\d{3})$}{join '.', int($1), int($2), int($3)}e;
             warn "$file: $orig_ver ($ver)\n";
         } elsif (/^version: (\d+.*)$/) {
             $ver = $1;
@@ -85,13 +85,19 @@ for my $file (map glob, qw{ lib/*.pm lib/*/*.pm lib/*/*/*.pm lib/*/*/*/*.pm lib/
     close $in;
 }
 
-$version =~ s{^(\d+)\.(\d{3})(\d{3})?$}{join '.', int($1), int($2), int($3||0)}e;
+$version =~ s{^(\d+)\.(\d{3})(\d{3})$}{join '.', int($1), int($2), int($3)}e;
 if (! file_contains 'Changes', qr/\b\Q$version\E\b/) {
     die "ERROR: File 'Changes' has nothing regarding release $version\n";
 }
 run_and_check "pod2text $main_pm > README";
 
-system(q{grep -E '^\\s*use Smart::Comments' `ls bin/* | grep -v '~$' | grep -v '.swp$'` `find -name '*.pm'` `find -name '*.t'`});
+my $bin = -d 'bin' ? 'bin' : (-d 'script' ? 'script' : '');
+
+system(
+    q{grep -E '^\\s*use Smart::Comments' } .
+    ($bin ? "`ls $bin/* | grep -v '~\$' | grep -v '.swp\$'`" : " ") .
+    q{ `find -name '*.pm'` `find -name '*.t'`}
+);
 
 my ($tests, $dist_tests);
 
