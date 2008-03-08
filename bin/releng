@@ -49,7 +49,7 @@ for my $mod (@mod) {
 }
 for my $dep (@deps) {
     #print $dep, "\n";
-    if (!file_contains('Makefile.PL', qr/[^#]*['"]\Q$dep\E['"]/)) {
+    if (!file_contains('Makefile.PL', qr/^[^#]*['"]\Q$dep\E['"]/)) {
         warn "WARNING: Prereq $dep not mentioned in Makefile.PL\n";
     }
 }
