@@ -7,6 +7,30 @@ use File::Slurp;
 use List::Util 'first';
 use IPC::Run3;
 
+my $arg = shift;
+
+if ($arg) {
+    if ($arg eq 'deps') {
+        system('rm -f /tmp/deps.txt');
+        for my $dir (qw( lib t script bin )) {
+            next if !-d $dir;
+            system(
+                q{ grep -E '^\s*use (\w+::)*\w+' -r } .
+                $dir .
+                q{ | grep -Ev 'use strict|use warnings|~:' | }.
+                q{ sed 's/^[^:]*:\s*use //g' | }.
+                q{ sed 's/ qw.*//g' | sed 's/ ''.*//' | sed 's/[^A-Za-z0-9_:]*//g' | sort | uniq | }.
+                q{ grep -vE '^(base|constant|subs|overload|lib|Cwd|Carp|List::Util|Encode|FindBin|vars|utf8|File::Copy|Clone)$' }.
+                q{ >> /tmp/deps.txt }
+            );
+        }
+        system("cat /tmp/deps.txt | sort | uniq | grep -v 'grep: '");
+        exit 0;
+    } else {
+        die "Unknown argument: $arg\n";
+    }
+}
+
 my ($stdout, $stderr);
 
 sub run ($);

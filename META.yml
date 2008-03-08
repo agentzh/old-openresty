@@ -1,6 +1,7 @@
 --- 
 abstract: General-purpose web service platform for web applications
-author: Agent Zhang <agentzh@yahoo.cn>
+author: 
+  - Agent Zhang <agentzh@yahoo.cn>
 build_requires: 
   CGI: 3.33
   Cache::Cache: 1.05
@@ -10,7 +11,7 @@ build_requires:
   Test::LongString: 0
   Text::Diff: 0
 distribution_type: module
-generated_by: Module::Install version 0.67
+generated_by: Module::Install version 0.68
 license: perl
 meta-spec: 
   url: http://module-build.sourceforge.net/META-spec-v1.3.html
