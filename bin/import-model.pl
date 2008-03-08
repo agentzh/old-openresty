@@ -10,7 +10,7 @@ use lib 'lib';
 use Params::Util qw( _HASH _ARRAY0 );
 use YAML::Syck ();
 use JSON::Syck ();
-use WWW::OpenAPI;
+use WWW::OpenResty;
 
 $YAML::Syck::ImplicitUnicode = 1;
 $JSON::Syck::ImplicitUnicode = 1;
@@ -35,7 +35,7 @@ my $offset = 0;
 my $count = 1;
 my $url = "/=/model/$model/~/~?user=$user";
 if ($password) { $url .= "\&password=$password"; }
-my $openapi = WWW::OpenAPI->new( { server => $server } );
+my $openapi = WWW::OpenResty->new( { server => $server } );
 $openapi->delete($url);
 my $inserted = 0;
 while (1) {

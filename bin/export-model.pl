@@ -12,7 +12,7 @@ use Getopt::Long;
 use Encode qw(decode encode);
 
 use lib 'lib';
-use WWW::OpenAPI;
+use WWW::OpenResty;
 use Params::Util qw( _HASH _ARRAY0 );
 use YAML::Syck ();
 use JSON::Syck ();
@@ -31,7 +31,7 @@ $user or die "No user given.\n";
 $model or die "No model given.\n";
 $server or die "No server given.\n";
 
-my $openapi = WWW::OpenAPI->new( { server => $server } );
+my $openapi = WWW::OpenResty->new( { server => $server } );
 
 my $offset = 0;
 my $count = 100;

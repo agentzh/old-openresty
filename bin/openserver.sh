@@ -16,12 +16,12 @@ OPENRESTY="${BASEDIR}/openapi.pl"
 
 case "$1" in
  start)
-        echo "OpenAPI server starting..."
+        echo "OpenResty server starting..."
         $OPENRESTY start &
         disown
         ;;
  stop)
-        echo "OpenAPI server stoping..."
+        echo "OpenResty server stoping..."
         pid=`ps axuww|grep [o]penapi |awk '{print $2}'`
         if [ 'x$pid' != 'x' ]; then
                 sudo kill -9 $pid
