@@ -15,6 +15,9 @@ bin/.*\.dat
 ^demo/Admin/JSON\.js$
 ^demo/Blog/out
 ^etc/site_openresty\.conf$
+^carrie_init.pl
+^blib/
+^pm_to_blib
 ^filter$
 ^font/wqy-zenhei.ttf
 ^grammar/Select\.pm$
