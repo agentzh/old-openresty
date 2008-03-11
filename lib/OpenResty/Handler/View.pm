@@ -207,7 +207,7 @@ sub new_view {
         ->cols( qw<name definition description> )
         ->values( Q($name, $minisql, $desc) );
 
-    return { success => $openresty->do($insert) ? 1 : 0 };
+    return { success => $openresty->do("$insert") ? 1 : 0 };
 
 }
 

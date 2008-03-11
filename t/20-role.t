@@ -12,7 +12,7 @@ __DATA__
 --- request
 GET /=/login/$TestAccount.Admin
 --- response
-{"success":0,"error":"Password for $TestAccount.Admin is required."}
+{"error":"Password for $TestAccount.Admin is required.","success":0}
 
 
 
@@ -20,7 +20,7 @@ GET /=/login/$TestAccount.Admin
 --- request
 GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
+^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 
 
 
@@ -61,8 +61,8 @@ DELETE /=/role/~
 GET /=/role
 --- response
 [
-    {"src":"/=/role/Admin","name":"Admin","description":"Administrator"},
-    {"src":"/=/role/Public","name":"Public","description":"Anonymous"}
+    {"description":"Administrator","name":"Admin","src":"/=/role/Admin"},
+    {"description":"Anonymous","name":"Public","src":"/=/role/Public"}
 ]
 
 
@@ -72,8 +72,8 @@ GET /=/role
 GET /=/role/~
 --- response
 [
-    {"src":"/=/role/Admin","name":"Admin","description":"Administrator"},
-    {"src":"/=/role/Public","name":"Public","description":"Anonymous"}
+    {"description":"Administrator","name":"Admin","src":"/=/role/Admin"},
+    {"description":"Anonymous","name":"Public","src":"/=/role/Public"}
 ]
 
 
@@ -84,8 +84,8 @@ GET /=/role/Admin
 --- response
 {
     "columns":[
-        {"name":"method","label":"HTTP method","type":"text"},
-        {"name":"url","label":"Resource","type":"text"}
+        {"label":"HTTP method","name":"method","type":"text"},
+        {"label":"Resource","name":"url","type":"text"}
     ],
     "name":"Admin",
     "description":"Administrator",
@@ -100,8 +100,8 @@ GET /=/role/Public
 --- response
 {
   "columns":[
-    {"name":"method","label":"HTTP method","type":"text"},
-    {"name":"url","label":"Resource","type":"text"}
+    {"label":"HTTP method","name":"method","type":"text"},
+    {"label":"Resource","name":"url","type":"text"}
   ],
   "name":"Public",
   "description":"Anonymous",
@@ -131,7 +131,7 @@ GET /=/role/Public/~/~
 POST /=/role/Public/~/~
 {"method":"GET","url":"/=/model"}
 --- response_like
-{"success":1,"rows_affected":1,"last_row":"/=/role/Public/id/\d+"}
+{"last_row":"/=/role/Public/id/\d+","rows_affected":1,"success":1}
 
 
 
@@ -144,7 +144,7 @@ POST /=/role/Public/~/~
     {"method":"DELETE","url":"/=/model/A/id/~"}
 ]
 --- response_like
-{"success":1,"rows_affected":3,"last_row":"/=/role/Public/id/\d+"}
+{"last_row":"/=/role/Public/id/\d+","rows_affected":3,"success":1}
 
 
 
@@ -153,10 +153,10 @@ POST /=/role/Public/~/~
 GET /=/role/Public/~/~
 --- response_like
 \[
-    \{"url":"/=/model","method":"GET","id":"\d+"},
-    \{"url":"/=/model/~","method":"POST","id":"\d+"},
-    \{"url":"/=/model/A/~/~","method":"POST","id":"\d+"},
-    \{"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
+    \{"id":"\d+","method":"GET","url":"/=/model"},
+    \{"id":"\d+","method":"POST","url":"/=/model/~"},
+    \{"id":"\d+","method":"POST","url":"/=/model/A/~/~"},
+    \{"id":"\d+","method":"DELETE","url":"/=/model/A/id/~"}
 \]
 
 
@@ -166,12 +166,12 @@ GET /=/role/Public/~/~
 GET /=/role/Public/method/~
 --- response_like
 \[
-    \{"url":"/=/model","method":"GET","id":"\d+"},
-    \{"url":"/=/model/~","method":"POST","id":"\d+"},
-    \{"url":"/=/model/A/~/~","method":"POST","id":"\d+"},
-    \{"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
+    \{"id":"\d+","method":"GET","url":"/=/model"},
+    \{"id":"\d+","method":"POST","url":"/=/model/~"},
+    \{"id":"\d+","method":"POST","url":"/=/model/A/~/~"},
+    \{"id":"\d+","method":"DELETE","url":"/=/model/A/id/~"}
 \]
-
+--- LAST
 
 
 === TEST 17: Query by method value
@@ -186,7 +186,7 @@ GET /=/role/Public/method//=/model
 --- request
 GET /=/role/Public/~//=/model
 --- response_like
-\[{"url":"/=/model","method":"GET","id":"\d+"}\]
+\[{"id":"\d+","method":"GET","url":"/=/model"}\]
 
 
 
@@ -195,10 +195,10 @@ GET /=/role/Public/~//=/model
 GET /=/role/Public/~/model?op=contains
 --- response_like
 \[
-    \{"url":"/=/model","method":"GET","id":"\d+"},
-    \{"url":"/=/model/~","method":"POST","id":"\d+"},
-    \{"url":"/=/model/A/~/~","method":"POST","id":"\d+"},
-    \{"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
+    \{"id":"\d+","method":"GET","url":"/=/model"},
+    \{"id":"\d+","method":"POST","url":"/=/model/~"},
+    \{"id":"\d+","method":"POST","url":"/=/model/A/~/~"},
+    \{"id":"\d+","method":"DELETE","url":"/=/model/A/id/~"}
 \]
 
 
@@ -208,8 +208,8 @@ GET /=/role/Public/~/model?op=contains
 GET /=/role/Public/url/A?op=contains
 --- response_like
 \[
-    \{"url":"/=/model/A/~/~","method":"POST","id":"\d+"},
-    \{"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
+    \{"id":"\d+","method":"POST","url":"/=/model/A/~/~"},
+    \{"id":"\d+","method":"DELETE","url":"/=/model/A/id/~"}
 \]
 
 
@@ -218,7 +218,7 @@ GET /=/role/Public/url/A?op=contains
 --- request
 GET /=/role/Public/method/GET
 --- response_like
-\[{"url":"/=/model","method":"GET","id":"\d+"}\]
+\[{"id":"\d+","method":"GET","url":"/=/model"}\]
 
 
 
@@ -227,8 +227,8 @@ GET /=/role/Public/method/GET
 GET /=/role/Public/method/POST
 --- response_like
 \[
-    {"url":"/=/model/~","method":"POST","id":"\d+"},
-    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"}
+    {"id":"\d+","method":"POST","url":"/=/model/~"},
+    {"id":"\d+","method":"POST","url":"/=/model/A/~/~"}
 \]
 
 
@@ -238,8 +238,8 @@ GET /=/role/Public/method/POST
 GET /=/role/Public/~/POST
 --- response_like
 \[
-    {"url":"/=/model/~","method":"POST","id":"\d+"},
-    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"}
+    {"id":"\d+","method":"POST","url":"/=/model/~"},
+    {"id":"\d+","method":"POST","url":"/=/model/A/~/~"}
 \]
 
 
@@ -248,7 +248,7 @@ GET /=/role/Public/~/POST
 --- request
 GET /=/login/.Public
 --- response
-{"success":0,"error":"Bad user name: \".Public\""}
+{"error":"Bad user name: \".Public\"","success":0}
 
 
 
@@ -256,14 +256,14 @@ GET /=/login/.Public
 --- request
 GET /=/login/$TestAccount.Public?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Public"}$
+^{"account":"$TestAccount","role":"Public","session":"[-\w]+","success":1}$
 
 
 
 === TEST 26: Create model A
 --- request
 POST /=/model/~
-{name:"A",description:"A",columns:{"name":"title",label:"name"}}
+{columns:{"name":"title",description:"A",label:"name"},name:"A"}
 --- response
 {"success":1}
 
@@ -273,8 +273,8 @@ POST /=/model/~
 --- request
 POST /=/model/B
 {description:"B",columns:[
-    {name:"title",label:"title"},
-    {name:"body",label:"body"}
+    {label:"title",name:"title"},
+    {label:"body",name:"body"}
  ]
 }
 --- response
@@ -287,8 +287,8 @@ POST /=/model/B
 GET /=/model
 --- response
 [
-    {"src":"/=/model/A","name":"A","description":"A"},
-    {"src":"/=/model/B","name":"B","description":"B"}
+    {"description":"A","name":"A","src":"/=/model/A"},
+    {"description":"B","name":"B","src":"/=/model/B"}
 ]
 
 
@@ -297,7 +297,7 @@ GET /=/model
 --- request
 DELETE /=/model
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -306,7 +306,7 @@ DELETE /=/model
 PUT /=/model
 ""
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -314,7 +314,7 @@ PUT /=/model
 --- request
 GET /=/model/A
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -322,7 +322,7 @@ GET /=/model/A
 --- request
 GET /=/model/~
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -330,7 +330,7 @@ GET /=/model/~
 --- request
 GET /=/model/A/~
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -338,7 +338,7 @@ GET /=/model/A/~
 --- request
 GET /=/model/A/title
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -346,16 +346,16 @@ GET /=/model/A/title
 --- request
 DELETE /=/model/A/title
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
 === TEST 36: Insert rows
 --- request
 POST /=/model/A/~/~
-[ {"title":"Audrey"}, {"title":"Larry"}, {"title":"Patrick"} ]
+[ { {"title":"Larry"}, {"title":"Patrick","title":"Audrey"}} ]
 --- response
-{"success":1,"rows_affected":3,"last_row":"/=/model/A/id/3"}
+{"last_row":"/=/model/A/id/3","rows_affected":3,"success":1}
 
 
 
@@ -363,7 +363,7 @@ POST /=/model/A/~/~
 --- request
 GET /=/model/A/~/~
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -371,7 +371,7 @@ GET /=/model/A/~/~
 --- request
 GET /=/model/A/id/3
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -379,7 +379,7 @@ GET /=/model/A/id/3
 --- request
 DELETE /=/model/A/~/~
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -387,7 +387,7 @@ DELETE /=/model/A/~/~
 --- request
 DELETE /=/model/A/title/Audrey
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -396,7 +396,7 @@ DELETE /=/model/A/title/Audrey
 PUT /=/model/A/id/3
 {"title":"fglock"}
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -404,7 +404,7 @@ PUT /=/model/A/id/3
 --- request
 DELETE /=/model/A/id/3
 --- response
-{"success":1,"rows_affected":1}
+{"rows_affected":1,"success":1}
 
 
 
@@ -412,7 +412,7 @@ DELETE /=/model/A/id/3
 --- request
 DELETE /=/model/A/id/3
 --- response
-{"success":1,"rows_affected":0}
+{"rows_affected":0,"success":1}
 
 
 
@@ -420,7 +420,7 @@ DELETE /=/model/A/id/3
 --- request
 DELETE /=/model/A/id/~
 --- response
-{"success":1,"rows_affected":2}
+{"rows_affected":2,"success":1}
 
 
 
@@ -428,7 +428,7 @@ DELETE /=/model/A/id/~
 --- request
 DELETE /=/model/B/id/~
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -437,7 +437,7 @@ DELETE /=/model/B/id/~
 POST /=/model/A/foo
 {"label":"foo"}
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -445,7 +445,7 @@ POST /=/model/A/foo
 --- request
 DELETE /=/model/A/bar
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -453,7 +453,7 @@ DELETE /=/model/A/bar
 --- request
 GET /=/view
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -462,7 +462,7 @@ GET /=/view
 POST /=/view/MyView
 {"body":"select * from A"}
 --- response
-{"success":0,"error":"Permission denied for the \"Public\" role."}
+{"error":"Permission denied for the \"Public\" role.","success":0}
 
 
 
@@ -470,7 +470,7 @@ POST /=/view/MyView
 --- request
 GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
+^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 
 
 
@@ -490,7 +490,7 @@ POST /=/role/Poster
     password: "$TestPass"
 }
 --- response
-{"success":0,"error":"Field 'description' is missing."}
+{"error":"Field 'description' is missing.","success":0}
 
 
 
@@ -501,7 +501,7 @@ POST /=/role/Poster
     "description":"Comment poster"
 }
 --- response
-{"success":0,"error":"No 'login' field specified."}
+{"error":"No 'login' field specified.","success":0}
 
 
 
@@ -513,7 +513,7 @@ POST /=/role/Poster
     login: "password"
 }
 --- response
-{"success":0,"error":"No password given when 'login' is 'password'."}
+{"error":"No password given when 'login' is 'password'.","success":0}
 
 
 
@@ -525,7 +525,7 @@ POST /=/role/Poster
     login: "blah"
 }
 --- response
-{"success":0,"error":"Unknown login method: blah"}
+{"error":"Unknown login method: blah","success":0}
 
 
 
@@ -538,7 +538,7 @@ POST /=/role/Poster
     password: ""
 }
 --- response
-{"success":0,"error":"Password too short; at least 6 chars required."}
+{"error":"Password too short; at least 6 chars required.","success":0}
 
 
 
@@ -551,7 +551,7 @@ POST /=/role/Poster
     password: "12345"
 }
 --- response
-{"success":0,"error":"Password too short; at least 6 chars required."}
+{"error":"Password too short; at least 6 chars required.","success":0}
 
 
 
@@ -577,7 +577,7 @@ POST /=/role/Poster
     password: "4417935"
 }
 --- response
-{"success":0,"error":"Role \"Poster\" already exists."}
+{"error":"Role \"Poster\" already exists.","success":0}
 
 
 
@@ -586,7 +586,7 @@ POST /=/role/Poster
 POST /=/role/Poster/~/~
 {"url":"/=/model"}
 --- response_like
-\{"success":1,"rows_affected":1,"last_row":"/=/role/Poster/id/\d+"\}
+\{"last_row":"/=/role/Poster/id/\d+","rows_affected":1,"success":1\}
 
 
 
@@ -595,7 +595,7 @@ POST /=/role/Poster/~/~
 POST /=/role/Poster/~/~
 {"method":"POST","src":"/=/model/A/~/~"}
 --- response
-{"success":0,"error":"row 1: Column \"url\" is missing."}
+{"error":"row 1: Column \"url\" is missing.","success":0}
 
 
 
@@ -604,7 +604,7 @@ POST /=/role/Poster/~/~
 POST /=/role/Poster/~/~
 {"method":"POST","url":"/=/model/A/~/~"}
 --- response_like
-^\{"success":1,"rows_affected":1,"last_row":"/=/role/Poster/id/\d+"\}$
+^\{"last_row":"/=/role/Poster/id/\d+"\,"rows_affected":1,"success":1}$
 
 
 
@@ -613,8 +613,8 @@ POST /=/role/Poster/~/~
 GET /=/role/Poster/~/~
 --- response_like
 ^\[
-    {"url":"/=/model","method":"GET","id":"\d+"},
-    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"}
+    {"id":"\d+","method":"GET","url":"/=/model"},
+    {"id":"\d+","method":"POST","url":"/=/model/A/~/~"}
 \]$
 
 
@@ -623,7 +623,7 @@ GET /=/role/Poster/~/~
 --- request
 GET /=/login/$TestAccount.Poster
 --- response
-{"success":0,"error":"Password for $TestAccount.Poster is required."}
+{"error":"Password for $TestAccount.Poster is required.","success":0}
 
 
 
@@ -631,7 +631,7 @@ GET /=/login/$TestAccount.Poster
 --- request
 GET /=/login/$TestAccount.Poster/4417935?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Poster"}$
+^{"account":"$TestAccount","role":"Poster","session":"[-\w]+","success":1}$
 
 
 
@@ -640,8 +640,8 @@ GET /=/login/$TestAccount.Poster/4417935?use_cookie=1
 GET /=/model
 --- response
 [
-    {"src":"/=/model/A","name":"A","description":"A"},
-    {"src":"/=/model/B","name":"B","description":"B"}
+    {"description":"A","name":"A","src":"/=/model/A"},
+    {"description":"B","name":"B","src":"/=/model/B"}
 ]
 
 
@@ -650,7 +650,7 @@ GET /=/model
 --- request
 GET /=/model/~
 --- response
-{"success":0,"error":"Permission denied for the \"Poster\" role."}
+{"error":"Permission denied for the \"Poster\" role.","success":0}
 
 
 
@@ -659,7 +659,7 @@ GET /=/model/~
 POST /=/model/C
 { description: "C" }
 --- response
-{"success":0,"error":"Permission denied for the \"Poster\" role."}
+{"error":"Permission denied for the \"Poster\" role.","success":0}
 
 
 
@@ -668,7 +668,7 @@ POST /=/model/C
 POST /=/action/.Select/lang/minisql
 "select * from A"
 --- response
-{"success":0,"error":"Permission denied for the \"Poster\" role."}
+{"error":"Permission denied for the \"Poster\" role.","success":0}
 
 
 
@@ -676,7 +676,7 @@ POST /=/action/.Select/lang/minisql
 --- request
 DELETE /=/role/Poster
 --- response
-{"success":0,"error":"Permission denied for the \"Poster\" role."}
+{"error":"Permission denied for the \"Poster\" role.","success":0}
 
 
 
@@ -684,7 +684,7 @@ DELETE /=/role/Poster
 --- request
 GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
+^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 
 
 
@@ -700,7 +700,7 @@ DELETE /=/role/Poster
 --- request
 GET /=/role/Poster
 --- response
-{"success":0,"error":"Role \"Poster\" not found."}
+{"error":"Role \"Poster\" not found.","success":0}
 
 
 
@@ -708,7 +708,7 @@ GET /=/role/Poster
 --- request
 DELETE /=/role/Admin
 --- response
-{"success":0,"error":"Role \"Admin\" reserved."}
+{"error":"Role \"Admin\" reserved.","success":0}
 
 
 
@@ -718,8 +718,8 @@ GET /=/role/Admin
 --- response
 {
     "columns":[
-        {"name":"method","label":"HTTP method","type":"text"},
-        {"name":"url","label":"Resource","type":"text"}
+        {"label":"HTTP method","name":"method","type":"text"},
+        {"label":"Resource","name":"url","type":"text"}
     ],
     "name":"Admin",
     "description":"Administrator",
@@ -732,7 +732,7 @@ GET /=/role/Admin
 --- request
 DELETE /=/role/Public
 --- response
-{"success":0,"error":"Role \"Public\" reserved."}
+{"error":"Role \"Public\" reserved.","success":0}
 
 
 
@@ -742,8 +742,8 @@ GET /=/role/Public
 --- response
 {
     "columns":[
-        {"name":"method","label":"HTTP method","type":"text"},
-        {"name":"url","label":"Resource","type":"text"}
+        {"label":"HTTP method","name":"method","type":"text"},
+        {"label":"Resource","name":"url","type":"text"}
     ],
     "name":"Public",
     "description":"Anonymous",
@@ -757,10 +757,10 @@ GET /=/role/Public
 GET /=/role/Public/~/~
 --- response_like
 \[
-    \{"url":"/=/model","method":"GET","id":"\d+"},
-    {"url":"/=/model/~","method":"POST","id":"\d+"},
-    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"},
-    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
+    \{"id":"\d+","method":"GET","url":"/=/model"},
+    {"id":"\d+","method":"POST","url":"/=/model/~"},
+    {"id":"\d+","method":"POST","url":"/=/model/A/~/~"},
+    {"id":"\d+","method":"DELETE","url":"/=/model/A/id/~"}
 \]
 
 
@@ -778,8 +778,8 @@ DELETE /=/role/Public/method/POST
 GET /=/role/Public/~/~
 --- response_like
 \[
-    \{"url":"/=/model","method":"GET","id":"\d+"},
-    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"}
+    \{"id":"\d+","method":"GET","url":"/=/model"},
+    {"id":"\d+","method":"DELETE","url":"/=/model/A/id/~"}
 \]
 
 
@@ -789,7 +789,7 @@ GET /=/role/Public/~/~
 PUT /=/role/Public/id/~
 { id: "521" }
 --- response
-{"success":0,"error":"Column \"id\" reserved."}
+{"error":"Column \"id\" reserved.","success":0}
 
 
 
@@ -807,8 +807,8 @@ PUT /=/role/Public/method/GET
 GET /=/role/Public/~/~
 --- response_like
 \[
-    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"},
-    {"url":"/=/model/A/~","method":"GET","id":"\d+"}
+    {"id":"\d+","method":"DELETE","url":"/=/model/A/id/~"},
+    {"id":"\d+","method":"GET","url":"/=/model/A/~"}
 ]
 
 
@@ -827,8 +827,8 @@ PUT /=/role/Public/method/GET
 GET /=/role/Public/~/~
 --- response_like
 \[
-    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"},
-    {"url":"/=/model/A/~","method":"POST","id":"\d+"}
+    {"id":"\d+","method":"DELETE","url":"/=/model/A/id/~"},
+    {"id":"\d+","method":"POST","url":"/=/model/A/~"}
 ]
 
 
@@ -847,8 +847,8 @@ PUT /=/role/Public/method/POST
 GET /=/role/Public/~/~
 --- response_like
 \[
-    {"url":"/=/model/A/id/~","method":"DELETE","id":"\d+"},
-    \{"url":"/=/model","method":"GET","id":"\d+"}
+    {"id":"\d+","method":"DELETE","url":"/=/model/A/id/~"},
+    \{"id":"\d+","method":"GET","url":"/=/model"}
 \]
 
 
@@ -872,8 +872,8 @@ GET /=/role/Poster
 --- response
 {
   "columns":[
-    {"name":"method","label":"HTTP method","type":"text"},
-    {"name":"url","label":"Resource","type":"text"}
+    {"label":"HTTP method","name":"method","type":"text"},
+    {"label":"Resource","name":"url","type":"text"}
   ],
   "name":"Poster",
   "description":"Comment poster",
@@ -887,7 +887,7 @@ GET /=/role/Poster
 POST /=/role/Poster/~/~
 {"url":"/=/model"}
 --- response_like
-\{"success":1,"rows_affected":1,"last_row":"/=/role/Poster/id/\d+"\}
+\{"last_row":"/=/role/Poster/id/\d+"\,"rows_affected":1,"success":1}
 
 
 
@@ -896,7 +896,7 @@ POST /=/role/Poster/~/~
 POST /=/role/Poster/~/~
 {"method":"POST","url":"/=/model/A/~/~"}
 --- response_like
-^\{"success":1,"rows_affected":1,"last_row":"/=/role/Poster/id/\d+"\}$
+^\{"last_row":"/=/role/Poster/id/\d+"\,"rows_affected":1,"success":1}$
 
 
 
@@ -905,8 +905,8 @@ POST /=/role/Poster/~/~
 GET /=/role/Poster/~/~
 --- response_like
 ^\[
-    {"url":"/=/model","method":"GET","id":"\d+"},
-    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"}
+    {"id":"\d+","method":"GET","url":"/=/model"},
+    {"id":"\d+","method":"POST","url":"/=/model/A/~/~"}
 \]$
 
 
@@ -926,7 +926,7 @@ PUT /=/role/Poster
 --- request
 GET /=/role/Poster
 --- response
-{"success":0,"error":"Role \"Poster\" not found."}
+{"error":"Role \"Poster\" not found.","success":0}
 
 
 
@@ -935,9 +935,9 @@ GET /=/role/Poster
 GET /=/role
 --- response
 [
-    {"src":"/=/role/Admin","name":"Admin","description":"Administrator"},
-    {"src":"/=/role/Public","name":"Public","description":"Anonymous"},
-    {"src":"/=/role/Newposter","name":"Newposter","description":"Comment poster"}
+    {"description":"Administrator","name":"Admin","src":"/=/role/Admin"},
+    {"description":"Anonymous","name":"Public","src":"/=/role/Public"},
+    {"description":"Comment poster","name":"Newposter","src":"/=/role/Newposter"}
 ]
 
 
@@ -948,8 +948,8 @@ GET /=/role/Newposter
 --- response
 {
   "columns":[
-    {"name":"method","label":"HTTP method","type":"text"},
-    {"name":"url","label":"Resource","type":"text"}
+    {"label":"HTTP method","name":"method","type":"text"},
+    {"label":"Resource","name":"url","type":"text"}
   ],
   "name":"Newposter",
   "description":"Comment poster",
@@ -963,8 +963,8 @@ GET /=/role/Newposter
 GET /=/role/Newposter/~/~
 --- response_like
 ^\[
-    {"url":"/=/model","method":"GET","id":"\d+"},
-    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"}
+    {"id":"\d+","method":"GET","url":"/=/model"},
+    {"id":"\d+","method":"POST","url":"/=/model/A/~/~"}
 \]$
 
 
@@ -986,8 +986,8 @@ GET /=/role/Newposter
 --- response
 {
   "columns":[
-    {"name":"method","label":"HTTP method","type":"text"},
-    {"name":"url","label":"Resource","type":"text"}
+    {"label":"HTTP method","name":"method","type":"text"},
+    {"label":"Resource","name":"url","type":"text"}
   ],
   "name":"Newposter",
   "description":"my description",
@@ -1014,8 +1014,8 @@ GET /=/role/Newname
 --- response
 {
   "columns":[
-    {"name":"method","label":"HTTP method","type":"text"},
-    {"name":"url","label":"Resource","type":"text"}
+    {"label":"HTTP method","name":"method","type":"text"},
+    {"label":"Resource","name":"url","type":"text"}
   ],
   "name":"Newname",
   "description":"Newdescription",
@@ -1029,8 +1029,8 @@ GET /=/role/Newname
 GET /=/role/Newname/~/~
 --- response_like
 ^\[
-    {"url":"/=/model","method":"GET","id":"\d+"},
-    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"}
+    {"id":"\d+","method":"GET","url":"/=/model"},
+    {"id":"\d+","method":"POST","url":"/=/model/A/~/~"}
 \]$
 
 
@@ -1050,7 +1050,7 @@ PUT /=/role/Newname
 --- request
 GET /=/login/$TestAccount.Newname/123456789
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Newname"}$
+^{"account":"$TestAccount","role":"Newname","session":"[-\w]+","success":1}$
 
 
 
@@ -1058,7 +1058,7 @@ GET /=/login/$TestAccount.Newname/123456789
 --- request
 GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
+^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 
 
 
@@ -1079,8 +1079,8 @@ GET /=/role/Newname
 --- response
 {
   "columns":[
-    {"name":"method","label":"HTTP method","type":"text"},
-    {"name":"url","label":"Resource","type":"text"}
+    {"label":"HTTP method","name":"method","type":"text"},
+    {"label":"Resource","name":"url","type":"text"}
   ],
   "name":"Newname",
   "description":"Newdescription",
@@ -1094,8 +1094,8 @@ GET /=/role/Newname
 GET /=/role/Newname/~/~
 --- response_like
 ^\[
-    {"url":"/=/model","method":"GET","id":"\d+"},
-    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"}
+    {"id":"\d+","method":"GET","url":"/=/model"},
+    {"id":"\d+","method":"POST","url":"/=/model/A/~/~"}
 \]$
 
 
@@ -1107,7 +1107,7 @@ PUT /=/role/Newname
     login:{blah:"blah"}
 }
 --- response
-{"success":0,"error":"Bad login method: {\"blah\":\"blah\"}"}
+{"error":"Bad login method: {\"blah\":\"blah\"}","success":0}
 
 
 
@@ -1118,7 +1118,7 @@ PUT /=/role/Newname
     login:[1234]
 }
 --- response
-{"success":0,"error":"Bad login method: [1234]"}
+{"error":"Bad login method: [1234]","success":0}
 
 
 
@@ -1129,7 +1129,7 @@ PUT /=/role/Newname
     login:"blah"
 }
 --- response
-{"success":0,"error":"Bad login method: blah"}
+{"error":"Bad login method: blah","success":0}
 
 
 
@@ -1140,7 +1140,7 @@ PUT /=/role/Newname
     description:{blah:"blah"}
 }
 --- response
-{"success":0,"error":"Bad role definition: {\"blah\":\"blah\"}"}
+{"error":"Bad role definition: {\"blah\":\"blah\"}","success":0}
 
 
 
@@ -1151,7 +1151,7 @@ PUT /=/role/Newname
     description:[1234]
 }
 --- response
-{"success":0,"error":"Bad role definition: [1234]"}
+{"error":"Bad role definition: [1234]","success":0}
 
 
 
@@ -1197,8 +1197,8 @@ GET /=/role/Poster
 --- response
 {
   "columns":[
-    {"name":"method","label":"HTTP method","type":"text"},
-    {"name":"url","label":"Resource","type":"text"}
+    {"label":"HTTP method","name":"method","type":"text"},
+    {"label":"Resource","name":"url","type":"text"}
   ],
   "name":"Poster",
   "description":"Comment poster",
@@ -1212,8 +1212,8 @@ GET /=/role/Poster
 GET /=/role/Poster/~/~
 --- response_like
 ^\[
-    {"url":"/=/model","method":"GET","id":"\d+"},
-    {"url":"/=/model/A/~/~","method":"POST","id":"\d+"}
+    {"id":"\d+","method":"GET","url":"/=/model"},
+    {"id":"\d+","method":"POST","url":"/=/model/A/~/~"}
 \]$
 
 
@@ -1234,7 +1234,7 @@ PUT /=/role/Poster
 --- request
 GET /=/login/$TestAccount.Poster/123456789
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Poster"}$
+^{"account":"$TestAccount","role":"Poster","session":"[-\w]+","success":1}$
 
 
 
@@ -1242,7 +1242,7 @@ GET /=/login/$TestAccount.Poster/123456789
 --- request
 GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
+^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 
 
 
@@ -1261,7 +1261,7 @@ PUT /=/role/Poster
 --- request
 GET /=/login/$TestAccount.Poster/789456213
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Poster"}$
+^{"account":"$TestAccount","role":"Poster","session":"[-\w]+","success":1}$
 
 
 
@@ -1269,7 +1269,7 @@ GET /=/login/$TestAccount.Poster/789456213
 --- request
 GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
+^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 
 
 
@@ -1280,7 +1280,7 @@ PUT /=/role/Poster
     login:"password"
 }
 --- response
-{"success":0,"error":"No password given when 'login' is 'password'."}
+{"error":"No password given when 'login' is 'password'.","success":0}
 
 
 
@@ -1292,7 +1292,7 @@ PUT /=/role/Poster
     password:"123456789"
 }
 --- response
-{"success":0,"error":"Password given when 'login' is not 'password'."}
+{"error":"Password given when 'login' is not 'password'.","success":0}
 
 
 
@@ -1326,7 +1326,7 @@ PUT /=/role/Poster
     password:"321987465"
 }
 --- response
-{"success":0,"error":"Password given when 'login' is not 'password'."}
+{"error":"Password given when 'login' is not 'password'.","success":0}
 
 
 
@@ -1348,7 +1348,7 @@ PUT /=/role/Poster
     login:"password"
 }
 --- response
-{"success":0,"error":"No password given when 'login' is 'password'."}
+{"error":"No password given when 'login' is 'password'.","success":0}
 
 
 
@@ -1368,7 +1368,7 @@ PUT /=/role/Poster
 --- request
 GET /=/login/$TestAccount.Poster/shangerdi
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Poster"}$
+^{"account":"$TestAccount","role":"Poster","session":"[-\w]+","success":1}$
 
 
 
@@ -1376,7 +1376,7 @@ GET /=/login/$TestAccount.Poster/shangerdi
 --- request
 GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
+^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 
 
 
@@ -1398,7 +1398,7 @@ PUT /=/role/Poster
     password:"_1984"
 }
 --- response
-{"success":0,"error":"Password too short; at least 6 chars are required."}
+{"error":"Password too short; at least 6 chars are required.","success":0}
 
 
 
@@ -1439,7 +1439,7 @@ PUT /=/role/Poster
 --- request
 GET /=/login/$TestAccount.Poster/SHANG1984_shangerdi_1984_shang_er_di_19841984
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Poster"}$
+^{"account":"$TestAccount","role":"Poster","session":"[-\w]+","success":1}$
 
 
 
@@ -1447,7 +1447,7 @@ GET /=/login/$TestAccount.Poster/SHANG1984_shangerdi_1984_shang_er_di_19841984
 --- request
 GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
-^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
+^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 
 
 

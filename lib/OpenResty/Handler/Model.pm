@@ -2,7 +2,8 @@ package OpenResty::Handler::Model;
 
 use strict;
 use warnings;
-#use Smart::Comments;
+
+#use Smart::Comments '####';
 use OpenResty::Util;
 use List::Util qw( first );
 use Params::Util qw( _STRING _ARRAY0 _ARRAY _HASH );
@@ -109,7 +110,10 @@ sub GET_model_column {
     if ($col eq '~') {
         my $list = $openresty->select("$select", { use_hash => 1 });
         if (!$list or !ref $list) { $list = []; }
-        unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
+        if (!@$list or $list->[0]->{name} ne 'id') {
+            unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
+        }
+
         return $list;
     } else {
         $select->where( name => Q($col) );
@@ -543,7 +547,11 @@ sub get_model_cols {
            ->order_by('id');
     $list = $openresty->select("$select", { use_hash => 1 });
     if (!$list or !ref $list) { $list = []; }
-    unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
+
+    #### model handler: $list
+    if (!@$list or $list->[0]->{name} ne 'id') {
+        unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
+    }
     return { description => $desc, name => $model, columns => $list };
 }
 

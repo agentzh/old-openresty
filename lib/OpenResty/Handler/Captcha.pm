@@ -306,11 +306,10 @@ sub gen_en_image {
         width   => 120,
         height  => 30,
         lines   => 1,
-        font    => "$FindBin::Bin/../font/wqy-zenhei.ttf",
+        gd_font => 'giant',
         #thickness => 0.5,
         rndmax => 3,
         angle => $angle,
-        ptsize => 14,
         #ptsize => 80,
         #send_ctobg => 1,
         #scramble => 1,
@@ -318,8 +317,7 @@ sub gen_en_image {
 
     #warn $str;
     $captcha->random($str);
-    $captcha->create(ttf => 'default');
-    die "Failed to load ttf font for GD: $@\n" if $captcha->gdbox_empty;
+    $captcha->create(normal => 'rect');
     $captcha->particle(100); # : 1732);
     my ($image_data, $mime_type) = $captcha->out(compress => 1);
     $openresty->{_bin_data} = $image_data;

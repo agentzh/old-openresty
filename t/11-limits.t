@@ -1,9 +1,20 @@
-use Test::More 'no_plan';
+#use Test::More 'no_plan';
 #use Smart::Comments;
 use lib 'lib';
 use JSON::Syck 'Dump';
 use OpenResty::Limits;
-use t::OpenResty;
+
+use OpenResty::Config;
+my $reason;
+BEGIN {
+    OpenResty::Config->init;
+    if ($OpenResty::Config{'backend.type'} eq 'PgMocked' ||
+        $OpenResty::Config{'backend.recording'}) {
+        $reason = 'Skipped in PgMocked or recording mode since too many tests here.';
+    }
+}
+use t::OpenResty $reason ? (skip_all => $reason) : ('no_plan');
+if ($reason) { return; }
 
 my $host = $t::OpenResty::host;
 my $client = $t::OpenResty::client;

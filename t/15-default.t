@@ -116,7 +116,7 @@ POST /=/model/Foo/~/~
 --- request
 GET /=/model/Foo/id/2
 --- response_like
-\[\{"created":"20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+","content":"No content","title":"Hi!","id":"2"\}\]
+\[\{"content":"No content","created":"20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+","id":"2","title":"Hi!"\}\]
 
 
 
@@ -133,7 +133,7 @@ POST /=/model/Foo/~/~
 --- request
 GET /=/model/Foo/id/3
 --- response_like
-\[\{"created":"20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+","content":"No content","title":"Bah!","id":"3"\}\]
+\[\{"content":"No content","created":"20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+","id":"3","title":"Bah!"\}\]
 
 
 
@@ -159,7 +159,7 @@ POST /=/model/Foo/~/~
 --- request
 GET /=/model/Foo/id/4
 --- response_like
-\[\{"created":"20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+","content":"hi","title":"Cat!","id":"4"\}\]
+\[\{"content":"hi","created":"20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+","id":"4","title":"Cat!"\}\]
 
 
 
@@ -185,7 +185,7 @@ POST /=/model/Foo/~/~
 --- request
 GET /=/model/Foo/id/5
 --- response_like
-\[\{"created":"(20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)","content":"\1[-+]\d{2}","title":"Dog!","id":"5"\}\]
+\[\{"content":".*?[-+]\d{2}","created":"(20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)","id":"5","title":"Dog!"\}\]
 
 
 
@@ -227,7 +227,7 @@ POST /=/model/Howdy/~/~
 --- request
 GET /=/model/Howdy/id/1
 --- response_like
-\[\{"updated":"(20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)","title":"Hey","id":"1"\}\]
+\[\{"id":"1","title":"Hey","updated":"(20\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)"\}\]
 
 
 
