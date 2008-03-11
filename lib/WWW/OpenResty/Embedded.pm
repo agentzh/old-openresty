@@ -134,6 +134,7 @@ sub _request {
     $Buffer = undef;
     OpenResty::Dispatcher->process_request($cgi);
     my $code;
+    #warn $Buffer;
     if (is_utf8($Buffer)) {
         $Buffer = encode('UTF-8', $Buffer);
     }
@@ -142,6 +143,7 @@ sub _request {
     }
     my $res = HTTP::Response->parse($Buffer); # $code, $msg, $header, $content )
     ## $res
+    #warn "---------- res: ", $res->is_success;
     my $raw_cookie = $res->header('Set-Cookie');
     #warn "RAW Cookie: $raw_cookie\n";
     if ($raw_cookie) {

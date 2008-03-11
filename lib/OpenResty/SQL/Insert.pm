@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use base 'OpenResty::SQL::Statement';
 
+use overload '""' => sub { $_[0]->generate };
+
 sub new {
     my $class = ref $_[0] ? ref shift : shift;
     bless {
@@ -26,7 +28,7 @@ sub cols {
 
 sub values {
     my $self = shift;
-    push @{ $self->{values} }, @_;
+    push @{ $self->{values} }, map { defined $_ ? $_ : 'NULL' } @_;
     $self;
 }
 

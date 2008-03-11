@@ -93,7 +93,12 @@ if (!-e $site_conf) {
 }
 
 system("$^X bin/revision.pl");
-system("$^X bin/fetch-font.pl");
+
+print STDERR "Download the Chinese font file (14 MB) from agentzh.org to get Chinese captcha support? [n]";
+my $ans = <STDIN>;
+if ($ans =~ /y/i) {
+    system("$^X bin/fetch-font.pl");
+}
 
 WriteAll();
 

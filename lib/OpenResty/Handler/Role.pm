@@ -206,7 +206,7 @@ sub insert_rule {
     my $insert = OpenResty::SQL::Insert->new("_access_rules")
         ->cols( qw< role method url > )
         ->values( Q( $role, $method, $url ) );
-    return $openresty->do($insert);
+    return $openresty->do("$insert");
 }
 
 sub GET_role_list {
@@ -328,7 +328,7 @@ sub new_role {
         ->cols( qw<name description login password> )
         ->values( Q($name, $desc, $login, $password) );
 
-    return { success => $openresty->do($insert) ? 1 : 0 };
+    return { success => $openresty->do("$insert") ? 1 : 0 };
 }
 
 sub PUT_role {

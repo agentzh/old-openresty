@@ -259,6 +259,7 @@ sub init {
 
 sub fatal {
     my ($self, $s) = @_;
+    #warn "fatal-ing...: $s\n";
     $self->error($s);
     $self->response();
 }
@@ -375,7 +376,9 @@ sub connect {
     my $self = shift;
     my $name = shift || $BackendName;
     $BackendName = $name;
+    #warn "connect: $BackendName\n";
     $Backend = OpenResty::Backend->new($name);
+    #warn "Backend: $Backend\n";
     #$Backend->select("");
 }
 

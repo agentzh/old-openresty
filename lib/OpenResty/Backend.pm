@@ -1,5 +1,6 @@
 package OpenResty::Backend;
 
+#use Smart::Comments;
 use strict;
 use warnings;
 
@@ -9,6 +10,7 @@ sub new {
         die "No backend specified";
     }
     my $backend_class = $class . '::' . $backend;
+    ### $backend_class
     eval "use $backend_class";
     if ($@) {
         die $@;

@@ -3,20 +3,22 @@ package OpenResty::Backend::PgMocked;
 use strict;
 use warnings;
 
+#use Smart::Comments;
 use JSON::Syck ();
 use base 'OpenResty::Backend::Pg';
 use Test::LongString;
 use Encode qw(is_utf8 encode decode);
 
 our ($DataFile, $Data, $TransList);
-$DataFile = 't/pgmocked-data.yml';
 
-$JSON::Syck::ImplicitUnicode = 1;
 #$JSON::Syck::SortKeys = 1;
 
 # -------------------
 # Recorder routines
 # -------------------
+
+my $path = 't/pgmock-data';
+unless (-d $path) { mkdir $path }
 
 sub LoadFile {
     my ($file) = @_;
@@ -30,9 +32,11 @@ sub LoadFile {
 
 sub DumpFile {
     my ($file, $data) = @_;
-    open my $out, "> $file" or
+    open my $out, ">$file" or
         die "Can't open $file for writing: $!";
     *JSON::Syck::UseCode = \&JSON::Syck::UseCode;
+
+    local $JSON::Syck::ImplicitUnicode = 1;
     my $json = JSON::Syck::Dump($data);
     print $out encode('utf8', $json);
     close $out;
@@ -40,20 +44,19 @@ sub DumpFile {
 
 sub start_recording_file {
     my $class = shift;
-    if (!$Data) {
-        my $file = shift;
-        if (!-f $DataFile) {
-            $Data = {};
-        } else {
-            $Data = LoadFile($DataFile) || {};
-        }
-        $Data->{$file} = ($TransList = []);
+    my $file = shift;
+    $DataFile = "$path/$file.json";
+    if (!-f $DataFile) {
+        $Data = {};
+    } else {
+        $Data = LoadFile($DataFile) || {};
     }
+    $Data = $TransList = [];
 }
 
 sub record {
     my ($class, $query, $res) = @_;
-    push @$TransList, [$query, $res];
+    push @$TransList, ["$query", $res];
 }
 
 sub stop_recording_file {
@@ -67,20 +70,25 @@ sub stop_recording_file {
 
 sub start_playing_file {
     my ($class, $file) = @_;
+    $DataFile = "$path/$file.json";
     $Data = LoadFile($DataFile) or
-        die "No hash found in yml file $DataFile.\n";
-    $TransList = $Data->{$file} or
+        die "No hash found in data file $DataFile.\n";
+    $TransList = $Data or
         die "No transaction list found for $file.\n";
 }
 
 sub play {
     my ($class, $query) = @_;
+    ### playing...
     my $cur = shift @$TransList;
     if (!$cur) {
         die "No more expected response for query $query";
     }
-    unless (is_utf8($query)) {
-        $query = decode('utf8', $query);
+    if (is_utf8($query)) {
+        $query = encode('utf8', $query);
+    }
+    if (is_utf8($cur->[0])) {
+        $cur->[0] = encode('utf8', $cur->[0]);
     }
     if ($cur->[0] ne $query) {
         #is_string($cur->[0], $query);
@@ -92,6 +100,7 @@ sub play {
 
 sub new {
     my $class = shift;
+    ### Creating class: $class
     my $t_file;
     if ($0 =~ m{[^/]+\.t$}) {
         $t_file = $&;
@@ -118,6 +127,7 @@ sub state {
 
 sub quote {
     my ($self, $val) = @_;
+    if (!defined $val) { return undef }
     $val =~ s/'/''/g;
     $val =~ s{\\}{\\\\}g;
     "'$val'";
@@ -125,6 +135,7 @@ sub quote {
 
 sub quote_identifier {
     my ($self, $val) = @_;
+    if (!defined $val) { return undef }
     $val =~ s/"/""/g;
     $val =~ s{\\}{\\\\}g;
     qq{"$val"};

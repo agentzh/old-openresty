@@ -7,7 +7,7 @@ use Test::Base -Base;
 use YAML::Syck ();
 use JSON::Syck ();
 
-use Smart::Comments '####';
+#use Smart::Comments '####';
 my $client_module;
 use OpenResty::Config;
 BEGIN {
@@ -50,16 +50,25 @@ our $debug = $OpenResty::Config{'frontend.debug'};
 
 #init();
 
-sub canon_json {
+sub canon_json ($) {
     my $json = shift;
-    return undef unless defined $json;
+    #return undef unless defined $json;
     #### $json
-    my $data = JSON::Syck::Load($json);
     local $JSON::Syck::SortKeys = 1;
+    if ($json =~ /^([^=]+)=(.*);$/) {
+        my ($var, $true_json) = ($1, $2);
+        my $data = JSON::Syck::Load($true_json);
+        return "$var=" . JSON::Syck::Dump($data) . ";\n";
+    } elsif ($json =~ /^([^\(]+)\((.*)\);$/) {
+        my ($func, $true_json) = ($1, $2);
+        my $data = JSON::Syck::Load($true_json);
+        return "$func(" . JSON::Syck::Dump($data) . ");\n";
+    }
+    my $data = JSON::Syck::Load($json);
     return JSON::Syck::Dump($data);
 }
 
-sub canon_yaml {
+sub canon_yaml ($) {
     my $yaml = shift;
     return undef unless defined $yaml;
     my $data = YAML::Syck::Load($yaml);
@@ -67,15 +76,47 @@ sub canon_yaml {
     return YAML::Syck::Dump($data);
 }
 
-sub smart_is {
+sub smart_like ($$$$) {
+    my ($got, $pattern, $desc, $format) = @_;
+    $format ||= 'json';
+    chomp($pattern);
+    #warn "Pattern: $pattern";
+    if (defined $got && $got !~ m/$pattern/) {
+        if ($format eq 'json') {
+            #### old got: $got
+            #### old expected: $expected
+            eval {
+                $got = canon_json($got);
+            };
+            #### $got
+            #### $expected
+        } elsif ($format eq 'yaml') {
+            eval {
+                $got = canon_yaml($got);
+            };
+        }
+    }
+    like $got, qr/$pattern/, $desc;
+}
+
+
+sub smart_is ($$$$) {
     my ($got, $expected, $desc, $format) = @_;
     $format ||= 'json';
     if (defined $got && defined $expected && $got ne $expected) {
         if ($format eq 'json') {
+            #### old got: $got
+            #### old expected: $expected
             eval {
                 $got = canon_json($got);
-                $expected = canon_json($expected);
             };
+            if (!$@) {
+                eval {
+                    $expected = canon_json($expected);
+                }
+            };
+            #### $got
+            #### $expected
         } elsif ($format eq 'yaml') {
             eval {
                 $got = canon_yaml($got);
@@ -94,13 +135,18 @@ sub run_tests () {
 
 sub run_test ($) {
     my $block = shift;
+    my $should_skip;
     if (!$debug && $block->debug) {
         return;
     }
     if ($debug && defined $block->debug && $block->debug == 0) {
         return;
     }
-    if ($debug && $OpenResty::Config{'backend.type'} eq 'PgMocked') { ok 1, 'skipped debug: 1' for 1..3; return; }
+    #warn $block->use_ttf, "!@!!\n";
+    if ($block->use_ttf && !-e 'font/wqy-zenhei.ttf') {
+        $should_skip = 1;
+    }
+    if ($debug && $OpenResty::Config{'backend.type'} eq 'PgMocked' && $block->debug) { ok 1, 'skipped debug: 1' for 1..3; return; }
     my $name = $block->name;
     my $request = $block->request;
     if (!$request) {
@@ -128,7 +174,9 @@ sub run_test ($) {
         from_to($body, 'UTF-8', $charset) unless $charset eq 'UTF-8';
         $client->content_type($type);
         my $res = $client->request($body, $method, $url);
+        if ($should_skip) { return; }
         ok $res->is_success, "request returns OK - $name";
+        #warn $res->content, '!!!!!!!!!!!!!!!';
         my $expected_res = $block->response || $block->response_like;
         if ($expected_res) {
             $expected_res =~ s/\$TestAccount\b/$user/g;
@@ -142,13 +190,13 @@ sub run_test ($) {
                 if ($res->content =~ qr/$expected_res/) {
                     $SavedCapture = $1 if defined $1;
                 }
-                like $res->content, qr/$expected_res/, "$name - response matched";
+                smart_like $res->content, $expected_res, "$name - response matched", lc($block->format);
             } else {
                 from_to($expected_res, 'UTF-8', $charset) unless $charset eq 'UTF-8';
-                smart_is $res->content, $expected_res, "response content OK - $name", lc($block->format);
+                smart_is $res->content(), $expected_res, "response content OK - $name", lc($block->format);
             }
         } else {
-            smart_is $res->content, $expected_res, "response content OK - $name", lc($block->format);
+            smart_is $res->content(), $expected_res, "response content OK - $name", lc($block->format);
         }
         if ($res_type) {
             my $true_res_type = $res->header('Content-Type');

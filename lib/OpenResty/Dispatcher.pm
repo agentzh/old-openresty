@@ -46,11 +46,13 @@ if ($url_prefix) {
 sub init {
     OpenResty::Config->init;
     my $backend = $OpenResty::Config{'backend.type'};
+    #warn "init: $backend\n";
     eval {
         $OpenResty::Cache = OpenResty::Cache->new;
         OpenResty->connect($backend);
     };
     if ($@) { $InitFatal = $@; }
+    #warn "InitFatal: $InitFatal\n";
 
     if (my $filtered = $OpenResty::Config{'frontend.filtered'}) {
         #warn "HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
@@ -78,6 +80,7 @@ sub process_request {
     $url =~ s{^\Q$url_prefix\E/+}{}g if $url_prefix;    ### New URL: $url
 
     my $openresty = OpenResty->new($cgi);
+    #warn "InitFatal2: $InitFatal\n";
     if ($InitFatal) {
         $openresty->fatal($InitFatal);
         return;
