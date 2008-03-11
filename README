@@ -2,7 +2,7 @@ NAME
     OpenResty - General-purpose web service platform for web applications
 
 VERSION
-    This document describes OpenResty 0.0.11 released on March 7, 2008.
+    This document describes OpenResty 0.1.0 released on March 11, 2008.
 
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
@@ -73,14 +73,19 @@ INSTALLATION
         settings. The default settings look like this:
 
             [backend]
-            type=Pg
+            recording=0
+            # You should change the line below to type=Pg or type=PgFarm
+            type=PgMocked
             host=localhost
             user=agentzh
             password=agentzh
             database=test
 
-        Most of the time, you need to change the last 3 lines unless you're
-        using exactly the same user, password, and database name.
+        Most of the time, you need to change "type=PgMocked" to "type=Pg",
+        as well as the last 3 lines (unless you're using exactly the same
+        user, password, and database name). The default "PgMocked" backend
+        is a mocked PostgreSQL database which is useful only for testing
+        purposes.
 
     4.  Give read/write access to lighttpd's log file (optional):
 

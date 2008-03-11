@@ -1,5 +1,5 @@
 0.1.0 Mar 11 2008
-* Asked the user for permission before downloading font/wqy-zenhei.ttf from agentzh.org.
+* Asked the user for permission before downloading font/wqy-zenhei.ttf from agentzh.org ( http://rt.cpan.org/Public/Bug/Display.html?id=33982 )
 * Implemented the PgMocked backend which mocks up the Pg backend using t/pgmocked-data.json.
 
 0.0.11 Mar 7 2008
