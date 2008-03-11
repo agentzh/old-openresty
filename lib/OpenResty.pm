@@ -574,13 +574,15 @@ Edit your F<etc/site_openresty.conf> file, change the configure settings
 under [backend] section according to your previous settings. The default settings look like this:
 
     [backend]
-    type=Pg
+    recording=0
+    # You should change the line below to type=Pg or type=PgFarm
+    type=PgMocked
     host=localhost
     user=agentzh
     password=agentzh
     database=test
 
-Most of the time, you need to change the last 3 lines unless you're using exactly the same user, password, and database name.
+Most of the time, you need to change C<type=PgMocked> to C<type=Pg>, as well as the last 3 lines (unless you're using exactly the same user, password, and database name). The default "PgMocked" backend is a mocked PostgreSQL database which is useful only for testing purposes.
 
 =item 4.
 

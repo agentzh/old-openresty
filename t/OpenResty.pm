@@ -4,8 +4,10 @@ use lib 'inc';
 use lib 'lib';
 
 use Test::Base -Base;
+use YAML::Syck ();
+use JSON::Syck ();
 
-#use Smart::Comments;
+use Smart::Comments '####';
 my $client_module;
 use OpenResty::Config;
 BEGIN {
@@ -48,6 +50,42 @@ our $debug = $OpenResty::Config{'frontend.debug'};
 
 #init();
 
+sub canon_json {
+    my $json = shift;
+    return undef unless defined $json;
+    #### $json
+    my $data = JSON::Syck::Load($json);
+    local $JSON::Syck::SortKeys = 1;
+    return JSON::Syck::Dump($data);
+}
+
+sub canon_yaml {
+    my $yaml = shift;
+    return undef unless defined $yaml;
+    my $data = YAML::Syck::Load($yaml);
+    local $YAML::Syck::SortKeys = 1;
+    return YAML::Syck::Dump($data);
+}
+
+sub smart_is {
+    my ($got, $expected, $desc, $format) = @_;
+    $format ||= 'json';
+    if (defined $got && defined $expected && $got ne $expected) {
+        if ($format eq 'json') {
+            eval {
+                $got = canon_json($got);
+                $expected = canon_json($expected);
+            };
+        } elsif ($format eq 'yaml') {
+            eval {
+                $got = canon_yaml($got);
+                $expected = canon_yaml($expected);
+            };
+        }
+    }
+    is $got, $expected, $desc;
+}
+
 sub run_tests () {
     for my $block (blocks()) {
         run_test($block);
@@ -62,6 +100,7 @@ sub run_test ($) {
     if ($debug && defined $block->debug && $block->debug == 0) {
         return;
     }
+    if ($debug && $OpenResty::Config{'backend.type'} eq 'PgMocked') { ok 1, 'skipped debug: 1' for 1..3; return; }
     my $name = $block->name;
     my $request = $block->request;
     if (!$request) {
@@ -106,10 +145,10 @@ sub run_test ($) {
                 like $res->content, qr/$expected_res/, "$name - response matched";
             } else {
                 from_to($expected_res, 'UTF-8', $charset) unless $charset eq 'UTF-8';
-                is $res->content, $expected_res, "response content OK - $name";
+                smart_is $res->content, $expected_res, "response content OK - $name", lc($block->format);
             }
         } else {
-            is $res->content, $expected_res, "response content OK - $name";
+            smart_is $res->content, $expected_res, "response content OK - $name", lc($block->format);
         }
         if ($res_type) {
             my $true_res_type = $res->header('Content-Type');
@@ -127,7 +166,6 @@ sub run_test ($) {
 }
 
 END {
-    use YAML::Syck;
     use Hash::Merge 'merge';
     #use Data::Dumper;
     #warn scalar $timer->reports;
@@ -140,10 +178,10 @@ END {
         $cur_data = { @$cur_data };
         #warn Dumper($cur_data);
         if (-f $file) {
-            my $last_data = LoadFile($file);
+            my $last_data = YAML::Syck::LoadFile($file);
             $cur_data = merge($cur_data, $last_data);
         }
-        DumpFile($file, $cur_data);
+        YAML::Syck::DumpFile($file, $cur_data);
     }
 }
 

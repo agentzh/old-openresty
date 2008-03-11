@@ -2,11 +2,13 @@ package OpenResty::Backend::Pg;
 
 use strict;
 use warnings;
+
 use DBI;
 use OpenResty::SQL::Select;
 use base 'OpenResty::Backend::Base';
 use Encode 'from_to';
 
+our $Recording;
 our ($Host, $User, $Password, $Port, $Database);
 
 sub new {
@@ -29,9 +31,28 @@ sub new {
         {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts, PrintError => 0}
     );
 
+    $Recording = $OpenResty::Config{'backend.recording'} && ! $OpenResty::Config{'test_suite.use_http'};
+    if ($Recording) {
+        my $t_file;
+        if ($0 =~ m{[^/]+\.t$}) {
+            $t_file = $&;
+            require OpenResty::Backend::PgMocked;
+            OpenResty::Backend::PgMocked->start_recording_file($t_file);
+        } else {
+            warn "Config setting backend.recording ignored.";
+            undef $Recording;
+        }
+    }
+
     return bless {
         dbh => $dbh
     }, $class;
+}
+
+END {
+    if ($Recording) {
+        OpenResty::Backend::PgMocked->stop_recording_file();
+    }
 }
 
 sub encode_string {
@@ -44,15 +65,24 @@ sub select {
     my ($self, $sql, $opts) = @_;
     $opts ||= {};
     my $dbh = $self->{dbh};
-    return $dbh->selectall_arrayref(
+    my $res = $dbh->selectall_arrayref(
         $sql,
         $opts->{use_hash} ? {Slice=>{}} : ()
     );
+    if ($Recording) {
+        OpenResty::Backend::PgMocked->record($sql => $res);
+    }
+    return $res;
 }
 
 sub do {
     my ($self, $sql) = @_;
-    $self->{dbh}->do($sql);
+    my $res = $self->{dbh}->do($sql);
+    if ($Recording) {
+        OpenResty::Backend::PgMocked->record($sql => $res);
+    }
+    return $res;
+
 }
 
 sub quote {
@@ -88,7 +118,7 @@ sub has_user {
 
 sub set_user {
     my ($self, $user) = @_;
-    $self->{dbh}->do("set search_path to $user");
+    $self->do("set search_path to $user");
     $self->{user} = $user;
 }
 
@@ -135,12 +165,12 @@ begin
       raise exception 'Cannot login as %.% via captchas.', account , role;
     end if;
   elsif pass is not null then
-  
+
     execute 'select name from _roles where name = '''||role||''' and login = ''password'' and password = '''||pass||'''' into u;
     if u is null then
       raise exception 'Password for %.% is incorrect.', account , role;
     end if;
-  else 
+  else
 
     execute 'select name from _roles where name = '''||role||''' and login = ''anonymous''' into u;
     if u is null then
@@ -158,7 +188,6 @@ _EOC_
         die $error;
     }
 }
-
 
 1;
 
