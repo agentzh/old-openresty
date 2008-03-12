@@ -1,6 +1,6 @@
 =head1 NAME
 
-OpenResty::CheatSheet - Cheet sheet for OpenResty
+OpenResty::CheatSheet - Cheat sheet for OpenResty
 
 =head1 DESCRIPTION
 
