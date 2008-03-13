@@ -550,7 +550,7 @@ This is a basic guideline for settting up an OpenResty server on your own machin
 
 =item 1.
 
-Grab the openresty package and unpack it in some place, let's say it's openresty.
+Grab the openresty package and unpack it to some place, let's say it's openresty.
 
 =item 2.
 
@@ -559,13 +559,14 @@ Enter the openresty directory, run "perl Makefile.PL" to check missing dependenc
     $ cd openresty
     $ perl Makefile.PL
     $ sudo make  # This will install missing dependencies
+    $ make test  # run the test suite using the PgMocked backend
 
-To run "make test" or "make debug -f dev.mk", you need to have lighttpd and PostgreSQL database installed.
+For the PostgreSQL database, you need to prepare a PostgreSQL account (e.g.
+"agentzh"); and you need to create an empty database (e.g., "test"),
+and you need to create a stored precedure language named "plpgsql" for that database,
+contact your PostgreSQL DBA for it or read the PostgreSQL manual.
 
-for PostgreSQL database, you need to prepare a PostgreSQL account (e.g.
-"agentzh"); and you need to create an empty database (e.g., "test"), and you need to create a store precedure language named "plpgsql" for that database, contact your PostgreSQL DBA for it or read PostgreSQL manuel.
-
-Basically, they are command like:
+Normally, the following commands are used:
 
     $ createdb test
     $ createuser -P agnetzh
@@ -596,7 +597,7 @@ Give read/write access to lighttpd's log file (optional):
 
 =item 5.
 
-For the Pg backend, one need to create the "anonymous" role in your database (like "test"):
+For the Pg backend, one needs to create the "anonymous" role in his database (like "test"):
 
     $ createuser anonymouse test
 
@@ -613,7 +614,7 @@ Give a password (say, "password") to its Admin role. Update your F<etc/site_open
     use_http=0
     server=tester:password@localhost
 
-Now you can already run the test suite without a lighttpd server:
+Now you can already run the test suite without a lighttpd server (but with a true Pg backend):
 
     $ make test
 
