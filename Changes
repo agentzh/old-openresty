@@ -1,3 +1,7 @@
+0.1.1 Mar 13 2008
+* Fixed a random regression caused by the inherent errors in float-point numbers.
+* Fixed a bunch of English typos in the POD.
+
 0.1.0 Mar 11 2008
 * Asked the user for permission before downloading font/wqy-zenhei.ttf from agentzh.org ( http://rt.cpan.org/Public/Bug/Display.html?id=33982 )
 * Implemented the PgMocked backend which mocks up the Pg backend using t/pgmocked-data.json.
