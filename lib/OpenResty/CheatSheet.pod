@@ -8,6 +8,13 @@ This 'cheat sheet' is a handy reference, meant for beginning OpenResty users.
 Not everything is mentioned, but most of the common features in
 L<OpenResty::Spec::REST> may already be included.
 
+=head1 LOGIN API
+
+    GET /=/login/agentzh.Admin/password   Login as account "agentzh" and
+                                          role "Admin" using encrypted
+                                          password "password"
+    DELETE /=/view/Blah?user=agentzh.Admin&password=password
+
 =head1 MODEL API
 
 =over
@@ -79,9 +86,40 @@ L<OpenResty::Spec::REST> may already be included.
 
 =over
 
+=item View lists
+
+    GET /=/view                     Get a list of all the views available
+    DELETE /=/view                  Delete all the views
+
+=item Views
+
+    POST /=/view/MyView             Create a new view named MyView
+    { description:"My first view",
+      definition:
+        "select * from Post where Post.id >= $min"
+    }
+    GET /=/view/MyView              View the definition of the view MyView
+    PUT /=/view/MyView              Update the information of MyView
+    { name:"NewName", description:"New desc" }
+    DELETE /=/view/NewName           Remove the NewName view
+
+=item Calling views
+
+    # assuming the PostsByMonth view has 2 parameters, "year" and "month"
+    GET /=/view/PostsByMonth/~/~?year=2008&month=3?
+    GET /=/view/PostsByMonth/year/2008?month=3
+    GET /=/view/PostsByMonth/month/3?year=2008
+
 =back
 
 =head1 ACTION API
+
+=head1 GENERAL PARAMETERS
+
+    GET /=/view/PostsByMonth/~/~?callback=foo       returns "foo(<JSON>);"
+                                                    instead of "<JSON>"
+    GET /=/view/PostsByMonth/~/~?var=foo            returns "foo=<JSON>;"
+                                                    instead of "<JSON>"
 
 =head1 ROLE API
 
