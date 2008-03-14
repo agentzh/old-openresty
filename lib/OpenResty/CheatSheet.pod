@@ -4,7 +4,11 @@ OpenResty::CheatSheet - Cheat sheet for OpenResty
 
 =head1 DESCRIPTION
 
-This 'cheat sheet' is a handy reference, meant for beginning OpenResty users. Not everything is mentioned, but all the main features may already be included.
+This 'cheat sheet' is a handy reference, meant for beginning OpenResty users.
+Not everything is mentioned, but most of the common features in
+L<OpenResty::Spec::REST> may already be included.
+
+=head1 MODEL API
 
 =over
 
@@ -17,22 +21,30 @@ This 'cheat sheet' is a handy reference, meant for beginning OpenResty users. No
 
     GET /=/model/MyModel            Read the info for MyModel
     POST /=/model/MyModel           Create a model MyModel
-        { description:"",
+        { description:"Model description",
           columns:[
-            { name:"", label:"", type:"" }
+            {
+              name:"title",label:"Title",
+              type:"text",default:"No title",
+              required:1
+            },
+            {
+              name:"gender",label:"Gender",
+              values:['M','F']
+            },
             ...
           ] }
     PUT /=/model/MyModel            Alter the model MyModel
-        { name:"", description:"" }
+        { name:"NewName",description:"New Description" }
     DELETE /=/model/MyModel         Delete model MyModel
 
 =item Columns
 
     GET /=/model/MyModel/mycol      Read the info for MyModel's mycol
     POST /=/model/MyModel/mycol     Add a new column named mycol
-        { label:"", type:"" }
+        { label:"My column",type:"integer",default:0 }
     PUT /=/model/MyModel/mycol      Alter the column mycol
-        { name:"", type:"" }
+        { name:"new_name", type:"real" }
     DELETE /=/model/MyModel/mycol   Remove column mycol
 
 =item Rows
@@ -52,7 +64,8 @@ This 'cheat sheet' is a handy reference, meant for beginning OpenResty users. No
     GET /=/model/MyModel/~/~?order_by=col1              order by col1
     GET /=/model/MyModel/~/~?order_by=col1,col2         order by col1, col2
     GET /=/model/MyModel/~/~?order_by=col1:asc,col2:desc
-                                                order by col1 asc, col2 desc
+                                                        order by col1 asc, col2 desc
+    GET /=/model/MyModel/~/~?offset=10&count=20         offset 10 limit 20
 
 =item Suffixes
 
@@ -62,11 +75,21 @@ This 'cheat sheet' is a handy reference, meant for beginning OpenResty users. No
 
 =back
 
+=head1 VIEW API
+
+=over
+
+=back
+
+=head1 ACTION API
+
+=head1 ROLE API
+
 =head1 AUTHOR
 
 Agent Zhang (agentzh) C<< <agentzh at yahoo.cn> >>.
 
 =head1 SEE ALSO
 
-L<OpenResty::Spec::REST>.
+L<OpenResty::Spec::REST>, L<OpenResty>.
 

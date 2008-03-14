@@ -90,6 +90,8 @@ sub play {
     if (is_utf8($cur->[0])) {
         $cur->[0] = encode('utf8', $cur->[0]);
     }
+    #$query =~ s/'3\.14159'/'3.14158999999999988'/;
+    $query =~ s/'3\.1415[89]{4,}\d*'/'3.14159'/;
     if ($cur->[0] ne $query) {
         #is_string($cur->[0], $query);
         die "Unexpected query: ", $OpenResty::Dumper->($query) .
