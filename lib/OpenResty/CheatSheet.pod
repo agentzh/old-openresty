@@ -189,6 +189,20 @@ L<OpenResty::Spec::REST> may already be included.
       password:"encrypted password"
     }
 
+=item ACL rules for a role
+
+    GET /=/role/MyRole/~/~              Get all the ACL rules for MyRole
+    GET /=/role/MyRole/method/GET       Filter out ACL rules with GET method
+                                        only
+    POST /=/role/MyRole/~/~             Allow MyRole to insert new rows into
+    { method:"POST", "/=/model/Post" }  the Post model
+
+    PUT /=/role/MyRole/id/5              Modify the ACL rule with id 5
+    { method:"PUT" }
+
+    DELETE /=/role/MyRole/method/DELETE  Banned delete operations from MyRole
+    DELETE /=/role/MyRole/~/~            Delete all the ACL rules for MyRole
+
 =head1 CAPTCHA API
 
 =over
