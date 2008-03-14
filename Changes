@@ -1,3 +1,6 @@
+0.1.2 XXX
+* Added more stuffs to CheatSheet.
+
 0.1.1 Mar 13 2008
 * Fixed a random regression caused by the inherent errors in float-point numbers.
 * Fixed a bunch of English typos in the POD.
@@ -7,7 +10,7 @@
 * Implemented the PgMocked backend which mocks up the Pg backend using t/pgmocked-data.json.
 
 0.0.11 Mar 7 2008
-* removed uncomm!ented "use Smart::Comments" from the source.
+* Removed uncomm!ented "use Smart::Comments" from the source.
 
 0.0.10 Mar 6 2008
 * No longer croak on the INSTALLDIRS=site argument and others fed to Makefile.PL
