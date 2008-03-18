@@ -1,6 +1,6 @@
 =head1 NAME
 
-OpenResty::Spec::MetaModel - MetaModel for OpenResty backends
+OpenResty::Spec::MetaModel - Metamodel for OpenResty backends
 
 =head1 VERSION
 
@@ -196,6 +196,8 @@ The C<type> column specifies the type of the Feed object, like "RSS 0.9", "RSS 1
 
 The snapshot stores a snapshot of the feeds which are usually automatically
 updated by OpenResty deamon processes.
+
+=back
 
 =head1 AUTHOR
 
