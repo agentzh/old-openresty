@@ -412,7 +412,7 @@ sub current_user_can {
     } continue { $max_i-- }
     map { $_ = '/=/' . join '/', @$_ } @urls;
     my $or_clause = join ' or ', map { "url = ".Q($_) } @urls;
-    my $sql = "select count(*) from _access_rules where role = ".
+    my $sql = "select count(*) from _access where role = ".
         Q($role) . " and method = " . Q($meth) . " and ($or_clause);";
     ### $sql
     my $res = $self->select($sql);

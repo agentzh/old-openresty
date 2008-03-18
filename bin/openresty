@@ -110,9 +110,19 @@ if ($cmd eq 'adduser') {
         die "User $user does not exist.\n";
     }
 } elsif ($cmd eq 'upgrade') {
+    my $user = shift or
+        die "No user specified.\n";
+    if ($backend->has_user($user)) {
+        my $base = $OpenResty::Backend->get_upgrading_base_for_user($user);
+        if ($base >= 0) {
+            $OpenResty::Backend->upgrade_metamodel_for_user($user, $base);
+        } else {
+            warn "User $user is already up to date.\n";
+        }
+    } else {
+        die "User $user does not exist.\n";
+    }
 } else {
     die "Unknown command: $cmd\n";
 }
-
-
 
