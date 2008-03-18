@@ -1,3 +1,6 @@
+0.1.8 Mar 18 2008
+* Fixed a typo in Base.pm
+
 0.1.7 Mar 17 2008
 * Added OpenResty::Spec::MetaModel.
 
