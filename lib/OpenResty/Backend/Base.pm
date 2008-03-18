@@ -111,22 +111,56 @@ my %DefaultRules = (
 );
 
 our @VersionDelta = (
-    ['0.01' => ''],
-    ['0.02' => ''],
+    [
+        '0.01' => <<'_EOC_',
+create table _version (
+    version varchar(10)
+);
+insert into _version (version) values ('0.01');
+alter table _access_rules rename to _access;
+alter table _roles rename to _tmp;
+create table _roles (
+    id serial primary key,
+    name text unique not null,
+    password text,
+    login text not null,
+    description text not null
+);
+insert into _roles
+    (name, password, login, description)
+    (select name, password, login, description from _tmp);
+drop table _tmp;
+alter table _columns add column indexed text;
+-- XXX TODO: alter table _columns rename column "default" to default_value;
+create table _action (
+    id serial primary key,
+    name text unique not null,
+    description text,
+    definition text unique not null,
+    confirmed_by text
+);
+_EOC_
+    ],
+    #[
+    #'0.02' => <<'_EOC_',
+#_EOC_
+    #],
 );
 
-sub getUpgradeBase {
+sub get_upgrading_base_for_user {
     my ($self, $user) = @_;
     my $data;
     if (defined $user) {
         $self->set_user($user);
+    } else {
+        die "No user specified.\n";
     }
     $user = $self->{user} or die "No user specified";
     $data = $self->select("select count(*) from pg_tables where tablename = '_version' and schemaname = '$user'");
-    if (_ARRAY($data) && !$data->[0][0]) {
-        return -1;
+    if (_ARRAY($data) && defined $data->[0][0] && $data->[0][0] == 0) {
+        return 0;
     }
-    $data = $self->select("select version from _version limit 1");
+    $data = $self->select("select version from $user._version limit 1");
     my $version;
     if (_ARRAY0($data) && _ARRAY0($data->[0])) {
         $version = $data->[0][0];
@@ -136,22 +170,31 @@ sub getUpgradeBase {
     return -1;
 }
 
-sub upgradeMetaModel {
-    my ($self, $from, $user) = @_;
+sub upgrade_metamodel_for_user {
+    my ($self, $user, $from) = @_;
     if (defined $user) {
         $self->set_user($user);
+    } else {
+        die "No user specified.\n";
     }
     if (!defined $from) {
         $from = $self->getUpgradeBase;
         if (!defined $from) { return; }
     }
+    my $cur_ver;
+    if ($from == 0) {
+        $cur_ver = 'nil';
+    } else {
+        $cur_ver = $VersionDelta[$from-1]->[0];
+    }
     my $res;
     for my $i ($from..$#VersionDelta) {
         my $entry = $VersionDelta[$i];
         my ($new_ver, $sql) = @$entry;
-        warn "Upgrading account $user from $from to $new_ver...\n";
-        $res = $self->do("$sql; update _versions set version='$new_ver';");
+        warn "Upgrading account $user from $cur_ver to $new_ver...\n";
+        $res = $self->do("$sql; update _version set version='$new_ver';");
         last if $res < 0;
+        $cur_ver = $new_ver;
     }
     return $res >= 0;
 }
@@ -235,7 +278,8 @@ _EOC_
     #$retval += 0;
     ### $admin_password
     $self->add_default_roles($user, $admin_password);
-    return $retval;
+    $self->upgrade_metamodel_for_user($user, 0);
+    #return $retval;
 }
 
 1;

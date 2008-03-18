@@ -20,7 +20,7 @@ sub DELETE_role {
     if (!$openresty->has_role($role)) {
         die "Role \"$role\" not found.\n";
     }
-    my $sql = "delete from _access_rules where role = ".Q($role).";\n".
+    my $sql = "delete from _access where role = ".Q($role).";\n".
         "delete from _roles where name = ".Q($role);
     return { success => $openresty->do($sql) >= 0 ? 1 : 0 };
 }
@@ -41,13 +41,13 @@ sub DELETE_access_rule {
     }
     my $sql;
     if ($value eq '~') {
-        $sql = "delete from _access_rules where role = '$role';";
+        $sql = "delete from _access where role = '$role';";
     } elsif ($col eq '~') {
         my $quoted = Q($value);
-        $sql = "delete from _access_rules where role = '$role' and (id::text = $quoted or method = $quoted or url = $quoted);";
+        $sql = "delete from _access where role = '$role' and (id::text = $quoted or method = $quoted or url = $quoted);";
     } else {
         my $quoted = Q($value);
-        $sql = "delete from _access_rules where role = '$role' and $col = $quoted;";
+        $sql = "delete from _access where role = '$role' and $col = $quoted;";
     }
     ### DELETE access rules: $sql
     my $res = $openresty->do($sql);
@@ -69,7 +69,7 @@ sub GET_access_rule {
 
     my $sql;
     if ($value eq '~') {
-        $sql = "select id,method,url from _access_rules where role = '$role';";
+        $sql = "select id,method,url from _access where role = '$role';";
     } else {
         my $op = $openresty->{_cgi}->url_param('op') || 'eq';
         $op = $OpenResty::OpMap{$op};
@@ -79,9 +79,9 @@ sub GET_access_rule {
         my $quoted = Q($value);
 
         if ($col eq '~') {
-            $sql = "select id,method,url from _access_rules where role = '$role' and ( id::text $op $quoted or method $op $quoted or url $op $quoted);";
+            $sql = "select id,method,url from _access where role = '$role' and ( id::text $op $quoted or method $op $quoted or url $op $quoted);";
         } else {
-            $sql = "select id,method,url from _access_rules where role = '$role' and $col $op $quoted;";
+            $sql = "select id,method,url from _access where role = '$role' and $col $op $quoted;";
         }
     }
     ### $sql
@@ -106,7 +106,7 @@ sub PUT_access_rule {
         die "Unknown access rule field: $col\n";
     }
 
-    my $update = OpenResty::SQL::Update->new('_access_rules');
+    my $update = OpenResty::SQL::Update->new('_access');
     my $data = $openresty->{_req_data};
     _HASH($data) or die "Only non-empty HASH expected.\n";
     while (my ($key, $val) = each %$data) {
@@ -171,7 +171,7 @@ sub POST_access_rule {
     } else {
         die "Only non-empty hashes or arrays are expected.\n";
     }
-    my $last_id = $openresty->last_insert_id('_access_rules');
+    my $last_id = $openresty->last_insert_id('_access');
     return {
         success => $success,
         rows_affected => $rows_affected >= 0 ? $rows_affected : 0,
@@ -203,7 +203,7 @@ sub insert_rule {
             join(" ", keys %$data),
             "\n";
     }
-    my $insert = OpenResty::SQL::Insert->new("_access_rules")
+    my $insert = OpenResty::SQL::Insert->new("_access")
         ->cols( qw< role method url > )
         ->values( Q( $role, $method, $url ) );
     return $openresty->do("$insert");
@@ -245,7 +245,7 @@ sub GET_role {
 
 sub DELETE_role_list {
     my ($self, $openresty, $bits) = @_;
-    my $sql = "delete from _access_rules where role <> 'Admin' and role <> 'Public';\n".
+    my $sql = "delete from _access where role <> 'Admin' and role <> 'Public';\n".
         "delete from _roles where name <> 'Admin' and name <> 'Public'";
     $openresty->warning("Predefined roles skipped.");
     return { success => $openresty->do($sql) >= 0 ? 1 : 0 };
@@ -347,7 +347,7 @@ sub PUT_role {
     if (defined $new_name) {
         _IDENT($new_name) or die "Bad role name: ", $OpenResty::Dumper->($new_name);
         $update->set( name => Q($new_name) );
-        $extra_sql .= 'update _access_rules set role='.Q($new_name).' where role='.Q($role).';';
+        $extra_sql .= 'update _access set role='.Q($new_name).' where role='.Q($role).';';
     }
 
     my $new_login = delete $data->{login};
