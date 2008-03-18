@@ -130,7 +130,7 @@ sub getUpgradeBase {
     my $version;
     if (_ARRAY0($data) && _ARRAY0($data->[0])) {
         $version = $data->[0][0];
-        my $from = firstidx { $_ > $from } @VersionDelta;
+        my $from = firstidx { $_ > $version } @VersionDelta;
         return $from;
     }
     return -1;
