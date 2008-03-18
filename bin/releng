@@ -24,6 +24,8 @@ sub check_deps {
             q{ sed 's/^base ''//' | }.
             q{ sed 's/^base qw//' | }.
             q{ sed 's/^base "//' | }.
+            q{ sed 's/L<//g' | }.
+            q{ sed 's/>.*//g' | }.
             q{ sed 's/ qw.*//g' | sed 's/ ''.*//' | sed 's/[^A-Za-z0-9_:]*//g' | sort | uniq | }.
             q{ grep -vE '^(constant|subs|overload|lib|Cwd|Carp|List::Util|Encode|FindBin|vars|utf8|File::Copy|Clone|File::Spec|File::stat|File::Temp|Getopt::Std|Getopt::Long|Exporter|Data::Dumper)$' }.
             q{ >> /tmp/deps.txt };
@@ -106,9 +108,10 @@ for my $file (map glob, qw{ lib/*.pm lib/*/*.pm lib/*/*/*.pm lib/*/*/*/*.pm lib/
     open my $in, $file or
         die "ERROR: Can't open $file for reading: $!\n";
     while (<$in>) {
-        my $ver;
-        if (/(?x) \$VERSION \s* = .*? ([\d\.]*\d+)/) {
+        my ($ver, $skipping);
+        if (/(?x) \$VERSION \s* = .*? ([\d\.]*\d+) (.*? SKIP)?/) {
             my $orig_ver = $ver = $1;
+            $skipping = $2;
             $ver =~ s{^(\d+)\.(\d{3})(\d{3})$}{join '.', int($1), int($2), int($3)}e;
             warn "$file: $orig_ver ($ver)\n";
         } elsif (/This document describes \S+ ([\d\.]*\d+)/) {
@@ -120,7 +123,7 @@ for my $file (map glob, qw{ lib/*.pm lib/*/*.pm lib/*/*/*.pm lib/*/*/*/*.pm lib/
             warn "$file: $ver\n";
         }
 
-        if ($ver and $version) {
+        if ($ver and $version and !$skipping) {
             if ($version ne $ver) {
                 die "$file: $ver != $version\n";
             }

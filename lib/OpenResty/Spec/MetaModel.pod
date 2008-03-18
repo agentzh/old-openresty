@@ -1,0 +1,215 @@
+=head1 NAME
+
+OpenResty::Spec::MetaModel - MetaModel for OpenResty backends
+
+=head1 VERSION
+
+This document describes the 0.02 version of the metamodel used in the OpenResty 0.2.x series.
+
+=head1 DESCRIPTION
+
+The metamodel in OpenResty is a set of internal database schemas or tables for storing meta information regarding the user data. They're usually invisible to the outside users and their names are carefully chosen so as to prevent potential naming conflicts with users' objects.
+
+=head1 Global metamodel
+
+The global metamodel stores the global (system-wide) information about the OpenResty users.
+
+It sits in a separate PostgreSQL schema named C<_admin>. It owns the following meta tables:
+
+=over
+
+=item _version
+
+The definition of the C<_version> table is
+
+    create table _version (
+        version varchar(10)
+    )
+
+Usually it stores the version of the global metamodel itself. Note that the version of the metamodel is independent of the version number of the whole OpenResty server implementation. For instance, the OpenResty 0.2.x series uses metamodel 0.02 while the versions earlier uses 0.01 instead. This table usually has only 1 row. But it's also fine to keep track of all the version history. The largest version number will be considered the current version of the metamodel in the I<current> user schema.
+
+=item _accounts
+
+The C<_accounts> table stores the list of all the available OpenResty accounts in the whole system. It has the following definition:
+
+    create table _accounts (
+        id serial primary key,
+        name text unique not null,
+        created_on timestamp (0) with time zone
+    )
+
+The C<name> column specifies the name of the account while the C<created_on> is the creation time of the account.
+
+=back
+
+=head1 Local metamodel
+
+Each OpenResty account registered by an outside user has a PostgreSQL schema for storing its models, views, roles, actions, and other user objects. Such schema has the same name as the account name. For instance, account C<carrie> has a corresponding database schema (or namespace) named C<carrie>. The C<carrie> schema has the following meta tables:
+
+=over
+
+=item _version
+
+The definition of the _version table is
+
+    create table _version (
+        version varchar(10)
+    )
+
+It is exactly the same as the L<_version> table in the global metamodel.
+
+=item _roles
+
+The C<_roles> table stores the meta information of the OpenResty Role objects.
+
+    create table _roles (
+        id serial primary key,
+        name text unique not null,
+        login text not null,
+        password text,
+        description text not null
+    );
+
+The C<login> column specifies the login method used by the role. Allowed values are C<'password'>, C<'anonymous'>, and C<'captcha'>.
+
+The C<password> column must be not null when the C<login> column has the value of C<'password'>. Its values should be null otherwise.
+
+=item _access
+
+The C<_access> table stores the information of the access rules
+associated with the OpenResty Role objects.
+
+    create table _access (
+        id serial primary key,
+        role text not null,
+        method varchar(10) not null,
+        url text not null
+    );
+
+The C<role> column stores the name of the role which owns the current rule.
+
+Each access rule has two components, HTTP method and the (abbreviated) URL, which are saved in the columns C<method> and C<url>, respectively. An example
+is that C<method> has a value of C<'GET'> and C<url> has a value of C<'/=/model/~/~/~'>.
+
+=item _models
+
+The C<_models> table stores the meta information regarding the OpenResty models.
+
+The definition of _models is
+
+    create table _models (
+        id serial primary key,
+        name text unique not null,
+        description text not null
+    );
+
+The C<name> column stores the names of user models. Every user model is represented by a physical PostgreSQL table under the same schema and the leading character of its name must be case-sensitive letters. Table names leading by an underscore are preserved for meta tables.
+
+The C<description> column stores users' textual description for their models.
+
+Neither C<name> nor C<description> can be null.
+
+=item _columns
+
+The C<_columns> table stores the meta information regarding OpenResty models' columns.
+
+    create table _columns (
+        id serial primary key,
+        name text not null,
+        model text not null,
+        label text not null,
+        type text not null,
+        default_value text,
+        indexed text,
+        unique(model, name)
+    );
+
+The C<name> column keeps the names of user models' columns and the C<model> column stores the names of the corresponding models.
+
+The C<lable> column stores the textual label provided by the user who created the column and types of the model columns are stored in the C<type> column.
+
+None of the columns above but C<default_value> and C<indexed> can be null and in addition, the combination of the columns C<model> and C<name> should be unique.
+
+User columns have default values and the corresponding JSON representation is stored in the C<default_value> column. Note that the values for C<default_value> are JSON literals, for instance, C<"32">, C<["now()"]>, and etc.
+
+The C<indexed> column stores the index method applied to the current user column if any; null otherwise. Possible values are 'fulltext', 'btree', 'rtree', 'gist', and 'hash'.
+
+=item _views
+
+The C<_views> table stores the information of the OpenResty View objects.
+
+    create table _views (
+        id serial primary key,
+        name text unique not null,
+        definition text unique not null,
+        description text
+    );
+
+All of the columns have similar meaning as the C<_model> table
+except that the C<definition> column stores the minisql string
+defining the functionality of the view.
+
+=item _actions
+
+The C<_actions> table stores the information of the OpenResty Action objects.
+
+    create table _action (
+        id serial primary key,
+        name text unique not null,
+        description text,
+        definition text unique not null,
+        confirmed_by text
+    );
+
+Most of the columns are similar to those in the C<_view> table except that
+the last C<confirmed_by> column specifies the confirmation method used to
+fire the action. Allowed values for this column are "email", "cellphone",
+and "captcha".
+
+=item _feeds
+
+B<WARNING> This part deserves more treatment.
+
+The C<_feeds> table stores the meta information for the OpenResty Feed objects.
+
+    create table _feeds (
+        id serial primary key,
+        name text unique not null,
+        description text not null,
+        view text not null,
+        arguments text not null,
+        type text not null,
+        snapshot text
+    );
+
+The C<arguments> column defines the mapping from Feed entries' attributes
+to the associated View object's columns. The JSON representation is
+used as the C<arguments> column's value. An example for the case of Atom/RSS feed is:
+
+    {title:"title",author:"poster",link:"http://blog.agentzh.org/#post-$id",issued:"created",summary:"content",summary_type:"html"}
+
+For email feeds, it may look like
+
+    {title:"title",body:"content",body_type:"html"}
+
+The C<type> column specifies the type of the Feed object, like "RSS 0.9", "RSS 1.0", "RSS 2.0", "Atom", and "email".
+
+The snapshot stores a snapshot of the feeds which are usually automatically
+updated by OpenResty deamon processes.
+
+=head1 AUTHOR
+
+agentzh C<< <agentzh@yahoo.cn> >>
+
+=head COPYRIGHT AND LICENSE
+
+Copyright (c)  2008  Yahoo! China EEEE Works, Alibaba Inc.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+Texts. A copy of the license can be found at
+
+L<http://www.gnu.org/licenses/fdl.html>
+
