@@ -1,5 +1,11 @@
-0.1.2 XXX
-* Added more stuffs to CheatSheet.
+0.1.6 Mar 16 2008
+* Fixed another randomness caused by float-point numbers.
+
+0.1.5 Mar 14 2008
+* Fixed the version number for OpenResty::FastCGI to amuse the PAUSE indexer.
+
+0.1.2 Mar 14 2008
+* Added much more stuffs to CheatSheet.
 
 0.1.1 Mar 13 2008
 * Fixed a random regression caused by the inherent errors in float-point numbers.

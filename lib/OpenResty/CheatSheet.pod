@@ -161,7 +161,7 @@ L<OpenResty::Spec::REST> may already be included.
     GET /=/view/Blah?user=agentzh.Public             Per-request-login
     GET /=/view/Blah?session=23EC98F2-F1A...         Specify the session
 
-=item Path Suffixes
+=head1 Path Suffixes
 
     GET /=/model.json           Get model list in JSON format (the default)
     GET /=/model.yaml           ditto, but in YAML format
@@ -202,6 +202,8 @@ L<OpenResty::Spec::REST> may already be included.
 
     DELETE /=/role/MyRole/method/DELETE  Banned delete operations from MyRole
     DELETE /=/role/MyRole/~/~            Delete all the ACL rules for MyRole
+
+=back
 
 =head1 CAPTCHA API
 
