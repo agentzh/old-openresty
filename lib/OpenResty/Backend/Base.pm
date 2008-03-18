@@ -4,6 +4,8 @@ use strict;
 use warnings;
 
 #use Smart::Comments;
+use Params::Util qw(_ARRAY0 _ARRAY);
+use List::MoreUtils qw(firstidx);
 use OpenResty::SQL::Insert;
 
 my %DefaultRules = (
@@ -107,6 +109,52 @@ my %DefaultRules = (
         [ POST => 'admin/~' ],
     ],
 );
+
+our @VersionDelta = (
+    ['0.01' => ''],
+    ['0.02' => ''],
+);
+
+sub getUpgradeBase {
+    my ($self, $user) = @_;
+    my $data;
+    if (defined $user) {
+        $self->set_user($user);
+    }
+    $user = $self->{user} or die "No user specified";
+    $data = $self->select("select count(*) from pg_tables where tablename = '_version' and schemaname = '$user'");
+    if (_ARRAY($data) && !$data->[0][0]) {
+        return -1;
+    }
+    $data = $self->select("select version from _version limit 1");
+    my $version;
+    if (_ARRAY0($data) && _ARRAY0($data->[0])) {
+        $version = $data->[0][0];
+        my $from = firstidx { $_ > $from } @VersionDelta;
+        return $from;
+    }
+    return -1;
+}
+
+sub upgradeMetaModel {
+    my ($self, $from, $user) = @_;
+    if (defined $user) {
+        $self->set_user($user);
+    }
+    if (!defined $from) {
+        $from = $self->getUpgradeBase;
+        if (!defined $from) { return; }
+    }
+    my $res;
+    for my $i ($from..$#VersionDelta) {
+        my $entry = $VersionDelta[$i];
+        my ($new_ver, $sql) = @$entry;
+        warn "Upgrading account $user from $from to $new_ver...\n";
+        $res = $self->do("$sql; update _versions set version='$new_ver';");
+        last if $res < 0;
+    }
+    return $res >= 0;
+}
 
 sub state {
     $_[0]->{dbh}->state;
