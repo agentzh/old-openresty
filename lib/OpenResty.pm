@@ -1,6 +1,6 @@
 package OpenResty;
 
-our $VERSION = '0.001006';
+our $VERSION = '0.001007';
 
 use strict;
 use warnings;
@@ -512,15 +512,18 @@ OpenResty - General-purpose web service platform for web applications
 
 =head1 VERSION
 
-This document describes OpenResty 0.1.6 released on March 16, 2008.
+This document describes OpenResty 0.1.7 released on March 18, 2008.
 
 =head1 DESCRIPTION
+
 
 This module implements the server-side OpenResty web service protocol. It provides scriptable and extensible web services for both server-side and client-side (pure AJAX) web applications.
 
 Currently this module can serve as a public web interface to a distributive or desktop PostgreSQL database system. In particular, it provides roles, models, views, actions, captchas, the minisql language, and many more to the web users.
 
-Note that OpenResty is I<not> a web application framework like L<Jifty>. Rather, it can serve as a component in many existing web application frameworks.
+"Another framework?" No, no, no, not all!
+
+OpenResty is I<not> a web application framework like L<Jifty>. Rather, it can serve as a component in many existing web application frameworks.
 
 We're already running an instance of the OpenResty server on our Yahoo! China's production machines:
 

@@ -109,6 +109,7 @@ if ($cmd eq 'adduser') {
     } else {
         die "User $user does not exist.\n";
     }
+} elsif ($cmd eq 'upgrade') {
 } else {
     die "Unknown command: $cmd\n";
 }

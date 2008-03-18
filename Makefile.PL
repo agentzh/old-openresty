@@ -33,6 +33,7 @@ requires            ('Data::UUID' => '1.148');
 requires            ('GD::SecurityImage' => '1.64');
 requires            ('Cache::Memcached::Fast' => '0.06');
 requires            ('Hash::Merge');
+#requires            ('List::MoreUtils');
 requires            ('Config::Simple');
 requires            ('Encode::Guess');
 
