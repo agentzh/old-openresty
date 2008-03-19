@@ -113,9 +113,10 @@ if ($cmd eq 'adduser') {
     my $user = shift or
         die "No user specified.\n";
     if ($backend->has_user($user)) {
-        my $base = $OpenResty::Backend->get_upgrading_base_for_user($user);
+        $backend->set_user($user);
+        my $base = $backend->get_upgrading_base;
         if ($base >= 0) {
-            $OpenResty::Backend->upgrade_metamodel_for_user($user, $base);
+            $backend->upgrade_local_metamodel($base);
         } else {
             warn "User $user is already up to date.\n";
         }

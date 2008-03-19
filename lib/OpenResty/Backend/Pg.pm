@@ -125,11 +125,16 @@ sub set_user {
 sub add_user {
     my $self = shift;
     my $user = shift;
+    $self->add_empty_user($user);
+    $self->SUPER::add_user($user, @_);
+}
+
+sub add_empty_user {
+    my ($self, $user) = @_;
     $self->do(<<"_EOC_");
 create schema $user;
 set search_path to $user;
 _EOC_
-    $self->SUPER::add_user($user, @_);
 }
 
 sub drop_user {
