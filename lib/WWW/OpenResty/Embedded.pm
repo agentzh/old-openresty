@@ -54,13 +54,13 @@ sub get {
 
 sub post {
     my $self = shift;
-    my $content = shift;
+    my $content = pop;
     $self->request($content, 'POST', @_);
 }
 
 sub put {
     my $self = shift;
-    my $content = shift;
+    my $content = pop;
     $self->request($content, 'PUT', @_);
 }
 
