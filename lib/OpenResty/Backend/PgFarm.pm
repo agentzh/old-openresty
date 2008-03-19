@@ -113,13 +113,18 @@ sub set_user {
 sub add_user {
     my $self = shift;
     my $user = shift;
-    my $retval = $self->{dbh}->do(<<"_EOC_");
-    SELECT useradd('$user','');
-    -- grant usage on schema $user to anonymous;
-_EOC_
+    my $retval = $self->add_empty_user($user);
     $self->set_user($user);
     $self->SUPER::add_user($user, @_);
     return $retval >= 0;
+}
+
+sub add_empty_user {
+    my ($self, $user) = @_;
+    $self->{dbh}->do(<<"_EOC_");
+        SELECT useradd('$user','');
+        -- grant usage on schema $user to anonymous;
+_EOC_
 }
 
 sub drop_user {
