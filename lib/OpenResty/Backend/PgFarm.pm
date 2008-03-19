@@ -129,6 +129,7 @@ _EOC_
 
 sub drop_user {
     my ($self, $user) = @_;
+    $self->SUPER::drop_user($user);
     my $retval = $self->{dbh}->do(<<"_EOC_");
     SELECT userdel('$user','');
 _EOC_

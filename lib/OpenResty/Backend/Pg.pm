@@ -139,6 +139,7 @@ _EOC_
 
 sub drop_user {
     my ($self, $user) = @_;
+    $self->SUPER::drop_user($user);
     $self->do(<<"_EOC_");
 drop schema $user cascade
 _EOC_
