@@ -110,18 +110,21 @@ if ($cmd eq 'adduser') {
         die "User $user does not exist.\n";
     }
 } elsif ($cmd eq 'upgrade') {
-    my $user = shift or
-        die "No user specified.\n";
-    if ($backend->has_user($user)) {
-        $backend->set_user($user);
-        my $base = $backend->get_upgrading_base;
-        if ($base >= 0) {
-            $backend->upgrade_local_metamodel($base);
+    my $user = shift;
+    if ($user) {
+        if ($backend->has_user($user)) {
+            $backend->set_user($user);
+            my $base = $backend->get_upgrading_base;
+            if ($base >= 0) {
+                $backend->upgrade_local_metamodel($base);
+            } else {
+                warn "User $user is already up to date.\n";
+            }
         } else {
-            warn "User $user is already up to date.\n";
+            die "User $user does not exist.\n";
         }
     } else {
-        die "User $user does not exist.\n";
+        $backend->upgrade_all;
     }
 } else {
     die "Unknown command: $cmd\n";

@@ -167,6 +167,34 @@ _EOC_
     #],
 );
 
+sub upgrade_all {
+    my ($self) = @_;
+    if ( ! $self->has_user('_global')) {
+        $self->upgrade_global_metamodel(0);
+        warn "WARNING!!! You need to upgrade every user account in your system manually.\n";
+        return;
+    }
+    $self->set_user('_global');
+    my $base = $self->get_upgrading_base;
+    if ($base < 0) {
+        warn "Global metamodel is up to date.\n";
+    }
+    my @accounts = $self->get_all_accounts;
+    #warn "@accounts";
+    for my $account (@accounts) {
+        $self->set_user($account);
+        my $base = $self->get_upgrading_base;
+        if ($base < 0) { warn "Account $account is up to date.\n"; }
+        else { $self->upgrade_local_metamodel($base); }
+    }
+}
+
+sub get_all_accounts {
+    my ($self) = @_;
+    my $res = $self->select("select name from _global._accounts") || [];
+    return map { @$_ } @$res;
+}
+
 sub get_upgrading_base {
     my ($self) = @_;
     my $user = $self->{user} or die "No user specified";
@@ -190,7 +218,7 @@ sub get_upgrading_base {
 sub upgrade_global_metamodel {
     my ($self, $base) = @_;
     if (!defined $base) { die "No upgrading base specified" }
-    if ($base == 0) {
+    if ($base == 0 || !$self->has_user('_global')) {
         $self->add_empty_user("_global");
         $self->set_user("_global");
     }
