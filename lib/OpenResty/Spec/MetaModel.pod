@@ -19,20 +19,21 @@ potential naming conflicts with users' objects.
 The global metamodel stores the global (system-wide) information about the
 OpenResty users.
 
-It sits in a separate PostgreSQL schema named C<_admin>. It owns the following
+It sits in a separate PostgreSQL schema named C<_global>. It owns the following
 meta tables:
 
 =over
 
-=item _version
+=item _general
 
-The definition of the C<_version> table is
+The definition of the C<_general> table is
 
-    create table _version (
+    create table _general (
         version varchar(10)
     )
 
-Usually it stores the version of the global metamodel itself. Note that the
+Usually it stores the version and other general information of
+the global metamodel itself. Note that the
 version of the metamodel is independent of the version number of the whole
 OpenResty server implementation. For instance, the OpenResty 0.2.x series
 uses metamodel 0.02 while the versions earlier uses 0.01 instead. This table
@@ -48,11 +49,9 @@ in the whole system. It has the following definition:
     create table _accounts (
         id serial primary key,
         name text unique not null,
-        created_on timestamp (0) with time zone
     )
 
-The C<name> column specifies the name of the account while the C<created_on>
-is the creation time of the account.
+The C<name> column specifies the name of the account.
 
 =back
 
@@ -66,15 +65,17 @@ C<carrie> schema has the following meta tables:
 
 =over
 
-=item _version
+=item _general
 
-The definition of the _version table is
+The definition of the C<_general> table is
 
-    create table _version (
-        version varchar(10)
+    create table _general (
+        version varchar(10),
+        created timestamp (0) with time zone
     )
 
-It is exactly the same as the L<_version> table in the global metamodel.
+The C<version> column keeps the metamodel version number for the current
+account while the C<created> column records its creation time.
 
 =item _roles
 
