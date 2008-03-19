@@ -1,5 +1,6 @@
 var account = 'agentzh';
-var host = 'http://resty.eeeeworks.org';
+//var host = 'http://resty.eeeeworks.org';
+var host = 'http://localhost';
 
 var openresty = null;
 var savedAnchor = null;
