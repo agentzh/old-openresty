@@ -116,7 +116,7 @@ $resty->post(
             from Post
             where id < $current
             order by id desc
-            mimit 1)
+            limit 1)
         union
             (select id, title
             from Post
