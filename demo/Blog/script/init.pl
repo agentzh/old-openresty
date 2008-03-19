@@ -11,6 +11,9 @@ use WWW::OpenResty::Simple;
 use Date::Manip;
 use Getopt::Std;
 
+#$JSON::Syck::ImplicitUnicode = 1;
+#$YAML::Syck::ImplicitUnicode = 1;
+
 my %opts;
 getopts('u:s:p:h', \%opts);
 if ($opts{h}) {
@@ -33,99 +36,123 @@ $resty->delete("/=/model");
 $resty->delete("/=/role/Public/~/~");
 $resty->delete("/=/view");
 
-$resty->post({
-    description => "Blog post",
-    columns => [
-        { name => 'title', label => 'Post title' },
-        { name => 'content', label => 'Post content' },
-        { name => 'author', label => 'Post author' },
-        { name => 'created', default => ['now()'], type => 'timestamp(0) with time zone', label => 'Post creation time' },
-        { name => 'comments', label => 'Number of comments', default => 0 },
-    ],
-}, '/=/model/Post');
+$resty->post(
+    '/=/model/Post',
+    {
+        description => "Blog rost",
+        columns => [
+            { name => 'title', label => 'Post title' },
+            { name => 'content', label => 'Post content' },
+            { name => 'author', label => 'Post author' },
+            { name => 'created', default => ['now()'], type => 'timestamp(0) with time zone', label => 'Post creation time' },
+            { name => 'comments', label => 'Number of comments', default => 0 },
+        ],
+    }
+);
 
-$resty->post({
-    description => "Blog comment",
-    columns => [
-        { name => 'sender', label => 'Comment sender' },
-        { name => 'email', label => 'Sender email address' },
-        { name => 'url', label => 'Sender homepage URL' },
-        { name => 'body', label => 'Comment body' },
-        { name => 'created', default => ['now()'], type => 'timestamp(0) with time zone', label => 'Comment creation time' },
-        { name => 'post', label => 'target post', type => 'integer' },
-    ],
-}, '/=/model/Comment');
+$resty->post(
+    '/=/model/Comment',
+    {
+        description => "Blog comment",
+        columns => [
+            { name => 'sender', label => 'Comment sender' },
+            { name => 'email', label => 'Sender email address' },
+            { name => 'url', label => 'Sender homepage URL' },
+            { name => 'body', label => 'Comment body' },
+            { name => 'created', default => ['now()'], type => 'timestamp(0) with time zone', label => 'Comment creation time' },
+            { name => 'post', label => 'target post', type => 'integer' },
+        ],
+    }
+);
 
 print Dump($resty->get('/=/model')), "\n";
 #print Dump($resty->get('/=/model/Post')), "\n";
 #print Dump($resty->get('/=/model/Comment')), "\n";
-$resty->post({
-    definition => <<'_EOC_',
-        select id, title, date_part('day', created) as day
-        from Post
-        where date_part('year', created) = $year and
-              date_part('month', created) = $month
-        order by created asc
+$resty->post(
+    '/=/view/PostsByMonth',
+    {
+        definition => <<'_EOC_',
+            select id, title, date_part('day', created) as day
+            from Post
+            where date_part('year', created) = $year and
+                date_part('month', created) = $month
+            order by created asc
 _EOC_
-}, '/=/view/PostsByMonth');
+    }
+);
 
-$resty->post({
-    definition => <<'_EOC_',
-        select Comment.id as id, post, sender, title
-        from Post, Comment
-        where post = Post.id
-        order by Comment.id desc
-        offset $offset | 0
-        limit $limit | 10
+$resty->post(
+    '/=/view/RecentComments',
+    {
+        definition => <<'_EOC_',
+            select Comment.id as id, post, sender, title
+            from Post, Comment
+            where post = Post.id
+            order by Comment.id desc
+            offset $offset | 0
+            limit $limit | 10
 _EOC_
-}, '/=/view/RecentComments');
+    }
+);
 
-$resty->post({
-    definition => <<'_EOC_',
-        select id, title
-        from Post
-        order by id desc
-        offset $offset | 0
-        limit $limit | 10
+$resty->post(
+    '/=/view/RecentPosts',
+    {
+        definition => <<'_EOC_',
+            select id, title
+            from Post
+            order by id desc
+            offset $offset | 0
+            limit $limit | 10
 _EOC_
-}, '/=/view/RecentPosts');
+    }
+);
 
-$resty->post({
-    definition => <<'_EOC_',
-        (select id, title
-        from Post
-        where id < $current
-        order by id desc
-        limit 1)
-      union
-        (select id, title
-        from Post
-        where id > $current
-        order by id asc
-        limit 1)
+$resty->post(
+    '/=/view/PrevNextPost',
+    {
+        definition => <<'_EOC_',
+            (select id, title
+            from Post
+            where id < $current
+            order by id desc
+            mimit 1)
+        union
+            (select id, title
+            from Post
+            where id > $current
+            order by id asc
+            limit 1)
 _EOC_
-}, '/=/view/PrevNextPost');
+    }
+);
 
-$resty->post({
-    definition => <<'_EOC_',
-        select count(*)
-        from $model
+$resty->post(
+    '/=/view/RowCount',
+    {
+        definition => <<'_EOC_',
+            select count(*)
+            from $model
 _EOC_
-}, '/=/view/RowCount');
+    }
+);
 
-$resty->post([
-    { method => "GET", url => '/=/model/Post/~/~' },
-    { method => "GET", url => '/=/model/Comment/~/~' },
+$resty->post(
+    '/=/role/Public/~/~',
+    [
+        { method => "GET", url => '/=/model/Post/~/~' },
+        { method => "GET", url => '/=/model/Comment/~/~' },
 
-    { method => "GET", url => '/=/view/RecentComments/~/~' },
-    { method => "GET", url => '/=/view/RecentPosts/~/~' },
-    { method => "GET", url => '/=/view/PrevNextPost/~/~' },
-    { method => "GET", url => '/=/view/PostsByMonth/~/~' },
-    { method => "GET", url => '/=/view/RowCount/~/~' },
+        { method => "GET", url => '/=/view/RecentComments/~/~' },
+        { method => "GET", url => '/=/view/RecentPosts/~/~' },
+        { method => "GET", url => '/=/view/PrevNextPost/~/~' },
+        { method => "GET", url => '/=/view/PostsByMonth/~/~' },
+        { method => "GET", url => '/=/view/RowCount/~/~' },
 
-    { method => "POST", url => '/=/model/Comment/~/~' },
-    { method => "PUT", url => '/=/model/Post/id/~' },
-], '/=/role/Public/~/~');
+        { method => "POST", url => '/=/model/Comment/~/~' },
+        { method => "PUT", url => '/=/model/Post/id/~' },
+    ]
+);
 
 ################################################
 
@@ -142,12 +169,15 @@ if ($cmd eq 'small') {
             chop $created;
         } elsif (m{^////////+$}) {
             warn $title, "\n";
-            $resty->post({
-                author => '章亦春',
-                title => $title,
-                content => $buffer,
-                $created eq 'undef' ? () : (created => $created),
-            }, '/=/model/Post/~/~');
+            $resty->post(
+                '/=/model/Post/~/~',
+                {
+                    author => '章亦春',
+                    title => $title,
+                    content => $buffer,
+                    $created eq 'undef' ? () : (created => $created),
+                }
+            );
             undef $title;
             undef $buffer;
             undef $created;
@@ -156,32 +186,41 @@ if ($cmd eq 'small') {
         }
     }
     if ($title && $buffer) {
-        $resty->post({
-            author => '章亦春',
-            title => $title,
-            content => $buffer,
-        }, '/=/model/Post/~/~');
+        $resty->post(
+            '/=/model/Post/~/~',
+            {
+                author => '章亦春',
+                title => $title,
+                content => $buffer,
+            }
+        );
     }
 
     #print Dump($resty->get('/=/model/Post/~/~')), "\n";
 
     for my $i (1..5) {
         warn "Comment $i\n";
-        $resty->post([
-            { sender => 'bot', body => qq{This is a comment <b>\t<a href="">&nbsp;</a>\t</b>$i\n} x 20, post => 2 },
-        ], '/=/model/Comment/~/~');
+        $resty->post(
+            '/=/model/Comment/~/~',
+            [
+                { sender => 'bot', body => qq{This is a comment <b>\t<a href="">&nbsp;</a>\t</b>$i\n} x 20, post => 2 },
+            ]
+        );
         #sleep(0.8);
     }
 
-    $resty->post([
-        { sender => 'laser', body => 'super cool!', url => 'www.pgsqldb.org', post => 4 },
-        { sender => 'ting', body => '呵呵。。。', url => 'http://agentzh.org', post => 4 },
-        { sender => 'clover', body => "yay!\nso great!", post => 3 },
-    ], '/=/model/Comment/~/~');
+    $resty->post(
+        '/=/model/Comment/~/~',
+        [
+            { sender => 'laser', body => 'super cool!', url => 'www.pgsqldb.org', post => 4 },
+            { sender => 'ting', body => '呵呵。。。', url => 'http://agentzh.org', post => 4 },
+            { sender => 'clover', body => "yay!\nso great!", post => 3 },
+        ]
+    );
 
-    $resty->put({ comments => 2 }, '/=/model/Post/id/4');
-    $resty->put({ comments => 1 }, '/=/model/Post/id/3');
-    $resty->put({ comments => 5 }, '/=/model/Post/id/2');
+    $resty->put('/=/model/Post/id/4', { comments => 2 });
+    $resty->put('/=/model/Post/id/3', { comments => 1 });
+    $resty->put('/=/model/Post/id/2', { comments => 5 });
 } else {
     my $infile = shift @ARGV || 'script/agentzh-live.json';
     open my $in, $infile or die "Can't open $infile for reading: $!\n";
@@ -198,46 +237,52 @@ if ($cmd eq 'small') {
         #if ($body =~ /.{1,55}c\.gif.{3,150}/) {
         #warn $&, "\n";
         #}
-        $resty->post({
-            author => '章亦春',
-            title => $title,
-            content => $body,
-            $date eq 'undef' ? () : (created => $date),
-        }, '/=/model/Post/~/~');
+        $resty->post(
+            '/=/model/Post/~/~',
+            {
+                author => '章亦春',
+                title => $title,
+                content => $body,
+                $date eq 'undef' ? () : (created => $date),
+            }
+        );
     }
-    $resty->post([
-        { sender => 'Cherry', body => '期待下一个完美之夜,我们又可以新的完美之旅了~~~', post => 1, url => 'http://cherrychuxinyun.spaces.msn.com' },
-        { sender => 'agentzh', body => 'Woot!', created => date('July 08 2006 3:53 PM'), post => 1 },
-        { sender => '咩咩', body => '你是第一个读到我心情短文的朋友，谢谢你的支持呢！加油加油，再加油！即立志，后面一句话怎么说的来着？ 总之就是要坚持的意思的啦！：）  我看了你对TUIT的解释，很受用，记下了，而且可以在适当场合小炫一下哦！我保准我周围没有什么人知道呢！嘿嘿...  对了，告诉我一下，空间的版面颜色如何更改吧，虽然绿色心情不错，但是我更希望颜色能温婉一些呢！   还有，沈同学的工作快完成了，他现在去上海学习，也正好可以再思考一下如何做的更完善呢，你看到他做的东西了吗，有什么好的建议和意见，可千万不要保守哦！ 好像我都把这个本应做评论的地方当成写电邮的地方了，不过，言及其意就好了，祝你过的好啰！', post => 2, created => date('July 11 2006 1:43 PM'), url => 'http://rebeccanewworld.spaces.msn.com' },
-        { sender => 'laye', body => "Learning by copying,\nMaybe I should try, :=D\n\nMy special field now is Natural Language Process (NLP),\nThis field utilizes Perl much as a powerful tool, maybe it's a good chance for me to get familiar with Perl :-)", post => 3, created => date('July 22 2006 11:44 PM'), url => 'http://layesuen.spaces.msn.com' },
-        { sender => 'agentzh', body => "Woot! NLP is a charming area...\n\nHappy hacking with Perl!", post => 3, created => date('August 10 2006 2:22 PM') },
-        { sender => 'bobby', body => '后来怎么样了？我很想知道：）', post => 6, created => date('October 25 2007 11:28 AM'), url => 'http://bobby316.spaces.live.com/' },
-        { sender => '光磊', body => '你好，请问您是不是对CLIPS比较熟悉。我也是刚开始学习这门语言，可是资料非常少，从网上搜索，发现学习这门语言的人也不是太多，希望与你交流一下。如果可能，可以用邮箱和我联系，谢谢。', email => 'guanglei9@yahoo.com.cn', post => 11, created => date('February 10 2006 12:04 PM') },
-        { sender => '光磊', body => '我的邮箱是guanglei9@yahoo.com.cn', post => 11, created => date('February 10 2006 12:05 PM') },
-        { sender => '李鲁', body => '感觉你看问题有点消极！', url => 'http://lvbuzhang2000.spaces.live.com/', post => 12, created => date('December 19 2006 2:23 PM') },
-        { sender => 'agentzh', body => "李鲁，真的消极么？不会吧？\n\n我一直觉得这才是一个人静下心来*应该*去思索的东西。;-)\n\n 激情、快乐，欢笑大多是留给学习、工作、以及身边的朋友和亲人的；\n至于严肃的人生课题和深入的冥想，那应该是属于自己的。呵呵。\n\n好，下回再写几篇激情似火的，哈哈。\n\n别忘了我是双重性格哦……呵呵……", post => 12, created => date('December 19 2006 3:30 PM') },
-        { sender => 'agentzh', body => '沈 Jack 推荐的 MPlayer 比 RealPlayer 好多了（RealPlayer 在播放时很不稳定，经常崩溃），尽管 MPlayer 的解码器和显卡驱动的配置花了我不少额外的工夫，呵呵。', post => 22, created => date('April 18 1:58 PM') },
-        { sender => 'Anonymous', body => 'OMFG. I was getting so frustrated trying to set this up on my own. Thank you very much.', created => date('August 9, 2007 9:02:00 AM CST'), post => 50 },
-        { sender => 'lobatt', body => "过来回拜：）\n关于你负责测试这个事情，我是在YAPC上获得的信息...不准确么？我改我改...", url => 'http://www.perlfect.org/', post => 62, created => date('November 25 8:47 PM') },
-        { sender => 'agentzh', body => '呵呵，谢谢你的留言 :)', url => 'http://blog.agentzh.org', post => 62, created => date('November 27 8:43 PM') },
-        { sender => 'xinglan', body => '非常好的一篇文章。期待下次崩溃 ：）', url => 'http://i.cn.yahoo.com/shi_xinglan', post => 65, created => '2007-12-03 11:09:00+08' },
-        { sender => 'cnhackTNT', body => "太COOL了！有才。。。", url => 'http://wanghui.org', post => 70, created => '2008-02-19 09:17:32+08' },
-        { sender => 'laye', body => "Wow, now I see it fully works,\ncool~", url => 'http://layesuen.spaces.live.com', post => 70, created => '2008-02-20 21:02:23+08' },
-        { sender => 'laye', body => ' laye wanna has his blog like this, too @@', url => 'http://layesuen.spaces.live.com', post => 70, created => '2008-02-20 21:06:56+08' },
-        { sender => 'laser', body => '还是。。。很好玩滴。。。。', email => 'laser@henry', created => '2008-02-26 18:17:46+08', post => 67 },
-    ], '/=/model/Comment/~/~');
-    $resty->put({ comments => 3 }, '/=/model/Post/id/70');
-    $resty->put({ comments => 1 }, '/=/model/Post/id/67');
-    $resty->put({ comments => 1 }, '/=/model/Post/id/65');
-    $resty->put({ comments => 2 }, '/=/model/Post/id/62');
-    $resty->put({ comments => 1 }, '/=/model/Post/id/50');
-    $resty->put({ comments => 1 }, '/=/model/Post/id/22');
-    $resty->put({ comments => 2 }, '/=/model/Post/id/12');
-    $resty->put({ comments => 2 }, '/=/model/Post/id/11');
-    $resty->put({ comments => 1 }, '/=/model/Post/id/6');
-    $resty->put({ comments => 2 }, '/=/model/Post/id/3');
-    $resty->put({ comments => 1 }, '/=/model/Post/id/2');
-    $resty->put({ comments => 2 }, '/=/model/Post/id/1');
+    $resty->post(
+        '/=/model/Comment/~/~',
+        [
+            { sender => 'Cherry', body => '期待下一个完美之夜,我们又可以新的完美之旅了~~~', post => 1, url => 'http://cherrychuxinyun.spaces.msn.com' },
+            { sender => 'agentzh', body => 'Woot!', created => date('July 08 2006 3:53 PM'), post => 1 },
+            { sender => '咩咩', body => '你是第一个读到我心情短文的朋友，谢谢你的支持呢！加油加油，再加油！即立志，后面一句话怎么说的来着？ 总之就是要坚持的意思的啦！：）  我看了你对TUIT的解释，很受用，记下了，而且可以在适当场合小炫一下哦！我保准我周围没有什么人知道呢！嘿嘿...  对了，告诉我一下，空间的版面颜色如何更改吧，虽然绿色心情不错，但是我更希望颜色能温婉一些呢！   还有，沈同学的工作快完成了，他现在去上海学习，也正好可以再思考一下如何做的更完善呢，你看到他做的东西了吗，有什么好的建议和意见，可千万不要保守哦！ 好像我都把这个本应做评论的地方当成写电邮的地方了，不过，言及其意就好了，祝你过的好啰！', post => 2, created => date('July 11 2006 1:43 PM'), url => 'http://rebeccanewworld.spaces.msn.com' },
+            { sender => 'laye', body => "Learning by copying,\nMaybe I should try, :=D\n\nMy special field now is Natural Language Process (NLP),\nThis field utilizes Perl much as a powerful tool, maybe it's a good chance for me to get familiar with Perl :-)", post => 3, created => date('July 22 2006 11:44 PM'), url => 'http://layesuen.spaces.msn.com' },
+            { sender => 'agentzh', body => "Woot! NLP is a charming area...\n\nHappy hacking with Perl!", post => 3, created => date('August 10 2006 2:22 PM') },
+            { sender => 'bobby', body => '后来怎么样了？我很想知道：）', post => 6, created => date('October 25 2007 11:28 AM'), url => 'http://bobby316.spaces.live.com/' },
+            { sender => '光磊', body => '你好，请问您是不是对CLIPS比较熟悉。我也是刚开始学习这门语言，可是资料非常少，从网上搜索，发现学习这门语言的人也不是太多，希望与你交流一下。如果可能，可以用邮箱和我联系，谢谢。', email => 'guanglei9@yahoo.com.cn', post => 11, created => date('February 10 2006 12:04 PM') },
+            { sender => '光磊', body => '我的邮箱是guanglei9@yahoo.com.cn', post => 11, created => date('February 10 2006 12:05 PM') },
+            { sender => '李鲁', body => '感觉你看问题有点消极！', url => 'http://lvbuzhang2000.spaces.live.com/', post => 12, created => date('December 19 2006 2:23 PM') },
+            { sender => 'agentzh', body => "李鲁，真的消极么？不会吧？\n\n我一直觉得这才是一个人静下心来*应该*去思索的东西。;-)\n\n 激情、快乐，欢笑大多是留给学习、工作、以及身边的朋友和亲人的；\n至于严肃的人生课题和深入的冥想，那应该是属于自己的。呵呵。\n\n好，下回再写几篇激情似火的，哈哈。\n\n别忘了我是双重性格哦……呵呵……", post => 12, created => date('December 19 2006 3:30 PM') },
+            { sender => 'agentzh', body => '沈 Jack 推荐的 MPlayer 比 RealPlayer 好多了（RealPlayer 在播放时很不稳定，经常崩溃），尽管 MPlayer 的解码器和显卡驱动的配置花了我不少额外的工夫，呵呵。', post => 22, created => date('April 18 1:58 PM') },
+            { sender => 'Anonymous', body => 'OMFG. I was getting so frustrated trying to set this up on my own. Thank you very much.', created => date('August 9, 2007 9:02:00 AM CST'), post => 50 },
+            { sender => 'lobatt', body => "过来回拜：）\n关于你负责测试这个事情，我是在YAPC上获得的信息...不准确么？我改我改...", url => 'http://www.perlfect.org/', post => 62, created => date('November 25 8:47 PM') },
+            { sender => 'agentzh', body => '呵呵，谢谢你的留言 :)', url => 'http://blog.agentzh.org', post => 62, created => date('November 27 8:43 PM') },
+            { sender => 'xinglan', body => '非常好的一篇文章。期待下次崩溃 ：）', url => 'http://i.cn.yahoo.com/shi_xinglan', post => 65, created => '2007-12-03 11:09:00+08' },
+            { sender => 'cnhackTNT', body => "太COOL了！有才。。。", url => 'http://wanghui.org', post => 70, created => '2008-02-19 09:17:32+08' },
+            { sender => 'laye', body => "Wow, now I see it fully works,\ncool~", url => 'http://layesuen.spaces.live.com', post => 70, created => '2008-02-20 21:02:23+08' },
+            { sender => 'laye', body => ' laye wanna has his blog like this, too @@', url => 'http://layesuen.spaces.live.com', post => 70, created => '2008-02-20 21:06:56+08' },
+            { sender => 'laser', body => '还是。。。很好玩滴。。。。', email => 'laser@henry', created => '2008-02-26 18:17:46+08', post => 67 },
+        ]
+    );
+    $resty->put('/=/model/Post/id/70', { comments => 3 });
+    $resty->put('/=/model/Post/id/67', { comments => 1 });
+    $resty->put('/=/model/Post/id/65', { comments => 1 });
+    $resty->put('/=/model/Post/id/62', { comments => 2 });
+    $resty->put('/=/model/Post/id/50', { comments => 1 });
+    $resty->put('/=/model/Post/id/22', { comments => 1 });
+    $resty->put('/=/model/Post/id/12', { comments => 2 });
+    $resty->put('/=/model/Post/id/11', { comments => 2 });
+    $resty->put('/=/model/Post/id/6', { comments => 1 });
+    $resty->put('/=/model/Post/id/3', { comments => 2 });
+    $resty->put('/=/model/Post/id/2', { comments => 1 });
+    $resty->put('/=/model/Post/id/1', { comments => 2 });
 }
 
 sub date {
@@ -254,7 +299,7 @@ __DATA__
 SearchAll 0.3.2 发布！
 2007-08-09 13:05
 经过 Yahoo! China EEEE hacking 小组近一个月的努力， <a href="http://searchall.agentzh.cn/">SearchAll</a>  0.3.2 版终于发布到了  <a href="http://addons.mozilla.org/">AMO 官方网站</a> ： </p><p><a href="https://addons.mozilla.org/zh-TW/firefox/addon/5712">
-https://addons.mozilla.org/zh-TW/firefox/addon/5712</a> </p><p>如果您已经安装了 SearchAll 的话，您的 Firefox 在启动时会自动检查更新，并按用户选择进行升级。 </p><p>和上一个 AMO 公开发布版本 0.1.8 相比，SearchAll 积累了许多重大改进。其中的亮点包括： </p><ul><li> <p>增加了对结果页中的链接进行本地测试的功能。SearchAll 现在会自动在``规格化视图''中用可爱的小图标标记出坏链，好链，和慢链。由于使用 Ajax HEAD 请求，所以测试的速度很快。我们 team 的 
+ittps://addons.mozilla.org/zh-TW/firefox/addon/5712</a> </p><p>如果您已经安装了 SearchAll 的话，您的 Firefox 在启动时会自动检查更新，并按用户选择进行升级。 </p><p>和上一个 AMO 公开发布版本 0.1.8 相比，SearchAll 积累了许多重大改进。其中的亮点包括： </p><ul><li> <p>增加了对结果页中的链接进行本地测试的功能。SearchAll 现在会自动在``规格化视图''中用可爱的小图标标记出坏链，好链，和慢链。由于使用 Ajax HEAD 请求，所以测试的速度很快。我们 team 的 
 <a href="http://blog.jianingy.com/">杨家宁</a> 当初做 <a href="http://www.yisou.com/">"易搜"</a> 的时候就想到实现这样的本地链接测试的功能，但受到 AJAX 跨域请求的限制而未能实现。谢谢杨家宁提的这个 feature! </p></li><li> <p>增加了 <a href="http://agentzh.org/misc/rightclick.swf">
 
 "划搜"功能</a> 。用户可以在任意的网页中选定文本，然后右击，在弹出的快捷菜单中点击"我搜去"（或者SearchAll)，进行搜索。感谢李晓栓的提议！ </p></li><li> <p>增
