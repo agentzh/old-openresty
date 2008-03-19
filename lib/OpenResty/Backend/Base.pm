@@ -200,15 +200,12 @@ sub upgrade_global_metamodel {
 sub upgrade_local_metamodel {
     my ($self, $base) = @_;
     if (!defined $base) { die "No upgrading base specified" }
-    $self->_upgrade_metamodel($base, \@LocalVersionDelta);
-    my $cur_user = $self->{user};
     if ($base == 0) {
         if (!$self->has_user('_global')) {
             $self->upgrade_global_metamodel(0);
         }
-        $self->set_user('_global');
-        $self->do("insert into _accounts (name) values ('$cur_user')");
     }
+    $self->_upgrade_metamodel($base, \@LocalVersionDelta);
 }
 
 sub _upgrade_metamodel {
@@ -275,6 +272,14 @@ _EOC_
     $self->do($sql);
 }
 
+sub drop_user {
+    my ($self, $user) = @_;
+    if ($self->has_user('_global')) {
+        $self->set_user('_global');
+        $self->do("delete from _accounts where name ='$user'");
+    }
+}
+
 sub add_user {
     my ($self, $user, $admin_password) = @_;
     my $retval = $self->do(<<"_EOC_");
@@ -325,6 +330,10 @@ _EOC_
     $self->set_user($user);
     $self->upgrade_local_metamodel(0);
     #return $retval;
+    my $cur_user = $self->{user};
+    $self->set_user('_global');
+    $self->do("insert into _accounts (name) values ('$cur_user')");
+    $self->set_user($cur_user);
 }
 
 1;
