@@ -18,7 +18,7 @@ $version .= 0 until length($version) >= length('0.123456');
 $version =~ s{^(\d+)\.(\d{3})(\d{3})?$}{join '.', int($1), int($2), int($3||0)}e;
 version($version);
 
-requires            ('Cookie::XS' => '0.06');
+requires            ('Cookie::XS' => '0.08');
 requires            ('FCGI');
 requires            ('CGI::Simple' => '1.103');
 requires            ('CGI::Simple::Cookie');
@@ -51,7 +51,7 @@ if ($arg eq 'product') {
                 recommends    ('HTTP::Response' => '1.53'),
                 recommends    ('Benchmark::Timer'),
                 recommends    ('HTTP::Server::Simple' => '0.27'),
-                recommends    ('WWW::OpenResty' => '0.01'),
+                recommends    ('WWW::OpenResty' => '0.02'),
                 recommends    ('Text::Diff'),
         ]
     );
@@ -67,6 +67,7 @@ if ($arg eq 'product') {
     recommends          ('Benchmark::Timer');
     recommends          ('Smart::Comments');
     recommends          ('HTTP::Server::Simple' => '0.27');
+    recommends          ('WWW::OpenResty' => '0.02'),
 } else {
     die "Unknown Makefile.PL argument: \"$arg\"\n";
 }
