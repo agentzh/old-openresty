@@ -1,6 +1,7 @@
 =TODO items for OpenAPI
 
 == Bugs
+* Captcha ID should not saved in a cookie and get expired during login.
 * http://ced02.search.cnb.yahoo.com/=/model/Post/~/~?user=agentzh.Admin&password=blahblah gives
     error: "Syck parser (line 313, column -1): syntax error at /home/es/share/htdocs/es/openapi-1782/bin/../lib/OpenAPI/Backend/PgFarm.pm line 57."
 * qyliu reports that PUT /=/model/Foo/bar/word does NOT quote the "word" part, resulting in a sql injection point.

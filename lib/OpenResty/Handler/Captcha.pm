@@ -173,15 +173,15 @@ sub GET_captcha_column {
     my ($self, $openresty, $bits) = @_;
     my $col = $bits->[1];
     if ($col eq 'id') {
-        my $captcha_from_cookie = $openresty->{_captcha_from_cookie};
-        if ($captcha_from_cookie) {
-            $OpenResty::Cache->remove($captcha_from_cookie);
-        }
+        #my $captcha_from_cookie = $openresty->{_captcha_from_cookie};
+        #if ($captcha_from_cookie) {
+            #$OpenResty::Cache->remove($captcha_from_cookie);
+        #}
 
         my $id = $OpenResty::UUID->create_str;
         $OpenResty::Cache->set($id => 1, 2 * 3600);  # expire in 2 h
 
-        $openresty->{_cookie} = { captcha => $id };
+        #$openresty->{_cookie} = { captcha => $id };
         return $id;
     } else {
         die "Unknown captcha column: $col\n";
