@@ -238,7 +238,7 @@ GET /=/captcha/id
 --- request
 GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:efg
 --- response
-{"success":0,"error":"Capture ID is bad or expired."}
+{"error":"Captcha image never used.","success":0}
 
 
 

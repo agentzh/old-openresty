@@ -98,10 +98,10 @@ sub login_by_sql {
         $OpenResty::Cache->remove($session_from_cookie)
     }
 
-    my $captcha_from_cookie = $openresty->{_captcha_from_cookie};
-    if ($captcha_from_cookie) {
-        $OpenResty::Cache->remove($captcha_from_cookie);
-    }
+    #my $captcha_from_cookie = $openresty->{_captcha_from_cookie};
+    #if ($captcha_from_cookie) {
+        #$OpenResty::Cache->remove($captcha_from_cookie);
+    #}
 
     my $uuid = $OpenResty::UUID->create_str;
     if ($openresty->{_use_cookie}) {
@@ -212,10 +212,10 @@ sub login_by_perl {
         $OpenResty::Cache->remove($session_from_cookie)
     }
 
-    my $captcha_from_cookie = $openresty->{_captcha_from_cookie};
-    if ($captcha_from_cookie) {
-        $OpenResty::Cache->remove($captcha_from_cookie);
-    }
+    #my $captcha_from_cookie = $openresty->{_captcha_from_cookie};
+    #if ($captcha_from_cookie) {
+    #$OpenResty::Cache->remove($captcha_from_cookie);
+    #}
 
     my $uuid = $OpenResty::UUID->create_str;
     if ($openresty->{_use_cookie}) {
