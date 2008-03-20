@@ -403,3 +403,13 @@ PUT /=/model/MyFavorites/count
 --- response
 {"success":0,"error":"Operation failed."}
 
+
+
+=== TEST 43: Create a new column of the boolean type
+--- request
+POST /=/model/MyFavorites/~
+{ name: "disabled", type: "boolean", label: "Disabled" }
+--- response
+{"success":1,"src":"/=/model/MyFavorites/disabled"}
+
+

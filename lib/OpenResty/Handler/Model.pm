@@ -14,6 +14,7 @@ sub check_type {
     my $type = shift;
     if ($type !~ m{^ \s*
                 (
+                    boolean |
                     text |
                     integer |
                     serial |
