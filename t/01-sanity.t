@@ -365,6 +365,15 @@ GET /=/model/MyFavorites/count
 
 
 
+=== TEST 43: Create a new column of the boolean type
+--- request
+POST /=/model/MyFavorites/~
+{ name: "disabled", type: "boolean", label: "Disabled" }
+--- response
+{"success":1,"src":"/=/model/MyFavorites/disabled"}
+
+
+
 === TEST 39: Change the name and type of title to incompactible types
 --- debug: 1
 --- request
@@ -402,14 +411,4 @@ PUT /=/model/MyFavorites/count
 { type: "real" }
 --- response
 {"success":0,"error":"Operation failed."}
-
-
-
-=== TEST 43: Create a new column of the boolean type
---- request
-POST /=/model/MyFavorites/~
-{ name: "disabled", type: "boolean", label: "Disabled" }
---- response
-{"success":1,"src":"/=/model/MyFavorites/disabled"}
-
 
