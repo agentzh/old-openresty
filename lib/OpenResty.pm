@@ -100,10 +100,12 @@ sub init {
     my $cgi = $self->{_cgi};
 
     my $db_state = $Backend->state;
+    #warn "DB state: $db_state\n";
     if ($db_state && $db_state =~ /^(?:08|57)/) {
         eval { $Backend->disconnect };
         my $backend = $OpenResty::Config{'backend.type'};
         OpenResty->connect($backend);
+        warn "Re-connecting the database...\n";
         #die "Backend connection lost: ", $db_state, "\n";
     }
 
