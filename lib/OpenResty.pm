@@ -80,6 +80,11 @@ our ($Dumper, $Importer);
 $Dumper = \&JSON::Syck::Dump;
 $Importer = \&JSON::Syck::Load;
 
+sub version {
+    (my $ver = $OpenResty::VERSION) =~ s{^(\d+)\.(\d{3})(\d{3})?$}{join '.', int($1), int($2), int($3)}e;
+    $ver;
+}
+
 # XXX more data types...
 sub parse_data {
     shift;

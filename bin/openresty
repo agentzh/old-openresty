@@ -10,8 +10,16 @@ use OpenResty::Dispatcher;
 use OpenResty::Limits;
 use Getopt::Std;
 
-my $cmd = lc(shift) || $ENV{OPENRESTY_COMMAND} || 'fastcgi';
-$ENV{OPENRESTY_COMMAND} = $cmd;
+my $cmd = lc(shift) || $ENV{OPENRESTY_COMMAND};
+
+if ($ENV{REQUEST_URI}) {
+    if (!$cmd) {
+        $cmd = 'fastcgi';
+        $ENV{OPENRESTY_COMMAND} = $cmd;
+    }
+}
+
+$cmd ||= '';
 
 eval {
     OpenResty::Dispatcher->init;
@@ -126,7 +134,92 @@ if ($cmd eq 'adduser') {
     } else {
         $backend->upgrade_all;
     }
+} elsif ($cmd eq '' or $cmd eq 'shell') {
+    run_shell();
 } else {
     die "Unknown command: $cmd\n";
+}
+
+sub run_shell {
+    local $| = 1;
+
+    my $backend_name = $OpenResty::BackendName;
+    my $version = OpenResty->version;
+    print <<"_EOC_";
+Welcome to openresty $version, the OpenResty interactive terminal.
+
+Type:  \\copyright for distribution terms
+       \\a <account> to set the current account
+       \\do <sql> to do sql query using xdo
+       \\q to quit
+       <sql> to do sql query using xquery
+
+_EOC_
+    eval { $backend->set_user('_global'); };
+    if ($@) { warn $@; }
+    while (1) {
+        #eval "use Data::Dumper";
+        print "$backend_name>";
+        my $cmd = <STDIN>;
+        trim($cmd);
+        if (lc($cmd) eq '\\q') {
+            last;
+        }
+        elsif (lc($cmd) eq '\\copyright') {
+            print <<'_EOC_';
+Copyright (c) 2007-2008 by Yahoo! China EEEE Works, Alibaba Inc.
+
+This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+_EOC_
+        }
+        elsif ($cmd eq '') { next }
+        elsif ($cmd =~ s/^\\[au]\s*//) {
+            my $user = $cmd;
+            trim($user);
+            my $res;
+            eval {
+                if (my $machine = $backend->has_user($user)) {
+                    warn "Switching to account $user on node $machine\n";
+                    $res = $backend->set_user($user);
+                } else {
+                    die "Account \"$user\" not found.\n";
+                }
+            };
+            if ($@) { warn $@ }
+            if (defined $res) {
+                print $res, "\n";
+            }
+        }
+        elsif ($cmd =~ s/^\\do\s*//) {
+            my $sql = $cmd;
+            trim($sql);
+            my $res;
+            eval { $res = $backend->do($sql); };
+            if ($@) { warn $@ }
+            print $res;
+        }
+        elsif ($cmd =~ /^\\\S+/) {
+            warn "Unknown command: $&\n";
+        }
+        elsif (lc($cmd) eq 'quit' or lc($cmd) eq 'exit') {
+            last;
+        }
+        else {
+            my $res;
+            eval {
+                $res = $backend->select($cmd, { use_hash => 1 });
+            };
+            if ($@) { warn $@ }
+            if (defined $res) {
+                print YAML::Syck::Dump($res);
+            }
+        }
+    }
+}
+
+sub trim {
+    $_[0] =~ s/^\s+|\s+$//gs;
 }
 
