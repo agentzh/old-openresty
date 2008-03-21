@@ -9,6 +9,7 @@ use List::Util qw( first );
 use Params::Util qw( _STRING _ARRAY0 _ARRAY _HASH );
 use OpenResty::Limits;
 use Clone 'clone';
+use Encode qw(is_utf8 decode);
 
 sub check_type {
     my $type = shift;
@@ -722,6 +723,11 @@ sub select_records {
     }
     my $select = OpenResty::SQL::Select->new;
     $select->from(QI($table));
+    #warn "VAL: $val\n";
+    #warn "IS UTF8???";
+    if (!is_utf8($val)) {
+        $val = decode('utf8', $val);
+    }
     if (defined $val and $val ne '~') {
         my $op = $openresty->{_cgi}->url_param('op') || 'eq';
         $op = $OpenResty::OpMap{$op};
@@ -745,6 +751,9 @@ sub select_records {
     $self->process_offset($openresty, $select);
     $self->process_limit($openresty, $select);
 
+    #use Data::Dumper;
+    #warn Dumper($select->{where});
+    #warn $select->generate, "\n";
     my $res = $openresty->select("$select", { use_hash => 1 });
     if (!$res and !ref $res) { return []; }
     return $res;

@@ -36,6 +36,7 @@ requires            ('Hash::Merge');
 #requires            ('List::MoreUtils');
 requires            ('Config::Simple');
 requires            ('Encode::Guess');
+requires            ('List::MoreUtils');
 
 if ($arg eq 'product') {
     features(

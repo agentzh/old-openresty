@@ -2,8 +2,10 @@ package OpenResty::SQL::Select;
 
 use strict;
 use warnings;
+
+#use Smart::Comments '####';
 use base 'OpenResty::SQL::Statement';
-#use Smart::Comments;
+use Encode qw( encode is_utf8 decode );
 
 sub new {
     my $class = ref $_[0] ? ref shift : shift;
@@ -56,9 +58,14 @@ sub generate {
     my $sql;
     local $" = ', ';
     $sql .= "select @{ $self->{select} } from @{ $self->{from} }";
+    #### $sql
     my @where = @{ $self->{where} };
-    my $where = join ' '. $self->{op} . ' ', map { join(' ', @$_) } @where;
+    my $where = join(' '.$self->{op}.' ', map { join(' ', @$_) } @where);
+    #### $where
+    #$where = decode('utf8', $where);
     if ($where) { $sql .= " where $where" }
+    #### UTF flag: is_utf8($where)
+        #### $sql
     my $order_by = $self->{order_by};
     if (@$order_by) { $sql .= " order by @$order_by"; }
     my $limit = $self->{limit};
