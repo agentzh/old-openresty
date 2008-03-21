@@ -129,7 +129,7 @@ sub process_request {
     if ($OpenResty::Config{'frontend.log'}) {
         require Clone;
         #warn "------------------------------------------------\n";
-        warn "$http_meth ", $ENV{REQUEST_URI}, "\n";
+        warn "$http_meth /=/", join("/", @bits), "\n";
         warn JSON::Syck::Dump(Clone::clone($openresty->{_req_data})), "\n"
             if $http_meth eq 'POST' or $http_meth eq 'PUT';
     }

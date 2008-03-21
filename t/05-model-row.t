@@ -147,3 +147,28 @@ PUT /=/model/Address/name/Perl?op=contain
 --- response
 {"success":0,"rows_affected":0}
 
+
+
+=== TEST 15: insert a new row
+--- request
+POST /=/model/Address/~/~
+{"name":"安徽"}
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/Address/id/5"}
+
+
+
+=== TEST 16: Get that row out by name
+--- request
+GET /=/model/Address/name/安徽
+--- response
+[{"name":"安徽","id":"5","addr":null}]
+
+
+
+=== TEST 17: Get that row out by uri encoded name
+--- request
+GET /=/model/Address/name/%E5%AE%89%E5%BE%BD
+--- response
+[{"name":"安徽","id":"5","addr":null}]
+
