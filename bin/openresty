@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use utf8;
 
 #use Smart::Comments;
 use FindBin;
@@ -71,7 +72,7 @@ if ($cmd eq 'adduser') {
     }
     eval "use Term::ReadKey;";
     if ($@) { die $@; }
-    local $| = 1;
+    #local $| = 1;
 
     my $password;
     print "Enter the password for the Admin role: ";
@@ -143,6 +144,9 @@ if ($cmd eq 'adduser') {
 sub run_shell {
     local $| = 1;
 
+    #BEGIN{ $ENV{PERL_RL} = 'GNU' };	# Do not test TR::Gnu !
+    eval "use Term::ReadLine;";
+    if ($@) { die "No Term::ReadLine::Gnu found.\n" };
     my $backend_name = $OpenResty::BackendName;
     my $version = OpenResty->version;
     print <<"_EOC_";
@@ -157,10 +161,13 @@ Type:  \\copyright for distribution terms
 _EOC_
     eval { $backend->set_user('_global'); };
     if ($@) { warn $@; }
-    while (1) {
+    my $term = new Term::ReadLine 'Simple Perl calc', \*STDIN, \*STDOUT;
+    my $features = $term->Features;
+    my $prompt = "$backend_name>";
+    while ( defined ($_ = $term->readline($prompt, "")) ) {
         #eval "use Data::Dumper";
-        print "$backend_name>";
-        my $cmd = <STDIN>;
+        my $cmd = $_;
+        #my $cmd = <STDIN>;
         trim($cmd);
         if (lc($cmd) eq '\\q') {
             last;
@@ -216,6 +223,8 @@ _EOC_
                 print YAML::Syck::Dump($res);
             }
         }
+    } continue {
+        $term->addhistory($_) if /\S/ && !$features->{autohistory};
     }
 }
 

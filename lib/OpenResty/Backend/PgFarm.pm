@@ -39,17 +39,19 @@ sub new {
 
 sub encode_string {
     my ($self, $str, $charset) = @_;
-    encode($charset, $str);
+    encode('utf8', $str);
 }
 
 sub select {
     my ($self, $sql, $opts) = @_;
+    #warn "SQL: $sql";
     $opts ||= {};
     my $type = $opts->{use_hash} ? 1 : 0;
     my $readonly = $opts->{read_only} ? 1 : 0;
     $sql = $self->quote($sql);
     #warn "==================> $sql\n";
     my $sql_cmd = "select xquery('$self->{user}', $sql, $type, $readonly)";
+    #warn $sql_cmd, "\n";
     #warn "------------------> $sql_cmd";
     my $dbh = $self->{dbh};
     my $res = $dbh->selectall_arrayref($sql_cmd);
