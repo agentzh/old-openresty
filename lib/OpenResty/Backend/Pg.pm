@@ -6,7 +6,6 @@ use warnings;
 use DBI;
 use OpenResty::SQL::Select;
 use base 'OpenResty::Backend::Base';
-use Encode 'from_to';
 
 our $Recording;
 our ($Host, $User, $Password, $Port, $Database);
@@ -28,7 +27,7 @@ sub new {
         "dbi:Pg:dbname=$Database;host=$Host".
             ($Port ? ";port=$Port" : ""),
         $User, $Password,
-        {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts, PrintError => 0}
+        {AutoCommit => 1, RaiseError => 1, %$opts, PrintError => 0}
     );
 
     $Recording = $OpenResty::Config{'backend.recording'} && ! $OpenResty::Config{'test_suite.use_http'};
@@ -53,12 +52,6 @@ END {
     if ($Recording) {
         OpenResty::Backend::PgMocked->stop_recording_file();
     }
-}
-
-sub encode_string {
-    my ($self, $str, $charset) = @_;
-    from_to($str, 'UTF-8', $charset);
-    $str;
 }
 
 sub select {

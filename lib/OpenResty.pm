@@ -8,7 +8,7 @@ use warnings;
 #use Smart::Comments;
 use Data::UUID;
 use YAML::Syck ();
-use JSON::Syck ();
+use JSON::XS ();
 
 use List::Util qw(first);
 use Params::Util qw(_HASH _STRING _ARRAY0 _ARRAY _SCALAR);
@@ -36,7 +36,7 @@ use OpenResty::Handler::Captcha;
 use OpenResty::Handler::Version;
 use Encode::Guess;
 
-$YAML::Syck::ImplicitUnicode = 1;
+#$YAML::Syck::ImplicitUnicode = 1;
 #$YAML::Syck::ImplicitBinary = 1;
 
 our ($Backend, $BackendName);
@@ -57,8 +57,8 @@ our %OpMap = (
 our %ext2dumper = (
     '.yml' => \&YAML::Syck::Dump,
     '.yaml' => \&YAML::Syck::Dump,
-    '.js' => \&JSON::Syck::Dump,
-    '.json' => \&JSON::Syck::Dump,
+    '.js' => \&JSON::XS::encode_json,
+    '.json' => \&JSON::XS::encode_json,
 );
 
 our %EncodingMap = (
@@ -71,8 +71,8 @@ our %EncodingMap = (
 our %ext2importer = (
     '.yml' => \&YAML::Syck::Load,
     '.yaml' => \&YAML::Syck::Load,
-    '.js' => \&JSON::Syck::Load,
-    '.json' => \&JSON::Syck::Load,
+    '.js' => \&JSON::XS::decode_json,
+    '.json' => \&JSON::XS::decode_json,
 );
 
 our $Ext = qr/\.(?:js|json|xml|yaml|yml)/;
@@ -89,7 +89,7 @@ sub version {
 sub parse_data {
     shift;
     if (!$Importer) {
-        $Importer = \&JSON::Syck::Load;
+        $Importer = \&JSON::XS::decode_json;
     }
     return $Importer->($_[0]);
 }
@@ -185,8 +185,10 @@ sub init {
 
     my $url = $$rurl;
     eval {
-        from_to($url, $charset, 'UTF-8');
+        from_to($url, $charset, 'utf8');
     };
+    warn $@ if $@;
+    #warn $url;
 
     $url =~ s{/+$}{}g;
     $url =~ s/\%2A/*/g;
@@ -339,11 +341,12 @@ sub response {
         #$str = decode_utf8($str);
         #if (is_utf8($str)) {
             #} else {
-        $str = $Backend->encode_string($str, $charset);
+            #warn "Encoding: $charset\n";
+        from_to($str, 'utf8', $charset);
             #$str = decode('UTF-8', $str);
             #$str = encode($charset, $str);
             #}
-    }; #warn $@ if $@;
+    }; warn $@ if $@;
     if (my $var = $self->{_var} and $Dumper eq \&JSON::Syck::Dump) {
         $str = "$var=$str;";
     } elsif (my $callback = $self->{_callback} and $Dumper eq \&JSON::Syck::Dump) {

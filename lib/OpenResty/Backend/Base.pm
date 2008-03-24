@@ -128,37 +128,41 @@ _EOC_
 our @LocalVersionDelta = (
     [
         '0.001' => <<'_EOC_',
-create table _general (
-    version varchar(10),
-    created timestamp (0) with time zone default now()
-);
-insert into _general (version) values ('0.001');
-alter table _access_rules rename to _access;
-alter table _roles rename to _tmp;
-create table _roles (
-    id serial primary key,
-    name text unique not null,
-    password text,
-    login text not null,
-    description text not null,
-    created timestamp (0) with time zone default now()
-);
-insert into _roles
-    (name, password, login, description)
-    (select name, password, login, description from _tmp);
-drop table _tmp;
-alter table _columns add column indexed text;
-alter table _models add column created timestamp (0) with time zone default now();
-alter table _views add column created timestamp (0) with time zone default now();
--- XXX TODO: alter table _columns rename column "default" to default_value;
-create table _action (
-    id serial primary key,
-    name text unique not null,
-    description text,
-    definition text unique not null,
-    confirmed_by text,
-    created timestamp (0) with time zone default now()
-);
+create or replace function upgrade() returns integer as $$
+begin
+    create table _general (
+        version varchar(10),
+        created timestamp (0) with time zone default now()
+    );
+    insert into _general (version) values ('0.001');
+    alter table _access_rules rename to _access;
+    alter table _roles rename to _tmp;
+    create table _roles (
+        id serial primary key,
+        name text unique not null,
+        password text,
+        login text not null,
+        description text not null,
+        created timestamp (0) with time zone default now()
+    );
+    insert into _roles
+        (name, password, login, description)
+        (select name, password, login, description from _tmp);
+    drop table _tmp;
+    alter table _columns add column indexed text;
+    alter table _models add column created timestamp (0) with time zone default now();
+    alter table _views add column created timestamp (0) with time zone default now();
+    create table _action (
+        id serial primary key,
+        name text unique not null,
+        description text,
+        definition text unique not null,
+        confirmed_by text,
+        created timestamp (0) with time zone default now()
+    );
+    return 0;
+end;
+$$ language plpgsql;
 _EOC_
     ],
     #[
@@ -255,14 +259,17 @@ sub _upgrade_metamodel {
         my ($new_ver, $sql) = @$entry;
         if (!$sql) { next; }
         warn "Upgrading account $user from $cur_ver to $new_ver...\n";
-        $sql .= "; update _general set version='$new_ver'";
-        for my $stmt (split /;\n/, $sql) {
+        #$sql .= "; update _general set version='$new_ver'";
+        $res = $self->do("$sql");
+        $res = $self->do("select upgrade();");
+        $res = $self->do("update _general set version='$new_ver'");
+        #for my $stmt (split /;\n/, $sql) {
             #warn "=======", $stmt, "=======\n";
-            next if $stmt =~ /^\s*$/;
+            #next if $stmt =~ /^\s*$/;
             #sleep 1;
-            $res = $self->do("$stmt;");
-            last if $res < 0;
-        }
+            #$res = $self->do("$stmt;");
+            #last if $res < 0;
+        #}
         $cur_ver = $new_ver;
     }
     return $res >= 0;

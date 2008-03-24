@@ -4,13 +4,9 @@ use strict;
 use warnings;
 
 #use Smart::Comments;
+use JSON::XS;
 use DBI;
-use JSON::Syck 'Load';
-use Encode 'encode';
 use base 'OpenResty::Backend::Base';
-
-$YAML::Syck::ImplicitUnicode = 1;
-$JSON::Syck::ImplicitUnicode = 1;
 
 our ($Host, $User, $Password, $Port);
 
@@ -30,16 +26,11 @@ sub new {
         "dbi:Pg:dbname=proxy host=$Host".
             ($Port ? ";port=$Port" : ""),
         $User, $Password,
-        {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts, PrintError => 0}
+        {AutoCommit => 1, RaiseError => 1, %$opts, PrintError => 0}
     );
     return bless {
         dbh => $dbh
     }, $class;
-}
-
-sub encode_string {
-    my ($self, $str, $charset) = @_;
-    encode('utf8', $str);
 }
 
 sub select {
@@ -58,10 +49,10 @@ sub select {
     ### JSON: $res->[0][0]
     my $json = $res->[0][0];
     eval {
-        $res = Load($json);
+        $res = decode_json($json);
     };
     if ($@) {
-        die "Failed to load JSON from PgFarm: $@\n$json";
+        die "Failed to load JSON from PgFarm's response: $@\n$json";
     }
     return $res;
 }

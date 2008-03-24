@@ -23,7 +23,7 @@ debug: all
 
 %.t: all force
 	sudo echo > /var/log/lighttpd/error.log
-	perl -c bin/openresty.pl
+	perl -c bin/openresty
 	sudo /etc/init.d/lighttpd restart
 	-time prove -Ilib $@
 	cat /var/log/lighttpd/error.log | egrep -v '^$$'
