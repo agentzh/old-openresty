@@ -263,7 +263,7 @@ GET /=/login/$TestAccount.Public?use_cookie=1
 === TEST 26: Create model A
 --- request
 POST /=/model/~
-{columns:{"name":"title","description":"A","label":"name"},"name":"A"}
+{"columns":{"name":"title","label":"name"},"description":"A","name":"A"}
 --- response
 {"success":1}
 
@@ -272,7 +272,7 @@ POST /=/model/~
 === TEST 27: Create model B
 --- request
 POST /=/model/B
-{"description":"B",columns:[
+{"description":"B","columns":[
     {"label":"title","name":"title"},
     {"label":"body","name":"body"}
  ]
@@ -353,10 +353,10 @@ DELETE /=/model/A/title
 === TEST 36: Insert rows
 --- request
 POST /=/model/A/~/~
-[ { {"title":"Larry"}, {"title":"Patrick","title":"Audrey"}} ]
+[ {"title":"Larry"}, {"title":"Patrick"}, {"title":"Audrey"} ]
 --- response
 {"last_row":"/=/model/A/id/3","rows_affected":3,"success":1}
-
+--- LAST
 
 
 === TEST 37: Get the rows
