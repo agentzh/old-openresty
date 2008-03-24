@@ -42,7 +42,7 @@ GET /=/model.js
 === TEST 4: insert a record 
 --- request
 POST /=/model/Carrie/~/~.js
-{ title:'hello carrie',"url":"http://www.carriezh.cn/index.html#"}
+{ "title":"hello carrie","url":"http://www.carriezh.cn/index.html#"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/1"}
 
@@ -51,7 +51,7 @@ POST /=/model/Carrie/~/~.js
 === TEST 5: insert another record
 --- request
 POST /=/model/Carrie/~/~.js
-{title:'second',"url":"http://zhangxiaojue.cn/test.php?p=mp3&t=web"}
+{"title":"second","url":"http://zhangxiaojue.cn/test.php?p=mp3&t=web"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/2"}
 
