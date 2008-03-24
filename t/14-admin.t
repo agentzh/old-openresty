@@ -63,17 +63,17 @@ POST /=/admin/select
 === TEST 6: CREATE FUNCTION
 --- request
 POST /=/admin/do
-"CREATE OR REPLACE FUNCTION add_child() returns trigger as $$ 
-	begin 
-		if NEW.id <> 0 then 
-			update _books set num=num+1 where id=1; 
-		END IF;
-		return NEW; 
-	end; 
+"CREATE OR REPLACE FUNCTION add_child() returns trigger as $$
+    begin
+        if NEW.id <> 0 then
+            update _books set num=num+1 where id=1;
+        END IF;
+        return NEW;
+    end;
 $$ language plpgsql;"
 --- response
 {"success":1}
-
+--- LAST
 
 
 === TEST 7: create tirgger
@@ -119,12 +119,12 @@ POST /=/admin/do
 POST /=/admin/do
 "DROP FUNCTION if exists hello_world0(int,int);
 CREATE OR REPLACE FUNCTION hello_world0(i int,j int) RETURNS _books AS $Q$
-	declare
-		tmp _books%ROWTYPE;
-	begin
-		select * into tmp from _books where id=i;
-	return tmp;
-	end;
+    declare
+        tmp _books%ROWTYPE;
+    begin
+        select * into tmp from _books where id=i;
+    return tmp;
+    end;
 $Q$LANGUAGE plpgsql;
 GRANT EXECUTE ON FUNCTION \"hello_world0\" (int,int) to anonymous;
 GRANT SELECT ON TABLE _books to anonymous;"
@@ -146,14 +146,14 @@ GET /=/post/action/.Select/lang/minisql?data="select hello_world0(1,0)"
 POST /=/admin/do
 "DROP FUNCTION if exists hello_world4(int,int);
 CREATE OR REPLACE FUNCTION hello_world4(i int,j int) RETURNS setof _books2 AS $Q$
-	declare
-		tmp _books2%ROWTYPE;
-	begin
-		for tmp in select * from _books2 order by id loop
-		return next tmp;
-		end loop;
-	return;
-	end;
+    declare
+        tmp _books2%ROWTYPE;
+    begin
+        for tmp in select * from _books2 order by id loop
+        return next tmp;
+        end loop;
+    return;
+    end;
 $Q$LANGUAGE plpgsql;
 GRANT EXECUTE ON FUNCTION \"hello_world4\" (int,int) to anonymous;
 GRANT SELECT ON TABLE _books2 to anonymous;"
