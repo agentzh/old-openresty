@@ -54,7 +54,7 @@ sub canon_json ($) {
     #return undef unless defined $json;
     #### $json
     #local $JSON::Syck::SortKeys = 1;
-    my $json_xs = JSON::XS->new->pretty->canonical->utf8->allow_nonref;
+    my $json_xs = JSON::XS->new->canonical->utf8->allow_nonref;
     if ($json =~ /^([^=]+)=(.*);$/) {
         my ($var, $true_json) = ($1, $2);
         my $data = $json_xs->decode($true_json);
