@@ -76,6 +76,7 @@ $$ language plpgsql;"
 --- LAST
 
 
+
 === TEST 7: create tirgger
 --- request
 POST /=/admin/do
