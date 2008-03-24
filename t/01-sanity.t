@@ -79,6 +79,7 @@ POST /=/model/Bookmark.js
 {"success":1,"warning":"Column \"id\" reserved. Ignored."}
 
 
+
 === TEST 9: check the model list again
 --- request
 GET /=/model.js
@@ -118,6 +119,7 @@ POST /=/model/Bookmark/~/~
 { "title": "Yahoo Search", "url": "http://www.yahoo.cn" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/1"}
+
 
 
 === TEST 13: insert another record
@@ -363,7 +365,7 @@ GET /=/model/MyFavorites/count
 
 
 
-=== TEST 43: Create a new column of the boolean type
+=== TEST 39: Create a new column of the boolean type
 --- request
 POST /=/model/MyFavorites/~
 { "name": "disabled", "type": "boolean", "label": "Disabled" }
@@ -372,7 +374,7 @@ POST /=/model/MyFavorites/~
 
 
 
-=== TEST 39: Change the name and type of title to incompactible types
+=== TEST 40: Change the name and type of title to incompactible types
 --- debug: 1
 --- request
 PUT /=/model/MyFavorites/count
@@ -382,7 +384,7 @@ PUT /=/model/MyFavorites/count
 
 
 
-=== TEST 40: Change the name and type of title to incompactible types
+=== TEST 41: Change the name and type of title to incompactible types
 --- debug: 0
 --- request
 PUT /=/model/MyFavorites/count
@@ -392,7 +394,7 @@ PUT /=/model/MyFavorites/count
 
 
 
-=== TEST 41: Change the name and type of title to incompactible types
+=== TEST 42: Change the name and type of title to incompactible types
 --- debug: 1
 --- request
 PUT /=/model/MyFavorites/count
@@ -402,7 +404,7 @@ PUT /=/model/MyFavorites/count
 
 
 
-=== TEST 42: Change the name and type of title to incompactible types
+=== TEST 43: Change the name and type of title to incompactible types
 --- debug: 0
 --- request
 PUT /=/model/MyFavorites/count

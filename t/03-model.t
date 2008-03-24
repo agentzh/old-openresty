@@ -42,6 +42,7 @@ POST /=/model/Human
 {"success":1}
 
 
+
 === TEST 3: Create a model with the same name
 --- request
 POST /=/model/Human
@@ -127,6 +128,7 @@ POST /=/model/Baz
 }
 --- response
 {"success":0,"error":"Syntax error found in the JSON input: '\"' expected, at character offset 25 [\"}\\n\"]."}
+
 
 
 === TEST 10: columns slot is not specified
@@ -276,12 +278,14 @@ POST /=/model/TTT
 {"success":0,"error":"Unrecognized keys in model schema 'TTT': \uFFFE"}
 
 
+
 === TEST 25: Unrecoginzed keys in model's block (POST)
 --- request
 POST /=/model/TTT
 { "\uFFFE": "key named \uFFFE", "\uFFFF": "key named \uFFFF", "description": "bad" }
 --- response
 {"success":0,"error":"Unrecognized keys in model schema 'TTT': \uFFFE, \uFFFF"}
+
 
 
 === TEST 26: when column def is bad
