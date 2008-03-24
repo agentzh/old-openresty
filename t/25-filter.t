@@ -20,9 +20,9 @@ DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
 --- request
 POST /=/model/Foo
 {
-    description:"foo",
+    "description":"foo",
     columns:
-        [ {name:"text", label:"Text"} ]
+        [ {"name":"text", "label":"Text"} ]
 }
 --- response
 {"success":1}
@@ -32,7 +32,7 @@ POST /=/model/Foo
 === TEST 3: Post a sexist's content
 --- request
 POST /=/model/Foo/~/~
-{ text: "oh, what a fuck!" }
+{ "text": "oh, what a fuck!" }
 --- response
 {"success":0,"error":"QP filter: Sexist not welcomed."}
 

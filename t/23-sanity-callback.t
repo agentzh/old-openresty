@@ -52,11 +52,11 @@ foo([]);
 --- request
 POST /=/model/Bookmark.js?callback=foo
 {
-    description: "我的书签",
-    columns: [
-        { name: "id", type: "serial", label: "ID" },
-        { name: "title", label: "标题" },
-        { name: "url", label: "网址" }
+    "description": "我的书签",
+    "columns": [
+        { "name": "id", "type": "serial", "label": "ID" },
+        { "name": "title", "label": "标题" },
+        { "name": "url", "label": "网址" }
     ]
 }
 --- response
@@ -100,7 +100,7 @@ foo({"success":0,"error":"Model \"Foo\" not found."});
 === TEST 10: insert a single record
 --- request
 POST /=/model/Bookmark/~/~?callback=foo
-{ title: "Yahoo Search", url: "http://www.yahoo.cn" }
+{ "title": "Yahoo Search", "url": "http://www.yahoo.cn" }
 --- response
 foo({"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/1"});
 
@@ -109,7 +109,7 @@ foo({"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/1"});
 === TEST 11: insert another record
 --- request
 POST /=/model/Bookmark/~/~.js?callback=foo
-{ title: "Yahoo Search", url: "http://www.yahoo.cn" }
+{ "title": "Yahoo Search", "url": "http://www.yahoo.cn" }
 --- response
 foo({"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/2"});
 
@@ -119,9 +119,9 @@ foo({"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/2"});
 --- request
 POST /=/model/Bookmark/~/~.js?callback=foo
 [
-    { title: "Google搜索", url: "http://www.google.cn" },
-    { url: "http://www.baidu.com" },
-    { title: "Perl.com", url: "http://www.perl.com" }
+    { "title": "Google搜索", "url": "http://www.google.cn" },
+    { "url": "http://www.baidu.com" },
+    { "title": "Perl.com", "url": "http://www.perl.com" }
 ]
 --- response
 foo({"success":1,"rows_affected":3,"last_row":"/=/model/Bookmark/id/5"});
@@ -202,7 +202,7 @@ foo([]);
 === TEST 20: update a nonexistent record
 --- request
 PUT /=/model/Bookmark/id/2.js?callback=foo
-{ title: "Blah blah blah" }
+{ "title": "Blah blah blah" }
 --- response
 foo({"success":0,"rows_affected":0});
 
@@ -211,7 +211,7 @@ foo({"success":0,"rows_affected":0});
 === TEST 21: update an existent record
 --- request
 PUT /=/model/Bookmark/id/3.js?callback=foo
-{ title: "Blah blah blah" }
+{ "title": "Blah blah blah" }
 --- response
 foo({"success":1,"rows_affected":1});
 
@@ -228,7 +228,7 @@ foo([{"url":"http://www.google.cn","title":"Blah blah blah","id":"3"}]);
 === TEST 23: update an existent record using POST
 --- request
 POST /=/put/model/Bookmark/id/3.js?callback=foo
-{ title: "Howdy!" }
+{ "title": "Howdy!" }
 --- response
 foo({"success":1,"rows_affected":1});
 
@@ -245,7 +245,7 @@ foo([{"url":"http://www.google.cn","title":"Howdy!","id":"3"}]);
 === TEST 25: Change the name of the model
 --- request
 PUT /=/model/Bookmark.js?callback=foo
-{ name: "MyFavorites", description: "我的最爱" }
+{ "name": "MyFavorites", "description": "我的最爱" }
 --- response
 foo({"success":1});
 
@@ -271,7 +271,7 @@ foo({
 === TEST 27: Change the name and type of title
 --- request
 PUT /=/model/MyFavorites/title?callback=foo
-{ name: "count", type: "text" }
+{ "name": "count", "type": "text" }
 --- response
 foo({"success":1});
 

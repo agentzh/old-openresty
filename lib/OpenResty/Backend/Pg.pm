@@ -3,6 +3,7 @@ package OpenResty::Backend::Pg;
 use strict;
 use warnings;
 
+#use Smart::Comments;
 use DBI;
 use OpenResty::SQL::Select;
 use base 'OpenResty::Backend::Base';
@@ -27,7 +28,7 @@ sub new {
         "dbi:Pg:dbname=$Database;host=$Host".
             ($Port ? ";port=$Port" : ""),
         $User, $Password,
-        {AutoCommit => 1, RaiseError => 1, %$opts, PrintError => 0}
+        {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts, PrintError => 0}
     );
 
     $Recording = $OpenResty::Config{'backend.recording'} && ! $OpenResty::Config{'test_suite.use_http'};
@@ -65,6 +66,9 @@ sub select {
     if ($Recording) {
         OpenResty::Backend::PgMocked->record($sql => $res);
     }
+
+    ### $res
+    ## SELECT RES: $OpenResty::Dumper->($res)
     return $res;
 }
 

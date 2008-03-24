@@ -35,8 +35,8 @@ GET /=/view
 === TEST 4: Create model A
 --- request
 POST /=/model/A
-{ description: "A",
-  columns: { name: "title", label: "title" }
+{ "description": "A",
+  columns: { "name": "title", "label": "title" }
   }
 --- response
 {"success":1}
@@ -46,10 +46,10 @@ POST /=/model/A
 === TEST 5: Create model B
 --- request
 POST /=/model/B
-{ description: "B",
-  columns: [
-    {name:"body",label:"body"},
-    {name:"a",type:"integer",label:"a"}
+{ "description": "B",
+  "columns": [
+    {"name":"body","label":"body"},
+    {"name":"a","type":"integer","label":"a"}
   ]
 }
 --- response
@@ -60,7 +60,7 @@ POST /=/model/B
 === TEST 6: Create the view
 --- request
 POST /=/view/View
-{ definition: "select * from A, B where A.id = B.a order by A.title" }
+{ "definition": "select * from A, B where A.id = B.a order by A.title" }
 --- response
 {"success":1}
 
@@ -69,7 +69,7 @@ POST /=/view/View
 === TEST 7: Create the view
 --- request
 POST /=/view/Test
-{ name: "Name", definition: "select * from A, B" }
+{ "name": "Name", "definition": "select * from A, B" }
 --- response
 {"success":1,"warning":"name \"Name\" in POST content ignored."}
 
@@ -78,7 +78,7 @@ POST /=/view/Test
 === TEST 8: Update the view
 --- request
 PUT /=/view/Test
-[{ definition: "select * from A, B where A.id = B.a order by A.title" }]
+[{ "definition": "select * from A, B where A.id = B.a order by A.title" }]
 --- response
 {"success":0,"error":"column spec must be a non-empty HASH."}
 
@@ -96,7 +96,7 @@ PUT /=/view/Test
 === TEST 10: Update name of the view
 --- request
 PUT /=/view/Test
-{ name:"Test1" }
+{ "name":"Test1" }
 --- response
 {"success":1}
 
@@ -105,7 +105,7 @@ PUT /=/view/Test
 === TEST 11: Update name of the view
 --- request
 PUT /=/view/Test1
-{ name:"123" }
+{ "name":"123" }
 --- response
 {"success":0,"error":"Bad view name: \"123\""}
 
@@ -114,7 +114,7 @@ PUT /=/view/Test1
 === TEST 12: Update name of the view
 --- request
 PUT /=/view/Test1
-{ name:"!@#$%#@" }
+{ "name":"!@#$%#@" }
 --- response
 {"success":0,"error":"Bad view name: \"!@#$%#@\""}
 
@@ -123,7 +123,7 @@ PUT /=/view/Test1
 === TEST 13: Update name of the view
 --- request
 PUT /=/view/Test1
-{ name:"_Test" }
+{ "name":"_Test" }
 --- response
 {"success":0,"error":"Bad view name: \"_Test\""}
 
@@ -132,7 +132,7 @@ PUT /=/view/Test1
 === TEST 14: Update name of the view
 --- request
 PUT /=/view/Test1
-{ name:"Test123!@#" }
+{ "name":"Test123!@#" }
 --- response
 {"success":0,"error":"Bad view name: \"Test123!@#\""}
 
@@ -141,7 +141,7 @@ PUT /=/view/Test1
 === TEST 15: Update name of the view
 --- request
 PUT /=/view/Test1
-{ name:"Test123" }
+{ "name":"Test123" }
 --- response
 {"success":1}
 
@@ -161,14 +161,14 @@ PUT /=/view/Test123
 PUT /=/view/Test123
 { definition:["select * from A, B where A.id = B.a order by A.title"] }
 --- response
-{"success":0,"error":"Bad view definition: [\"select * from A, B where A.id = B.a order by A.title\"]"}
+{"success":0,"error":"Bad view "definition": [\"select * from A, B where A.id = B.a order by A.title\"]"}
 
 
 
 === TEST 18: Update definition of the view
 --- request
 PUT /=/view/Test123
-{ definition:"select * from A, B where A.id = B.a order by B.a" }
+{ "definition":"select * from A, B where A.id = B.a order by B.a" }
 --- response
 {"success":1}
 
@@ -186,7 +186,7 @@ PUT /=/view/Test123
 === TEST 20: Update description of the view
 --- request
 PUT /=/view/Test123
-{ description:{desc:"blahblah"} }
+{ description:{"desc":"blahblah"} }
 --- response
 {"success":0,"error":"Bad view description: {\"desc\":\"blahblah\"}"}
 
@@ -195,7 +195,7 @@ PUT /=/view/Test123
 === TEST 21: Update description of the view
 --- request
 PUT /=/view/Test123
-{ description:"blahblah" }
+{ "description":"blahblah" }
 --- response
 {"success":1}
 

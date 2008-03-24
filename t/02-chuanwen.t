@@ -28,10 +28,10 @@ DELETE /=/model/Blah.js
 --- request
 POST /=/model/Bookmark.js
 {
-    columns: [
-        { name: "id", type: "serial", label: "ID" },
-        { name: "title", label: "标题" },
-        { name: "url", label: "网址" }
+    "columns": [
+        { "name": "id", "type": "serial", "label": "ID" },
+        { "name": "title", "label": "标题" },
+        { "name": "url", "label": "网址" }
     ]
 }
 --- response
@@ -43,11 +43,11 @@ POST /=/model/Bookmark.js
 --- request
 POST /=/model/Bookmark.js
 {
-    description: "我的书签",
-    columns: [
-        { name: "id", type: "serial", label: "ID" },
-        { name: "title", label: "标题" },
-        { name: "url" }
+    "description": "我的书签",
+    "columns": [
+        { "name": "id", "type": "serial", "label": "ID" },
+        { "name": "title", "label": "标题" },
+        { "name": "url" }
     ]
 }
 --- response
@@ -59,11 +59,11 @@ POST /=/model/Bookmark.js
 --- request
 POST /=/model/1_Bookmark.js
 {
-    description: "我的书签",
-    columns: [
-        { name: "id", type: "serial", label: "ID" },
-        { name: "title", label: "标题" },
-        { name: "url", label: "网址" }
+    "description": "我的书签",
+    "columns": [
+        { "name": "id", "type": "serial", "label": "ID" },
+        { "name": "title", "label": "标题" },
+        { "name": "url", "label": "网址" }
     ]
 }
 --- response
@@ -75,11 +75,11 @@ POST /=/model/1_Bookmark.js
 --- request
 POST /=/model/_Bookmark.js
 {
-    description: "我的书签",
-    columns: [
-        { name: "id", type: "serial", label: "ID" },
-        { name: "title", label: "标题" },
-        { name: "url", label: "网址" }
+    "description": "我的书签",
+    "columns": [
+        { "name": "id", "type": "serial", "label": "ID" },
+        { "name": "title", "label": "标题" },
+        { "name": "url", "label": "网址" }
     ]
 }
 --- response
@@ -91,11 +91,11 @@ POST /=/model/_Bookmark.js
 --- request
 POST /=/model/Bookmark.chen.js
 {
-    description: "我的书签",
-    columns: [
-        { name: "id", type: "serial", label: "ID" },
-        { name: "title", label: "标题" },
-        { name: "url", label: "网址" }
+    "description": "我的书签",
+    "columns": [
+        { "name": "id", "type": "serial", "label": "ID" },
+        { "name": "title", "label": "标题" },
+        { "name": "url", "label": "网址" }
     ]
 }
 --- response
@@ -107,11 +107,11 @@ POST /=/model/Bookmark.chen.js
 --- request
 POST /=/model/Bookmark-chen.js
 {
-    description: "我的书签",
-    columns: [
-        { name: "id", type: "serial", label: "ID" },
-        { name: "title", label: "标题" },
-        { name: "url", label: "网址" }
+    "description": "我的书签",
+    "columns": [
+        { "name": "id", "type": "serial", "label": "ID" },
+        { "name": "title", "label": "标题" },
+        { "name": "url", "label": "网址" }
     ]
 }
 --- response
@@ -123,10 +123,10 @@ POST /=/model/Bookmark-chen.js
 --- request
 POST /=/model/Bookmark
 {
-    description: "我的书签",
-    columns: [
-        { name: "title", label: "标题" },
-        { name: "url", label: "网址" }
+    "description": "我的书签",
+    "columns": [
+        { "name": "title", "label": "标题" },
+        { "name": "url", "label": "网址" }
     ]
 }
 --- response
@@ -146,10 +146,10 @@ DELETE /=/model/Bookmark
 --- request
 POST /=/model/bookmark.js
 {
-    description: "我的书签",
-    columns: [
-        { name: "title", label: "标题" },
-        { name: "url", label: "网址" }
+    "description": "我的书签",
+    "columns": [
+        { "name": "title", "label": "标题" },
+        { "name": "url", "label": "网址" }
     ]
 }
 --- response
@@ -169,9 +169,9 @@ DELETE /=/model/bookmark
 --- request
 POST /=/model/Bookmark.js
 {
-    description: "我的书签",
-    columns: [
-        { name: "_id", type: "serial", label: "ID" }
+    "description": "我的书签",
+    "columns": [
+        { "name": "_id", "type": "serial", "label": "ID" }
     ]
 }
 --- response
@@ -183,9 +183,9 @@ POST /=/model/Bookmark.js
 --- request
 POST /=/model/Bookmark.js
 {
-    description: "我的书签",
-    columns: [
-        { name: "id.chen", type: "serial", label: "ID" }
+    "description": "我的书签",
+    "columns": [
+        { "name": "id.chen", "type": "serial", "label": "ID" }
     ]
 }
 --- response
@@ -197,9 +197,9 @@ POST /=/model/Bookmark.js
 --- request
 POST /=/model/bookmark.js
 {
-    description: "我的书签",
-    columns: [
-        { name: "1_id", type: "serial", label: "ID" }
+    "description": "我的书签",
+    "columns": [
+        { "name": "1_id", "type": "serial", "label": "ID" }
     ]
 }
 --- response
@@ -211,9 +211,9 @@ POST /=/model/bookmark.js
 --- request
 POST /=/model/bookmark.js
 {
-    description: "我的书签",
-    columns: [
-        { name: "id-chen", type: "serial", label: "ID" }
+    "description": "我的书签",
+    "columns": [
+        { "name": "id-chen", "type": "serial", "label": "ID" }
     ]
 }
 --- response
@@ -225,9 +225,9 @@ POST /=/model/bookmark.js
 --- request
 POST /=/model/bookmark.js
 {
-    description: "我的书签",
-    columns: [
-        { name: "ID", type: "serial", label: "ID" }
+    "description": "我的书签",
+    "columns": [
+        { "name": "ID", "type": "serial", "label": "ID" }
     ]
 }
 --- response
@@ -247,8 +247,8 @@ DELETE /=/model/bookmark
 --- request
 POST /=/model/Bookmark.js
 {
-    description: "我的书签",
-    columns: { name: "id_chen", type: "serial", label: "ID" }
+    "description": "我的书签",
+    columns: { "name": "id_chen", "type": "serial", "label": "ID" }
 }
 --- response
 {"success":1}

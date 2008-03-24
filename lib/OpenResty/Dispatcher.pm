@@ -130,7 +130,7 @@ sub process_request {
         require Clone;
         #warn "------------------------------------------------\n";
         warn "$http_meth /=/", join("/", @bits), "\n";
-        warn JSON::Syck::Dump(Clone::clone($openresty->{_req_data})), "\n"
+        warn $OpenResty::Dumper->(Clone::clone($openresty->{_req_data})), "\n"
             if $http_meth eq 'POST' or $http_meth eq 'PUT';
     }
 

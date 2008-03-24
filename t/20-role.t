@@ -263,7 +263,7 @@ GET /=/login/$TestAccount.Public?use_cookie=1
 === TEST 26: Create model A
 --- request
 POST /=/model/~
-{columns:{"name":"title",description:"A",label:"name"},name:"A"}
+{columns:{"name":"title","description":"A","label":"name"},"name":"A"}
 --- response
 {"success":1}
 
@@ -272,9 +272,9 @@ POST /=/model/~
 === TEST 27: Create model B
 --- request
 POST /=/model/B
-{description:"B",columns:[
-    {label:"title",name:"title"},
-    {label:"body",name:"body"}
+{"description":"B",columns:[
+    {"label":"title","name":"title"},
+    {"label":"body","name":"body"}
  ]
 }
 --- response
@@ -486,8 +486,8 @@ GET /=/model/A/~/~
 --- request
 POST /=/role/Poster
 {
-    login: "password",
-    password: "$TestPass"
+    "login": "password",
+    "password": "$TestPass"
 }
 --- response
 {"error":"Field 'description' is missing.","success":0}
@@ -510,7 +510,7 @@ POST /=/role/Poster
 POST /=/role/Poster
 {
     "description":"Comment poster",
-    login: "password"
+    "login": "password"
 }
 --- response
 {"error":"No password given when 'login' is 'password'.","success":0}
@@ -522,7 +522,7 @@ POST /=/role/Poster
 POST /=/role/Poster
 {
     "description":"Comment poster",
-    login: "blah"
+    "login": "blah"
 }
 --- response
 {"error":"Unknown login method: blah","success":0}
@@ -534,8 +534,8 @@ POST /=/role/Poster
 POST /=/role/Poster
 {
     "description":"Comment poster",
-    login: "password",
-    password: ""
+    "login": "password",
+    "password": ""
 }
 --- response
 {"error":"Password too short; at least 6 chars required.","success":0}
@@ -547,8 +547,8 @@ POST /=/role/Poster
 POST /=/role/Poster
 {
     "description":"Comment poster",
-    login: "password",
-    password: "12345"
+    "login": "password",
+    "password": "12345"
 }
 --- response
 {"error":"Password too short; at least 6 chars required.","success":0}
@@ -560,8 +560,8 @@ POST /=/role/Poster
 POST /=/role/Poster
 {
     "description":"Comment poster",
-    login: "password",
-    password: "4417935"
+    "login": "password",
+    "password": "4417935"
 }
 --- response
 {"success":1}
@@ -573,8 +573,8 @@ POST /=/role/Poster
 POST /=/role/Poster
 {
     "description":"Comment poster",
-    login: "password",
-    password: "4417935"
+    "login": "password",
+    "password": "4417935"
 }
 --- response
 {"error":"Role \"Poster\" already exists.","success":0}
@@ -657,7 +657,7 @@ GET /=/model/~
 === TEST 68: Try to create a new model
 --- request
 POST /=/model/C
-{ description: "C" }
+{ "description": "C" }
 --- response
 {"error":"Permission denied for the \"Poster\" role.","success":0}
 
@@ -787,7 +787,7 @@ GET /=/role/Public/~/~
 === TEST 81: Try to update id of rule in Public
 --- request
 PUT /=/role/Public/id/~
-{ id: "521" }
+{ "id": "521" }
 --- response
 {"error":"Column \"id\" reserved.","success":0}
 
@@ -796,7 +796,7 @@ PUT /=/role/Public/id/~
 === TEST 82: Update urls of rules
 --- request
 PUT /=/role/Public/method/GET
-{ url: "/=/model/A/~" }
+{ "url": "/=/model/A/~" }
 --- response
 {"success":1}
 
@@ -816,7 +816,7 @@ GET /=/role/Public/~/~
 === TEST 84: Update methods of rules
 --- request
 PUT /=/role/Public/method/GET
-{ method: "POST" }
+{ "method": "POST" }
 --- response_like
 {"success":1}
 
@@ -836,7 +836,7 @@ GET /=/role/Public/~/~
 === TEST 86: Update methods & urls of rules
 --- request
 PUT /=/role/Public/method/POST
-{ method: "GET",url: "/=/model" }
+{ "method": "GET","url": "/=/model" }
 --- response_like
 {"success":1}
 
@@ -857,9 +857,9 @@ GET /=/role/Public/~/~
 --- request
 POST /=/role/Poster
 {
-    description:"Comment poster",
-    login: "password",
-    password: "4417935"
+    "description":"Comment poster",
+    "login": "password",
+    "password": "4417935"
 }
 --- response
 {"success":1}
@@ -915,7 +915,7 @@ GET /=/role/Poster/~/~
 --- request
 PUT /=/role/Poster
 {
-    name:"Newposter"
+    "name":"Newposter"
 }
 --- response
 {"success":1}
@@ -973,7 +973,7 @@ GET /=/role/Newposter/~/~
 --- request
 PUT /=/role/Newposter
 {
-    description:"my description"
+    "description":"my description"
 }
 --- response
 {"success":1}
@@ -1000,8 +1000,8 @@ GET /=/role/Newposter
 --- request
 PUT /=/role/Newposter
 {
-    name:"Newname",
-    description:"Newdescription"
+    "name":"Newname",
+    "description":"Newdescription"
 }
 --- response
 {"success":1}
@@ -1039,7 +1039,7 @@ GET /=/role/Newname/~/~
 --- request
 PUT /=/role/Newname
 {
-    password:"123456789"
+    "password":"123456789"
 }
 --- response
 {"success":1}
@@ -1066,7 +1066,7 @@ GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- request
 PUT /=/role/Newname
 {
-    login:"captcha"
+    "login":"captcha"
 }
 --- response
 {"success":1}
@@ -1104,7 +1104,7 @@ GET /=/role/Newname/~/~
 --- request
 PUT /=/role/Newname
 {
-    login:{blah:"blah"}
+    login:{"blah":"blah"}
 }
 --- response
 {"error":"Bad login method: {\"blah\":\"blah\"}","success":0}
@@ -1118,7 +1118,7 @@ PUT /=/role/Newname
     login:[1234]
 }
 --- response
-{"error":"Bad login method: [1234]","success":0}
+{"error":"Bad login "method": [1234]","success":0}
 
 
 
@@ -1126,7 +1126,7 @@ PUT /=/role/Newname
 --- request
 PUT /=/role/Newname
 {
-    login:"blah"
+    "login":"blah"
 }
 --- response
 {"error":"Bad login method: blah","success":0}
@@ -1137,7 +1137,7 @@ PUT /=/role/Newname
 --- request
 PUT /=/role/Newname
 {
-    description:{blah:"blah"}
+    description:{"blah":"blah"}
 }
 --- response
 {"error":"Bad role definition: {\"blah\":\"blah\"}","success":0}
@@ -1151,7 +1151,7 @@ PUT /=/role/Newname
     description:[1234]
 }
 --- response
-{"error":"Bad role definition: [1234]","success":0}
+{"error":"Bad role "definition": [1234]","success":0}
 
 
 
@@ -1159,7 +1159,7 @@ PUT /=/role/Newname
 --- request
 PUT /=/role/Newname
 {
-    description:"blah"
+    "description":"blah"
 }
 --- response
 {"success":1}
@@ -1170,7 +1170,7 @@ PUT /=/role/Newname
 --- request
 PUT /=/role/Newname
 {
-    password:"987654321"
+    "password":"987654321"
 }
 --- response
 {"success":1}
@@ -1181,10 +1181,10 @@ PUT /=/role/Newname
 --- request
 PUT /=/role/Newname
 {
-    name:"Poster",
-    description:"Comment poster",
-    login:"password",
-    password:"4417935"
+    "name":"Poster",
+    "description":"Comment poster",
+    "login":"password",
+    "password":"4417935"
 }
 --- response
 {"success":1}
@@ -1222,8 +1222,8 @@ GET /=/role/Poster/~/~
 --- request
 PUT /=/role/Poster
 {
-    login:"password",
-    password:"123456789"
+    "login":"password",
+    "password":"123456789"
 }
 --- response
 {"success":1}
@@ -1250,7 +1250,7 @@ GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- request
 PUT /=/role/Poster
 {
-    password:"789456213"
+    "password":"789456213"
 }
 --- response
 {"success":1}
@@ -1277,7 +1277,7 @@ GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- request
 PUT /=/role/Poster
 {
-    login:"password"
+    "login":"password"
 }
 --- response
 {"error":"No password given when 'login' is 'password'.","success":0}
@@ -1288,8 +1288,8 @@ PUT /=/role/Poster
 --- request
 PUT /=/role/Poster
 {
-    login:"captcha",
-    password:"123456789"
+    "login":"captcha",
+    "password":"123456789"
 }
 --- response
 {"error":"Password given when 'login' is not 'password'.","success":0}
@@ -1300,7 +1300,7 @@ PUT /=/role/Poster
 --- request
 PUT /=/role/Poster
 {
-    login:"captcha"
+    "login":"captcha"
 }
 --- response
 {"success":1}
@@ -1311,7 +1311,7 @@ PUT /=/role/Poster
 --- request
 PUT /=/role/Poster
 {
-    password:"456978321"
+    "password":"456978321"
 }
 --- response
 {"success":1}
@@ -1322,8 +1322,8 @@ PUT /=/role/Poster
 --- request
 PUT /=/role/Poster
 {
-    login:"captcha",
-    password:"321987465"
+    "login":"captcha",
+    "password":"321987465"
 }
 --- response
 {"error":"Password given when 'login' is not 'password'.","success":0}
@@ -1334,7 +1334,7 @@ PUT /=/role/Poster
 --- request
 PUT /=/role/Poster
 {
-    login:"anonymous"
+    "login":"anonymous"
 }
 --- response
 {"success":1}
@@ -1345,7 +1345,7 @@ PUT /=/role/Poster
 --- request
 PUT /=/role/Poster
 {
-    login:"password"
+    "login":"password"
 }
 --- response
 {"error":"No password given when 'login' is 'password'.","success":0}
@@ -1356,8 +1356,8 @@ PUT /=/role/Poster
 --- request
 PUT /=/role/Poster
 {
-    login:"password",
-    password:"shangerdi"
+    "login":"password",
+    "password":"shangerdi"
 }
 --- response
 {"success":1}
@@ -1384,7 +1384,7 @@ GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- request
 PUT /=/role/Poster
 {
-    password:"shangerdi1984"
+    "password":"shangerdi1984"
 }
 --- response
 {"success":1}
@@ -1395,7 +1395,7 @@ PUT /=/role/Poster
 --- request
 PUT /=/role/Poster
 {
-    password:"_1984"
+    "password":"_1984"
 }
 --- response
 {"error":"Password too short; at least 6 chars are required.","success":0}
@@ -1406,7 +1406,7 @@ PUT /=/role/Poster
 --- request
 PUT /=/role/Poster
 {
-    password:"_1984_1984"
+    "password":"_1984_1984"
 }
 --- response
 {"success":1}
@@ -1417,7 +1417,7 @@ PUT /=/role/Poster
 --- request
 PUT /=/role/Poster
 {
-    password:"shang_erdi"
+    "password":"shang_erdi"
 }
 --- response
 {"success":1}
@@ -1428,7 +1428,7 @@ PUT /=/role/Poster
 --- request
 PUT /=/role/Poster
 {
-    password:"SHANG1984_shangerdi_1984_shang_er_di_19841984"
+    "password":"SHANG1984_shangerdi_1984_shang_er_di_19841984"
 }
 --- response
 {"success":1}

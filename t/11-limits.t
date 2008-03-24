@@ -25,7 +25,7 @@ for (1..$MODEL_LIMIT + 1) {
     my $model_name = 'Foo'.$_;
     my $url = '/=/model/'.$model_name;
     ### $url
-    my $body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
+    my $body = '{"description":"blah",columns:[{"name":"title","label":"title"}]}';
     my $res = $client->post($url, $body);
     ok $res->is_success, '1..' . $MODEL_LIMIT . ' OK';
     my $res_body = $res->content;
@@ -62,7 +62,7 @@ for ($COLUMN_LIMIT..$COLUMN_LIMIT + 1) {
     my $col_name = 'Foo'.$_;
 
     my $url_local = $url.'/'.$col_name;
-    $body = '{label:"'.$col_name.'"}';
+    $body = '{"label":"'.$col_name.'"}';
 
     $res = $client->post($url_local, $body);
     ok $res->is_success, $COLUMN_LIMIT . ' OK';
@@ -107,7 +107,7 @@ for ($COLUMN_LIMIT..$COLUMN_LIMIT + 2) {
 $res = $client->delete($url);
 
 ## 2. create it
-$body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
+$body = '{"description":"blah",columns:[{"name":"title","label":"title"}]}';
 $res = $client->post($url, $body);
 ### $res
 
@@ -142,7 +142,7 @@ for ($INSERT_LIMIT..$INSERT_LIMIT + 1) {
 
     ## 1. delete the 'foo' model first, then create it
     $res = $client->delete($url);
-    $body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
+    $body = '{"description":"blah",columns:[{"name":"title","label":"title"}]}';
     $res = $client->post($url, $body);
     ok $res->is_success, 'Create model okay';
 
@@ -168,7 +168,7 @@ for ($INSERT_LIMIT..$INSERT_LIMIT + 1) {
 $data = 'a' x ($POST_LEN_LIMIT + 1);
 ## delete the 'foo' model first, then create it
 $res = $client->delete($url);
-$body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
+$body = '{"description":"blah",columns:[{"name":"title","label":"title"}]}';
 $res = $client->post($url, $data);
 ok $res->is_success, 'Create model okay';
 
@@ -184,12 +184,12 @@ is $res_body, '{"success":0,"error":"Exceeded POST content length limit: '.$POST
 $data = 'a' x ($POST_LEN_LIMIT + 1);
 ## delete the 'foo' model first, then create it
 $res = $client->delete($url);
-$body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
+$body = '{"description":"blah",columns:[{"name":"title","label":"title"}]}';
 $res = $client->put($url, $body);
 ok $res->is_success, $POST_LEN_LIMIT .'init model okay';
 
 ## insert a record
-$body = '{ title: "abc" }';
+$body = '{ "title": "abc" }';
 $res = $client->post($url.'/~/~', $body);
 ok $res->is_success, $POST_LEN_LIMIT . 'insert a short record OK';
 $res_body = $res->content;
@@ -206,7 +206,7 @@ is $res_body, '{"success":0,"error":"Exceeded PUT content length limit: '.$POST_
 # max select records in a request
 ## delete the 'foo' model first, then create it
 $res = $client->delete($url);
-$body = '{description:"blah",columns:[{name:"title",label:"title"}]}';
+$body = '{"description":"blah",columns:[{"name":"title","label":"title"}]}';
 $res = $client->post($url, $body);
 ok $res->is_success, 'Create model okay';
 

@@ -44,6 +44,8 @@ our %AccountFiltered;
 our $Cache;
 our $UUID = Data::UUID->new;
 
+our $JsonXs = JSON::XS->new->utf8->allow_nonref;
+
 our %OpMap = (
     contains => 'like',
     gt => '>',
@@ -57,8 +59,8 @@ our %OpMap = (
 our %ext2dumper = (
     '.yml' => \&YAML::Syck::Dump,
     '.yaml' => \&YAML::Syck::Dump,
-    '.js' => \&JSON::XS::encode_json,
-    '.json' => \&JSON::XS::encode_json,
+    '.js' => sub { $JsonXs->encode($_[0]) },
+    '.json' => sub { $JsonXs->encode($_[0]) },
 );
 
 our %EncodingMap = (
@@ -71,14 +73,14 @@ our %EncodingMap = (
 our %ext2importer = (
     '.yml' => \&YAML::Syck::Load,
     '.yaml' => \&YAML::Syck::Load,
-    '.js' => \&JSON::XS::decode_json,
-    '.json' => \&JSON::XS::decode_json,
+    '.js' => sub { $JsonXs->decode($_[0]) },
+    '.json' => sub { $JsonXs->decode($_[0]) },
 );
 
 our $Ext = qr/\.(?:js|json|xml|yaml|yml)/;
 our ($Dumper, $Importer);
-$Dumper = \&JSON::Syck::Dump;
-$Importer = \&JSON::Syck::Load;
+$Dumper = $ext2dumper{'.js'};
+$Importer = $ext2importer{'.js'};
 
 sub version {
     (my $ver = $OpenResty::VERSION) =~ s{^(\d+)\.(\d{3})(\d{3})?$}{join '.', int($1), int($2), int($3)}e;
@@ -89,7 +91,7 @@ sub version {
 sub parse_data {
     shift;
     if (!$Importer) {
-        $Importer = \&JSON::XS::decode_json;
+        $Importer = $ext2importer{'.js'};
     }
     return $Importer->($_[0]);
 }
@@ -347,9 +349,9 @@ sub response {
             #$str = encode($charset, $str);
             #}
     }; warn $@ if $@;
-    if (my $var = $self->{_var} and $Dumper eq \&JSON::Syck::Dump) {
+    if (my $var = $self->{_var} and $Dumper eq $ext2dumper{'.js'}) {
         $str = "$var=$str;";
-    } elsif (my $callback = $self->{_callback} and $Dumper eq \&JSON::Syck::Dump) {
+    } elsif (my $callback = $self->{_callback} and $Dumper eq $ext2dumper{'.js'}) {
         $str = "$callback($str);";
     }
     $str =~ s/\n+$//s;

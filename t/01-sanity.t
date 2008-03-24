@@ -216,7 +216,7 @@ GET /=/model/Bookmark/id/2.js
 === TEST 22: update a nonexistent record
 --- request
 PUT /=/model/Bookmark/id/2.js
-{ title: "Blah blah blah" }
+{ "title": "Blah blah blah" }
 --- response
 {"success":0,"rows_affected":0}
 
@@ -225,7 +225,7 @@ PUT /=/model/Bookmark/id/2.js
 === TEST 23: update an existent record
 --- request
 PUT /=/model/Bookmark/id/3.js
-{ title: "Blah blah blah" }
+{ "title": "Blah blah blah" }
 --- response
 {"success":1,"rows_affected":1}
 
@@ -242,7 +242,7 @@ GET /=/model/Bookmark/id/3.js
 === TEST 25: update an existent record using POST
 --- request
 POST /=/put/model/Bookmark/id/3.js?last_response=1234
-{ title: "Howdy!" }
+{ "title": "Howdy!" }
 --- response
 {"success":1,"rows_affected":1}
 
@@ -307,9 +307,9 @@ GET /=/last/response/1234
 === TEST 33: Change the name of the model
 --- request
 PUT /=/model/Bookmark.js?last_response=hello,world
-{ name: "MyFavorites", description: "我的最爱" }
+{ "name": "MyFavorites", "description": "我的最爱" }
 --- response
-{"success":1}
+{"success":"1"}
 
 
 
@@ -317,7 +317,7 @@ PUT /=/model/Bookmark.js?last_response=hello,world
 --- request
 GET /=/last/response/hello,world
 --- response
-{"success":1}
+{"success":"1"}
 
 
 
@@ -341,7 +341,7 @@ GET /=/model/MyFavorites.js
 === TEST 36: Change the name and type of title
 --- request
 PUT /=/model/MyFavorites/title
-{ name: "count", type: "text" }
+{ "name": "count", "type": "text" }
 --- response
 {"success":1}
 
@@ -366,7 +366,7 @@ GET /=/model/MyFavorites/count
 === TEST 43: Create a new column of the boolean type
 --- request
 POST /=/model/MyFavorites/~
-{ name: "disabled", type: "boolean", label: "Disabled" }
+{ "name": "disabled", "type": "boolean", "label": "Disabled" }
 --- response
 {"success":1,"src":"/=/model/MyFavorites/disabled"}
 
@@ -376,7 +376,7 @@ POST /=/model/MyFavorites/~
 --- debug: 1
 --- request
 PUT /=/model/MyFavorites/count
-{ name: "count", type: "real" }
+{ "name": "count", "type": "real" }
 --- response_like
 ^{"success":0,"error":"DBD::Pg::db (?:do|selectall_arrayref) failed:.*
 
@@ -386,7 +386,7 @@ PUT /=/model/MyFavorites/count
 --- debug: 0
 --- request
 PUT /=/model/MyFavorites/count
-{ name: "count", type: "real" }
+{ "name": "count", "type": "real" }
 --- response
 {"success":0,"error":"Operation failed."}
 
@@ -396,7 +396,7 @@ PUT /=/model/MyFavorites/count
 --- debug: 1
 --- request
 PUT /=/model/MyFavorites/count
-{ type: "real" }
+{ "type": "real" }
 --- response_like
 ^{"success":0,"error":"DBD::Pg::db (?:do|selectall_arrayref) failed:.*
 
@@ -406,7 +406,7 @@ PUT /=/model/MyFavorites/count
 --- debug: 0
 --- request
 PUT /=/model/MyFavorites/count
-{ type: "real" }
+{ "type": "real" }
 --- response
 {"success":0,"error":"Operation failed."}
 

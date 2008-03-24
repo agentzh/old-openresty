@@ -34,9 +34,9 @@ DELETE /=/model.js?user=$TestAccount&password=$TestPass&use_cookie=1
 === TEST 2: Create a new model
 --- request
 POST /=/model/Human
-{ description:"人类",
-  columns:
-    [ { name: "gender", label: "性别" } ]
+{ "description":"人类",
+  "columns":
+    [ { "name": "gender", "label": "性别" } ]
 }
 --- response
 {"success":1}
@@ -46,9 +46,9 @@ POST /=/model/Human
 === TEST 3: Create a model with the same name
 --- request
 POST /=/model/Human
-{ description:"人类",
+{ "description":"人类",
   columns:
-    [ { name: "gender", label: "性别" } ]
+    [ { "name": "gender", "label": "性别" } ]
 }
 --- response
 {"success":0,"error":"Model \"Human\" already exists."}
@@ -59,10 +59,10 @@ POST /=/model/Human
 --- request
 POST /=/model/Foo
 {
-  name: "Blah",
-  description:"人类",
+  "name": "Blah",
+  "description":"人类",
   columns:
-    [ { name: "gender", label: "性别" } ]
+    [ { "name": "gender", "label": "性别" } ]
 }
 --- response
 {"success":1,"warning":"name \"Blah\" in POST content ignored."}
@@ -74,7 +74,7 @@ POST /=/model/Foo
 POST /=/model/Blah
 {
   columns:
-    [ { name: "gender", label: "性别" } ]
+    [ { "name": "gender", "label": "性别" } ]
 }
 --- response
 {"success":0,"error":"No 'description' specified for model \"Blah\"."}
@@ -85,9 +85,9 @@ POST /=/model/Blah
 --- request
 POST /=/model/Blah
 {
-  description:"人类",
+  "description":"人类",
   columns:
-    [ { name: "gender" } ]
+    [ { "name": "gender" } ]
 }
 --- response
 {"success":0,"error":"No 'label' specified for column \"gender\" in model \"Blah\"."}
@@ -98,7 +98,7 @@ POST /=/model/Blah
 --- request
 POST /=/model/Blah
 {
-  description:"Blah",
+  "description":"Blah",
   columns:
     []
 }
@@ -124,7 +124,7 @@ GET /=/model/Blah
 --- request
 POST /=/model/Baz
 {
-  description:"BAZ",
+  "description":"BAZ",
 }
 --- response
 {"success":0,"error":"Syntax error found in the JSON input: line 3, column 1."}
@@ -135,7 +135,7 @@ POST /=/model/Baz
 --- request
 POST /=/model/Baz
 {
-  description:"BAZ"
+  "description":"BAZ"
 }
 --- response
 {"success":1,"warning":"No 'columns' specified for model \"Baz\"."}
@@ -187,7 +187,7 @@ DELETE /=/model/NotExist
 === TEST 15: Post model as a list
 --- request
 POST /=/model/Tiger
-[{ description: "Tiger" }]
+[{ "description": "Tiger" }]
 --- response
 {"success":0,"error":"The model schema must be a HASH."}
 
@@ -204,7 +204,7 @@ POST /=/model/laser
 === TEST 17: invalid columns in the model schema
 --- request
 POST /=/model/Tiger
-{ description: "Tiger", columns: 32 }
+{ "description": "Tiger", columns: 32 }
 --- response
 {"success":0,"error":"Invalid 'columns' value: 32"}
 
@@ -213,28 +213,28 @@ POST /=/model/Tiger
 === TEST 18: invalid 'description' slot value in the schema
 --- request
 POST /=/model/Tiger
-{ description: ["hello"] }
+{ "description": ["hello"] }
 --- response
-{"success":0,"error":"Bad 'description' value: [\"hello\"]"}
+{"success":0,"error":"Bad 'description' "value": [\"hello\"]"}
 
 
 
 === TEST 19: invalid model column name in schema
 --- request
 POST /=/model/Tiger
-{ description: "Tiger", columns:
-    [ { name:[32], label:"bad col" } ]
+{ "description": "Tiger", columns:
+    [ { name:[32], "label":"bad col" } ]
 }
 --- response
-{"success":0,"error":"Bad column name: [32]"}
+{"success":0,"error":"Bad column "name": [32]"}
 
 
 
 === TEST 20: model column name too long
 --- request
 POST /=/model/Tiger
-{ description: "Tiger", columns:
-    [ { name:"dddddddddddddddddddddddddddddddd", label:"hiya" } ]
+{ "description": "Tiger", columns:
+    [ { "name":"dddddddddddddddddddddddddddddddd", "label":"hiya" } ]
 }
 --- response
 {"success":0,"error":"Column name too long: dddddddddddddddddddddddddddddddd"}
@@ -244,8 +244,8 @@ POST /=/model/Tiger
 === TEST 21: model column name JUST NOT too long
 --- request
 POST /=/model/Tiger
-{ description: "Tiger", columns:
-    [ { name:"ddddddddddddddddddddddddddddddd", label:"hiya" } ]
+{ "description": "Tiger", columns:
+    [ { "name":"ddddddddddddddddddddddddddddddd", "label":"hiya" } ]
 }
 --- response
 {"success":1}
@@ -255,7 +255,7 @@ POST /=/model/Tiger
 === TEST 22: model name too long
 --- request
 POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ123456
-{ description: "Bad model" }
+{ "description": "Bad model" }
 --- response
 {"success":0,"error":"Model name too long: ABCDEFGHIJKLMNOPQRSTUVWXYZ123456"}
 
@@ -264,7 +264,7 @@ POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ123456
 === TEST 23: model name JUST NOT too long
 --- request
 POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ12345
-{ description: "Bad model" }
+{ "description": "Bad model" }
 --- response
 {"success":1,"warning":"No 'columns' specified for model \"ABCDEFGHIJKLMNOPQRSTUVWXYZ12345\"."}
 
@@ -273,7 +273,7 @@ POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ12345
 === TEST 24: Unrecoginzed key in model's block (POST)
 --- request
 POST /=/model/TTT
-{ \xFF\xFE: 'key named \xFF\xFE', description: "bad" }
+{ \xFF\xFE: 'key named \xFF\xFE', "description": "bad" }
 --- response
 {"success":0,"error":"Unrecognized keys in model schema 'TTT': \\xFF\\xFE"}
 
@@ -282,7 +282,7 @@ POST /=/model/TTT
 === TEST 25: Unrecoginzed keys in model's block (POST)
 --- request
 POST /=/model/TTT
-{ \xFF\xFE: 'key named \xFF\xFE', \xFF\xFF: 'key named \xFF\xFF', description: "bad" }
+{ \xFF\xFE: 'key named \xFF\xFE', \xFF\xFF: 'key named \xFF\xFF', "description": "bad" }
 --- response
 {"success":0,"error":"Unrecognized keys in model schema 'TTT': \\xFF\\xFE, \\xFF\\xFF"}
 
@@ -292,17 +292,17 @@ POST /=/model/TTT
 --- request
 POST /=/model/Foo2
 { description: 'blah',
-  columns: [ [1,2] ]
+  "columns": [ [1,2] ]
 }
 --- response
-{"success":0,"error":"Column definition must be a hash: [1,2]"}
+{"success":0,"error":"Column definition must be a "hash": [1,2]"}
 
 
 
 === TEST 27: Put a description
 --- request
 PUT /=/model/Tiger
-{ description: "Hello!" }
+{ "description": "Hello!" }
 --- response
 {"success":1}
 
