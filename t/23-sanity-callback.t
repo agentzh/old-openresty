@@ -247,7 +247,7 @@ foo([{"url":"http://www.google.cn","title":"Howdy!","id":"3"}]);
 PUT /=/model/Bookmark.js?callback=foo
 { "name": "MyFavorites", "description": "我的最爱" }
 --- response
-foo({"success":1});
+foo({"success":"1"});
 
 
 
