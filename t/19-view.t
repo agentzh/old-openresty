@@ -61,7 +61,7 @@ POST /=/view/View
 --- request
 POST /=/model/A
 { "description": "A",
-  columns: { "name": "title", "label": "title" }
+  "columns": { "name": "title", "label": "title" }
   }
 --- response
 {"success":1}
@@ -172,9 +172,9 @@ GET /=/view/View/~/~
 === TEST 18: Insert some data into model B
 --- request
 POST /=/model/B/~/~
-[{"body":"baidu.com",a:3},{"body":"google.com",a:2},
- {"body":"sohu.com",a:5},{"body":"163.com",a:6},
- {"body":"yahoo.cn",a:1}]
+[{"body":"baidu.com","a":3},{"body":"google.com","a":2},
+ {"body":"sohu.com","a":5},{"body":"163.com","a":6},
+ {"body":"yahoo.cn","a":1}]
 --- response
 {"success":1,"rows_affected":5,"last_row":"/=/model/B/id/5"}
 
@@ -589,7 +589,7 @@ POST /=/view/Foo
 === TEST 64: Bad hash
 --- request
 POST /=/view/Foo
-{cat=>3}
+{"cat":3}
 --- response
 {"success":0,"error":"No 'definition' specified."}
 
