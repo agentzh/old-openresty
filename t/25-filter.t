@@ -21,7 +21,7 @@ DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
 POST /=/model/Foo
 {
     "description":"foo",
-    columns:
+    "columns":
         [ {"name":"text", "label":"Text"} ]
 }
 --- response
