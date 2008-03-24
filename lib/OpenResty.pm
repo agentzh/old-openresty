@@ -106,7 +106,8 @@ sub init {
     my $class = ref $self;
     my $cgi = $self->{_cgi};
 
-    my $db_state = $Backend->state;
+    my $db_state;
+    eval { $db_state = $Backend->state; };
     #warn "DB state: $db_state\n";
     if ($db_state && $db_state =~ /^(?:08|57)/) {
         eval { $Backend->disconnect };
