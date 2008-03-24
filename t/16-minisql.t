@@ -20,11 +20,11 @@ DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
 --- request
 POST /=/model/Carrie.js
 {
-    description: "我的书签",
-    columns: [
-        { name: "title", label: "标题" },
-        { name: "url", label: "网址" },
-        { name: "num", type: "integer", label: "num" }
+    "description": "我的书签",
+    "columns": [
+        { "name": "title", "label": "标题" },
+        { "name": "url", "label": "网址" },
+        { "name": "num", "type": "integer", "label": "num" }
     ]
 }
 --- response
@@ -43,7 +43,7 @@ GET /=/model.js
 === TEST 4: insert a record
 --- request
 POST /=/model/Carrie/~/~.js
-{ title:'hello carrie',url:"http://www.carriezh.cn/",num:"10"}
+{ title:'hello carrie',"url":"http://www.carriezh.cn/","num":"10"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/1"}
 
@@ -60,7 +60,7 @@ GET /=/model/Carrie/url/http://www.carriezh.cn/.js
 === TEST 6: insert another record
 --- request
 POST /=/model/Carrie/~/~.js
-{ title:'second',url:"http://zhangxiaojue.cn",num:"1"}
+{ title:'second',"url":"http://zhangxiaojue.cn","num":"1"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/2"}
 

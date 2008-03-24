@@ -20,10 +20,10 @@ DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
 --- request
 POST /=/model/Foo
 {
-  description:"Foo",
-  columns: [
-    {name:"title", label: "title", default:"No title"},
-    {name:"content", label: "content", default:"No content" }
+  "description":"Foo",
+  "columns": [
+    {"name":"title", "label": "title", "default":"No title"},
+    {"name":"content", "label": "content", "default":"No content" }
   ]
 }
 --- response
@@ -60,7 +60,7 @@ POST /=/model/Foo/~/~
 === TEST 5: Insert a row
 --- request
 POST /=/model/Foo/~/~
-{ title: "Howdy!" }
+{ "title": "Howdy!" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Foo/id/1"}
 
@@ -77,7 +77,7 @@ GET /=/model/Foo/id/1
 === TEST 7: Add a column with default now()
 --- request
 POST /=/model/Foo/~
-{ name: "created", label: "创建日期", type: "timestamp", default: ["now()"] }
+{ "name": "created", "label": "创建日期", "type": "timestamp", "default": ["now()"] }
 --- response
 {"success":1,"src":"/=/model/Foo/created"}
 
@@ -106,7 +106,7 @@ GET /=/model/Foo/~
 === TEST 10: Insert a row w/o setting "created"
 --- request
 POST /=/model/Foo/~/~
-{ title: "Hi!" }
+{ "title": "Hi!" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Foo/id/2"}
 
@@ -123,7 +123,7 @@ GET /=/model/Foo/id/2
 === TEST 12: Insert another row
 --- request
 POST /=/model/Foo/~/~
-{ title: "Bah!" }
+{ "title": "Bah!" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Foo/id/3"}
 
@@ -140,7 +140,7 @@ GET /=/model/Foo/id/3
 === TEST 14: change the default value of the "content" column
 --- request
 PUT /=/model/Foo/content
-{ default: "hi" }
+{ "default": "hi" }
 --- response
 {"success":1}
 
@@ -149,7 +149,7 @@ PUT /=/model/Foo/content
 === TEST 15: Insert another row
 --- request
 POST /=/model/Foo/~/~
-{ title: "Cat!" }
+{ "title": "Cat!" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Foo/id/4"}
 
@@ -166,7 +166,7 @@ GET /=/model/Foo/id/4
 === TEST 17: change the default value of the "content" column to now()
 --- request
 PUT /=/model/Foo/content
-{ default: [" now ( ) "] }
+{ "default": [" now ( ) "] }
 --- response
 {"success":1}
 
@@ -175,7 +175,7 @@ PUT /=/model/Foo/content
 === TEST 18: Insert another row
 --- request
 POST /=/model/Foo/~/~
-{ title: "Dog!" }
+{ "title": "Dog!" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Foo/id/5"}
 
@@ -192,10 +192,10 @@ GET /=/model/Foo/id/5
 === TEST 20: model with default now()
 --- request
 POST /=/model/~
-{ name:"Howdy", description:"Howdy",
+{ "name":"Howdy", "description":"Howdy",
   columns:[
-    {name:"title",label:"title"},
-    {name:"updated",label:"updated",default:["now() at time zone 'UTC'"]}
+    {"name":"title","label":"title"},
+    {"name":"updated","label":"updated",default:["now() at time zone 'UTC'"]}
   ] }
 --- response
 {"success":1}
@@ -217,7 +217,7 @@ GET /=/model/Howdy/~
 === TEST 22: Insert another row
 --- request
 POST /=/model/Howdy/~/~
-{ title: "Hey" }
+{ "title": "Hey" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Howdy/id/1"}
 
@@ -234,7 +234,7 @@ GET /=/model/Howdy/id/1
 === TEST 24: Create a new column with timestamp
 --- request
 POST /=/model/Howdy/colA
-{ label: "colA", type:  "timestamp" }
+{ "label": "colA", type:  "timestamp" }
 --- response
 {"success":1,"src":"/=/model/Howdy/colA"}
 
@@ -243,7 +243,7 @@ POST /=/model/Howdy/colA
 === TEST 25: Create a new column with timestamp(0)
 --- request
 POST /=/model/Howdy/colB
-{ label: "colB", type:  "timestamp(0)" }
+{ "label": "colB", type:  "timestamp(0)" }
 --- response
 {"success":1,"src":"/=/model/Howdy/colB"}
 
@@ -252,7 +252,7 @@ POST /=/model/Howdy/colB
 === TEST 26: extra space in type
 --- request
 POST /=/model/Howdy/colC
-{ label: "colC", type:  "  timestamp  (  0  )  " }
+{ "label": "colC", type:  "  timestamp  (  0  )  " }
 --- response
 {"success":1,"src":"/=/model/Howdy/colC"}
 
@@ -261,7 +261,7 @@ POST /=/model/Howdy/colC
 === TEST 27: invalid stuff
 --- request
 POST /=/model/Howdy/colD
-{ label: "colD", type:  "  timestamp  (  'a'  )  " }
+{ "label": "colD", type:  "  timestamp  (  'a'  )  " }
 --- response
 {"success":0,"error":"Bad column type:   timestamp  (  'a'  )  "}
 
@@ -270,7 +270,7 @@ POST /=/model/Howdy/colD
 === TEST 28: with timezone (Bad)
 --- request
 POST /=/model/Howdy/colE
-{ label: "colE", type:  "  timestamp  (  0  )  with  timezone " }
+{ "label": "colE", type:  "  timestamp  (  0  )  with  timezone " }
 --- response
 {"success":0,"error":"Bad column type:   timestamp  (  0  )  with  timezone "}
 
@@ -279,7 +279,7 @@ POST /=/model/Howdy/colE
 === TEST 29: with time zone (Good)
 --- request
 POST /=/model/Howdy/colE
-{ label: "colE", type:  " timestamp ( 0 )  with  time  zone " }
+{ "label": "colE", type:  " timestamp ( 0 )  with  time  zone " }
 --- response
 {"success":1,"src":"/=/model/Howdy/colE"}
 
@@ -288,7 +288,7 @@ POST /=/model/Howdy/colE
 === TEST 30: with time zone but w/o precision
 --- request
 POST /=/model/Howdy/colF
-{ label: "colF", type:  " timestamp with  time  zone " }
+{ "label": "colF", type:  " timestamp with  time  zone " }
 --- response
 {"success":1,"src":"/=/model/Howdy/colF"}
 
@@ -297,7 +297,7 @@ POST /=/model/Howdy/colF
 === TEST 31: with time zone but w/o precision (for time)
 --- request
 POST /=/model/Howdy/colG
-{ label: "colG", type:  " time (0) with  time  zone " }
+{ "label": "colG", type:  " time (0) with  time  zone " }
 --- response
 {"success":1,"src":"/=/model/Howdy/colG"}
 
@@ -306,7 +306,7 @@ POST /=/model/Howdy/colG
 === TEST 32: Add a column with default 0
 --- request
 POST /=/model/Foo/~
-{ name: "num", label: "num", type: "integer", default: "0" }
+{ "name": "num", "label": "num", "type": "integer", "default": "0" }
 --- response
 {"success":1,"src":"/=/model/Foo/num"}
 
@@ -315,7 +315,7 @@ POST /=/model/Foo/~
 === TEST 33: Add a column with default 0
 --- request
 POST /=/model/Foo/~
-{ name: "carrie_stamp", label: "num", type: "timestamp", default: ["timestamp(0)"] }
+{ "name": "carrie_stamp", "label": "num", "type": "timestamp", "default": ["timestamp(0)"] }
 --- response
 {"success":1,"src":"/=/model/Foo/num"}
 --- SKIP

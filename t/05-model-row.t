@@ -46,11 +46,11 @@ POST /=/model/Dummy/~/~
 --- request
 POST /=/model/Address
 {
-    description: "通讯录",
-    columns: [
-        { name: "id", type: "serial", label: "ID" },
-        { name: "name", label: "名称" },
-        { name: "addr", label: "地址" }
+    "description": "通讯录",
+    "columns": [
+        { "name": "id", "type": "serial", "label": "ID" },
+        { "name": "name", "label": "名称" },
+        { "name": "addr", "label": "地址" }
     ]
 }
 --- response
@@ -70,10 +70,10 @@ GET /=/model
 --- request
 POST /=/model/Address/~/~
 [
-    { name: "Google搜索", addr: "http://www.google.cn" },
-    { addr: "http://www.baidu.com" },
-    { name: "Perl", addr: "http://www.perl.com" },
-    { name: "Perl.com", addr: "Perl" }
+    { "name": "Google搜索", "addr": "http://www.google.cn" },
+    { "addr": "http://www.baidu.com" },
+    { "name": "Perl", "addr": "http://www.perl.com" },
+    { "name": "Perl.com", "addr": "Perl" }
 ]
 --- response
 {"success":1,"rows_affected":4,"last_row":"/=/model/Address/id/4"}
@@ -100,7 +100,7 @@ PUT /=/model/Address/id/3
 === TEST 9: Use special chars
 --- request
 PUT /=/model/Address/id/1
-{ name: "\"\\\"" }
+{ "name": "\"\\\"" }
 --- response
 {"success":1,"rows_affected":1}
 
@@ -117,7 +117,7 @@ GET /=/model/Address/id/1
 === TEST 11: Use special chars
 --- request
 PUT /=/model/Address/id/1
-{ addr: "\t\\\n" }
+{ "addr": "\t\\\n" }
 --- response
 {"success":1,"rows_affected":1}
 

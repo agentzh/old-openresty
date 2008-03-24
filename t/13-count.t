@@ -27,10 +27,10 @@ DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
 --- request
 POST /=/model/Foo
 {
-    description:"foo",
+    "description":"foo",
     columns:
-        [ {name:"name", label:"姓名"},
-          {name:"age", label: "年龄", type:"integer"}
+        [ {"name":"name", "label":"姓名"},
+          {"name":"age", "label": "年龄", "type":"integer"}
         ]
 }
 --- response
@@ -42,13 +42,13 @@ POST /=/model/Foo
 --- request
 POST /=/model/Foo/~/~
 [
-  { name:"Marry", age:21 },
-  { name:"Bob", age:32 },
-  { name:"Bob", age: 15 },
-  { name:"Henry", age: 19 },
-  { name:"Henry", age: 23 },
-  { name:"Larry", age: 59 },
-  { name:"Audrey", age: 17 }
+  { "name":"Marry", age:21 },
+  { "name":"Bob", age:32 },
+  { "name":"Bob", age: 15 },
+  { "name":"Henry", age: 19 },
+  { "name":"Henry", age: 23 },
+  { "name":"Larry", age: 59 },
+  { "name":"Audrey", age: 17 }
 ]
 --- response
 {"success":1,"rows_affected":7,"last_row":"/=/model/Foo/id/7"}

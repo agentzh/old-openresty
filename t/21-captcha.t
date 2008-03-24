@@ -139,7 +139,7 @@ DELETE /=/role
 === TEST 16: Create an account with 'captcha' login method
 --- request
 POST /=/role/Poster
-{ description:"Poster", login:"captcha" }
+{ "description":"Poster", "login":"captcha" }
 --- response
 {"success":1}
 
@@ -148,7 +148,7 @@ POST /=/role/Poster
 === TEST 17: Add permission to GET model list
 --- request
 POST /=/role/Poster/~/~
-{url:"/=/model"}
+{"url":"/=/model"}
 --- response_like
 ^{"success":1,"rows_affected":1,"last_row":"/=/role/Poster/id/\d+"}$
 

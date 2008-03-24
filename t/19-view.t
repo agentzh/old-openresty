@@ -51,7 +51,7 @@ DELETE /=/view/~
 === TEST 6: Create a view referencing non-existent models
 --- request
 POST /=/view/View
-{ definition: "select * from A, B where A.id = B.a order by A.title" }
+{ "definition": "select * from A, B where A.id = B.a order by A.title" }
 --- response
 {"success":0,"error":"Model \"A\" not found."}
 
@@ -60,8 +60,8 @@ POST /=/view/View
 === TEST 7: Create model A
 --- request
 POST /=/model/A
-{ description: "A",
-  columns: { name: "title", label: "title" }
+{ "description": "A",
+  columns: { "name": "title", "label": "title" }
   }
 --- response
 {"success":1}
@@ -71,7 +71,7 @@ POST /=/model/A
 === TEST 8: Create a view referencing non-existent model B
 --- request
 POST /=/view/View
-{ definition: "select * from A, B where A.id = B.a order by A.title" }
+{ "definition": "select * from A, B where A.id = B.a order by A.title" }
 --- response
 {"success":0,"error":"Model \"B\" not found."}
 
@@ -80,10 +80,10 @@ POST /=/view/View
 === TEST 9: Create model B
 --- request
 POST /=/model/B
-{ description: "B",
-  columns: [
-    {name:"body",label:"body"},
-    {name:"a",type:"integer",label:"a"}
+{ "description": "B",
+  "columns": [
+    {"name":"body","label":"body"},
+    {"name":"a","type":"integer","label":"a"}
   ]
 }
 --- response
@@ -94,7 +94,7 @@ POST /=/model/B
 === TEST 10: Create the view when the models are ready
 --- request
 POST /=/view/View
-{ definition: "select * from A, B where A.id = B.a order by A.title" }
+{ "definition": "select * from A, B where A.id = B.a order by A.title" }
 --- response
 {"success":1}
 
@@ -154,8 +154,8 @@ GET /=/view/View/~/~
 --- request
 POST /=/model/A/~/~
 [
-  {title:"Yahoo"},{title:"Google"},{title:"Baidu"},
-  {title:"Sina"},{title:"Sohu"} ]
+  {"title":"Yahoo"},{"title":"Google"},{"title":"Baidu"},
+  {"title":"Sina"},{"title":"Sohu"} ]
 --- response
 {"success":1,"rows_affected":5,"last_row":"/=/model/A/id/5"}
 
@@ -172,9 +172,9 @@ GET /=/view/View/~/~
 === TEST 18: Insert some data into model B
 --- request
 POST /=/model/B/~/~
-[{body:"baidu.com",a:3},{body:"google.com",a:2},
- {body:"sohu.com",a:5},{body:"163.com",a:6},
- {body:"yahoo.cn",a:1}]
+[{"body":"baidu.com",a:3},{"body":"google.com",a:2},
+ {"body":"sohu.com",a:5},{"body":"163.com",a:6},
+ {"body":"yahoo.cn",a:1}]
 --- response
 {"success":1,"rows_affected":5,"last_row":"/=/model/B/id/5"}
 
@@ -196,7 +196,7 @@ GET /=/view/View/~/~
 === TEST 20: Insert another record to model A
 --- request
 POST /=/model/A/~/~
-{title:"163"}
+{"title":"163"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/A/id/6"}
 
@@ -219,7 +219,7 @@ GET /=/view/View/~/~
 === TEST 22: Create a second view
 --- request
 POST /=/view/~
-{name:"View2",definition:"select title from A order by $col"}
+{"name":"View2","definition":"select title from A order by $col"}
 --- response
 {"success":1}
 
@@ -277,7 +277,7 @@ GET /=/view/View2/col/id
 === TEST 28: Rename View2 to TitleOnly
 --- request
 PUT /=/view/View2
-{name:"TitleOnly"}
+{"name":"TitleOnly"}
 --- response
 {"success":1}
 
@@ -286,7 +286,7 @@ PUT /=/view/View2
 === TEST 29: Rename View2 again (this should fail)
 --- request
 PUT /=/view/View2
-{name:"TitleOnly"}
+{"name":"TitleOnly"}
 --- response
 {"success":0,"error":"View \"View2\" not found."}
 
@@ -330,7 +330,7 @@ GET /=/view/TitleOnly/col/title
 === TEST 34: Change the body of TitleOnly
 --- request
 PUT /=/view/TitleOnly
-{ definition:"select $select_col from A order by $order_by" }
+{ "definition":"select $select_col from A order by $order_by" }
 --- response
 {"success":1}
 
@@ -521,7 +521,7 @@ GET /=/view
 === TEST 57: Change the view name and definition simultaneously
 --- request
 PUT /=/view/Foo
-{ name: "Bah", definition: "select * from A" }
+{ "name": "Bah", "definition": "select * from A" }
 --- response
 {"success":1}
 
@@ -550,7 +550,7 @@ GET /=/view/Bah
 === TEST 60: Set the description (the wrong way, typo)
 --- request
 PUT /=/view/Bah
-{ descripition: "Blah blah blah..." }
+{ "descripition": "Blah blah blah..." }
 --- response
 {"success":0,"error":"Unknown keys in POST data: descripition"}
 
@@ -559,7 +559,7 @@ PUT /=/view/Bah
 === TEST 61: Set the description
 --- request
 PUT /=/view/Bah
-{ description: "Blah blah blah..." }
+{ "description": "Blah blah blah..." }
 --- response
 {"success":1}
 
@@ -598,8 +598,8 @@ POST /=/view/Foo
 === TEST 65: Re-add view Foo (Bad minisql)
 --- request
 POST /=/view/Foo
-{description:"Test vars for vals",name:"Foo",
-    definition:""}
+{"description":"Test vars for vals","name":"Foo",
+    "definition":""}
 --- response
 {"success":0,"error":"Bad definition: \"\""}
 
@@ -608,8 +608,8 @@ POST /=/view/Foo
 === TEST 66: Re-add view Foo (Bad minisql)
 --- request
 POST /=/view/Foo
-{description:"Test vars for vals",name:"Foo",
-    definition:"update _view set "}
+{"description":"Test vars for vals","name":"Foo",
+    "definition":"update _view set "}
 --- response
 {"success":0,"error":"minisql: line 1: error: Unexpected input: \"update\" ('(' or select expected)."}
 
@@ -618,8 +618,8 @@ POST /=/view/Foo
 === TEST 67: Re-add view Foo (Bad minisql)
 --- request
 POST /=/view/Foo
-{description:"Test vars for vals",name:"Foo",
-    definition:"select * from $model | 'A' where $col|id > $val"}
+{"description":"Test vars for vals","name":"Foo",
+    "definition":"select * from $model | 'A' where $col|id > $val"}
 --- response
 {"success":0,"error":"minisql: line 1: error: Unexpected input: \"'A'\" (IDENT expected)."}
 
@@ -628,8 +628,8 @@ POST /=/view/Foo
 === TEST 68: Re-add view Foo
 --- request
 POST /=/view/Foo
-{description:"Test vars for vals",name:"Foo",
-    definition:"select * from $model | A where $col|id > $val"}
+{"description":"Test vars for vals","name":"Foo",
+    "definition":"select * from $model | A where $col|id > $val"}
 --- response
 {"success":1}
 
@@ -709,7 +709,7 @@ GET /=/view/Foo/~/~?val=2&col=id
 === TEST 76: bug
 --- request
 POST /=/view/RowCount
-{ definition: "select count(*) from $model" }
+{ "definition": "select count(*) from $model" }
 --- response
 {"success":1}
 

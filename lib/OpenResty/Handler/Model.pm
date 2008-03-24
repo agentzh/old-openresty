@@ -618,7 +618,7 @@ sub insert_records {
     my $user = $openresty->current_user;
     ### %AccountFiltered
     if ($OpenResty::AccountFiltered{$user}) {
-        my $str = JSON::Syck::Dump(clone($data));
+        my $str = $OpenResty::Dumper->(clone($data));
         #die $val;
         #die "aaaa";
         OpenResty::Filter::QP->filter($str);
