@@ -165,6 +165,10 @@ sub run_test ($) {
         my ($method, $url, $body) = ($1, $2, $3);
         $url =~ s/\$SavedCapture\b/$SavedCapture/g;
         $body =~ s/\$SavedCapture\b/$SavedCapture/g;
+        if ($body =~ m/^"(?:\\"|[^"])*"$/) {
+            $body =~ s/\n//g;
+        }
+
         ### $method
         ### $url
         ### $body
