@@ -115,7 +115,7 @@ select * from Carrie;
 --- sql
 select * from Carrie blah
 --- error
-line 1: error: Unexpected "input": "blah".
+line 1: error: Unexpected input: "blah".
 
 
 
@@ -161,7 +161,7 @@ from People, Blah
 where name='zhxj';
 group by name
 --- error
-line 4: error: Unexpected "input": "group by".
+line 4: error: Unexpected input: "group by".
 
 
 
@@ -205,7 +205,7 @@ select *
 from blah
 where name = ''''Hi' or age <= 3;
 --- error
-line 3: error: Unexpected "input": "Hi".
+line 3: error: Unexpected input: "Hi".
 
 
 
@@ -239,7 +239,7 @@ select *
 from blah
 where name = '\'' and #@!##$@ --' or age <= 3;
 --- error
-line 3: error: Unexpected "input": "#" (VAR or IDENT or '(' expected).
+line 3: error: Unexpected input: "#" (VAR or IDENT or '(' expected).
 
 
 
@@ -261,7 +261,7 @@ select *
 from blah
 where name = $q$Laser's gift...$q$ update nhehe $q$ and age > 3;
 --- error
-line 3: error: Unexpected "input": "update".
+line 3: error: Unexpected input: "update".
 
 
 
@@ -508,7 +508,7 @@ sEleCt * frOM shangtest WHerE col='value'
 --- sql
 select * from from where select='abc'
 --- error
-line 1: error: Unexpected "input": "from" (VAR or IDENT expected).
+line 1: error: Unexpected input: "from" (VAR or IDENT expected).
 
 
 
