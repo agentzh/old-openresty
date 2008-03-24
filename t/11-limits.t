@@ -25,7 +25,7 @@ for (1..$MODEL_LIMIT + 1) {
     my $model_name = 'Foo'.$_;
     my $url = '/=/model/'.$model_name;
     ### $url
-    my $body = '{"description":"blah",columns:[{"name":"title","label":"title"}]}';
+    my $body = '{"description":"blah","columns":[{"name":"title","label":"title"}]}';
     my $res = $client->post($url, $body);
     ok $res->is_success, '1..' . $MODEL_LIMIT . ' OK';
     my $res_body = $res->content;
@@ -107,13 +107,13 @@ for ($COLUMN_LIMIT..$COLUMN_LIMIT + 2) {
 $res = $client->delete($url);
 
 ## 2. create it
-$body = '{"description":"blah",columns:[{"name":"title","label":"title"}]}';
+$body = '{"description":"blah","columns":[{"name":"title","label":"title"}]}';
 $res = $client->post($url, $body);
 ### $res
 
 ## 3. insert $RECORD_LIMIT - 1 records
 for (1..$RECORD_LIMIT - 1) {
-    $body = '{title:'.($RECORD_LIMIT-1).'}';
+    $body = '{"title":'.($RECORD_LIMIT-1).'}';
     ### $body
     $res = $client->post($url.'/~/~', $body);
     ok $res->is_success, $COLUMN_LIMIT . ' OK';
@@ -123,7 +123,7 @@ for (1..$RECORD_LIMIT - 1) {
 
 ## 4. add 2 more records
 for ($RECORD_LIMIT..$RECORD_LIMIT + 1) {
-    $body = '{title:'.($RECORD_LIMIT-1).'}';
+    $body = '{"title":'.($RECORD_LIMIT-1).'}';
 
     ### $body
     $res = $client->post($url.'/~/~', $body);
@@ -142,7 +142,7 @@ for ($INSERT_LIMIT..$INSERT_LIMIT + 1) {
 
     ## 1. delete the 'foo' model first, then create it
     $res = $client->delete($url);
-    $body = '{"description":"blah",columns:[{"name":"title","label":"title"}]}';
+    $body = '{"description":"blah","columns":[{"name":"title","label":"title"}]}';
     $res = $client->post($url, $body);
     ok $res->is_success, 'Create model okay';
 
@@ -206,7 +206,7 @@ is $res_body, '{"success":0,"error":"Exceeded PUT content length limit: '.$POST_
 # max select records in a request
 ## delete the 'foo' model first, then create it
 $res = $client->delete($url);
-$body = '{"description":"blah",columns:[{"name":"title","label":"title"}]}';
+$body = '{"description":"blah","columns":[{"name":"title","label":"title"}]}';
 $res = $client->post($url, $body);
 ok $res->is_success, 'Create model okay';
 
