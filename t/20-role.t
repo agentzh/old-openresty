@@ -171,7 +171,6 @@ GET /=/role/Public/method/~
     \{"id":"\d+","method":"POST","url":"/=/model/A/~/~"},
     \{"id":"\d+","method":"DELETE","url":"/=/model/A/id/~"}
 \]
---- LAST
 
 
 
