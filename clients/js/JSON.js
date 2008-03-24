@@ -1,4 +1,4 @@
-var JSON = function () {
+var JSON = (function () {
     var m = {
             '\b': '\\b',
             '\t': '\\t',
@@ -99,5 +99,5 @@ var JSON = function () {
             }
         }
     };
-}();
+}());
 

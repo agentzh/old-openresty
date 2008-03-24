@@ -7,6 +7,7 @@ use warnings;
 use OpenResty::Util;
 use List::Util qw( first );
 use Params::Util qw( _STRING _ARRAY0 _ARRAY _HASH );
+use JSON::Syck ();
 use OpenResty::Limits;
 use Clone 'clone';
 
@@ -366,7 +367,7 @@ sub new_model {
     if (%$data) {
     my @key = sort(keys %$data);
         die "Unrecognized keys in model schema 'TTT': ",
-            join(", ", @key),"\n";
+            join(", ", map { JSON::Syck::Dump($_) } @key), "\n";
     }
     my $i = 1;
     if ($openresty->has_model($model)) {

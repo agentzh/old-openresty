@@ -4,10 +4,10 @@ use strict;
 use warnings;
 
 #use Smart::Comments;
-use JSON::Syck ();
+use JSON::XS;
 use base 'OpenResty::Backend::Pg';
 use Test::LongString;
-use Encode qw(is_utf8 encode decode);
+#use Encode qw(is_utf8 encode decode);
 
 our ($DataFile, $Data, $TransList);
 
@@ -20,25 +20,25 @@ our ($DataFile, $Data, $TransList);
 my $path = 't/pgmock-data';
 unless (-d $path) { mkdir $path }
 
+my $json_xs = JSON::XS->new->utf8->allow_nonref;
+
 sub LoadFile {
     my ($file) = @_;
     open my $in, $file or
         die "Can't open $file for reading: $!";
     my $json = do { local $/; <$in> };
     close $in;
-    *JSON::Syck::LoadCode = \&JSON::Syck::LoadCode;
-    JSON::Syck::Load($json);
+    $json_xs->decode($json);
 }
 
 sub DumpFile {
     my ($file, $data) = @_;
     open my $out, ">$file" or
         die "Can't open $file for writing: $!";
-    *JSON::Syck::UseCode = \&JSON::Syck::UseCode;
 
-    local $JSON::Syck::ImplicitUnicode = 1;
-    my $json = JSON::Syck::Dump($data);
-    print $out encode('utf8', $json);
+    my $json = $json_xs->encode($data);
+    #print $out encode('utf8', $json);
+    print $out $json;
     close $out;
 }
 
@@ -84,12 +84,12 @@ sub play {
     if (!$cur) {
         die "No more expected response for query $query";
     }
-    if (is_utf8($query)) {
-        $query = encode('utf8', $query);
-    }
-    if (is_utf8($cur->[0])) {
-        $cur->[0] = encode('utf8', $cur->[0]);
-    }
+    #if (is_utf8($query)) {
+        #$query = encode('utf8', $query);
+    #}
+    #if (is_utf8($cur->[0])) {
+    #$cur->[0] = encode('utf8', $cur->[0]);
+    #}
     #$query =~ s/'3\.14159'/'3.14158999999999988'/;
     #$query =~ s/'3\.14'/'3.14000000000000012'/;
     $query =~ s/'3\.1415[89]{4,}\d*'/'3.14159'/;

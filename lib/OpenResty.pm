@@ -280,7 +280,7 @@ sub error {
     if (!$OpenResty::Config{'frontend.debug'} && $s =~ /^DBD::Pg::(?:db|st) \w+ failed:/) {
         $s = 'Operation failed.';
     }
-    $s =~ s/(.+) at lib\/OpenResty\.pm line \d+(?:, <DATA> line \d+)?\./Syntax error found in the JSON input: $1./;
+    $s =~ s/(.+) at \S+\/OpenResty\.pm line \d+(?:, <DATA> line \d+)?\./Syntax error found in the JSON input: $1./;
     #$s =~ s/^DBD::Pg::db do failed:\s.*?ERROR:\s+//;
     $self->{_error} .= $s . "\n";
 
@@ -398,7 +398,8 @@ sub connect {
 
 sub emit_data {
     my ($self, $data) = @_;
-    return $Dumper->($data);
+    #warn "$data";
+    return eval { $Dumper->($data); }
 }
 
 sub has_role {

@@ -274,8 +274,8 @@ POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ12345
 --- request
 POST /=/model/TTT
 { "\uFFFE": "key named \uFFFE", "description": "bad" }
---- response
-{"success":0,"error":"Unrecognized keys in model schema 'TTT': \uFFFE"}
+--- response_like
+{"success":0,"error":"Unrecognized keys in model schema 'TTT': .+?"}
 
 
 
@@ -283,19 +283,19 @@ POST /=/model/TTT
 --- request
 POST /=/model/TTT
 { "\uFFFE": "key named \uFFFE", "\uFFFF": "key named \uFFFF", "description": "bad" }
---- response
-{"success":0,"error":"Unrecognized keys in model schema 'TTT': \uFFFE, \uFFFF"}
+--- response_like
+{"success":0,"error":"Unrecognized keys in model schema 'TTT': .+?, .+?"}
 
 
 
 === TEST 26: when column def is bad
 --- request
 POST /=/model/Foo2
-{ description: 'blah',
+{ "description": "blah",
   "columns": [ [1,2] ]
 }
 --- response
-{"success":0,"error":"Column definition must be a "hash": [1,2]"}
+{"success":0,"error":"Column definition must be a hash: [1,2]"}
 
 
 
@@ -304,7 +304,7 @@ POST /=/model/Foo2
 PUT /=/model/Tiger
 { "description": "Hello!" }
 --- response
-{"success":1}
+{"success":"1"}
 
 
 

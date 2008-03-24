@@ -1,6 +1,14 @@
 # vi:filetype=
-
-use t::OpenResty;
+use OpenResty::Config;
+my $reason;
+BEGIN {
+    OpenResty::Config->init;
+    if ($OpenResty::Config{'backend.type'} eq 'PgMocked' ||
+        $OpenResty::Config{'backend.recording'}) {
+        $reason = 'Skipped in PgMocked or recording mode here.';
+    }
+}
+use t::OpenResty $reason ? (skip_all => $reason) : ();
 
 plan tests => 3 * blocks();
 
