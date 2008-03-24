@@ -203,7 +203,7 @@ GET /=/model/laser
 === TEST 19: Insert a record
 --- request
 POST /=/model/laser/~/~
-{ C: 3.14159 }
+{ "C": 3.14159 }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/laser/id/1"}
 
@@ -371,7 +371,7 @@ POST /=/model/laser/~
 
 === TEST 38: Insert a record
 --- request
-GET /=/post/model/laser/~/~?data={M:3.14}
+GET /=/post/model/laser/~/~?data={"M":3.14}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/laser/id/2"}
 

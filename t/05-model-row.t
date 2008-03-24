@@ -36,7 +36,7 @@ DELETE /=/model
 === TEST 3: insert data to an nonexistant model
 --- request
 POST /=/model/Dummy/~/~
-{ name: 'foo' }
+{ "name": "foo" }
 --- response
 {"success":0,"error":"Model \"Dummy\" not found."}
 
@@ -91,7 +91,7 @@ GET /=/model/Address/~/Perl
 === TEST 8: update id
 --- request
 PUT /=/model/Address/id/3
-{ id: 99}
+{ "id": 99}
 --- response
 {"success":0,"error":"Column \"id\" reserved."}
 

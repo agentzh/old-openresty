@@ -3,7 +3,8 @@ package t::OpenResty;
 use lib 'lib';
 use Test::Base -Base;
 use YAML::Syck ();
-use JSON::Syck ();
+#use JSON::Syck ();
+use JSON::XS ();
 
 #use Smart::Comments '####';
 my $client_module;
@@ -52,18 +53,19 @@ sub canon_json ($) {
     my $json = shift;
     #return undef unless defined $json;
     #### $json
-    local $JSON::Syck::SortKeys = 1;
+    #local $JSON::Syck::SortKeys = 1;
+    my $json_xs = JSON::XS->new->pretty->canonical->utf8->allow_nonref;
     if ($json =~ /^([^=]+)=(.*);$/) {
         my ($var, $true_json) = ($1, $2);
-        my $data = JSON::Syck::Load($true_json);
-        return "$var=" . JSON::Syck::Dump($data) . ";\n";
+        my $data = $json_xs->decode($true_json);
+        return "$var=" . $json_xs->encode($data) . ";\n";
     } elsif ($json =~ /^([^\(]+)\((.*)\);$/) {
         my ($func, $true_json) = ($1, $2);
-        my $data = JSON::Syck::Load($true_json);
-        return "$func(" . JSON::Syck::Dump($data) . ");\n";
+        my $data = $json_xs->decode($true_json);
+        return "$func(" . $json_xs->encode($data) . ");\n";
     }
-    my $data = JSON::Syck::Load($json);
-    return JSON::Syck::Dump($data);
+    my $data = $json_xs->decode($json);
+    return $json_xs->encode($data);
 }
 
 sub canon_yaml ($) {

@@ -42,12 +42,11 @@ POST /=/model/Human
 {"success":1}
 
 
-
 === TEST 3: Create a model with the same name
 --- request
 POST /=/model/Human
 { "description":"人类",
-  columns:
+  "columns":
     [ { "name": "gender", "label": "性别" } ]
 }
 --- response
@@ -61,7 +60,7 @@ POST /=/model/Foo
 {
   "name": "Blah",
   "description":"人类",
-  columns:
+  "columns":
     [ { "name": "gender", "label": "性别" } ]
 }
 --- response
@@ -73,7 +72,7 @@ POST /=/model/Foo
 --- request
 POST /=/model/Blah
 {
-  columns:
+  "columns":
     [ { "name": "gender", "label": "性别" } ]
 }
 --- response
@@ -86,7 +85,7 @@ POST /=/model/Blah
 POST /=/model/Blah
 {
   "description":"人类",
-  columns:
+  "columns":
     [ { "name": "gender" } ]
 }
 --- response
@@ -99,7 +98,7 @@ POST /=/model/Blah
 POST /=/model/Blah
 {
   "description":"Blah",
-  columns:
+  "columns":
     []
 }
 --- response
@@ -127,8 +126,7 @@ POST /=/model/Baz
   "description":"BAZ",
 }
 --- response
-{"success":0,"error":"Syntax error found in the JSON input: line 3, column 1."}
-
+{"success":0,"error":"Syntax error found in the JSON input: '\"' expected, at character offset 25 [\"}\\n\"]."}
 
 
 === TEST 10: columns slot is not specified
@@ -204,7 +202,7 @@ POST /=/model/laser
 === TEST 17: invalid columns in the model schema
 --- request
 POST /=/model/Tiger
-{ "description": "Tiger", columns: 32 }
+{ "description": "Tiger", "columns": 32 }
 --- response
 {"success":0,"error":"Invalid 'columns' value: 32"}
 
@@ -215,25 +213,25 @@ POST /=/model/Tiger
 POST /=/model/Tiger
 { "description": ["hello"] }
 --- response
-{"success":0,"error":"Bad 'description' "value": [\"hello\"]"}
+{"success":0,"error":"Bad 'description' value: [\"hello\"]"}
 
 
 
 === TEST 19: invalid model column name in schema
 --- request
 POST /=/model/Tiger
-{ "description": "Tiger", columns:
-    [ { name:[32], "label":"bad col" } ]
+{ "description": "Tiger", "columns":
+    [ { "name":[32], "label":"bad col" } ]
 }
 --- response
-{"success":0,"error":"Bad column "name": [32]"}
+{"success":0,"error":"Bad column name: [32]"}
 
 
 
 === TEST 20: model column name too long
 --- request
 POST /=/model/Tiger
-{ "description": "Tiger", columns:
+{ "description": "Tiger", "columns":
     [ { "name":"dddddddddddddddddddddddddddddddd", "label":"hiya" } ]
 }
 --- response
@@ -244,7 +242,7 @@ POST /=/model/Tiger
 === TEST 21: model column name JUST NOT too long
 --- request
 POST /=/model/Tiger
-{ "description": "Tiger", columns:
+{ "description": "Tiger", "columns":
     [ { "name":"ddddddddddddddddddddddddddddddd", "label":"hiya" } ]
 }
 --- response
@@ -273,19 +271,17 @@ POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ12345
 === TEST 24: Unrecoginzed key in model's block (POST)
 --- request
 POST /=/model/TTT
-{ \xFF\xFE: 'key named \xFF\xFE', "description": "bad" }
+{ "\uFFFE": "key named \uFFFE", "description": "bad" }
 --- response
-{"success":0,"error":"Unrecognized keys in model schema 'TTT': \\xFF\\xFE"}
-
+{"success":0,"error":"Unrecognized keys in model schema 'TTT': \uFFFE"}
 
 
 === TEST 25: Unrecoginzed keys in model's block (POST)
 --- request
 POST /=/model/TTT
-{ \xFF\xFE: 'key named \xFF\xFE', \xFF\xFF: 'key named \xFF\xFF', "description": "bad" }
+{ "\uFFFE": "key named \uFFFE", "\uFFFF": "key named \uFFFF", "description": "bad" }
 --- response
-{"success":0,"error":"Unrecognized keys in model schema 'TTT': \\xFF\\xFE, \\xFF\\xFF"}
-
+{"success":0,"error":"Unrecognized keys in model schema 'TTT': \uFFFE, \uFFFF"}
 
 
 === TEST 26: when column def is bad
