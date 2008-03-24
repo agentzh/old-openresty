@@ -349,6 +349,8 @@ sub response {
             #$str = encode($charset, $str);
             #}
     }; warn $@ if $@;
+    #warn $Dumper;
+    #warn $ext2dumper{'.js'};
     if (my $var = $self->{_var} and $Dumper eq $ext2dumper{'.js'}) {
         $str = "$var=$str;";
     } elsif (my $callback = $self->{_callback} and $Dumper eq $ext2dumper{'.js'}) {
@@ -379,7 +381,7 @@ sub response {
 
 sub set_formatter {
     my ($self, $ext) = @_;
-    $ext ||= '.json';
+    $ext ||= '.js';
     $Dumper = $ext2dumper{$ext};
     $Importer = $ext2importer{$ext};
 }
