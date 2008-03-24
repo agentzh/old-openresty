@@ -356,7 +356,7 @@ POST /=/model/A/~/~
 [ {"title":"Larry"}, {"title":"Patrick"}, {"title":"Audrey"} ]
 --- response
 {"last_row":"/=/model/A/id/3","rows_affected":3,"success":1}
---- LAST
+
 
 
 === TEST 37: Get the rows
@@ -1104,7 +1104,7 @@ GET /=/role/Newname/~/~
 --- request
 PUT /=/role/Newname
 {
-    login:{"blah":"blah"}
+    "login":{"blah":"blah"}
 }
 --- response
 {"error":"Bad login method: {\"blah\":\"blah\"}","success":0}
@@ -1115,10 +1115,10 @@ PUT /=/role/Newname
 --- request
 PUT /=/role/Newname
 {
-    login:[1234]
+    "login":[1234]
 }
 --- response
-{"error":"Bad login "method": [1234]","success":0}
+{"error":"Bad login method: [1234]","success":0}
 
 
 
@@ -1137,7 +1137,7 @@ PUT /=/role/Newname
 --- request
 PUT /=/role/Newname
 {
-    description:{"blah":"blah"}
+    "description":{"blah":"blah"}
 }
 --- response
 {"error":"Bad role definition: {\"blah\":\"blah\"}","success":0}
@@ -1148,10 +1148,10 @@ PUT /=/role/Newname
 --- request
 PUT /=/role/Newname
 {
-    description:[1234]
+    "description":[1234]
 }
 --- response
-{"error":"Bad role "definition": [1234]","success":0}
+{"error":"Bad role definition: [1234]","success":0}
 
 
 
