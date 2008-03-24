@@ -84,7 +84,6 @@ POST /=/model/Carrie.js
 GET /=/model.js
 --- response
 [{"src":"/=/model/Carrie","name":"Carrie","description":"我的书签"}]
---- LAST
 
 
 
