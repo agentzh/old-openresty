@@ -4,8 +4,8 @@ OpenResty::Spec::MetaModel - Metamodel for OpenResty backends
 
 =head1 VERSION
 
-This document describes the 0.02 version of the metamodel used in the
-OpenResty 0.2.x series.
+This document describes the 0.001 version of the metamodel used in the
+OpenResty 0.1.9.
 
 =head1 DESCRIPTION
 
@@ -35,8 +35,9 @@ The definition of the C<_general> table is
 Usually it stores the version and other general information of
 the global metamodel itself. Note that the
 version of the metamodel is independent of the version number of the whole
-OpenResty server implementation. For instance, the OpenResty 0.2.x series
-uses metamodel 0.02 while the versions earlier uses 0.01 instead. This table
+OpenResty server implementation. For instance, the OpenResty 0.1.8
+uses metamodel 0.001 while the versions earlier does not have a versioned
+metamodel. This table
 usually has only 1 row. But it's also fine to keep track of all the version
 history. The largest version number will be considered the current version
 of the metamodel in the I<current> user schema.
