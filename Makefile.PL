@@ -37,6 +37,7 @@ requires            ('Hash::Merge');
 requires            ('Config::Simple');
 requires            ('Encode::Guess');
 requires            ('List::MoreUtils');
+requires            ('JSON::XS' => '2.1');
 
 if ($arg eq 'product') {
     features(

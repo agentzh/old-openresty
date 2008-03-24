@@ -68,16 +68,15 @@ GET /=/model.js
 --- request
 POST /=/model/Bookmark.js
 {
-    description: "我的书签",
-    columns: [
-        { name: "id", type: "serial", label: "ID" },
-        { name: "title", label: "标题" },
-        { name: "url", label: "网址" }
+    "description": "我的书签",
+    "columns": [
+        { "name": "id", "type": "serial", "label": "ID" },
+        { "name": "title", "label": "标题" },
+        { "name": "url", "label": "网址" }
     ]
 }
 --- response
 {"success":1,"warning":"Column \"id\" reserved. Ignored."}
-
 
 
 === TEST 9: check the model list again
@@ -116,16 +115,15 @@ GET /=/model/Foo.js
 === TEST 12: insert a single record
 --- request
 POST /=/model/Bookmark/~/~
-{ title: "Yahoo Search", url: 'http://www.yahoo.cn' }
+{ "title": "Yahoo Search", "url": "http://www.yahoo.cn" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/1"}
-
 
 
 === TEST 13: insert another record
 --- request
 POST /=/model/Bookmark/~/~.js
-{ title: "Yahoo Search", url: 'http://www.yahoo.cn' }
+{ "title": "Yahoo Search", "url": "http://www.yahoo.cn" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/2"}
 
@@ -135,9 +133,9 @@ POST /=/model/Bookmark/~/~.js
 --- request
 POST /=/model/Bookmark/~/~.js
 [
-    { title: "Google搜索", url: "http://www.google.cn" },
-    { url: "http://www.baidu.com" },
-    { title: "Perl.com", url: "http://www.perl.com" }
+    { "title": "Google搜索", "url": "http://www.google.cn" },
+    { "url": "http://www.baidu.com" },
+    { "title": "Perl.com", "url": "http://www.perl.com" }
 ]
 --- response
 {"success":1,"rows_affected":3,"last_row":"/=/model/Bookmark/id/5"}

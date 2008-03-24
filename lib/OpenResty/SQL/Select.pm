@@ -5,7 +5,7 @@ use warnings;
 
 #use Smart::Comments '####';
 use base 'OpenResty::SQL::Statement';
-use Encode qw( encode is_utf8 decode );
+#use Encode qw( encode is_utf8 decode );
 
 sub new {
     my $class = ref $_[0] ? ref shift : shift;

@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use utf8;
-use Encode 'encode';
+#use Encode 'encode';
 
 my $Error;
 eval "use GD::SecurityImage;";
