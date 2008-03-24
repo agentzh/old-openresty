@@ -193,9 +193,9 @@ GET /=/model/Foo/id/5
 --- request
 POST /=/model/~
 { "name":"Howdy", "description":"Howdy",
-  columns:[
+  "columns":[
     {"name":"title","label":"title"},
-    {"name":"updated","label":"updated",default:["now() at time zone 'UTC'"]}
+    {"name":"updated","label":"updated","default":["now() at time zone 'UTC'"]}
   ] }
 --- response
 {"success":1}
@@ -234,7 +234,7 @@ GET /=/model/Howdy/id/1
 === TEST 24: Create a new column with timestamp
 --- request
 POST /=/model/Howdy/colA
-{ "label": "colA", type:  "timestamp" }
+{ "label": "colA", "type":  "timestamp" }
 --- response
 {"success":1,"src":"/=/model/Howdy/colA"}
 
@@ -243,7 +243,7 @@ POST /=/model/Howdy/colA
 === TEST 25: Create a new column with timestamp(0)
 --- request
 POST /=/model/Howdy/colB
-{ "label": "colB", type:  "timestamp(0)" }
+{ "label": "colB", "type":  "timestamp(0)" }
 --- response
 {"success":1,"src":"/=/model/Howdy/colB"}
 
@@ -252,7 +252,7 @@ POST /=/model/Howdy/colB
 === TEST 26: extra space in type
 --- request
 POST /=/model/Howdy/colC
-{ "label": "colC", type:  "  timestamp  (  0  )  " }
+{ "label": "colC", "type":  "  timestamp  (  0  )  " }
 --- response
 {"success":1,"src":"/=/model/Howdy/colC"}
 
@@ -261,7 +261,7 @@ POST /=/model/Howdy/colC
 === TEST 27: invalid stuff
 --- request
 POST /=/model/Howdy/colD
-{ "label": "colD", type:  "  timestamp  (  'a'  )  " }
+{ "label": "colD", "type":  "  timestamp  (  'a'  )  " }
 --- response
 {"success":0,"error":"Bad column type:   timestamp  (  'a'  )  "}
 
@@ -270,7 +270,7 @@ POST /=/model/Howdy/colD
 === TEST 28: with timezone (Bad)
 --- request
 POST /=/model/Howdy/colE
-{ "label": "colE", type:  "  timestamp  (  0  )  with  timezone " }
+{ "label": "colE", "type":  "  timestamp  (  0  )  with  timezone " }
 --- response
 {"success":0,"error":"Bad column type:   timestamp  (  0  )  with  timezone "}
 
@@ -279,7 +279,7 @@ POST /=/model/Howdy/colE
 === TEST 29: with time zone (Good)
 --- request
 POST /=/model/Howdy/colE
-{ "label": "colE", type:  " timestamp ( 0 )  with  time  zone " }
+{ "label": "colE", "type":  " timestamp ( 0 )  with  time  zone " }
 --- response
 {"success":1,"src":"/=/model/Howdy/colE"}
 
@@ -288,7 +288,7 @@ POST /=/model/Howdy/colE
 === TEST 30: with time zone but w/o precision
 --- request
 POST /=/model/Howdy/colF
-{ "label": "colF", type:  " timestamp with  time  zone " }
+{ "label": "colF", "type":  " timestamp with  time  zone " }
 --- response
 {"success":1,"src":"/=/model/Howdy/colF"}
 
@@ -297,7 +297,7 @@ POST /=/model/Howdy/colF
 === TEST 31: with time zone but w/o precision (for time)
 --- request
 POST /=/model/Howdy/colG
-{ "label": "colG", type:  " time (0) with  time  zone " }
+{ "label": "colG", "type":  " time (0) with  time  zone " }
 --- response
 {"success":1,"src":"/=/model/Howdy/colG"}
 
