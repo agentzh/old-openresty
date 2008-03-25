@@ -252,7 +252,7 @@ sub trim {
 sub dump_res {
     my ($res) = @_;
     return if !defined $res;
-    use Text::Table;
+    require Text::Table;
     my $tb;
     if (ref $res && @$res) {
         my @keys = sort keys %{ $res->[0] };
