@@ -120,21 +120,8 @@ if ($cmd eq 'adduser') {
     }
 } elsif ($cmd eq 'upgrade') {
     my $user = shift;
-    if ($user) {
-        if ($backend->has_user($user)) {
-            $backend->set_user($user);
-            my $base = $backend->get_upgrading_base;
-            if ($base >= 0) {
-                $backend->upgrade_local_metamodel($base);
-            } else {
-                warn "User $user is already up to date.\n";
-            }
-        } else {
-            die "User $user does not exist.\n";
-        }
-    } else {
-        $backend->upgrade_all;
-    }
+    require OpenResty::Script::Upgrade;
+    OpenResty::Script::Upgrade->go($backend, $user);
 } elsif ($cmd eq '' or $cmd eq 'shell') {
     require OpenResty::Shell;
     my $shell = OpenResty::Shell->new($backend);
