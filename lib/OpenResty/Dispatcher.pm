@@ -129,8 +129,10 @@ sub process_request {
     if ($OpenResty::Config{'frontend.log'}) {
         require Clone;
         #warn "------------------------------------------------\n";
-        warn "$http_meth /=/", join("/", @bits), "\n";
-        warn $OpenResty::Dumper->(Clone::clone($openresty->{_req_data})), "\n"
+        warn "$http_meth $ENV{REQUEST_URI} (", join("/", @bits), ")\n";
+        my $data = Clone::clone($openresty->{_req_data});
+        Data::Structure::Util::_utf8_on($data);
+        warn $OpenResty::Dumper->($data), "\n"
             if $http_meth eq 'POST' or $http_meth eq 'PUT';
     }
 
