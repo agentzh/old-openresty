@@ -73,7 +73,6 @@ POST /=/admin/do
 $$ language plpgsql;"
 --- response
 {"success":1}
---- LAST
 
 
 
@@ -109,7 +108,7 @@ POST /=/admin/select
 === TEST 10: Create a DB table
 --- request
 POST /=/admin/do
-"create table _books2 (id serial primary key, body text, num integer default 0);
+"create table _books2 (id serial primary key, body text, num integer default 0);"
 --- response
 {"success":1}
 

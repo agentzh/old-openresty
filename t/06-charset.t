@@ -7,6 +7,7 @@ BEGIN {
         $OpenResty::Config{'backend.recording'}) {
         $reason = 'Skipped in PgMocked or recording mode here.';
     }
+    #undef $reason;
 }
 use t::OpenResty $reason ? (skip_all => $reason) : ();
 
