@@ -187,19 +187,40 @@ _EOC_
         elsif ($cmd eq '') { next }
         elsif ($cmd =~ s/^\\[au]\b\s*//) {
             $user = $cmd;
-            trim($user);
-            my $res;
-            eval {
-                if (my $machine = $backend->has_user($user)) {
-                    warn "Switching to account $user on node $machine\n";
-                    $res = $backend->set_user($user);
-                } else {
-                    die "Account \"$user\" not found.\n";
+            if ($user) {
+                my $res;
+                eval {
+                    if (my $machine = $backend->has_user($user)) {
+                        warn "Switching to account $user on node $machine\n";
+                        $res = $backend->set_user($user);
+                    } else {
+                        die "Account \"$user\" not found.\n";
+                    }
+                };
+                if ($@) { warn $@ }
+                if (defined $res) {
+                    print $res, "\n";
                 }
-            };
-            if ($@) { warn $@ }
-            if (defined $res) {
-                print $res, "\n";
+            } else {
+                my @accounts;
+                eval {
+                    @accounts = $backend->get_all_accounts;
+                };
+                if ($@) { warn $@ }
+                if (@accounts) {
+                    my @res;
+                    for my $account (@accounts) {
+                        my $machine;
+                        eval {
+                            $machine = $backend->has_user($account);
+                        };
+                        if ($@) { warn $@ }
+                        push @res, { Machine => $machine, Account => $account };
+                    }
+                    dump_res(\@res);
+                } else {
+                    warn "No accounts found.\n";
+                }
             }
         }
         elsif ($cmd =~ s/^\\d\b\s*//) {
