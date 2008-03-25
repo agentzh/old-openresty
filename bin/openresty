@@ -154,6 +154,8 @@ Welcome to openresty $version, the OpenResty interactive terminal.
 
 Type:  \\copyright for distribution terms
        \\a <account> to set the current account
+       \\d to view the table list in the current schema
+       \\d <table> to view the definition of the specified table
        \\do <sql> to do sql query using xdo
        \\q to quit
        <sql> to do sql query using xquery
