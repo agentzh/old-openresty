@@ -38,6 +38,7 @@ requires            ('Config::Simple');
 requires            ('Encode::Guess');
 requires            ('List::MoreUtils');
 requires            ('JSON::XS' => '2.1');
+requires            ('Data::Structure::Util' => '0.15');
 
 recommends          ('Benchmark::Timer');
 recommends          ('HTTP::Server::Simple' => '0.27');

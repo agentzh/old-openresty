@@ -172,3 +172,44 @@ GET /=/model/Address/name/%E5%AE%89%E5%BE%BD
 --- response
 [{"name":"安徽","id":"5","addr":null}]
 
+
+
+=== TEST 18: PUT by a Chinese selector
+--- request
+PUT /=/model/Address/name/安徽
+{ "name": "上海" }
+--- response
+{"success":1,"rows_affected":1}
+
+
+
+=== TEST 19: Check if 安徽 still exists
+--- request
+GET /=/model/Address/name/安徽
+--- response
+[]
+
+
+
+=== TEST 20: check if 上海 is there
+--- request
+GET /=/model/Address/name/上海
+--- response
+[{"addr":null,"id":"5","name":"上海"}]
+
+
+
+=== TEST 21: Delete 上海
+--- request
+DELETE /=/model/Address/name/上海
+--- response
+{"rows_affected":1,"success":1}
+
+
+
+=== TEST 22: check if 上海 is there
+--- request
+GET /=/model/Address/name/上海
+--- response
+[]
+
