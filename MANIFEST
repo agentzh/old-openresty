@@ -110,6 +110,8 @@ lib/OpenResty/Handler/View.pm
 lib/OpenResty/Limits.pm
 lib/OpenResty/MiniSQL/Select.pm
 lib/OpenResty/Server.pm
+lib/OpenResty/Shell.pm
+lib/OpenResty/Shell/History.pm
 lib/OpenResty/Spec/Arch_cn.pod
 lib/OpenResty/Spec/REST.pod
 lib/OpenResty/Spec/REST_cn.pod
@@ -185,3 +187,4 @@ t/pgmock-data/24-session.t.json
 t/pgmock-data/25-filter.t.json
 t/pgmock-data/sanity.t.json
 TODO
+

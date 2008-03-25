@@ -10,6 +10,7 @@ build_requires:
   LWP::UserAgent: 0
   Test::LongString: 0
   Text::Diff: 0
+  WWW::OpenResty: 0.02
 distribution_type: module
 generated_by: Module::Install version 0.68
 license: perl
@@ -30,19 +31,21 @@ no_index:
     - t
 recommends: 
   Benchmark::Timer: 0
-  Cache::FastMmap: 1.24
   HTTP::Server::Simple: 0.27
-  Smart::Comments: 0
-  WWW::OpenResty: 0.02
+  Term::ReadLine::Gnu: 0
+  Term::ReadLine::Perl: 0
+  Text::Diff: 0
+  Text::Table: 0
 requires: 
   CGI::Simple: 1.103
   CGI::Simple::Cookie: 0
   Cache::Memcached::Fast: 0.06
   Clone: 0.22
   Config::Simple: 0
-  Cookie::XS: 0.08
+  Cookie::XS: 0.09
   DBD::Pg: 1.49
   DBI: 1.57
+  Data::Structure::Util: 0.15
   Data::UUID: 1.148
   Encode::Guess: 0
   FCGI: 0
