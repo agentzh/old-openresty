@@ -43,6 +43,7 @@ requires            ('Data::Structure::Util' => '0.15');
 recommends          ('Benchmark::Timer');
 recommends          ('HTTP::Server::Simple' => '0.27');
 recommends          ('Text::Diff');
+recommends          ('Text::Table');
 
 if ($arg eq 'product') {
     features(
