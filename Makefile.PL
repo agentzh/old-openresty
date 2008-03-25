@@ -44,6 +44,8 @@ recommends          ('Benchmark::Timer');
 recommends          ('HTTP::Server::Simple' => '0.27');
 recommends          ('Text::Diff');
 recommends          ('Text::Table');
+recommends          ('Term::ReadLine::Perl');
+recommends          ('Term::ReadLine::Gnu');
 
 if ($arg eq 'product') {
     features(
