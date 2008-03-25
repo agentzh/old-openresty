@@ -3,13 +3,14 @@ package OpenResty::Handler::Model;
 use strict;
 use warnings;
 
-#use Smart::Comments '####';
+#use Smart::Comments '###';
 use OpenResty::Util;
 use List::Util qw( first );
 use Params::Util qw( _STRING _ARRAY0 _ARRAY _HASH );
 use JSON::Syck ();
 use OpenResty::Limits;
 use Clone 'clone';
+use Encode qw(is_utf8);
 
 sub check_type {
     my $type = shift;
@@ -617,7 +618,6 @@ sub insert_records {
     my $insert = OpenResty::SQL::Insert->new(QI($table));
 
     my $user = $openresty->current_user;
-    ### %AccountFiltered
     if ($OpenResty::AccountFiltered{$user}) {
         my $str = $OpenResty::Dumper->(clone($data));
         #die $val;
@@ -833,6 +833,8 @@ sub update_records {
         if (lc($col) eq 'id') {
             die "Column \"id\" reserved.\n";
         }
+        #warn "is_utf8(val):", is_utf8($val), "\n";
+        #warn "is_utf8:", is_utf8($col), "\n";
         $update->set(QI($col) => Q($val));
     }
 
@@ -840,7 +842,12 @@ sub update_records {
         # XXX SQL injection point
         $update->where(QI($user_col) => Q($val));
     }
+    #warn "VAL:  $val";
+    #warn "is_utf8:", is_utf8($val), "\n";
+    #warn "is_utf8:", is_utf8($user_col), "\n";
+    #warn "is_utf8:", is_utf8($table), "\n";
     ### SQL: "$update"
+    #warn "X<<<<>>>> $update";
     my $retval = $openresty->do("$update") + 0;
     return {success => $retval ? 1 : 0,rows_affected => $retval};
 }

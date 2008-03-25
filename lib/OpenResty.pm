@@ -13,6 +13,7 @@ use JSON::XS ();
 use List::Util qw(first);
 use Params::Util qw(_HASH _STRING _ARRAY0 _ARRAY _SCALAR);
 use Encode qw(from_to encode decode);
+use Data::Structure::Util qw( _utf8_off );
 use DBI;
 
 use OpenResty::SQL::Select;
@@ -93,7 +94,9 @@ sub parse_data {
     if (!$Importer) {
         $Importer = $ext2importer{'.js'};
     }
-    return $Importer->($_[0]);
+    my $data = $Importer->($_[0]);
+    _utf8_off($data);
+    return $data;
 }
 
 sub new {
@@ -263,6 +266,7 @@ sub init {
 
     if ($req_data) {
         from_to($req_data, $charset, 'UTF-8');
+        #warn "from_to is_utf8(req_data): ", Encode::is_utf8($req_data), "\n";
         $req_data = $self->parse_data($req_data);
     }
 
