@@ -1,0 +1,61 @@
+(05:41:45 PM) agentzh: cnhackTNT: ping?
+(05:41:51 PM) agentzh: cnhackTNT: 试试我的 springbot?
+(05:41:52 PM) agentzh: 哈哈
+(05:41:59 PM) agentzh: employee 何伟平
+(05:42:00 PM) springbot: Yahoo IM ID | Office Phone | Name | Employee ID | Email | Department | Cellphone
+(05:42:00 PM) springbot: laserhe | 10-65986666-85982 | 何伟平 | 004749 | heweiping@alibaba-inc.com | 中国雅虎-工程技术部-平台技术-系统平台 | 13701194074
+(05:42:08 PM) agentzh: employee 于霆
+(05:42:09 PM) springbot: Yahoo IM ID | Office Phone | Name | Employee ID | Email | Department | Cellphone
+(05:42:09 PM) springbot: tingle2008 | 10-65986666-85867 | 于霆 | 004504 | yuting@alibaba-inc.com | 中国雅虎-工程技术部-平台技术-系统平台-PE | 
+(05:42:15 PM) agentzh: employee 亦春
+(05:42:15 PM) springbot: Yahoo IM ID | Office Phone | Name | Employee ID | Email | Department | Cellphone
+(05:42:16 PM) springbot:  | 10-65986666- | 章亦春 | 012083 | yichun.zhang@alibaba-inc.com | 中国雅虎-工程技术部-平台技术-系统平台-PE | 
+(05:42:22 PM) agentzh: springbot: thanks :)
+(05:42:22 PM) springbot: agentzh: ;)
+(05:43:18 PM) agentzh: springbot: baidu cnhacktnt
+(05:43:19 PM) springbot: agentzh: 饭否| cnhackTNT ( http://fanfou.com/cnhacktnt )
+(05:43:38 PM) agentzh: springbot: seen http://www.perl.com ?
+(05:43:41 PM) springbot: Perl.com: The Source for Perl -- perl development, conferences
+(05:43:45 PM) ChanServ left the room (quit: Shutting Down).
+(05:44:58 PM) ChanServ [ChanServ@services.] entered the room.
+(05:44:58 PM) mode (+o ChanServ ) by irc.freenode.net
+(05:44:58 PM) springbot left the room (quit: Remote closed the connection).
+(05:45:10 PM) springbot [n=agentz@nat/yahoo/x-2c4712742e8c95a5] entered the room.
+(05:45:53 PM) cnhackTNT left the room (quit: Remote closed the connection).
+(05:46:12 PM) cnhackTNT [n=cnhacktn@204-15-80-50.ironport.com] entered the room.
+(05:46:56 PM) cnhackTNT: google agentzh
+(05:47:01 PM) cnhackTNT: springbot: google agentzh
+(05:47:01 PM) springbot: cnhackTNT: ;)
+(05:47:09 PM) agentzh: cnhackTNT: google not supported ;)
+(05:47:12 PM) cnhackTNT: springbot: baidu agentzh
+(05:47:13 PM) springbot: cnhackTNT: Human ＆ Machine ( http://agentzh.spaces.live.com/ )
+(05:47:32 PM) agentzh: springbot: employee 家宁
+(05:47:33 PM) springbot: Yahoo IM ID | Office Phone | Name | Employee ID | Email | Department | Cellphone
+(05:47:33 PM) springbot: yangjianing_detrox | 10-65986666-86088 | 杨家宁 | 006812 | jianing.yang@alibaba-inc.com | 中国雅虎-工程技术部-平台技术-系统平台-PE | 13810104285
+(05:47:43 PM) agentzh: cnhackTNT: 你应该认识的 :)
+(05:47:57 PM) agentzh: employee carrie
+(05:47:58 PM) springbot: Yahoo IM ID | Office Phone | Name | Employee ID | Email | Department | Cellphone
+(05:47:59 PM) springbot: carrie_zhxj | 10-65986666-85377 | 张皛珏 | 005558 | xiaojue.zhangxj@alibaba-inc.com | 中国雅虎-工程技术部-平台技术-系统平台-PE | 13488708601
+(05:47:59 PM) springbot:  | 10-65986666-86434 | 李薇 | 012768 | carrie.li@alibaba-inc.com | 中国雅虎-邮件运营-用户运营-BD | 13911114680
+(05:48:00 PM) cnhackTNT: 认识
+(05:48:06 PM) cnhackTNT: 活活～很强大
+(05:48:08 PM) agentzh: 哈哈
+(05:48:18 PM) agentzh: it's powered by OpenResty!
+(05:48:33 PM) agentzh: springbot: YOU ARE POWERED BY OPENRESTY, DO YOU KNOW!!!???
+(05:48:34 PM) springbot: agentzh: cool
+(05:48:52 PM) cnhackTNT: 我说的强大就是指它POWERED BY OPENRESTY
+(05:49:08 PM) agentzh: cnhackTNT: i'll add it to OpenResty's SVN repos soon ;)
+(05:49:20 PM) cnhackTNT: cool
+(05:49:24 PM) agentzh: ^_^
+(05:49:35 PM) agentzh: springbot: say "cool" ;)
+(05:49:36 PM) springbot: agentzh: :P
+(05:49:38 PM) cnhackTNT: I'd like to read the code of your springbot
+(05:49:46 PM) agentzh: i'm adding now...
+(05:49:48 PM) agentzh: a sec
+(05:55:33 PM) cnhackTNT left the room (quit: Remote closed the connection).
+(06:00:51 PM) cnhackTNT [n=cnhacktn@204-15-80-50.ironport.com] entered the room.
+(06:00:58 PM) agentzh: cnhackTNT: committed
+(06:01:07 PM) agentzh: under demo/Springbot
+(06:02:40 PM) agentzh: cnhackTNT: http://svn.openfoundry.org/openapi/trunk/demo/Springbot/
+(06:02:42 PM) springbot: Revision 1049: /trunk/demo/Springbot
+(06:13:39 PM) cnhackTNT left the room (quit: "leaving").
