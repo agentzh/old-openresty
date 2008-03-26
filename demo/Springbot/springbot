@@ -22,7 +22,7 @@ GetOptions(
     'server=s' => \$server,
     'account=s' => \$account,
     'password=s' => \$password,
-) or die "Usage: springbot [-d]\n";
+) or die "Usage: springbot --nick <irc_nick> --channel <irc_channel> --charset <default_charset_for_the_channel> --server <irc_server> --account <openresty_account> --password <openresty_password>\n";
 
 $account || die "No --acount <account> specified.\n";
 $password || die "No --password <password> specified.\n";
