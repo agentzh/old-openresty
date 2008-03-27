@@ -5,6 +5,9 @@ use warnings;
 
 my $html = do { local $/; <> };
 $html =~ s/\&nbsp;/ /gs;
+$html =~ s/\&lt;/</gs;
+$html =~ s/\&gt;/>/gs;
+$html =~ s/\&amp;/\&/gs;
 $html =~ s{\s+}{ }gs;
 $html =~ s{</td>}{|}gsi;
 $html =~ s{</tr>}{\n}sgi;
