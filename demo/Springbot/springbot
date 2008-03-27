@@ -51,28 +51,39 @@ my @Greetings = (
 my @Brain = (
     [0 => qr{http://\S+} => \&process_url],
     [1 => qr{^\s*baidu\s+}i => \&baidu_stuff],
-    [0 => qr{^\s*employee\s+} => \&find_employee],
+    [0 => qr{^\s*emp(?:loyee)?\s+} => \&find_employee],
     [1 => qr{.} => \&reply_crap],
 );
 
-my $irc = new Net::IRC;
-my $conn = $irc->newconn(
-    Nick    => $nick,
-    Server  => $server,
-    Port    =>  6667,
-    Ircname => $nick,
-);
+my $resty;
 
-use WWW::OpenResty::Simple;
-my $resty = WWW::OpenResty::Simple->new(
-    { server => 'resty.eeeeworks.org' }
-);
-$resty->login($account, $password);
+sub init {
+    my $irc = new Net::IRC;
+    my $conn = $irc->newconn(
+        Nick    => $nick,
+        Server  => $server,
+        Port    =>  6667,
+        Ircname => $nick,
+    );
 
-$conn->add_global_handler('376', \&on_connect);
-$conn->add_handler('msg', \&on_msg);
-$conn->add_handler('public', \&on_public);
-$irc->start;
+    use WWW::OpenResty::Simple;
+    $resty = WWW::OpenResty::Simple->new(
+        { server => 'resty.eeeeworks.org' }
+    );
+    $resty->login($account, $password);
+
+    $conn->add_global_handler('376', \&on_connect);
+    $conn->add_handler('msg', \&on_msg);
+    $conn->add_handler('public', \&on_public);
+    eval {
+        $irc->start;
+    };
+    if ($@) {
+        init();
+    }
+}
+
+init();
 
 sub on_connect {
     my $self = shift;
@@ -105,7 +116,7 @@ sub on_public {
     from_to($text, $enc, 'utf8');
     #warn length($orig_text);
     if (length($orig_text) > 4 and $enc ne 'ascii' and $enc ne $charset and $text !~ /^\[\w+\]: /) {
-        #warn "Hit!\n";
+        warn "Hit!\n";
         $say->("[$enc]: $text\n");
     }
     process_msg($text, $say, $sender);
@@ -198,11 +209,30 @@ sub baidu_stuff {
 
 sub find_employee {
     my ($pattern , $text, $cmd, $say, $sender) = @_;
+    my %map = (
+        agentzh => '章亦春',
+        jianingy => '杨家宁',
+        arthas => '谢昕',
+        ywayne => '王熠',
+        leiyh => '雷永华',
+        highway => '周海维',
+        carriezh => '张皛珏',
+        tangch => 'cheng.tang',
+        'whj' => '王惠军',
+    );
     $text =~ s/$pattern//;
     $text =~ s/\n+//sg;
     if ($text) {
+        $text = $map{$text} || $text;
         my $url = 'http://resty.eeeeworks.org/=/model/YahooStaff/~/';
-        my $res = $resty->get($url . $text, { op => 'contains', limit => 3 });
+        my $res;
+        eval {
+            $res = $resty->get($url . $text, { op => 'contains', limit => 3 });
+        };
+        if ($@ =~ /Login required/i) {
+            $resty->login($account, $password);
+            $res = $resty->get($url . $text, { op => 'contains', limit => 3 });
+        }
         if (_ARRAY($res)) {
             my $s = res2table($res);
             $say->($s);
@@ -254,8 +284,9 @@ sub html2text {
 
 sub guess_charset {
     my $data = shift;
-    my @enc = qw( UTF-8 GBK Big5 Latin1 );
-    for my $enc (@enc) {
+    my @enc = qw( utf8 gbk Big5 Latin1 );
+    warn "guess charset: $charset";
+    for my $enc ($charset, @enc) {
         my $decoder = guess_encoding($data, $enc);
         if (ref $decoder) {
 #            if ($enc ne 'ascii') {
@@ -284,10 +315,13 @@ sub res2table {
         my @items;
         for my $key (@keys) {
             my $val = $line->{$key};
+            if (!defined $val) { $val = '' }
             $val =~ s/^\+86-//g;
+            $val =~ s/\&amp;/\&/g;
             push @items, $val;
         }
         push @lines, join ' | ', @items;
     }
     return join "\n", @lines;
 }
+
