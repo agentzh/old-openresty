@@ -1,20 +1,16 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 
-use Smart::Comments '####';
-use Net::IRC;
-use Encode qw(from_to);
 use Getopt::Long;
-use Encode::Guess;
-use Params::Util qw(_ARRAY);
+use SpringBot;
 
-my $nick = 'springbot';
+my $nick = 'chunbot';
 my $channel = '#eeee';
 my $charset = 'gbk';
 my $server = '10.62.136.8';
+
 my ($account, $password);
+
 GetOptions(
     'nick=s' => \$nick,
     'channel=s' => \$channel,
@@ -24,319 +20,24 @@ GetOptions(
     'password=s' => \$password,
 ) or die "Usage: springbot --nick <irc_nick> --channel <irc_channel> --charset <default_charset_for_the_channel> --server <irc_server> --account <openresty_account> --password <openresty_password>\n";
 
+$channel = "#$channel" unless $channel =~ /^\#/;
+
 $account || die "No --acount <account> specified.\n";
 $password || die "No --password <password> specified.\n";
 
-$channel = "#$channel" if $channel !~ /^\#/;
-
-warn "Channel: $channel\n";
-warn "Nick: $nick\n";
-warn "Charset: $charset\n";
-
-our %EncodingMap = (
-    'cp936' => 'gbk',
-    'utf8'  => 'utf8',
-    'euc-cn' => 'gbk',
-    'big5-eten' => 'big5',
+my $bot = SpringBot->new(
+    server    => $server,
+    #port      => $port,
+    channels  => [$channel],
+    nick      => $nick,
+    alt_nicks => [$nick, $nick.'_', $nick . '__'],
+    username  => "bot",
+    name      => "SpringBot powered by OpenResty",
+    charset   => $charset,
+    resty_account => $account,
+    resty_password => $password,
 );
+$bot->run();
 
-my @Greetings = (
-    'hello',
-    'hi, there~',
-    'morning!',
-    "hoho, i'm coming",
-    'howdy!',
-);
-
-my @Brain = (
-    [0 => qr{http://\S+} => \&process_url],
-    [1 => qr{^\s*baidu\s+}i => \&baidu_stuff],
-    [0 => qr{^\s*emp(?:loyee)?\s+} => \&find_employee],
-    [1 => qr{.} => \&reply_crap],
-);
-
-my $resty;
-
-sub init {
-    my $irc = new Net::IRC;
-    my $conn = $irc->newconn(
-        Nick    => $nick,
-        Server  => $server,
-        Port    =>  6667,
-        Ircname => $nick,
-    );
-
-    use WWW::OpenResty::Simple;
-    $resty = WWW::OpenResty::Simple->new(
-        { server => 'resty.eeeeworks.org' }
-    );
-    $resty->login($account, $password);
-
-    $conn->add_global_handler('376', \&on_connect);
-    $conn->add_handler('msg', \&on_other);
-    $conn->add_handler('public', \&on_public);
-    $conn->add_handler('other', \&on_other);
-    $conn->add_handler('mode', \&on_other);
-    $conn->add_handler('ping', \&on_other);
-    $conn->add_handler('error', \&on_other);
-    $conn->add_handler('join', \&on_other);
-    $conn->add_handler('topic', \&on_other);
-    $conn->add_handler('part', \&on_other);
-    $conn->add_handler('kick', \&on_other);
-    $conn->add_handler('unmode', \&on_other);
-    eval {
-        $irc->start;
-    };
-    if ($@) {
-        init();
-    }
-}
-
-init();
-
-sub on_connect {
-    my $self = shift;
-
-    print "Joining $channel...";
-    $self->join($channel);
-    #$self->privmsg($channel, greeting());
-}
-
-sub on_public {
-    my ($conn, $event) = @_;	
-    #### $event
-    my $text = "@{$event->{args}}";
-    my $sender = $event->{nick};
-    my $orig_text = $text;
-    $orig_text =~ s/[ \n]+$//gs;
-    my $channel = shift @{$event->{to}};
-    #warn "public: $text";
-    my $say = sub {
-        my $msg = shift;
-        from_to($msg, 'utf8', $charset);
-        for my $line (split /\n+/, $msg) {
-            next if $line =~ /^\s*$/;
-            $conn->privmsg($channel, $line);
-        }
-    };
-    my $enc = guess_charset($text);
-    warn "msg in charset: $enc\n";
-    warn "Charset:  $charset\n";
-    from_to($text, $enc, 'utf8');
-    #warn length($orig_text);
-    if (length($orig_text) > 4 and $enc ne 'ascii' and $enc ne $charset and $text !~ /^\[\w+\]: /) {
-        warn "Hit!\n";
-        $say->("[$enc]: $text\n");
-    }
-    process_msg($text, $say, $sender);
-}
-
-sub on_notice {
-    my ($conn, $event) = @_;	
-    #### $event
-}
-
-sub on_other {
-    my ($conn, $event) = @_;
-    my $args = $event->{args};
-    #### $event
-    my $text = "@$args";
-    ### /msg: $text
-}
-
-sub greeting {
-    pick(\@Greetings);
-}
-
-sub pick {
-    my ($list) = @_;
-    my $len = @$list;
-    my $i = int rand ($len);
-    warn $i;
-    $list->[$i];
-}
-
-sub process_msg {
-    my ($orig_text, $say, $sender) = @_;
-    for my $item (@Brain) {
-        my $text = $orig_text;
-        #### $item
-        my ($explicit, $pattern, $handle) = @$item;
-        my $is_explicit = ($text =~ s/^\s*\Q$nick\E\s*[:：]\s*//);
-        if ($explicit) {
-            next unless $is_explicit;
-        }
-        if ($text =~ m{$pattern}) {
-            $handle->($pattern, $text, $&, $say, $sender);
-            last;
-        }
-    }
-}
-
-sub process_url {
-    my ($pattern, $text, $url, $say, $sender) = @_;
-    #$say->("Found URL: $match");
-    use LWP::Simple;
-    warn "Getting $url...\n";
-    my $content = get($url);
-    if (defined $content) {
-        if ($content =~ m{<title>(.*?)</title>}is) {
-            my $title = $1;
-            $title =~ s/\n+//gs;
-            $title =~ s/\s+/ /g;
-            my $enc = guess_charset($title);
-            ### $title
-            from_to($title, $enc, 'utf8');
-            ### $enc
-            $say->($title);
-        }
-    } else {
-        warn "Failed to get $url.\n";
-    }
-}
-
-sub baidu_stuff {
-    my ($pattern, $text, $cmd, $say, $sender) = @_;
-    $text =~ s/$pattern//;
-    warn "CMD: $text";
-    $text =~ s/\n+//sg;
-    ### $text
-    if ($text) {
-        use LWP::Simple;
-        from_to($text, 'utf8', 'gbk');
-        my $url = "http://www.baidu.com/s?wd=$text";
-        ### $url
-        my $content = get($url);
-        if (!$content) {
-            warn "Cannot open $url\n";
-            return;
-        }
-        if ($content =~ m{<a [^>]*?href="([^"]+)" target="_blank"><font size="3">(.+?)</font></a>}i) {
-            my ($url, $title) = ($1, $2);
-            $title = html2text($title);
-            my $msg = "$title ( $url )";
-            from_to($msg, 'gbk', 'utf8');
-            $say->("$sender: $msg");
-        }
-    }
-
-}
-
-sub find_employee {
-    my ($pattern , $text, $cmd, $say, $sender) = @_;
-    my %map = (
-        agentzh => '章亦春',
-        jianingy => '杨家宁',
-        arthas => '谢昕',
-        ywayne => '王熠',
-        leiyh => '雷永华',
-        highway => '周海维',
-        carriezh => '张皛珏',
-        tangch => 'cheng.tang',
-        'whj' => '王惠军',
-    );
-    $text =~ s/$pattern//;
-    $text =~ s/\n+//sg;
-    if ($text) {
-        $text = $map{$text} || $text;
-        my $url = 'http://resty.eeeeworks.org/=/model/YahooStaff/~/';
-        my $res;
-        eval {
-            $res = $resty->get($url . $text, { op => 'contains', limit => 3 });
-        };
-        if ($@ =~ /Login required/i) {
-            $resty->login($account, $password);
-            $res = $resty->get($url . $text, { op => 'contains', limit => 3 });
-        }
-        if (_ARRAY($res)) {
-            my $s = res2table($res);
-            $say->($s);
-        } else {
-            my @ans = (
-                'sorry, not found...',
-                'oops, i got nothing :(',
-                'sigh...none obtained :/',
-                '0 hits...',
-            );
-            my $ans = pick(\@ans);
-            $say->("$sender: $ans");
-        }
-
-    }
-}
-
-sub reply_crap {
-    my ($pattern , $text, $cmd, $say, $sender) = @_;
-
-    my @craps = (
-        "yes, i'm aware of that :)",
-        ";)",
-        "why?",
-        "^_^",
-        "i see.",
-        "really?",
-        "hey!",
-        "cool",
-        ":P",
-        "yo",
-        "hiya",
-    );
-    warn "About to generating craps...\n";
-    my $s = pick(\@craps);
-    warn $s;
-    $say->("$sender: $s");
-}
-
-sub html2text {
-    my $html = shift;
-    $html =~ s/<[^>]+>//g;
-    $html =~ s/\&nbsp;/ /g;
-    $html =~ s/\&lt;/</g;
-    $html =~ s/\&gt;/>/g;
-    $html =~ s/\&amp;/\&/g;
-    $html;
-}
-
-sub guess_charset {
-    my $data = shift;
-    my @enc = qw( utf8 gbk Big5 Latin1 );
-    warn "guess charset: $charset";
-    for my $enc ($charset, @enc) {
-        my $decoder = guess_encoding($data, $enc);
-        if (ref $decoder) {
-#            if ($enc ne 'ascii') {
-#                print "line $.: $enc message found: ", $decoder->decode($s), "\n";
-#            }
-            my $enc = $decoder->name;
-            $enc = $EncodingMap{$enc} || $enc;
-            return $enc;
-        }
-    }
-    return 'utf8';
-}
-
-sub res2table {
-    my ($res) = @_;
-    return '' if !defined $res or !@$res;
-    my @keys = reverse sort grep { $_ ne 'id' } keys %{ $res->[0] };
-    my @lines = join ' | ', map {
-        my $e = $_;
-        $e =~ s/_/ /g;
-        $e =~ s/\b(?:im|id)\b/uc($&)/eg;
-        $e =~ s/\b[A-Za-z]+\b/ucfirst($&)/eg;
-        $e;
-    } @keys;
-    for my $line (@$res) {
-        my @items;
-        for my $key (@keys) {
-            my $val = $line->{$key};
-            if (!defined $val) { $val = '' }
-            $val =~ s/^\+86-//g;
-            $val =~ s/\&amp;/\&/g;
-            push @items, $val;
-        }
-        push @lines, join ' | ', @items;
-    }
-    return join "\n", @lines;
-}
+# vim: ts=4 sw=4 expandtab
 
