@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-#use Smart::Comments '####';
+use Smart::Comments '####';
 use Net::IRC;
 use Encode qw(from_to);
 use Getopt::Long;
@@ -73,8 +73,17 @@ sub init {
     $resty->login($account, $password);
 
     $conn->add_global_handler('376', \&on_connect);
-    $conn->add_handler('msg', \&on_msg);
+    $conn->add_handler('msg', \&on_other);
     $conn->add_handler('public', \&on_public);
+    $conn->add_handler('other', \&on_other);
+    $conn->add_handler('mode', \&on_other);
+    $conn->add_handler('ping', \&on_other);
+    $conn->add_handler('error', \&on_other);
+    $conn->add_handler('join', \&on_other);
+    $conn->add_handler('topic', \&on_other);
+    $conn->add_handler('part', \&on_other);
+    $conn->add_handler('kick', \&on_other);
+    $conn->add_handler('unmode', \&on_other);
     eval {
         $irc->start;
     };
@@ -122,9 +131,15 @@ sub on_public {
     process_msg($text, $say, $sender);
 }
 
-sub on_msg {
+sub on_notice {
+    my ($conn, $event) = @_;	
+    #### $event
+}
+
+sub on_other {
     my ($conn, $event) = @_;
     my $args = $event->{args};
+    #### $event
     my $text = "@$args";
     ### /msg: $text
 }

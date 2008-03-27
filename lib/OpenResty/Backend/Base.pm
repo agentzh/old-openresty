@@ -275,13 +275,12 @@ sub _upgrade_metamodel {
     return $res >= 0;
 }
 
-sub state {
-    $_[0]->{dbh}->state;
+sub ping {
+    $_[0]->{dbh}->ping;
 }
 
 sub disconnect {
     $_[0]->{dbh}->disconnect;
-    $_[0]->{dbh} = undef;
 }
 
 sub add_default_roles {
