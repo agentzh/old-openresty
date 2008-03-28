@@ -37,7 +37,26 @@ if (!has_model($resty, 'IrcLog')) {
     );
 }
 
+eval { $resty->delete('/=/view/LastSeen'); };
+if (!has_view($resty, 'LastSeen')) {
+    $resty->post(
+        '/=/view/LastSeen',
+        {
+            description => 'A person last seen on a channel',
+            definition => q{select * from IrcLog
+                where sender = $sender
+                order by sent_on desc
+                limit 1
+            },
+        }
+    );
+
+}
+
 my $res = $resty->get('/=/model');
+print dumper($res);
+
+$res = $resty->get('/=/view/LastSeen');
 print dumper($res);
 
 sub dumper {
@@ -50,6 +69,17 @@ sub has_model {
         $resty->get("/=/model/$model");
     };
     if ($@ && $@ =~ /Model .*? not found/i) {
+        return undef;
+    }
+    return 1;
+}
+
+sub has_view {
+    my ($resty, $view) = @_;
+    eval {
+        $resty->get("/=/view/$view");
+    };
+    if ($@ && $@ =~ /View .*? not found/i) {
         return undef;
     }
     return 1;
