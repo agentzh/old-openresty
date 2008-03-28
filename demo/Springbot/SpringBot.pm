@@ -12,8 +12,13 @@ use Encode qw(from_to encode decode);
 use WWW::OpenResty::Simple;
 use Params::Util qw(_ARRAY);
 
+use LWP::UserAgent;
+my $ua = LWP::UserAgent->new;
+$ua->timeout(2);
+$ua->env_proxy;
+
 our @Brain = (
-    [0 => qr{http://\S+} => \&process_url],
+    [0 => qr{https?://[^\(\)（）？。]+} => \&process_url],
     [0 => qr{(?:哈你个头|[^A-Za-z]TMD[^A-Za-z]|\bTMD\b|\bshit\b|\bf[us]ck(?:ing)?\b|\bdammit\b|\bdamn(?:\s+it)?\b|\bbastard\b|perl.*?邪教)}i => \&punish_him],
     [1 => qr{^\s*baidu\s+}i => \&baidu_stuff],
     [0 => qr{^\s*emp(?:loyee)?\s+} => \&find_employee],
@@ -192,9 +197,13 @@ sub process_url {
     my ($self, $pattern, $text, $url, $say, $sender) = @_;
     my $charset = $self->charset;
     #$say->("Found URL: $match");
-    use LWP::Simple;
     warn "Getting $url...\n";
-    my $content = get($url);
+    my $res = $ua->get($url);
+    if (!$res->is_success) {
+        warn $res->status_line;
+        return;
+    }
+    my $content = $res->content;
     if (defined $content) {
         if ($content =~ m{<title>(.*?)</title>}is) {
             my $title = $1;
