@@ -16,6 +16,10 @@ sub check_type {
     my $type = shift;
     if ($type !~ m{^ \s*
                 (
+                    cidr |
+                    inet |
+                    macaddr |
+                    bit \s* \( \s* \d+ \s* \) |
                     boolean |
                     text |
                     integer |
