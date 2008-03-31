@@ -4,58 +4,83 @@ use strict;
 use warnings;
 
 use Getopt::Long;
-use Encode qw(decode encode);
-
 use lib 'lib';
-use Params::Util qw( _HASH _ARRAY0 );
-use YAML::Syck ();
-use JSON::Syck ();
+use Params::Util qw( _HASH );
+use JSON::XS ();
 use WWW::OpenResty::Simple;
 
-$YAML::Syck::ImplicitUnicode = 1;
-$JSON::Syck::ImplicitUnicode = 1;
+sub usage {
+    my $progname;
+    if ($0 =~ m{[^/\\]+$}) {
+        $progname = $&;
+    }
+    return <<_EOC_;
+Usage: $progname [options] <json_file>
+Options:
+    --user <user>      OpenResty user (i.e. agentzh.Admin)
+    --password <s>     OpenResty password for the user specified
+    --model <model>    OpenResty model name being imported
+    --server <host>    OpenResty server hostname
+    --step <num>       Size of the bulk insertion group
+_EOC_
+}
 
+my $server = 'resty.eeeeworks.org';
+my $step = 20;
 GetOptions(
+    'help|h'   => \(my $help),
     'user|u=s' => \(my $user),
     'model=s' => \(my $model),
-    'server=s' => \(my $server),
+    'server=s' => \$server,
     'password=s' => \(my $password),
-) or die "Usage: $0 --user foo.Public --model Book --server 127.0.0.1\n";
+    'step=i' => \$step,
+    'reset' => \(my $reset),
+) or die usage();
 
-$user or die "No user given.\n";
-$model or die "No model given.\n";
-$server or die "No server given.\n";
+if ($help) { print usage() }
 
-my $yaml = do { local $/; <> };
-my $data = YAML::Syck::Load($yaml);
-_ARRAY0($data) or die "The YAML data is not an array.\n";
-my @rows = @$data;
+$user or die "No --user given.\n";
+$model or die "No --model given.\n";
 
-my $offset = 0;
-my $count = 1;
+my $json_xs = JSON::XS->new->utf8;
+
 my $openresty = WWW::OpenResty::Simple->new( { server => $server } );
 $openresty->login($user, $password);
-$openresty->delete("/=/model/$model/~/~");
-my $inserted = 0;
-while (1) {
-    last if $offset >= $#rows;
-    #select(undef, undef, undef, 0.1);
-    print STDERR "$offset\t";
-    my $to = $offset + $count - 1;
-    my @elems = @rows[$offset..($to > $#rows ? $#rows : $to)];
-    #warn "count: ", scalar(@elems), "\n";
-    my $json = JSON::Syck::Dump(\@elems);
-    $json = encode('UTF-8', $json);
-    #warn $json;
+if ($reset) { $openresty->delete("/=/model/$model/~/~"); }
 
+my @rows;
+my $inserted = 0;
+local $| = 1;
+while (<>) {
+    #select(undef, undef, undef, 0.1);
+    #warn "count: ", scalar(@elems), "\n";
+    my $row = $json_xs->decode($_);
+
+    push @rows, $row;
+    if (@rows % $step == 0) {
+        $inserted += insert_rows(\@rows);
+        @rows = ();
+        print STDERR "\rInserted rows: $inserted";
+    }
+
+    $inserted++;
+}
+
+if (@rows) {
+    $inserted += insert_rows(\@rows);
+}
+print STDERR "\n$inserted row(s) inserted.\n";
+
+sub insert_rows {
+    my $rows = shift;
     my $res = $openresty->post(
         "/=/model/$model/~/~",
-        { offset => $offset, count => $count, order_by => 'id:asc' },
-        $json
+        $rows
     );
-    $inserted++;
-} continue { $offset += $count }
+    return 0 unless _HASH($res);
+    return $res->{rows_affected} || 0;
+}
 
-warn "For tatal $inserted (", scalar(@rows), ") records inserted.\n";
+warn "\nFor tatal $inserted records inserted.\n";
 #print encode('UTF-8', YAML::Syck::Dump(\@rows));
 
