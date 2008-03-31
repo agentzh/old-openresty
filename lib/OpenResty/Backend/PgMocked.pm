@@ -31,6 +31,8 @@ sub LoadFile {
     $json_xs->decode($json);
 }
 
+sub ping { 1; }
+
 sub DumpFile {
     my ($file, $data) = @_;
     open my $out, ">$file" or
