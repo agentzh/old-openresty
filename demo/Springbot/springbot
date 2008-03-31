@@ -28,19 +28,21 @@ $account || die "No --acount <account> specified.\n";
 $password || die "No --password <password> specified.\n";
 
 sub init {
-    my $bot = SpringBot->new(
-        server    => $server,
-        #port      => $port,
-        channels  => [$channel],
-        nick      => $nick,
-        alt_nicks => [$nick, $nick.'_', $nick . '__'],
-        username  => "bot",
-        name      => "SpringBot powered by OpenResty",
-        charset   => $charset,
-        resty_account => $account,
-        resty_password => $password,
-    );
-    eval { $bot->run(); };
+    eval {
+        my $bot = SpringBot->new(
+            server    => $server,
+            #port      => $port,
+            channels  => [$channel],
+            nick      => $nick,
+            alt_nicks => [$nick, $nick.'_', $nick . '__'],
+            username  => "bot",
+            name      => "SpringBot powered by OpenResty",
+            charset   => $charset,
+            resty_account => $account,
+            resty_password => $password,
+        );
+        $bot->run();
+    };
     if ($@) { warn $@; init(); }
 }
 

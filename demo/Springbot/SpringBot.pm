@@ -116,6 +116,7 @@ sub said {
 sub log_error {
     my $error = shift;
     #print $error;
+    warn $error;
     open my $out, '>>springbot.error';
     if ($out) {
         print $out "Hello!!! >>>>>> log ", scalar(localtime), "\n";
@@ -260,7 +261,7 @@ sub seen_person {
         eval {
             $res = $Resty->get(
                 '/=/view/LastSeen/~/~',
-                { sender => $sender }
+                { sender => $sender, user => $self->resty_account, password => $self->resty_password }
             );
         };
         if ($@) { $self->log_error($@); return }
@@ -302,7 +303,7 @@ sub seen_person {
             }
             my $s = join(', ', @s);
             $s =~ s/.*,/$& and /;
-            my $content = decode('utf8', $row->{content});
+            my $content = $row->{content};
             my $msg = "$sender was last seen in $row->{channel} $s ago, saying \"$content\"";
             $say->($msg);
         } else {
@@ -445,7 +446,7 @@ sub res2table {
         for my $key (@keys) {
             my $val = $line->{$key};
             if (!defined $val) { $val = '' }
-            $val = decode('utf8', $val);
+            #$val = decode('utf8', $val);
             $val =~ s/^\+86-//g;
             $val =~ s/\&amp;/\&/g;
             push @items, $val;
