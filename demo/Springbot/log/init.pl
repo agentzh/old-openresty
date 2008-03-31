@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use Params::Util qw(_HASH);
-use WWW::OpenResty::Simple;
+use WWW::OpenResty::Simple '0.04';
 use JSON::XS;
 use Getopt::Std;
 
@@ -19,7 +19,7 @@ my $resty = WWW::OpenResty::Simple->new(
     { server => 'resty.eeeeworks.org' }
 );
 $resty->login($user, $password);
-if (!has_model($resty, 'IrcLog')) {
+if (!$resty->has_model('IrcLog')) {
     $resty->post(
         '/=/model/IrcLog',
         {
@@ -38,7 +38,8 @@ if (!has_model($resty, 'IrcLog')) {
 }
 
 eval { $resty->delete('/=/view/LastSeen'); };
-if (!has_view($resty, 'LastSeen')) {
+if (!$resty->has_view('LastSeen')) {
+    warn "Creating view...\n";
     $resty->post(
         '/=/view/LastSeen',
         {
@@ -61,27 +62,5 @@ print dumper($res);
 
 sub dumper {
     JSON::XS->new->utf8->pretty->encode($_[0]);
-}
-
-sub has_model {
-    my ($resty, $model) = @_;
-    eval {
-        $resty->get("/=/model/$model");
-    };
-    if ($@ && $@ =~ /Model .*? not found/i) {
-        return undef;
-    }
-    return 1;
-}
-
-sub has_view {
-    my ($resty, $view) = @_;
-    eval {
-        $resty->get("/=/view/$view");
-    };
-    if ($@ && $@ =~ /View .*? not found/i) {
-        return undef;
-    }
-    return 1;
 }
 
