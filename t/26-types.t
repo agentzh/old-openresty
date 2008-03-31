@@ -23,7 +23,8 @@ DELETE /=/model
 {"success":1}
 
 
-=== TEST 4: Create a model with various types
+
+=== TEST 3: Create a model with various types
 --- request
 POST /=/model/NetAddr
 {
@@ -38,7 +39,8 @@ POST /=/model/NetAddr
 {"success":1}
 
 
-=== TEST 5: insert a line
+
+=== TEST 4: insert a line
 --- request
 POST /=/model/NetAddr/~/~
 { "cidr":"192.168.100.128", "macaddr":"08-00-2b-01-02-03", "inet":"192.168.100.128/25" }
@@ -46,7 +48,8 @@ POST /=/model/NetAddr/~/~
 {"last_row":"/=/model/NetAddr/id/1","rows_affected":1,"success":1}
 
 
-=== TEST 6: Check the row that was just inserted
+
+=== TEST 5: Check the row that was just inserted
 --- request
 GET /=/model/NetAddr/id/1
 --- response
@@ -58,4 +61,13 @@ GET /=/model/NetAddr/id/1
      "cidr":"192.168.100.128/32"
     }
 ]
+
+
+
+=== TEST 6: Add a column with type bigint
+--- request
+POST /=/model/NetAddr/bigint
+{ "type": "bigint", "label": "Bigint" }
+--- response
+{"src":"/=/model/NetAddr/bigint","success":1}
 
