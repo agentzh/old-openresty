@@ -14,47 +14,55 @@ use Encode qw(decode encode);
 use lib 'lib';
 use WWW::OpenResty::Simple;
 use Params::Util qw( _HASH _ARRAY0 );
-use YAML::Syck ();
-use JSON::Syck ();
+use JSON::XS ();
 
-$YAML::Syck::ImplicitUnicode = 1;
-$JSON::Syck::ImplicitUnicode = 1;
-
+my $step = 500;
+my $server = 'resty.eeeeworks.org';
 GetOptions(
     'user|u=s' => \(my $user),
     'model=s' => \(my $model),
-    'server=s' => \(my $server),
+    'server=s' => \$server,
     'password=s' => \(my $password),
+    'step=i' => \$step,
+    'out=s' => \(my $outfile),
 ) or die "Usage: $0 --user foo.Public --model Book --server 127.0.0.1\n";
 
 $user or die "No user given.\n";
 $model or die "No model given.\n";
-$server or die "No server given.\n";
 
-my $openapi = WWW::OpenResty::Simple->new( { server => $server } );
+my $out;
+if ($outfile) {
+    open $out, ">$outfile" or
+        die "Can't open $outfile for writing: $!\n";
+} else {
+    $out = \*STDOUT;
+}
+
+my $resty = WWW::OpenResty::Simple->new( { server => $server } );
+$resty->login($user, $password);
+
+my $json_xs = JSON::XS->new->utf8;
 
 my $offset = 0;
-my $count = 100;
-my @rows;
+my $exported = 0;
 while (1) {
-    warn "$offset\n";
     my $url = "/=/model/$model/~/~";
     my %args = (
-        user => $user,
         offset => $offset,
-        count => $count,
+        count => $step,
         order_by => "id:asc",
     );
-    if ($password) {
-        $args{password} = $password;
+    my $res = $resty->get($url, \%args);
+    if (_ARRAY0($res)) {
+        for my $row (@$res) {
+            print $out $json_xs->encode($row), "\n";
+        }
+        $exported += @$res;
+        print STDERR "\rExported rows: $exported";
+        last if @$res < $step;
     }
-    my $data = $openapi->get($url, \%args);
-    if (_ARRAY0($data)) {
-        push @rows, @$data;
-        last if @$data < $count;
-    }
-} continue { $offset += $count }
+} continue { $offset += $step }
+close $out;
 
-warn "For tatal ", scalar(@rows), " records obtained.\n";
-print encode('UTF-8', YAML::Syck::Dump(\@rows));
+warn "\nFor tatal $exported record(s) obtained.\n";
 
