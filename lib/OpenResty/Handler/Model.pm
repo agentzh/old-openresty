@@ -16,6 +16,7 @@ sub check_type {
     my $type = shift;
     if ($type !~ m{^ \s*
                 (
+                    bigint |
                     cidr |
                     inet |
                     macaddr |
