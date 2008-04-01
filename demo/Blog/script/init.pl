@@ -5,7 +5,7 @@ use warnings;
 
 use lib '../../lib';
 use utf8;
-use JSON::Syck;
+use JSON::XS;
 use YAML 'Dump';
 use WWW::OpenResty::Simple;
 use Date::Manip;
@@ -32,38 +32,45 @@ if ($cmd ne 'small' and $cmd ne 'big') {
 
 my $resty = WWW::OpenResty::Simple->new( { server => $server } );
 $resty->login($user, $password);
-$resty->delete("/=/model");
 $resty->delete("/=/role/Public/~/~");
 $resty->delete("/=/view");
 
-$resty->post(
-    '/=/model/Post',
-    {
-        description => "Blog rost",
-        columns => [
-            { name => 'title', label => 'Post title' },
-            { name => 'content', label => 'Post content' },
-            { name => 'author', label => 'Post author' },
-            { name => 'created', default => ['now()'], type => 'timestamp(0) with time zone', label => 'Post creation time' },
-            { name => 'comments', label => 'Number of comments', default => 0 },
-        ],
-    }
-);
+if ($resty->has_model('Post')) {
+    $resty->delete('/=/model/Post');
+}
 
-$resty->post(
-    '/=/model/Comment',
-    {
-        description => "Blog comment",
-        columns => [
-            { name => 'sender', label => 'Comment sender' },
-            { name => 'email', label => 'Sender email address' },
-            { name => 'url', label => 'Sender homepage URL' },
-            { name => 'body', label => 'Comment body' },
-            { name => 'created', default => ['now()'], type => 'timestamp(0) with time zone', label => 'Comment creation time' },
-            { name => 'post', label => 'target post', type => 'integer' },
-        ],
-    }
-);
+    $resty->post(
+        '/=/model/Post',
+        {
+            description => "Blog rost",
+            columns => [
+                { name => 'title', label => 'Post title' },
+                { name => 'content', label => 'Post content' },
+                { name => 'author', label => 'Post author' },
+                { name => 'created', default => ['now()'], type => 'timestamp(0) with time zone', label => 'Post creation time' },
+                { name => 'comments', label => 'Number of comments', default => 0 },
+            ],
+        }
+    );
+
+if ($resty->has_model('Comment')) {
+    $resty->delete('/=/model/Comment');
+}
+
+    $resty->post(
+        '/=/model/Comment',
+        {
+            description => "Blog comment",
+            columns => [
+                { name => 'sender', label => 'Comment sender' },
+                { name => 'email', label => 'Sender email address' },
+                { name => 'url', label => 'Sender homepage URL' },
+                { name => 'body', label => 'Comment body' },
+                { name => 'created', default => ['now()'], type => 'timestamp(0) with time zone', label => 'Comment creation time' },
+                { name => 'post', label => 'target post', type => 'integer' },
+            ],
+        }
+    );
 
 print Dump($resty->get('/=/model')), "\n";
 #print Dump($resty->get('/=/model/Post')), "\n";
@@ -225,7 +232,7 @@ if ($cmd eq 'small') {
     my $infile = shift @ARGV || 'script/agentzh-live.json';
     open my $in, $infile or die "Can't open $infile for reading: $!\n";
     my $json = do { local $/; <$in> };
-    my $data = JSON::Syck::Load($json);
+    my $data = JSON::XS::decode_json($json);
     for my $entry (reverse @$data) {
         my $title = $entry->{title};
         my $body = $entry->{body};
