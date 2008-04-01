@@ -107,7 +107,7 @@ sub login_by_sql {
     if ($openresty->{_use_cookie}) {
         $openresty->{_cookie} = { session => $uuid };
     }
-    $OpenResty::Cache->set($uuid => "$account.$role", 8 * 3600);  # expire in 8 h
+    $OpenResty::Cache->set($uuid => "$account.$role", 48 * 3600);  # expire in 8 h
 
     return {
         success => 1,
@@ -221,7 +221,7 @@ sub login_by_perl {
     if ($openresty->{_use_cookie}) {
         $openresty->{_cookie} = { session => $uuid };
     }
-    $OpenResty::Cache->set($uuid => "$account.$role", 8 * 3600);  # expire in 8 h
+    $OpenResty::Cache->set($uuid => "$account.$role", 48 * 3600);  # expire in 8 h
 
     return {
         success => 1,

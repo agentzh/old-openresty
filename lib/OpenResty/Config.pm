@@ -38,6 +38,7 @@ sub init {
         $OpenResty::Config{'cache.type'} = 'mmap';
     }
     $OpenResty::Limits::RECORD_LIMIT = $OpenResty::Config{'frontend.row_limit'};
+    $OpenResty::Limits::INSERT_LIMIT = $OpenResty::Config{'frontend.bulk_insert_limit'};
     $OpenResty::Limits::COLUMN_LIMIT = $OpenResty::Config{'frontend.column_limit'};
     $OpenResty::Limits::MODEL_LIMIT = $OpenResty::Config{'frontend.model_limit'};
     $OpenResty::Limits::POST_LEN_LIMIT = $OpenResty::Config{'frontend.post_len_limit'};
