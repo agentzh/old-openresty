@@ -7,15 +7,22 @@ use JSON::XS;
 use YAML::Syck qw(DumpFile LoadFile);
 
 my $conf_file = '.blog.conf';
+my $help;
 
 my $cmd = shift or die usage();
+if ($cmd eq '--help' or $cmd eq '-h') {
+    print usage();
+    exit;
+}
 if ($cmd eq 'init') {
     my $server = 'resty.eeeeworks.org';
     GetOptions(
+        'help'     => \$help,
         'server=s' => \$server,
         'user=s' => \(my $user),
         'password=s' => \(my $password),
     ) or die usage();
+    if ($help) { print usage(); exit; }
     if (!$user) { die "No --user specified.\n"; }
     #if (!$password) { die "No --password specified.\n"; }
     $password ||= '';
@@ -92,7 +99,7 @@ if ($cmd eq 'post') {
 
 sub usage {
     return <<'_EOC_';
-$0 <command> <options>
+blog.pl <command> <options>
 Commands:
     init --server <host> --user <s> --password <s>
                                     Initialize the .blog.conf file
