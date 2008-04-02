@@ -25,6 +25,7 @@ GetOptions(
     'password=s' => \(my $password),
     'step=i' => \$step,
     'out=s' => \(my $outfile),
+    'retries=i' => \(my $retries),
 ) or die "Usage: $0 --user foo.Public --model Book --server 127.0.0.1\n";
 
 $user or die "No user given.\n";
@@ -38,7 +39,9 @@ if ($outfile) {
     $out = \*STDOUT;
 }
 
-my $resty = WWW::OpenResty::Simple->new( { server => $server } );
+my $resty = WWW::OpenResty::Simple->new(
+    { server => $server, retries => $retries }
+);
 $resty->login($user, $password);
 
 my $json_xs = JSON::XS->new->utf8;

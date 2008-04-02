@@ -22,6 +22,7 @@ Options:
     --model <model>    OpenResty model name being imported
     --server <host>    OpenResty server hostname
     --step <num>       Size of the bulk insertion group
+    --retries <num>    Number of automatic retries when failures occur
 _EOC_
 }
 
@@ -35,6 +36,7 @@ GetOptions(
     'password=s' => \(my $password),
     'step=i' => \$step,
     'reset' => \(my $reset),
+    'retries' => \(my $retries),
 ) or die usage();
 
 if ($help) { print usage() }
@@ -44,7 +46,9 @@ $model or die "No --model given.\n";
 
 my $json_xs = JSON::XS->new->utf8;
 
-my $openresty = WWW::OpenResty::Simple->new( { server => $server } );
+my $openresty = WWW::OpenResty::Simple->new(
+    { server => $server, retries => $retries }
+);
 $openresty->login($user, $password);
 if ($reset) { $openresty->delete("/=/model/$model/~/~"); }
 
