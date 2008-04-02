@@ -2,6 +2,8 @@ package OpenResty::Shell;
 
 use strict;
 use warnings;
+
+use Encode ();
 use OpenResty::Shell::History;
 
 eval "use Term::ReadLine;";
@@ -206,7 +208,7 @@ sub dump_res {
         $tb->rule('-'),
         $tb->title,
         $tb->rule('-'),
-        $tb->body,
+        Encode::encode('utf8', $tb->body),
         $tb->rule('-'),
         "\n";
 }
