@@ -4,11 +4,14 @@ use strict;
 use warnings;
 
 #use Smart::Comments;
-use JSON::XS;
+use JSON::XS ();
 use DBI;
+use Encode ();
 use base 'OpenResty::Backend::Base';
 
 our ($Host, $User, $Password, $Port);
+
+my $json_xs = JSON::XS->new->utf8;
 
 sub new {
     #
@@ -49,10 +52,11 @@ sub select {
     ### JSON: $res->[0][0]
     my $json = $res->[0][0];
     eval {
-        $res = decode_json($json);
+        $res = $json_xs->decode($json);
     };
     if ($@) {
-        die "Failed to load JSON from PgFarm's response: $@\n$json";
+        use Data::Dumper;
+        die "Failed to load JSON from PgFarm's response: $@\n", Data::Dumper::Dumper($json);
     }
     return $res;
 }
