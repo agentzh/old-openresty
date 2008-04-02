@@ -36,7 +36,7 @@ GetOptions(
     'password=s' => \(my $password),
     'step=i' => \$step,
     'reset' => \(my $reset),
-    'retries' => \(my $retries),
+    'retries=i' => \(my $retries),
 ) or die usage();
 
 if ($help) { print usage() }
