@@ -632,22 +632,28 @@ sub insert_records {
 
     if (ref $data eq 'HASH') { # record found
 
-        my $num = $self->insert_record($openresty, $insert, $data, $cols, 1);
+        my $sql = $self->insert_record($openresty, $insert, $data, $cols, 1);
+        my $num = $openresty->do($sql);
 
         my $last_id = $openresty->last_insert_id($table);
 
         return { rows_affected => $num, last_row => "/=/model/$model/id/$last_id", success => $num?1:0 };
     } elsif (ref $data eq 'ARRAY') {
-        my $i = 0;
-        my $rows_affected = 0;
         if (@$data > $INSERT_LIMIT) {
             die "You can only insert $INSERT_LIMIT rows at a time.\n";
         }
+        my $i = 0;
+        my $sql;
         for my $row_data (@$data) {
+            ++$i;
             _HASH($row_data) or
                 die "Bad data in row $i: ", $OpenResty::Dumper->($row_data), "\n";
-            $rows_affected += $self->insert_record($openresty, $insert, $row_data, $cols, $i);
-            $i++;
+            $sql .= $self->insert_record($openresty, $insert, $row_data, $cols, $i);
+        }
+        my $success = $openresty->do($sql);
+        my $rows_affected = 0;
+        if ($success) {
+            $rows_affected = @$data;
         }
         my $last_id = $openresty->last_insert_id($table);
         return { rows_affected => $rows_affected, last_row => "/=/model/$model/id/$last_id", success => $rows_affected?1:0 };
@@ -672,9 +678,10 @@ sub insert_record {
     if (!$found) {
         die "No column specified in row $row_num.\n";
     }
-    my $sql = "$insert";
+    return "$insert";
+}
 
-    return $openresty->do($sql);
+sub bulk_insert_records {
 }
 
 sub process_order_by {
