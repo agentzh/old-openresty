@@ -1,0 +1,79 @@
+<div class="module-calendar module">
+    <!-- calendar.tt -->
+</div>
+
+<div class="module-archives module">
+    <h2 class="module-header">Recent Posts</h2>
+    <div id="recent-posts" class="module-content">
+    </div>
+</div>
+
+<div class="module-recent-comments module">
+    <h2 class="module-header">Recent Comments</h2>
+    <div class="module-content" id="recent-comments">
+    </div>
+</div>
+
+<div class="module-categories module">
+    <h2 class="module-header">Categories</h2>
+    <div class="module-content">
+        <ul class="module-list">
+                    <!--
+                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/app/index.html">App</a></li>
+                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/backends/index.html">Backends</a></li>
+                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/doc/index.html">Doc</a></li>
+                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/event/index.html">Event</a></li>
+                    -->
+
+        </ul>
+    </div>
+</div>
+    <div class="module-archives module">
+        <h2 class="module-header">Archives</h2>
+        <div class="module-content">
+            <!--
+                                                <ul class="module-list">
+
+                <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/10/index.html">October 2007</a></li>
+
+
+                <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/08/index.html">August 2007</a></li>
+
+                    </ul>
+                    <p class="module-more"><a href="http://pugs.blogs.com/pugs/archives.html">More...</a></p>
+            -->
+        </div>
+    </div>
+
+<div class="module-download module">
+    <h2 class="module-header"><a
+        href="site-binary.tar.gz">Download this site</a></h2>
+    <div class="module-content">
+        <ul class="module-list">
+            <li class="module-list-item">
+                <a href="site-binary.tar.gz">Compiled form (.tar.gz)</a>
+            </li>
+            <li class="module-list-item">
+                <a target="_blank" href="http://svn.openfoundry.org/openapi/trunk/demo/Blog2/">
+                    Source code (SVN)
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="module-typelist module">
+    <h2 class="module-header">License</h2>
+    <div class="module-content">
+        <ul class="module-list">
+            <li class="module-list-item">
+                This work is licensed under
+                <a href="http://en.wikipedia.org/wiki/MIT_License">
+                    the MIT License
+                </a>.
+            </li>
+        </ul>
+    </div>
+</div>
+
+
