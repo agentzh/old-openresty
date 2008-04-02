@@ -47,8 +47,12 @@ sub DELETE_model_list {
     my @tables = map { @$_ } @$res;
     #$tables = $tables->[0];
 
+    my $sql;
     for my $table (@tables) {
-        $self->drop_table($openresty, $table);
+        $sql .= $self->drop_table($openresty, $table);
+    }
+    if ($sql) {
+        $openresty->do($sql);
     }
     return { success => 1 };
 }
@@ -100,7 +104,8 @@ sub DELETE_model {
         die "Model \"$model\" not found.\n";
     }
     #$tables = $tables->[0];
-    $self->drop_table($openresty, $table);
+    my $sql = $self->drop_table($openresty, $table);
+    $openresty->do($sql);
     return { success => 1 };
 }
 
@@ -600,7 +605,7 @@ sub has_model_col {
 
 sub drop_table {
     my ($self, $openresty, $table) = @_;
-    $openresty->do(<<_EOC_);
+    return (<<_EOC_);
 drop table if exists "$table";
 delete from _models where table_name='$table';
 delete from _columns where table_name='$table';
