@@ -6,6 +6,7 @@ use warnings;
 use Getopt::Long;
 use WWW::OpenResty::Simple;
 use JSON::XS;
+use Encode qw(decode encode);
 use YAML::Syck qw(DumpFile LoadFile);
 
 my $conf_file = '.blog.conf';
@@ -67,7 +68,7 @@ if ($cmd eq 'post') {
     if (!$author) { die "No --author specified.\n"; }
     my $html;
     while (<>) {
-        $html .= $_;
+        $html .= decode('utf8', $_);
     }
     my $res = $resty->post(
         '/=/model/Post/~/~',
