@@ -1,3 +1,5 @@
+#!/usr/bin/env perl
+
 use strict;
 use warnings;
 
@@ -98,8 +100,8 @@ if ($cmd eq 'post') {
 }
 
 sub usage {
-    return <<'_EOC_';
-blog.pl <command> <options>
+    return <<"_EOC_";
+$0 <command> <options>
 Commands:
     init --server <host> --user <s> --password <s>
                                     Initialize the .blog.conf file
