@@ -1,5 +1,5 @@
 var account = 'eeee';
-var host = 'http://resty.eeeeworks.org';
+var host = 'http://api.eeeeworks.org';
 //var host = 'http://10.62.136.86';
 
 var openresty = null;
