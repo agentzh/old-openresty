@@ -2,14 +2,7 @@
     <a id="post-[% comment.post %]:comment-[% comment.id %]"></a>
     <div class="comment" id="comment-95523406">
         <div class="comment-content">
-            [% comment.body
-                .replace("&", '&amp;')
-                .replace("<", '&lt;')
-                .replace(">", '&gt;')
-                .replace("\n", "<br/>")
-                .replace("  ", '&nbsp; ')
-                .replace("\t", '&nbsp;&nbsp;&nbsp;&nbsp;')
-            %]
+            [% comment.body | html %]
         </div>
         <p class="comment-footer">
             Posted by:
@@ -18,11 +11,11 @@
                 [% IF NOT url.match('^\\w+://');
                         url = 'http://' _ url;
                     END -%]
-                <a href="[% url %]">[% comment.sender %]</a>
+                <a href="[% url %]">[% comment.sender | html %]</a>
             [% ELSE %]
-                [% comment.sender %] |
+                [% comment.sender | html %] |
             [% END %]
-            [% comment.created %]
+            [% comment.created | html %]
         </p>
     </div>
 [%- END %]

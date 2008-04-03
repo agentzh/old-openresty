@@ -1,6 +1,6 @@
-var account = 'agentzh';
-//var host = 'http://resty.eeeeworks.org';
-var host = 'http://10.62.136.86';
+var account = 'eeee';
+var host = 'http://api.eeeeworks.org';
+//var host = 'http://10.62.136.86';
 
 var openresty = null;
 var savedAnchor = null;
@@ -314,6 +314,7 @@ function renderPost (res) {
         error("Failed to render post: " + res.error);
     } else {
         var post = res[0];
+        //if (!post) return;
         $("#beta-inner.pkg").html(
             Jemplate.process('post-page.tt', { post: post })
         ).postprocess();
@@ -321,6 +322,7 @@ function renderPost (res) {
         openresty.callback = function (res) {
             renderPrevNextPost(post.id, res);
         };
+        //debug(JSON.stringify(post));
         openresty.get('/=/view/PrevNextPost/current/' + post.id);
 
         setStatus(true, 'renderComments');
@@ -384,5 +386,12 @@ function renderPager (res, page) {
         ).postprocess();
         resetAnchor();
     }
+}
+
+function escapeHTML (str) {
+    return str.replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/  /g, '&nbsp; ')
 }
 
