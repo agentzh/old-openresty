@@ -5,6 +5,7 @@ all:
 	-rm -rf out
 	-mkdir out
 	-cp ../../clients/js/*.js out/
+	cp -r ../Blog/template .
 	jemplate --compile template/elem/ > out/jemplates.js
 	jemplate --runtime > out/Jemplate.js
 	tpage --define 'blog_name=$(blog_name)' \
