@@ -3,8 +3,8 @@
 [% FOREACH comment IN comments -%]
     <li class="module-list-item">
         <a href="#post-[% comment.post %]:comment-[% comment.id %]">
-        [% comment.sender %]</a> on
-        <a href="#post-[% comment.post %]">[% comment.title %]</a>
+        [% comment.sender | html %]</a> on
+        <a href="#post-[% comment.post %]">[% comment.title | html %]</a>
     </li>
     [%- last_id = comment.id %]
 [% END -%]
