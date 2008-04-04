@@ -10,7 +10,7 @@ all:
 	-cp ../../clients/js/*.js out/
 	cp -r ../Blog/template .
 	cp -r ../Blog/js .
-	cp ../Blog/image/loading.gif image/
+	cp ../Blog/image/loading.gif out/
 	sed -i 's/resty\.eeeeworks\.org/api.eeeeworks.org/g' js/blog.js
 	sed -i 's/agentzh/eeee/g' js/blog.js
 	jemplate --compile template/elem/ > out/jemplates.js

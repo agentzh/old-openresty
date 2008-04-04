@@ -55,6 +55,7 @@ sub select {
         $res = $json_xs->decode($json);
     };
     if ($@) {
+        warn Encode::decode('utf8', $json);
         die "Failed to load JSON from PgFarm's response: $@\n", Encode::decode('utf8', $json);
     }
     return $res;
