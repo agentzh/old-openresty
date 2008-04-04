@@ -1,5 +1,10 @@
-0.1.10 Mar 24 2008
-* DBI's state method may fail in earlier versions of DBD::Pg, so we wrap it in an eval block.
+0.1.10 April 4 2008
+* Optimized the POST and DELETE method for model rows. Bulk data insertion is much much faster.
+* Now we use the ping method to test the DBI handle.
+* Added demo/Blog2 for eeeeworks.org
+* Added demo/SpringBot which is an IRC bot using OpenResty for storage.
+* Pushed import-model.pl and export-model.pl into a pretty good shape.
+* Added support for the Pg network address types and bigint to the Model handler.
 
 0.1.9 Mar 24 2008
 * Implemented the MetaModel automatic upgrading mechanism.
