@@ -1,5 +1,5 @@
 0.1.10 April 4 2008
-* Optimized the POST and DELETE method for model rows. Bulk data insertion is much much faster.
+* Optimized the row bulk insertion and model bulk deletion operations. They are now much much faster.
 * Now we use the ping method to test the DBI handle.
 * Added demo/Blog2 for eeeeworks.org
 * Added demo/SpringBot which is an IRC bot using OpenResty for storage.
