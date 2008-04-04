@@ -45,8 +45,9 @@
         </div>
     </div>
 
+[% IF blog_owner == 'agentzh' %]
 <div class="module-feed module">
-    <h2 class="module-header">agentzh</h2>
+    <h2 class="module-header">[% blog_owner %]</h2>
     <div class="module-content" id="feed-d6e3ea166d4156b0ee0935b704a55dbf5f52a212">
     </div>
 </div>
@@ -63,6 +64,7 @@
         <a href="http://agentzh.spaces.live.com/feed.rss">Subscribe to this blog's feed</a>
     </div>
 </div>
+[% END %]
 
 <div class="module-download module">
     <h2 class="module-header"><a
@@ -73,7 +75,7 @@
                 <a href="site-binary.tar.gz">Compiled form (.tar.gz)</a>
             </li>
             <li class="module-list-item">
-                <a target="_blank" href="http://svn.openfoundry.org/openapi/trunk/demo/Blog/">
+                <a target="_blank" href="http://svn.openfoundry.org/openapi/trunk/demo/[% blog_owner == 'agentzh' ? "Blog" : "Blog2" %]/">
                     Source code (SVN)
                 </a>
             </li>
