@@ -35,7 +35,14 @@ OpenResty.Client.prototype.login = function (user, password) {
     this.get('/=/login/' + user + '/' + password);
 };
 
-OpenResty.Client.prototype.postByGet = function (content, url, args) {
+OpenResty.Client.prototype.postByGet = function (url) {
+    var args, content;
+    if (arguments.length == 3) {
+        args = arguments[1];
+        content = arguments[2];
+    } else {
+        content = arguments[1];
+    }
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/post/');
     if (typeof(content) == 'object') {
@@ -47,7 +54,14 @@ OpenResty.Client.prototype.postByGet = function (content, url, args) {
     this.get(url, args);
 };
 
-OpenResty.Client.prototype.post = function (content, url, args) {
+OpenResty.Client.prototype.post = function (url) {
+    var args, content;
+    if (arguments.length == 3) {
+        args = arguments[1];
+        content = arguments[2];
+    } else {
+        content = arguments[1];
+    }
     if (!args) args = {};
     //url = url.replace(/^\/=\//, '/=/post/');
     if (url.match(/\?/)) throw "URL should not contain '?'.";
@@ -103,7 +117,14 @@ OpenResty.Client.prototype.post = function (content, url, args) {
     //
 };
 
-OpenResty.Client.prototype.putByGet = function (content, url, args) {
+OpenResty.Client.prototype.putByGet = function (url) {
+    var args, content;
+    if (arguments.length == 3) {
+        args = arguments[1];
+        content = arguments[2];
+    } else {
+        content = arguments[1];
+    }
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/put/');
     content = JSON.stringify(content);
@@ -113,7 +134,14 @@ OpenResty.Client.prototype.putByGet = function (content, url, args) {
     this.get(url, args);
 };
 
-OpenResty.Client.prototype.put = function (content, url, args) {
+OpenResty.Client.prototype.put = function (url) {
+    var args, content;
+    if (arguments.length == 3) {
+        args = arguments[1];
+        content = arguments[2];
+    } else {
+        content = arguments[1];
+    }
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/put/');
     //alert("type of content: " + typeof(content));
