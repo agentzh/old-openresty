@@ -23,11 +23,12 @@
                         </div>
                     </div>
                     <div id="beta">
+                        <div class="pkg pager"></div>
+                        <br/>
                         <div id="beta-inner" class="pkg">
                             <!-- entries -->
                         </div>
-                        <div id="beta-pager" class="pkg">
-                        </div>
+                        <div class="pkg pager"></div>
                         <br/>
                     </div>
                 </div>

@@ -69,10 +69,11 @@
           <tr>
             [%- day_of_week = 0 %]
             [%- WHILE day_of_week <= 6 %]
+                [%- today_mark = day == today ? 'class="today-cell"' : '' %]
                 [%- IF (day > end_of_month) || (day == 1 && day_of_week < first_day_of_week) -%]
                     <td>&nbsp;</td>
                 [%- ELSE -%]
-                    <td id="day-[% year %]-[% month %]-[% day %]">[% day %]</td>
+                    <td id="day-[% year %]-[% month %]-[% day %]" [% today_mark %]>[% day %]</td>
                     [%- day = day + 1 %]
                 [%- END %]
                 [%- day_of_week = day_of_week + 1 %]
