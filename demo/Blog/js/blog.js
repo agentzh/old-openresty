@@ -8,6 +8,9 @@ var itemsPerPage = 5;
 var loadingCount = 0;
 var waitMessage = null;
 var timer = null;
+var thisYear = null;
+var thisMonth = null;
+var thisDay = null;
 
 $(window).ready(init);
 
@@ -62,6 +65,11 @@ function setStatus (isLoading, category) {
 
 function init () {
     loadingCount = 0;
+    var now = new Date();
+    thisYear = now.getFullYear();
+    thisMonth = now.getMonth();
+    thisDay = now.getDate();
+
     waitMessage = document.getElementById('wait-message');
     openresty = new OpenResty.Client(
         { server: host, user: account + '.Public' }
@@ -111,6 +119,13 @@ function dispatchByAnchor () {
     else if (anchor != 'main')
         top.location.hash = 'main';
 
+    getPostList(page);
+    getPager(page);
+
+    $(".blog-top").attr('id', 'post-list-' + page);
+}
+
+function getPostList (page) {
     setStatus(true, 'renderPostList');
     openresty.callback = renderPostList;
     openresty.get('/=/model/Post/~/~', {
@@ -119,10 +134,12 @@ function dispatchByAnchor () {
         offset: itemsPerPage * (page - 1),
         limit: itemsPerPage
     });
+}
+
+function getPager (page) {
     setStatus(true, 'renderPager');
     openresty.callback = function (res) { renderPager(res, page); };
     openresty.get('/=/view/RowCount/model/Post');
-    $(".blog-top").attr('id', 'post-list-' + page);
 }
 
 function getSidebar () {
@@ -133,9 +150,8 @@ function getSidebar () {
 
 function getCalendar (year, month) {
     if (year == undefined || month == undefined) {
-        var now = new Date();
-        year = now.getFullYear();
-        month = now.getMonth();
+        year = thisYear;
+        month = thisMonth;
     }
     var date = new Date(year, month, 1);
     var first_day_of_week = date.getDay();
@@ -148,6 +164,7 @@ function getCalendar (year, month) {
     }
     //alert(year);
     //alert(month);
+    //alert("thisday: " + thisDay);
     $(".module-calendar").html(
         Jemplate.process(
             'calendar.tt',
@@ -155,7 +172,9 @@ function getCalendar (year, month) {
                 year: year,
                 month: month,
                 first_day_of_week: first_day_of_week,
-                end_of_month: end_of_month
+                end_of_month: end_of_month,
+                today: (year == thisYear && month == thisMonth) ?
+                        thisDay : null
             }
         )
     ).postprocess();
@@ -379,7 +398,7 @@ function renderPager (res, page) {
     } else {
         var pageCount = Math.ceil(parseInt(res[0].count) / itemsPerPage);
         if (pageCount < 2) return;
-        $("#beta-pager.pkg").html(
+        $(".pager").html(
             Jemplate.process(
                 'pager.tt',
                 { page: page, page_count: pageCount, title: 'Pages' }

@@ -13,9 +13,8 @@ div#wait-message {
     display: block;
 }
 
-td.highlight {
-    font-weight: bold;
-    color:#A90A08;
+td.today-cell {
+    background: #fff;
 }
 
 input.required {
