@@ -19,7 +19,7 @@ function debug (msg) {
     $("#copyright").append(msg + "<br/>");
 }
 
-$.fn.postprocess = function (clas, options) {
+$.fn.postprocess = function (className, options) {
     return this.find("a[@href^='#']").each( function () {
         var anchor = $(this).attr('href').replace(/^\#/, '');
         //debug("Anchor: " + anchor);
@@ -63,9 +63,7 @@ function setStatus (isLoading, category) {
 function init () {
     loadingCount = 0;
     waitMessage = document.getElementById('wait-message');
-    //var host = 'http://10.62.136.86';
-    //var host = 'http://127.0.0.1';
-    openresty = new OpenAPI.Client(
+    openresty = new OpenResty.Client(
         { server: host, user: account + '.Public' }
     );
     //openresty.formId = 'new_model';
@@ -73,7 +71,7 @@ function init () {
         clearInterval(timer);
     }
     dispatchByAnchor();
-    //timer = setInterval(dispatchByAnchor, 500);
+    timer = setInterval(dispatchByAnchor, 600);
     getSidebar();
 }
 
@@ -93,6 +91,9 @@ function dispatchByAnchor () {
         location.hash = 'main';
     }
     savedAnchor = anchor;
+
+    // prevent memory leaks from dynamically created <script> nodes:
+    if (loadingCount <= 0) openresty.purge();
     loadingCount = 0;
 
     var match = anchor.match(/^post-(\d+)(:comments|comment-(\d+))?/);
