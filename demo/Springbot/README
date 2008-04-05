@@ -1,3 +1,7 @@
+INSTALLATION:
+
+sudo cpan Bot::BasicBot File::Slurp DateTime DateTime::Format::Pg DateTime::Format::Duration
+
 Basic commands:
 
 springbot: baidu keyword

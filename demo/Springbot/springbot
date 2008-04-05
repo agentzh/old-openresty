@@ -3,6 +3,8 @@
 use strict;
 use warnings;
 
+use FindBin;
+use lib "$FindBin::Bin";
 use Getopt::Long;
 use SpringBot;
 
@@ -24,7 +26,7 @@ GetOptions(
 
 $channel = "#$channel" unless $channel =~ /^\#/;
 
-$account || die "No --acount <account> specified.\n";
+$account || die "No --account <account> specified.\n";
 $password || die "No --password <password> specified.\n";
 
 sub init {
