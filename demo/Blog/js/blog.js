@@ -261,7 +261,7 @@ function postComment (form) {
     setStatus(true, 'afterPostComment');
     openresty.callback = afterPostComment;
     //openresty.formId = 'comment-form';
-    openresty.postByGet(data, '/=/model/Comment/~/~');
+    openresty.postByGet('/=/model/Comment/~/~', data);
     return false;
 }
 
@@ -292,8 +292,8 @@ function afterPostComment (res) {
             }
         };
         openresty.putByGet(
-            { comments: commentCount + 1 },
-            '/=/model/Post/id/' + postId
+            '/=/model/Post/id/' + postId,
+            { comments: commentCount + 1 }
         );
         getRecentComments(0);
     }
