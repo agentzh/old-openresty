@@ -80,6 +80,7 @@ function init () {
     }
     dispatchByAnchor();
     timer = setInterval(dispatchByAnchor, 600);
+    //debug("before getSidebar...");
     getSidebar();
 }
 
@@ -119,8 +120,11 @@ function dispatchByAnchor () {
     else if (anchor != 'main')
         top.location.hash = 'main';
 
+    //debug("before getPostList...");
     getPostList(page);
+    //debug("before getPager...");
     getPager(page);
+    //debug("after getPager...");
 
     $(".blog-top").attr('id', 'post-list-' + page);
 }
@@ -396,14 +400,19 @@ function renderPager (res, page) {
     if (!openresty.isSuccess(res)) {
         error("Failed to render pager: " + res.error);
     } else {
+        //debug("before rendering pager...");
         var pageCount = Math.ceil(parseInt(res[0].count) / itemsPerPage);
         if (pageCount < 2) return;
-        $(".pager").html(
-            Jemplate.process(
-                'pager.tt',
-                { page: page, page_count: pageCount, title: 'Pages' }
-            )
-        ).postprocess();
+        //debug("before redering pager (2)...");
+        var html = Jemplate.process(
+            'pager.tt',
+            { page: page, page_count: pageCount, title: 'Pages' }
+        );
+        //debug("after html generation...");
+        $(".pager").each( function () {
+            $(this).html( html ).postprocess();
+        } );
+        //debug("after rendering pager...");
         resetAnchor();
     }
 }
