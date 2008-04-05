@@ -95,7 +95,7 @@ $(document).ready( function () {
         return false;
     });
     var host = 'http://10.62.136.86';
-    openresty = new OpenAPI.Client(
+    openresty = new OpenResty.Client(
         { server: host, callback: 'display' }
     );
     openresty.formId = 'new_model';

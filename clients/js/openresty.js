@@ -1,12 +1,12 @@
-if (typeof window.OpenAPI == "undefined") {
+if (typeof window.OpenResty == "undefined") {
 
 window.undefined = window.undefined;
 
-var OpenAPI = {
+var OpenResty = {
     callbackMap: {}
 };
 
-OpenAPI.Client = function (params) {
+OpenResty.Client = function (params) {
     if (params == undefined) params = {};
     this.callback = params.callback;
     this.server = params.server;
@@ -14,11 +14,11 @@ OpenAPI.Client = function (params) {
     //this.password = params.password;
 };
 
-OpenAPI.Client.prototype.isSuccess = function (res) {
+OpenResty.Client.prototype.isSuccess = function (res) {
     return !(typeof res == 'object' && res.success == 0 && res.error);
 };
 
-OpenAPI.Client.prototype.login = function (user, password) {
+OpenResty.Client.prototype.login = function (user, password) {
     this.user = user;
     var userCallback = this.callback;
     if (typeof userCallback == 'string') {
@@ -35,7 +35,7 @@ OpenAPI.Client.prototype.login = function (user, password) {
     this.get('/=/login/' + user + '/' + password);
 };
 
-OpenAPI.Client.prototype.postByGet = function (content, url, args) {
+OpenResty.Client.prototype.postByGet = function (content, url, args) {
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/post/');
     if (typeof(content) == 'object') {
@@ -47,11 +47,11 @@ OpenAPI.Client.prototype.postByGet = function (content, url, args) {
     this.get(url, args);
 };
 
-OpenAPI.Client.prototype.post = function (content, url, args) {
+OpenResty.Client.prototype.post = function (content, url, args) {
     if (!args) args = {};
     //url = url.replace(/^\/=\//, '/=/post/');
     if (url.match(/\?/)) throw "URL should not contain '?'.";
-    if (!this.callback) throw "No callback specified for OpenAPI.";
+    if (!this.callback) throw "No callback specified for OpenResty.";
     var formId = this.formId;
     if (!formId) throw "No form specified.";
 
@@ -103,7 +103,7 @@ OpenAPI.Client.prototype.post = function (content, url, args) {
     //
 };
 
-OpenAPI.Client.prototype.putByGet = function (content, url, args) {
+OpenResty.Client.prototype.putByGet = function (content, url, args) {
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/put/');
     content = JSON.stringify(content);
@@ -113,7 +113,7 @@ OpenAPI.Client.prototype.putByGet = function (content, url, args) {
     this.get(url, args);
 };
 
-OpenAPI.Client.prototype.put = function (content, url, args) {
+OpenResty.Client.prototype.put = function (content, url, args) {
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/put/');
     //alert("type of content: " + typeof(content));
@@ -122,11 +122,11 @@ OpenAPI.Client.prototype.put = function (content, url, args) {
 };
 
 
-OpenAPI.Client.prototype.get = function (url, args) {
+OpenResty.Client.prototype.get = function (url, args) {
     if (!args) args = {};
-    if (!this.callback) throw "No callback specified for OpenAPI.";
-    if (!this.server) throw "No server specified for OpenAPI.";
-    //if (!this.user) throw "No user specified for OpenAPI.";
+    if (!this.callback) throw "No callback specified for OpenResty.";
+    if (!this.server) throw "No server specified for OpenResty.";
+    //if (!this.user) throw "No user specified for OpenResty.";
 
     if (this.session) args.session = this.session;
     if (!this.session && !args.user)
@@ -141,11 +141,11 @@ OpenAPI.Client.prototype.get = function (url, args) {
     if (typeof this.callback == 'string') {
         this.callback = eval(this.callback);
     }
-    OpenAPI.callbackMap[args.rand] = this.callback;
-    args.callback = "OpenAPI.callbackMap[" + args.rand + "]";
+    OpenResty.callbackMap[args.rand] = this.callback;
+    args.callback = "OpenResty.callbackMap[" + args.rand + "]";
     var scriptTag = document.createElement("script");
     scriptTag.id = "openapiScriptTag" + args.rand;
-    scriptTag.className = 'openapiScriptTag';
+    scriptTag.className = '_openrestyScriptTag';
     var arg_list = new Array();
     for (var key in args) {
         arg_list.push(key + "=" + encodeURIComponent(args[key]));
@@ -156,19 +156,19 @@ OpenAPI.Client.prototype.get = function (url, args) {
     headTag.appendChild(scriptTag);
 };
 
-OpenAPI.Client.prototype.del = function (url, args) {
+OpenResty.Client.prototype.del = function (url, args) {
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/delete/');
     this.get(url, args);
 };
 
-OpenAPI.Client.prototype.purge = function () {
+OpenResty.Client.prototype.purge = function () {
     // document.getElementByClassName('openapiScriptTag').remove();
-    OpenAPI.callbackMap = {};
+    OpenResty.callbackMap = {};
     var nodes = document.getElementsByTagName('script');
     for (var i = 0; i < nodes.length; i++) {
         var node = nodes[i];
-        if (node.className == 'openapiScriptTag') {
+        if (node.className == '_openrestyScriptTag') {
             node.parentNode.removeChild(node);
         }
     }
