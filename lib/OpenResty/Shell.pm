@@ -36,6 +36,10 @@ Type:  \\copyright for distribution terms
        <sql> to do sql query using xquery
 
 _EOC_
+    if ($backend_name eq 'PgFarm') {
+        print "$backend_name: $OpenResty::Backend::PgFarm::Host\n\n";
+    }
+
     eval { $backend->set_user('_global'); };
     if ($@) { warn $@; }
     my $term = Term::ReadLine->new('Simple Perl calc', \*STDIN, \*STDOUT);
