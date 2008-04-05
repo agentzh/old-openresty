@@ -348,7 +348,7 @@ function renderPost (res) {
         setStatus(true, 'renderComments');
         openresty.callback = renderComments;
         openresty.get('/=/model/Comment/post/' + post.id);
-        $("#beta-pager.pkg").html('');
+        $(".pager").html('');
     }
 }
 

@@ -13,6 +13,10 @@ div#wait-message {
     display: block;
 }
 
+td.today-cell {
+    background: #eee;
+}
+
 td.highlight {
     font-weight: bold;
     color:#A90A08;

@@ -17,6 +17,11 @@ td.today-cell {
     background: #fff;
 }
 
+td.highlight {
+    font-weight: bold;
+    color:#A90A08;
+}
+
 input.required {
     background: #ffa;
 }
