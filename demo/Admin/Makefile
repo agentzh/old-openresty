@@ -1,7 +1,7 @@
 all:
 	-rm -rf out
 	-mkdir out
-	-cp ../../clients/js/*.js out/ 
+	-cp ../../clients/js/*.js out/
 	jemplate --compile template/elem/ > out/jemplates.js
 	jemplate --runtime > out/Jemplate.js
 	tpage --include_path=template template/index.tt > out/index.html
