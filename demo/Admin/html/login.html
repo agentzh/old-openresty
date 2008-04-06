@@ -6,6 +6,7 @@
         <script type="text/javascript" src="openresty.js"></script>
         <script type="text/javascript" src="jquery.js"></script>
         <script type="text/javascript" src="login.js"></script>
+        <script type="text/javascript" src="jquery.cookie.pack.js"></script>
     </head>
     <body>
         <center id="main">
@@ -17,20 +18,20 @@
             <br/>
 
             <table>
-                <form>
+                <form id="login-form">
                 <tr>
-                    <td>Server</td><td><input type="text" value="resty.eeeeworks.org"></input></td>
+                    <td>Server</td><td><input id="login-server" type="text" value="resty.eeeeworks.org"></input></td>
                 </tr>
                 <tr>
-                    <td>User</td><td><input type="text"></input></td>
+                    <td>User</td><td><input id="login-user" type="text"></input></td>
                 </tr>
                 <tr>
-                    <td>Password</td><td><input type="password"></input></td>
+                    <td>Password</td><td><input id="login-password" type="password"></input></td>
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
                     <td>
-                        <button>Login</button>
+                        <button id="login-button">Login</button>
                     </td>
                 </tr>
                 <tr>
