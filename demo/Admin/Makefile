@@ -7,6 +7,7 @@ all:
 	tpage --include_path=template template/index.tt > out/index.html
 	cp html/login.html out/
 	cp js/*.js out/
+	cp js/*/*.js out/
 	cp css/*.css out/
 	tar cvf site-binary.tar out
 	gzip --best site-binary.tar
