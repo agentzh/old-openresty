@@ -9,7 +9,11 @@ var OpenResty = {
 OpenResty.Client = function (params) {
     if (params == undefined) params = {};
     this.callback = params.callback;
-    this.server = params.server;
+    var server = params.server;
+    if (!/^https?:\/\//.test(server)) {
+        server = 'http://' + server;
+    }
+    this.server = server;
     this.user = params.user;
     //this.password = params.password;
 };
