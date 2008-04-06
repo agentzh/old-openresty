@@ -1,0 +1,18 @@
+table {
+    background: #cdd;
+    padding: 1em;
+}
+
+td {
+    padding: 5;
+}
+
+#register-link, button {
+    float: right;
+    margin-right: 2em
+}
+
+#main {
+    padding-top: 10em;
+}
+
