@@ -1,3 +1,17 @@
+div#wait-message {
+    color: red !important;
+    background: white !important;
+    font-size: 18px !important;
+    float: right;
+    position: fixed;
+    top: 2px;
+    right: 200px;
+    padding: 4px;
+    border-width: 2px;
+    border-color: white;
+    display: block;
+}
+
 span.editable:hover {
     background-color: yellow;
     padding: 2;
