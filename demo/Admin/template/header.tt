@@ -10,6 +10,7 @@
         'admin.js',
         'model.js',
         'view.js',
+        'role.js',
     ]
 %]
 <title>OpenResty Admin</title>

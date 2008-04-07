@@ -1,4 +1,5 @@
 [% DEFAULT
+    category = 'model',
     objects = [
         {
             description => 'Blog post',
@@ -29,7 +30,7 @@
     <!-- block begin -->
     <div class="ttl">
         <span class="text">
-            <a href="#[% object.name | lower %]" title="[% object.description | html %]">[% object.name %]</a>
+            <a href="#[% category %]-[% object.name %]" title="[% object.description | html %]">[% object.name %]</a>
         </span>
         <span class="tp"><!-- <a href="#__top" title="">页首↑</a> --></span>
     </div>

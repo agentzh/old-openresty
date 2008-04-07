@@ -1,53 +1,56 @@
-function getViews (opts) {
-    setStatus(true, 'getViews');
+[% DEFAULT
+    category = 'Model'
+-%]
+function get[% category %]s (opts) {
+    setStatus(true, 'get[% category %]');
     if (opts.cache) {
-        if (viewList != null) {
-            renderViews(viewList);
+        if ([% category | lower %]List != null) {
+            render[% category %]s([% category | lower %]List);
             return;
         }
     } else {
-        viewList = null;
+        [% category | lower %]List = null;
     }
-    openresty.callback = renderViews;
-    openresty.get('/=/view');
-    getViewMenu();
+    openresty.callback = render[% category %]s;
+    openresty.get('/=/[% category | lower %]');
+    get[% category %]Menu();
 }
 
-function renderViews (res) {
-    setStatus(false, 'getViews');
+function render[% category %]s (res) {
+    setStatus(false, 'get[% category %]s');
     if (!openresty.isSuccess(res)) {
-        error("Failed to get view list: " + res.error);
+        error("Failed to get [% category | lower %] list: " + res.error);
         return;
     }
     $("#main").html(
         Jemplate.process(
             'object-list.tt',
-            { objects: res, category: 'view' }
+            { objects: res, category: '[% category | lower %]' }
         )
-    );
+    ).postprocess();
 }
 
-function getViewMenu () {
-    setStatus(true, 'getViewMenu');
-    if (viewList != null) {
-        return renderViewMenu(viewList);
+function get[% category %]Menu () {
+    setStatus(true, 'get[% category %]Menu');
+    if ([% category | lower %]List != null) {
+        return render[% category %]Menu([% category | lower %]List);
     }
-    openresty.callback = renderViewMenu;
-    openresty.get('/=/view');
+    openresty.callback = render[% category %]Menu;
+    openresty.get('/=/[% category | lower %]');
 }
 
-function renderViewMenu (res) {
-    setStatus(false, 'getViewMenu');
+function render[% category %]Menu (res) {
+    setStatus(false, 'get[% category %]Menu');
     if (!openresty.isSuccess(res)) {
-        error("Failed to get the view menu: " + res.error);
+        error("Failed to get the [% category | lower %] menu: " + res.error);
         return;
     }
     $("#menu").html(
         Jemplate.process(
             'menu.tt',
-            { active_item: 'Views', submenu: res }
+            { active_item: '[% category %]s', submenu: res }
         )
-    );
+    ).postprocess();
 }
 
 $.fn.postprocess = function (className, options) {

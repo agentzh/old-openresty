@@ -22,7 +22,7 @@ function renderModels (res) {
     $("#main").html(
         Jemplate.process(
             'object-list.tt',
-            { objects: res }
+            { objects: res, category: 'model' }
         )
     );
 }

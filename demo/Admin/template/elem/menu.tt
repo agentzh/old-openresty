@@ -56,7 +56,7 @@
 <div class="submenu">
     [%- FOREACH item IN submenu %]
 
-        <a href="#[% prefix | lower %]-[% item.name | lower %]" title="[% item.description | html %]">[% item.name | html %]</a>&nbsp;&nbsp;&nbsp;
+        <a href="#[% prefix | lower %]-[% item.name %]" title="[% item.description | html %]">[% item.name | html %]</a>&nbsp;&nbsp;&nbsp;
 
     [%- END %]
 </div>
