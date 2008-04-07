@@ -3,23 +3,112 @@ var serverCookie = 'admin_server';
 var openresty = null;
 var loadingCount = 0;
 var waitMessage = null;
+var savedAnchor = null;
 
 $(document).ready(init);
+
+function error (msg) {
+    alert(msg);
+}
+
+function removeCookies () {
+    //alert("Hey!");
+    $.cookie(serverCookie, null, { path: '/' });
+    $.cookie(sessionCookie, null, { path: '/' });
+    location = 'login.html';
+}
 
 function init () {
     //alert("HERE!");
     var server = $.cookie(serverCookie);
     var session = $.cookie(sessionCookie);
+    //alert("server: " + server);
+    //alert("session: " + session);
     if (!server || !session) {
         location = 'login.html';
     }
+    $("#logout-link").click(removeCookies);
+
     waitMessage = document.getElementById('wait-message');
+
     openresty = new OpenResty.Client({server: server});
+    openresty.session = session;
+
     dispatchByAnchor();
     setInterval(dispatchByAnchor, 600);
 }
 
 function dispatchByAnchor () {
+    var anchor = location.hash;
+    anchor = anchor.replace(/^\#/, '');
+    if (savedAnchor == anchor)
+        return;
+    if (anchor == "") {
+        anchor = 'models';
+        location.hash = 'models';
+    }
+    savedAnchor = anchor;
+
+    // prevent memory leaks from dynamically created <script> nodes:
+    if (loadingCount <= 0) openresty.purge();
+    loadingCount = 0;
+
+    if (anchor == 'models') {
+        getModels( { cache: false } );
+        return;
+    }
+}
+
+function getModels (opts) {
+    setStatus(true, 'getModels');
+    if (opts.cache) {
+        if (modelList != null) {
+            renderModels(modelList);
+            return;
+        }
+    } else {
+        modelList = null;
+    }
+    openresty.callback = renderModels;
+    openresty.get('/=/model');
+    getModelMenu();
+}
+
+function getModelMenu () {
+    setStatus(true, 'getModelMenu');
+    if (modelList != null) {
+        return renderModelMenu(modelList);
+    }
+    openresty.callback = renderModelMenu;
+    openresty.get('/=/model');
+}
+
+function renderModels (res) {
+    setStatus(false, 'getModels');
+    if (!openresty.isSuccess(res)) {
+        error("Failed to get model list: " + res.error);
+        return;
+    }
+    $("#main").html(
+        Jemplate.process(
+            'model-list.tt',
+            { models: res }
+        )
+    );
+}
+
+function renderModelMenu (res) {
+    setStatus(false, 'getModelMenu');
+    if (!openresty.isSuccess(res)) {
+        error("Failed to get the model menu: " + res.error);
+        return;
+    }
+    $("#menu").html(
+        Jemplate.process(
+            'menu.tt',
+            { active_item: 'Models', submenu: res }
+        )
+    );
 }
 
 $.fn.postprocess = function (className, options) {

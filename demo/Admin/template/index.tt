@@ -9,10 +9,10 @@
         [%- PROCESS 'banner.tt' %]
 
         <div id="bd">
-            [%- PROCESS 'elem/menu.tt' %]
+            <div id="menu">
+            </div>
 
             <div id="main">
-                [% PROCESS 'elem/model-list.tt' %]
             </div>
 
             [%- PROCESS 'footer.tt' %]

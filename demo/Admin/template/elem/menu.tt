@@ -31,6 +31,8 @@
     ];
 -%]
 
+<a id="logout-link" href="javascript:void(0);">Logout</a>
+
 <div class="tabnav">
     <ul>
 
