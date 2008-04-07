@@ -1,0 +1,51 @@
+[% DEFAULT
+    page = 1,
+    page_count = undef,
+    title = 'Pages',
+    prefix = 'modelrows-Foo';
+-%]
+
+[% IF page_count <= 10;
+      from = 1;
+      to = page_count;
+   ELSE;
+      from = page - 10 >= 1 ? page - 10 : 1
+      to = page + 9 >= page_count ? page_count : page + 9;
+   END -%]
+
+<center>
+  <table class="pager">
+    <tr>
+      <td>
+        [% title %]:&nbsp; &nbsp;
+      </td>
+      <td>
+      [%- IF page > 1 %]
+        <span class="prev-page">
+            <a href="#[% prefix %]-[% page - 1 %]">Previous</a>
+        </span>
+      [%- END %]
+      </td>
+
+    [%- i = from; %]
+    [%- WHILE i <= to %]
+      [%- IF i == page %]
+        <td class="highlight">[% i %]</td>
+      [%- ELSE %]
+        <td><a href="#[% prefix %]-[% i %]">[% i %]</a></td>
+      [%- END %]
+      [%- i = i + 1 %]
+    [%- END %]
+
+      <td>
+      [%- IF page < page_count %]
+        <span class="next-page">
+            <a href="#[% prefix %]-[% page + 1 %]">Next</a>
+        </span>
+      [%- END %]
+      </td>
+    </tr>
+  </table>
+</center>
+<br/>
+

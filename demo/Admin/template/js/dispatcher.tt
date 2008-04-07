@@ -22,7 +22,7 @@ function dispatchByAnchor () {
         get[% cat %]s();
         return;
     }
-    var match = anchor.match(/^[% cat | lower %]-(\w+)$/);
+    var match = anchor.match(/^[% cat | lower %]-([A-Za-z]\w*)$/);
     if (match) {
         var [% cat | lower %] = match[1];
         get[% cat %]([% cat | lower %]);
@@ -30,6 +30,17 @@ function dispatchByAnchor () {
     }
 
     [%- END %]
+
+    var match = anchor.match(/^modelrows-([A-Za-z]\w*)(?:-(\d+))?$/);
+    if (match) {
+        var model = match[1];
+        var page = match[2] || 1;
+        page = parseInt(page);
+        //alert("Model: " + model);
+        //alert("Page: " + page);
+        getModelRows(model, page);
+        return;
+    }
 
     // fallback
     alert("Not implemented :(");
