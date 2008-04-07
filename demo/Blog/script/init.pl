@@ -42,7 +42,7 @@ if ($resty->has_model('Post')) {
     $resty->post(
         '/=/model/Post',
         {
-            description => "Blog rost",
+            description => "Blog post",
             columns => [
                 { name => 'title', label => 'Post title' },
                 { name => 'content', label => 'Post content' },
