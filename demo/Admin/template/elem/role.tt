@@ -1,0 +1,52 @@
+[% DEFAULT
+    role = {
+        description => 'Administrator',
+        name => 'Admin',
+        login => 'password',
+        columns => [
+            {
+                label => 'HTTP method',
+                name => 'method',
+                type => 'text',
+            },
+            {
+                label => 'Resource',
+                name => 'url',
+                type => 'text',
+            }
+        ]
+    };
+%]
+<!-- block begin -->
+<div class="ttl">
+    <span class="text">
+        [% role.name %]
+    </span>
+</div>
+
+<div class="listcon">
+    <ul>
+        <li><b class="key">Name</b>: [% role.name | html %]</li>
+        <li><b class="key">Description</b>: [% role.description | html %]</li>
+        <li><b class="key">Login method</b>: [% role.login | html %]</li>
+        <li><b class="key">Columns</b>:
+            <ul>
+            [%- FOREACH column IN role.columns %]
+                <li>
+              [%- FOREACH key IN column.keys %]
+                [%- value = column.$key;
+                    NEXT IF !value AND value != 0 %]
+                <b class="key">[%- key | html %]</b>: [% value | html %] &nbsp;&nbsp;
+              [%- END %]
+                </li>
+            [%- END %]
+            </ul>
+        </li>
+    </ul>
+
+
+    </ul>
+    <div class="clearit"></div>
+</div>
+<!-- block end -->
+
