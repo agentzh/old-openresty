@@ -108,16 +108,17 @@ function render[% cat %] (res, name) {
 }
 
 function getModelRows (name, page) {
+    setStatus(true, 'renderModelRows');
     if (!page) page = 1;
-    openresty.callback = function (res) { renderModelRows(res, name); };
+    openresty.callback = function (res) { renderModelRows(res, name, page); };
     openresty.get(
         '/=/model/' + name + '/~/~',
-        { offset: itemsPerPage * (page - 1), count: itemsPerPage }
+        { offset: itemsPerPage * (page - 1), count: itemsPerPage, order_by: 'id:desc' }
     );
-    getPager(name, page, 'modelrows-' + name);
 }
 
 function getPager (name, page, prefix) {
+    setStatus(true, 'getPager');
     openresty.callback = function (res) {
         renderPager(res, page, prefix);
     };
@@ -128,6 +129,7 @@ function getPager (name, page, prefix) {
 }
 
 function renderPager (res, page, prefix) {
+    setStatus(false, 'getPager');
     if (!openresty.isSuccess(res)) {
         error("Failed to get the pager: " + res.error);
         return;
@@ -140,10 +142,13 @@ function renderPager (res, page, prefix) {
         { page: page, page_count: pageCount, prefix: prefix }
     );
     //alert("HTML: " + html);
-    $("#pager").html( html );
+    $(".pager").each( function () {
+        $(this).html(html);
+    } ).postprocess();
 }
 
-function renderModelRows (res, model) {
+function renderModelRows (res, model, page) {
+    setStatus(false, 'renderModelRows');
     if (!openresty.isSuccess(res)) {
         error("Failed to get model rows: " + res.error);
         return;
@@ -157,5 +162,6 @@ function renderModelRows (res, model) {
             { model: model, rows: res }
         )
     ).postprocess();
+    getPager(model, page, 'modelrows-' + model);
 }
 
