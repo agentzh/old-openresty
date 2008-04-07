@@ -1,56 +1,46 @@
 [% DEFAULT
-    category = 'Model'
+    cat = 'Model'  # category
 -%]
-function get[% category %]s (opts) {
-    setStatus(true, 'get[% category %]');
-    if (opts && opts.cache) {
-        if ([% category | lower %]List != null) {
-            render[% category %]s([% category | lower %]List);
-            return;
-        }
-    } else {
-        [% category | lower %]List = null;
-    }
-    openresty.callback = render[% category %]s;
-    openresty.get('/=/[% category | lower %]');
-    get[% category %]Menu();
+function get[% cat %]s (opts) {
+    setStatus(true, 'get[% cat %]');
+    openresty.callback = render[% cat %]s;
+    openresty.get('/=/[% cat | lower %]');
+    get[% cat %]Menu();
 }
 
-function render[% category %]s (res) {
-    setStatus(false, 'get[% category %]s');
+function render[% cat %]s (res) {
+    setStatus(false, 'get[% cat %]s');
     if (!openresty.isSuccess(res)) {
-        error("Failed to get [% category | lower %] list: " + res.error);
+        error("Failed to get [% cat | lower %] list: " + res.error);
         return;
     }
     $("#main").html(
         Jemplate.process(
             'object-list.tt',
-            { objects: res, category: '[% category | lower %]' }
+            { objects: res, category: '[% cat | lower %]' }
         )
     ).postprocess();
 }
 
-function get[% category %]Menu () {
-    setStatus(true, 'get[% category %]Menu');
-    if ([% category | lower %]List != null) {
-        return render[% category %]Menu([% category | lower %]List);
-    }
-    openresty.callback = render[% category %]Menu;
-    openresty.get('/=/[% category | lower %]');
+function get[% cat %]Menu () {
+    setStatus(true, 'get[% cat %]Menu');
+    openresty.callback = render[% cat %]Menu;
+    openresty.get('/=/[% cat | lower %]');
 }
 
-function render[% category %]Menu (res) {
-    setStatus(false, 'get[% category %]Menu');
+function render[% cat %]Menu (res) {
+    setStatus(false, 'get[% cat %]Menu');
     if (!openresty.isSuccess(res)) {
-        error("Failed to get the [% category | lower %] menu: " + res.error);
+        error("Failed to get the [% cat | lower %] menu: " + res.error);
         return;
     }
     $("#menu").html(
         Jemplate.process(
             'menu.tt',
-            { active_item: '[% category %]s', submenu: res }
+            { active_item: '[% cat %]s', submenu: res }
         )
     ).postprocess();
+    $("#logout-link").click(removeCookies);
 }
 
 $.fn.postprocess = function (className, options) {
@@ -90,6 +80,30 @@ function setStatus (isLoading, category) {
         }
     }
     //count++;
-    //debug("[" + count + "] setStatus: " + category + ": " + loadingCount + "(" + isLoading + ")");
+    //debug("[" + count + "] setStatus: " + cat + ": " + loadingCount + "(" + isLoading + ")");
+}
+
+function get[% cat %] (name) {
+    setStatus(true, 'get[% cat %]');
+    openresty.callback = function (res) { render[% cat %](res, name) };
+    openresty.get('/=/[% cat | lower %]/' + name);
+}
+
+function render[% cat %] (res, name) {
+    setStatus(false, 'get[% cat %]');
+    if (!openresty.isSuccess(res)) {
+        error("Failed to get [% cat | lower %] " + name + ": " + res.error);
+        return;
+    }
+    if ($("#menu").find("#[% cat | lower %]-" + name).length == 0) {
+        //error("[% cat | lower %]-" + name + " not found!");
+        get[% cat %]Menu();
+    }
+    $("#main").html(
+        Jemplate.process(
+            '[% cat | lower %].tt',
+            { [% cat | lower %]: res }
+        )
+    ).postprocess();
 }
 
