@@ -31,6 +31,8 @@
     ];
 -%]
 
+[%- prefix = active_item.replace('s$', '') %]
+
 <a id="logout-link" href="javascript:void(0);">Logout</a>
 
 <div class="tabnav">
@@ -54,7 +56,7 @@
 <div class="submenu">
     [%- FOREACH item IN submenu %]
 
-        <a href="#[% active_item | lower %]-[% item.name | lower %]" title="[% item.description | html %]">[% item.name | html %]</a>&nbsp;&nbsp;&nbsp;
+        <a href="#[% prefix | lower %]-[% item.name | lower %]" title="[% item.description | html %]">[% item.name | html %]</a>&nbsp;&nbsp;&nbsp;
 
     [%- END %]
 </div>

@@ -1,9 +1,14 @@
 var sessionCookie = 'admin_session';
 var serverCookie = 'admin_server';
+
 var openresty = null;
+
 var loadingCount = 0;
 var waitMessage = null;
 var savedAnchor = null;
+
+var modelList = null;
+var viewList = null;
 
 $(document).ready(init);
 
