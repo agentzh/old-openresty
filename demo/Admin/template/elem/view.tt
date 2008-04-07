@@ -7,9 +7,7 @@
 %]
 <!-- block begin -->
 <div class="ttl">
-    <span class="text">
-        <a href="#[% view.name | lower %]" title="[% view.description | html %]">[% view.name %]</a>
-    </span>
+    <span class="text">[% view.name %]</span>
 </div>
 
 <div class="listcon">
