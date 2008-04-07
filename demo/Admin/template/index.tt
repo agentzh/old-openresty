@@ -15,9 +15,6 @@
             <div id="main">
             </div>
 
-            <div id="pager">
-            </div>
-
             [%- PROCESS 'footer.tt' %]
         </div>
     </body>

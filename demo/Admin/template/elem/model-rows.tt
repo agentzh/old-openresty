@@ -12,6 +12,8 @@
     </span>
 </div>
 
+<div class="pager"></div>
+
 <div class="listcon">
     <ul>
         [%- FOREACH row IN rows %]
@@ -26,4 +28,6 @@
         [%- END %]
     </ul>
 </div>
+
+<div class="pager"></div>
 

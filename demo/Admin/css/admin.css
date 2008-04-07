@@ -39,7 +39,8 @@ div#wait-message {
     right: 200px;
     padding: 4px;
     border-width: 2px;
-    border-color: white;
+    border-style: solid;
+    border-color: #2ce;
     display: block;
 }
 
