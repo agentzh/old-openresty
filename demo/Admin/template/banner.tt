@@ -1,0 +1,12 @@
+<div id="wait-message">
+    <img src="loading.gif"/>
+    &nbsp; <b>Loading...</b>&nbsp;
+</div>
+
+<div id="hd">
+    <div>
+        <a href="http://www.yahoo.cn"><img src="http://cn.yimg.com/i/os/v004/ylg.gif" alt="中国雅虎">
+        </a>
+    </div>
+</div>
+
