@@ -33,7 +33,7 @@
 
 [%- prefix = active_item.replace('s$', '') %]
 
-<a id="logout-link" href="javascript:void(0);">Logout</a>
+<a id="logout-link" href="login.html">Logout</a>
 
 <div class="tabnav">
     <ul>

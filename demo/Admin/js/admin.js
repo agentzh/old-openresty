@@ -17,7 +17,6 @@ function removeCookies () {
     //alert("Hey!");
     $.cookie(serverCookie, null, { path: '/' });
     $.cookie(sessionCookie, null, { path: '/' });
-    location = 'login.html';
 }
 
 function init () {
