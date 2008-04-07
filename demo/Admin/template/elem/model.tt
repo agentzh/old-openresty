@@ -44,7 +44,7 @@
 <!-- block begin -->
 <div class="ttl">
     <span class="text">
-        <a href="#[% model.name | lower %]" title="[% model.description | html %]">[% model.name %]</a>
+        <a href="#modelrows-[% model.name %]">[% model.name %]</a>
     </span>
 </div>
 
@@ -66,10 +66,15 @@
             </ul>
         </li>
     </ul>
-
-
+    <ul>
+        <li>
+            <b><a id="show-detail" href="#modelrows-[% model.name %]" class="text">View model rows</a></b>
+        </li>
     </ul>
     <div class="clearit"></div>
+</ul>
+
 </div>
+
 <!-- block end -->
 
