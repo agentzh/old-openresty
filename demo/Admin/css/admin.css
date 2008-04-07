@@ -1,3 +1,29 @@
+table.rules {
+    padding: 3px;
+    border: 0;
+    white-space: nowrap;
+    padding-left: 4em;
+    padding-top: 1em;
+}
+
+table.rules td {
+    padding: 7px;
+    font-size: 100%;
+    text-align: left;
+    padding-left: 35px;
+    padding-right: 35px;
+}
+
+table.rules th {
+    padding: 5px;
+    padding-left: 35px;
+    padding-right: 35px;
+    font-weight: bold;
+    font-size: 110%;
+    text-align: left;
+    color:#A90A08;
+}
+
 table.pager {
     border: 0;
     width: 1%;
@@ -7,7 +33,7 @@ table.pager {
 table.pager td {
     font-size: 100%;
     white-space: nowrap;
-    padding: 3px;
+    padding: 5px;
 }
 
 td.highlight {
