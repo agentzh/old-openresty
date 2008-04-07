@@ -1,0 +1,59 @@
+[% DEFAULT
+    menu = [
+        'Models',
+        'Views',
+        'Roles',
+        'Actions',
+        'Feeds',
+    ],
+    active_item = 'Views',
+    submenu = [
+        {
+            description => 'Blog post',
+            name => 'Post',
+            src => '/=/model/Post',
+        },
+        {
+            description => 'Blog comment',
+            name => 'Comment',
+            src => '/=/model/Comment',
+        },
+        {
+            description => 'Yahoo! China Staff',
+            name => 'YahooStaff',
+            src => '/=/model/YahooStaff'
+        },
+        {
+            description => 'IRC Log',
+            name => 'IrcLog',
+            src => '/=/model/IrcLog',
+        }
+    ];
+-%]
+
+<div class="tabnav">
+    <ul>
+
+        [%- i = 0 %]
+        [%- FOREACH item IN menu %]
+
+        <li class="[% item == active_item ? "cur" : "" %]">
+            <a href="#[% item | lower %]" title="[% item %]">
+                [% item %]
+            </a>
+        </li>
+
+        [%- i = i + 1 %]
+        [%- END %]
+
+    </ul>
+</div>
+
+<div class="submenu">
+    [%- FOREACH item IN submenu %]
+
+        <a href="#[% active_item | lower %]-[% item.name | lower %]" title="[% item.description | html %]">[% item.name | html %]</a>&nbsp;&nbsp;&nbsp;
+
+    [%- END %]
+</div>
+

@@ -1,5 +1,69 @@
-var openresty;
+var sessionCookie = 'admin_session';
+var serverCookie = 'admin_server';
+var openresty = null;
+var loadingCount = 0;
+var waitMessage = null;
 
+$(document).ready(init);
+
+function init () {
+    //alert("HERE!");
+    var server = $.cookie(serverCookie);
+    var session = $.cookie(sessionCookie);
+    if (!server || !session) {
+        location = 'login.html';
+    }
+    waitMessage = document.getElementById('wait-message');
+    openresty = new OpenResty.Client({server: server});
+    dispatchByAnchor();
+    setInterval(dispatchByAnchor, 600);
+}
+
+function dispatchByAnchor () {
+}
+
+$.fn.postprocess = function (className, options) {
+    return this.find("a[@href^='#']").each( function () {
+        var anchor = $(this).attr('href').replace(/^\#/, '');
+        //debug("Anchor: " + anchor);
+        $(this).click( function () {
+            //debug(location.hash);
+            location.hash = anchor;
+            //alert(location.hash);
+            if (savedAnchor == anchor) savedAnchor = null;
+            dispatchByAnchor();
+        } );
+    } );
+};
+
+function setStatus (isLoading, category) {
+    if (isLoading) {
+        if (++loadingCount == 1) {
+            if (jQuery.browser.opera)
+                $(waitMessage).css('top', '2px');
+            else
+                $(waitMessage).show();
+        }
+    } else {
+        loadingCount--;
+        if (loadingCount < 0) loadingCount = 0;
+        if (loadingCount == 0) {
+            // the reason we use this hack is to work around
+            // a rendering bug in Win32 build of Opera
+            // (at least 9.25 and 9.26)
+            if (jQuery.browser.opera)
+                $(waitMessage).css('top', '-200px');
+            else
+                $(waitMessage).hide();
+
+        }
+    }
+    //count++;
+    //debug("[" + count + "] setStatus: " + category + ": " + loadingCount + "(" + isLoading + ")");
+}
+
+
+/*
 var display = function (res) {
     $("#output").text(JSON.stringify(res));
 };
@@ -107,4 +171,5 @@ function init (data) {
     //alert("Hey!");
     get_model_list(data);
 }
+*/
 

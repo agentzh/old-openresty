@@ -6,6 +6,7 @@ all:
 	jemplate --runtime > out/Jemplate.js
 	tpage --include_path=template template/index.tt > out/index.html
 	cp html/login.html out/
+	cp ../Blog/image/loading.gif out/
 	cp js/*.js out/
 	cp js/*/*.js out/
 	cp css/*.css out/
