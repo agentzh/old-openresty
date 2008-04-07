@@ -1,0 +1,34 @@
+[% DEFAULT
+    role = 'Admin',
+    rules = [
+        { method => "GET", url => '/=/view/Foo' },
+        { method => "DELETE", url => '/=/role/Bar' },
+    ];
+%]
+<div class="ttl">
+    <span class="text">
+        <a href="#role-[% role | html %]">[% role %]</a>
+    </span>
+</div>
+
+<div class="pager"></div>
+
+<div class="listcon">
+    <table class="rules">
+        <tr>
+            <th>ID</th>
+            <th>HTTP method</th>
+            <th>Resource</th>
+        </tr>
+        [%- FOREACH rule = rules %]
+        <tr>
+            <td>[% rule.id %]</td>
+            <td>[% rule.method | html %]</td>
+            <td>[% rule.url | html %]</td>
+        </tr>
+        [%- END %]
+    </table>
+</div>
+
+<div class="pager"></div>
+
