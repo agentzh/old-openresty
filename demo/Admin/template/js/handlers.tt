@@ -3,7 +3,7 @@
 -%]
 function get[% category %]s (opts) {
     setStatus(true, 'get[% category %]');
-    if (opts.cache) {
+    if (opts && opts.cache) {
         if ([% category | lower %]List != null) {
             render[% category %]s([% category | lower %]List);
             return;

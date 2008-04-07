@@ -9,6 +9,7 @@ var savedAnchor = null;
 
 var modelList = null;
 var viewList = null;
+var roleList = null;
 
 $(document).ready(init);
 
