@@ -7,10 +7,6 @@ var loadingCount = 0;
 var waitMessage = null;
 var savedAnchor = null;
 
-var modelList = null;
-var viewList = null;
-var roleList = null;
-
 $(document).ready(init);
 
 function error (msg) {
@@ -33,7 +29,6 @@ function init () {
     if (!server || !session) {
         location = 'login.html';
     }
-    $("#logout-link").click(removeCookies);
 
     waitMessage = document.getElementById('wait-message');
 
@@ -44,34 +39,4 @@ function init () {
     setInterval(dispatchByAnchor, 600);
 }
 
-function dispatchByAnchor () {
-    var anchor = location.hash;
-    anchor = anchor.replace(/^\#/, '');
-    if (savedAnchor == anchor)
-        return;
-    if (anchor == "") {
-        anchor = 'models';
-        location.hash = 'models';
-    }
-    savedAnchor = anchor;
-
-    // prevent memory leaks from dynamically created <script> nodes:
-    if (loadingCount <= 0) openresty.purge();
-    loadingCount = 0;
-
-    if (anchor == 'models') {
-        getModels( { cache: false } );
-        return;
-    }
-    if (anchor == 'views') {
-        getViews( { cache: false } );
-        return;
-    }
-    if (anchor == 'roles') {
-        getRoles( { cache: false } );
-        return;
-    }
-
-    alert("Not implemented :(");
-}
 

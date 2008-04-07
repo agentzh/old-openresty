@@ -1,0 +1,29 @@
+[% DEFAULT
+    view = {
+        definition => "select id, title, date_part('day', created) as day\n            from Post\n            where date_part('year', created) = $year and\n                date_part('month', created) = $month\n            order by created asc\n",
+        description => undef,
+        name => "PostsByMonth",
+    };
+%]
+<!-- block begin -->
+<div class="ttl">
+    <span class="text">
+        <a href="#[% view.name | lower %]" title="[% view.description | html %]">[% view.name %]</a>
+    </span>
+    <span class="tp"><a href="#__top" title="">页首↑</a></span>
+</div>
+
+<div class="listcon">
+    <ul>
+        <li><b>Name</b>: [% view.name | html %]</li>
+        <li><b>Description</b>: [% view.description | html %]</li>
+        <li><b>Definition</b>:<br/><pre>[% view.definition | html %]<pre></li>
+        </li>
+    </ul>
+
+
+    </ul>
+    <div class="clearit"></div>
+</div>
+<!-- block end -->
+

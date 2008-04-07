@@ -7,10 +7,11 @@
         'jquery.cookie.pack.js',
         'Jemplate.js',
         'jemplates.js',
-        'admin.js',
         'model.js',
         'view.js',
         'role.js',
+        'dispatcher.js',
+        'admin.js',
     ]
 %]
 <title>OpenResty Admin</title>

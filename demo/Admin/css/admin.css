@@ -24,16 +24,17 @@ span.editable:hover {
 }
 
 body{padding:0;margin:0;background:#fff;text-align:center;color:#000;font-size:12px;font-family:Arial;}
-h1,h2,h3,h4,h5,h6,form,div,p,i,img,ul,li,ol,table,tr,td,th,fieldset,label,legend,button{margin:0;padding:0;}
+h1,h2,h3,h4,h5,h6,form,div,p,i,img,ol,table,tr,td,th,fieldset,label,legend,button{margin:0;padding:0;}
 li{list-style:none;}
 a img{border:none;}
 a{text-decoration:underline;color:#0353CE;}
 .clr{clear:both;height:0px;overflow:hidden;}
 
 a b{color:#f03;font-weight:normal;text-decoration:underline;}
+b.key{color:#c03;font-weight:normal;text-decoration:none;}
 
 body{color:#000;background:#FFF;}
-body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0;}
+body,div,dl,dt,dd,ol,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0;}
 table{border-spacing:0;}
 fieldset,img{border:0;}
 address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal;}
@@ -106,7 +107,7 @@ legend{display:none;}
 .ttl .text a{color:#000;}
 .ttl .tp{float:right;font-size:12px;padding-right:10px;}
 .listcon{width:924px;margin:5px;}
-.listcon li{float:none;line-height:27px;text-align:left;font-size:14px;}
+.listcon li{float:none;line-height:27px;text-align:left;padding-left:20px;font-size:14px;}
 
 #YahooCity{color:#666666;position:relative;z-index:100;}
 div.BoxBG {position:absolute;top:22px;left:0;background:#d4d4d4;}
