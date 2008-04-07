@@ -4,9 +4,16 @@
 </div>
 
 <div id="hd">
-    <div>
-        <a href="http://www.yahoo.cn"><img src="http://cn.yimg.com/i/os/v004/ylg.gif" alt="中国雅虎" title="中国雅虎">
-        </a>
-    </div>
+    <table id="banner">
+        <tr>
+            <td>
+                <div>
+                    <a href="http://www.yahoo.cn"><img src="http://cn.yimg.com/i/os/v004/ylg.gif" alt="中国雅虎" title="中国雅虎"></a>
+                </div>
+            </td>
+            <td id="version">
+            </td>
+        </tr>
+    </table>
 </div>
 
