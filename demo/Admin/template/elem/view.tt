@@ -10,7 +10,6 @@
     <span class="text">
         <a href="#[% view.name | lower %]" title="[% view.description | html %]">[% view.name %]</a>
     </span>
-    <span class="tp"><a href="#__top" title="">页首↑</a></span>
 </div>
 
 <div class="listcon">
