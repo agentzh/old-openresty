@@ -42,6 +42,13 @@ function dispatchByAnchor () {
         return;
     }
 
+    var match = anchor.match(/^rolerules-([A-Za-z]\w*)$/);
+    if (match) {
+        var role = match[1];
+        getRoleRules(role);
+        return;
+    }
+
     // fallback
     alert("Not implemented :(");
 }

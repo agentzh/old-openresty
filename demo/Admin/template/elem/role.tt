@@ -20,7 +20,9 @@
 <!-- block begin -->
 <div class="ttl">
     <span class="text">
+        <a href="#rolerules-[% role.name %]" title="Access rules for Role [% role.name %]">
         [% role.name %]
+        </a>
     </span>
 </div>
 
@@ -43,9 +45,13 @@
             </ul>
         </li>
     </ul>
-
-
+    <ul>
+        <li>
+            <b><a id="show-detail" href="#rolerules-[% role.name %]" class="text">View ACL rules</a></b>
+        </li>
     </ul>
+
+
     <div class="clearit"></div>
 </div>
 <!-- block end -->
