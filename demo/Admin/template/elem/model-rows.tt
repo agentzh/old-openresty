@@ -1,0 +1,29 @@
+[% DEFAULT
+    model = 'Employee',
+    rows = [
+        { name => "Carrie", age => 24 },
+        { name => "agentzh", age => 25 },
+        { name => "laser", age => 35 },
+    ];
+%]
+<div class="ttl">
+    <span class="text">
+        <a href="#model-[% model %]">[% model %]</a>
+    </span>
+</div>
+
+<div class="listcon">
+    <ul>
+        [%- FOREACH row IN rows %]
+            <li>
+            [%- FOREACH key IN row.keys %]
+            [%- value = row.$key;
+                NEXT IF !value AND value != 0 %]
+            <b class="key">[%- key | html %]</b>: [% value | html %] &nbsp;&nbsp;
+            [%- END %]
+            </li>
+            <hr/>
+        [%- END %]
+    </ul>
+</div>
+

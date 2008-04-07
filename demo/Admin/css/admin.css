@@ -1,3 +1,34 @@
+table.pager {
+    border: 0;
+    width: 1%;
+    padding: 5px;
+}
+
+table.pager td {
+    font-size: 100%;
+    white-space: nowrap;
+    padding: 3px;
+}
+
+td.highlight {
+    font-weight: bold;
+    color:#A90A08;
+}
+
+.prev-page {
+    text-align: right;
+    font-size: 12pt;
+    color: #00c;
+    font-weight: bold;
+}
+
+.next-page {
+    text-align: left;
+    font-size: 12pt;
+    color: #00c;
+    font-weight: bold;
+}
+
 div#wait-message {
     color: red !important;
     background: white !important;
@@ -23,7 +54,7 @@ span.editable:hover {
     padding: 2;
 }
 
-body{padding:0;margin:0;background:#fff;text-align:center;color:#000;font-size:12px;font-family:Arial;}
+body{padding:0;margin:0;background:#fff;text-align:center;color:#000;font-size:12px;font-family:helvetica,sans-serif;}
 h1,h2,h3,h4,h5,h6,form,div,p,i,img,ol,table,tr,td,th,fieldset,label,legend,button{margin:0;padding:0;}
 li{list-style:none;}
 a img{border:none;}

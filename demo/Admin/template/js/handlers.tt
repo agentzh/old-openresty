@@ -107,3 +107,55 @@ function render[% cat %] (res, name) {
     ).postprocess();
 }
 
+function getModelRows (name, page) {
+    if (!page) page = 1;
+    openresty.callback = function (res) { renderModelRows(res, name); };
+    openresty.get(
+        '/=/model/' + name + '/~/~',
+        { offset: itemsPerPage * (page - 1), count: itemsPerPage }
+    );
+    getPager(name, page, 'modelrows-' + name);
+}
+
+function getPager (name, page, prefix) {
+    openresty.callback = function (res) {
+        renderPager(res, page, prefix);
+    };
+    openresty.postByGet(
+        '/=/action/.Select/lang/minisql',
+        "select count(*) as count from " + name
+    );
+}
+
+function renderPager (res, page, prefix) {
+    if (!openresty.isSuccess(res)) {
+        error("Failed to get the pager: " + res.error);
+        return;
+    }
+    var pageCount = Math.ceil(parseInt(res[0].count) / itemsPerPage);
+    //.processalert(pageCount);
+    if (pageCount < 2) return;
+    var html = Jemplate.process(
+        'pager.tt',
+        { page: page, page_count: pageCount, prefix: prefix }
+    );
+    //alert("HTML: " + html);
+    $("#pager").html( html );
+}
+
+function renderModelRows (res, model) {
+    if (!openresty.isSuccess(res)) {
+        error("Failed to get model rows: " + res.error);
+        return;
+    }
+    if ($("#menu").find("#model-" + model).length == 0) {
+        getModelMenu();
+    }
+    $("#main").html(
+        Jemplate.process(
+            'model-rows.tt',
+            { model: model, rows: res }
+        )
+    ).postprocess();
+}
+

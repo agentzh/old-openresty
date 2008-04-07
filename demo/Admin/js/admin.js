@@ -1,3 +1,4 @@
+var itemsPerPage = 50;
 var sessionCookie = 'admin_session';
 var serverCookie = 'admin_server';
 
@@ -8,6 +9,10 @@ var waitMessage = null;
 var savedAnchor = null;
 
 $(document).ready(init);
+
+function debug (msg) {
+    $("#footer").append(msg + "<br/>");
+}
 
 function error (msg) {
     alert(msg);
