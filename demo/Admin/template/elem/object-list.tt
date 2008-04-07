@@ -1,43 +1,43 @@
 [% DEFAULT
-    models = [
+    objects = [
         {
             description => 'Blog post',
             name => 'Post',
-            src => '/=/model/Post',
+            src => '/=/object/Post',
         },
         {
             description => 'Blog comment',
             name => 'Comment',
-            src => '/=/model/Comment',
+            src => '/=/object/Comment',
         },
         {
             description => 'Yahoo! China Staff',
             name => 'YahooStaff',
-            src => '/=/model/YahooStaff'
+            src => '/=/object/YahooStaff'
         },
         {
             description => 'IRC Log',
             name => 'IrcLog',
-            src => '/=/model/IrcLog',
+            src => '/=/object/IrcLog',
         }
     ];
 %]
 [%- i = 0 %]
-[%- FOREACH model IN models %]
+[%- FOREACH object IN objects %]
     [%- i = i + 1 %]
 
     <!-- block begin -->
     <div class="ttl">
         <span class="text">
-            <a href="#[% model.name | lower %]" title="[% model.description | html %]">[% model.name %]</a>
+            <a href="#[% object.name | lower %]" title="[% object.description | html %]">[% object.name %]</a>
         </span>
         <span class="tp"><!-- <a href="#__top" title="">页首↑</a> --></span>
     </div>
 
     <div class="listcon">
         <ul>
-            <li><b>Name</b>: [% model.name | html %]</li>
-            <li><b>Description</b>: [% model.description | html %]</li>
+            <li><b>Name</b>: [% object.name | html %]</li>
+            <li><b>Description</b>: [% object.description | html %]</li>
         </ul>
 
         </ul>

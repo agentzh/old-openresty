@@ -21,8 +21,8 @@ function renderViews (res) {
     }
     $("#main").html(
         Jemplate.process(
-            'model-list.tt',
-            { views: res }
+            'object-list.tt',
+            { objects: res }
         )
     );
 }

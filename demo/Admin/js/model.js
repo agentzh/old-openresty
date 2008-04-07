@@ -21,8 +21,8 @@ function renderModels (res) {
     }
     $("#main").html(
         Jemplate.process(
-            'model-list.tt',
-            { models: res }
+            'object-list.tt',
+            { objects: res }
         )
     );
 }
