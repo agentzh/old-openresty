@@ -2,9 +2,11 @@
 <!--{{start:copy -->
 <br/>
 <hr/>
-<div class="cp1">
+<center>
+<div id="copyright" class="cp1">
     Copyright © 2008 Yahoo! China EEEE Works.
 </div>
+</center>
 <!--}}end:copy -->
 </div>
 
