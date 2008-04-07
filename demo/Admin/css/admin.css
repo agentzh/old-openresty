@@ -12,6 +12,12 @@ div#wait-message {
     display: block;
 }
 
+#logout-link {
+    float: right;
+    margin-top: 1em;
+    margin-right: 1em;
+}
+
 span.editable:hover {
     background-color: yellow;
     padding: 2;
