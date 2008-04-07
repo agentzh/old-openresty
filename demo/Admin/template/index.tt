@@ -1,29 +1,22 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        [%- INCLUDE header.tt %]
+        [%- PROCESS 'header.tt' %]
     </head>
 
     <body>
-        [% PROCESS 'page.tt' %]
-        <h2>Server response</h2>
-        <p style="word-wrap:break-word;width:450" id="output">
-        </p>
-        <h2>Models</h2>
-        <div id="model-list">
+
+        [%- PROCESS 'banner.tt' %]
+
+        <div id="bd">
+            [%- PROCESS 'elem/menu.tt' %]
+
+            <div id="main">
+                [% PROCESS 'elem/model-list.tt' %]
+            </div>
+
+            [%- PROCESS 'footer.tt' %]
         </div>
-        <h2>Create model</h2>
-        <form id="new_model" method="post">
-          <p>
-            <label>Name</label>&nbsp;<input id="model-name" type="text"/>
-          </p>
-          <p>
-            <label>Description</label>&nbsp;<input id="model-desc" type="text"/>
-          </p>
-          <input type="submit" value="Create!">
-          <input type="hidden" name="data"></input>
-        </form>
-        [%- PROCESS footer.tt %]
     </body>
 </html>
 

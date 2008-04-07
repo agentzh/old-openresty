@@ -1,4 +1,5 @@
-var cookieName = 'admin_session';
+var sessionCookie = 'admin_session';
+var serverCookie = 'admin_server';
 var openresty = null;
 
 $(document).ready(init);
@@ -44,7 +45,8 @@ function afterLogin (res) {
         error("Failed to login: " + res.error);
         return;
     }
-    $.cookie(cookieName, res.session, { path: '/', expires: 2 /* days */ });
+    $.cookie(sessionCookie, res.session, { path: '/', expires: 2 /* days */ });
+    $.cookie(serverCookie, openresty.server, { path: '/', expires: 2 /* days */ });
     //alert("saved cookie: " + $.cookie(cookieName));
     location = 'index.html';
 }

@@ -22,16 +22,6 @@
         }
     ];
 %]
-<div class="submnu">
-    [%- FOREACH model IN models %]
-
-        <a href="#[% model.name | lower %]" title="[% model.description | html %]">[% model.name | html %]</a>&nbsp;&nbsp;&nbsp;
-
-    [%- END %]
-</div>
-
-<div class="main-panel">
-
 [%- i = 0 %]
 [%- FOREACH model IN models %]
     [%- i = i + 1 %]
@@ -41,7 +31,7 @@
         <span class="text">
             <a href="#[% model.name | lower %]" title="[% model.description | html %]">[% model.name %]</a>
         </span>
-        <span class="tp"><a href="#__top" title="">页首↑</a></span>
+        <span class="tp"><!-- <a href="#__top" title="">页首↑</a> --></span>
     </div>
 
     <div class="listcon">
@@ -56,6 +46,4 @@
     <!-- block end -->
 
 [%- END %]
-
-</div>
 

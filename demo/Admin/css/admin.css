@@ -80,7 +80,7 @@ legend{display:none;}
 .tabnav li{display:block;float:left;}
 .tabnav li a{display:block;line-height:32px;padding:0 7px;font-size:14px;font-weight:bold;text-decoration:none;color:#0553CF;background:#F3F6FD;border: 1px solid #F4F7FF;margin-right:1px;border-bottom:0;}
 .tabnav li.cur a{border: 1px solid #93BDE5;background:#DCE8FF;color:#000;cursor:default;border-bottom-color:#DCE8FE;}
-.submnu{background:#DCE8FF;line-height:32px;padding-left:18px;font-size:14px;text-align:left;}
+.submenu{background:#DCE8FF;line-height:32px;padding-left:18px;font-size:14px;text-align:left;}
 .ttl{line-height:31px;height:31px;background:#F3F3F3;margin-top:20px;}
 .ttl .text{float:left;font-size:14px;font-weight:bold;padding-left:13px;}
 .ttl .text a{color:#000;}
