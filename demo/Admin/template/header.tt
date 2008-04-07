@@ -1,0 +1,24 @@
+[%- DEFAULT
+     js_files = [
+        'JSON.js',
+        'openresty.js',
+        'jquery.js',
+        'jquery.jeditable.pack.js',
+        'jquery.cookie.pack.js',
+        'Jemplate.js',
+        'jemplates.js',
+        'admin.js',
+        'model.js',
+        'view.js',
+    ]
+%]
+<title>OpenResty Admin</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="admin.css" type="text/css" media="screen" />
+
+[% FOR file IN js_files %]
+<script type="text/javascript" src="[% file %]"></script>
+[% END -%]
+
+</head>
+
