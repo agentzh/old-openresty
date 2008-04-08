@@ -23,6 +23,9 @@
                 NEXT IF !value AND value != 0 %]
             <b class="key">[%- key | html %]</b>: [% value | html %] &nbsp;&nbsp;
             [%- END %]
+
+            <b><a href="javascript:void(0);" onclick="deleteModelRow('[% model %]', [% row.id %])">Delete</a></b>
+
             </li>
             <hr/>
         [%- END %]
