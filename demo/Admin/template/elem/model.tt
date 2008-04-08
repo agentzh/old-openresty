@@ -68,7 +68,10 @@
     </ul>
     <ul>
         <li>
-            <b><a id="show-detail" href="#modelrows-[% model.name %]" class="text">View model rows</a></b>
+            <a class="show-detail" href="#modelrows-[% model.name %]">View model rows</a>
+        </li>
+        <li>
+            <b><a class="show-detail" href="javascript:void(0);" onclick="deleteModel('[% model.name %]', 'models')">Delete this model</a></b>
         </li>
     </ul>
     <div class="clearit"></div>
