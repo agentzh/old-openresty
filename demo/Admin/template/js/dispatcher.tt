@@ -10,6 +10,7 @@ function dispatchByAnchor () {
         anchor = 'models';
         location.hash = 'models';
     }
+    var oldAnchor = savedAnchor;
     savedAnchor = anchor;
 
     // prevent memory leaks from dynamically created <script> nodes:
@@ -51,5 +52,9 @@ function dispatchByAnchor () {
 
     // fallback
     alert("Sorry, not implemented yet :P");
+    if (!oldAnchor) {
+        location.hash = 'models';
+        dispatchByAnchor();
+    }
 }
 
