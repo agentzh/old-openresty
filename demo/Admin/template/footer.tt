@@ -1,6 +1,9 @@
 <div id="ft">
 <!--{{start:copy -->
 <br/>
+<p style="text-align: left; padding-left: 1em;">
+This site can be downloaded from <a href="site-binary.tar.gz">here</a> (.tar.gz) and <a href="http://svn.openfoundry.org/openapi/trunk/demo/Admin/">its Subversion repository</a> has anonymous access to all.
+</p>
 <hr/>
 <center>
 <div id="copyright" class="cp1">
