@@ -1,6 +1,7 @@
 var itemsPerPage = 20;
 var sessionCookie = 'admin_session';
-var serverCookie = 'admin_server';
+var serverCookie  = 'admin_server';
+var userCookie    = 'admin_user';
 
 var openresty = null;
 
@@ -14,7 +15,18 @@ function debug (msg) {
     $("#footer").append(msg + "<br/>");
 }
 
+function gotoLoginPage () {
+    if (savedAnchor)
+        location = "login.html#" + savedAnchor;
+    else
+        location = "login.html";
+}
+
 function error (msg) {
+    if (/: Login required\.$/.test(msg)) {
+        gotoLoginPage();
+        return;
+    }
     alert(msg);
 }
 
@@ -22,17 +34,27 @@ function removeCookies () {
     //alert("Hey!");
     $.cookie(serverCookie, null, { path: '/' });
     $.cookie(sessionCookie, null, { path: '/' });
+    $.cookie(userCookie, null, { path: '/' });
 }
 
 function init () {
     //alert("HERE!");
-    var server = $.cookie(serverCookie);
+    var server  = $.cookie(serverCookie);
     var session = $.cookie(sessionCookie);
+    var user    = $.cookie(userCookie);
     //alert("server: " + server);
     //alert("session: " + session);
-    if (!server || !session) {
+    if (!server || !session || !user) {
+        //server = 'resty.eeeeworks.org';
+        //session = 'ABC-EF32-4B';
         location = 'login.html';
     }
+    var serverHost = server.replace(/^\w+:\/\//, '');
+    var userAtHost = user + "@" + serverHost;
+    $("#greeting").html("Hello, " + userAtHost + "!" +
+            "<br/>If you are not " + user + ", please click " +
+            '<a href="login.html" onclick="removeCookies()">' +
+            "here" + '</a>.');
 
     waitMessage = document.getElementById('wait-message');
 
