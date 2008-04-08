@@ -176,3 +176,23 @@ function renderVersionInfo (res) {
     $("#copyright").html(res);
 }
 
+function deleteModel (model, nextPage) {
+    if (!confirm("Are you sure to delete model " + model + "?"))
+        return;
+    openresty.callback = function (res) {
+        afterDeleteModel(res, model, nextPage);
+    };
+    openresty.del('/=/model/' + model);
+}
+
+function afterDeleteModel (res, model, nextPage) {
+    if (!openresty.isSuccess(res)) {
+        error("Failed to delete model: " + model);
+        return;
+    }
+    if (!nextPage) nextPage = savedAnchor;
+    if (nextPage == savedAnchor) savedAnchor = null;
+    location.hash = nextPage;
+    dispatchByAnchor();
+}
+
