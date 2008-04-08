@@ -1,0 +1,8 @@
+This is the source code for the site http://resty.eeeeworks.org/admin/ .
+
+To build the site:
+
+    $ make
+
+Then out/ will hold the binary site ready for deployment.
+
