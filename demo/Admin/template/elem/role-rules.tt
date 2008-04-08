@@ -25,13 +25,11 @@
             <td>[% rule.id %]</td>
             <td>[% rule.method | html %]</td>
             <td>[% rule.url | html %]</td>
-        </tr>
-        [%- END %]
-        <tr>
             <td>
-                <b><a href="javascript:void(0);" onclick="deleteRoleRule('[% model %]', [% row.id %])">Delete</a></b>
+              <b><a href="javascript:void(0);" onclick="deleteRoleRule('[% role %]', [% rule.id %])">Delete</a></b>
             </td>
         </tr>
+        [%- END %]
     </table>
 </div>
 

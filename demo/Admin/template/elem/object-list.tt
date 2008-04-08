@@ -49,6 +49,9 @@
                 [%- IF category == 'model' %]
                 <a href="#modelrows-[% object.name %]">View model rows</a>
                 &nbsp; &nbsp; &nbsp;
+                [%- ELSIF category == 'role' %]
+                <a href="#rolerules-[% object.name %]">View ACL rules</a>
+                &nbsp; &nbsp; &nbsp;
                 [%- END %]
 
                 <b><a href="javascript:void(0);" onclick="delete[% category | ucfirst %]('[% object.name %]')">Delete this [% category %]</a></b>
