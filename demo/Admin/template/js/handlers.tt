@@ -1,43 +1,43 @@
 [% DEFAULT
-    cat = 'Model'  # category
+    cat = 'model'  # category
 -%]
-function get[% cat %]s (opts) {
-    setStatus(true, 'get[% cat %]');
-    openresty.callback = render[% cat %]s;
-    openresty.get('/=/[% cat | lower %]');
-    get[% cat %]Menu();
+function get[% cat | ucfirst %]s (opts) {
+    setStatus(true, 'get[% cat | ucfirst %]');
+    openresty.callback = render[% cat | ucfirst %]s;
+    openresty.get('/=/[% cat %]');
+    get[% cat | ucfirst %]Menu();
 }
 
-function render[% cat %]s (res) {
-    setStatus(false, 'get[% cat %]s');
+function render[% cat | ucfirst %]s (res) {
+    setStatus(false, 'get[% cat | ucfirst %]s');
     if (!openresty.isSuccess(res)) {
-        error("Failed to get [% cat | lower %] list: " + res.error);
+        error("Failed to get [% cat %] list: " + res.error);
         return;
     }
     $("#main").html(
         Jemplate.process(
             'object-list.tt',
-            { objects: res, category: '[% cat | lower %]' }
+            { objects: res, category: '[% cat %]' }
         )
     ).postprocess();
 }
 
-function get[% cat %]Menu () {
-    setStatus(true, 'get[% cat %]Menu');
-    openresty.callback = render[% cat %]Menu;
-    openresty.get('/=/[% cat | lower %]');
+function get[% cat | ucfirst %]Menu () {
+    setStatus(true, 'get[% cat | ucfirst %]Menu');
+    openresty.callback = render[% cat | ucfirst %]Menu;
+    openresty.get('/=/[% cat %]');
 }
 
-function render[% cat %]Menu (res) {
-    setStatus(false, 'get[% cat %]Menu');
+function render[% cat | ucfirst %]Menu (res) {
+    setStatus(false, 'get[% cat | ucfirst %]Menu');
     if (!openresty.isSuccess(res)) {
-        error("Failed to get the [% cat | lower %] menu: " + res.error);
+        error("Failed to get the [% cat %] menu: " + res.error);
         return;
     }
     $("#menu").html(
         Jemplate.process(
             'menu.tt',
-            { active_item: '[% cat %]s', submenu: res }
+            { active_item: '[% cat | ucfirst %]s', submenu: res }
         )
     ).postprocess();
     $("#logout-link").click(removeCookies);
@@ -83,27 +83,49 @@ function setStatus (isLoading, category) {
     //debug("[" + count + "] setStatus: " + cat + ": " + loadingCount + "(" + isLoading + ")");
 }
 
-function get[% cat %] (name) {
-    setStatus(true, 'get[% cat %]');
-    openresty.callback = function (res) { render[% cat %](res, name) };
-    openresty.get('/=/[% cat | lower %]/' + name);
+function get[% cat | ucfirst %] (name) {
+    setStatus(true, 'get[% cat | ucfirst %]');
+    openresty.callback = function (res) { render[% cat | ucfirst %](res, name) };
+    openresty.get('/=/[% cat %]/' + name);
 }
 
-function render[% cat %] (res, name) {
-    setStatus(false, 'get[% cat %]');
+function render[% cat | ucfirst %] (res, name) {
+    setStatus(false, 'get[% cat | ucfirst %]');
     if (!openresty.isSuccess(res)) {
-        error("Failed to get [% cat | lower %] " + name + ": " + res.error);
+        error("Failed to get [% cat %] " + name + ": " + res.error);
         return;
     }
-    if ($("#menu").find("#[% cat | lower %]-" + name).length == 0) {
-        //error("[% cat | lower %]-" + name + " not found!");
-        get[% cat %]Menu();
+    if ($("#menu").find("#[% cat %]-" + name).length == 0) {
+        //error("[% cat %]-" + name + " not found!");
+        get[% cat | ucfirst %]Menu();
     }
     $("#main").html(
         Jemplate.process(
-            '[% cat | lower %].tt',
-            { [% cat | lower %]: res }
+            '[% cat %].tt',
+            { [% cat %]: res }
         )
     ).postprocess();
+}
+
+function delete[% cat | ucfirst %] ([% cat %], nextPage) {
+    setStatus(true, 'delete[% cat | ucfirst %]');
+    if (!confirm("Are you sure to delete [% cat %] " + [% cat %] + "?"))
+        return;
+    openresty.callback = function (res) {
+        afterDelete[% cat | ucfirst %](res, [% cat %], nextPage);
+    };
+    openresty.del('/=/[% cat %]/' + [% cat %]);
+}
+
+function afterDelete[% cat | ucfirst %] (res, [% cat %], nextPage) {
+    setStatus(false, 'delete[% cat | ucfirst %]');
+    if (!openresty.isSuccess(res)) {
+        error("Failed to delete [% cat %] " + [% cat %] + ": " + res.error);
+        return;
+    }
+    if (!nextPage) nextPage = savedAnchor;
+    if (nextPage == savedAnchor) savedAnchor = null;
+    location.hash = nextPage;
+    dispatchByAnchor();
 }
 

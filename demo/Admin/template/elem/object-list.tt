@@ -43,11 +43,15 @@
                 <b>Description</b>: [% object.description | html %]
             </li>
             <li>
-                <a href="#[% category %]-[% object.name %]" title="[% object.description | html %]">More detail...</a>
+                <a href="#[% category %]-[% object.name %]" title="[% object.description | html %]">More detail</a>
                 &nbsp; &nbsp; &nbsp;
-                <a href="#modelrows-[% model.name %]">View model rows</a>
+
+                [%- IF category == 'model' %]
+                <a href="#modelrows-[% object.name %]">View model rows</a>
                 &nbsp; &nbsp; &nbsp;
-                <b><a href="javascript:void(0);" onclick="deleteModel('[% model.name %]')">Delete this model</a></b>
+                [%- END %]
+
+                <b><a href="javascript:void(0);" onclick="delete[% category | ucfirst %]('[% object.name %]')">Delete this [% category %]</a></b>
             </li>
         </ul>
         <div class="clearit"></div>
