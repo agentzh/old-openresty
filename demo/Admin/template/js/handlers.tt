@@ -108,9 +108,9 @@ function render[% cat | ucfirst %] (res, name) {
 }
 
 function delete[% cat | ucfirst %] ([% cat %], nextPage) {
-    setStatus(true, 'delete[% cat | ucfirst %]');
     if (!confirm("Are you sure to delete [% cat %] " + [% cat %] + "?"))
         return;
+    setStatus(true, 'delete[% cat | ucfirst %]');
     openresty.callback = function (res) {
         afterDelete[% cat | ucfirst %](res, [% cat %], nextPage);
     };
@@ -123,9 +123,6 @@ function afterDelete[% cat | ucfirst %] (res, [% cat %], nextPage) {
         error("Failed to delete [% cat %] " + [% cat %] + ": " + res.error);
         return;
     }
-    if (!nextPage) nextPage = savedAnchor;
-    if (nextPage == savedAnchor) savedAnchor = null;
-    location.hash = nextPage;
-    dispatchByAnchor();
+    gotoNextPage(nextPage);
 }
 

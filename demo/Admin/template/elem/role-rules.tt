@@ -27,6 +27,11 @@
             <td>[% rule.url | html %]</td>
         </tr>
         [%- END %]
+        <tr>
+            <td>
+                <b><a href="javascript:void(0);" onclick="deleteRoleRule('[% model %]', [% row.id %])">Delete</a></b>
+            </td>
+        </tr>
     </table>
 </div>
 
