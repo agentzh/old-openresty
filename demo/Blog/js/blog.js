@@ -409,6 +409,8 @@ function renderPager (res, page) {
             { page: page, page_count: pageCount, title: 'Pages' }
         );
         //debug("after html generation...");
+
+        // we use the .each hack here to work aound a JS runtime error in IE 6:
         $(".pager").each( function () {
             $(this).html( html ).postprocess();
         } );
