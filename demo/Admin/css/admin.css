@@ -1,3 +1,25 @@
+#create-model-form table {
+    background: #eef;
+    padding: 1em;
+    padding-left: 2em;
+    padding-right: 2em;
+    text-align: left;
+}
+
+input.create-button {
+    margin-top: 4px;
+    padding: 2px;
+    margin-right: 1em;
+    float: right;
+    font-weight: bold;
+    font-size: 102%;
+}
+
+
+#create-model-form td {
+    padding: 4px;
+}
+
 #greeting {
     padding-top: 1em;
     width: 50em;
@@ -175,6 +197,12 @@ legend{display:none;}
 .ttl .text{float:left;font-size:14px;font-weight:bold;padding-left:13px;}
 .ttl .text a{color:#000;}
 .ttl .tp{float:right;font-size:12px;padding-right:10px;}
+
+.ttl2{line-height:31px;height:31px;background:#fff;margin-top:20px;}
+.ttl2 .text{float:left;font-size:14px;font-weight:bold;padding-left:13px;}
+.ttl2 .text a{color:#000;}
+.ttl2 .tp{float:right;font-size:12px;padding-right:10px;}
+
 .listcon{width:924px;margin:5px;}
 .listcon li{float:none;line-height:27px;text-align:left;padding-left:20px;font-size:14px;}
 

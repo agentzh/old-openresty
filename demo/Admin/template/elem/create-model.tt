@@ -1,0 +1,28 @@
+[% DEFAULT
+    fields = [ 'Name', 'Description' ];
+%]
+<div class="ttl2">
+    <span class="text">
+        New model
+    </span>
+</div>
+
+<form id="create-model-form">
+    <table>
+        [%- FOREACH field = fields %]
+        <tr>
+            <td>
+                [% field %]
+            </td>
+            <td>
+                <input json_path="[% field | lower %]" type="text"></input>
+            </td>
+        </tr>
+        [%- END %]
+        <tr>
+            <td>&nbsp;</td>
+            <td><input type="submit" class="create-button" value="Create" onclick="alert('Sorry, not implemented yet :P');return false;"></input></td>
+        </tr>
+    </table>
+</form>
+

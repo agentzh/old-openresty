@@ -60,6 +60,10 @@
         <div class="clearit"></div>
     </div>
     <!-- block end -->
+[%- END %]
 
+[%- IF category == 'model' %]
+    [%- file = 'create-' _ category _ '.tt' %]
+    [%- PROCESS $file %]
 [%- END %]
 
