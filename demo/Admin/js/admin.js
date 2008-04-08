@@ -177,6 +177,9 @@ function renderVersionInfo (res) {
 }
 
 function deleteModelColumn (model, column, nextPage) {
+    if (!confirm("Are you sure to delete column " + column +
+                " from model " + model + "?"))
+        return;
     setStatus(true, 'deleteModelColumn');
     openresty.callback = function (res) {
         afterDeleteModelColumn(res, model, column, nextPage);
@@ -186,18 +189,12 @@ function deleteModelColumn (model, column, nextPage) {
 
 function afterDeleteModelColumn (res, model, column, nextPage) {
     setStatus(false, 'deleteModelColumn');
-    if (!confirm("Are you sure to delete column " + column +
-                " from model " + model + "?"))
-        return;
     if (!openresty.isSuccess(res)) {
         error("Failed to delete column " + column + " from model " +
                 model + ": " + res.error);
         return;
     }
-    if (!nextPage) nextPage = savedAnchor;
-    if (nextPage == savedAnchor) savedAnchor = null;
-    location.hash = nextPage;
-    dispatchByAnchor();
+    gotoNextPage(nextPage);
 }
 
 function deleteModelRow (model, id, nextPage) {
@@ -209,15 +206,40 @@ function deleteModelRow (model, id, nextPage) {
 }
 
 function afterDeleteModelRow (res, model, id, nextPage) {
-    setStatus(false, 'deleteModelRow');
     if (!confirm("Are you sure to delete row with ID " + id +
                 " from model " + model + "?"))
         return;
+    setStatus(false, 'deleteModelRow');
     if (!openresty.isSuccess(res)) {
         error("Failed to delete row with ID " + id + " from model " +
                 model + ": " + res.error);
         return;
     }
+    gotoNextPage(nextPage);
+}
+
+function deleteRoleRule (role, id, nextPage) {
+    setStatus(true, 'deleteRoleRule');
+    openresty.callback = function (res) {
+        afterDeleteRoleRule(res, role, id, nextPage);
+    };
+    openresty.del("/=/role/" + role + "/id/" + id);
+}
+
+function afterDeleteRoleRule (res, role, id, nextPage) {
+    if (!confirm("Are you sure to delete ACL rule with ID " + id +
+                " from role " + role + "?"))
+        return;
+    setStatus(false, 'deleteRoleRule');
+    if (!openresty.isSuccess(res)) {
+        error("Failed to delete ACL rule with ID " + id + " from role " +
+                role + ": " + res.error);
+        return;
+    }
+    gotoNextPage(nextPage);
+}
+
+function gotoNextPage (nextPage) {
     if (!nextPage) nextPage = savedAnchor;
     if (nextPage == savedAnchor) savedAnchor = null;
     location.hash = nextPage;
