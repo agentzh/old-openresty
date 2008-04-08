@@ -198,6 +198,9 @@ function afterDeleteModelColumn (res, model, column, nextPage) {
 }
 
 function deleteModelRow (model, id, nextPage) {
+    if (!confirm("Are you sure to delete row with ID " + id +
+                " from model " + model + "?"))
+        return;
     setStatus(true, 'deleteModelRow');
     openresty.callback = function (res) {
         afterDeleteModelRow(res, model, id, nextPage);
@@ -206,9 +209,6 @@ function deleteModelRow (model, id, nextPage) {
 }
 
 function afterDeleteModelRow (res, model, id, nextPage) {
-    if (!confirm("Are you sure to delete row with ID " + id +
-                " from model " + model + "?"))
-        return;
     setStatus(false, 'deleteModelRow');
     if (!openresty.isSuccess(res)) {
         error("Failed to delete row with ID " + id + " from model " +
@@ -219,6 +219,9 @@ function afterDeleteModelRow (res, model, id, nextPage) {
 }
 
 function deleteRoleRule (role, id, nextPage) {
+    if (!confirm("Are you sure to delete ACL rule with ID " + id +
+                " from role " + role + "?"))
+        return;
     setStatus(true, 'deleteRoleRule');
     openresty.callback = function (res) {
         afterDeleteRoleRule(res, role, id, nextPage);
@@ -227,9 +230,6 @@ function deleteRoleRule (role, id, nextPage) {
 }
 
 function afterDeleteRoleRule (res, role, id, nextPage) {
-    if (!confirm("Are you sure to delete ACL rule with ID " + id +
-                " from role " + role + "?"))
-        return;
     setStatus(false, 'deleteRoleRule');
     if (!openresty.isSuccess(res)) {
         error("Failed to delete ACL rule with ID " + id + " from role " +
