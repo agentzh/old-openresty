@@ -33,6 +33,7 @@ if ($cmd ne 'small' and $cmd ne 'big') {
 my $resty = WWW::OpenResty::Simple->new( { server => $server } );
 $resty->login($user, $password);
 $resty->delete("/=/role/Public/~/~");
+$resty->delete("/=/role");
 $resty->delete("/=/view");
 
 if ($resty->has_model('Post')) {
@@ -159,6 +160,11 @@ $resty->post(
         { method => "POST", url => '/=/model/Comment/~/~' },
         { method => "PUT", url => '/=/model/Post/id/~' },
     ]
+);
+
+$resty->post(
+    '/=/role/Poster',
+    { description => "Role for comment posters", login => 'captcha' }
 );
 
 ################################################
