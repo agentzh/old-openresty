@@ -200,3 +200,27 @@ function afterDeleteModelColumn (res, model, column, nextPage) {
     dispatchByAnchor();
 }
 
+function deleteModelRow (model, id, nextPage) {
+    setStatus(true, 'deleteModelRow');
+    openresty.callback = function (res) {
+        afterDeleteModelRow(res, model, id, nextPage);
+    };
+    openresty.del("/=/model/" + model + "/id/" + id);
+}
+
+function afterDeleteModelRow (res, model, id, nextPage) {
+    setStatus(false, 'deleteModelRow');
+    if (!confirm("Are you sure to delete row with ID " + id +
+                " from model " + model + "?"))
+        return;
+    if (!openresty.isSuccess(res)) {
+        error("Failed to delete row with ID " + id + " from model " +
+                model + ": " + res.error);
+        return;
+    }
+    if (!nextPage) nextPage = savedAnchor;
+    if (nextPage == savedAnchor) savedAnchor = null;
+    location.hash = nextPage;
+    dispatchByAnchor();
+}
+
