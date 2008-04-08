@@ -61,6 +61,7 @@
                     NEXT IF !value AND value != 0 %]
                 <b class="key">[%- key | html %]</b>: [% value | html %] &nbsp;&nbsp;
               [%- END %]
+                <b><a class="show-detail" href="javascript:void(0);" onclick="deleteModelColumn('[% model.name %]', '[% column.name %]')">Delete</a></b>
                 </li>
             [%- END %]
             </ul>

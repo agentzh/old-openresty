@@ -5,9 +5,9 @@ all:
 	jemplate --compile template/elem/ > out/jemplates.js
 	jemplate --runtime > out/Jemplate.js
 	tpage --include_path=template template/index.tt > out/index.html
-	tpage --define cat=Model template/js/handlers.tt > out/model.js
-	tpage --define cat=View template/js/handlers.tt > out/view.js
-	tpage --define cat=Role template/js/handlers.tt > out/role.js
+	tpage --define cat=model template/js/handlers.tt > out/model.js
+	tpage --define cat=view template/js/handlers.tt > out/view.js
+	tpage --define cat=role template/js/handlers.tt > out/role.js
 	tpage template/js/dispatcher.tt > out/dispatcher.js
 	cp html/login.html out/
 	cp ../Blog/image/loading.gif out/

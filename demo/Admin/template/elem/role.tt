@@ -48,6 +48,9 @@
     <ul>
         <li>
             <b><a id="show-detail" href="#rolerules-[% role.name %]" class="text">View ACL rules</a></b>
+            &nbsp; &nbsp; &nbsp;
+            <b><a href="javascript:void(0);" onclick="deleteRole('[% role.name %]', 'roles')">Delete this role</a></b>
+
         </li>
     </ul>
 

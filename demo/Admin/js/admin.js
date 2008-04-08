@@ -176,18 +176,22 @@ function renderVersionInfo (res) {
     $("#copyright").html(res);
 }
 
-function deleteModel (model, nextPage) {
-    if (!confirm("Are you sure to delete model " + model + "?"))
-        return;
+function deleteModelColumn (model, column, nextPage) {
+    setStatus(true, 'deleteModelColumn');
     openresty.callback = function (res) {
-        afterDeleteModel(res, model, nextPage);
+        afterDeleteModelColumn(res, model, column, nextPage);
     };
-    openresty.del('/=/model/' + model);
+    openresty.del("/=/model/" + model + "/" + column);
 }
 
-function afterDeleteModel (res, model, nextPage) {
+function afterDeleteModelColumn (res, model, column, nextPage) {
+    setStatus(false, 'deleteModelColumn');
+    if (!confirm("Are you sure to delete column " + column +
+                " from model " + model + "?"))
+        return;
     if (!openresty.isSuccess(res)) {
-        error("Failed to delete model: " + model);
+        error("Failed to delete column " + column + " from model " +
+                model + ": " + res.error);
         return;
     }
     if (!nextPage) nextPage = savedAnchor;
