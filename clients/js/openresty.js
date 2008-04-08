@@ -49,9 +49,7 @@ OpenResty.Client.prototype.postByGet = function (url) {
     }
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/post/');
-    if (typeof(content) == 'object') {
-        content = JSON.stringify(content);
-    }
+    content = JSON.stringify(content);
     //alert("type of content: " + typeof(content));
     //alert("content: " + content);
     args.data = content;
