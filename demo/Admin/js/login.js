@@ -1,15 +1,28 @@
 var sessionCookie = 'admin_session';
 var serverCookie = 'admin_server';
+var userCookie    = 'admin_user';
+
+var savedAnchor = null;
 var openresty = null;
 
 $(document).ready(init);
 
 function init () {
+    var anchor = location.hash;
+    anchor = anchor.replace(/^\#/, '');
+    if (anchor) savedAnchor = anchor;
     //alert("HERE!");
     $("#register-link").click( function () {
         alert('For now, please write to "agentzh" <agentzh@yahoo.cn> to request one :)');
     } );
     $("#login-button").click(login);
+}
+
+function gotoMainPage () {
+    if (savedAnchor)
+        location = "index.html#" + savedAnchor;
+    else
+        location = "index.html";
 }
 
 function error (msg) {
@@ -47,7 +60,8 @@ function afterLogin (res) {
     }
     $.cookie(sessionCookie, res.session, { path: '/', expires: 2 /* days */ });
     $.cookie(serverCookie, openresty.server, { path: '/', expires: 2 /* days */ });
+    $.cookie(userCookie, openresty.user, { path: '/', expires: 2 /* days */ });
     //alert("saved cookie: " + $.cookie(cookieName));
-    location = 'index.html';
+    gotoMainPage();
 }
 

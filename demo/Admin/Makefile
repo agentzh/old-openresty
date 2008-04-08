@@ -18,3 +18,6 @@ all:
 	gzip --best site-binary.tar
 	mv site-binary.tar.gz out/
 
+upload:
+	scp -l 10000 -r `pwd`/out agentz@resty.eeeeworks.org:~/admin
+
