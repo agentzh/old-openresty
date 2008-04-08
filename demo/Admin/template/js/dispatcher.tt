@@ -50,6 +50,6 @@ function dispatchByAnchor () {
     }
 
     // fallback
-    alert("Not implemented :(");
+    alert("Sorry, not implemented yet :P");
 }
 

@@ -43,14 +43,14 @@
                 <b>Description</b>: [% object.description | html %]
             </li>
             <li>
-                <a href="#[% category %]-[% object.name %]" title="[% object.description | html %]">More detail</a>
+                <b><a href="#[% category %]-[% object.name %]" title="[% object.description | html %]">More detail</a></b>
                 &nbsp; &nbsp; &nbsp;
 
                 [%- IF category == 'model' %]
-                <a href="#modelrows-[% object.name %]">View model rows</a>
+                <b><a href="#modelrows-[% object.name %]">View model rows</a></b>
                 &nbsp; &nbsp; &nbsp;
                 [%- ELSIF category == 'role' %]
-                <a href="#rolerules-[% object.name %]">View ACL rules</a>
+                <b><a href="#rolerules-[% object.name %]">View ACL rules</a></b>
                 &nbsp; &nbsp; &nbsp;
                 [%- END %]
 
