@@ -45,9 +45,12 @@ function init () {
     //alert("server: " + server);
     //alert("session: " + session);
     if (!server || !session || !user) {
-        //server = 'resty.eeeeworks.org';
-        //session = 'ABC-EF32-4B';
-        location = 'login.html';
+        var anchor = location.hash;
+        anchor = anchor.replace(/^\#/, '');
+        if (anchor) savedAnchor = anchor;
+
+        gotoLoginPage();
+        return;
     }
     var serverHost = server.replace(/^\w+:\/\//, '');
     var userAtHost = user + "@" + serverHost;
@@ -101,6 +104,7 @@ function renderPager (res, page, prefix) {
         { page: page, page_count: pageCount, prefix: prefix }
     );
     //alert("HTML: " + html);
+    // we use the .each hack here to work aound a JS runtime error in IE 6:
     $(".pager").each( function () {
         $(this).html(html);
     } ).postprocess();
