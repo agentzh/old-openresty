@@ -37,10 +37,18 @@
 
     <div class="listcon">
         <ul>
-            <li><b>Name</b>: [% object.name | html %]</li>
-            <li><b>Description</b>: [% object.description | html %]</li>
-        </ul>
-
+            <li>
+                <b>Name</b>: [% object.name | html %]
+                &nbsp; &nbsp; &nbsp;
+                <b>Description</b>: [% object.description | html %]
+            </li>
+            <li>
+                <a href="#[% category %]-[% object.name %]" title="[% object.description | html %]">More detail...</a>
+                &nbsp; &nbsp; &nbsp;
+                <a href="#modelrows-[% model.name %]">View model rows</a>
+                &nbsp; &nbsp; &nbsp;
+                <b><a href="javascript:void(0);" onclick="deleteModel('[% model.name %]')">Delete this model</a></b>
+            </li>
         </ul>
         <div class="clearit"></div>
     </div>
