@@ -66,8 +66,6 @@ while (<>) {
         @rows = ();
         print STDERR "\rInserted rows: $inserted";
     }
-
-    $inserted++;
 }
 
 if (@rows) {
