@@ -246,3 +246,9 @@ function gotoNextPage (nextPage) {
     dispatchByAnchor();
 }
 
+function addOneMoreColumn () {
+    $("#create-model-columns").append(
+        "<tr><td>" + Jemplate.process('column-inputs.tt') + "</tr></td>"
+    );
+}
+

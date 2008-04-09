@@ -8,6 +8,7 @@ use lib 'lib';
 use Params::Util qw( _HASH );
 use JSON::XS ();
 use WWW::OpenResty::Simple;
+use Data::Dumper;
 
 sub usage {
     my $progname;
@@ -79,7 +80,10 @@ sub insert_rows {
         "/=/model/$model/~/~",
         $rows
     );
-    return 0 unless _HASH($res);
+    if (!_HASH($res)) {
+        die Dumper($res);
+        return 0;
+    }
     return $res->{rows_affected} || 0;
 }
 

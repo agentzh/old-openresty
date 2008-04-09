@@ -8,7 +8,7 @@
 </div>
 
 <form id="create-model-form">
-    <table>
+    <table class="create-model">
         [%- FOREACH field = fields %]
         <tr>
             <td>
@@ -19,6 +19,10 @@
             </td>
         </tr>
         [%- END %]
+        <div id="create-model-columns"></div>
+        <tr class="add-column">
+            <td><a href="javascript:void(0);" onclick="addOneMoreColumn()">Add a column</a></td>
+        </tr>
         <tr>
             <td>&nbsp;</td>
             <td><input type="submit" class="create-button" value="Create" onclick="alert('Sorry, not implemented yet :P');return false;"></input></td>
