@@ -167,6 +167,7 @@ MANIFEST.SKIP
 META.yml
 README
 revision
+t/TODO
 t/01-sanity.t
 t/02-carrie.t
 t/02-chuanwen.t
