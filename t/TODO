@@ -1,0 +1,3 @@
+* /=/model.json?var=foo
+* /=/model/Foo/~/blah?op=contains (when Foo has a timestamp column)
+
