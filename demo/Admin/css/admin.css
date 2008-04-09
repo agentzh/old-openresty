@@ -1,9 +1,13 @@
-#create-model-form table {
+table.create-model {
     background: #eef;
-    padding: 1em;
+    padding: 10px;
     padding-left: 2em;
     padding-right: 2em;
     text-align: left;
+}
+
+.create-model td {
+    padding: 4px;
 }
 
 input.create-button {
@@ -13,11 +17,6 @@ input.create-button {
     float: right;
     font-weight: bold;
     font-size: 102%;
-}
-
-
-#create-model-form td {
-    padding: 4px;
 }
 
 #greeting {
