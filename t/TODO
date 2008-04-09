@@ -1,3 +1,5 @@
 * /=/model.json?var=foo
 * /=/model/Foo/~/blah?op=contains (when Foo has a timestamp column)
+* t/p3p-cookie.t for cross-site cookie support and the cookie_site url param
+
 
