@@ -1,4 +1,14 @@
-table.create-model {
+div.column-input {
+    margin-left: 2em;
+}
+
+input.column-input {
+    margin-left: 4px;
+    margin-right: 4px;
+    margin: 4px;
+}
+
+.create-model {
     background: #eef;
     padding: 10px;
     padding-left: 2em;
@@ -6,15 +16,25 @@ table.create-model {
     text-align: left;
 }
 
-.create-model td {
-    padding: 4px;
+.create-model-columns {
+    text-align: left;
 }
+
+.create-model p {
+    padding: 5px;
+    text-align: left;
+}
+
+.create-model label {
+    padding: 5px;
+    text-align: left;
+}
+
 
 input.create-button {
     margin-top: 4px;
-    padding: 2px;
-    margin-right: 1em;
-    float: right;
+    padding: 4px;
+    margin-left: 5em;
     font-weight: bold;
     font-size: 102%;
 }

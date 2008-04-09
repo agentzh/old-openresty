@@ -1,32 +1,29 @@
-[% DEFAULT
-    fields = [ 'Name', 'Description' ];
-%]
 <div class="ttl2">
     <span class="text">
         New model
     </span>
 </div>
 
+<div class="create-model">
 <form id="create-model-form">
-    <table class="create-model">
-        [%- FOREACH field = fields %]
-        <tr>
-            <td>
-                [% field %]
-            </td>
-            <td>
-                <input json_path="[% field | lower %]" type="text"></input>
-            </td>
-        </tr>
-        [%- END %]
+
+        <p>
+            <label>Name</label>
+            <input type="text" size="8" id="create-model-name"></input>
+        </p>
+        <p>
+            <label>Description</label>
+            <input type="text" size="18" id="create-model-desc"></input>
+        </p>
+
         <div id="create-model-columns"></div>
-        <tr class="add-column">
-            <td><a href="javascript:void(0);" onclick="addOneMoreColumn()">Add a column</a></td>
-        </tr>
-        <tr>
-            <td>&nbsp;</td>
-            <td><input type="submit" class="create-button" value="Create" onclick="alert('Sorry, not implemented yet :P');return false;"></input></td>
-        </tr>
-    </table>
+        <p class="add-column">
+            <a href="javascript:void(0);" onclick="addOneMoreColumn()">Add a column</a>
+        </p>
+        <p>
+            <input type="submit" class="create-button" value="Create" onclick="alert('Sorry, not implemented yet :P');return false;"></input>
+        </p>
+
 </form>
+</div>
 
