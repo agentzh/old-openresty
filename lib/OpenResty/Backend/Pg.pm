@@ -59,26 +59,44 @@ sub select {
     my ($self, $sql, $opts) = @_;
     $opts ||= {};
     my $dbh = $self->{dbh};
-    my $res = $dbh->selectall_arrayref(
-        $sql,
-        $opts->{use_hash} ? {Slice=>{}} : ()
-    );
     if ($Recording) {
+        my $res;
+        eval {
+            $res = $dbh->selectall_arrayref(
+                $sql,
+                $opts->{use_hash} ? {Slice=>{}} : ()
+            );
+        };
+        if ($@) {
+            my $err = $@;
+            OpenResty::Backend::PgMocked->record($sql => bless \$err, 'die');
+            die $err;
+        }
         OpenResty::Backend::PgMocked->record($sql => $res);
+        return $res;
+    } else {
+        return $dbh->selectall_arrayref(
+            $sql,
+            $opts->{use_hash} ? {Slice=>{}} : ()
+        );
     }
-
-    ### $res
-    ## SELECT RES: $OpenResty::Dumper->($res)
-    return $res;
 }
 
 sub do {
     my ($self, $sql) = @_;
-    my $res = $self->{dbh}->do($sql);
     if ($Recording) {
+        my $res;
+        eval { $res = $self->{dbh}->do($sql); };
         OpenResty::Backend::PgMocked->record($sql => $res);
+        if ($@) {
+            my $err = $@;
+            OpenResty::Backend::PgMocked->record($sql => $err => 'die');
+            die $err;
+        }
+        return $res;
+    } else {
+        return $self->{dbh}->do($sql);
     }
-    return $res;
 
 }
 

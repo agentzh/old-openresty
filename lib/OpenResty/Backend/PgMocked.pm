@@ -57,8 +57,9 @@ sub start_recording_file {
 }
 
 sub record {
-    my ($class, $query, $res) = @_;
-    push @$TransList, ["$query", $res];
+    my ($class, $query, $res, $type) = @_;
+    $type ||= 'data';
+    push @$TransList, ["$query", $res, $type];
 }
 
 sub stop_recording_file {
@@ -83,6 +84,8 @@ sub play {
     my ($class, $query) = @_;
     ### playing...
     my $cur = shift @$TransList;
+    #warn "SQL: $cur->[0]";
+    #if ($cur->[0] =~ /select2/) { warn "!!!!!!!! $cur >>>>$query<<<<<" }
     if (!$cur) {
         die "No more expected response for query $query";
     }
@@ -96,12 +99,17 @@ sub play {
     #$query =~ s/'3\.14'/'3.14000000000000012'/;
     $query =~ s/'3\.1415[89]{4,}\d*'/'3.14159'/;
     $query =~ s/'3\.140{4,}\d*'/'3.14'/;
+    my $res = $cur->[1];
+    my $type = $cur->[-1];
+    if ($type eq 'die') {
+        die $res;
+    }
     if ($cur->[0] ne $query) {
         #is_string($cur->[0], $query);
         die "Unexpected query: ", $OpenResty::Dumper->($query) .
             " (Expecting: ", $OpenResty::Dumper->($cur->[0]), ")\n";
     }
-    return $cur->[1];
+    return $res;
 }
 
 sub new {
