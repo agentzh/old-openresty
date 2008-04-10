@@ -196,12 +196,12 @@ t/22-version.t
 t/23-sanity-callback.t
 t/24-session.t
 t/26-types.t
+t/27-transaction.t
 t/99-pod-coverage.t
 t/99-pod.t
 t/OpenResty.pm
 t/pg-farm/01-sanity.t
 t/pg-farm/02-user-dist.t
-t/pg-farm/03-transaction.t
 t/pg/sanity.t
 t/pgmock-data/01-sanity.t.json
 t/pgmock-data/02-carrie.t.json
@@ -228,6 +228,7 @@ t/pgmock-data/23-sanity-callback.t.json
 t/pgmock-data/24-session.t.json
 t/pgmock-data/25-filter.t.json
 t/pgmock-data/26-types.t.json
+t/pgmock-data/27-transaction.t.json
 t/pgmock-data/sanity.t.json
 TODO
 

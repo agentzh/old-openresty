@@ -1,0 +1,15 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use JSON::XS ();
+use YAML::Syck ();
+
+my $json_xs = JSON::XS->new->utf8->pretty;
+my $infile = shift or die "No input file specified.\n";
+open my $in, $infile or die "Cannot open input file $infile for reading: $!";
+my $json = do { local $/; <$in> };
+my $data = $json_xs->decode($json);
+print $json_xs->encode($data);
+

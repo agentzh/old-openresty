@@ -110,6 +110,7 @@ sub has_user {
         $retval = $self->do("$select");
     };
     if ($@) { warn $@; }
+    no warnings 'uninitialized';
     return $retval + 0;
 }
 
