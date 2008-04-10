@@ -38,12 +38,14 @@ POST /=/model/Foo
 {"success":1}
 
 
+
 === TEST 4: Insert various records
 --- request
 POST /=/model/Foo/~/~
 [{"name":"Marry","age":17},{"name":"Bob","age":"invalid"}]
 --- response_like
 {"success":0,"error":
+
 
 
 === TEST 5: Check if the first record has been inserted
