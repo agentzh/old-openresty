@@ -3,9 +3,12 @@ package OpenResty::Config;
 use strict;
 use warnings;
 
+#use Smart::Comments;
 use FindBin;
 use Config::Simple;
 use Hash::Merge;
+
+our $Initialized = undef;
 
 sub to_num ($) {
     (my $s = $_[0]) =~ s/_//g;
@@ -13,6 +16,8 @@ sub to_num ($) {
 }
 
 sub init {
+    return if $Initialized;
+    $Initialized = 1;
     my ($class, $root_path) = @_;
     $root_path ||= "$FindBin::Bin/..";
     my $path = "$root_path/etc/openresty.conf";

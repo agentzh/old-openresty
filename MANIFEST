@@ -199,8 +199,9 @@ t/26-types.t
 t/99-pod-coverage.t
 t/99-pod.t
 t/OpenResty.pm
-t/pg-farm/sanity.t
-t/pg-farm/user-dist.t
+t/pg-farm/01-sanity.t
+t/pg-farm/02-user-dist.t
+t/pg-farm/03-transaction.t
 t/pg/sanity.t
 t/pgmock-data/01-sanity.t.json
 t/pgmock-data/02-carrie.t.json

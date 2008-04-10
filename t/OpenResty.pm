@@ -10,7 +10,7 @@ use JSON::XS ();
 my $client_module;
 use OpenResty::Config;
 BEGIN {
-    OpenResty::Config->init;
+    OpenResty::Config->init('.');
     my $use_http = $OpenResty::Config{'test_suite.use_http'};
     if ($use_http) {
         $client_module = 'WWW::OpenResty';
@@ -33,7 +33,7 @@ eval {
 my $SavedCapture;
 
 our $server = $ENV{'OPENRESTY_TEST_SERVER'} ||
-    $OpenResty::Config{'test_suite.server'} or
+    $OpenResty::Config{'test_suite.server'} ||
     die "No server specified.\n";
 our ($user, $password, $host);
 if ($server =~ /^(\w+):(\S+)\@(\S+)$/) {
