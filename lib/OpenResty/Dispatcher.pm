@@ -56,7 +56,7 @@ sub init {
 
     if (my $filtered = $OpenResty::Config{'frontend.filtered'}) {
         #warn "HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
-        use lib "$FindBin::Bin/../../../openresty-filter-qp/trunk/lib";
+        #use lib "$FindBin::Bin/../../../openresty-filter-qp/trunk/lib";
         require OpenResty::Filter::QP;
         my @accounts = split /\s+/, $filtered;
         for my $account (@accounts) {

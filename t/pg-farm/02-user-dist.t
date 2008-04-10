@@ -16,7 +16,6 @@ BEGIN {
 use Test::More $reason ? (skip_all => $reason) : 'no_plan';
 
 use OpenResty::Backend::PgFarm;
-use OpenResty::Config;
 
 use Data::Dumper;
 use subs 'dump';
