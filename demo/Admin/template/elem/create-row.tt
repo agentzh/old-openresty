@@ -1,0 +1,26 @@
+[%# DEFAULT
+    model = {
+        name => "Foo",
+        columns => [
+            { name => 'name', type => 'text' }
+        ]
+    }
+%]
+<div class="ttl2">
+    <span class="text">
+        New model row
+    </span>
+</div>
+<div class="create-model">
+<form id="create-row-form" onsubmit="return false;">
+    [%- FOREACH col = model.columns %]
+        [%- NEXT IF col.name == 'id' %]
+        <label>[% col.name %]</label>
+        <input type="text" size="10" class="row-input" resty_key="[% col.name %]"></input>
+    [%- END %]
+    <p>
+        <input type="submit" class="create-button" value="Create" onclick="createModelRow('[% model.name %]')"></input>
+    </p>
+</form>
+</div>
+

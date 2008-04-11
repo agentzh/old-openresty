@@ -34,3 +34,7 @@
 
 <div class="pager"></div>
 
+<p style="text-align: left; margin-left: 6em;" id="new-row">
+<b><a href="javascript:void(0);" title="Create a new record" onclick="getModelRowForm('[% model %]')">Add a new row</a></b>
+</p>
+

@@ -12,7 +12,7 @@ var savedAnchor = null;
 $(document).ready(init);
 
 function debug (msg) {
-    $("#footer").append(msg + "<br/>");
+    $("#copyright").append(msg + "<br/>");
 }
 
 function gotoLoginPage () {
@@ -426,6 +426,71 @@ function afterCreateACLRule (res) {
         error("Failed to create ACL rule: " + res.error);
     } else {
         gotoNextPage();
+    }
+}
+
+function getModelRowForm (model) {
+    setStatus(true, 'getModelRowForm');
+    openresty.callback = renderModelRowForm;
+    openresty.get('/=/model/' + model);
+}
+
+function renderModelRowForm (res) {
+    setStatus(false, 'getModelRowForm');
+    if (openresty.isSuccess(res)) {
+        $("#new-row").html(
+            Jemplate.process(
+                'create-row.tt',
+                { model: res }
+            )
+        );
+    } else {
+        error("Failed to get model info: " + res.error);
+    }
+}
+
+function getRowSpec () {
+    //alert("HERE!");
+    var col = {};
+    var found = false;
+    //debug(div);
+    var container = document.getElementById('create-row-form');
+    if (!container) { error("No create row form found"); return }
+    $(".row-input", container).each( function () {
+        var key = $(this).attr('resty_key');
+        //debug("Key: " + key);
+        var val = $(this).val();
+        //debug("Value: " + val);
+        if (!key) return;
+        if (val != '') {
+            col[key] = val;
+            found = true;
+        }
+    } );
+    return found ? col : null;
+}
+
+function createModelRow (model) {
+    var data = getRowSpec();
+    if (!data) {
+        error("Cannot create empty row.");
+        return false;
+    }
+    setStatus(true, 'createModelRow');
+    openresty.callback = afterCreateModelRow;
+    openresty.postByGet(
+        '/=/model/' + model + '/~/~',
+        data
+    );
+    return false;
+}
+
+function afterCreateModelRow (res) {
+    setStatus(false, 'createModelRow');
+    if (openresty.isSuccess(res)) {
+        gotoNextPage();
+    } else {
+        error("Failed to create the row: " + res.error);
     }
 }
 
