@@ -36,6 +36,11 @@
 
 <div class="pager"></div>
 
+<div class="ttl2">
+    <span class="text">
+        New ACL rule
+    </span>
+</div>
 <div class="create-model">
 <form id="create-rule-form" onsubmit="return false;">
     <p>
