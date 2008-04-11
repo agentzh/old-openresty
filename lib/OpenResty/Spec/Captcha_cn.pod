@@ -1,0 +1,54 @@
+=encoding UTF-8
+
+=head1 NAME
+
+OpenResty::Spec::Captcha_cn - Captcha 图片生成和验证
+
+=head1 AUTHOR
+
+chaoslawful (王晓哲) <chaoslawful@gmail.com>
+
+=head1 VERSION
+
+    CREATED:       Apr 11, 2007
+    LAST MODIFIED: Apr 11, 2007
+    VERSION:       0.01
+
+=head1 DESCRIPTION
+
+本文描述了 OpenResty 系统中 Captcha 图片生成和验证过程及相关算法，以便在 Captcha 模块重构过程中作为依据。
+
+=head1 THE OLD WAY
+
+=head2 WORKFLOWS
+
+OpenResty 系统中原有的 Captcha 图片生成基于 C<GD::SecurityImage> 模块，可以做出英文或中文 Captcha 图片 (中文字体使用文泉驿 TTF 字体)。
+
+当前端请求生成一个 Captcha id 时， C<Handler::Captcha> 模块生成一个 UUID 记录在缓存系统中，设定过期时间为 2 小时，然后将其作为 Captcha 图片唯一标识返回；在前端用 Captcha id 请求图片内容时， C<Handler::Captcha> 模块会检查该 id 是否存在于缓存系统中。若 id 已存在，则表示该 Captcha 请求是在 2 小时时间窗口内生成的有效请求，模块将根据请求参数中设定的语言类型随机生成英文 (默认) 或中文的验证字并输出对应的图片内容，验证字随后在缓存系统中同该 id 关联起来，以备验证之用；若 id 不存在，则该 Captcha 请求可能是过期或根本没有生成过的请求，模块将拒绝继续服务。
+
+当前端给出一个 id 和用户给出的对应解，请求验证 Captcha 时， C<Handler::Login> 模块会从缓存系统中查找该 id 对应的内容，若该 id 不存在、不对应有效验证字或给出的解同保存的验证字不相符，则认为用户没有通过 Captcha 验证，拒绝继续服务；否则就认为用户通过了 Captcha 验证，将该 id 对应的信息从系统缓存中移除后继续进行其他验证过程。
+
+=head2 DRAWBACKS
+
+=over
+
+=item *
+
+在 2 小时内生成的每个 Captcha id 都必须记录在系统缓存中。当访问量较大，系统缓存不足以容纳这一时间窗口内所有的 Captcha 信息时，基于 LRU 的缓存策略可能有某些较早生成却还没来得及进行验证的 Captcha id 被换出缓存丢弃，这样使用该 id 对应图片的用户就无法通过验证或更换 Captcha 图片，只有重新开始登录过程，影响了用户体验。系统缓存越小，这一问题表现越明显；
+
+=item *
+
+有极小的概率 (1/2**128 ，即 UUID 的冲突概率) 可能出现两个独立的 Captcha 请求获得的却是相同的 id ，这样会产生不可预料的 Captcha 验证结果，迫使用户重新开始登录过程，影响了用户体验。
+
+=back
+
+=head1 THE RECONSTRUCTED WAY
+
+重构后的 Captcha id 生成和验证过程类似于 Yahoo! Captcha ，图片生成部分维持不变，将 Captcha 验证接口也集成在 C<Handler::Captcha> 模块里，以便将 Captcha 功能相关接口维持在同一个地方。
+
+=head2 WORKFLOWS
+
+当前端请求生成一个 Captcha 时，将真实的 Captcha 验证字、最短有效时刻、最长有效时刻和随机数拼接起来，使用对称加密算法加密后作为 Captcha id；
+
+=head2 SPECIFICATIONS
+
