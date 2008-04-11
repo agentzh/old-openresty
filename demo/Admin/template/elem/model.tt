@@ -53,7 +53,7 @@
         <li><b class="key">Name</b>: [% model.name | html %]</li>
         <li><b class="key">Description</b>: [% model.description | html %]</li>
         <li><b class="key">Columns</b>:
-            <ul>
+            <ul id="create-column">
             [%- FOREACH column IN model.columns %]
                 <li>
               [%- FOREACH key IN column.keys %]
@@ -64,6 +64,9 @@
                 <b><a class="show-detail" href="javascript:void(0);" onclick="deleteModelColumn('[% model.name %]', '[% column.name %]')">Delete</a></b>
                 </li>
             [%- END %]
+                <li class="add-col">
+                <a class="add-col-link" href="javascript:void(0);" onclick="addNewColumn('[% model.name %]')">Add a new column</a>
+                </li>
             </ul>
         </li>
     </ul>
