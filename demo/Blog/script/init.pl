@@ -49,7 +49,7 @@ if ($resty->has_model('Post')) {
                 { name => 'content', label => 'Post content' },
                 { name => 'author', label => 'Post author' },
                 { name => 'created', default => ['now()'], type => 'timestamp(0) with time zone', label => 'Post creation time' },
-                { name => 'comments', label => 'Number of comments', default => 0 },
+                { name => 'comments', label => 'Number of comments', type => "integer", default => 0 },
             ],
         }
     );
