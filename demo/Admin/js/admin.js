@@ -246,9 +246,47 @@ function gotoNextPage (nextPage) {
     dispatchByAnchor();
 }
 
+function addNewColumn (model) {
+    $("li.add-col").html(
+        '<form>' + Jemplate.process('column-inputs.tt') + '<input class="column-create-button" type="submit" value="Create" onclick="createColumn(\'' + model + '\')"></input></form>'
+    );
+}
+
+function createColumn (model) {
+    //alert("Creating column .column-inputsfor model " + model);
+    var data;
+    try {
+        data = getColumnSpec(document);
+    } catch (e) {
+        error(e);
+        return false;
+    }
+    if (data == null) {
+        error("Column spec is empty.");
+        return false;
+    }
+    //alert("Col json: " + JSON.stringify(data));
+    setStatus(true, "createColumn");
+    openresty.callback = afterCreateColumn;
+    openresty.postByGet(
+        '/=/model/' + model + "/~",
+        data
+    );
+    return false;
+}
+
+function afterCreateColumn (res) {
+    setStatus(false, "createColumn");
+    if (!openresty.isSuccess(res)) {
+        error("Failed to add a new column: " + res.error);
+        return;
+    }
+    gotoNextPage();
+}
+
 function addOneMoreColumn () {
     $("#create-model-columns").append(
-        "<tr><td>" + Jemplate.process('column-inputs.tt') + "</tr></td>"
+        '<tr><td><span class="column-inputs">' + Jemplate.process('column-inputs.tt') + "</span></td></tr>"
     );
 }
 
@@ -294,15 +332,16 @@ function afterCreateModel (res) {
     gotoNextPage();
 }
 
-function getColumnSpec (div) {
+function getColumnSpec (container) {
     //alert("HERE!");
     var col = {};
     var found = false;
     //debug(div);
-    $("input.column-input", div).each( function () {
+    $("input.column-input", container).each( function () {
         var key = $(this).attr('resty_key');
         //debug("Key: " + key);
         var val = $(this).val();
+        if (!key) return;
         if (key == 'default' && val) {
             var res = JSON.parse(val);
             if (res == false && val != 'false') {

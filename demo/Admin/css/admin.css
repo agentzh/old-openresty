@@ -1,8 +1,12 @@
+li.add-col label {
+    font-size: 11pt;
+}
+
 p.add-column {
     margin-left: 2em;
 }
 
-div.column-inputs {
+span.column-inputs {
     margin-left: 2em;
 }
 
@@ -40,6 +44,9 @@ input.create-button {
     margin-left: 15em;
     font-weight: bold;
     font-size: 102%;
+}
+
+input.column-create-button {
 }
 
 #greeting {
@@ -225,7 +232,7 @@ legend{display:none;}
 .ttl2 .text a{color:#000;}
 .ttl2 .tp{float:right;font-size:12px;padding-right:10px;}
 
-.listcon{width:924px;margin:5px;}
+.listcon{width:1224px;margin:5px;}
 .listcon li{float:none;line-height:27px;text-align:left;padding-left:20px;font-size:14px;}
 
 #YahooCity{color:#666666;position:relative;z-index:100;}
