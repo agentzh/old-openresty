@@ -408,3 +408,24 @@ function afterCreateRole (res) {
     }
 }
 
+function createACLRule (role) {
+    var method = $("#create-rule-method").val();
+    var url = $("#create-rule-url").val();
+    setStatus(true, "createACLRule");
+    openresty.callback = afterCreateACLRule;
+    openresty.postByGet(
+        '/=/role/' + role + '/~/~',
+        { method: method, url: url }
+    );
+    return false;
+}
+
+function afterCreateACLRule (res) {
+    setStatus(false, "createACLRole");
+    if (!openresty.isSuccess(res)) {
+        error("Failed to create ACL rule: " + res.error);
+    } else {
+        gotoNextPage();
+    }
+}
+
