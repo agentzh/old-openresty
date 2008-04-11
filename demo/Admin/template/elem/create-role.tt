@@ -1,0 +1,37 @@
+<div class="ttl2">
+    <span class="text">
+        New role
+    </span>
+</div>
+
+<div class="create-model">
+<form id="create-role-form" onsubmit="return false;">
+
+        <p>
+            <label>Name</label>
+            <input type="text" size="8" id="create-role-name"></input>
+        </p>
+        <p>
+            <label>Description</label>
+            <input type="text" size="18" id="create-role-desc"></input>
+        </p>
+        <p>
+            <label>Login by</label>
+            <select id="create-role-login">
+                <option value ="password">password</option>
+                <option value ="anonymous">anonymous</option>
+                <option value ="captcha">captcha</option>
+            </select>
+        </p>
+        <p>
+            <label>Password</label>
+            <input type="password" size="18" id="create-role-password"></input>
+        </p>
+
+        <p>
+            <input type="submit" class="create-button" value="Create" onclick="createRole()"></input>
+        </p>
+
+</form>
+</div>
+

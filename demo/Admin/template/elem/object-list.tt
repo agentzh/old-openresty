@@ -62,8 +62,6 @@
     <!-- block end -->
 [%- END %]
 
-[%- IF category == 'model' OR category == 'view' %]
-    [%- file = 'create-' _ category _ '.tt' %]
-    [%- PROCESS $file %]
-[%- END %]
+[%- file = 'create-' _ category _ '.tt' %]
+[%- PROCESS $file %]
 
