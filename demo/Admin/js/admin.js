@@ -252,3 +252,69 @@ function addOneMoreColumn () {
     );
 }
 
+function createModel () {
+    var name = $("#create-model-name").val();
+    var desc = $("#create-model-desc").val();
+    var cols = [];
+    var columns = document.getElementById('create-model-columns');
+    if (columns) {
+        try {
+            $(".column-inputs", columns).each( function () {
+                var col = getColumnSpec(this);
+                if (col) cols.push(col);
+            } );
+        } catch (e) {
+            error(e);
+            return false;
+        }
+    } else {
+        error("columns not found!");
+        return false;
+    }
+    var data = {
+        name: name,
+        description: desc,
+        columns: cols
+    };
+    //debug("JSON: " + JSON.stringify(data));
+    //return;
+    openresty.callback = afterCreateModel;
+    openresty.postByGet(
+        '/=/model/~',
+        data
+    );
+    return false;
+}
+
+function afterCreateModel (res) {
+    if (!openresty.isSuccess(res)) {
+        error("Failed to create model: " + res.error);
+        return;
+    }
+    gotoNextPage();
+}
+
+function getColumnSpec (div) {
+    //alert("HERE!");
+    var col = {};
+    var found = false;
+    //debug(div);
+    $("input.column-input", div).each( function () {
+        var key = $(this).attr('resty_key');
+        //debug("Key: " + key);
+        var val = $(this).val();
+        if (key == 'default' && val) {
+            var res = JSON.parse(val);
+            if (res == false && val != 'false') {
+                throw("Invalid JSON for the column's default value: " + val);
+            }
+            val = res;
+        }
+        if (val != '') {
+            col[key] = val;
+            found = true;
+        }
+    } );
+    return found ? col : null;
+}
+

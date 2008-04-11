@@ -21,7 +21,7 @@
             <a href="javascript:void(0);" onclick="addOneMoreColumn()">Add a column</a>
         </p>
         <p>
-            <input type="submit" class="create-button" value="Create" onclick="alert('Sorry, not implemented yet :P');return false;"></input>
+            <input type="submit" class="create-button" value="Create" onclick="createModel()"></input>
         </p>
 
 </form>
