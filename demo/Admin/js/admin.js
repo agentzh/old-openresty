@@ -421,7 +421,7 @@ function createACLRule (role) {
 }
 
 function afterCreateACLRule (res) {
-    setStatus(false, "createACLRole");
+    setStatus(false, "createACLRule");
     if (!openresty.isSuccess(res)) {
         error("Failed to create ACL rule: " + res.error);
     } else {
