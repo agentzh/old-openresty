@@ -34,11 +34,10 @@ input.column-input {
     text-align: left;
 }
 
-
 input.create-button {
     margin-top: 4px;
     padding: 4px;
-    margin-left: 5em;
+    margin-left: 15em;
     font-weight: bold;
     font-size: 102%;
 }
