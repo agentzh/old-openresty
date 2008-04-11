@@ -14,7 +14,9 @@
     <ul>
         <li><b>Name</b>: [% view.name | html %]</li>
         <li><b>Description</b>: [% view.description | html %]</li>
-        <li><b>Definition</b>:<br/><pre>[% view.definition | html %]<pre></li>
+        <li><b>Definition</b>:
+            <br/>
+            <pre class="view-def">[% view.definition | html %]</pre></li>
         <li>
         <b><a href="javascript:void(0);" onclick="deleteView('[% view.name %]', 'views')">Delete this view</a></b>
         </li>

@@ -291,7 +291,6 @@ function addOneMoreColumn () {
 }
 
 function createModel () {
-    setStatus(true, "createModel");
     var name = $("#create-model-name").val();
     var desc = $("#create-model-desc").val();
     var cols = [];
@@ -317,6 +316,7 @@ function createModel () {
     };
     //debug("JSON: " + JSON.stringify(data));
     //return;
+    setStatus(true, "createModel");
     openresty.callback = afterCreateModel;
     openresty.postByGet(
         '/=/model/~',
@@ -357,5 +357,31 @@ function getColumnSpec (container) {
         }
     } );
     return found ? col : null;
+}
+
+function createView () {
+    var name = $("#create-view-name").val();
+    var desc = $("#create-view-desc").val();
+    var def = $("#create-view-def").val();
+    if (!def) {
+        error("View definition can't be empty.");
+        return false;
+    }
+    setStatus(true, "createView");
+    openresty.callback = afterCreateView;
+    openresty.postByGet(
+        '/=/view/~',
+        { name: name, description: desc, definition: def }
+    );
+    return false;
+}
+
+function afterCreateView (res) {
+    setStatus(false, "createView");
+    if (!openresty.isSuccess(res)) {
+        error("Failed to create view: " + res.error);
+    } else {
+        gotoNextPage('views');
+    }
 }
 

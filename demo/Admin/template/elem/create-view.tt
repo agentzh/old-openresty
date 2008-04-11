@@ -1,0 +1,31 @@
+<div class="ttl2">
+    <span class="text">
+        New view
+    </span>
+</div>
+
+<div class="create-model">
+<form id="create-view-form" onsubmit="return false;">
+
+        <p>
+            <label>Name</label>
+            <input type="text" size="8" id="create-view-name"></input>
+        </p>
+        <p>
+            <label>Description</label>
+            <input type="text" size="18" id="create-view-desc"></input>
+        </p>
+        <p>
+            <label>Definition (minisql)</label>
+        </p>
+        <p>
+            <textarea size="18" id="create-view-def"></textarea>
+        </p>
+
+        <p>
+            <input type="submit" class="create-button" value="Create" onclick="createView()"></input>
+        </p>
+
+</form>
+</div>
+

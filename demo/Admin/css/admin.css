@@ -1,3 +1,13 @@
+pre.view-def {
+    margin-left: 4em;
+}
+
+textarea#create-view-def {
+    width: 250px;
+    height: 10em;
+    margin-left: 2em;
+}
+
 li.add-col label {
     font-size: 11pt;
 }
