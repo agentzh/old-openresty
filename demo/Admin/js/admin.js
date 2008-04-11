@@ -385,3 +385,26 @@ function afterCreateView (res) {
     }
 }
 
+function createRole () {
+    var name = $("#create-role-name").val();
+    var desc = $("#create-role-desc").val();
+    var login_by = $("#create-role-login").val();
+    var password = $("#create-role-password").val();
+    setStatus(true, "createRole");
+    openresty.callback = afterCreateRole;
+    openresty.postByGet(
+        '/=/role/~',
+        { name: name, description: desc, login: login_by, password: password }
+    );
+    return false;
+}
+
+function afterCreateRole (res) {
+    setStatus(false, "createRole");
+    if (!openresty.isSuccess(res)) {
+        error("Failed to create role: " + res.error);
+    } else {
+        gotoNextPage('roles');
+    }
+}
+
