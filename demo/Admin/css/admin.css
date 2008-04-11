@@ -1,4 +1,8 @@
-div.column-input {
+p.add-column {
+    margin-left: 2em;
+}
+
+div.column-inputs {
     margin-left: 2em;
 }
 
