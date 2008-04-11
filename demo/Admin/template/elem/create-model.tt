@@ -5,7 +5,7 @@
 </div>
 
 <div class="create-model">
-<form id="create-model-form">
+<form id="create-model-form" onsubmit="return false;">
 
         <p>
             <label>Name</label>

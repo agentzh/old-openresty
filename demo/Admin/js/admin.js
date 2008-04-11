@@ -248,7 +248,7 @@ function gotoNextPage (nextPage) {
 
 function addNewColumn (model) {
     $("li.add-col").html(
-        '<form>' + Jemplate.process('column-inputs.tt') + '<input class="column-create-button" type="submit" value="Create" onclick="createColumn(\'' + model + '\')"></input></form>'
+        '<form onsubmit="return false;">' + Jemplate.process('column-inputs.tt') + '<input class="column-create-button" type="submit" value="Create" onclick="createColumn(\'' + model + '\')"></input></form>'
     );
 }
 
@@ -279,9 +279,9 @@ function afterCreateColumn (res) {
     setStatus(false, "createColumn");
     if (!openresty.isSuccess(res)) {
         error("Failed to add a new column: " + res.error);
-        return;
+    } else {
+        gotoNextPage();
     }
-    gotoNextPage();
 }
 
 function addOneMoreColumn () {
@@ -291,6 +291,7 @@ function addOneMoreColumn () {
 }
 
 function createModel () {
+    setStatus(true, "createModel");
     var name = $("#create-model-name").val();
     var desc = $("#create-model-desc").val();
     var cols = [];
@@ -325,11 +326,12 @@ function createModel () {
 }
 
 function afterCreateModel (res) {
+    setStatus(false, "createModel");
     if (!openresty.isSuccess(res)) {
         error("Failed to create model: " + res.error);
-        return;
+    } else {
+        gotoNextPage('models');
     }
-    gotoNextPage();
 }
 
 function getColumnSpec (container) {
