@@ -31,7 +31,31 @@
         </tr>
         [%- END %]
     </table>
+
 </div>
 
 <div class="pager"></div>
+
+<div class="create-model">
+<form id="create-rule-form" onsubmit="return false;">
+    <p>
+        <label>HTTP method</label>
+        <select id="create-rule-method">
+            <option value ="GET">GET</option>
+            <option value ="POST">POST</option>
+            <option value ="PUT">PUT</option>
+            <option value ="DELETE">DELETE</option>
+        </select>
+
+    </p>
+    <p>
+        <label>Resource</label>
+        <input type="text" size="25" id="create-rule-url"></input>
+    </p>
+
+    <p>
+        <input type="submit" class="create-button" value="Create" onclick="createACLRule('[% role %]')"></input>
+    </p>
+</form>
+</div>
 
