@@ -44,7 +44,7 @@ OpenResty 系统中原有的 Captcha 图片生成基于 C<GD::SecurityImage> 模
 
 =head1 THE RECONSTRUCTED WAY
 
-重构后的 Captcha id 生成和验证过程类似于 Yahoo! Captcha ，图片生成部分维持不变，将 Captcha 验证接口也集成在 C<Handler::Captcha> 模块里，以便将 Captcha 功能相关接口维持在同一个地方。
+重构后的 Captcha 图片生成部分维持不变，将 Captcha 验证接口也集成在 C<Handler::Captcha> 模块里，以便将 Captcha 功能相关接口维持在同一个地方。
 
 =head2 WORKFLOWS
 
