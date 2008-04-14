@@ -55,7 +55,7 @@
 
 <div class="listcon">
     <ul>
-        <li><b class="key">Name</b>: [% INCLUDE editable_model_value key="name", value=model.name %]</li>
+        <li><b class="key">Name</b>: [% model.name | html %]</li>
         <li><b class="key">Description</b>: [% INCLUDE editable_model_value key="description", value=model.description %]</li>
         <li><b class="key">Columns</b>:
             <ul id="create-column">
