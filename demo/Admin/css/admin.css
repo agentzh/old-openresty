@@ -148,7 +148,7 @@ div#wait-message {
     margin-right: 1em;
 }
 
-span.editable:hover {
+span.editable-hooked:hover {
     background-color: #ccf;
 }
 

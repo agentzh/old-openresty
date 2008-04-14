@@ -22,38 +22,54 @@ $.fn.postprocess = function (className, options) {
             if (savedAnchor == anchor) savedAnchor = null;
             dispatchByAnchor();
         } );
-        $(".editable").editable( function (value) {
-            var path = $(this).attr('resty_path');
-            var key = $(this).attr('resty_key');
-            var isJSON = $(this).attr('resty_json');
-            var data = {};
-            if (isJSON) {
-                var res = JSON.parse(value);
-                if (res == false && value != false) {
-                    error("Invalid JSON value: " + value);
-                    return html2text(value);
-                }
-                value = res;
+        $(".editable").each( function () {
+            var settings = {};
+            settings.data = $(this).attr('resty_value');
+            settings.type = $(this).attr('resty_type');
+            //alert(settings.type);
+            if (settings.type == 'textarea') {
+                debug("found textarea!");
+                settings.width = 600;
+                settings.height = 200;
             }
-            data[key] = value;
-            debug("PUT /=/" + path + " " + JSON.stringify(data));
-            openresty.callback = afterEditInplace;
-            openresty.putByGet('/=/' + path, data);
-            return '<span class="loading-field"><img src="loading.gif/>&nbsp;Loading...</span>';
-        }, {
-            type: 'text',
-            style: "display: inline",
-            submit: "Save",
-            cancel: "Cancel",
-            width: 130,
-            height: 20,
-            tooltop: "Click to edit",
-            event :'dblclick',
-            data: function () { return $(this).attr('resty_value'); },
-            tooltip   : 'Double-click to edit'
+            plantEditableHook(this, settings);
+            $(this).attr('class', 'editable-hooked');
         } );
     } );
 };
+
+function plantEditableHook (node, settings) {
+    $(node).editable( function (value) {
+        var path = $(this).attr('resty_path');
+        var key = $(this).attr('resty_key');
+        var isJSON = $(this).attr('resty_json');
+        var data = {};
+        if (isJSON) {
+            var res = JSON.parse(value);
+            if (res == false && value != false) {
+                error("Invalid JSON value: " + value);
+                return html2text(value);
+            }
+            value = res;
+        }
+        data[key] = value;
+        debug("PUT /=/" + path + " " + JSON.stringify(data));
+        openresty.callback = afterEditInplace;
+        openresty.putByGet('/=/' + path, data);
+        return '<span class="loading-field"><img src="loading.gif/>&nbsp;Loading...</span>';
+    }, {
+        type: settings.type || 'text',
+        style: "display: inline",
+        submit: "Save",
+        cancel: "Cancel",
+        width: settings.width || 130,
+        height: settings.height || 20,
+        tooltop: "Click to edit",
+        event :'dblclick',
+        data: settings.data || '',
+        tooltip   : 'Double-click to edit'
+    } );
+}
 
 function afterEditInplace (res, revert) {
     if (!openresty.isSuccess(res)) {
