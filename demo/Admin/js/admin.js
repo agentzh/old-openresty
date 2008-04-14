@@ -32,7 +32,7 @@ $.fn.postprocess = function (className, options) {
             }
             if (!type) type = 'text';
             if (type == 'textarea') {
-                debug("found textarea!");
+                //debug("found textarea!");
                 settings.width = 600;
                 settings.height = 200;
             }
@@ -59,7 +59,7 @@ function plantEditableHook (node, settings) {
             value = res;
         }
         data[key] = value;
-        debug("PUT /=/" + path + " " + JSON.stringify(data));
+        //debug("PUT /=/" + path + " " + JSON.stringify(data));
         openresty.callback = afterEditInplace;
         openresty.putByGet('/=/' + path, data);
         return '<span class="loading-field"><img src="loading.gif/>&nbsp;Loading...</span>';
