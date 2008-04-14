@@ -25,20 +25,6 @@ $.fn.postprocess = function (className, options) {
     } );
 };
 
-$.fn.postprocess = function (className, options) {
-    return this.find("a[@href^='#']").each( function () {
-        var anchor = $(this).attr('href').replace(/^\#/, '');
-        //debug("Anchor: " + anchor);
-        $(this).click( function () {
-            //debug(location.hash);
-            location.hash = anchor;
-            //alert(location.hash);
-            if (savedAnchor == anchor) savedAnchor = null;
-            dispatchByAnchor();
-        } );
-    } );
-};
-
 function setStatus (isLoading, category) {
     if (isLoading) {
         if (++loadingCount == 1) {
