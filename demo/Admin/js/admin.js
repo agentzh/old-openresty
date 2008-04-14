@@ -12,8 +12,9 @@ var savedAnchor = null;
 $(document).ready(init);
 
 $.fn.postprocess = function (className, options) {
-    return this.find("a[@href^='#']").each( function () {
-        var anchor = $(this).attr('href').replace(/^\#/, '');
+    return this.find("a[@href*='#']").each( function () {
+        var href = $(this).attr('href');
+        var anchor = href.replace(/^.*?\#/, '');
         //debug("Anchor: " + anchor);
         $(this).click( function () {
             //debug(location.hash);
@@ -22,29 +23,33 @@ $.fn.postprocess = function (className, options) {
             if (savedAnchor == anchor) savedAnchor = null;
             dispatchByAnchor();
         } );
-        $(".editable").each( function () {
-            var settings = {};
-            var data = $(this).attr('resty_value');
-            var type = $(this).attr('resty_type');
-            //alert(settings.type);
-            if (/\n.*?\n/.test(data)) {
-                type = 'textarea';
-            }
-            if (!type) type = 'text';
-            if (type == 'textarea') {
-                //debug("found textarea!");
-                settings.width = 600;
-                settings.height = 200;
-            }
-            settings.data = data;
-            settings.type = type;
-            plantEditableHook(this, settings);
-            $(this).attr('class', 'editable-hooked');
-        } );
+        //debug("about to process editable...");
+        setTimeout( function () {
+            $(".editable").each( function () {
+                var settings = {};
+                var data = $(this).attr('resty_value');
+                var type = $(this).attr('resty_type');
+                //debug(type);
+                if (/\n.*?\n/.test(data)) {
+                    type = 'textarea';
+                }
+                if (!type) type = 'text';
+                if (type == 'textarea') {
+                    //debug("found textarea!");
+                    settings.width = 600;
+                    settings.height = 200;
+                }
+                settings.data = data;
+                settings.type = type;
+                plantEditableHook(this, settings);
+                $(this).attr('class', 'editable-hooked');
+            } );
+        }, 0);
     } );
 };
 
 function plantEditableHook (node, settings) {
+    //debug("start plantEditableHook...");
     $(node).editable( function (value) {
         var path = $(this).attr('resty_path');
         var key = $(this).attr('resty_key');
@@ -60,6 +65,7 @@ function plantEditableHook (node, settings) {
         }
         data[key] = value;
         //debug("PUT /=/" + path + " " + JSON.stringify(data));
+        setStatus(true, 'editInplace');
         openresty.callback = afterEditInplace;
         openresty.putByGet('/=/' + path, data);
         return '<span class="loading-field"><img src="loading.gif/>&nbsp;Loading...</span>';
@@ -70,14 +76,13 @@ function plantEditableHook (node, settings) {
         cancel: "Cancel",
         width: settings.width || 130,
         height: settings.height || 20,
-        tooltop: "Click to edit",
-        event :'dblclick',
         data: settings.data || '',
-        tooltip   : 'Double-click to edit'
+        tooltip   : 'Click to edit'
     } );
 }
 
 function afterEditInplace (res, revert) {
+    setStatus(false, 'editInplace');
     if (!openresty.isSuccess(res)) {
         error("Failed to update the field: " + res.error);
     }
