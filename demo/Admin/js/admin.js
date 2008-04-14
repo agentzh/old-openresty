@@ -22,8 +22,37 @@ $.fn.postprocess = function (className, options) {
             if (savedAnchor == anchor) savedAnchor = null;
             dispatchByAnchor();
         } );
+        $(".editable").editable( function (value) {
+            var path = $(this).attr('resty_path');
+            var key = $(this).attr('resty_key');
+            var isJSON = $(this).attr('is_json');
+            var data = {};
+            data[key] = value;
+            debug("PUT /=/" + path + " " + JSON.stringify(data));
+            openresty.callback = afterEditInplace;
+            openresty.putByGet('/=/' + path, data);
+            return '<span class="loading-field"><img src="loading.gif/>&nbsp;Loading...</span>';
+        }, {
+            type: 'text',
+            style: "display: inline",
+            submit: "Save",
+            cancel: "Cancel",
+            width: 130,
+            height: 20,
+            tooltop: "Click to edit",
+            event :'dblclick',
+            data: function () { return $(this).attr('resty_value'); },
+            tooltip   : 'Double-click to edit'
+        } );
     } );
 };
+
+function afterEditInplace (res, revert) {
+    if (!openresty.isSuccess(res)) {
+        error("Failed to update the field: " + res.error);
+    }
+    gotoNextPage();
+}
 
 function setStatus (isLoading, category) {
     if (isLoading) {
@@ -52,7 +81,7 @@ function setStatus (isLoading, category) {
 }
 
 function debug (msg) {
-    $("#copyright").append(msg + "<br/>");
+    $("#copyright").append('<p>' + msg + "</p>");
 }
 
 function gotoLoginPage () {
@@ -527,10 +556,9 @@ function createModelRow (model) {
 
 function afterCreateModelRow (res) {
     setStatus(false, 'createModelRow');
-    if (openresty.isSuccess(res)) {
-        gotoNextPage();
-    } else {
+    if (!openresty.isSuccess(res)) {
         error("Failed to create the row: " + res.error);
     }
+    gotoNextPage();
 }
 

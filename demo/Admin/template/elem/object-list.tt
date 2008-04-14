@@ -38,9 +38,9 @@
     <div class="listcon">
         <ul>
             <li>
-                <b>Name</b>: [% object.name | html %]
+                <b>Name</b>: <span class="editable" resty_path="[% category %]/[% object.name %]" resty_key="name" resty_value="[% object.name | html %]">[% object.name | html %]</span>
                 &nbsp; &nbsp; &nbsp;
-                <b>Description</b>: [% object.description | html %]
+                <b>Description</b>: <span class="editable" resty_path="[% category %]/[% object.name %]" resty_key="description" resty_value="[% object.description | html %]">[% object.description | html %]</span>
             </li>
             <li>
                 <b><a href="#[% category %]-[% object.name %]" title="[% object.description | html %]">More detail</a></b>
