@@ -11,6 +11,60 @@ var savedAnchor = null;
 
 $(document).ready(init);
 
+$.fn.postprocess = function (className, options) {
+    return this.find("a[@href^='#']").each( function () {
+        var anchor = $(this).attr('href').replace(/^\#/, '');
+        //debug("Anchor: " + anchor);
+        $(this).click( function () {
+            //debug(location.hash);
+            location.hash = anchor;
+            //alert(location.hash);
+            if (savedAnchor == anchor) savedAnchor = null;
+            dispatchByAnchor();
+        } );
+    } );
+};
+
+$.fn.postprocess = function (className, options) {
+    return this.find("a[@href^='#']").each( function () {
+        var anchor = $(this).attr('href').replace(/^\#/, '');
+        //debug("Anchor: " + anchor);
+        $(this).click( function () {
+            //debug(location.hash);
+            location.hash = anchor;
+            //alert(location.hash);
+            if (savedAnchor == anchor) savedAnchor = null;
+            dispatchByAnchor();
+        } );
+    } );
+};
+
+function setStatus (isLoading, category) {
+    if (isLoading) {
+        if (++loadingCount == 1) {
+            if (jQuery.browser.opera)
+                $(waitMessage).css('top', '2px');
+            else
+                $(waitMessage).show();
+        }
+    } else {
+        loadingCount--;
+        if (loadingCount < 0) loadingCount = 0;
+        if (loadingCount == 0) {
+            // the reason we use this hack is to work around
+            // a rendering bug in Win32 build of Opera
+            // (at least 9.25 and 9.26)
+            if (jQuery.browser.opera)
+                $(waitMessage).css('top', '-200px');
+            else
+                $(waitMessage).hide();
+
+        }
+    }
+    //count++;
+    //debug("[" + count + "] setStatus: " + cat + ": " + loadingCount + "(" + isLoading + ")");
+}
+
 function debug (msg) {
     $("#copyright").append(msg + "<br/>");
 }
