@@ -7,4 +7,6 @@
 * [bug] reject updating the names of the builtin roles.
 * add the sorting capability (i.e. the order_by url param) to model/view/role lists
 * [bug] PUT an empty label.
+* [bug] PUT /=/role/Foo/id/32 does not work as expected.
+
 
