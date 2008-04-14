@@ -1,4 +1,4 @@
-var itemsPerPage = 20;
+var itemsPerPage = 10;
 var sessionCookie = 'admin_session';
 var serverCookie  = 'admin_server';
 var userCookie    = 'admin_user';
@@ -24,14 +24,20 @@ $.fn.postprocess = function (className, options) {
         } );
         $(".editable").each( function () {
             var settings = {};
-            settings.data = $(this).attr('resty_value');
-            settings.type = $(this).attr('resty_type');
+            var data = $(this).attr('resty_value');
+            var type = $(this).attr('resty_type');
             //alert(settings.type);
-            if (settings.type == 'textarea') {
+            if (/\n.*?\n/.test(data)) {
+                type = 'textarea';
+            }
+            if (!type) type = 'text';
+            if (type == 'textarea') {
                 debug("found textarea!");
                 settings.width = 600;
                 settings.height = 200;
             }
+            settings.data = data;
+            settings.type = type;
             plantEditableHook(this, settings);
             $(this).attr('class', 'editable-hooked');
         } );

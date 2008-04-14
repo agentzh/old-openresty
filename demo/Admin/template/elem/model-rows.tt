@@ -6,6 +6,11 @@
         { name => "laser", age => 35 },
     ];
 %]
+
+[% BLOCK editable_row_value -%]
+<span class="editable" [% type ? 'resty_type="' _ type _ '"' : "" %] resty_path="model/[% model %]/~/~" resty_key="[% key %]" resty_value="[% value | html %]">[% value | html %]</span>
+[% END -%]
+
 <div class="ttl">
     <span class="text">
         <a href="#model-[% model %]">[% model %]</a>
@@ -21,7 +26,7 @@
             [%- FOREACH key IN row.keys %]
             [%- value = row.$key;
                 NEXT IF !value AND value != 0 %]
-            <b class="key">[%- key | html %]</b>: [% value | html %] &nbsp;&nbsp;
+            <b class="key">[%- key | html %]</b>: [% INCLUDE editable_row_value %] &nbsp;&nbsp;
             [%- END %]
 
             <b><a href="javascript:void(0);" onclick="deleteModelRow('[% model %]', [% row.id %])">Delete</a></b>

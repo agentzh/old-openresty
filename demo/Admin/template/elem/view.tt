@@ -7,7 +7,7 @@
 %]
 
 [% BLOCK editable_view_value -%]
-<span class="editable" [% is_json ? 'resty_json="1"' : "" %] [% type ? 'resty_type="' _ type _ '"' : "" %] resty_path="view/[% view.name %]" resty_key="[% key %]" resty_value="[% value | html %]">[% value | html %]</span>
+<span class="editable" [% is_json ? 'resty_json="1"' : "" %] resty_path="view/[% view.name %]" resty_key="[% key %]" resty_value="[% value | html %]">[% value | html %]</span>
 [% END -%]
 
 <!-- block begin -->
@@ -21,7 +21,7 @@
         <li><b>Description</b>: [% INCLUDE editable_view_value key="description", value=view.description %]</li>
         <li><b>Definition</b>:
             <br/>
-            <pre class="view-def">[% INCLUDE editable_view_value key="definition", value=view.definition, type="textarea" %]</pre></li>
+            <pre class="view-def">[% INCLUDE editable_view_value key="definition", value=view.definition %]</pre></li>
         <li>
         <b><a href="javascript:void(0);" onclick="deleteView('[% view.name %]', 'views')">Delete this view</a></b>
         </li>
