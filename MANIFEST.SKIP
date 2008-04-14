@@ -39,7 +39,7 @@ agentzh-live\.json$
 ^font/wqy-zenhei.ttf
 ^grammar/Select\.pm$
 ^doc/spec*
-^minisql
+^obsolete/minisql
 ^print\.txt$
 ^log.conf$
 ^lib/SQL
