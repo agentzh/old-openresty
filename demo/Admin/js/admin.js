@@ -25,8 +25,16 @@ $.fn.postprocess = function (className, options) {
         $(".editable").editable( function (value) {
             var path = $(this).attr('resty_path');
             var key = $(this).attr('resty_key');
-            var isJSON = $(this).attr('is_json');
+            var isJSON = $(this).attr('resty_json');
             var data = {};
+            if (isJSON) {
+                var res = JSON.parse(value);
+                if (res == false && value != false) {
+                    error("Invalid JSON value: " + value);
+                    return html2text(value);
+                }
+                value = res;
+            }
             data[key] = value;
             debug("PUT /=/" + path + " " + JSON.stringify(data));
             openresty.callback = afterEditInplace;
@@ -560,5 +568,13 @@ function afterCreateModelRow (res) {
         error("Failed to create the row: " + res.error);
     }
     gotoNextPage();
+}
+
+function html2text (text) {
+    text = text.replace(/&/g, '&amp;');
+    text = text.replace(/</g, '&lt;');
+    text = text.replace(/>/g, '&gt;');
+    text = text.replace(/"/g, '&quot;'); // " end quote for emacs
+    return text;
 }
 

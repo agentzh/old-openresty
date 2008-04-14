@@ -23,6 +23,11 @@
         }
     ];
 %]
+
+[% BLOCK editable_value -%]
+<span class="editable" resty_path="[% category %]/[% object.name %]" resty_key="[% key %]" resty_value="[% value | html %]">[% value | html %]</span>
+[% END -%]
+
 [%- i = 0 %]
 [%- FOREACH object IN objects %]
     [%- i = i + 1 %]
@@ -38,9 +43,9 @@
     <div class="listcon">
         <ul>
             <li>
-                <b>Name</b>: <span class="editable" resty_path="[% category %]/[% object.name %]" resty_key="name" resty_value="[% object.name | html %]">[% object.name | html %]</span>
+                <b>Name</b>: [% INCLUDE editable_value key="name", value=object.name %]
                 &nbsp; &nbsp; &nbsp;
-                <b>Description</b>: <span class="editable" resty_path="[% category %]/[% object.name %]" resty_key="description" resty_value="[% object.description | html %]">[% object.description | html %]</span>
+                <b>Description</b>: [% INCLUDE editable_value key="description", value=object.description %]
             </li>
             <li>
                 <b><a href="#[% category %]-[% object.name %]" title="[% object.description | html %]">More detail</a></b>
