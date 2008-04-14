@@ -17,6 +17,12 @@
         ]
     };
 %]
+
+[% BLOCK editable_role_value -%]
+<span class="editable" [% is_json ? 'resty_json="1"' : "" %] [% type ? 'resty_type="' _ type _ '"' : "" %] resty_path="role/[% role.name %]" resty_key="[% key %]" resty_value="[% value | html %]">[% value | html %]</span>
+[% END -%]
+
+
 <!-- block begin -->
 <div class="ttl">
     <span class="text">
@@ -29,8 +35,8 @@
 <div class="listcon">
     <ul>
         <li><b class="key">Name</b>: [% role.name | html %]</li>
-        <li><b class="key">Description</b>: [% role.description | html %]</li>
-        <li><b class="key">Login method</b>: [% role.login | html %]</li>
+        <li><b class="key">Description</b>: [% INCLUDE editable_role_value key="description", value=role.description %]</li>
+        <li><b class="key">Login method</b>: [% INCLUDE editable_role_value key="login", value=role.login %]</li>
         <li><b class="key">Columns</b>:
             <ul>
             [%- FOREACH column IN role.columns %]
