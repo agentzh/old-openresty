@@ -5,6 +5,11 @@
         { method => "DELETE", url => '/=/role/Bar' },
     ];
 %]
+
+[% BLOCK editable_rule_value -%]
+<span class="editable" [% type ? 'resty_type="' _ type _ '"' : "" %] resty_path="role/[% role %]/id/[% id %]" resty_key="[% key %]" resty_value="[% value | html %]">[% value | html %]</span>
+[% END -%]
+
 <div class="ttl">
     <span class="text">
         <a href="#role-[% role | html %]">[% role %]</a>
@@ -23,8 +28,8 @@
         [%- FOREACH rule = rules %]
         <tr>
             <td>[% rule.id %]</td>
-            <td>[% rule.method | html %]</td>
-            <td>[% rule.url | html %]</td>
+            <td>[% INCLUDE editable_rule_value id=rule.id, key="method", value=rule.method %]</td>
+            <td>[% INCLUDE editable_rule_value id=rule.id, key="url", value=rule.url %]</td>
             <td>
               <b><a href="javascript:void(0);" onclick="deleteRoleRule('[% role %]', [% rule.id %])">Delete</a></b>
             </td>
