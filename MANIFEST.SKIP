@@ -15,6 +15,7 @@ bin/.*\.dat
 ^demo/Admin/jemplates\.js$
 ^demo/Admin/JSON\.js$
 ^demo/Blog/out
+^demo/Blog/script/upload
 ^demo/Blog2/out
 ^demo/Blog2/js
 ^demo/Blog2/template

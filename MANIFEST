@@ -14,7 +14,6 @@ clients/js/dojo.openresty.js
 clients/js/JSON.js
 clients/js/openresty.js
 clients/perl/README
-demo/Admin/admin.css
 demo/Admin/template/footer.tt
 demo/Admin/template/header.tt
 demo/Blog2/css/blog.css
@@ -39,7 +38,6 @@ demo/Blog2/Makefile
 demo/Blog2/README
 demo/Blog2/script/blogadmin.pl
 demo/Blog2/script/init.pl
-demo/Blog2/script/upload
 demo/Blog2/TODO
 demo/Springbot/log/import.pl
 demo/Springbot/log/init.pl
@@ -51,15 +49,11 @@ demo/Springbot/staff/html2txt.pl
 demo/Springbot/staff/init.pl
 demo/Springbot/staff/Makefile
 demo/Springbot/staff/txt2csv.pl
-demo/Admin/admin.js
-demo/Admin/jquery.jeditable.pack.js
-demo/Admin/jquery.js
 demo/Admin/Makefile
 demo/Admin/template/index.tt
 demo/Admin/template/page.tt
 demo/Admin/template/elem/model-list.tt
 demo/Admin/template/elem/model.tt
-demo/Blog/admin.html
 demo/Blog/css/blog.css
 demo/Blog/css/styles.css
 demo/Blog/css/themes/common/base-weblog.css
@@ -80,7 +74,6 @@ demo/Blog/js/thirdparty/jquery.js
 demo/Blog/Makefile
 demo/Blog/README
 demo/Blog/script/init.pl
-demo/Blog/script/upload
 demo/Blog/template/banner.tt
 demo/Blog/template/elem/calendar.tt
 demo/Blog/template/elem/comments.tt

@@ -1,0 +1,46 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+#use Smart::Comments;
+use YAML::Syck;
+use File::Copy;
+
+my $listfile = 't/cover-list.dat';
+
+my $cmd = shift or die "No command specified.\n";
+{
+    no strict 'refs';
+    $cmd->();
+}
+
+sub init {
+    my @list;
+    my $infile = 't/cover-table.txt';
+    open my $in, $infile or
+        die "Can't open $infile for reading: $!\n";
+    while (<$in>) {
+        next if /^\s*$/;
+        my @cols = split /\s+/, $_;
+        my @methods = split /\//, $cols[0];
+        shift @cols;
+        for my $meth (@methods) {
+            push @list, [$meth, @cols];
+        }
+    }
+    close $in;
+    ### @list
+    unshift @list, scalar(@list);
+    DumpFile($listfile, \@list);
+}
+
+sub summary {
+    my $list = LoadFile($listfile);
+    my $count = shift @$list;
+    ### $count
+    for my $item (@$list) {
+        print $item->[0];
+    }
+}
+
