@@ -1,5 +1,4 @@
 AUTHORS
-bin/cover
 bin/export-model.pl
 bin/fetch-font.pl
 bin/import-model.pl
@@ -51,9 +50,13 @@ demo/Springbot/staff/Makefile
 demo/Springbot/staff/txt2csv.pl
 demo/Admin/Makefile
 demo/Admin/template/index.tt
-demo/Admin/template/page.tt
-demo/Admin/template/elem/model-list.tt
+demo/Admin/template/elem/object-list.tt
+demo/Admin/template/elem/pager.tt
 demo/Admin/template/elem/model.tt
+demo/Admin/template/elem/view.tt
+demo/Admin/template/elem/role.tt
+demo/Admin/template/elem/model-rows.tt
+demo/Admin/template/elem/role-rules.tt
 demo/Blog/css/blog.css
 demo/Blog/css/styles.css
 demo/Blog/css/themes/common/base-weblog.css
@@ -94,7 +97,6 @@ demo/YisouComments/lightbox3.js
 demo/YisouComments/loading.gif
 demo/YisouComments/post.html
 demo/YisouComments/post.js
-demo/YisouComments/print.txt
 demo/YisouComments/storage.js
 demo/YisouComments/style3.css
 dev.mk
