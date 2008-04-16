@@ -6,6 +6,7 @@ use warnings;
 use OpenResty::Util;
 use Params::Util qw( _HASH _STRING );
 use OpenResty::Limits;
+use OpenResty::MiniSQL::Select;
 
 sub POST_view {
     my ($self, $openresty, $bits) = @_;
