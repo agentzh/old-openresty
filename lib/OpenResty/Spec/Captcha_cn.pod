@@ -34,7 +34,7 @@ OpenResty 系统中原有的 Captcha 图片生成基于 C<GD::SecurityImage> 模
 
 =item *
 
-在 2 小时内生成的每个 Captcha id 都必须记录在系统缓存中。当访问量较大，系统缓存不足以容纳这一时间窗口内所有的 Captcha 信息时，基于 LRU 的缓存策略可能有某些较早生成却还没来得及进行验证的 Captcha id 被换出缓存丢弃，这样使用该 id 对应图片的用户就无法通过验证或更换 Captcha 图片，只有重新开始登录过程，影响了用户体验。系统缓存越小，这一问题表现越明显；
+在 2 小时内生成的每个 Captcha id 都必须记录在系统缓存中。当访问量较大，系统缓存不足以容纳这一时间窗口内所有的 Captcha 信息时，基于 LRU 的缓存策略可能使某些较早生成却还没来得及进行验证的 Captcha id 被换出缓存丢弃，这样使用该 id 对应图片的用户就无法通过验证或更换 Captcha 图片，只有重新开始登录过程，影响了用户体验。系统缓存越小，这一问题表现越明显；
 
 =item *
 
@@ -48,7 +48,86 @@ OpenResty 系统中原有的 Captcha 图片生成基于 C<GD::SecurityImage> 模
 
 =head2 WORKFLOWS
 
-当前端请求生成一个 Captcha 时，将真实的 Captcha 验证字、最短有效时刻、最长有效时刻和随机数拼接起来，使用对称加密算法加密后作为 Captcha id；
+当前端请求生成一个 Captcha 时，将真实的 Captcha 验证字、最短有效时刻、最长有效时刻和随机数拼接起来，使用对称加密算法加密后作为 Captcha id；在前端用 Captcha id 请求图片内容时， C<Handler::Captcha> 模块使用系统密钥尝试解密 Captcha id，若解密后的内容同拼接时的格式相同，且当前时间早于最长有效时刻，则根据解出的 Catpcha 验证字生成对应的图片内容；若解密后的内容格式有误，或格式正确但当前时间晚于最长有效时刻，则表示 Captcha id 无效，模块将拒绝继续服务。
+
+当前端给出一个 Captcha id 和用户给出的对应解，请求验证 Captcha 时， C<Handler::Login> 模块会调用 C<Handler::Captcha> 模块中的验证例程进行验证。该例程首先检查 Captcha id 是否已记录在系统缓存中，若缓存里没有记录则使用系统密钥尝试解密 Captcha id，若解密后的内容同拼接时的格式相同，且当前时间晚于最短有效时刻（Captcha 若被过快解答，则很可能是程序在进行破解）而早于最长有效时刻，则将解出的真实 Captcha 验证字同用户解进行不区分大小写的比较，比较通过则表示 Captcha 验证通过，此时再将 Captcha id 以一定的过期时间（由对应的最长有效时刻计算得出）记录在系统缓存里，避免恶意用户使用相同的 id 和验证字进行反复验证；若以上条件未得到满足，则 Captcha 验证失败，拒绝继续服务。
 
 =head2 SPECIFICATIONS
+
+=head3 CAPTCHA ID PLAINTEXT FORMAT
+
+Captcha id 明文格式为：
+
+	<lang> <\001> <solution> <\001> <min_ts> <\001> <max_ts> <\001> <rand>
+
+其中各个部分的含义如下：
+
+=over
+
+=item <lang>
+
+验证字语言标识字符串，目前为 C<en>（表示使用英文 Captcha）或 C<cn>（表示使用中文 Captcha）。
+
+=item <solution>
+
+验证字明文字符串，非英文字符使用 UTF-8 编码，例如“hello”或“一本正经”。
+
+=item <min_ts>
+
+Captcha 最短有效时刻，以 UNIX 时戳形式表示，例如“1208357712”。Captcha 的验证时刻不能早于该值，否则一定失败。
+
+=item <max_ts>
+
+Captcha 最长有效时刻，以 UNIX 时戳形式表示，例如“1208361326”。Captcha 的验证时刻不能晚于该值，否则一定失败，且对应的 Captcha 图片也不会被生成。
+
+=item <rand>
+
+随机正整数，用来扰码，以避免连续产生的相同内容字串在加密后产生相同的密文。
+
+=back
+
+=head3 CAPTCHA ID ENCRYPTION/DECRYPTION
+
+最终的 Captcha id 是原始的 Captcha id 明文串经过 AES 加密（通过 C<Crypt::Rijndael> 和 C<Crypt::CBC> 模块）后再 Base64 编码，最后再将 [+/=] 分别替换为 [._-] （以便在 URL 中引用）后的结果。例如，若 Captcha id 明文串为：
+
+	cn<\001>测试一下<\001>1208357712<\001>1208361326<\001>15768
+
+若选择密钥为 16 个 a（128 bits 密钥），则最终生成的 Captcha id 将为：
+
+	gi2g3CgKpznmIjUq_OVsu.NzlRlFAWGWxjWLCrMmZXkNocpoe2JqN7Zg7BOvVBPQ
+
+加密的示例代码如下：
+
+	use Crypt::CBC;
+	use MIME::Base64;
+	my $plain=join("\001",'cn','测试一下','1208357712','1208361326','15768');
+	my $key='a' x 16;
+	my $algo=Crypt::CBC->new(
+			-key=>$key,
+			-header=>'none',
+			-iv=>$key,
+			-cipher=>'Rijndael',
+			);
+	my $cipher=$algo->encrypt($plain);
+	(my $result=encode_base64($cipher))=~y!+/=!._-!;
+	print "Captcha ID: $result\n";
+
+解密的示例代码如下：
+
+	use Crypt::CBC;
+	use MIME::Base64;
+	my $result='gi2g3CgKpznmIjUq_OVsu.NzlRlFAWGWxjWLCrMmZXkNocpoe2JqN7Zg7BOvVBPQ';
+	my $key='a' x 16;
+	my $algo=Crypt::CBC->new(
+			-key=>$key,
+			-header=>'none',
+			-iv=>$key,
+			-cipher=>'Rijndael',
+			);
+	(my $base64=$result)=~y!._-!+/=!;
+	my $cipher=decode_base64($base64);
+	my ($lang,$solution,$min_ts,$max_ts,$rand)=split("\001",$algo->decrypt($cipher));
+	print "$lang,$solution,$min_ts,$max_ts,$rand\n";
+
+另外，解密后的结果为字节串，在同 Perl-Native 字符串比较前一定要注意转换编码！
 
