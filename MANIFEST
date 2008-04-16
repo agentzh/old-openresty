@@ -102,7 +102,6 @@ demo/YisouComments/style3.css
 dev.mk
 etc/openresty.conf
 grammar/restyscript-view.yp
-grammar/restyscript-action.yp
 inc/Module/AutoInstall.pm
 inc/Module/Install.pm
 inc/Module/Install/AutoInstall.pm
@@ -143,7 +142,7 @@ lib/OpenResty/Handler/Role.pm
 lib/OpenResty/Handler/Version.pm
 lib/OpenResty/Handler/View.pm
 lib/OpenResty/Limits.pm
-lib/OpenResty/MiniSQL/Select.pm
+lib/OpenResty/RestyScript/View.pm
 lib/OpenResty/Server.pm
 lib/OpenResty/Shell.pm
 lib/OpenResty/Shell/History.pm
