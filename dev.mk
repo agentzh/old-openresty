@@ -8,10 +8,10 @@ define CMDS
     bin/perf
 endef
 
-all: lib/OpenResty/MiniSQL/Select.pm
+all: lib/OpenResty/RestyScript/View.pm
 
-lib/OpenResty/MiniSQL/Select.pm: grammar/Select.yp
-	yapp -m OpenResty::MiniSQL::Select -o $@ $<
+lib/OpenResty/RestyScript/View.pm: grammar/restyscript-view.yp
+	yapp -m OpenResty::RestyScript::View -o $@ $<
 
 test: all
 	$(CMDS)

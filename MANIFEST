@@ -101,7 +101,8 @@ demo/YisouComments/storage.js
 demo/YisouComments/style3.css
 dev.mk
 etc/openresty.conf
-grammar/Select.yp
+grammar/restyscript-view.yp
+grammar/restyscript-action.yp
 inc/Module/AutoInstall.pm
 inc/Module/Install.pm
 inc/Module/Install/AutoInstall.pm

@@ -23,7 +23,6 @@ use OpenResty::SQL::Insert;
 use OpenResty::Backend;
 use OpenResty::Limits;
 
-use OpenResty::MiniSQL::Select;
 #use encoding "utf8";
 
 use OpenResty::Util;
