@@ -125,7 +125,7 @@ select *
 from Carrie
 where
 --- error
-line 3: error: Unexpected end of input (VAR or IDENT or '(' expected).
+line 3: error: Unexpected end of input (NUM or VAR or IDENT or '(' or STRING expected).
 
 
 
@@ -239,7 +239,7 @@ select *
 from blah
 where name = '\'' and #@!##$@ --' or age <= 3;
 --- error
-line 3: error: Unexpected input: "#" (VAR or IDENT or '(' expected).
+line 3: error: Unexpected input: "#" (NUM or VAR or IDENT or '(' or STRING expected).
 
 
 
@@ -644,4 +644,41 @@ from $model
 select * from Post where id like '%Hello%'
 --- out: select * from "Post" where "id" like $y$%Hello%$y$
 --- models: Post
+
+
+
+=== TEST 56: random operators
+--- sql
+select sum(1) as count, sum(3+2 * (3 - 5^7)) from Post
+--- out: select sum ( 1 ) as count , sum ( 3 + 2 * ( 3 - 5 ^ 7 ) ) from "Post"
+
+
+
+=== TEST 57: % and /
+--- sql
+select 32 % (3 ^ (7-5) / 25 )
+--- out: select 32 % ( 3 ^ ( 7 - 5 ) / 25 )
+
+
+
+=== TEST 58: ||
+--- sql
+select '32' || '56'
+--- out: select $y$32$y$ || $y$56$y$
+
+
+
+=== TEST 59: || in proc calls
+--- sql
+select date_part('year', created) || date_part('mon' || 'th', created) from Post
+--- out: select date_part ( $y$year$y$ , "created" ) || date_part ( $y$mon$y$ || $y$th$y$ , "created" ) from "Post"
+--- models: Post
+
+
+=== TEST 60: || with vars
+--- sql
+select * from Post where title like '%' || $keyword || '%'
+--- in_vars
+keyword=Perl
+--- out: select * from "Post" where "title" like $y$%$y$ || $y$Perl$y$ || $y$%$y$
 

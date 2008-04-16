@@ -16,8 +16,9 @@ my (
 %left 'and'
 %left '+' '-'
 %left '*' '/' '%'
-%left '^'
-%left '::'
+%right '^'
+%left '||'
+%nonassoc '::'
 
 %%
 
@@ -57,22 +58,45 @@ pattern_list: pattern ',' pattern_list
             | pattern
             ;
 
-pattern: proc_call 'as' alias
+pattern: expr 'as' alias
              { join(' ', @_[1..$#_]) }
-       | proc_call
-       | column 'as' alias
-             { join(' ', @_[1..$#_]) }
-       | column
+       | expr
        | '*'
-       | number 'as' alias
-             { join(' ', @_[1..$#_]) }
-       | number
-       | string 'as' alias
-             { join(' ', @_[1..$#_]) }
-       | string
        ;
 
+expr: expr '||' expr
+             { join(' ', @_[1..$#_]) }
+    | expr '*' expr
+             { join(' ', @_[1..$#_]) }
+    | expr '/' expr
+             { join(' ', @_[1..$#_]) }
+    | expr '%' expr
+             { join(' ', @_[1..$#_]) }
+    | expr '+' expr
+             { join(' ', @_[1..$#_]) }
+    | expr '-' expr
+             { join(' ', @_[1..$#_]) }
+    | expr '^' expr
+             { join(' ', @_[1..$#_]) }
+    | expr '::' type
+             { join(' ', @_[1..$#_]) }
+    | '(' expr ')'
+             { join(' ', @_[1..$#_]) }
+    | atom
+    ;
+
+type: symbol
+    ;
+
+atom: proc_call
+    | column
+    | true_literal
+    | true_number
+    ;
+
 proc_call: IDENT '(' parameter_list ')'
+             { join(' ', @_[1..$#_]) }
+         | IDENT '(' '*' ')'
              { join(' ', @_[1..$#_]) }
          ;
 
@@ -81,11 +105,50 @@ parameter_list: parameter ',' parameter_list
               | parameter
               ;
 
-parameter: literal
-         | variable
-         | column
-         | '*'
+parameter: expr
          ;
+
+expr2: expr2 '||' expr2
+             { join(' ', @_[1..$#_]) }
+    | expr2 '*' expr2
+             { join(' ', @_[1..$#_]) }
+    | expr2 '/' expr2
+             { join(' ', @_[1..$#_]) }
+    | expr2 '%' expr2
+             { join(' ', @_[1..$#_]) }
+    | expr2 '+' expr2
+             { join(' ', @_[1..$#_]) }
+    | expr2 '-' expr2
+             { join(' ', @_[1..$#_]) }
+    | expr2 '^' expr2
+             { join(' ', @_[1..$#_]) }
+    | expr2 '::' type
+             { join(' ', @_[1..$#_]) }
+    | '(' expr2 ')'
+             { join(' ', @_[1..$#_]) }
+    | atom2
+    ;
+
+atom2: proc_call2
+    | column
+    | literal
+    | true_number
+    ;
+
+proc_call2: IDENT '(' parameter_list2 ')'
+             { join(' ', @_[1..$#_]) }
+         | IDENT '(' '*' ')'
+             { join(' ', @_[1..$#_]) }
+         ;
+
+parameter_list2: parameter2 ',' parameter_list2
+                { join(' ', @_[1..$#_]) }
+              | parameter2
+              ;
+
+parameter2: expr2
+         ;
+
 
 variable: VAR
             {
@@ -98,6 +161,9 @@ variable: VAR
                 $Quote->($val);
             }
         ;
+
+true_number: NUM
+           ;
 
 number: NUM
       | VAR '|' NUM
@@ -209,15 +275,12 @@ comparison: lhs_atom operator rhs_atom
                 { join(' ', @_[1..$#_]) }
           ;
 
-lhs_atom: column
+lhs_atom: expr
         | '(' condition ')'
-        | proc_call
         ;
 
-rhs_atom: column
-        | literal
+rhs_atom: expr2
         | '(' condition ')'
-        | proc_call
         ;
 
 operator: '>'
@@ -229,8 +292,12 @@ operator: '>'
         | 'like'
         ;
 
-literal: string
-       | number
+
+true_literal: string
+            | number
+            ;
+
+literal: true_literal
        | variable
        ;
 
@@ -327,7 +394,7 @@ sub _Lexer {
             (my $token = $s) =~ s/\s+/ /g;
             return (lc($token), lc($s));
         }
-        s/^\s*(<=|>=|<>|like\b)//s
+        s/^\s*(<=|>=|<>|\|\||like\b)//s
                 and return (lc($1), lc($1));
         s/^\s*([A-Za-z][A-Za-z0-9_]*)\b//s
                 and return ('IDENT', $1);
