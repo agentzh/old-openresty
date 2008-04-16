@@ -6,7 +6,7 @@ use warnings;
 use OpenResty::Util;
 use Params::Util qw( _HASH _STRING );
 use OpenResty::Limits;
-use OpenResty::MiniSQL::Select;
+use OpenResty::RestyScript::View;
 
 sub POST_view {
     my ($self, $openresty, $bits) = @_;
@@ -103,7 +103,7 @@ sub PUT_view {
 
 sub exec_view {
     my ($self, $openresty,$view, $bits, $cgi) = @_;
-    my $select = OpenResty::MiniSQL::Select->new;
+    my $select = OpenResty::RestyScript::View->new;
     my $sql = "select definition from _views where name = " . Q($view);
     ### laser exec_view: "$sql"
     my $view_def = $openresty->select($sql)->[0][0];
@@ -181,7 +181,7 @@ sub new_view {
         die "Unknown keys: ", join(" ", keys %$data), "\n";
     }
 
-    my $select = OpenResty::MiniSQL::Select->new;
+    my $select = OpenResty::RestyScript::View->new;
     eval {
         $res = $select->parse(
             $minisql,
