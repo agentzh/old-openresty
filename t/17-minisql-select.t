@@ -682,3 +682,30 @@ select * from Post where title like '%' || $keyword || '%'
 keyword=Perl
 --- out: select * from "Post" where "title" like $y$%$y$ || $y$Perl$y$ || $y$%$y$
 
+
+
+=== TEST 61: blog archive listing
+--- sql
+    select (date_part('year', created) || '-'
+                || date_part('month', created) || '-01')::date
+        as year_month,
+        sum(1) as count
+    from Post
+    group by year_month
+    order by year_month desc
+    offset $offset | 0
+    limit $limit | 12
+--- out: select ( date_part ( $y$year$y$ , "created" ) || $y$-$y$ || date_part ( $y$month$y$ , "created" ) || $y$-01$y$ ) :: date as year_month , sum ( 1 ) as count from "Post" group by "year_month" order by "year_month" desc offset 0 limit 12
+
+
+=== TEST 62: try to_char
+--- sql
+    select to_char(created, 'YYYY-MM-01') :: date as year_month,
+        sum(1) as count
+    from Post
+    group by year_month
+    order by year_month desc
+    offset $offset | 0
+    limit $limit | 12
+--- out: select to_char ( "created" , $y$YYYY-MM-01$y$ ) :: date as year_month , sum ( 1 ) as count from "Post" group by "year_month" order by "year_month" desc offset 0 limit 12
+

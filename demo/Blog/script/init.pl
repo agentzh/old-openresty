@@ -146,6 +146,23 @@ _EOC_
 );
 
 $resty->post(
+    '/=/view/PostCountByMonths',
+    {
+        definition => <<'_EOC_',
+    select (date_part('year', created) || date_part('month', created) || '-01')::date as year_month,
+           sum(1) as comment
+    from Post
+    where count > 0
+    group by year_month
+    order by year_month
+    offset $offset
+    limit $limit
+_EOC_
+    }
+);
+
+
+$resty->post(
     '/=/role/Public/~/~',
     [
         { method => "GET", url => '/=/model/Post/~/~' },
