@@ -6,6 +6,7 @@ use warnings;
 
 use OpenResty::Util;
 use Params::Util qw( _HASH _STRING );
+use OpenResty::RestyScript::View;
 
 sub POST_action_exec {
     my ($self, $openresty, $bits) = @_;
@@ -26,7 +27,7 @@ sub POST_action_exec {
     _STRING($sql) or
         die "miniSQL must be an non-empty literal string: ", $OpenResty::Dumper->($sql), "\n";
    #warn "SQL 1: $sql\n";
-    my $select = OpenResty::MiniSQL::Select->new;
+    my $select = OpenResty::RestyScript::View->new;
     my $res = $select->parse(
         $sql,
         {

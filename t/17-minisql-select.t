@@ -4,7 +4,7 @@ use Test::Base;
 
 #use Smart::Comments;
 use lib 'lib';
-use OpenResty::MiniSQL::Select;
+use OpenResty::RestyScript::View;
 
 #plan tests => 3 * blocks();
 
@@ -37,7 +37,7 @@ run {
         } @ln;
     }
 
-    my $select = OpenResty::MiniSQL::Select->new;
+    my $select = OpenResty::RestyScript::View->new;
     my $sql = $block->sql or die "$name - No --- sql section found.\n";
     my $res;
     eval {
@@ -636,4 +636,12 @@ select count(*)
 from $model
 --- out: select count ( * ) from ""
 --- models:
+
+
+
+=== TEST 55: like and other operators
+--- sql
+select * from Post where id like '%Hello%'
+--- out: select * from "Post" where "id" like $y$%Hello%$y$
+--- models: Post
 
