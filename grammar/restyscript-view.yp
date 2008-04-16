@@ -12,8 +12,12 @@ my (
 
 %}
 
-%left 'and'
 %left 'or'
+%left 'and'
+%left '+' '-'
+%left '*' '/' '%'
+%left '^'
+%left '::'
 
 %%
 
@@ -323,8 +327,8 @@ sub _Lexer {
             (my $token = $s) =~ s/\s+/ /g;
             return (lc($token), lc($s));
         }
-        s/^\s*(<=|>=|<>)//s
-                and return ($1, $1);
+        s/^\s*(<=|>=|<>|like\b)//s
+                and return (lc($1), lc($1));
         s/^\s*([A-Za-z][A-Za-z0-9_]*)\b//s
                 and return ('IDENT', $1);
         s/^\$(\w+)//s
