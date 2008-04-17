@@ -41,6 +41,8 @@ function debug (msg) {
 $.fn.postprocess = function (className, options) {
     return this.find("a[@href^='#']").each( function () {
         var href = $(this).attr('href');
+        // We need the following hack because IE expands href to
+        // absolute URL:
         var anchor = href.replace(/^.*?\#/, '');
         //debug("Anchor: " + anchor);
         $(this).click( function () {
@@ -253,7 +255,8 @@ function getCalendar (year, month) {
                 first_day_of_week: first_day_of_week,
                 end_of_month: end_of_month,
                 today: (year == thisYear && month == thisMonth) ?
-                        thisDay : null
+                        thisDay : null,
+                months: months
             }
         )
     ).postprocess();
