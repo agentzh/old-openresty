@@ -20,9 +20,6 @@
         <ul class="module-list">
                     <!--
                         <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/app/index.html">App</a></li>
-                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/backends/index.html">Backends</a></li>
-                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/doc/index.html">Doc</a></li>
-                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/event/index.html">Event</a></li>
                     -->
 
         </ul>
@@ -30,7 +27,7 @@
 </div>
     <div class="module-archives module">
         <h2 class="module-header">Archives</h2>
-        <div class="module-content">
+        <div class="module-content" id="archive-list">
             <!--
                                                 <ul class="module-list">
 

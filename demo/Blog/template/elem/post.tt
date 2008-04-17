@@ -1,5 +1,5 @@
 <h2 class="date-header">[% post.created %]</h2>
-<div class="entry" id="entry-40621150">
+<div class="entry">
     <h3 class="entry-header">
         <a href="#post-[% post.id %]">
             [%- post.title -%]
