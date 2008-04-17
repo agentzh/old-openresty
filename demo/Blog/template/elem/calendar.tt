@@ -1,20 +1,5 @@
-[% months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ]
--%]
-
-<h2 class="module-header">[% months.$month %] [% year %]</h2>
+[%- index = month + 1 %]
+<h2 class="module-header">[% months.$index %] [% year %]</h2>
 <div class="module-content">
     <table id="calendar-nav">
         <tbody>

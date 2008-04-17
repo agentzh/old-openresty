@@ -20,7 +20,7 @@
 &nbsp; &nbsp;
 [% IF last_id > 1 && posts.size == count %]
     <a id="more-recent-posts" href="javascript:getRecentPosts([% offset + count %]);">
-    More...
+    Next...
     </a>
 [% END %]
 

@@ -19,7 +19,7 @@
 &nbsp; &nbsp;
 [% IF archives.size == count %]
     <a id="more-archives" href="javascript:getArchiveList([% offset + count %]);">
-    More...
+    Next...
     </a>
 [% END %]
 
