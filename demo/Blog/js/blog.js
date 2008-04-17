@@ -12,6 +12,22 @@ var thisYear = null;
 var thisMonth = null;
 var thisDay = null;
 
+var months = [
+    null,
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+];
+
 $(window).ready(init);
 
 function error (msg) {
@@ -24,7 +40,8 @@ function debug (msg) {
 
 $.fn.postprocess = function (className, options) {
     return this.find("a[@href^='#']").each( function () {
-        var anchor = $(this).attr('href').replace(/^\#/, '');
+        var href = $(this).attr('href');
+        var anchor = href.replace(/^.*?\#/, '');
         //debug("Anchor: " + anchor);
         $(this).click( function () {
             //debug(location.hash);
@@ -112,6 +129,14 @@ function dispatchByAnchor () {
         getPost(postId);
         return;
     }
+
+    match = anchor.match(/^archive-(\d+)-(\d+)$/);
+    if (match) {
+        var year = match[1];
+        var month = match[2];
+        getArchive(year, month);
+        return;
+    }
     match = anchor.match(/^(?:post-list|post-list-(\d+))$/);
     var page = 1;
     //alert(anchor + " " + location.hash);
@@ -129,14 +154,63 @@ function dispatchByAnchor () {
     $(".blog-top").attr('id', 'post-list-' + page);
 }
 
+function getArchive (year, month) {
+    setStatus(true, 'renderPostList');
+    $(".pager").html('');
+    openresty.callback = function (res) {
+        renderPostList(res);
+        setStatus(true, 'renderArchiveNav');
+        openresty.callback = renderArchiveNav;
+        openresty.get(
+            '/=/view/PrevNextArchive/~/~',
+            {
+                now: year + '-' + month + '-01',
+                month: month,
+                months: months
+            }
+        );
+    };
+    openresty.get(
+        '/=/view/FullPostsByMonth/~/~',
+        { count: 40, year: year, month: month }
+    );
+    $(".blog-top").attr('id', 'archive-' + year + '-' + month);
+}
+
+function renderArchiveNav (res) {
+    //debug("render archive nav: " + JSON.stringify(res));
+    setStatus(false, 'renderArchiveNav');
+    if (!openresty.isSuccess(res)) {
+        error("Failed to get archive navigator: " + res.error);
+        return;
+    }
+    var prev = null;
+    var next = null;
+    for (var i = 0; i < res.length; i++) {
+        var item = res[i];
+        item.year = parseInt(item.year);
+        item.month = parseInt(item.month);
+        //debug("item: " + JSON.stringify(item));
+        if (item.id == "prev") prev = item;
+        else if (item.id == "next")  next = item;
+    }
+    //debug("next: " + JSON.stringify(next));
+    //debug("prev: " + JSON.stringify(prev));
+    $("#post-list-nav").html(
+        Jemplate.process(
+            'archive-nav.tt',
+            { next: next, prev: prev, months: months }
+        )
+    ).postprocess();
+}
+
 function getPostList (page) {
     setStatus(true, 'renderPostList');
     openresty.callback = renderPostList;
     openresty.get('/=/model/Post/~/~', {
         count: itemsPerPage,
         order_by: 'id:desc',
-        offset: itemsPerPage * (page - 1),
-        limit: itemsPerPage
+        offset: itemsPerPage * (page - 1)
     });
 }
 
@@ -150,6 +224,7 @@ function getSidebar () {
     getCalendar();
     getRecentPosts();
     getRecentComments();
+    getArchiveList();
 }
 
 function getCalendar (year, month) {
@@ -257,6 +332,43 @@ function renderRecentPosts (res, offset, count) {
         );
         $("#recent-posts").html(html).postprocess();
     }
+}
+
+function getArchiveList (offset) {
+    if (offset == undefined) offset = 0;
+    setStatus(true, 'getArchiveList');
+    openresty.callback = function (res) {
+        renderArchiveList(res, offset, 12);
+    };
+    openresty.get(
+        '/=/view/PostCountByMonths/~/~',
+        { offset: offset, count: 12 }
+    );
+}
+
+function renderArchiveList (res, offset, count) {
+    setStatus(false, 'getArchiveList');
+    if (!openresty.isSuccess(res)) {
+        error("Failed to get archive list: " + res.error);
+        return;
+    }
+    for (var i = 0; i < res.length; i++) {
+        var item = res[i];
+        var match = item.year_month.match(/^(\d\d\d\d)-0?(\d+)/);
+        if (match) {
+            item.year = parseInt(match[1]);
+            item.month = parseInt(match[2]);
+        } else {
+            error("Failed to match against year_month: " + item.year_month);
+        }
+        //debug(JSON.stringify(item));
+    }
+    $("#archive-list").html(
+        Jemplate.process(
+            'archive-list.tt',
+            { archives: res, count: count, offset: offset, months: months }
+        )
+    ).postprocess();
 }
 
 function postComment (form) {

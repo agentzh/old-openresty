@@ -149,18 +149,51 @@ $resty->post(
     '/=/view/PostCountByMonths',
     {
         definition => <<'_EOC_',
-    select (date_part('year', created) || date_part('month', created) || '-01')::date as year_month,
-           sum(1) as comment
+    select to_char(created, 'YYYY-MM-01') :: date as year_month,
+        sum(1) as count
     from Post
-    where count > 0
     group by year_month
-    order by year_month
-    offset $offset
-    limit $limit
+    order by year_month desc
+    offset $offset | 0
+    limit $limit | 12
 _EOC_
     }
 );
 
+$resty->post(
+    '/=/view/FullPostsByMonth',
+    {
+        definition => <<'_EOC_',
+    select *
+    from Post
+    where date_part('year', created) = $year and
+        date_part('month', created) = $month
+    order by id desc
+    limit $count | 40
+_EOC_
+    }
+);
+
+$resty->post(
+    '/=/view/PrevNextArchive',
+    {
+        definition => <<'_EOC_',
+    (select 'next' as id, date_part('month', created) as month,
+        date_part('year', created) as year
+     from Post
+     where created > $now and (date_part('month', created) <> $month)
+     order by created asc
+     limit 1
+    ) union
+    (select 'prev' as id, date_part('month', created) as month,
+        date_part('year', created) as year
+     from Post
+     where created < $now and (date_part('month', created) <> $month)
+     order by created desc
+     limit 1)
+_EOC_
+    }
+);
 
 $resty->post(
     '/=/role/Public/~/~',
@@ -173,6 +206,9 @@ $resty->post(
         { method => "GET", url => '/=/view/PrevNextPost/~/~' },
         { method => "GET", url => '/=/view/PostsByMonth/~/~' },
         { method => "GET", url => '/=/view/RowCount/~/~' },
+        { method => "GET", url => '/=/view/PostCountByMonths/~/~' },
+        { method => "GET", url => '/=/view/FullPostsByMonth/~/~' },
+        { method => "GET", url => '/=/view/PrevNextArchive/~/~' },
 
         { method => "POST", url => '/=/model/Comment/~/~' },
         { method => "PUT", url => '/=/model/Post/id/~' },
