@@ -3,7 +3,7 @@ package OpenResty::Handler::Feed;
 use strict;
 use warnings;
 
-use Smart::Comments;
+#use Smart::Comments;
 use OpenResty::Util;
 use Params::Util qw( _HASH _STRING );
 use OpenResty::Limits;
@@ -11,10 +11,7 @@ use XML::RSS;
 
 use DateTime::Format::Pg;
 use DateTime::Format::RSS;
-use XML::Atom::Syndication::Feed;
-use XML::Atom::Syndication::Entry;
-use XML::Atom::Syndication::Text;
-use XML::Atom::Syndication::Content;
+use OpenResty::FeedWriter::RSS;
 use POSIX qw( strftime );
 
 sub POST_feed {
@@ -126,8 +123,8 @@ sub exec_feed {
         $updated = strftime '%Y-%m-%dT%H:%M:%SZ', gmtime;
     }
 
-    my $rss = new XML::RSS (version => '2.0');
-    $rss->channel(
+    my $rss = OpenResty::FeedWriter::RSS->new(
+      {
         title          => $info->{title},
         link           => $info->{link},
         language       => $info->{language},
@@ -135,8 +132,7 @@ sub exec_feed {
         copyright      => $info->{copyright},
         pubDate        => time_pg2rss($info->{created}),
         lastBuildDate  => $updated,
-        managingEditor => 'agentzh@yahoo.cn',
-        webMaster      => 'agentzh@yahoo.cn'
+      }
     );
     ### Begin...
 
@@ -167,31 +163,19 @@ sub exec_feed {
         my $updated = $item->{updated};
         my $author = $item->{author} || $info->{author};
 
-        $rss->add_item(title => "GTKeyboard 0.85",
-            permaLink  => $link,
+        my $entry = {
+            title => $title,
+            link => $link,
             description => $content,
-        );
-        ### HERE 0...
-        my $entry = XML::Atom::Syndication::Entry->new;
-        my $title_obj = XML::Atom::Syndication::Text->new(Name=>'title');
-        ### HERE 1...
-        $title_obj->body($title_obj);
-        ### HERE 2...
-        $entry->title($title_obj);
-        ### HERE 3...
-        #$entry->author($author);
-        ### HERE 4...
-        my $content_obj = XML::Atom::Syndication::Content->new($content);
-        $entry->content($content_obj);
-        ### HERE 5...
-        #$entry->updated(time_pg2rss($updated));
-        $feed->add_entry($entry);
-        ### HERE 6...
+            pubDate => time_pg2rss($published),
+            category => $item->{category},
+            comments => $item->{comments},
+            author => $author,
+        };
+        $rss->add_entry($entry);
     }
-    ### HERE 7...
-    $openresty->{_bin_data} = $feed->as_xml;
-    ### HERE 8...
-    $openresty->{_type} = 'application/atom+xml';
+    $openresty->{_bin_data} = $rss->as_xml;
+    $openresty->{_type} = 'application/rss+xml';
     return undef;
 }
 
@@ -301,7 +285,7 @@ sub DELETE_feed_list {
 
 sub time_pg2rss {
     my $time = shift;
-    return if !$time;
+    return undef if !$time;
     my $dt = DateTime::Format::Pg->parse_datetime($time);
     return "".DateTime::Format::RSS->format_datetime($dt);
 }

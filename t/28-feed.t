@@ -201,9 +201,40 @@ GET /=/feed/Post
 === TEST 16: Obtain the feed content (XML)
 --- request
 GET /=/feed/Post/~/~
---- res_type: application/atom+xml
---- format: xml
---- response_like
+--- res_type: application/rss+xml
+--- format: feed
+--- response
+<?xml version="1.0"?>
+<rss version="2.0">
+  <channel>
+  <title>Human &amp; Machine - Blog posts</title>
+  <link>http://blog.agentzh.org</link>
+  <language>en</language>
+  <copyright>Copyright 2008 by Agent Zhang</copyright>
+  <lastBuildDate>2008-04-17T20:24:57</lastBuildDate>
+  <item>
+    <title>Hello, world</title>
+    <link>http://blog.agentzh.org/#post-1</link>
+    <description>&lt;h1&gt;This is my first program ;)&lt;/h1&gt;</description>
+    <author>agentzh</author>
+    <pubDate>2008-04-17T20:24:57</pubDate>
+  </item>
+  <item>
+    <title>I'm going home</title>
+    <link>http://blog.agentzh.org/#post-2</link>
+    <description>&lt;h1&gt;At last, I'm home again! Yay!&lt;/h1&gt;</description>
+    <author>carrie</author>
+    <pubDate>2008-04-17T20:24:57</pubDate>
+  </item>
+  <item>
+    <title>我来了呀！</title>
+    <link>http://blog.agentzh.org/#post-3</link>
+    <description>&lt;h1&gt;呵呵，我&lt;B&gt;回来&lt;/B&gt;了！&lt;/h1&gt;我很开心哦，呵呵！</description>
+    <author>章亦春</author>
+    <pubDate>2008-04-17T20:24:57</pubDate>
+  </item>
+  </channel>
+</rss>
 --- LAST
 
 

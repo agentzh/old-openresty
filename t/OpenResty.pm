@@ -122,6 +122,9 @@ sub smart_is ($$$$) {
                 $got = canon_yaml($got);
                 $expected = canon_yaml($expected);
             };
+        } elsif ($format eq 'feed') {
+            $got =~ s/>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}</>YYYY-MM-DDThh:mm:ss</g;
+            $expected =~ s/>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}</>YYYY-MM-DDThh:mm:ss</g;
         }
     }
     is $got, $expected, $desc;
