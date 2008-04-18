@@ -165,6 +165,9 @@ sub new_view {
     my $name = delete $data->{name} or
         die "No 'name' specified.\n";
     _IDENT($name) or die "Bad view name: ", $OpenResty::Dumper->($name), "\n";
+    if ($openresty->has_view($name)) {
+        die "View \"$name\" already exists.\n";
+    }
 
     my $minisql = delete $data->{definition};
     if (!defined $minisql) {
