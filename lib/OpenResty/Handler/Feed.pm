@@ -7,7 +7,6 @@ use warnings;
 use OpenResty::Util;
 use Params::Util qw( _HASH _STRING );
 use OpenResty::Limits;
-use XML::RSS;
 
 use DateTime::Format::Pg;
 use DateTime::Format::Strptime;
