@@ -33,14 +33,14 @@ requires            ('Data::UUID' => '1.148');
 requires            ('GD::SecurityImage' => '1.64');
 requires            ('Cache::Memcached::Fast' => '0.06');
 requires            ('Hash::Merge');
-requires            ('XML::Atom::Feed');
-requires            ('XML::RSS');
 #requires            ('List::MoreUtils');
 requires            ('Config::Simple');
 requires            ('Encode::Guess');
 requires            ('List::MoreUtils');
 requires            ('JSON::XS' => '2.1');
 requires            ('Data::Structure::Util' => '0.15');
+requires            ('DateTime::Format::Pg');
+requires            ('DateTime::Format::Strptime');
 
 recommends          ('Benchmark::Timer');
 recommends          ('HTTP::Server::Simple' => '0.27');

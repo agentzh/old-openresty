@@ -71,11 +71,13 @@ is $rss->as_xml, <<'_EOC_';
     <comments>http://blog.agentzh.org/#post-3:comments</comments>
     <pubDate>2007-03-04 5:34</pubDate>
     <category>IT</category>
+    <guid isPermaLink="true">http://blog.agentzh.org/#post-3</guid>
   </item>
   <item>
     <title>&lt;h1&gt;我来了！&lt;/h1&gt;</title>
     <link>http://foo.com</link>
     <description>howdy!</description>
+    <guid isPermaLink="true">http://foo.com</guid>
   </item>
   </channel>
 </rss>
