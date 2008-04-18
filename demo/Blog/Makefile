@@ -24,6 +24,7 @@ all:
 	gzip --best site-binary.tar
 	mv site-binary.tar.gz out/
 
+upload: resty_server=api.eeeeworks.org
 upload: all
 	script/upload
 
