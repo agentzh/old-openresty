@@ -20,6 +20,9 @@ my %Dispatcher = (
     view => [
         qw< view_list view view_param view_exec >
     ],
+    feed => [
+        qw< feed_list feed feed_param feed_exec >
+    ],
     action => [
         qw< action_list action action_param action_exec  >
     ],

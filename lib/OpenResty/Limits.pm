@@ -7,6 +7,7 @@ use base 'Exporter';
 our @EXPORT = qw(
     $MODEL_LIMIT
     $VIEW_LIMIT
+    $FEED_LIMIT
     $ROLE_LIMIT
     $COLUMN_LIMIT
     $RECORD_LIMIT
@@ -18,6 +19,7 @@ our @EXPORT = qw(
 
 our $MODEL_LIMIT = 40;
 our $VIEW_LIMIT = 100;
+our $FEED_LIMIT = 100;
 our $ROLE_LIMIT = 100;
 our $COLUMN_LIMIT = 40;
 our $INSERT_LIMIT = 20;

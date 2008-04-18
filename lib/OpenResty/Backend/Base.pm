@@ -123,12 +123,15 @@ create table _accounts (
 );
 _EOC_
     ],
+    [
+        '0.002' => '',
+    ]
 );
 
 our @LocalVersionDelta = (
     [
         '0.001' => <<'_EOC_',
-create or replace function upgrade() returns integer as $$
+create or replace function _upgrade() returns integer as $$
 begin
     create table _general (
         version varchar(10),
@@ -165,10 +168,34 @@ end;
 $$ language plpgsql;
 _EOC_
     ],
-    #[
-    #'0.002' => <<'_EOC_',
-#_EOC_
-    #],
+    [
+        '0.002' => <<'_EOC_',
+create or replace function _upgrade() returns integer as $$
+begin
+    drop table _action;
+    insert into _access (role, method, url) values ('Admin', 'DELETE', '/=/feed');
+    insert into _access (role, method, url) values ('Admin', 'DELETE', '/=/feed/~');
+    insert into _access (role, method, url) values ('Admin', 'GET', '/=/feed');
+    insert into _access (role, method, url) values ('Admin', 'GET', '/=/feed/~');
+    insert into _access (role, method, url) values ('Admin', 'GET', '/=/feed/~/~/~');
+    insert into _access (role, method, url) values ('Admin', 'POST', '/=/feed/~');
+    insert into _access (role, method, url) values ('Admin', 'PUT', '/=/feed/~');
+    create table _feeds (
+        id serial primary key,
+        name text unique,
+        view text,
+        title text,
+        link text,
+        description text,
+        copyright text,
+        language text,
+        author text
+    );
+    return 0;
+end;
+$$ language plpgsql;
+_EOC_
+    ],
 );
 
 sub upgrade_all {
@@ -261,7 +288,7 @@ sub _upgrade_metamodel {
         warn "Upgrading account $user from $cur_ver to $new_ver...\n";
         #$sql .= "; update _general set version='$new_ver'";
         $res = $self->do("$sql");
-        $res = $self->do("select upgrade();");
+        $res = $self->do("select _upgrade();");
         $res = $self->do("update _general set version='$new_ver'");
         #for my $stmt (split /;\n/, $sql) {
             #warn "=======", $stmt, "=======\n";

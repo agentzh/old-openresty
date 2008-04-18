@@ -13,3 +13,9 @@ How to setup the site:
     $ make
     $ firefox out/index.html &
 
+../../bin/export-model.pl --user eeee --password $password --model Comment --server api.eeeeworks.org --out Comment.json
+../../bin/export-model.pl --user eeee --password $password --model Post --server api.eeeeworks.org --out Post.json
+script/init.pl -u eeee -p $password -s api.eeeeworks.org
+../../bin/import-model.pl --reset --no-id --user eeee --password $password --model Post --server api.eeeeworks.org Post.json
+../../bin/import-model.pl --reset --no-id --user eeee --password $password --model Comment --server api.eeeeworks.org Comment.json
+

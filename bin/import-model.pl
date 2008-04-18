@@ -24,6 +24,7 @@ Options:
     --server <host>    OpenResty server hostname
     --step <num>       Size of the bulk insertion group
     --retries <num>    Number of automatic retries when failures occur
+    --no-id            Skipped the id field in the records being imported
 _EOC_
 }
 
@@ -38,6 +39,7 @@ GetOptions(
     'step=i' => \$step,
     'reset' => \(my $reset),
     'retries=i' => \(my $retries),
+    'no-id' => \(my $no_id),
 ) or die usage();
 
 if ($help) { print usage() }
@@ -61,6 +63,9 @@ while (<>) {
     #warn "count: ", scalar(@elems), "\n";
     my $row = $json_xs->decode($_);
 
+    if ($no_id) {
+        delete $row->{id};
+    }
     push @rows, $row;
     if (@rows % $step == 0) {
         $inserted += insert_rows(\@rows);

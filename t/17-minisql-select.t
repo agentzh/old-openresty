@@ -675,6 +675,7 @@ select date_part('year', created) || date_part('mon' || 'th', created) from Post
 --- models: Post
 
 
+
 === TEST 60: || with vars
 --- sql
 select * from Post where title like '%' || $keyword || '%'
@@ -696,6 +697,7 @@ keyword=Perl
     offset $offset | 0
     limit $limit | 12
 --- out: select ( date_part ( $y$year$y$ , "created" ) || $y$-$y$ || date_part ( $y$month$y$ , "created" ) || $y$-01$y$ ) :: date as year_month , sum ( 1 ) as count from "Post" group by "year_month" order by "year_month" desc offset 0 limit 12
+
 
 
 === TEST 62: try to_char

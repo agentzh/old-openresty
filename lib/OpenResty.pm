@@ -28,6 +28,7 @@ use OpenResty::Limits;
 use OpenResty::Util;
 use OpenResty::Handler::Model;
 use OpenResty::Handler::View;
+use OpenResty::Handler::Feed;
 use OpenResty::Handler::Action;
 use OpenResty::Handler::Role;
 use OpenResty::Handler::Admin;
@@ -436,6 +437,16 @@ sub current_user_can {
     return do { $res->[0][0] };
 }
 
+sub has_feed {
+    my ($self, $feed) = @_;
+
+    _IDENT($feed) or die "Bad feed name: $feed\n";
+
+    my $select = OpenResty::SQL::Select->new('count(name)')
+        ->from('_feeds')
+        ->where(name => Q($feed));
+    return $self->select("$select",)->[0][0];
+}
 sub has_view {
     my ($self, $view) = @_;
 
