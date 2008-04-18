@@ -8,6 +8,13 @@ This 'cheat sheet' is a handy reference, meant for beginning OpenResty users.
 Not everything is mentioned, but most of the common features in
 L<OpenResty::Spec::REST> may already be included.
 
+Note that in the following small examples the plain password passing
+on the URL is merely a hack in the currrent implementation
+(just for my development convenience).
+It is supposed to be encrypted on the client side first (with a
+random salt obtained from the OpenResty server) I<and> all go through
+SSL in the real thing.
+
 =head1 LOGIN API
 
     GET /=/login/agentzh.Admin/password   Login as account "agentzh" and
