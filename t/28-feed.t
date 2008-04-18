@@ -71,10 +71,11 @@ POST /=/model/Post
 POST /=/model/Post/~/~
 [
     {"title":"Hello, world","author":"agentzh","content":"<h1>This is my first program ;)</h1>","comments":5},
-    {"title":"I'm going home","author":"agentzh","content":"<h1>At last, I'm home again! Yay!</h1>","comments":5}
+    {"title":"I'm going home","author":"carrie","content":"<h1>At last, I'm home again! Yay!</h1>","comments":5},
+    {"title":"我来了呀！","author":"章亦春","content":"<h1>呵呵，我<B>回来</B>了！</h1>我很开心哦，呵呵！","comments":5}
 ]
 --- response
-{"last_row":"/=/model/Post/id/2","rows_affected":2,"success":1}
+{"last_row":"/=/model/Post/id/3","rows_affected":3,"success":1}
 
 
 
@@ -116,7 +117,7 @@ POST /=/feed/Post
 POST /=/view/PostFeed
 {
   "description": "View for post feeds",
-  "definition": "select author, title, 'http://blog.agentzh.org/#post-' || id as link, content as summary, created_on as published from Post order by created_on desc limit 20"
+  "definition": "select author, title, 'http://blog.agentzh.org/#post-' || id as link, content, created_on as published, created_on as updated from Post order by created_on desc limit 20"
 }
 --- response
 {"success":1}
@@ -197,6 +198,16 @@ GET /=/feed/Post
 }
 
 
+=== TEST 16: Obtain the feed content (XML)
+--- request
+GET /=/feed/Post/~/~
+--- res_type: application/atom+xml
+--- format: xml
+--- response_like
+--- LAST
+
+
+
 
 === TEST 16: Create another feed
 --- request
@@ -222,7 +233,6 @@ GET /=/feed
     {"src":"/=/feed/Post","name":"Post","description":"Feed for blog posts"},
     {"src":"/=/feed/Comment","name":"Comment","description":"Feed for blog comments"}
 ]
-
 
 
 === TEST 18: Delete feed Comment

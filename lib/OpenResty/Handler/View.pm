@@ -102,7 +102,7 @@ sub PUT_view {
 }
 
 sub exec_view {
-    my ($self, $openresty,$view, $bits, $cgi) = @_;
+    my ($self, $openresty, $view, $bits, $cgi) = @_;
     my $select = OpenResty::RestyScript::View->new;
     my $sql = "select definition from _views where name = " . Q($view);
     ### laser exec_view: "$sql"

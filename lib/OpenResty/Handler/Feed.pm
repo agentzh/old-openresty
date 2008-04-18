@@ -3,9 +3,19 @@ package OpenResty::Handler::Feed;
 use strict;
 use warnings;
 
+use Smart::Comments;
 use OpenResty::Util;
 use Params::Util qw( _HASH _STRING );
 use OpenResty::Limits;
+use XML::RSS;
+
+use DateTime::Format::Pg;
+use DateTime::Format::RSS;
+use XML::Atom::Syndication::Feed;
+use XML::Atom::Syndication::Entry;
+use XML::Atom::Syndication::Text;
+use XML::Atom::Syndication::Content;
+use POSIX qw( strftime );
 
 sub POST_feed {
     my ($self, $openresty, $bits) = @_;
@@ -101,42 +111,88 @@ sub PUT_feed {
 }
 
 sub exec_feed {
-    my ($self, $openresty,$feed, $bits, $cgi) = @_;
+    my ($self, $openresty, $feed_name, $bits, $cgi) = @_;
     my $select = OpenResty::RestyScript::View->new;
-    my $sql = "select definition from _feeds where name = " . Q($feed);
+    my $sql = "select title, author, link, view, language, copyright, created from _feeds where name = " . Q($feed_name);
     ### laser exec_feed: "$sql"
-    my $feed_def = $openresty->select($sql)->[0][0];
-    my $fix_var = $bits->[2];
-    _IDENT($fix_var) or $fix_var eq '~' or die "Bad parameter name: ", $OpenResty::Dumper->($fix_var), "\n";
-    my $fix_var_value = $bits->[3];
-    my $exists;
-    my %vars;
-
-    foreach my $var ($cgi->url_param) {
-        $vars{$var} = $cgi->url_param($var);
+    my $info = $openresty->select($sql, { use_hash => 1 })->[0];
+    my $view = $info->{view} or die "View name not found.\n";
+    my $data = OpenResty::Handler::View->exec_view($openresty, $view, $bits, $cgi);
+    my $updated;
+    if (@$data) {
+        $updated = time_pg2rss($data->[0]->{updated});
+    }
+    if (!$updated) {
+        $updated = strftime '%Y-%m-%dT%H:%M:%SZ', gmtime;
     }
 
-    if ($fix_var ne '~' and $fix_var_value ne '~') {
-        $vars{$fix_var} = $fix_var_value;
-    }
+    my $rss = new XML::RSS (version => '2.0');
+    $rss->channel(
+        title          => $info->{title},
+        link           => $info->{link},
+        language       => $info->{language},
+        description    => $info->{description},
+        copyright      => $info->{copyright},
+        pubDate        => time_pg2rss($info->{created}),
+        lastBuildDate  => $updated,
+        managingEditor => 'agentzh@yahoo.cn',
+        webMaster      => 'agentzh@yahoo.cn'
+    );
+    ### Begin...
 
-    my $res;
-    eval {
-        $res = $select->parse(
-            $feed_def,
-            { quote => \&Q, quote_ident => \&QI, vars => \%vars }
+    for my $item (@{ $data }) {
+        if (!exists $item->{title}) {
+            die "Column \"title\" not found in view \"$view\".\n";
+        }
+        my $title = $item->{title};
+
+        if (!exists $item->{link}) {
+            die "Column \"link\" not found in view \"$view\".\n";
+        }
+        my $link = $item->{link} || $info->{link}; 
+
+        if (!exists $item->{content}) {
+            die "Column \"content\" not found in view \"$view\".\n";
+        }
+        my $content = $item->{content};
+
+        if (!exists $item->{published}) {
+            die "Column \"published\" not found in view \"$view\".\n";
+        }
+        my $published = $item->{published};
+
+        if (!exists $item->{updated}) {
+            die "Column \"updated\" not found in view \"$view\".\n";
+        }
+        my $updated = $item->{updated};
+        my $author = $item->{author} || $info->{author};
+
+        $rss->add_item(title => "GTKeyboard 0.85",
+            permaLink  => $link,
+            description => $content,
         );
-    };
-    if ($@) {
-        die "minisql: $@\n";
+        ### HERE 0...
+        my $entry = XML::Atom::Syndication::Entry->new;
+        my $title_obj = XML::Atom::Syndication::Text->new(Name=>'title');
+        ### HERE 1...
+        $title_obj->body($title_obj);
+        ### HERE 2...
+        $entry->title($title_obj);
+        ### HERE 3...
+        #$entry->author($author);
+        ### HERE 4...
+        my $content_obj = XML::Atom::Syndication::Content->new($content);
+        $entry->content($content_obj);
+        ### HERE 5...
+        #$entry->updated(time_pg2rss($updated));
+        $feed->add_entry($entry);
+        ### HERE 6...
     }
-
-    my @unbound = @{ $res->{unbound} };
-    if (@unbound) {
-        die "Parameters required: @unbound\n";
-    }
-    return $openresty->select($res->{sql}, { use_hash=>1, read_only=>1 });
-
+    ### HERE 7...
+    $openresty->{_bin_data} = $feed->as_xml;
+    ### HERE 8...
+    $openresty->{_type} = 'application/atom+xml';
+    return undef;
 }
 
 sub GET_feed_exec {
@@ -241,6 +297,13 @@ sub DELETE_feed_list {
     my ($self, $openresty, $bits) = @_;
     my $sql = "truncate _feeds;";
     return { success => $openresty->do($sql) >= 0 ? 1 : 0 };
+}
+
+sub time_pg2rss {
+    my $time = shift;
+    return if !$time;
+    my $dt = DateTime::Format::Pg->parse_datetime($time);
+    return "".DateTime::Format::RSS->format_datetime($dt);
 }
 
 1;
