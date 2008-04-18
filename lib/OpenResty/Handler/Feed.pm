@@ -159,10 +159,6 @@ sub exec_feed {
         }
         my $published = $item->{published};
 
-        if (!exists $item->{updated}) {
-            die "Column \"updated\" not found in view \"$view\".\n";
-        }
-        my $updated = $item->{updated};
         my $author = $item->{author} || $info->{author};
 
         my $entry = {

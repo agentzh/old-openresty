@@ -116,7 +116,7 @@ POST /=/feed/Post
 POST /=/view/PostFeed
 {
   "description": "View for post feeds",
-  "definition": "select author, title, 'http://blog.agentzh.org/#post-' || id as link, content, created_on as published, created_on as updated, 'http://blog.agentzh.org/#post-' || id || ':comments' as comments from Post order by created_on desc limit 20"
+  "definition": "select author, title, 'http://blog.agentzh.org/#post-' || id as link, content, created_on as published, 'http://blog.agentzh.org/#post-' || id || ':comments' as comments from Post order by created_on desc limit 20"
 }
 --- response
 {"success":1}
