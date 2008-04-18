@@ -30,6 +30,7 @@ $resty->login($user, $password);
 $resty->delete("/=/role/Public/~/~");
 $resty->delete("/=/role");
 $resty->delete("/=/view");
+$resty->delete("/=/feed");
 
 if ($resty->has_model('Post')) {
     $resty->delete('/=/model/Post');
@@ -191,6 +192,66 @@ _EOC_
 );
 
 $resty->post(
+    '/=/view/PostFeed',
+    {
+        description => 'View for post feed',
+        definition => <<'_EOC_',
+    select author, title, 'http://blog.agentzh.org/#post-' || id as link,
+           content, created as published,
+           'http://blog.agentzh.org/#post-' || id || ':comments' as comments
+    from Post
+    order by created desc
+    limit $count | 20
+_EOC_
+    }
+);
+
+$resty->post(
+    '/=/view/CommentFeed',
+    {
+        description => 'View for comment feed',
+        definition => <<'_EOC_',
+    select sender as author, 'Re: ' || Post.title as title,
+           'http://blog.agentzh.org/#post-' || post || ':comment-' || Comment.id
+           as link,
+           body as content, Comment.created as published,
+           'http://blog.agentzh.org/#post-' || Comment.id as comments
+    from Comment, Post
+    where post = Post.id
+    order by Comment.created desc
+    limit $count | 20
+_EOC_
+    }
+);
+
+$resty->post(
+    '/=/feed/Post',
+    {
+        "description" => "Feed for blog posts",
+        "author" => "agentzh",
+        "copyright" => "Copyright 2008 by Yahoo! China EEEE Works",
+        "language" => "zh-cn",
+        "title" => "Articles for Human & Machine",
+        "view" => "PostFeed",
+        "link" => 'http://blog.agentzh.org',
+        "logo" => "http://localhost/Blog/out/me.jpg",
+    }
+);
+
+$resty->post(
+    '/=/feed/Comment',
+    {
+        "description" => "Feed for blog comments",
+        "copyright" => "Copyright 2008 by Yahoo! China EEEE Works",
+        "language" => "zh-cn",
+        "title" => "Comments for Human & Machine",
+        "view" => "CommentFeed",
+        "link" => 'http://blog.agentzh.org',
+        "logo" => "http://localhost/Blog/out/me.jpg",
+    }
+);
+
+$resty->post(
     '/=/role/Public/~/~',
     [
         { method => "GET", url => '/=/model/Post/~/~' },
@@ -204,6 +265,9 @@ $resty->post(
         { method => "GET", url => '/=/view/PostCountByMonths/~/~' },
         { method => "GET", url => '/=/view/FullPostsByMonth/~/~' },
         { method => "GET", url => '/=/view/PrevNextArchive/~/~' },
+
+        { method => "GET", url => '/=/feed/Post/~/~' },
+        { method => "GET", url => '/=/feed/Comment/~/~' },
 
         { method => "POST", url => '/=/model/Comment/~/~' },
         { method => "PUT", url => '/=/model/Post/id/~' },

@@ -1,6 +1,7 @@
 blog_name=EEEE Works Blog
 blog_desc=Welcome to our 4E planet!
 blog_owner=eeee
+resty_server=localhost
 
 all:
 	-rm -rf out
@@ -18,6 +19,7 @@ all:
 	tpage --define 'blog_name=$(blog_name)' \
 	    --define 'blog_desc=$(blog_desc)' \
 	    --define 'blog_owner=$(blog_owner)' \
+	    --define 'resty_server=$(resty_server)' \
 	    --include_path=template template/index.tt > out/index.html
 	cp js/*.js out/
 	cp js/*/*.js out/
@@ -28,6 +30,7 @@ all:
 	gzip --best site-binary.tar
 	mv site-binary.tar.gz out/
 
+upload: resty_server=api.eeeeworks.org
 upload: all
 	script/upload
 
