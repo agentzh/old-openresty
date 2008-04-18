@@ -164,6 +164,9 @@ sub new_feed {
     my $name = delete $data->{name} or
         die "No 'name' specified.\n";
     _IDENT($name) or die "Bad feed name: ", $OpenResty::Dumper->($name), "\n";
+    if ($openresty->has_feed($name)) {
+        die "Feed \"$name\" already exists.\n";
+    }
 
     my $title = delete $data->{title};
     if (!defined $title) {

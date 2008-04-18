@@ -121,12 +121,45 @@ POST /=/feed/Post
 {
     "description": "Feed for blog posts",
     "author": "agentzh",
+    "copyright": "Copyright 2008 by Agent Zhang",
+    "language": "en",
+    "title": "Human & Machine",
+    "view": "PostFeed"
+}
+--- response
+{"error":"No 'link' specified.","success":0}
+
+
+
+=== TEST 11: Create a feed successfully
+--- request
+POST /=/feed/Post
+{
+    "description": "Feed for blog posts",
+    "author": "agentzh",
     "link": "http://blog.agentzh.org",
     "copyright": "Copyright 2008 by Agent Zhang",
     "language": "en",
     "title": "Human & Machine",
-    "view": "Blah"
+    "view": "PostFeed"
 }
 --- response
-{"error":"View \"Blah\" not found.","success":0}
+{"success":1}
+
+
+
+=== TEST 12: Try to create a feed twice
+--- request
+POST /=/feed/Post
+{
+    "description": "Feed for blog posts",
+    "author": "agentzh",
+    "link": "http://blog.agentzh.org",
+    "copyright": "Copyright 2008 by Agent Zhang",
+    "language": "en",
+    "title": "Human & Machine",
+    "view": "PostFeed"
+}
+--- response
+{"error":"Feed \"Post\" already exists.","success":0}
 
