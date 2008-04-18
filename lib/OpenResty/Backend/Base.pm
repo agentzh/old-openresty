@@ -189,7 +189,8 @@ begin
         description text,
         copyright text,
         language text,
-        author text
+        author text,
+        created timestamp (0) with time zone
     );
     return 0;
 end;

@@ -105,7 +105,7 @@ parameter_list: parameter ',' parameter_list
               | parameter
               ;
 
-parameter: expr
+parameter: expr2
          ;
 
 expr2: expr2 '||' expr2

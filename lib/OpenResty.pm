@@ -447,6 +447,7 @@ sub has_feed {
         ->where(name => Q($feed));
     return $self->select("$select",)->[0][0];
 }
+
 sub has_view {
     my ($self, $view) = @_;
 
