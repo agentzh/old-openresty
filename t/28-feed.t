@@ -40,7 +40,15 @@ DELETE /=/feed
 
 
 
-=== TEST 5: Create a sample model
+=== TEST 5: Check the feed list
+--- request
+GET /=/feed
+--- response
+[]
+
+
+
+=== TEST 6: Create a sample model
 --- request
 POST /=/model/Post
 {
@@ -58,7 +66,7 @@ POST /=/model/Post
 
 
 
-=== TEST 6: Insert some records
+=== TEST 7: Insert some records
 --- request
 POST /=/model/Post/~/~
 [
@@ -70,7 +78,7 @@ POST /=/model/Post/~/~
 
 
 
-=== TEST 7: Create a feed without "view"
+=== TEST 8: Create a feed without "view"
 --- request
 POST /=/feed/Post
 {
@@ -86,7 +94,7 @@ POST /=/feed/Post
 
 
 
-=== TEST 8: Create a feed with an undefined view
+=== TEST 9: Create a feed with an undefined view
 --- request
 POST /=/feed/Post
 {
@@ -103,7 +111,7 @@ POST /=/feed/Post
 
 
 
-=== TEST 9: Create a view
+=== TEST 10: Create a view
 --- request
 POST /=/view/PostFeed
 {
@@ -115,7 +123,7 @@ POST /=/view/PostFeed
 
 
 
-=== TEST 10: Create a feed without link
+=== TEST 11: Create a feed without link
 --- request
 POST /=/feed/Post
 {
@@ -131,7 +139,7 @@ POST /=/feed/Post
 
 
 
-=== TEST 11: Create a feed successfully
+=== TEST 12: Create a feed successfully
 --- request
 POST /=/feed/Post
 {
@@ -148,7 +156,7 @@ POST /=/feed/Post
 
 
 
-=== TEST 12: Try to create a feed twice
+=== TEST 13: Try to create a feed twice
 --- request
 POST /=/feed/Post
 {
@@ -162,4 +170,12 @@ POST /=/feed/Post
 }
 --- response
 {"error":"Feed \"Post\" already exists.","success":0}
+
+
+
+=== TEST 14: Get the feed list
+--- request
+GET /=/feed
+--- response
+[{"src":"/=/feed/Post","name":"Post","description":"Feed for blog posts"}]
 
