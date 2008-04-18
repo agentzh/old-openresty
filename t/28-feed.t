@@ -203,7 +203,6 @@ GET /=/feed/Post
 POST /=/feed/Comment
 {
     "description": "Feed for blog comments",
-    "author": "unknown",
     "link": "http://blog.agentzh.org",
     "copyright": "Copyright by the individual commment senders",
     "language": "en",
