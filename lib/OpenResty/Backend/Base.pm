@@ -183,10 +183,11 @@ begin
     create table _feeds (
         id serial primary key,
         name text unique,
+        description text,
         view text,
         title text,
         link text,
-        description text,
+        logo text,
         copyright text,
         language text,
         author text,

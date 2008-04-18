@@ -286,6 +286,7 @@ sub POST_model_row {
     my $data = $openresty->{_req_data};
     my $model = $bits->[1];
 
+    ### POST_model_row
     return $self->insert_records($openresty, $model, $data);
 }
 
@@ -617,15 +618,18 @@ sub insert_records {
     if (!ref $data) {
         die "Malformed data: Hash or Array expected\n";
     }
-    ## Data: $data
+    ### Data: $data
     my $table = $model;
     if ($self->row_count($openresty, $table) >= $RECORD_LIMIT) {
         die "Exceeded model row count limit: $RECORD_LIMIT.\n";
     }
+    ### HERE 2...
 
     my $cols = $self->get_model_col_names($openresty, $model);
     my $sql;
     my $insert = OpenResty::SQL::Insert->new(QI($table));
+
+    ### HERE 3...
 
     my $user = $openresty->current_user;
     if ($OpenResty::AccountFiltered{$user}) {
@@ -634,6 +638,8 @@ sub insert_records {
         #die "aaaa";
         OpenResty::Filter::QP->filter($str);
     }
+
+    ### HERE 4...
 
     if (ref $data eq 'HASH') { # record found
 
@@ -649,12 +655,14 @@ sub insert_records {
         }
         my $i = 0;
         my $sql;
+        ### For loop...
         for my $row_data (@$data) {
             ++$i;
             _HASH($row_data) or
                 die "Bad data in row $i: ", $OpenResty::Dumper->($row_data), "\n";
             $sql .= $self->insert_record($openresty, $insert, $row_data, $cols, $i);
         }
+        ### HERE HANG...
         my $success = $openresty->do($sql);
         my $rows_affected = 0;
         if ($success) {
@@ -671,6 +679,7 @@ sub insert_record {
     my ($self, $openresty, $insert, $row_data, $cols, $row_num) = @_;
     $insert = $insert->clone;
     #die $user;
+    ### inserting record...
     my $found = 0;
     while (my ($col, $val) = each %$row_data) {
         _IDENT($col) or
