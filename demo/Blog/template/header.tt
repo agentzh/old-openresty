@@ -15,7 +15,7 @@
 
     <meta name="description" content="[% blog_desc %]" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="generator" content="http://www.typepad.com/" />
+    <meta name="generator" content="http://search.cpan.org/perldoc?OpenResty" />
 
     [%- FOREACH js_file IN js_files %]
         <script type="text/javascript" src="[% js_file %]"></script>
@@ -24,5 +24,9 @@
     <link rel="stylesheet" href="blog.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="styles.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="themes/common/print.css" type="text/css" media="print" />
+
+    <link rel="alternate" type="application/rss+xml" title="Posts on '[% blog_name %]' (RSS 2.0)" href="http://[% resty_server %]/=/feed/Post/count/100?user=[% blog_owner %].Public" />
+    <link rel="alternate" type="application/rss+xml" title="Comments on '[% blog_name %]' (RSS 2.0)" href="http://[% resty_server %]/=/feed/Comment/count/100?user=[% blog_owner %].Public" />
+
 </head>
 
