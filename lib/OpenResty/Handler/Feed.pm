@@ -184,10 +184,9 @@ sub new_feed {
     }
 
     my $author = delete $data->{author};
-    if (!defined $author) {
-        die "No 'author' specified.\n";
+    if (defined $author) {
+        _STRING($author) or die "Bad author: ", $OpenResty::Dumper->($author), "\n";
     }
-    _STRING($author) or die "Bad author: ", $OpenResty::Dumper->($author), "\n";
 
     my $link = delete $data->{link};
     if (!defined $link) {
