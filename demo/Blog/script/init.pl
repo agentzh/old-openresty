@@ -254,7 +254,7 @@ $resty->post(
         "description" => "Feed for blog comments",
         "copyright" => "Copyright 2008 by Yahoo! China EEEE Works",
         "language" => "zh-cn",
-        "title" => "Comments for Human & Machine",
+        "title" => "Comments for $blog_name",
         "view" => "CommentFeed",
         "link" => "http://$blog_home",
         "logo" => "http://$blog_home/me.jpg",
