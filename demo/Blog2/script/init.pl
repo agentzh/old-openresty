@@ -25,6 +25,14 @@ my $password = $opts{p} or
     die "No OpenResty account's Admin password specified via option -p\n";
 my $server = $opts{s} || 'http://resty.eeeeworks.org';
 
+my $server = kk
+my $title = 'Blog';
+if ($user eq 'agentzh') {
+    $title = 'Human & Machine';
+} elsif ($user eq 'eeee') {
+    $title = 'EEEE Works Blog';
+}
+
 my $resty = WWW::OpenResty::Simple->new( { server => $server } );
 $resty->login($user, $password);
 $resty->delete("/=/role/Public/~/~");
@@ -231,7 +239,7 @@ $resty->post(
         "author" => "agentzh",
         "copyright" => "Copyright 2008 by Yahoo! China EEEE Works",
         "language" => "zh-cn",
-        "title" => "Articles for Human & Machine",
+        "title" => "Posts for Human & Machine",
         "view" => "PostFeed",
         "link" => 'http://blog.agentzh.org',
         "logo" => "http://localhost/Blog/out/me.jpg",
