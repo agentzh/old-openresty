@@ -179,3 +179,24 @@ GET /=/feed
 --- response
 [{"src":"/=/feed/Post","name":"Post","description":"Feed for blog posts"}]
 
+
+=== TEST 15: Get the "Post" feed
+--- request
+GET /=/feed/Post
+--- response
+
+
+
+=== TEST 15: Create another feed
+--- request
+POST /=/feed/Post
+{
+    "description": "Feed for blog comments",
+    "author": "unknown",
+    "link": "http://blog.agentzh.org",
+    "copyright": "Copyright 2008 by Agent Zhang",
+    "language": "en",
+    "title": "Human & Machine",
+    "view": "PostFeed"
+}
+
