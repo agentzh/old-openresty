@@ -53,15 +53,22 @@
         <div class="module-content"><img src="me.jpg" alt="My Photo" /></div>
                 <br/>
     </div>
+[% END %]
 
 <div class="module-syndicate module">
     <h2 class="module-header">RSS feed</h2>
     <div class="module-content">
         <!-- this is a hack; we'll use OpenAPI's own RSS feed support later -->
-        <a href="http://agentzh.spaces.live.com/feed.rss">Subscribe to this blog's feed</a>
+        <ul class="module-list">
+            <li class="module-list-item">
+                <a href="http://[% resty_server %]/=/feed/Post/~/~?user=agentzh.Public">Subscribe to the article feed</a>
+            </li>
+            <li class="module-list-item">
+                <a href="http://[% resty_server %]/=/feed/Comment/~/~?user=agentzh.Public">Subscribe to the comment feed</a>
+            </li>
+        </ul>
     </div>
 </div>
-[% END %]
 
 <div class="module-download module">
     <h2 class="module-header"><a

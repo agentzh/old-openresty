@@ -226,6 +226,7 @@ GET /=/feed/Post/~/~
     <author>agentzh</author>
     <comments>http://blog.agentzh.org/#post-1:comments</comments>
     <pubDate>2008-03-12T15:20:00Z</pubDate>
+    <guid isPermaLink="true">http://blog.agentzh.org/#post-1</guid>
   </item>
   <item>
     <title>I'm going home</title>
@@ -234,6 +235,7 @@ GET /=/feed/Post/~/~
     <author>carrie</author>
     <comments>http://blog.agentzh.org/#post-2:comments</comments>
     <pubDate>2008-02-29T20:03:00Z</pubDate>
+    <guid isPermaLink="true">http://blog.agentzh.org/#post-2</guid>
   </item>
   <item>
     <title>我来了呀！</title>
@@ -242,6 +244,7 @@ GET /=/feed/Post/~/~
     <author>章亦春</author>
     <comments>http://blog.agentzh.org/#post-3:comments</comments>
     <pubDate>2008-01-30T15:59:00Z</pubDate>
+    <guid isPermaLink="true">http://blog.agentzh.org/#post-3</guid>
   </item>
   </channel>
 </rss>
