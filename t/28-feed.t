@@ -148,7 +148,7 @@ POST /=/feed/Post
     "link": "http://blog.agentzh.org",
     "copyright": "Copyright 2008 by Agent Zhang",
     "language": "en",
-    "title": "Human & Machine",
+    "title": "Human & Machine - Blog posts",
     "view": "PostFeed"
 }
 --- response
@@ -165,7 +165,7 @@ POST /=/feed/Post
     "link": "http://blog.agentzh.org",
     "copyright": "Copyright 2008 by Agent Zhang",
     "language": "en",
-    "title": "Human & Machine",
+    "title": "Human & Machine - Blog posts",
     "view": "PostFeed"
 }
 --- response
@@ -180,23 +180,73 @@ GET /=/feed
 [{"src":"/=/feed/Post","name":"Post","description":"Feed for blog posts"}]
 
 
+
 === TEST 15: Get the "Post" feed
 --- request
 GET /=/feed/Post
 --- response
+{
+    "name": "Post",
+    "description": "Feed for blog posts",
+    "author": "agentzh",
+    "link": "http://blog.agentzh.org",
+    "copyright": "Copyright 2008 by Agent Zhang",
+    "language": "en",
+    "title": "Human & Machine - Blog posts",
+    "view": "PostFeed"
+}
 
 
 
-=== TEST 15: Create another feed
+=== TEST 16: Create another feed
 --- request
-POST /=/feed/Post
+POST /=/feed/Comment
 {
     "description": "Feed for blog comments",
     "author": "unknown",
     "link": "http://blog.agentzh.org",
-    "copyright": "Copyright 2008 by Agent Zhang",
+    "copyright": "Copyright by the individual commment senders",
     "language": "en",
-    "title": "Human & Machine",
+    "title": "Human & Machine - Blog comments",
     "view": "PostFeed"
 }
+--- response
+{"success":1}
+
+
+
+=== TEST 17: Get the feed list again
+--- request
+GET /=/feed
+--- response
+[
+    {"src":"/=/feed/Post","name":"Post","description":"Feed for blog posts"},
+    {"src":"/=/feed/Comment","name":"Comment","description":"Feed for blog comments"}
+]
+
+
+
+=== TEST 18: Delete feed Comment
+--- request
+DELETE /=/feed/Comment
+--- response
+{"success":1}
+
+
+
+=== TEST 19: Get the feed list again
+--- request
+GET /=/feed
+--- response
+[
+    {"src":"/=/feed/Post","name":"Post","description":"Feed for blog posts"}
+]
+
+
+
+=== TEST 20: Delete feed Comment again
+--- request
+DELETE /=/feed/Comment
+--- response
+{"error":"Feed \"Comment\" not found.","success":0}
 
