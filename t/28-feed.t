@@ -70,9 +70,9 @@ POST /=/model/Post
 --- request
 POST /=/model/Post/~/~
 [
-    {"title":"Hello, world","author":"agentzh","content":"<h1>This is my first program ;)</h1>","comments":5},
-    {"title":"I'm going home","author":"carrie","content":"<h1>At last, I'm home again! Yay!</h1>","comments":5},
-    {"title":"我来了呀！","author":"章亦春","content":"<h1>呵呵，我<B>回来</B>了！</h1>我很开心哦，呵呵！","comments":5}
+    {"title":"Hello, world","author":"agentzh","content":"<h1>This is my first program ;)</h1>","comments":5, "created_on":"2008-03-12 15:20:00+08"},
+    {"title":"I'm going home","author":"carrie","content":"<h1>At last, I'm home again! Yay!</h1>","comments":5,"created_on":"2008-02-29 20:03:00+08"},
+    {"title":"我来了呀！","author":"章亦春","content":"<h1>呵呵，我<B>回来</B>了！</h1>我很开心哦，呵呵！","comments":5,"created_on":"2008-01-30 15:59:00+08"}
 ]
 --- response
 {"last_row":"/=/model/Post/id/3","rows_affected":3,"success":1}
@@ -202,7 +202,7 @@ GET /=/feed/Post
 --- request
 GET /=/feed/Post/~/~
 --- res_type: application/rss+xml
---- format: feed
+--- format: xml
 --- response
 <?xml version="1.0"?>
 <rss version="2.0">
@@ -211,32 +211,30 @@ GET /=/feed/Post/~/~
   <link>http://blog.agentzh.org</link>
   <language>en</language>
   <copyright>Copyright 2008 by Agent Zhang</copyright>
-  <lastBuildDate>2008-04-17T20:24:57</lastBuildDate>
+  <lastBuildDate>2008-03-12T15:20:00</lastBuildDate>
   <item>
     <title>Hello, world</title>
     <link>http://blog.agentzh.org/#post-1</link>
     <description>&lt;h1&gt;This is my first program ;)&lt;/h1&gt;</description>
     <author>agentzh</author>
-    <pubDate>2008-04-17T20:24:57</pubDate>
+    <pubDate>2008-03-12T15:20:00</pubDate>
   </item>
   <item>
     <title>I'm going home</title>
     <link>http://blog.agentzh.org/#post-2</link>
     <description>&lt;h1&gt;At last, I'm home again! Yay!&lt;/h1&gt;</description>
     <author>carrie</author>
-    <pubDate>2008-04-17T20:24:57</pubDate>
+    <pubDate>2008-02-29T20:03:00</pubDate>
   </item>
   <item>
     <title>我来了呀！</title>
     <link>http://blog.agentzh.org/#post-3</link>
     <description>&lt;h1&gt;呵呵，我&lt;B&gt;回来&lt;/B&gt;了！&lt;/h1&gt;我很开心哦，呵呵！</description>
     <author>章亦春</author>
-    <pubDate>2008-04-17T20:24:57</pubDate>
+    <pubDate>2008-01-30T15:59:00</pubDate>
   </item>
   </channel>
 </rss>
---- LAST
-
 
 
 
