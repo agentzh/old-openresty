@@ -212,6 +212,8 @@ GET /=/feed/Post/~/~
   <language>en</language>
   <copyright>Copyright 2008 by Agent Zhang</copyright>
   <generator>OpenResty RSS Feed Writer</generator>
+  <pubDate>XXX</pubDate>
+  <lastBuildDate>XXX</lastBuildDate>
   <image>
     <url>http://localhost/Blog/out/me.jpg</url>
     <link>http://blog.agentzh.org</link>

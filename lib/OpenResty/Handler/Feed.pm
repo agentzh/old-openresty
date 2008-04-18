@@ -126,8 +126,8 @@ sub exec_feed {
         language       => $info->{language},
         description    => $info->{description},
         copyright      => $info->{copyright},
-        #pubDate        => $now,
-        #lastBuildDate  => $now,
+        pubDate        => $now,
+        lastBuildDate  => $now,
         generator      => 'OpenResty RSS Feed Writer',
         image => $info->{logo} ? {
             url   => $info->{logo},
