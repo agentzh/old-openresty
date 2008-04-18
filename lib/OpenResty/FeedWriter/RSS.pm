@@ -19,6 +19,7 @@ sub new {
 
 sub add_entry {
     my ($self, $entry) = @_;
+    _HASH($entry) or croak "entry settings must be a hash";
     my $s;
     for my $key (qw<
             title link description author
@@ -39,18 +40,32 @@ sub as_xml {
     my $self = shift;
     my $global = $self->{global};
     my $s = <<'_EOC_';
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
 _EOC_
     for my $key (qw<
             title link description language
-            copyright pubDate lastBuildDate
-            category >) {
+            copyright generator pubDate lastBuildDate
+            category image >) {
         my $value = delete $global->{$key};
         next if !defined $value;
-        _escape($value);
-        $s .= "  <$key>$value</$key>\n";
+        if ($key eq 'image') {
+            _HASH($value) or croak "Value for the 'image' key should be a non-empty hash";
+            $s .= "  <image>\n";
+            for my $subkey (qw< url link title >) {
+                my $subval = delete $value->{$subkey};
+                _escape($subval);
+                $s .= "    <$subkey>$subval</$subkey>\n";
+            }
+            if (%$value) {
+                croak "Unexpcted keys in the image hash: " . join (", ", keys %$value);
+            }
+            $s .= "  </image>\n";
+        } else {
+            _escape($value);
+            $s .= "  <$key>$value</$key>\n";
+        }
     }
     if (%$global) {
         croak "Unknown keys: ", join(', ', keys %$global);

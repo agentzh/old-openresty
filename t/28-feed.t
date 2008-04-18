@@ -65,7 +65,6 @@ POST /=/model/Post
 {"success":1}
 
 
-
 === TEST 7: Insert some records
 --- request
 POST /=/model/Post/~/~
@@ -117,7 +116,7 @@ POST /=/feed/Post
 POST /=/view/PostFeed
 {
   "description": "View for post feeds",
-  "definition": "select author, title, 'http://blog.agentzh.org/#post-' || id as link, content, created_on as published, created_on as updated from Post order by created_on desc limit 20"
+  "definition": "select author, title, 'http://blog.agentzh.org/#post-' || id as link, content, created_on as published, created_on as updated, 'http://blog.agentzh.org/#post-' || id || ':comments' as comments from Post order by created_on desc limit 20"
 }
 --- response
 {"success":1}
@@ -150,7 +149,8 @@ POST /=/feed/Post
     "copyright": "Copyright 2008 by Agent Zhang",
     "language": "en",
     "title": "Human & Machine - Blog posts",
-    "view": "PostFeed"
+    "view": "PostFeed",
+    "logo": "http://localhost/Blog/out/me.jpg"
 }
 --- response
 {"success":1}
@@ -201,37 +201,47 @@ GET /=/feed/Post
 === TEST 16: Obtain the feed content (XML)
 --- request
 GET /=/feed/Post/~/~
---- res_type: application/rss+xml
---- format: xml
+--- res_type: application/rss+xml; charset=utf-8
+--- format: feed
 --- response
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
   <title>Human &amp; Machine - Blog posts</title>
   <link>http://blog.agentzh.org</link>
   <language>en</language>
   <copyright>Copyright 2008 by Agent Zhang</copyright>
-  <lastBuildDate>2008-03-12T15:20:00</lastBuildDate>
+  <generator>OpenResty RSS Feed Writer</generator>
+  <pubDate>2008-03-12T15:20:00Z</pubDate>
+  <lastBuildDate>2008-03-12T15:20:00Z</lastBuildDate>
+  <image>
+    <url>http://localhost/Blog/out/me.jpg</url>
+    <link>http://blog.agentzh.org</link>
+    <title>Human &amp; Machine - Blog posts</title>
+  </image>
   <item>
     <title>Hello, world</title>
     <link>http://blog.agentzh.org/#post-1</link>
     <description>&lt;h1&gt;This is my first program ;)&lt;/h1&gt;</description>
     <author>agentzh</author>
-    <pubDate>2008-03-12T15:20:00</pubDate>
+    <comments>http://blog.agentzh.org/#post-1:comments</comments>
+    <pubDate>2008-03-12T15:20:00Z</pubDate>
   </item>
   <item>
     <title>I'm going home</title>
     <link>http://blog.agentzh.org/#post-2</link>
     <description>&lt;h1&gt;At last, I'm home again! Yay!&lt;/h1&gt;</description>
     <author>carrie</author>
-    <pubDate>2008-02-29T20:03:00</pubDate>
+    <comments>http://blog.agentzh.org/#post-2:comments</comments>
+    <pubDate>2008-02-29T20:03:00Z</pubDate>
   </item>
   <item>
     <title>我来了呀！</title>
     <link>http://blog.agentzh.org/#post-3</link>
     <description>&lt;h1&gt;呵呵，我&lt;B&gt;回来&lt;/B&gt;了！&lt;/h1&gt;我很开心哦，呵呵！</description>
     <author>章亦春</author>
-    <pubDate>2008-01-30T15:59:00</pubDate>
+    <comments>http://blog.agentzh.org/#post-3:comments</comments>
+    <pubDate>2008-01-30T15:59:00Z</pubDate>
   </item>
   </channel>
 </rss>

@@ -10,9 +10,11 @@ use OpenResty::Limits;
 use XML::RSS;
 
 use DateTime::Format::Pg;
-use DateTime::Format::RSS;
+use DateTime::Format::Strptime;
 use OpenResty::FeedWriter::RSS;
 use POSIX qw( strftime );
+
+my $Formatter = DateTime::Format::Strptime->new(pattern => '%a, %d %b %Y %H:%M:%S GMT');
 
 sub POST_feed {
     my ($self, $openresty, $bits) = @_;
@@ -110,18 +112,12 @@ sub PUT_feed {
 sub exec_feed {
     my ($self, $openresty, $feed_name, $bits, $cgi) = @_;
     my $select = OpenResty::RestyScript::View->new;
-    my $sql = "select title, author, link, view, language, copyright, created from _feeds where name = " . Q($feed_name);
+    my $sql = "select title, author, link, view, language, copyright, logo from _feeds where name = " . Q($feed_name);
     ### laser exec_feed: "$sql"
     my $info = $openresty->select($sql, { use_hash => 1 })->[0];
     my $view = $info->{view} or die "View name not found.\n";
     my $data = OpenResty::Handler::View->exec_view($openresty, $view, $bits, $cgi);
-    my $updated;
-    if (@$data) {
-        $updated = time_pg2rss($data->[0]->{updated});
-    }
-    if (!$updated) {
-        $updated = strftime '%Y-%m-%dT%H:%M:%SZ', gmtime;
-    }
+    my $now = strftime '%Y-%m-%dT%H:%M:%SZ', gmtime;
 
     my $rss = OpenResty::FeedWriter::RSS->new(
       {
@@ -130,8 +126,14 @@ sub exec_feed {
         language       => $info->{language},
         description    => $info->{description},
         copyright      => $info->{copyright},
-        pubDate        => time_pg2rss($info->{created}),
-        lastBuildDate  => $updated,
+        pubDate        => $now,
+        lastBuildDate  => $now,
+        generator      => 'OpenResty RSS Feed Writer',
+        image => $info->{logo} ? {
+            url   => $info->{logo},
+            link  => $info->{link},
+            title => $info->{title}
+        } : undef,
       }
     );
     ### Begin...
@@ -174,8 +176,9 @@ sub exec_feed {
         };
         $rss->add_entry($entry);
     }
+    ### DONE...
     $openresty->{_bin_data} = $rss->as_xml;
-    $openresty->{_type} = 'application/rss+xml';
+    $openresty->{_type} = 'application/rss+xml; charset=utf-8';
     return undef;
 }
 
@@ -228,6 +231,11 @@ sub new_feed {
         _STRING($author) or die "Bad author: ", $OpenResty::Dumper->($author), "\n";
     }
 
+    my $logo = delete $data->{logo};
+    if (defined $logo) {
+        _STRING($logo) or die "Bad logo: ", $OpenResty::Dumper->($logo), "\n";
+    }
+
     my $link = delete $data->{link};
     if (!defined $link) {
         die "No 'link' specified.\n";
@@ -255,8 +263,8 @@ sub new_feed {
 
     my $insert = OpenResty::SQL::Insert
         ->new('_feeds')
-        ->cols( qw<name view title link description copyright language author > )
-        ->values( Q($name, $view, $title, $link, $desc, $copyright, $language, $author) );
+        ->cols( qw<name view title link description copyright language author logo > )
+        ->values( Q($name, $view, $title, $link, $desc, $copyright, $language, $author, $logo) );
 
     return { success => $openresty->do("$insert") ? 1 : 0 };
 
@@ -286,8 +294,12 @@ sub DELETE_feed_list {
 sub time_pg2rss {
     my $time = shift;
     return undef if !$time;
-    my $dt = DateTime::Format::Pg->parse_datetime($time);
-    return "".DateTime::Format::RSS->format_datetime($dt);
+    my $dt = DateTime::Format::Pg->parse_timestamp_with_time_zone($time);
+    #print DateTime::Format::Pg->format_time_with_time_zone($dt);
+    # Fri, 04 Apr 2008 08:36:27 GMT
+    $dt->set_time_zone('GMT');
+    $dt->set_formatter($Formatter);
+    return "$dt";
 }
 
 1;

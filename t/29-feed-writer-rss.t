@@ -53,7 +53,7 @@ $rss->add_entry(
 );
 
 is $rss->as_xml, <<'_EOC_';
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
   <title>&lt;h1&gt;你好么?&lt;/h1&gt;</title>
