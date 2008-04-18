@@ -1,7 +1,8 @@
 blog_name=Human & Machine
 blog_desc=The mad house for a Perl guy, agentzh
 blog_owner=agentzh
-resty_server=blog.agentzh.org
+#resty_server=blog.agentzh.org
+resty_server=localhost
 
 all:
 	-rm -rf out
