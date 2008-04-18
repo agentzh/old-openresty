@@ -14,7 +14,8 @@ use DateTime::Format::Strptime;
 use OpenResty::FeedWriter::RSS;
 use POSIX qw( strftime );
 
-my $Formatter = DateTime::Format::Strptime->new(pattern => '%a, %d %b %Y %H:%M:%S GMT');
+my $FormatterPattern = '%a, %d %b %Y %H:%M:%S GMT';
+my $Formatter = DateTime::Format::Strptime->new(pattern => $FormatterPattern);
 
 sub POST_feed {
     my ($self, $openresty, $bits) = @_;
@@ -117,7 +118,7 @@ sub exec_feed {
     my $info = $openresty->select($sql, { use_hash => 1 })->[0];
     my $view = $info->{view} or die "View name not found.\n";
     my $data = OpenResty::Handler::View->exec_view($openresty, $view, $bits, $cgi);
-    my $now = strftime '%Y-%m-%dT%H:%M:%SZ', gmtime;
+    my $now = strftime $FormatterPattern, gmtime;
 
     my $rss = OpenResty::FeedWriter::RSS->new(
       {

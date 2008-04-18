@@ -20,14 +20,21 @@ sub new {
 sub add_entry {
     my ($self, $entry) = @_;
     _HASH($entry) or croak "entry settings must be a hash";
+    my $link;
     my $s;
     for my $key (qw<
             title link description author
-            comments pubDate category >) {
+            comments pubDate category guid >) {
         my $value = delete $entry->{$key};
-        next if !defined $value;
-        _escape($value);
-        $s .= "    <$key>$value</$key>\n";
+        if (defined $value) {
+            _escape($value);
+            $link = $value if $key eq 'link';
+            $s .= "    <$key>$value</$key>\n";
+            next;
+        }
+        if ($key eq 'guid') {
+            $s .= "    <guid isPermaLink=\"true\">$link</guid>\n";
+        }
     }
     if (%$entry) {
         croak "Unknown keys: ", join(', ', keys %$entry);

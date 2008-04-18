@@ -1,6 +1,7 @@
 blog_name=Human & Machine
 blog_desc=The mad house for a Perl guy, agentzh
 blog_owner=agentzh
+resty_server=blog.agentzh.org
 
 all:
 	-rm -rf out
@@ -11,6 +12,7 @@ all:
 	tpage --define 'blog_name=$(blog_name)' \
 	    --define 'blog_desc=$(blog_desc)' \
 	    --define 'blog_owner=$(blog_owner)' \
+	    --define 'resty_server=$(resty_server)' \
 	    --include_path=template template/index.tt > out/index.html
 	cp js/*.js out/
 	cp js/*/*.js out/
