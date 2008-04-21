@@ -60,7 +60,7 @@ if ($arg eq 'product') {
                 recommends    ('Class::Prototyped'),
                 recommends    ('Test::LongString'),
                 recommends    ('HTTP::Response' => '1.53'),
-                recommends    ('WWW::OpenResty' => '0.05'),
+                recommends    ('WWW::OpenResty' => '0.06'),
         ]
     );
 } elsif ($arg eq 'devel') {
@@ -71,7 +71,7 @@ if ($arg eq 'product') {
     build_requires      ('LWP::UserAgent');
     build_requires      ('HTTP::Response' => '1.53');
     build_requires      ('Cache::Cache' => '1.05');
-    build_requires      ('WWW::OpenResty' => '0.05'),
+    build_requires      ('WWW::OpenResty' => '0.06'),
 } else {
     die "Unknown Makefile.PL argument: \"$arg\"\n";
 }
