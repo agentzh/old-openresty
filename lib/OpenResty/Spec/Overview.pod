@@ -42,6 +42,46 @@ and cross-site AJAX support.
 
 =head2 Accounts
 
+An openresty server typically distributes its data in terms of accounts, especially when the backend is a database cluster. An account is an atomic namespace for other OpenResty first-class objects like models and views. (In the current Pg and PgFarm backends, accounts are actually implemented by Pg schemas.) These objects are shared in the same account and different accounts can have different models, views, actions, and etc. with the same names.
+
+Operations like creating and removing accounts are not part of the OpenResty web service API. Basically the sysadmin uses the following command to create an account on his server terminal:
+
+    $ bin/openresty adduser marry
+
+and a similar command to remove one:
+
+    $ bin/openresty deluser marry
+
+=head2 Roles
+
+Multiple users can share the same set of objects in an account by logging in as different roles. And fine-grained access control can be achieved by specifying different sets of ACL rules for each role.
+
+Every user accessing an OpenResty server must specify both its account name and its role name. For example, a typical HTTP request may look like this:
+
+    GET /=/model/Post/id/3?user=agentzh.Public HTTP/1.1
+
+In the above example, the C<user> parameter has the value C<agentzh.Public> where C<agentzh> is the account name and C<Public> the role name. In addition, the C<Public> role is an anonymous role, or a C<password> or a C<captcha> parameter would be required here as well.
+
+Every OpenResty account has two builtin roles throughout its lifetime: C<Admin> and C<Public>.
+
+The C<Admin> role always owns the most privileges and its properties and ACL rule set are always read only. C<Public> role is always anonymous but its ACL rule set can be modified by a role with enough privileges.
+
+An OpenResty role with access to the Role API (such as C<Admin>) can create new roles, remove existing roles (except the two builtin roles explained above, of course), and modify the properties and ACL rules of other roles or even itself. For instance, to allow the C<Public> role to perform the request C<< GET /=/model/Post/id/<some number> >> under the same account, the C<Admin> role could insert a corresponding access rule to the C<Public> role's ACL rule set, like this:
+
+    POST /=/role/Public/~/~ HTTP/1.1
+    Content-Length: 45
+
+    {"method":"GET", "url":"/=/model/Post/id/~"}
+
+The JSON structure in the POST content specifies an ACL rule. The tild (C<~>) character in the C<url> value serves as a wildcard which matches "anything". So both C<GET /=/model/Post/id/1> and C<GET /=/model/Post/id/231> are allowed to perform by the C<Public> role.
+
+Interestingly it's also possible to grant the C<Public> role privileges to augment its own ACL rule set in a similar way:
+
+    POST /=/role/Public/~/~ HTTP/1.1
+    Content-Length: 46
+
+    {"method":"POST", "url":"/=/role/Public/~/~"}
+
 =head2 Models
 
 =head2 Views
