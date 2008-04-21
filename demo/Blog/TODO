@@ -1,5 +1,4 @@
 * Tags and category support.
-* true RSS/Atom support.
 * Full-text search within the blog (for both comments and posts).
 * Captcha image in the comment form.
 * Use custom action PostComment rather than chained POST and PUT.
