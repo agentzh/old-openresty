@@ -41,6 +41,7 @@ requires            ('JSON::XS' => '2.1');
 requires            ('Data::Structure::Util' => '0.15');
 requires            ('DateTime::Format::Pg');
 requires            ('DateTime::Format::Strptime');
+requires            ('Digest::MD5');
 
 recommends          ('Benchmark::Timer');
 recommends          ('HTTP::Server::Simple' => '0.27');

@@ -14,6 +14,7 @@ all:
 	    --define 'blog_desc=$(blog_desc)' \
 	    --define 'blog_owner=$(blog_owner)' \
 	    --define 'resty_server=$(resty_server)' \
+	    --define 'js_pack=0' \
 	    --include_path=template template/index.tt > out/index.html
 	cp js/*.js out/
 	cp js/*/*.js out/
@@ -24,7 +25,24 @@ all:
 	gzip --best site-binary.tar
 	mv site-binary.tar.gz out/
 
+pack: all
+	tpage --define 'blog_name=$(blog_name)' \
+	    --define 'blog_desc=$(blog_desc)' \
+	    --define 'blog_owner=$(blog_owner)' \
+	    --define 'resty_server=$(resty_server)' \
+	    --define 'pack_js=1' \
+	    --include_path=template template/index.tt > out/index.html
+	-rm out/packed_all.js
+	mv out/jquery.js .
+	cat out/*.js | jsmin > packed_all.js
+	rm out/*.js
+	mv packed_all.js out/
+	mv jquery.js out/
+
 upload: resty_server=api.eeeeworks.org
 upload: all
 	script/upload
+
+upload2:
+	scp -l 10000 -r `pwd`/out agentzh@perlcabal.org:~/public_html
 

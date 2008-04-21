@@ -35,6 +35,10 @@ OpenResty.Client.prototype.login = function (user, password) {
         self.session = data.session;
         userCallback(data);
     };
+    if (password == null)
+        password = '';
+    else
+        password = hex_md5(password);
     //this.callback = 'save_session';
     this.get('/=/login/' + user + '/' + password);
 };

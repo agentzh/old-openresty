@@ -198,6 +198,15 @@ end;
 $$ language plpgsql;
 _EOC_
     ],
+    [ '0.003' => <<'_EOC_',
+create or replace function _upgrade() returns integer as $$
+begin
+    update _roles set password=md5(password);
+    return 0;
+end;
+$$ language plpgsql;
+_EOC_
+    ],
 );
 
 sub upgrade_all {

@@ -13,6 +13,7 @@ all:
 	cp -r ../Blog/js .
 	cp ../Blog/script/init.pl script/
 	cp ../Blog/image/loading.gif out/
+	cp ../Blog/script/reset.mk script/
 	sed -i 's/resty\.eeeeworks\.org/api.eeeeworks.org/g' js/blog.js
 	sed -i 's/agentzh/eeee/g' js/blog.js
 	jemplate --compile template/elem/ > out/jemplates.js
