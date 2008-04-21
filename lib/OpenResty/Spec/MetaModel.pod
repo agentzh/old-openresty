@@ -4,8 +4,8 @@ OpenResty::Spec::MetaModel - Metamodel for OpenResty backends
 
 =head1 VERSION
 
-This document describes the 0.001 version of the metamodel used in the
-OpenResty 0.1.9.
+This document describes the 0.003 version of the metamodel used in the
+OpenResty 0.2.0.
 
 =head1 DESCRIPTION
 
@@ -72,7 +72,7 @@ The definition of the C<_general> table is
 
     create table _general (
         version varchar(10),
-        created timestamp (0) with time zone
+        created timestamp (0) with time zone default now()
     )
 
 The C<version> column keeps the metamodel version number for the current
@@ -87,7 +87,8 @@ The C<_roles> table stores the meta information of the OpenResty Role objects.
         name text unique not null,
         login text not null,
         password text,
-        description text not null
+        description text not null,
+        created timestamp(0) with time zone default now()
     );
 
 The C<login> column specifies the login method used by the role. Allowed
@@ -125,7 +126,8 @@ The definition of _models is
     create table _models (
         id serial primary key,
         name text unique not null,
-        description text not null
+        description text,
+        created timestamp(0) with time zone default now()
     );
 
 The C<name> column stores the names of user models. Every user model is
@@ -145,22 +147,22 @@ columns.
     create table _columns (
         id serial primary key,
         name text not null,
-        model text not null,
+        table_name text not null,
         label text not null,
         type text not null,
         default_value text,
         indexed text,
-        unique(model, name)
+        unique(table_name, name)
     );
 
-The C<name> column keeps the names of user models' columns and the C<model>
+The C<name> column keeps the names of user models' columns and the C<table_name>
 column stores the names of the corresponding models.
 
 The C<lable> column stores the textual label provided by the user who created
 the column and types of the model columns are stored in the C<type> column.
 
 None of the columns above but C<default_value> and C<indexed> can be null
-and in addition, the combination of the columns C<model> and C<name> should
+and in addition, the combination of the columns C<table_name> and C<name> should
 be unique.
 
 User columns have default values and the corresponding JSON representation
@@ -180,7 +182,8 @@ The C<_views> table stores the information of the OpenResty View objects.
         id serial primary key,
         name text unique not null,
         definition text unique not null,
-        description text
+        description text,
+        created timestamp(0) with time zone default now()
     );
 
 All of the columns have similar meaning as the C<_model> table
@@ -204,6 +207,8 @@ the last C<confirmed_by> column specifies the confirmation method used to
 fire the action. Allowed values for this column are "email", "cellphone",
 and "captcha".
 
+Note that, as of OpenResty 0.2.x, the _action table has not been included in the MetaModel implementation yet.
+
 =item _feeds
 
 B<WARNING> This part deserves more treatment.
@@ -215,27 +220,18 @@ The C<_feeds> table stores the meta information for the OpenResty Feed objects.
         name text unique not null,
         description text not null,
         view text not null,
-        arguments text not null,
-        type text not null,
-        snapshot text
+        title text not null,
+        link text not null,
+        logo text,
+        copyright text,
+        language text,
+        author text,
+        created timestamp (0) with time zone default now()
     );
 
-The C<arguments> column defines the mapping from Feed entries' attributes
-to the associated View object's columns. The JSON representation is
-used as the C<arguments> column's value. An example for the case of Atom/RSS
-feed is:
+The C<view> argument specifies the OpenResty view name from which the RSS/Atom feed is generated.
 
-    {title:"title",author:"poster",link:"http://blog.agentzh.org/#post-$id",issued:"created",summary:"content",summary_type:"html"}
-
-For email feeds, it may look like
-
-    {title:"title",body:"content",body_type:"html"}
-
-The C<type> column specifies the type of the Feed object, like "RSS 0.9",
-"RSS 1.0", "RSS 2.0", "Atom", and "email".
-
-The snapshot stores a snapshot of the feeds which are usually automatically
-updated by OpenResty deamon processes.
+The C<title>, C<link>, C<logo>, C<copyright>, and C<author> are properties of the web site the current feed is referred to.
 
 =back
 

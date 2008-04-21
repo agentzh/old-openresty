@@ -182,16 +182,16 @@ begin
     insert into _access (role, method, url) values ('Admin', 'PUT', '/=/feed/~');
     create table _feeds (
         id serial primary key,
-        name text unique,
-        description text,
-        view text,
-        title text,
-        link text,
+        name text unique not null,
+        description text not null,
+        view text not null,
+        title text not null,
+        link text not null,
         logo text,
         copyright text,
         language text,
         author text,
-        created timestamp (0) with time zone
+        created timestamp (0) with time zone default now()
     );
     return 0;
 end;
@@ -391,8 +391,6 @@ sub add_user {
         id serial primary key,
         name text unique not null,
         definition text unique not null,
-        createdate timestamp with time zone default current_timestamp,
-        updatedate timestamp with time zone default current_timestamp,
         description text
     );
 _EOC_

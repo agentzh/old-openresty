@@ -1,5 +1,19 @@
-0.1.11 XXX
+Change Log for OpenResty
+
+0.2.0 April 21 2008
+* Now we save the hex MD5 form of role passwords in the _roles table.
+* Updated the openresty.js client lib accordingly.
+* Added OpenResty::FeedWriter::RSS and the Feed handler to implement the basic Feed API.
 * Reported the PL/proxy server's hostname in the openresty shell if the backend is "PgFarm".
+* Put a note regarding password encryption in CheatSheet per Dylan Tynan's suggestion.
+* Checked if an OpenResty view already exists before creating it.
+* Finished the catpcha handler refactoring documentation (chaoslawful).
+* demo/Blog - implemented the Archives module using enhanced minisql syntax.
+* Renamed MiniSQL to RestyScript since it will no longer be a subset of SQL anyway.
+* Added support for various operations (including +, -, *, /, ^, ||, and %) in the RestyScript compiler.
+* Fixed the "like" operator in the restyscript compiler for views.
+* demo/Admin - the general-purpose OpenResty admin site is now functional and CRUD operations for models, model columns, model rows, views, and roles have been fully implemented. I've also put a compiled version at http://resty.eeeeworks.org/admin/ ).
+* Upgraded the metamodel to 0.003
 
 0.1.10 April 4 2008
 * Optimized the row bulk insertion and model bulk deletion operations. They are now much much faster.
