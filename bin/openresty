@@ -10,6 +10,7 @@ use lib "$FindBin::Bin/../lib";
 use OpenResty::Dispatcher;
 use OpenResty::Limits;
 use Getopt::Std;
+use Digest::MD5 'md5';
 
 my $cmd = lc(shift) || $ENV{OPENRESTY_COMMAND};
 

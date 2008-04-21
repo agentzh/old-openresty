@@ -5,6 +5,7 @@ use Test::Base -Base;
 use YAML::Syck ();
 #use JSON::Syck ();
 use JSON::XS ();
+use Digest::MD5 qw(md5_hex);
 
 #use Smart::Comments '####';
 my $client_module;
@@ -41,6 +42,7 @@ if ($server =~ /^(\w+):(\S+)\@(\S+)$/) {
 } else {
     die "test_suite.server syntax error in conf file: $server\n";
 }
+$password = md5_hex($password);
 
 $host = "http://$host" if $host !~ m{^http://};
 

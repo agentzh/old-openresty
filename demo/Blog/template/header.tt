@@ -1,6 +1,8 @@
 [% DEFAULT
       blog_name  = 'Foo\'s blog',
-      blog_desc  = 'This is my blog'
+      blog_desc  = 'This is my blog';
+%]
+[% IF NOT pack_js;
       js_files = [
         'JSON.js',
         'openresty.js',
@@ -8,8 +10,11 @@
         'Jemplate.js',
         'jemplates.js',
         'blog.js',
-      ]
--%]
+      ];
+   ELSE;
+      js_files = ['jquery.js', 'packed_all.js'];
+   END;
+%]
 <head>
     <title>[% blog_name %]</title>
 
