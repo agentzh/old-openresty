@@ -93,7 +93,7 @@ access rule to the C<Public> role's ACL rule set, like this:
 The JSON structure in the POST content specifies an ACL rule. The
 tild (C<~>) character in the C<url> value serves as a wildcard which
 matches "anything". So both C<GET /=/model/Post/id/1> and C<GET
-/=/model/Post/id/231> are allowed to perform by the C<Public> role.
+/=/model/Post/id/231> are allowed to be performed by the C<Public> role.
 
 Interestingly it's also possible to grant the C<Public> role privileges
 to augment its own ACL rule set in a similar way:
