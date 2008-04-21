@@ -1,0 +1,56 @@
+=head1 NAME
+
+OpenResty::Spec::Overview - OpenResty overview
+
+=head1 INTRODUCTION
+
+OpenResty is a general-purpose RESTful web service engine for web applications. It provides the following important functionalities for a common nontrivial web app:
+
+=over
+
+=item *
+
+(scalable) relational data storage,
+
+=item *
+
+SQL-based reusable views,
+
+=item *
+
+a REST-oriented role system for access control,
+
+=item *
+
+view-based RSS feeds,
+
+=item *
+
+user-defined actions in the RestyScript language,
+
+=item *
+
+captchas,
+
+=item *
+
+and cross-site AJAX support.
+
+=back
+
+=head1 Key features
+
+=head2 Accounts
+
+=head2 Models
+
+=head2 Views
+
+=head2 Feeds
+
+=head2 Actions
+
+=head2 Captchas
+
+=head2 Cross-site AJAX
+
