@@ -207,11 +207,9 @@ the last C<confirmed_by> column specifies the confirmation method used to
 fire the action. Allowed values for this column are "email", "cellphone",
 and "captcha".
 
-Note that, as of OpenResty 0.2.x, the _action table has not been included in the MetaModel implementation yet.
+B<WARNING> This part deserves more treatment. As of OpenResty 0.2.x, the _action table has not been included in the MetaModel implementation yet.
 
 =item _feeds
-
-B<WARNING> This part deserves more treatment.
 
 The C<_feeds> table stores the meta information for the OpenResty Feed objects.
 
