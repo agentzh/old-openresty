@@ -47,6 +47,9 @@ requires:
   DBI: 1.57
   Data::Structure::Util: 0.15
   Data::UUID: 1.148
+  DateTime::Format::Pg: 0
+  DateTime::Format::Strptime: 0
+  Digest::MD5: 0
   Encode::Guess: 0
   FCGI: 0
   GD::SecurityImage: 1.64

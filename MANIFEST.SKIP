@@ -17,9 +17,16 @@ bin/.*\.dat
 ^demo/Blog/out
 ^demo/Blog/script/upload
 ^demo/Blog2/out
+^demo/Blog/backup
 ^demo/Blog2/js
 ^demo/Blog2/template
 ^demo/Admin/index.html
+^demo/Admin/out
+^demo/Blog/backup
+^demo/Blog/.*\.json
+^demo/Blog2/.*\.json
+^demo/Blog2/script/reset\.mk
+^demo/Blog2/script/upload
 ^demo/Admin/template/exceptions.tt
 ^demo/Admin/template/page-rent.tt
 ^demo/Admin/template/page-secondary.tt
