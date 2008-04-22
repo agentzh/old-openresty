@@ -380,7 +380,53 @@ some basic ideas.
 
 =head2 Captchas
 
+Captchas are just another way to do "per-request login" in addition to the C<anonymous> and C<password> login methods.
 
+Captcha support must be associated with some user-defined role whose "login" attribute is set to the value "C<captcha>", like this:
+
+    POST /=/role/CommentPoster HTTP/1.0
+    Content-Type: text/json
+    Content-Length: 64
+
+    {"description":"Role for posting comments","login": "captcha"}
+
+Then we should grant priviledges to the operations that need to performed by solving a capthca challenge:
+
+    POST /=/role/CommentPoster/~/~ HTTP/1.0
+    Content-Type: text/json
+    Content-Length: 48
+
+    {"method":"POST","url":"/=/model/Comment/~/~"}
+
+Then the clients (like the JavaScript code in a web page) could do the following:
+
+=over
+
+=item 1.
+
+Use C<GET /=/captcha/id> to obtain an ID from the OpenResty server.
+
+=item 2.
+
+Use the captcha ID, say, C<B44572D0-1038-11DD-B185-1A3EB9E8D9B0>, to fetch the catpcha image:
+
+    GET /=/captcha/id/B44572D0-1038-11DD-B185-1A3EB9E8D9B0 HTTP/1.0
+
+=item 3.
+
+Use the captcha ID as long as the captcha solution provided by the I<end user>, the following operation can be tried:
+
+    POST /=/model/Comment/~/~?user=agentzh.CommentPoster\
+        &captcha=B44572D0-1038-11DD-B185-1A3EB9E8D9B0:pretty%20cat\
+        HTTP/1.0
+    Content-Type: text/json
+    Content-Length: 52
+
+    {"sender":"agentzh","body":"Good post!","post":25}
+
+=back
+
+If the user solution C<pretty%20cat> provided in the C<captcha> URL parameter is incorrect, the server would reject the whole POST operation.
 
 =head2 Cross-site AJAX
 
