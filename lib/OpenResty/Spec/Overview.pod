@@ -634,7 +634,8 @@ L<http://svn.openfoundry.org/openapi/trunk/demo/Springbot/>
 
 =back
 
-Most of the sample apps' source code can be found at L<http://svn.openfoundry.org/openapi/trunk/demo/>.
+Most of the sample apps' source code can be found at
+L<http://svn.openfoundry.org/openapi/trunk/demo/>.
 
 =head1 AUTHOR
 
