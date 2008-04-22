@@ -101,10 +101,10 @@ SSL in the real thing.
 
 =item Views
 
-    POST /=/view/MyView             Create a new view named MyView
-    { description:"My first view",
+    POST /=/view/MyView             Create a new view named MyView which
+    { description:"My view",        takes the parameters "table" and "min"
       definition:
-        "select * from Post, $<table> where Post.id >= $(min)"
+        "select * from Post, $table where Post.id >= $min"
     }
 
     GET /=/view/MyView              View the definition of the view MyView
@@ -126,6 +126,8 @@ SSL in the real thing.
 
 =head1 ACTION API
 
+B<Note:> Actions have not yet been implemented.
+
 =over
 
 =item Action lists
@@ -139,11 +141,11 @@ SSL in the real thing.
     { description:"Post a comment",         new comments
       definition:"
         POST /=/model/Comment/~/~
-        { author:   $(author),
-          content:  $(content),
-          post:     $(post) }
+        { author:   $author,
+          content:  $content,
+          post:     $post }
         update Post set comments=comments+1
-        where post = $(post)" }
+        where post = $post" }
 
     PUT /=/action/PostComment               Update an existing action
     { name:"SendComment",

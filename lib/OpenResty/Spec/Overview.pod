@@ -90,6 +90,10 @@ like Amazon SimpleDB or CouchDB.
 
 =head1 REST API
 
+This section just gives a conceptual overview for the REST API probably
+with some samples. For detailed spec for the various REST request syntax,
+see L<OpenResty::CheatSheet> and L<OpenResty::Spec::REST>.
+
 =head2 Accounts
 
 An openresty server typically distributes its data in terms of accounts,
@@ -104,11 +108,11 @@ Operations like creating and removing accounts are not part of the
 OpenResty web service API. Basically the sysadmin uses the following
 command to create an account on his server terminal:
 
-    $ bin/openresty adduser marry
+  $ bin/openresty adduser marry
 
 and a similar command to remove one:
 
-    $ bin/openresty deluser marry
+  $ bin/openresty deluser marry
 
 =head2 Roles
 
@@ -131,10 +135,10 @@ role to perform the request C<< GET /=/model/Post/id/<some number> >>
 under the same account, the C<Admin> role could insert a corresponding
 access rule to the C<Public> role's ACL rule set, like this:
 
-    POST /=/role/Public/~/~ HTTP/1.0
-    Content-Length: 45
+  POST /=/role/Public/~/~ HTTP/1.0
+  Content-Length: 45
 
-    {"method":"GET", "url":"/=/model/Post/id/~"}
+  {"method":"GET", "url":"/=/model/Post/id/~"}
 
 The JSON structure in the POST content specifies an ACL rule. The
 tild (C<~>) character in the C<url> value serves as a wildcard which
@@ -144,10 +148,10 @@ matches "anything". So both C<GET /=/model/Post/id/1> and C<GET
 Interestingly it's also possible to grant the C<Public> role privileges
 to augment its own ACL rule set in a similar way:
 
-    POST /=/role/Public/~/~ HTTP/1.0
-    Content-Length: 46
+  POST /=/role/Public/~/~ HTTP/1.0
+  Content-Length: 46
 
-    {"method":"POST", "url":"/=/role/Public/~/~"}
+  {"method":"POST", "url":"/=/role/Public/~/~"}
 
 =head1 Login
 
@@ -155,7 +159,7 @@ Every user accessing an OpenResty server must specify both its account
 name and its role name unless he or she has already logged in and got
 a session ID. For example, a typical HTTP request may look like this:
 
-    GET /=/model/Post/id/3?user=agentzh.Public HTTP/1.0
+  GET /=/model/Post/id/3?user=agentzh.Public HTTP/1.0
 
 In the above example, the C<user> parameter has the value
 C<agentzh.Public> where C<agentzh> is the account name and C<Public>
@@ -167,25 +171,25 @@ Alternatively, the user can login with his user name and MD5'd password
 first so as to obtain a session ID which can be used for subsequence
 requests. For example:
 
-    GET /=/login/agentzh.Admin/5f4dcc3b5aa765d61d8327deb882cf99 HTTP/1.0
+  GET /=/login/agentzh.Admin/5f4dcc3b5aa765d61d8327deb882cf99 HTTP/1.0
 
 will yield an HTTP response from the OpenResty server like this:
 
-    HTTP/1.0 200 OK
-    Connection: close
-    Content-Type: text/plain; charset=UTF-8
-    Content-Length: 133
-    Date: Mon, 21 Apr 2008 11:51:49 GMT
+  HTTP/1.0 200 OK
+  Connection: close
+  Content-Type: text/plain; charset=UTF-8
+  Content-Length: 133
+  Date: Mon, 21 Apr 2008 11:51:49 GMT
 
-    {
-        "success": 1,
-        "session": "535F265E-0F99-11DD-B185-1A3EB9E8D9B0",
-        "account": "agentzh","role":"Admin"
-    }
+  {
+      "success": 1,
+      "session": "535F265E-0F99-11DD-B185-1A3EB9E8D9B0",
+      "account": "agentzh","role":"Admin"
+  }
 
 And subsequent requests can be made by using the resulting session ID:
 
-    GET /=/model/Post/id/3?session=535F265E-0F99-11DD-B185-1A3EB9E8D9B0
+  GET /=/model/Post/id/3?session=535F265E-0F99-11DD-B185-1A3EB9E8D9B0
 
 For convenience, the sample HTTP requests given throughout this document
 will not specify the C<user> nor the C<session> parameter explicitly.
@@ -201,30 +205,30 @@ An OpenResty model is just an abstract concept of tables found in common
 relational databases. An instance of an OpenResty model could be a
 blog post:
 
-    {
-      "description":"Blog post",
-      "columns": [
-        { "name":"title", "label":"Post title", "type":"text" },
-        { "name":"content", "label":"Post content", "type":"text" },
-        { "name":"author", "label":"Post author", "type":"text" },
-        { "name":"created", "default":["now()"],
-            "type":"timestamp (0) with time zone",
-            "label":"Post creation time" },
-        { "name":"comments", "label":"Number of comments",
-            "type":"integer", "default":0 }
-      ],
-    }
+  {
+    "description":"Blog post",
+    "columns": [
+      { "name":"title", "label":"Post title", "type":"text" },
+      { "name":"content", "label":"Post content", "type":"text" },
+      { "name":"author", "label":"Post author", "type":"text" },
+      { "name":"created", "default":["now()"],
+          "type":"timestamp (0) with time zone",
+          "label":"Post creation time" },
+      { "name":"comments", "label":"Number of comments",
+          "type":"integer", "default":0 }
+    ],
+  }
 
 This is approximately the C<Post> model used in my personal blog site
 L<http://blog.agentzh.org>. The rough SQL equivalence could be as follows:
 
-    create table "Post" (
-        title text,
-        content text,
-        author text,
-        created timestamp (0) with time zone default now(),
-        comments integer default 0
-    )
+  create table "Post" (
+      title text,
+      content text,
+      author text,
+      created timestamp (0) with time zone default now(),
+      comments integer default 0
+  )
 
 Although the data storage backend may be truly implmented this way,
 the column types and names that can be used here are well defined and
@@ -232,14 +236,14 @@ reasonably limited.
 
 After creating a model, one can insert data via an HTTP POST request:
 
-    POST /=/model/Post/~/~ HTTP/1.0
-    Content-Length: 111
+  POST /=/model/Post/~/~ HTTP/1.0
+  Content-Length: 111
 
-    {
-        "title":"My first post",
-        "content":"Blah blah blah...",
-        "author":"Agent Zhang"
-    }
+  {
+    "title":"My first post",
+    "content":"Blah blah blah...",
+    "author":"Agent Zhang"
+  }
 
 Multiple rows can be inserted at a time as well, but there's a limit.
 
@@ -247,16 +251,15 @@ The model API not only offers interfaces to perform CRUD operations on
 models, columns, and rows, but also gives some simple but still powerful
 query functionalities. Here's an example:
 
-    GET /=/model/Post/author/agentzh?order_by=created:desc&count=10
-    HTTP/1.0
+  GET /=/model/Post/author/agentzh?order_by=created:desc&count=10 HTTP/1.0
 
 which is roughly equivalent to the following standard SQL query:
 
-    select *
-    from "Post"
-    where "author" = 'agentzh'
-    order by created desc
-    count 10
+  select *
+  from "Post"
+  where "author" = 'agentzh'
+  order by created desc
+  count 10
 
 =head2 Views
 
@@ -265,18 +268,18 @@ provided by the model API, OpenResty integrates a view system in which
 the user can define reusable SQL-like queries by means of the RestyScript
 language. Here is an example:
 
-    POST /=/view/~ HTTP/1.0
-    Content-Length: 312
+  POST /=/view/~ HTTP/1.0
+  Content-Length: 312
 
-    {
-        "name": "CommentsToAuthor",
-        "description": "Recent comments for the blog",
-        "definition": "
-            select Comment.sender as guest,
-                   Comment.body as comment_body
-            from Comment, Post
-            where Comment.id = Post.id and Post.author = $author"
-    }
+  {
+    "name": "CommentsToAuthor",
+    "description": "Recent comments for the blog",
+    "definition": "
+         select Comment.sender as guest,
+                Comment.body as comment_body
+         from Comment, Post
+         where Comment.id = Post.id and Post.author = $author"
+  }
 
 In this sample, the string literal for the C<definition> slot has been
 splitted into multiple lines for readability. The RestyScript language
@@ -289,25 +292,25 @@ Unlike SQL, however, the view definition can take one or more parameters
 (or named place-holders) which are required to feed values (unless
 they've got a default value) while invoking the view:
 
-    GET /=/view/CommentsToAuthor/author/agentzh
+  GET /=/view/CommentsToAuthor/author/agentzh
 
 Or equivalently
 
-    GET /=/view/CommentsToAuthor/~/~?author=agentzh
+  GET /=/view/CommentsToAuthor/~/~?author=agentzh
 
 The HTTP response from the OpenResty server might be
 
-    HTTP/1.0 200 OK
-    Connection: close
-    Content-Type: text/plain; charset=UTF-8
-    Content-Length: 187
-    Date: Mon, 21 Apr 2008 12:42:15 GMT
+  HTTP/1.0 200 OK
+  Connection: close
+  Content-Type: text/plain; charset=UTF-8
+  Content-Length: 187
+  Date: Mon, 21 Apr 2008 12:42:15 GMT
 
-    [
-      {"guest":"laser","comment_body":"super cool!"},
-      {"guest":"carriezh","comment_body":"hello?hello?"},
-      {"guest":"agentzh":"comment_body":"Thanks for commenting!"}
-    ]
+  [
+    {"guest":"laser","comment_body":"super cool!"},
+    {"guest":"carriezh","comment_body":"hello?hello?"},
+    {"guest":"agentzh":"comment_body":"Thanks for commenting!"}
+  ]
 
 =head2 Feeds
 
@@ -346,12 +349,14 @@ Here the C<PostFeed> view takes one optional parameter C<$count> (with
 the default value C<20>), which controls the number of resulting rows
 returned.
 
-Not every view can be used to drive the feed generation. The resulting rows of the view must have the columns that make sense to the feed, like C<author>, C<title>, C<link>, C<content>, C<published>, and C<comments>.
+Not every view can be used to drive the feed generation. The resulting
+rows of the view must have the columns that make sense to the feed, like
+C<author>, C<title>, C<link>, C<content>, C<published>, and C<comments>.
 
 After creating the C<Post> feed in my C<agentzh> account, one can
 subscribe to the feed by the following GET request:
 
-    GET /=/feed/Post/~/~ HTTP/1.0
+  GET /=/feed/Post/~/~ HTTP/1.0
 
 Check L<http://api.eeeeworks.org/=/feed/Post/~/~> to see what the actual
 response looks like.
@@ -359,12 +364,15 @@ response looks like.
 One nice thing about the feed object is that it can forward arguments
 to the  view that drives it:
 
-    GET /=/feed/Post/count/100 HTTP/1.0
+  GET /=/feed/Post/count/100 HTTP/1.0
 
 This will produce the RSS 2.0 feed for the last 100 post entries rather
 than the default 20, giving more options to my blog readers.
 
 =head2 Actions
+
+B<Note:> Custom actions have not yet been implemented. Below is just
+some basic ideas.
 
 =head2 Captchas
 
