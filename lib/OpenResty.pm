@@ -562,17 +562,27 @@ And there're several (pure-client-side) web sites alreadying taking advantage of
 
 =over
 
-=item agentzh's blog site
+=item OpenResty's admin site
+
+L<http://resty.eeeeworks.org/admin/>
+
+=item agentzh's blog and EEEE Works' blog
 
 L<http://blog.agentzh.org>
 
-=item Yisou.com's BBS
+L<http://eeeeworks.org>
+
+=item Yisou BBS
 
 L<http://www.yisou.com/opi/post.html>
 
 =back
 
 This library is still in B<pre-alpha> stage and the API is still in flux. We're just following the "release early, releaes often" guideline. So please check back often ;)
+
+See L<OpenResty::Spec::Overview> for more detailed information.
+
+L<OpenResty::CheatSheet> also provides a good enough summary for the REST interface.
 
 =head1 INSTALLATION
 
@@ -774,5 +784,5 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 =head1 SEE ALSO
 
-L<OpenResty::Spec::REST>, L<OpenResty::CheatSheet>, L<WWW::OpenResty>, L<WWW::OpenResty::Simple>.
+L<OpenResty::Spec::Overview>, L<OpenResty::Spec::REST>, L<OpenResty::CheatSheet>, L<WWW::OpenResty>, L<WWW::OpenResty::Simple>.
 
