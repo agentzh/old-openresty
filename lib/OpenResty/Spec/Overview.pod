@@ -18,6 +18,10 @@ a common nontrivial web app:
 
 =item *
 
+Truely RESTy interface and JSON/YAML data transfer format,
+
+=item *
+
 SQL-based reusable views,
 
 =item *
@@ -42,7 +46,49 @@ and cross-site AJAX support.
 
 =back
 
-=head1 Key features
+=head2 What OpenResty is
+
+=over
+
+=item *
+
+A REST wrapper for relational databases
+
+=item *
+
+A web runtime for 100% JavaScript web sites and other RIAs.
+
+=item *
+
+A "meta web site" supporting other sites via web services.
+
+=item *
+
+A handy personal or company database which can be accessed from anywhere
+on the web.
+
+=item *
+
+A (sort of) competitor for the Facebook Data Store API.
+
+=back
+
+=head2 What OpenResty is NOT
+
+=over
+
+=item *
+
+A server-side web application framework.
+
+=item *
+
+A relacement for highly scalable semi-structured data storage solutions
+like Amazon SimpleDB or CouchDB.
+
+=back
+
+=head1 REST API
 
 =head2 Accounts
 
@@ -144,28 +190,30 @@ And subsequent requests can be made by using the resulting session ID:
 For convenience, the sample HTTP requests given throughout this document
 will not specify the C<user> nor the C<session> parameter explicitly.
 
+It's worth mentioning that the simple MD5 treatment of passwords in the
+current implementation is merely a hack and will be changed in the near
+future. It's highly recommended to use SSL for the password login method
+for any serious uses.
+
 =head2 Models
 
 An OpenResty model is just an abstract concept of tables found in common
 relational databases. An instance of an OpenResty model could be a
 blog post:
 
-        {
-            "description": "Blog post",
-            "columns": [
-                { "name": "title", "label": "Post title", "type":
-                "text" },
-                { "name": "content", "label": "Post content", "type":
-                "text" },
-                { "name": "author", "label": "Post author", "type":
-                "text" },
-                { "name": "created", "default": ["now()"],
-                    "type": "timestamp (0) with time zone",
-                    "label": "Post creation time" },
-                { "name": "comments", "label": "Number of comments",
-                    "type": "integer", "default": 0 }
-            ],
-        }
+    {
+      "description":"Blog post",
+      "columns": [
+        { "name":"title", "label":"Post title", "type":"text" },
+        { "name":"content", "label":"Post content", "type":"text" },
+        { "name":"author", "label":"Post author", "type":"text" },
+        { "name":"created", "default":["now()"],
+            "type":"timestamp (0) with time zone",
+            "label":"Post creation time" },
+        { "name":"comments", "label":"Number of comments",
+            "type":"integer", "default":0 }
+      ],
+    }
 
 This is approximately the C<Post> model used in my personal blog site
 L<http://blog.agentzh.org>. The rough SQL equivalence could be as follows:
@@ -211,7 +259,10 @@ which is roughly equivalent to the following standard SQL query:
 
 =head2 Views
 
-To address the problem of extending the limited data query interface provided by the model API, OpenResty integrates a view system in which the user can define reusable SQL-like queries by means of the RestyScript language. Here is an example:
+To address the problem of extending the limited data query interface
+provided by the model API, OpenResty integrates a view system in which
+the user can define reusable SQL-like queries by means of the RestyScript
+language. Here is an example:
 
     POST /=/view/~ HTTP/1.0
     Content-Length: 312
@@ -226,9 +277,16 @@ To address the problem of extending the limited data query interface provided by
             where Comment.id = Post.id and Post.author = $author"
     }
 
-In this sample, the string literal for the C<definition> slot has been splitted into multiple lines for readability. The RestyScript language for views is just a (non-strict) subset of the standard SQL language, thus giving powerful strucutred query capability to the user, which is often a missing feature in those highly-distributed and semi-structured data storage solutions like CouchDB and SimpleDB.
+In this sample, the string literal for the C<definition> slot has been
+splitted into multiple lines for readability. The RestyScript language
+for views is just a (non-strict) subset of the standard SQL language,
+thus giving powerful strucutred query capability to the user, which is
+often a missing feature in those highly-distributed and semi-structured
+data storage solutions like CouchDB and SimpleDB.
 
-Unlike SQL, however, the view definition can take one or more parameters (or named place-holders) which are required to feed values (unless they've got a default value) while invoking the view:
+Unlike SQL, however, the view definition can take one or more parameters
+(or named place-holders) which are required to feed values (unless
+they've got a default value) while invoking the view:
 
     GET /=/view/CommentsToAuthor/author/agentzh
 
