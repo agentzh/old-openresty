@@ -247,7 +247,8 @@ The model API not only offers interfaces to perform CRUD operations on
 models, columns, and rows, but also gives some simple but still powerful
 query functionalities. Here's an example:
 
-    GET /=/model/Post/author/agentzh?order_by=created:desc&count=10 HTTP/1.0
+    GET /=/model/Post/author/agentzh?order_by=created:desc&count=10
+    HTTP/1.0
 
 which is roughly equivalent to the following standard SQL query:
 
@@ -310,7 +311,9 @@ The HTTP response from the OpenResty server might be
 
 =head2 Feeds
 
-OpenResty offers the feed objects which can be used to map OpenResty views to RSS 2.0 feeds. For instance, the OpenResty feed object for my blog posts looks like this:
+OpenResty offers the feed objects which can be used to map OpenResty
+views to RSS 2.0 feeds. For instance, the OpenResty feed object for my
+blog posts looks like this:
 
     {
         "description": "Feed for blog posts",
@@ -323,7 +326,8 @@ OpenResty offers the feed objects which can be used to map OpenResty views to RS
         "view": "PostFeed"
     }
 
-and the C<PostFeed> view used to generate this view has the following definition:
+and the C<PostFeed> view used to generate this view has the following
+definition:
 
     {
       "description":"View for post feed",
@@ -338,20 +342,25 @@ and the C<PostFeed> view used to generate this view has the following definition
       "
     }
 
+Here the C<PostFeed> view takes one optional parameter C<$count> (with
+the default value C<20>), which controls the number of resulting rows
+returned.
 
-Here the C<PostFeed> view takes one optional parameter C<$count> (with the default value C<20>), which controls the number of resulting rows returned.
-
-After creating the C<Post> feed in my C<agentzh> account, one can subscribe to the feed by the following GET request:
+After creating the C<Post> feed in my C<agentzh> account, one can
+subscribe to the feed by the following GET request:
 
     GET /=/feed/Post/~/~ HTTP/1.0
 
-Check L<http://api.eeeeworks.org/=/feed/Post/~/~> to see what the actual response looks like.
+Check L<http://api.eeeeworks.org/=/feed/Post/~/~> to see what the actual
+response looks like.
 
-One nice thing about the feed object is that it can forward arguments to the  view that drives it:
+One nice thing about the feed object is that it can forward arguments
+to the  view that drives it:
 
     GET /=/feed/Post/count/100 HTTP/1.0
 
-This will produce the RSS 2.0 feed for the last 100 post entries rather than the default 20, giving more options to my blog readers.
+This will produce the RSS 2.0 feed for the last 100 post entries rather
+than the default 20, giving more options to my blog readers.
 
 =head2 Actions
 
