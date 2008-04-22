@@ -136,6 +136,7 @@ under the same account, the C<Admin> role could insert a corresponding
 access rule to the C<Public> role's ACL rule set, like this:
 
   POST /=/role/Public/~/~ HTTP/1.0
+  Content-Type: text/json
   Content-Length: 45
 
   {"method":"GET", "url":"/=/model/Post/id/~"}
@@ -149,6 +150,7 @@ Interestingly it's also possible to grant the C<Public> role privileges
 to augment its own ACL rule set in a similar way:
 
   POST /=/role/Public/~/~ HTTP/1.0
+  Content-Type: text/json
   Content-Length: 46
 
   {"method":"POST", "url":"/=/role/Public/~/~"}
@@ -177,7 +179,7 @@ will yield an HTTP response from the OpenResty server like this:
 
   HTTP/1.0 200 OK
   Connection: close
-  Content-Type: text/plain; charset=UTF-8
+  Content-Type: text/json; charset=UTF-8
   Content-Length: 133
   Date: Mon, 21 Apr 2008 11:51:49 GMT
 
@@ -237,6 +239,7 @@ reasonably limited.
 After creating a model, one can insert data via an HTTP POST request:
 
   POST /=/model/Post/~/~ HTTP/1.0
+  Content-Type: text/json
   Content-Length: 111
 
   {
@@ -269,6 +272,7 @@ the user can define reusable SQL-like queries by means of the RestyScript
 language. Here is an example:
 
   POST /=/view/~ HTTP/1.0
+  Content-Type: text/json
   Content-Length: 312
 
   {
@@ -302,7 +306,7 @@ The HTTP response from the OpenResty server might be
 
   HTTP/1.0 200 OK
   Connection: close
-  Content-Type: text/plain; charset=UTF-8
+  Content-Type: text/json; charset=UTF-8
   Content-Length: 187
   Date: Mon, 21 Apr 2008 12:42:15 GMT
 
@@ -377,4 +381,71 @@ some basic ideas.
 =head2 Captchas
 
 =head2 Cross-site AJAX
+
+The OpenResty server opens a special door to JavaScript code running in a web page from the user's own domain, so as to allow REST requests get directly initiated from I<end> users' web browser.
+
+For GET requests, it's the common practice to do cross-domain AJAX requests via dynamically-created C<< <scrip> >> tags. To help the page owner do this trick with an OpenResty server, the special C<callback> URL parameter is supported to make the server returning JSON data wrapped by C<some_callback_func(> and C<);>. For example, the request
+
+  GET /=/view/RecentPosts/~/~?user=agentzh.Public&callback=foo HTTP/1.0
+
+yields something like this
+
+  HTTP/1.0 200 OK
+  Connection: close
+  Content-Type: application/x-javascript; charset=UTF-8
+  Content-Length: 74
+  Date: Mon, 21 Apr 2008 12:42:15 GMT
+
+  foo(
+    [
+        {"title":"My first post","id":1},
+        {"title":"My second one","id":2}
+    ]
+  );
+
+Note the extra stuff C<foo(...)> around the JSON data.
+
+POST, PUT, and DELETE requests all have their GET forms:
+
+    GET /=/post/...
+    GET /=/put/...
+    GET /=/delete/...
+
+where C<...> is the normal stuff in C<POST /=/...>, C<PUT /=/...>, and C<DELETE /=/...>, respectively. Some people might be nervous about GET requests doing data modification and cookies for authentication should always be excluded due to the risk of XSS attacks.
+
+To overcome the length limit of URLs, cross-site POST AJAX interface is also supported. Basically the user could use an HTML form in his web page like below:
+
+  <form action="/=/model/Comment/~/~?last_response=69bc45ec71ca7dc83cc"
+        method="POST"
+        onclick="onPostComment()"
+        target="myHiddenFrame">
+    <input type="hidden" name="data" value="{some JSON goes here...}">
+  </form>
+  <iframe id="myHiddenFrame" style="display: none"></iframe>
+
+and the browser may initiate a POST request when submitting this form:
+
+  POST /=/model/Comment/~/~?last_response=69bc45ec71ca7dc83cc HTTP/1.0
+  Content-Type: application/x-www-form-urlencoded
+  Content-Length: 23
+
+  data={some JSON goes here...}
+
+which is functionally equivalent to
+
+  POST /=/model/Comment/~/~
+  Content-Type: text/json
+  Content-Length: 23
+
+  {some JSON goes here...}
+
+with the exception that the OpenResty serser would save the response of the former POST request and allow the user to retrieve it later (using the same C<last_response> key):
+
+  GET /=/last/response/69bc45ec71ca7dc83cc
+
+Note that the C<last_response> key C<69bc45ec71ca7dc83cc> used here should betruly random and unique enough.
+
+The "last response" stuff is essential for the web page client to obtain the response for its POST request because there's no way for the JavaScript code to directly "look" into the target frame (i.e. the C<myHiddenFrame> iframe in the above sample) of another domain.
+
+As you might have already noticed, two HTTP roundtrips to do a true POST is a little too expensive. We'll use the cross-site cookies (as well as p3p headers for IE) to transfer the response for POST to the client-side JavaScript initiator.
 
