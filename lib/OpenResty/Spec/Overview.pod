@@ -614,6 +614,10 @@ just use its subclass L<WWW::OpenResty::Simple> which is much more handy.
 
 =over
 
+=item OpenResty's admin site
+
+L<http://resty.eeeeworks.org/admin/>
+
 =item agentzh's blog and EEEE Works' blog
 
 L<http://blog.agentzh.org>
@@ -629,6 +633,8 @@ L<http://www.yisou.com/opi/post.html>
 L<http://svn.openfoundry.org/openapi/trunk/demo/Springbot/>
 
 =back
+
+Most of the sample apps' source code can be found at L<http://svn.openfoundry.org/openapi/trunk/demo/>.
 
 =head1 AUTHOR
 
