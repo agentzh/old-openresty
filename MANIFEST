@@ -175,6 +175,7 @@ lib/OpenResty/RestyScript/View.pm
 lib/OpenResty/Server.pm
 lib/OpenResty/Shell.pm
 lib/OpenResty/Shell/History.pm
+lib/OpenResty/Spec/Overview.pod
 lib/OpenResty/Spec/Arch_cn.pod
 lib/OpenResty/Spec/REST.pod
 lib/OpenResty/Spec/REST_cn.pod

@@ -639,7 +639,7 @@ L<http://svn.openfoundry.org/openapi/trunk/demo/>.
 
 =head1 AUTHOR
 
-Agent Zhang C<< agentzh@yahoo.cn >>
+Agent Zhang C<< <agentzh@yahoo.cn> >>
 
 =head1 COPYRIGHT AND LICENSE
 
