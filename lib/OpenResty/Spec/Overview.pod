@@ -378,6 +378,48 @@ than the default 20, giving more options to my blog readers.
 B<Note:> Custom actions have not yet been implemented. Below is just
 some basic ideas.
 
+An openresty action is a bunch of RestyScript commands with a name attached to it. Such a command can be either a SQL-like statement or an HTTP-like command.
+
+An example for SQL-like commands could be
+
+    update Post
+    set comments = comments + 1
+    where id = $post_id"
+
+In this C<update> command, C<Post> is the name of an OpenResty model (assuming it's already there), C<comments> is one of its columns, and C<$post_id> is a parameter for the whole action (similar to parameters for views).
+
+An instance of HTTP-like commands could be
+
+    POST '/=/model/Comment/~/~'
+    { "sender": $sender, "body": $body, "post": $post_id }
+
+And we can put them together using the C<;> as the separator to define an action object:
+
+    {
+        "name": "PostComment",
+        "description": "Action for posting a comment",
+        "definition":
+        "
+            update Post
+            set comments = comments + 1
+            where id = $post_id";
+            POST '/=/model/Comment/~/~'
+            { "sender": $sender, "body": $body, "post": $post_id }
+        "
+    }
+
+We still split the definition string into multiple lines for readability. The C<PostComment> defined here takes 3 parameters, i.e. C<$post_id>, C<$sender>, and C<$body>.
+
+One can invoke the C<PostComment> action like this:
+
+    GET /=/action/PostComment/~/~?post_id=3&sender=marry&body=Haha HTTP/1.0
+
+The server response would be an array of results for each command. If any of the commands fail, the whole action would fail. Even preious successful commands would be rolled back. That is, actions always run in a transaction.
+
+With actions the user can encapsulate multiple OpenResty REST requests as well as SQL-like C<update> and C<delete> statements as a whole and reuse as many times as he wishes. Such atomicity would be very useful in the context of captcha authentication. (See the L</Captchas> section for more information.)
+
+More interestingly it would be possilbe to call other actions or views in an action, or even call the action itself (i.e. recursive calling). Special constrains would be imposed on the length of call chain though. There would also be some limit regarding the number of commands grouped in an action.
+
 =head2 Captchas
 
 Captchas are just another way to do "per-request login" in addition to
@@ -426,7 +468,7 @@ Use the captcha ID as long as the captcha solution provided by the I<end
 user>, the following operation can be tried:
 
     POST /=/model/Comment/~/~?user=agentzh.CommentPoster\
-        &captcha=B44572D0-1038-11DD-B185-1A3EB9E8D9B0:pretty%20cat\
+        &captcha=B44572D0-1038-11DD-B185-1A3EB9E8D9B0:pretty%20cat \
         HTTP/1.0
     Content-Type: text/json
     Content-Length: 52
