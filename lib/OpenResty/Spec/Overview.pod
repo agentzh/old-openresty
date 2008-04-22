@@ -128,7 +128,7 @@ will yield an HTTP response from the OpenResty server like this:
     HTTP/1.0 200 OK
     Connection: close
     Content-Type: text/plain; charset=UTF-8
-    Content-Length: 98
+    Content-Length: 133
     Date: Mon, 21 Apr 2008 11:51:49 GMT
 
     {
@@ -185,7 +185,7 @@ reasonably limited.
 After creating a model, one can insert data via an HTTP POST request:
 
     POST /=/model/Post/~/~ HTTP/1.0
-    Content-Length: 53
+    Content-Length: 111
 
     {
         "title":"My first post",
@@ -199,8 +199,7 @@ The model API not only offers interfaces to perform CRUD operations on
 models, columns, and rows, but also gives some simple but still powerful
 query functionalities. Here's an example:
 
-    GET /=/model/Post/author/agentzh?order_by=created:desc&count=10
-    HTTP/1.0
+    GET /=/model/Post/author/agentzh?order_by=created:desc&count=10 HTTP/1.0
 
 which is roughly equivalent to the following standard SQL query:
 
@@ -211,6 +210,45 @@ which is roughly equivalent to the following standard SQL query:
     count 10
 
 =head2 Views
+
+To address the problem of extending the limited data query interface provided by the model API, OpenResty integrates a view system in which the user can define reusable SQL-like queries by means of the RestyScript language. Here is an example:
+
+    POST /=/view/~ HTTP/1.0
+    Content-Length: 312
+
+    {
+        "name": "CommentsToAuthor",
+        "description": "Recent comments for the blog",
+        "definition": "
+            select Comment.sender as guest,
+                   Comment.body as comment_body
+            from Comment, Post
+            where Comment.id = Post.id and Post.author = $author"
+    }
+
+In this sample, the string literal for the C<definition> slot has been splitted into multiple lines for readability. The RestyScript language for views is just a (non-strict) subset of the standard SQL language, thus giving powerful strucutred query capability to the user, which is often a missing feature in those highly-distributed and semi-structured data storage solutions like CouchDB and SimpleDB.
+
+Unlike SQL, however, the view definition can take one or more parameters (or named place-holders) which are required to feed values (unless they've got a default value) while invoking the view:
+
+    GET /=/view/CommentsToAuthor/author/agentzh
+
+Or equivalently
+
+    GET /=/view/CommentsToAuthor/~/~?author=agentzh
+
+The HTTP response from the OpenResty server might be
+
+    HTTP/1.0 200 OK
+    Connection: close
+    Content-Type: text/plain; charset=UTF-8
+    Content-Length: 187
+    Date: Mon, 21 Apr 2008 12:42:15 GMT
+
+    [
+      {"guest":"laser","comment_body":"super cool!"},
+      {"guest":"carriezh","comment_body":"hello?hello?"},
+      {"guest":"agentzh":"comment_body":"Thanks for commenting!"}
+    ]
 
 =head2 Feeds
 
