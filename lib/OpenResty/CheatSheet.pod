@@ -212,6 +212,26 @@ SSL in the real thing.
 
 =back
 
+=head1 FEED API
+
+    POST /=/feed/Post,                   Create a feed named "Post" using the
+    { "description":"My feed",           RecentPosts view
+      "author":"Me","copyright":"",
+      "language":"en","title":"Craps",
+      "view":"RecentPosts",
+      "link":"http://blog.foo.com",
+      "logo":"http://foo.com/me.jpg",
+    }
+
+    PUT /=/feed/Post                    Update attributes of the Post feed
+    {"author":"New author",
+     "link":"http://new.home"}
+
+    GET /=/feed/Post/~/~                Get the RSS 2.0 feed in XML
+
+    DELETE /=/feed/Post                 Remove the Post feed
+    DELETE /=/feed                      Remove all the feeds
+
 =head1 CAPTCHA API
 
 =over

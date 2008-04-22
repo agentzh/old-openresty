@@ -346,6 +346,8 @@ Here the C<PostFeed> view takes one optional parameter C<$count> (with
 the default value C<20>), which controls the number of resulting rows
 returned.
 
+Not every view can be used to drive the feed generation. The resulting rows of the view must have the columns that make sense to the feed, like C<author>, C<title>, C<link>, C<content>, C<published>, and C<comments>.
+
 After creating the C<Post> feed in my C<agentzh> account, one can
 subscribe to the feed by the following GET request:
 
