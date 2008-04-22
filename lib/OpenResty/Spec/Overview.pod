@@ -380,11 +380,19 @@ some basic ideas.
 
 =head2 Captchas
 
+
+
 =head2 Cross-site AJAX
 
-The OpenResty server opens a special door to JavaScript code running in a web page from the user's own domain, so as to allow REST requests get directly initiated from I<end> users' web browser.
+The OpenResty server opens a special door to JavaScript code running in
+a web page from the user's own domain, so as to allow REST requests get
+directly initiated from I<end> users' web browser.
 
-For GET requests, it's the common practice to do cross-domain AJAX requests via dynamically-created C<< <scrip> >> tags. To help the page owner do this trick with an OpenResty server, the special C<callback> URL parameter is supported to make the server returning JSON data wrapped by C<some_callback_func(> and C<);>. For example, the request
+For GET requests, it's the common practice to do cross-domain AJAX
+requests via dynamically-created C<< <scrip> >> tags. To help the page
+owner do this trick with an OpenResty server, the special C<callback>
+URL parameter is supported to make the server returning JSON data wrapped
+by C<some_callback_func(> and C<);>. For example, the request
 
   GET /=/view/RecentPosts/~/~?user=agentzh.Public&callback=foo HTTP/1.0
 
@@ -411,9 +419,14 @@ POST, PUT, and DELETE requests all have their GET forms:
     GET /=/put/...
     GET /=/delete/...
 
-where C<...> is the normal stuff in C<POST /=/...>, C<PUT /=/...>, and C<DELETE /=/...>, respectively. Some people might be nervous about GET requests doing data modification and cookies for authentication should always be excluded due to the risk of XSS attacks.
+where C<...> is the normal stuff in C<POST /=/...>, C<PUT /=/...>, and
+C<DELETE /=/...>, respectively. Some people might be nervous about GET
+requests doing data modification and cookies for authentication should
+always be excluded due to the risk of XSS attacks.
 
-To overcome the length limit of URLs, cross-site POST AJAX interface is also supported. Basically the user could use an HTML form in his web page like below:
+To overcome the length limit of URLs, cross-site POST AJAX interface
+is also supported. Basically the user could use an HTML form in his web
+page like below:
 
   <form action="/=/model/Comment/~/~?last_response=69bc45ec71ca7dc83cc"
         method="POST"
@@ -439,13 +452,22 @@ which is functionally equivalent to
 
   {some JSON goes here...}
 
-with the exception that the OpenResty serser would save the response of the former POST request and allow the user to retrieve it later (using the same C<last_response> key):
+with the exception that the OpenResty serser would save the response of
+the former POST request and allow the user to retrieve it later (using
+the same C<last_response> key):
 
   GET /=/last/response/69bc45ec71ca7dc83cc
 
-Note that the C<last_response> key C<69bc45ec71ca7dc83cc> used here should betruly random and unique enough.
+Note that the C<last_response> key C<69bc45ec71ca7dc83cc> used here
+should betruly random and unique enough.
 
-The "last response" stuff is essential for the web page client to obtain the response for its POST request because there's no way for the JavaScript code to directly "look" into the target frame (i.e. the C<myHiddenFrame> iframe in the above sample) of another domain.
+The "last response" stuff is essential for the web page client to
+obtain the response for its POST request because there's no way for
+the JavaScript code to directly "look" into the target frame (i.e. the
+C<myHiddenFrame> iframe in the above sample) of another domain.
 
-As you might have already noticed, two HTTP roundtrips to do a true POST is a little too expensive. We'll use the cross-site cookies (as well as p3p headers for IE) to transfer the response for POST to the client-side JavaScript initiator.
+As you might have already noticed, two HTTP roundtrips to do a true POST
+is a little too expensive. We'll use the cross-site cookies (as well as
+p3p headers for IE) to transfer the response for POST to the client-side
+JavaScript initiator.
 
