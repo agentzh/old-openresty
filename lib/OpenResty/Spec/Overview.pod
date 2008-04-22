@@ -589,3 +589,44 @@ is a little too expensive. We'll use the cross-site cookies (as well as
 p3p headers for IE) to transfer the response for POST to the client-side
 JavaScript initiator.
 
+=head1 CLIENTS
+
+In theory, any programming languages or tools with basic HTTP 1.0 support
+would have access to all the OpenResty services.
+
+But to make things even easier, there are currently two special OpenResty
+client library for JavaScript and Perl:
+
+=over
+
+=item openresty.js
+
+See L<http://svn.openfoundry.org/openapi/trunk/clients/js/>.
+
+=item WWW::OpenResty
+
+See the L<WWW::OpenResty> module on CPAN. Most of the time one would
+just use its subclass L<WWW::OpenResty::Simple> which is much more handy.
+
+=back
+
+=head1 SAMPLE APPLICATIONS
+
+=over
+
+=item agentzh's blog and EEEE Works' blog
+
+L<http://blog.agentzh.org>
+
+L<http://eeeeworks.org>
+
+=item Yisou BBS
+
+L<http://www.yisou.com/opi/post.html>
+
+=item An IRC bot, springbot
+
+L<http://svn.openfoundry.org/openapi/trunk/demo/Springbot/>
+
+=back
+
