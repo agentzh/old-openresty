@@ -2,7 +2,7 @@ NAME
     OpenResty - General-purpose web service platform for web applications
 
 VERSION
-    This document describes OpenResty 0.2.0 released on April 21, 2008.
+    This document describes OpenResty 0.2.1 released on April 22, 2008.
 
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
@@ -27,15 +27,25 @@ DESCRIPTION
     And there're several (pure-client-side) web sites alreadying taking
     advantage of the services:
 
-    agentzh's blog site
+    OpenResty's admin site
+        <http://resty.eeeeworks.org/admin/>
+
+    agentzh's blog and EEEE Works' blog
         <http://blog.agentzh.org>
 
-    Yisou.com's BBS
+        <http://eeeeworks.org>
+
+    Yisou BBS
         <http://www.yisou.com/opi/post.html>
 
     This library is still in pre-alpha stage and the API is still in flux.
     We're just following the "release early, releaes often" guideline. So
     please check back often ;)
+
+    See OpenResty::Spec::Overview for more detailed information.
+
+    OpenResty::CheatSheet also provides a good enough summary for the REST
+    interface.
 
 INSTALLATION
     This is a basic guideline for settting up an OpenResty server on your
@@ -231,6 +241,6 @@ License and Copyright
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 SEE ALSO
-    OpenResty::Spec::REST, OpenResty::CheatSheet, WWW::OpenResty,
-    WWW::OpenResty::Simple.
+    OpenResty::Spec::Overview, OpenResty::Spec::REST, OpenResty::CheatSheet,
+    WWW::OpenResty, WWW::OpenResty::Simple.
 

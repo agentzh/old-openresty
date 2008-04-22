@@ -1,5 +1,8 @@
 Change Log for OpenResty
 
+0.2.1 April 22 2008
+* Added the OpenResty::Spec::Overview document.
+
 0.2.0 April 21 2008
 * Now we save the hex MD5 form of role passwords in the _roles table.
 * Updated the openresty.js client lib accordingly.

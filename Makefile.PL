@@ -3,7 +3,7 @@ use lib '.';
 use inc::Module::Install;
 
 name                ('OpenResty');
-license             ('perl');
+license             ('artistic2');
 author              ('Agent Zhang <agentzh@yahoo.cn>');
 perl_version        ('5.006001');
 all_from            ('lib/OpenResty.pm');
