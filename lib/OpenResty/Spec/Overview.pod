@@ -2,11 +2,11 @@
 
 =head1 NAME
 
-OpenResty::Spec::Overview - OpenResty overview
+OpenResty::Spec::Overview - Overview of the OpenResty service platform
 
 =head1 INTRODUCTION
 
-OpenResty is a general-purpose RESTful web service engine for web
+OpenResty is a general-purpose RESTful web service platform for web
 applications. It provides the following important functionalities for
 a common nontrivial web app:
 
@@ -309,6 +309,49 @@ The HTTP response from the OpenResty server might be
     ]
 
 =head2 Feeds
+
+OpenResty offers the feed objects which can be used to map OpenResty views to RSS 2.0 feeds. For instance, the OpenResty feed object for my blog posts looks like this:
+
+    {
+        "description": "Feed for blog posts",
+        "author": "agentzh",
+        "copyright": "Copyright 2008 by Yahoo! China EEEE Works",
+        "language": "zh-cn",
+        "title": "Posts for Human & Machine",
+        "link": "http://blog.agentzh.org",
+        "logo": "http://blog.agentzh.org/me.jpg",
+        "view": "PostFeed"
+    }
+
+and the C<PostFeed> view used to generate this view has the following definition:
+
+    {
+      "description":"View for post feed",
+      "definition":
+      "
+ select author, title, 'http://blog.agentzh.org/#post-' || id as link,
+        content, created as published,
+       'http://blog.agentzh.org/#post-' || id || ':comments' as comments
+ from Post
+ order by created desc
+ limit $count | 20
+      "
+    }
+
+
+Here the C<PostFeed> view takes one optional parameter C<$count> (with the default value C<20>), which controls the number of resulting rows returned.
+
+After creating the C<Post> feed in my C<agentzh> account, one can subscribe to the feed by the following GET request:
+
+    GET /=/feed/Post/~/~ HTTP/1.0
+
+Check L<http://api.eeeeworks.org/=/feed/Post/~/~> to see what the actual response looks like.
+
+One nice thing about the feed object is that it can forward arguments to the  view that drives it:
+
+    GET /=/feed/Post/count/100 HTTP/1.0
+
+This will produce the RSS 2.0 feed for the last 100 post entries rather than the default 20, giving more options to my blog readers.
 
 =head2 Actions
 
