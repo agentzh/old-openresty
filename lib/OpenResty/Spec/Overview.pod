@@ -436,9 +436,9 @@ for more information.)
 
 More interestingly it would be possilbe to call other actions or
 views in an action, or even call the action itself (i.e. recursive
-calling). Special constrains would be imposed on the length of call chain
-though. There would also be some limit regarding the number of commands
-grouped in an action.
+calling). Special constraints would be imposed on the length of the
+action call chain though. There would also be some limit regarding the
+total number of commands grouped in an action.
 
 =head2 Captchas
 
