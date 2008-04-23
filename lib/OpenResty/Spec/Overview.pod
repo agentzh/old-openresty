@@ -452,13 +452,13 @@ Captcha support must be associated with some user-defined role whose
     Content-Type: text/json
     Content-Length: 64
 
-    {"description":"Role for posting comments","login": "captcha"}
+    {"description":"Role for posting comments","login":"captcha"}
 
 Therefore, it's not hard to see that it's not possible to do captchas
 with roles like C<Public> or C<Admin>.
 
 Then we should grant priviledges to the operations that need to performed
-by solving a capthca challenge:
+by solving a capthca challenge for the C<CommentPoster> role:
 
     POST /=/role/CommentPoster/~/~ HTTP/1.0
     Content-Type: text/json
@@ -473,7 +473,7 @@ the following:
 
 =item 1.
 
-Use C<GET /=/captcha/id> to obtain an ID from the OpenResty server.
+Use C<GET /=/captcha/id> to obtain a captcha ID from the OpenResty server.
 
 =item 2.
 
@@ -484,8 +484,8 @@ fetch the catpcha image:
 
 =item 3.
 
-Use the captcha ID as long as the captcha solution provided by the I<end
-user>, the following operation can be tried:
+With the captcha ID along with the captcha solution given by the I<end
+user> the following operation can be tried:
 
     POST /=/model/Comment/~/~?user=agentzh.CommentPoster\
         &captcha=B44572D0-1038-11DD-B185-1A3EB9E8D9B0:pretty%20cat \
@@ -497,20 +497,22 @@ user>, the following operation can be tried:
 
 =back
 
-If the user solution C<pretty%20cat> provided in the C<captcha> URL
-parameter is incorrect, the server would reject the whole POST operation.
+If the user solution C<pretty cat> (i.e. "C<pretty%20cat>") provided in
+the C<captcha> URL parameter is incorrect, the server would reject the
+whole POST operation.
 
 =head2 Cross-site AJAX
 
-The OpenResty server opens a special door to JavaScript code running in
-a web page from the user's own domain, so as to allow REST requests get
-directly initiated from I<end> users' web browser.
+The OpenResty server opens a special door to JavaScript code in a web
+page coming from the user's own domain, so as to allow REST requests get
+directly initiated from I<end> users' web browsers.
 
 For GET requests, it's the common practice to do cross-domain AJAX
-requests via dynamically-created C<< <scrip> >> tags. To help the page
-owner do this trick with an OpenResty server, the special C<callback>
-URL parameter is supported to make the server returning JSON data wrapped
-by C<some_callback_func(> and C<);>. For example, the request
+requests via dynamically created C<< <script> >> tags.
+To help the page owner do this trick with an OpenResty server, the
+special C<callback> URL parameter is supported to make the server
+returning JSON data wrapped by C<some_callback_func(> and C<);>.
+For example, the request
 
   GET /=/view/RecentPosts/~/~?user=agentzh.Public&callback=foo HTTP/1.0
 
