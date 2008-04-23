@@ -18,7 +18,7 @@ a common nontrivial web app:
 
 =item *
 
-Truely RESTy interface and JSON/YAML data transfer format,
+truely RESTy interface and JSON/YAML data transfer format,
 
 =item *
 

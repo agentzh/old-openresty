@@ -225,6 +225,8 @@ B<Note:> Actions have not yet been implemented.
       "logo":"http://foo.com/me.jpg",
     }
 
+    GET /=/feed/Post                    Read info for the Post feed back
+
     PUT /=/feed/Post                    Update attributes of the Post feed
     {"author":"New author",
      "link":"http://new.home"}
