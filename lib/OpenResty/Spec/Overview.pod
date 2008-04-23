@@ -353,7 +353,7 @@ Here the C<PostFeed> view takes one optional parameter C<$count> (with
 the default value C<20>), which controls the number of resulting rows
 returned.
 
-Not every view can be used to drive the feed generation. The resulting
+Not every view can be used to drive feed generation. The resulting
 rows of the view must have the columns that make sense to the feed, like
 C<author>, C<title>, C<link>, C<content>, C<published>, and C<comments>.
 
@@ -386,7 +386,7 @@ An example for SQL-like commands could be
 
     update Post
     set comments = comments + 1
-    where id = $post_id"
+    where id = $post_id
 
 In this C<update> command, C<Post> is the name of an OpenResty model
 (assuming it's already there), C<comments> is one of its columns, and
