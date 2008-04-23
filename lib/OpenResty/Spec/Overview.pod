@@ -375,7 +375,7 @@ than the default 20, giving more options to my blog readers.
 
 =head2 Actions
 
-B<Note:> Custom actions have not yet been implemented. Below is just
+B<Note:> Actions have not yet been implemented. Below is just
 some basic ideas.
 
 An openresty action is a bunch of RestyScript commands with a name
@@ -398,8 +398,20 @@ An instance of HTTP-like commands could be
     POST '/=/model/Comment/~/~'
     { "sender": $sender, "body": $body, "post": $post_id }
 
-And we can put them together using the C<;> as the separator to define
-an action object:
+Here the C<http://blah.blah.blah> part is omitted in the POST URL, so
+it's default to the current OpenResty server being requested. If a full
+URL is specified here, one can do some really cool things by invoking
+the resources some other OpenResty server.
+
+Similarly, for the SQL-like command, a optional C<run on> clause can be
+specified to run "SQL" on remote OpenResty servers, such as:
+
+    delete from Comment
+    where post = $post_id and sender = $spammer
+    run on http://some.other.openresty.server
+
+Furthermore, we can put multiple RestyScript commands together using
+the C<;> separator to define a full action object:
 
     {
         "name": "PostComment",
@@ -439,6 +451,8 @@ views in an action, or even call the action itself (i.e. recursive
 calling). Special constraints would be imposed on the length of the
 action call chain though. There would also be some limit regarding the
 total number of commands grouped in an action.
+
+
 
 =head2 Captchas
 
@@ -596,7 +610,8 @@ JavaScript initiator.
 
 =head1 CLIENTS
 
-In theory, any programming languages or tools with basic HTTP 1.0/1.1 support
+In theory, any programming languages or tools with basic HTTP 1.0/1.1
+support
 would have access to 100% of the OpenResty services.
 
 But to make things even easier, there are currently two ad-hoc OpenResty
