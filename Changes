@@ -4,6 +4,7 @@ Change Log for OpenResty
 * Put OpenResty under Artistic Licence 2.0.
 * Fixed various nits in OpenResty::Spec::Overview.
 * Fixed a typo in the INSTALLATION section in OpenResty.pm.
+* Updated the CheatSheet document to reflect recent changes.
 
 0.2.1 April 22 2008
 * Added the OpenResty::Spec::Overview document.
