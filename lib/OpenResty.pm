@@ -641,7 +641,9 @@ Give read/write access to lighttpd's log file (optional):
 
 For the Pg backend, one needs to create the "anonymous" role in his database (like "test"):
 
-    $ createuser anonymouse test
+    $ createuser -r anonymous
+
+You shouldn't grant any permissions to it.
 
 =item 6.
 
