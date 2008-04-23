@@ -503,9 +503,9 @@ whole POST operation.
 
 =head2 Cross-site AJAX
 
-The OpenResty server opens a special door to JavaScript code in a web
-page coming from the user's own domain, so as to allow REST requests get
-directly initiated from I<end> users' web browsers.
+The OpenResty server opens a special door to the JavaScript code in a web
+page coming from other domains, so as to allow REST requests get
+directly initiated from the I<end> user's web browser.
 
 For GET requests, it's the common practice to do cross-domain AJAX
 requests via dynamically created C<< <script> >> tags.
@@ -533,7 +533,7 @@ yields something like this
 
 Note the extra stuff C<foo(...)> around the JSON data.
 
-POST, PUT, and DELETE requests all have their GET forms:
+POST, PUT, and DELETE requests all have their GET variations:
 
     GET /=/post/...
     GET /=/put/...
@@ -541,10 +541,12 @@ POST, PUT, and DELETE requests all have their GET forms:
 
 where C<...> is the normal stuff in C<POST /=/...>, C<PUT /=/...>, and
 C<DELETE /=/...>, respectively. Some people might be nervous about GET
-requests doing data modification and cookies for authentication should
-always be excluded due to the risk of XSS attacks.
+requests doing data modification but I can't think of a better way.
 
-To overcome the length limit of URLs, cross-site POST AJAX interface
+Cookies for authentication should always be excluded due to the risk of
+XSS attacks.
+
+To overcome the length limit of URLs, cross-site POST interface
 is also supported. Basically the user could use an HTML form in his web
 page like below:
 
@@ -573,30 +575,31 @@ which is functionally equivalent to
   {some JSON goes here...}
 
 with the exception that the OpenResty serser would save the response of
-the former POST request and allow the user to retrieve it later (using
+the current POST request and allow the user to retrieve it later (using
 the same C<last_response> key):
 
   GET /=/last/response/69bc45ec71ca7dc83cc
 
 Note that the C<last_response> key C<69bc45ec71ca7dc83cc> used here
-should betruly random and unique enough.
+should be randomly selected and globally unique enough.
 
 The "last response" stuff is essential for the web page client to
-obtain the response for its POST request because there's no way for
+obtain the response of its POST request because there's no (known) way for
 the JavaScript code to directly "look" into the target frame (i.e. the
-C<myHiddenFrame> iframe in the above sample) of another domain.
+C<myHiddenFrame> iframe in the above sample) belonging to the OpenResty
+server's domain.
 
-As you might have already noticed, two HTTP roundtrips to do a true POST
-is a little too expensive. We'll use the cross-site cookies (as well as
-p3p headers for IE) to transfer the response for POST to the client-side
+As you might have already noticed, two HTTP round-trips are required to do
+a true POST, which is a bit expensive. We'll use the cross-site cookies
+(as well as p3p headers for IE) to deliver the response of POSTs to the
 JavaScript initiator.
 
 =head1 CLIENTS
 
-In theory, any programming languages or tools with basic HTTP 1.0 support
-would have access to all the OpenResty services.
+In theory, any programming languages or tools with basic HTTP 1.0/1.1 support
+would have access to 100% of the OpenResty services.
 
-But to make things even easier, there are currently two special OpenResty
+But to make things even easier, there are currently two ad-hoc OpenResty
 client library for JavaScript and Perl:
 
 =over
@@ -608,7 +611,8 @@ See L<http://svn.openfoundry.org/openapi/trunk/clients/js/>.
 =item WWW::OpenResty
 
 See the L<WWW::OpenResty> module on CPAN. Most of the time one would
-just use its subclass L<WWW::OpenResty::Simple> which is much more handy.
+just use its subclass L<WWW::OpenResty::Simple> which is much more handy
+IMHO ;)
 
 =back
 
