@@ -80,8 +80,7 @@ API 应支持自省能力。用户可以通过 API 获得有关 Models, Actions,
 
 =head1 PROTOCOL BASIS
 
-我们的 API 将基于最基本的 HTTP 1.1 协议。特别地，我们将充分利用 HEAD, GET, POST, PUT, DELETE 这几种基本的 HTTP 方法
-来简化我们的 API。
+我们的 API 基于最基本的 HTTP 1.1/1.0 协议。特别地，我们充分利用了 GET, POST, PUT, DELETE 这几种基本的 HTTP 方法来简化我们的 API。
 
 在本文中，除非特别说明，将总是假设使用 C<http://> 模式。
 
@@ -112,7 +111,7 @@ C<update> 和 C<alter> 语句.
 
 =item HEAD
 
-与 C<GET> 相近，但对于返回列表型数据的读取操作而言，返回列表中元素的个数。类似 SQL 语言中的 C<select count(*)>.
+XXX not defined yet
 
 =back
 
