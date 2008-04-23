@@ -1,5 +1,10 @@
 Change Log for OpenResty
 
+0.2.2 April 23 2008
+* Put OpenResty under Artistic Licence 2.0.
+* Fixed various nits in OpenResty::Spec::Overview.
+* Fixed a typo in the INSTALLATION section in OpenResty.pm.
+
 0.2.1 April 22 2008
 * Added the OpenResty::Spec::Overview document.
 
