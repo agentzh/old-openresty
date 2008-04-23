@@ -293,8 +293,8 @@ often a missing feature in those highly-distributed and semi-structured
 data storage solutions like CouchDB and SimpleDB.
 
 Unlike SQL, however, the view definition can take one or more parameters
-(or named place-holders) which are required to feed values (unless
-they've got a default value) while invoking the view:
+(or named place-holders) which are required to feed values while invoking
+the view (unless they have a default value):
 
   GET /=/view/CommentsToAuthor/author/agentzh
 
@@ -333,7 +333,7 @@ blog posts looks like this:
         "view": "PostFeed"
     }
 
-and the C<PostFeed> view used to generate this view has the following
+and the C<PostFeed> view used to generate this feed has the following
 definition:
 
     {
