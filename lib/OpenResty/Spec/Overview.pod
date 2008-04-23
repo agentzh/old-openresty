@@ -415,7 +415,7 @@ an action object:
     }
 
 We still split the definition string into multiple lines for
-readability. The C<PostComment> defined here takes 3 parameters,
+readability. The C<PostComment> action defined here takes 3 parameters,
 i.e. C<$post_id>, C<$sender>, and C<$body>.
 
 One can invoke the C<PostComment> action like this:
