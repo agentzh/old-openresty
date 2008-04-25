@@ -46,3 +46,8 @@ upload: all
 upload2:
 	scp -l 10000 -r `pwd`/out agentzh@perlcabal.org:~/public_html
 
+doc: doc/blog_site.png
+
+doc/blog_site.png: doc/graphviz.mk
+	gvmake -f $< --layout neato --edge-len 1.3 --out $@
+
