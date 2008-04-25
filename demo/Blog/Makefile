@@ -49,5 +49,8 @@ upload2:
 doc: doc/blog_site.png
 
 doc/blog_site.png: doc/graphviz.mk
-	gvmake -f $< --layout neato --edge-len 1.3 --out $@
+	gvmake -f $< --layout neato --edge-len 1.5 --debug > a.dot
+	sed -i 's/node \[/node [fontname="consolas", /' a.dot
+	neato -Tpng a.dot > $@
+
 
