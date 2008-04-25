@@ -11,6 +11,7 @@ use Encode::Guess;
 use Encode qw(from_to encode decode);
 use WWW::OpenResty::Simple;
 use Params::Util qw(_ARRAY);
+use Digest::MD5 qw(md5_hex);
 
 use LWP::UserAgent;
 my $ua = LWP::UserAgent->new;
@@ -144,7 +145,8 @@ sub log {
             eval {
                 $res = $Resty->post(
                     '/=/model/IrcLog/~/~',
-                    { user => $self->resty_account, password => $self->resty_password },
+                    { user => $self->resty_account,
+                      password => md5_hex($self->resty_password) },
                     {
                         channel => $channel,
                         sender  => $sender,
