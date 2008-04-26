@@ -1,11 +1,21 @@
 package OpenResty::Handler::Captcha;
 
-#use Smart::Comments;
 use strict;
 use warnings;
 
 use utf8;
-#use Encode 'encode';
+
+use Crypt::CBC;
+use MIME::Base64;
+use constant {
+	PLAINTEXT_SEP => "\001",    # separator character in plaintext str
+	MIN_TIMESPAN => 3,          # minimum timespan(sec) for a valid Captcha,
+                                # verification will fail before this timespan.
+                                # default to 3s.
+	MAX_TIMESPAN => 15*60,      # maximum timespan(sec) for a valid Captcha,
+                                # Captcha will be invalid after this timespan.
+                                # default to 15m.
+};
 
 my $Error;
 eval "use GD::SecurityImage;";
@@ -168,16 +178,13 @@ my @WordList = qw(
     wrong year your hello moon
 );
 
-# Create a normal image
+# Create a normal Captcha ID
 sub GET_captcha_column {
     my ($self, $openresty, $bits) = @_;
     my $col = $bits->[1];
     if ($col eq 'id') {
-        #my $captcha_from_cookie = $openresty->{_captcha_from_cookie};
-        #if ($captcha_from_cookie) {
-            #$OpenResty::Cache->remove($captcha_from_cookie);
-        #}
 
+        # Generate captcha solution here and encrypt to ID str
         my $id = $OpenResty::UUID->create_str;
         $OpenResty::Cache->set($id => 1, 2 * 3600);  # expire in 2 h
 
@@ -323,6 +330,30 @@ sub gen_en_image {
     $openresty->{_bin_data} = $image_data;
     $openresty->{_type} = "image/$mime_type";
     ### $mime_type
+}
+
+sub get_captcha_secretkey
+{
+	# 128 bits secret key for encryption/decryption
+	return "a" x 16;
+}
+
+sub encode_base64_urlsafe
+{
+	# base64 encode the given value and substitute URL-unsafe characters to URL-safe ones
+	(my $base64=encode_base64(shift))=~y!+/=!._-!;
+
+	# remove the extra newline appended by encode_base64()
+	chomp($base64);
+
+	return $base64;
+}
+
+sub decode_base64_urlsafe
+{
+	# substitute URL-safe characters to original ones
+	(my $base64=shift)=~y!._-!+/=!;
+	return decode_base64($base64);
 }
 
 1;
