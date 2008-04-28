@@ -1,6 +1,16 @@
 # vi:filetype=
 
-use t::OpenResty;
+my $reason;
+BEGIN {
+	eval {
+		require OpenResty::Filter::QP;
+	};
+	if ($@) {
+		$reason = 'Skipped because QP Filter is for internal use only';
+	}
+}
+
+use t::OpenResty $reason ? (skip_all => $reason) : ();
 
 plan tests => 3 * blocks();
 
