@@ -10,7 +10,7 @@ __DATA__
 --- request
 GET /=/captcha/id
 --- response_like
-^"(\w+(?:-\w+){3,})"$
+^"([0-9a-zA-Z._-]+)"$
 
 
 
@@ -41,56 +41,79 @@ GET /=/captcha/id/$SavedCapture.jpeg
 
 
 
+=== TEST 5: get the captcha ID (en)
+--- request
+GET /=/captcha/id?lang=en
+--- response_like
+^"([0-9a-zA-Z._-]+)"$
+
+
+
 === TEST 5: get the captcha image using the ID (en)
 --- res_type: image/png
 --- request
-GET /=/captcha/id/$SavedCapture.jpeg?lang=en
+GET /=/captcha/id/$SavedCapture.jpeg
 --- response_like
 .
 
 
 
-=== TEST 6: get the captcha image using the ID (En)
+=== TEST 6: get the captcha ID (En)
+--- request
+GET /=/captcha/id?lang=En
+--- response_like
+^"([0-9a-zA-Z._-]+)"$
+
+
+
+=== TEST 5: get the captcha image using the ID (En)
 --- res_type: image/png
 --- request
-GET /=/captcha/id/$SavedCapture.jpeg?lang=En
+GET /=/captcha/id/$SavedCapture.jpeg
 --- response_like
 .
+
+
+
+=== TEST 7: get the captcha ID (cn)
+--- request
+GET /=/captcha/id?lang=cn
+--- response_like
+^"([0-9a-zA-Z._-]+)"$
 
 
 
 === TEST 7: get the captcha image using the ID (cn)
 --- res_type: image/png
 --- request
-GET /=/captcha/id/$SavedCapture.jpeg?lang=cn
+GET /=/captcha/id/$SavedCapture.jpeg
 --- response_like
 .
 --- use_ttf: 1
+
+
+
+=== TEST 8: get the captcha ID (Cn)
+--- request
+GET /=/captcha/id?lang=Cn
+--- response_like
+^"([0-9a-zA-Z._-]+)"$
 
 
 
 === TEST 8: get the captcha image using the ID (Cn)
 --- res_type: image/png
 --- request
-GET /=/captcha/id/$SavedCapture.jpeg?lang=Cn
+GET /=/captcha/id/$SavedCapture.jpeg
 --- response_like
 .
 --- use_ttf: 1
 
 
 
-=== TEST 9: get the captcha image using the ID (en)
---- res_type: image/png
+=== TEST 10: get the captcha ID (fr)
 --- request
-GET /=/captcha/id/$SavedCapture.jpeg?lang=en
---- response_like
-.
-
-
-
-=== TEST 10: get the captcha image using the ID (fr)
---- request
-GET /=/captcha/id/$SavedCapture.jpeg?lang=fr
+GET /=/captcha/id?lang=fr
 --- response
 {"success":0,"error":"Unsupported lang (only cn and en allowed): fr"}
 
@@ -100,7 +123,7 @@ GET /=/captcha/id/$SavedCapture.jpeg?lang=fr
 --- request
 GET /=/model?user=$TestAccount.Admin&captcha=$SavedCapture
 --- response_like
-{"success":0,"error":"Bad captcha parameter: \w+(?:-\w+)+"}
+{"success":0,"error":"Bad captcha parameter: [0-9a-zA-Z._-]+"}
 
 
 
@@ -158,19 +181,19 @@ POST /=/role/Poster/~/~
 --- request
 GET /=/captcha/id
 --- response_like
-^"(\w+(?:-\w+){3,})"$
+^"([0-9a-zA-Z._-]+)"$
 
 
 
-=== TEST 19: Login via captcha (not get the image yet)
+=== TEST 19: Login via captcha (wrong solution)
 --- request
 GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:abc
 --- response
-{"success":0,"error":"Captcha image never used."}
+{"success":0,"error":"Solution to the captcha is incorrect."}
 
 
 
-=== TEST 20: Login via captcha (the second time)
+ == TEST 20: Login via captcha (the second time)
 --- request
 GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:abc
 --- response
@@ -182,7 +205,7 @@ GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:abc
 --- request
 GET /=/captcha/id/$SavedCapture
 --- response_like
-^{"success":0,"error":"Invalid captcha ID: \w+(?:-\w+)+"}$
+^{"success":0,"error":"Invalid captcha ID: [0-9a-zA-Z._-]+"}$
 
 
 
@@ -190,7 +213,7 @@ GET /=/captcha/id/$SavedCapture
 --- request
 GET /=/captcha/id/$SavedCapture
 --- response_like
-^{"success":0,"error":"Invalid captcha ID: \w+(?:-\w+)+"}$
+^{"success":0,"error":"Invalid captcha ID: [0-9a-zA-Z._-]+"}$
 
 
 
@@ -198,7 +221,7 @@ GET /=/captcha/id/$SavedCapture
 --- request
 GET /=/captcha/id
 --- response_like
-^"(\w+(?:-\w+){3,})"$
+^"([0-9a-zA-Z._-]+)"$
 
 
 
@@ -222,7 +245,7 @@ GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:efg
 --- request
 GET /=/captcha/id
 --- response_like
-^"(\w+(?:-\w+){3,})"$
+^"([0-9a-zA-Z._-]+)"$
 
 
 
@@ -230,7 +253,7 @@ GET /=/captcha/id
 --- request
 GET /=/captcha/id
 --- response_like
-^"(?:\w+(?:-\w+){3,})"$
+^"(?:[0-9a-zA-Z._-]+)"$
 
 
 
@@ -246,7 +269,7 @@ GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:efg
 --- request
 GET /=/captcha/id
 --- response_like
-^"(\w+(?:-\w+){3,})"$
+^"([0-9a-zA-Z._-]+)"$
 
 
 
@@ -288,7 +311,7 @@ GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
 --- request
 GET /=/captcha/id/$SavedCapture
 --- response_like
-{"success":0,"error":"Invalid captcha ID: \w+(?:-\w+)+"}
+{"success":0,"error":"Invalid captcha ID: [0-9a-zA-Z._-]+"}
 
 
 
@@ -304,7 +327,7 @@ GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
 --- request
 GET /=/captcha/id
 --- response_like
-^"(\w+(?:-\w+){3,})"$
+^"([0-9a-zA-Z._-]+)"$
 
 
 
@@ -327,16 +350,16 @@ GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworldd
 
 === TEST 39: Get a new captcha ID
 --- request
-GET /=/captcha/id
+GET /=/captcha/id?lang=cn
 --- response_like
-^"(\w+(?:-\w+){3,})"$
+^"([0-9a-zA-Z._-]+)"$
 
 
 
 === TEST 40: Get the image
 --- res_type: image/png
 --- request
-GET /=/captcha/id/$SavedCapture?lang=cn
+GET /=/captcha/id/$SavedCapture
 --- response_like
 .
 --- use_ttf: 1
@@ -354,16 +377,16 @@ GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:你好，世界！
 
 === TEST 42: Get a new captcha ID
 --- request
-GET /=/captcha/id
+GET /=/captcha/id?lang=en
 --- response_like
-^"(\w+(?:-\w+){3,})"$
+^"([0-9a-zA-Z._-]+)"$
 
 
 
 === TEST 43: Get the image
 --- res_type: image/png
 --- request
-GET /=/captcha/id/$SavedCapture?lang=en
+GET /=/captcha/id/$SavedCapture
 --- response_like
 .
 
