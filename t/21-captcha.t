@@ -236,16 +236,8 @@ GET /=/captcha/id/$SavedCapture
 
 
 
-=== TEST 34: Get a new captcha ID
---- res_type: image/png
---- request
-GET /=/captcha/id/$SavedCapture
---- response_like
-.
-
-
-
 === TEST 35: Use captcha to login
+--- sleep_before: 1
 --- request
 GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
 --- response
@@ -262,10 +254,11 @@ GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
 
 
 === TEST 37: Get captcha image (use expired succeeded one again)
+--- sleep_before: 3
 --- request
 GET /=/captcha/id/$SavedCapture
 --- response_like
-{"success":0,"error":"Invalid captcha ID: [0-9a-zA-Z._-]+"}
+{"success":0,"error":"Captcha ID has expired: [0-9a-zA-Z._-]+"}
 
 
 
@@ -273,7 +266,7 @@ GET /=/captcha/id/$SavedCapture
 --- request
 GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
 --- response
-{"success":0,"error":"Capture ID is bad or expired."}
+{"success":0,"error":"Answered too late."}
 
 
 
@@ -295,6 +288,7 @@ GET /=/captcha/id/$SavedCapture?lang=en
 
 
 === TEST 41: Use captcha to login (wrong password)
+--- sleep_before: 1
 --- request
 GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworldd
 --- response
@@ -321,6 +315,7 @@ GET /=/captcha/id/$SavedCapture
 
 
 === TEST 44: Use captcha to login
+--- sleep_before: 1
 --- request
 GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:你好，世界！
 --- response
@@ -348,6 +343,7 @@ GET /=/captcha/id/$SavedCapture
 
 === TEST 47: Use captcha to login (wrong solution)
 buggy in PgMocked...
+--- sleep_before: 1
 --- request
 GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:你好，世界啊！
 --- response
