@@ -7,7 +7,6 @@ use warnings;
 use CGI::Simple::Cookie;
 use OpenResty::Util;
 use Params::Util qw( _STRING );
-use Encode qw( decode is_utf8 );
 
 #*login = \&login_by_sql;
 *login = \&login_by_perl;
@@ -23,15 +22,6 @@ sub GET_login_user_password {
     my $user = $bits->[1];
     my $password = $bits->[2];
     $self->login($openresty, $user, { password => $password });
-}
-
-sub trim_sol {
-    my $s = $_[0];
-    unless (is_utf8($s)) {
-        $s = decode('UTF-8', $s);
-    }
-    $s =~ s/\W+//g;
-    $s;
 }
 
 sub login_by_sql {
@@ -65,29 +55,30 @@ sub login_by_sql {
 
     if (defined $captcha) {
         my ($id, $user_sol) = split /:/, $captcha, 2;
-        ### Captcha ID: $id
-        my $true_sol = $OpenResty::Cache->get($id);
-        ### True sol: $true_sol
-        $OpenResty::Cache->remove($id);
-        if (!defined $true_sol) {
-            die "Capture ID is bad or expired.\n";
-        }
-        if ($true_sol eq '1') {
-            die "Captcha image never used.\n";
-        }
-        # XXX for testing purpose...
-        ### Account:  $account;
-        my $server = $ENV{OPENRESTY_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
-        if ($OpenResty::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
-            if ($true_sol =~ /[a-z]/) {
-                $true_sol = 'hello world ';
-            } else {
-                $true_sol = '你好世界';
-            }
-        }
-        if (trim_sol($user_sol) ne trim_sol($true_sol)) {
+#        ### Captcha ID: $id
+#        my $true_sol = $OpenResty::Cache->get($id);
+#        ### True sol: $true_sol
+#        $OpenResty::Cache->remove($id);
+#        if (!defined $true_sol) {
+#            die "Capture ID is bad or expired.\n";
+#        }
+#        if ($true_sol eq '1') {
+#            die "Captcha image never used.\n";
+#        }
+#        # XXX for testing purpose...
+#        ### Account:  $account;
+#        my $server = $ENV{OPENRESTY_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
+#        if ($OpenResty::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
+#            if ($true_sol =~ /[a-z]/) {
+#                $true_sol = 'hello world ';
+#            } else {
+#                $true_sol = '你好世界';
+#            }
+#        }
+
+		if (!OpenResty::Handler::Captcha::validate_captcha($id,$user_sol)) {
             die "Solution to the captcha is incorrect.\n";
-        }
+		}
     }
 
     $openresty->set_role($role);
