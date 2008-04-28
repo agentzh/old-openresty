@@ -457,6 +457,9 @@ sub encrypt_captcha_id
 
 sub get_captcha_secretkey
 {
+	return "a" x 16;
+
+	# TODO: get captcha secret key from backend
 	my ($self,$openresty)=@_;
 	# 128 bits secret key for encryption/decryption
 	my $key=$OpenResty::Cache->get("captcha:key");
