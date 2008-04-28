@@ -10,7 +10,6 @@ use MIME::Base64;
 use Digest::MD5 qw/md5/;
 use Encode qw( encode decode is_utf8 );
 
-my $CAPTCHA_SIGNATURE="oc1";	# means openapi captcha v1 :)
 my $PLAINTEXT_SEP="\001";	# separator character in plaintext str
 my $MIN_TIMESPAN=3;			# minimum timespan(sec) for a valid Captcha,
 							# verification will fail before this timespan.
@@ -429,6 +428,8 @@ sub encrypt_captcha_id
 {
 	my ($lang,$solution,$min_valid,$max_valid)=@_;
 	my $rand=int(rand(10000));
+	# Add random number before and after captcha parameters
+	# in order to maximum obfuscate the cipher
 	my $plain=join($PLAINTEXT_SEP,$rand,$lang,$solution,$min_valid,$max_valid,$rand);
 
 	my $secret=get_captcha_secretkey();
@@ -440,6 +441,8 @@ sub encrypt_captcha_id
 	);
 
 	my $cipher=$algo->encrypt($plain);
+
+	# Generate a 16-byte MD5 signature for plaintext, to further protect cipher
 	utf8::encode($plain);	# XXX: eliminating md5() i/o error
 	my $digest=md5($plain);
 	return encode_base64_urlsafe($digest.$cipher);
@@ -470,10 +473,9 @@ sub decode_base64_urlsafe
 	(my $base64=shift)=~y!._!+/!;
 	my $result;
 	{
-		my $warn=$^W;
-		$^W=0;	# suppress decode_base64() warnings
+		# suppress decode_base64() warnings (premature end of data, etc.)
+		local $^W=0;
 		$result=decode_base64($base64);
-		$^W=$warn;
 	}
 	return $result;
 }
