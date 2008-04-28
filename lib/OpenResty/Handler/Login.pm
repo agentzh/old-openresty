@@ -55,28 +55,18 @@ sub login_by_sql {
 
     if (defined $captcha) {
         my ($id, $user_sol) = split /:/, $captcha, 2;
-#        ### Captcha ID: $id
-#        my $true_sol = $OpenResty::Cache->get($id);
-#        ### True sol: $true_sol
-#        $OpenResty::Cache->remove($id);
-#        if (!defined $true_sol) {
-#            die "Capture ID is bad or expired.\n";
-#        }
-#        if ($true_sol eq '1') {
-#            die "Captcha image never used.\n";
-#        }
-#        # XXX for testing purpose...
-#        ### Account:  $account;
-#        my $server = $ENV{OPENRESTY_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
-#        if ($OpenResty::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
-#            if ($true_sol =~ /[a-z]/) {
-#                $true_sol = 'hello world ';
-#            } else {
-#                $true_sol = '你好世界';
-#            }
-#        }
 
-		if (!OpenResty::Handler::Captcha::validate_captcha($id,$user_sol)) {
+		# Captcha testing flag
+		my $test_flag=0;
+
+        # XXX for testing purpose...
+        ### Account:  $account;
+        my $server = $ENV{OPENRESTY_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
+        if ($OpenResty::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
+			$test_flag=1;
+        }
+
+		if (!OpenResty::Handler::Captcha::validate_captcha($id,$user_sol,$test_flag)) {
             die "Solution to the captcha is incorrect.\n";
 		}
     }
@@ -157,31 +147,18 @@ sub login_by_perl {
         if ($res->[0][0] == 0) {
             die "Cannot login as $account.$role via captchas.\n";
         }
-#        ### Captcha ID: $id
-#        my $true_sol = $OpenResty::Cache->get($id);
-#        ### True sol: $true_sol
-#        $OpenResty::Cache->remove($id);
-#        if (!defined $true_sol) {
-#            die "Capture ID is bad or expired.\n";
-#        }
-#        if ($true_sol eq '1') {
-#            die "Captcha image never used.\n";
-#        }
-#        # XXX for testing purpose...
-#        ### Account:  $account;
-#        my $server = $ENV{OPENRESTY_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
-#        if ($OpenResty::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
-#            if ($true_sol =~ /[a-z]/) {
-#                $true_sol = 'hello world ';
-#            } else {
-#                $true_sol = '你好世界';
-#            }
-#        }
-#        if (trim_sol($user_sol) ne trim_sol($true_sol)) {
-#            die "Solution to the captcha is incorrect.\n";
-#        }
 
-		if (!OpenResty::Handler::Captcha::validate_captcha($id,$user_sol)) {
+		# Captcha testing flag
+		my $test_flag=0;
+
+        # XXX for testing purpose...
+        ### Account:  $account;
+        my $server = $ENV{OPENRESTY_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
+        if ($OpenResty::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
+			$test_flag=1;
+        }
+
+		if (!OpenResty::Handler::Captcha::validate_captcha($id,$user_sol,$test_flag)) {
             die "Solution to the captcha is incorrect.\n";
 		}
     } elsif (defined $password) {
