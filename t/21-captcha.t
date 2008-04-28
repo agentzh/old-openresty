@@ -49,7 +49,7 @@ GET /=/captcha/id?lang=en
 
 
 
-=== TEST 5: get the captcha image using the ID (en)
+=== TEST 6: get the captcha image using the ID (en)
 --- res_type: image/png
 --- request
 GET /=/captcha/id/$SavedCapture.jpeg
@@ -58,7 +58,7 @@ GET /=/captcha/id/$SavedCapture.jpeg
 
 
 
-=== TEST 6: get the captcha ID (En)
+=== TEST 7: get the captcha ID (En)
 --- request
 GET /=/captcha/id?lang=En
 --- response_like
@@ -66,7 +66,7 @@ GET /=/captcha/id?lang=En
 
 
 
-=== TEST 5: get the captcha image using the ID (En)
+=== TEST 8: get the captcha image using the ID (En)
 --- res_type: image/png
 --- request
 GET /=/captcha/id/$SavedCapture.jpeg
@@ -75,7 +75,7 @@ GET /=/captcha/id/$SavedCapture.jpeg
 
 
 
-=== TEST 7: get the captcha ID (cn)
+=== TEST 9: get the captcha ID (cn)
 --- request
 GET /=/captcha/id?lang=cn
 --- response_like
@@ -83,7 +83,7 @@ GET /=/captcha/id?lang=cn
 
 
 
-=== TEST 7: get the captcha image using the ID (cn)
+=== TEST 10: get the captcha image using the ID (cn)
 --- res_type: image/png
 --- request
 GET /=/captcha/id/$SavedCapture.jpeg
@@ -93,7 +93,7 @@ GET /=/captcha/id/$SavedCapture.jpeg
 
 
 
-=== TEST 8: get the captcha ID (Cn)
+=== TEST 11: get the captcha ID (Cn)
 --- request
 GET /=/captcha/id?lang=Cn
 --- response_like
@@ -101,7 +101,7 @@ GET /=/captcha/id?lang=Cn
 
 
 
-=== TEST 8: get the captcha image using the ID (Cn)
+=== TEST 12: get the captcha image using the ID (Cn)
 --- res_type: image/png
 --- request
 GET /=/captcha/id/$SavedCapture.jpeg
@@ -111,7 +111,7 @@ GET /=/captcha/id/$SavedCapture.jpeg
 
 
 
-=== TEST 10: get the captcha ID (fr)
+=== TEST 13: get the captcha ID (fr)
 --- request
 GET /=/captcha/id?lang=fr
 --- response
@@ -119,7 +119,7 @@ GET /=/captcha/id?lang=fr
 
 
 
-=== TEST 11: Login via captcha (invalid format, id only)
+=== TEST 14: Login via captcha (invalid format, id only)
 --- request
 GET /=/model?user=$TestAccount.Admin&captcha=$SavedCapture
 --- response_like
@@ -127,7 +127,7 @@ GET /=/model?user=$TestAccount.Admin&captcha=$SavedCapture
 
 
 
-=== TEST 12: Login via captcha (invalid format, id only)
+=== TEST 15: Login via captcha (invalid format, id only)
 --- request
 GET /=/model?user=$TestAccount.Admin&captcha=$SavedCapture:abc
 --- response_like
@@ -135,7 +135,7 @@ GET /=/model?user=$TestAccount.Admin&captcha=$SavedCapture:abc
 
 
 
-=== TEST 13: Login as Admin
+=== TEST 16: Login as Admin
 --- request
 GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 --- response_like
@@ -143,7 +143,7 @@ GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 
 
 
-=== TEST 14: Delete existing models
+=== TEST 17: Delete existing models
 --- request
 DELETE /=/model
 --- response
@@ -151,7 +151,7 @@ DELETE /=/model
 
 
 
-=== TEST 15: Delete existing roles
+=== TEST 18: Delete existing roles
 --- request
 DELETE /=/role
 --- response
@@ -159,7 +159,7 @@ DELETE /=/role
 
 
 
-=== TEST 16: Create an account with 'captcha' login method
+=== TEST 19: Create an account with 'captcha' login method
 --- request
 POST /=/role/Poster
 { "description":"Poster", "login":"captcha" }
@@ -168,7 +168,7 @@ POST /=/role/Poster
 
 
 
-=== TEST 17: Add permission to GET model list
+=== TEST 20: Add permission to GET model list
 --- request
 POST /=/role/Poster/~/~
 {"url":"/=/model"}
@@ -177,7 +177,7 @@ POST /=/role/Poster/~/~
 
 
 
-=== TEST 18: Get a new captcha ID
+=== TEST 21: Get a new captcha ID
 --- request
 GET /=/captcha/id
 --- response_like
@@ -185,7 +185,8 @@ GET /=/captcha/id
 
 
 
-=== TEST 19: Login via captcha (wrong solution)
+=== TEST 22: Login via captcha (wrong solution)
+--- sleep_before: 1
 --- request
 GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:abc
 --- response
@@ -193,31 +194,32 @@ GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:abc
 
 
 
- == TEST 20: Login via captcha (the second time)
+=== TEST 23: Login via captcha (wrong captcha ID format)
 --- request
-GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:abc
+GET /=/model?user=$TestAccount.Poster&captcha=aa$SavedCapture:abc
 --- response
-{"success":0,"error":"Capture ID is bad or expired."}
+{"success":0,"error":"Captcha ID format is incorrect."}
 
 
 
-=== TEST 21: get the captcha image using the ID (already expired)
+=== TEST 24: get the captcha image using the ID (invalid format)
 --- request
-GET /=/captcha/id/$SavedCapture
+GET /=/captcha/id/aa$SavedCapture
 --- response_like
 ^{"success":0,"error":"Invalid captcha ID: [0-9a-zA-Z._-]+"}$
 
 
 
-=== TEST 22: get the captcha image using the ID (already expired)
+=== TEST 25: get the captcha image using the ID (already expired)
+--- sleep_before: 4
 --- request
 GET /=/captcha/id/$SavedCapture
 --- response_like
-^{"success":0,"error":"Invalid captcha ID: [0-9a-zA-Z._-]+"}$
+^{"success":0,"error":"Captcha ID has expired: [0-9a-zA-Z._-]+"}$
 
 
 
-=== TEST 23: Get a new captcha ID
+=== TEST 32: Get a new captcha ID
 --- request
 GET /=/captcha/id
 --- response_like
@@ -225,93 +227,21 @@ GET /=/captcha/id
 
 
 
-=== TEST 24: Get a new one again
---- request
-GET /=/model
---- response
-[]
-
-
-
-=== TEST 25: Use the old to try login
---- request
-GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:efg
---- response
-{"success":0,"error":"Captcha image never used."}
-
-
-
-=== TEST 26: Get a new captcha ID
---- request
-GET /=/captcha/id
---- response_like
-^"([0-9a-zA-Z._-]+)"$
-
-
-
-=== TEST 27: Get a new captcha ID for a second time
---- request
-GET /=/captcha/id
---- response_like
-^"(?:[0-9a-zA-Z._-]+)"$
-
-
-
-=== TEST 28: Use the old ID to try login
---- request
-GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:efg
---- response
-{"error":"Captcha image never used.","success":0}
-
-
-
-=== TEST 29: Get a new captcha ID
---- request
-GET /=/captcha/id
---- response_like
-^"([0-9a-zA-Z._-]+)"$
-
-
-
-=== TEST 30: Get the image
+=== TEST 33: Get the image
 --- res_type: image/png
 --- request
 GET /=/captcha/id/$SavedCapture
 --- response_like
 .
-
-
-
-=== TEST 31: Get a new captcha ID
---- res_type: image/png
---- request
-GET /=/captcha/id/$SavedCapture
---- response_like
-.
-
-
-
-=== TEST 32: Use captcha to login
---- request
-GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
---- response
-[]
-
-
-
-=== TEST 33: Use captcha to login
---- request
-GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
---- response
-{"success":0,"error":"Capture ID is bad or expired."}
 
 
 
 === TEST 34: Get a new captcha ID
+--- res_type: image/png
 --- request
 GET /=/captcha/id/$SavedCapture
 --- response_like
-{"success":0,"error":"Invalid captcha ID: [0-9a-zA-Z._-]+"}
+.
 
 
 
@@ -319,38 +249,37 @@ GET /=/captcha/id/$SavedCapture
 --- request
 GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
 --- response
-{"success":0,"error":"Capture ID is bad or expired."}
+[]
 
 
 
-=== TEST 36: Get a new captcha ID
+=== TEST 36: Use captcha to login (use previous succeeded one again)
 --- request
-GET /=/captcha/id
---- response_like
-^"([0-9a-zA-Z._-]+)"$
-
-
-
-=== TEST 37: Get the image
---- res_type: image/png
---- request
-GET /=/captcha/id/$SavedCapture?lang=en
---- response_like
-.
-
-
-
-=== TEST 38: Use captcha to login (wrong password)
---- request
-GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworldd
+GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
 --- response
-{"success":0,"error":"Solution to the captcha is incorrect."}
+{"success":0,"error":"The captcha has been used."}
+
+
+
+=== TEST 37: Get captcha image (use expired succeeded one again)
+--- request
+GET /=/captcha/id/$SavedCapture
+--- response_like
+{"success":0,"error":"Invalid captcha ID: [0-9a-zA-Z._-]+"}
+
+
+
+=== TEST 38: Use captcha to login (use expired succeeded one again)
+--- request
+GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
+--- response
+{"success":0,"error":"Capture ID is bad or expired."}
 
 
 
 === TEST 39: Get a new captcha ID
 --- request
-GET /=/captcha/id?lang=cn
+GET /=/captcha/id
 --- response_like
 ^"([0-9a-zA-Z._-]+)"$
 
@@ -359,25 +288,23 @@ GET /=/captcha/id?lang=cn
 === TEST 40: Get the image
 --- res_type: image/png
 --- request
-GET /=/captcha/id/$SavedCapture
+GET /=/captcha/id/$SavedCapture?lang=en
 --- response_like
 .
---- use_ttf: 1
 
 
 
-=== TEST 41: Use captcha to login
+=== TEST 41: Use captcha to login (wrong password)
 --- request
-GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:你好，世界！
+GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworldd
 --- response
-[]
---- use_ttf: 1
+{"success":0,"error":"Solution to the captcha is incorrect."}
 
 
 
 === TEST 42: Get a new captcha ID
 --- request
-GET /=/captcha/id?lang=en
+GET /=/captcha/id?lang=cn
 --- response_like
 ^"([0-9a-zA-Z._-]+)"$
 
@@ -389,10 +316,37 @@ GET /=/captcha/id?lang=en
 GET /=/captcha/id/$SavedCapture
 --- response_like
 .
+--- use_ttf: 1
 
 
 
-=== TEST 44: Use captcha to login (wrong solution)
+=== TEST 44: Use captcha to login
+--- request
+GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:你好，世界！
+--- response
+[]
+--- use_ttf: 1
+
+
+
+=== TEST 45: Get a new captcha ID
+--- request
+GET /=/captcha/id?lang=en
+--- response_like
+^"([0-9a-zA-Z._-]+)"$
+
+
+
+=== TEST 46: Get the image
+--- res_type: image/png
+--- request
+GET /=/captcha/id/$SavedCapture
+--- response_like
+.
+
+
+
+=== TEST 47: Use captcha to login (wrong solution)
 buggy in PgMocked...
 --- request
 GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:你好，世界啊！

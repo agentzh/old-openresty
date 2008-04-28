@@ -7,16 +7,17 @@ use utf8;
 
 use Crypt::CBC;
 use MIME::Base64;
-use Encode qw( decode is_utf8 );
-use constant {
-	PLAINTEXT_SEP => "\001",    # separator character in plaintext str
-	MIN_TIMESPAN => 3,          # minimum timespan(sec) for a valid Captcha,
-                                # verification will fail before this timespan.
-                                # default to 3s.
-	MAX_TIMESPAN => 15*60,      # maximum timespan(sec) for a valid Captcha,
-                                # Captcha will be invalid after this timespan.
-                                # default to 15m.
-};
+use Digest::MD5 qw/md5/;
+use Encode qw( encode decode is_utf8 );
+
+my $CAPTCHA_SIGNATURE="oc1";	# means openapi captcha v1 :)
+my $PLAINTEXT_SEP="\001";	# separator character in plaintext str
+my $MIN_TIMESPAN=3;			# minimum timespan(sec) for a valid Captcha,
+							# verification will fail before this timespan.
+							# default to 3s.
+my $MAX_TIMESPAN=15*60;		# maximum timespan(sec) for a valid Captcha,
+							# Captcha will be invalid after this timespan.
+							# default to 15m.
 
 my $Error;
 eval "use GD::SecurityImage;";
@@ -197,9 +198,15 @@ sub GET_captcha_column {
 			die "Unsupported lang (only cn and en allowed): $lang\n";
 		}
 
+		if ($OpenResty::Config{'frontend.debug'}) {
+			# testing mode
+			$MIN_TIMESPAN=1;	# change min valid timespan to 1s
+			$MAX_TIMESPAN=3;	# change max valid timespan to 3s
+		}
+
 		# Generate min and max valid timestamp
-		my $min_valid=time()+MIN_TIMESPAN;
-		my $max_valid=time()+MAX_TIMESPAN;
+		my $min_valid=time()+$MIN_TIMESPAN;
+		my $max_valid=time()+$MAX_TIMESPAN;
 
         my $id = encrypt_captcha_id($lang,$solution,$min_valid,$max_valid);
 
@@ -228,7 +235,7 @@ sub GET_captcha_value {
         my $id = $value;
 
 		# Decrypt captcha id to get info about the captcha
-		my ($lang,$solution,$min_valid,$max_valid,$rand)=decrypt_captcha_id($id);
+		my ($lang,$solution,$min_valid,$max_valid)=decrypt_captcha_id($id);
 
 		# Exit if the captcha id is in wrong format
         die "Invalid captcha ID: $id\n" unless defined($solution);
@@ -359,7 +366,10 @@ sub trim_sol {
 sub validate_captcha
 {
 	my ($id,$word,$test_flag)=@_;
-	my ($lang,$solution,$min_valid,$max_valid,$rand)=decrypt_captcha_id($id);
+	my ($lang,$solution,$min_valid,$max_valid)=decrypt_captcha_id($id);
+
+	# validate failed if the captcha id is in wrong format
+	return (0,"Captcha ID format is incorrect.") unless defined($solution);	# wrong format
 
 	# change true solution for testing purpose
 	if($test_flag) {
@@ -370,30 +380,29 @@ sub validate_captcha
 		}
 	}
 
-	# validate failed if the captcha id is in wrong format
-	return 0 unless defined($solution);
-
 	# validate failed if the captcha id has expired or not allowed to validate yet
 	my $now=time();
-	return 0 if $min_valid>$now || $max_valid<$now;
+	return (0,"Answered too quickly.") if $min_valid>$now;	# ans too early
+	return (0,"Answered too late.")  if $max_valid<$now;	# ans too late
 
 	# validate failed if the captcha id has been used
 	my $used=$OpenResty::Cache->get($id);
-	return 0 if $used;
+	return (0,"The captcha has been used.") if $used;	# ans used
 
 	# validate failed if user input doesn't match the solution in captcha id
-	return 0 if trim_sol($word) ne trim_sol($solution);
+	return (0,"Solution to the captcha is incorrect.") if trim_sol($word) ne trim_sol($solution);	# wrong ans
 
 	# validate succeed, remember which captcha id has been used
-	$OpenResty::Cache->set($id=>1,MAX_TIMESPAN);
+	$OpenResty::Cache->set($id=>1,$MAX_TIMESPAN);
 
-	return 1;
+	return (1,"Verification succeeded.");
 }
 
 sub decrypt_captcha_id
 {
 	my $id=shift||return ();
-	my $cipher=decode_base64_urlsafe($id);
+	$id=decode_base64_urlsafe($id);
+	my ($digest,$cipher)=unpack("a16a*",$id);
 
 	my $secret=get_captcha_secretkey();
 	my $algo=Crypt::CBC->new(
@@ -403,19 +412,24 @@ sub decrypt_captcha_id
 		-cipher=>'Rijndael',
 	);
 
-	my ($lang,$solution,$min_valid,$max_valid,$rand)=split(PLAINTEXT_SEP,$algo->decrypt($cipher));
+	my $plain=$algo->decrypt($cipher);
+	return () unless $digest eq md5($plain);
 
-	return () unless defined($lang) && defined($solution) && defined($min_valid) && defined($max_valid) && defined($rand);
-	return () unless $rand>=0 && $rand<1000000;
+	my ($rand1,$lang,$solution,$min_valid,$max_valid,$rand2)=split($PLAINTEXT_SEP,$plain);
 
-	return ($lang,$solution,$min_valid,$max_valid,$rand);
+	return () unless defined($lang) && defined($solution) && defined($min_valid) && defined($max_valid);
+	return () unless $min_valid>0 && $max_valid>0;
+	return () unless defined($rand1) && $rand1>=0 && $rand1<10000;
+	return () unless $rand1==$rand2;
+
+	return ($lang,$solution,$min_valid,$max_valid);
 }
 
 sub encrypt_captcha_id
 {
 	my ($lang,$solution,$min_valid,$max_valid)=@_;
-	my $rand=int(rand(1000000));
-	my $plain=join(PLAINTEXT_SEP,$lang,$solution,$min_valid,$max_valid,$rand);
+	my $rand=int(rand(10000));
+	my $plain=join($PLAINTEXT_SEP,$rand,$lang,$solution,$min_valid,$max_valid,$rand);
 
 	my $secret=get_captcha_secretkey();
 	my $algo=Crypt::CBC->new(
@@ -426,31 +440,42 @@ sub encrypt_captcha_id
 	);
 
 	my $cipher=$algo->encrypt($plain);
-	return encode_base64_urlsafe($cipher);
+	utf8::encode($plain);	# XXX: eliminating md5() i/o error
+	my $digest=md5($plain);
+	return encode_base64_urlsafe($digest.$cipher);
 }
 
 sub get_captcha_secretkey
 {
 	# 128 bits secret key for encryption/decryption
+	# TODO: should get captcha secret key from database
 	return "a" x 16;
 }
 
 sub encode_base64_urlsafe
 {
 	# base64 encode the given value and substitute URL-unsafe characters to URL-safe ones
-	(my $base64=encode_base64(shift))=~y!+/=!._-!;
+	(my $base64=encode_base64(shift,""))=~y!+/!._!;
 
 	# remove the extra newline appended by encode_base64()
 	chomp($base64);
 
+	$base64=~s/=//g;
 	return $base64;
 }
 
 sub decode_base64_urlsafe
 {
 	# substitute URL-safe characters to original ones
-	(my $base64=shift)=~y!._-!+/=!;
-	return decode_base64($base64);
+	(my $base64=shift)=~y!._!+/!;
+	my $result;
+	{
+		my $warn=$^W;
+		$^W=0;	# suppress decode_base64() warnings
+		$result=decode_base64($base64);
+		$^W=$warn;
+	}
+	return $result;
 }
 
 1;

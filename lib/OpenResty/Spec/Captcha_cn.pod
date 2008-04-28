@@ -58,7 +58,7 @@ OpenResty 系统中原有的 Captcha 图片生成基于 C<GD::SecurityImage> 模
 
 Captcha id 明文格式为：
 
-	<lang> <\001> <solution> <\001> <min_ts> <\001> <max_ts> <\001> <rand>
+	<rand> <\001> <lang> <\001> <solution> <\001> <min_ts> <\001> <max_ts> <\001> <rand>
 
 其中各个部分的含义如下：
 
@@ -88,19 +88,21 @@ Captcha 最长有效时刻，以 UNIX 时戳形式表示，例如“1208361326�
 
 =head3 CAPTCHA ID ENCRYPTION/DECRYPTION
 
-最终的 Captcha id 是原始的 Captcha id 明文串经过 AES 加密（通过 C<Crypt::Rijndael> 和 C<Crypt::CBC> 模块）后再 Base64 编码，最后再将 [+/=] 分别替换为 [._-] （以便在 URL 中引用）后的结果。例如，若 Captcha id 明文串为：
+最终的 Captcha id 是原始的 Captcha id 明文串经过 AES 加密（通过 C<Crypt::Rijndael> 和 C<Crypt::CBC> 模块）后再 Base64 编码，最后再将 [+/=] 分别替换为 [._-] （以便在 URL 中引用）后的结果，同时在前面附加了经过相同 Base64 编码步骤的对明文串的 MD5 摘要。例如，若 Captcha id 明文串为：
 
-	cn<\001>测试一下<\001>1208357712<\001>1208361326<\001>15768
+	15768<\001>cn<\001>测试一下<\001>1208357712<\001>1208361326<\001>15768
 
 若选择密钥为 16 个 a（128 bits 密钥），则最终生成的 Captcha id 将为：
 
-	gi2g3CgKpznmIjUq_OVsu.NzlRlFAWGWxjWLCrMmZXkNocpoe2JqN7Zg7BOvVBPQ
+	ZhFYSq_rtlPjKHfxZuZpoAGO6DnQcufQ3HyQlT50BHz6HmFx5M6uyPXPE4c0a60IR0JgchmTkHle2DjT3_F9ob.9gYnCKE6haFsQtPm6hGQA--
 
 加密的示例代码如下：
 
 	use Crypt::CBC;
 	use MIME::Base64;
-	my $plain=join("\001",'cn','测试一下','1208357712','1208361326','15768');
+	use Digest::MD5 'md5_base64';
+	my $rand=15768;
+	my $plain=join("\001",$rand,'cn','测试一下','1208357712','1208361326',$rand);
 	my $key='a' x 16;
 	my $algo=Crypt::CBC->new(
 			-key=>$key,
@@ -109,14 +111,16 @@ Captcha 最长有效时刻，以 UNIX 时戳形式表示，例如“1208361326�
 			-cipher=>'Rijndael',
 			);
 	my $cipher=$algo->encrypt($plain);
-	(my $result=encode_base64($cipher))=~y!+/=!._-!;
+	my $digest=md5_base64($plain);
+	(my $result=$digest.encode_base64($cipher,""))=~y!+/=!._-!;
 	print "Captcha ID: $result\n";
 
 解密的示例代码如下：
 
 	use Crypt::CBC;
 	use MIME::Base64;
-	my $result='gi2g3CgKpznmIjUq_OVsu.NzlRlFAWGWxjWLCrMmZXkNocpoe2JqN7Zg7BOvVBPQ';
+	use Digest::MD5 'md5_base64';
+	my $result='ZhFYSq_rtlPjKHfxZuZpoAGO6DnQcufQ3HyQlT50BHz6HmFx5M6uyPXPE4c0a60IR0JgchmTkHle2DjT3_F9ob.9gYnCKE6haFsQtPm6hGQA--';
 	my $key='a' x 16;
 	my $algo=Crypt::CBC->new(
 			-key=>$key,
@@ -125,9 +129,15 @@ Captcha 最长有效时刻，以 UNIX 时戳形式表示，例如“1208361326�
 			-cipher=>'Rijndael',
 			);
 	(my $base64=$result)=~y!._-!+/=!;
-	my $cipher=decode_base64($base64);
-	my ($lang,$solution,$min_ts,$max_ts,$rand)=split("\001",$algo->decrypt($cipher));
-	print "$lang,$solution,$min_ts,$max_ts,$rand\n";
+	my ($digest,$cipher)=unpack("a22a*",$base64);
+	my $cipher=decode_base64($cipher);
+	my $plain=$algo->decrypt($cipher);
+	my ($rand1,$lang,$solution,$min_ts,$max_ts,$rand2)=split("\001",$plain);
+	if($digest ne md5_base64($plain)) {
+		print "Invalid captcha ID!\n";
+		exit;
+	}
+	print "$rand1,$lang,$solution,$min_ts,$max_ts,$rand2\n";
 
 另外，解密后的结果为字节串，在同 Perl-Native 字符串比较前一定要注意转换编码！
 

@@ -66,8 +66,9 @@ sub login_by_sql {
 			$test_flag=1;
         }
 
-		if (!OpenResty::Handler::Captcha::validate_captcha($id,$user_sol,$test_flag)) {
-            die "Solution to the captcha is incorrect.\n";
+		my ($rc,$err)=OpenResty::Handler::Captcha::validate_captcha($id,$user_sol,$test_flag);
+		if (!$rc) {
+            die $err."\n";
 		}
     }
 
@@ -158,8 +159,9 @@ sub login_by_perl {
 			$test_flag=1;
         }
 
-		if (!OpenResty::Handler::Captcha::validate_captcha($id,$user_sol,$test_flag)) {
-            die "Solution to the captcha is incorrect.\n";
+		my ($rc,$err)=OpenResty::Handler::Captcha::validate_captcha($id,$user_sol,$test_flag);
+		if (!$rc) {
+            die $err."\n";
 		}
     } elsif (defined $password) {
         my $res = $openresty->select("select count(*) from _roles where name = " . Q($role) . " and login = 'password' and password = " . Q($password) . ";");
@@ -186,7 +188,7 @@ sub login_by_perl {
 
     #my $captcha_from_cookie = $openresty->{_captcha_from_cookie};
     #if ($captcha_from_cookie) {
-    #$OpenResty::Cache->remove($captcha_from_cookie);
+	    #$OpenResty::Cache->remove($captcha_from_cookie);
     #}
 
     my $uuid = $OpenResty::UUID->create_str;
