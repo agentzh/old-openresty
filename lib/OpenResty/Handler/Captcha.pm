@@ -382,7 +382,7 @@ sub validate_captcha
 	# validate failed if the captcha id has expired or not allowed to validate yet
 	my $now=time();
 	return (0,"Answered too quickly.") if $min_valid>$now;	# ans too early
-	return (0,"Answered too late.")  if $max_valid<$now;	# ans too late
+	return (0,"Captcha ID has expired.")  if $max_valid<$now;	# ans too late
 
 	# validate failed if the captcha id has been used
 	my $used=$OpenResty::Cache->get($id);
