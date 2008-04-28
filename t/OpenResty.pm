@@ -158,6 +158,12 @@ sub run_test ($) {
         warn "No request section found in $name\n";
         return;
     }
+
+	my $sleep_before=$block->sleep_before;
+	if($sleep_before) {
+		sleep $sleep_before;
+	}
+
     my $charset = $block->charset || 'UTF-8';
     my $format = $block->format || 'JSON';
     my $res_type = $block->res_type;
@@ -216,6 +222,11 @@ sub run_test ($) {
         } else {
             like $res->header('Content-Type'), qr/\Q; charset=$charset\E$/, "charset okay - $name";
         }
+
+		my $sleep_after=$block->sleep_after;
+		if($sleep_after) {
+			sleep $sleep_after;
+		}
     } else {
         my ($firstline) = ($request =~ /^([^\n]*)/s);
         die "Invalid request head: \"$firstline\" in $name\n";
