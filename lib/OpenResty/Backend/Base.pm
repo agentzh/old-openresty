@@ -129,6 +129,12 @@ _EOC_
     [
         '0.003' => '',
     ],
+	[
+		'0.004' => <<'_EOC_',
+alter table _global._general add column captcha_key char(16) not null
+default 'aaaaaaaaaaaaaaaa';
+_EOC_
+	],
 );
 
 our @LocalVersionDelta = (
