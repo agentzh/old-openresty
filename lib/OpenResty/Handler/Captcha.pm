@@ -457,9 +457,19 @@ sub encrypt_captcha_id
 
 sub get_captcha_secretkey
 {
+	my ($self,$openresty)=@_;
 	# 128 bits secret key for encryption/decryption
-	# TODO: should get captcha secret key from database
-	return "a" x 16;
+	my $key=$OpenResty::Cache->get("captcha:key");
+	return $key if defined($key) && length($key)==16;
+	my $res=$openresty->select("select captcha_key from _global._general",{use_hash=>1});
+	die "Unable to retrieve captcha secret key"
+		unless defined($res) && exists $res->{captcha_key};
+	$key=$res->{captcha_key};
+	die "Captcha secret key length invalid, should be exactly 16 bytes"
+		unless length($key)==16;
+	# Cache the captcha secret key for 1 day
+	$OpenResty::Cache->set("captcha:key"=>$key,3600*24);
+	return $key;
 }
 
 sub encode_base64_urlsafe
