@@ -358,8 +358,17 @@ sub trim_sol {
 
 sub validate_captcha
 {
-	my ($id,$word)=@_;
+	my ($id,$word,$test_flag)=@_;
 	my ($lang,$solution,$min_valid,$max_valid,$rand)=decrypt_captcha_id($id);
+
+	# change true solution for testing purpose
+	if($test_flag) {
+		if ($lang eq 'en') {
+			$solution = 'hello world ';
+		} else {
+			$solution = '你好世界';
+		}
+	}
 
 	# validate failed if the captcha id is in wrong format
 	return 0 unless defined($solution);
@@ -386,16 +395,18 @@ sub decrypt_captcha_id
 	my $id=shift||return ();
 	my $cipher=decode_base64_urlsafe($id);
 
+	my $secret=get_captcha_secretkey();
 	my $algo=Crypt::CBC->new(
-		-key=>get_captcha_secretkey(),
+		-key=>$secret,
 		-header=>'none',
-		-iv=>$key,
+		-iv=>$secret,
 		-cipher=>'Rijndael',
 	);
 
 	my ($lang,$solution,$min_valid,$max_valid,$rand)=split(PLAINTEXT_SEP,$algo->decrypt($cipher));
 
 	return () unless defined($lang) && defined($solution) && defined($min_valid) && defined($max_valid) && defined($rand);
+	return () unless $rand>=0 && $rand<1000000;
 
 	return ($lang,$solution,$min_valid,$max_valid,$rand);
 }
@@ -406,10 +417,11 @@ sub encrypt_captcha_id
 	my $rand=int(rand(1000000));
 	my $plain=join(PLAINTEXT_SEP,$lang,$solution,$min_valid,$max_valid,$rand);
 
+	my $secret=get_captcha_secretkey();
 	my $algo=Crypt::CBC->new(
-		-key=>get_captcha_secretkey(),
+		-key=>$secret,
 		-header=>'none',
-		-iv=>$key,
+		-iv=>$secret,
 		-cipher=>'Rijndael',
 	);
 
