@@ -236,7 +236,7 @@ sub GET_captcha_value {
         my $id = $value;
 
 		# Decrypt captcha id to get info about the captcha
-		my ($lang,$solution,$min_valid,$max_valid)=decrypt_captcha_id($id);
+		my ($rand1,$lang,$solution,$min_valid,$max_valid,$rand2)=decrypt_captcha_id($id);
 
 		# Exit if the captcha id is in wrong format
         die "Invalid captcha ID: $id\n" unless defined($solution);
@@ -366,14 +366,14 @@ sub trim_sol {
 
 sub validate_captcha
 {
-	my ($id,$word,$test_flag)=@_;
-	my ($lang,$solution,$min_valid,$max_valid)=decrypt_captcha_id($id);
+	my ($id,$word)=@_;
+	my ($rand1,$lang,$solution,$min_valid,$max_valid,$rand2)=decrypt_captcha_id($id);
 
 	# validate failed if the captcha id is in wrong format
 	return (0,"Captcha ID format is incorrect.") unless defined($solution);	# wrong format
 
 	# change true solution for testing purpose
-	if($test_flag) {
+	if($test_mode) {
 		if ($lang eq 'en') {
 			$solution = 'hello world ';
 		} else {
@@ -386,15 +386,19 @@ sub validate_captcha
 	return (0,"Answered too quickly.") if $min_valid>$now;	# ans too early
 	return (0,"Captcha ID has expired.")  if $max_valid<$now;	# ans too late
 
+	# Construct cache key for captcha id. We cannot use captcha id directly, for the id itself
+	# could be append any character without affecting its decryption.
+	my $cache_key=join($PLAINTEXT_SEP,$rand1,$lang,$solution,$min_valid,$max_valid,$rand2);
+
 	# validate failed if the captcha id has been used
-	my $used=$OpenResty::Cache->get($id);
+	my $used=$OpenResty::Cache->get($cache_key);
 	return (0,"The captcha has been used.") if $used;	# ans used
 
 	# validate failed if user input doesn't match the solution in captcha id
 	return (0,"Solution to the captcha is incorrect.") if trim_sol($word) ne trim_sol($solution);	# wrong ans
 
 	# validate succeed, remember which captcha id has been used
-	$OpenResty::Cache->set($id=>1,$MAX_TIMESPAN);
+	$OpenResty::Cache->set($cache_key=>1,$MAX_TIMESPAN);
 
 	return (1,"Verification succeeded.");
 }
@@ -423,7 +427,7 @@ sub decrypt_captcha_id
 	return () unless defined($rand1) && $rand1>=0 && $rand1<10000;
 	return () unless $rand1==$rand2;
 
-	return ($lang,$solution,$min_valid,$max_valid);
+	return ($rand1,$lang,$solution,$min_valid,$max_valid,$rand2);
 }
 
 sub encrypt_captcha_id

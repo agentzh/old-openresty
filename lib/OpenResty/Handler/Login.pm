@@ -56,17 +56,7 @@ sub login_by_sql {
     if (defined $captcha) {
         my ($id, $user_sol) = split /:/, $captcha, 2;
 
-		# Captcha testing flag
-		my $test_flag=0;
-
-        # XXX for testing purpose...
-        ### Account:  $account;
-        my $server = $ENV{OPENRESTY_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
-        if ($OpenResty::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
-			$test_flag=1;
-        }
-
-		my ($rc,$err)=OpenResty::Handler::Captcha::validate_captcha($id,$user_sol,$test_flag);
+		my ($rc,$err)=OpenResty::Handler::Captcha::validate_captcha($id,$user_sol);
 		if (!$rc) {
             die $err."\n";
 		}
@@ -149,17 +139,7 @@ sub login_by_perl {
             die "Cannot login as $account.$role via captchas.\n";
         }
 
-		# Captcha testing flag
-		my $test_flag=0;
-
-        # XXX for testing purpose...
-        ### Account:  $account;
-        my $server = $ENV{OPENRESTY_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
-        if ($OpenResty::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
-			$test_flag=1;
-        }
-
-		my ($rc,$err)=OpenResty::Handler::Captcha::validate_captcha($id,$user_sol,$test_flag);
+		my ($rc,$err)=OpenResty::Handler::Captcha::validate_captcha($id,$user_sol);
 		if (!$rc) {
             die $err."\n";
 		}
