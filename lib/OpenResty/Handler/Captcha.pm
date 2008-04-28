@@ -389,6 +389,7 @@ sub validate_captcha
 	# Construct cache key for captcha id. We cannot use captcha id directly, for the id itself
 	# could be append any character without affecting its decryption.
 	my $cache_key=join($PLAINTEXT_SEP,$rand1,$lang,$solution,$min_valid,$max_valid,$rand2);
+	utf8::encode($cache_key);
 
 	# validate failed if the captcha id has been used
 	my $used=$OpenResty::Cache->get($cache_key);
