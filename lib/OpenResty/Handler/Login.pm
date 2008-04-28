@@ -157,29 +157,33 @@ sub login_by_perl {
         if ($res->[0][0] == 0) {
             die "Cannot login as $account.$role via captchas.\n";
         }
-        ### Captcha ID: $id
-        my $true_sol = $OpenResty::Cache->get($id);
-        ### True sol: $true_sol
-        $OpenResty::Cache->remove($id);
-        if (!defined $true_sol) {
-            die "Capture ID is bad or expired.\n";
-        }
-        if ($true_sol eq '1') {
-            die "Captcha image never used.\n";
-        }
-        # XXX for testing purpose...
-        ### Account:  $account;
-        my $server = $ENV{OPENRESTY_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
-        if ($OpenResty::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
-            if ($true_sol =~ /[a-z]/) {
-                $true_sol = 'hello world ';
-            } else {
-                $true_sol = '你好世界';
-            }
-        }
-        if (trim_sol($user_sol) ne trim_sol($true_sol)) {
+#        ### Captcha ID: $id
+#        my $true_sol = $OpenResty::Cache->get($id);
+#        ### True sol: $true_sol
+#        $OpenResty::Cache->remove($id);
+#        if (!defined $true_sol) {
+#            die "Capture ID is bad or expired.\n";
+#        }
+#        if ($true_sol eq '1') {
+#            die "Captcha image never used.\n";
+#        }
+#        # XXX for testing purpose...
+#        ### Account:  $account;
+#        my $server = $ENV{OPENRESTY_TEST_SERVER} || $OpenResty::Config{'test_suite.server'};
+#        if ($OpenResty::Config{'frontend.debug'} && $server =~ /^\Q$account\E\:/ && $role eq 'Poster') {
+#            if ($true_sol =~ /[a-z]/) {
+#                $true_sol = 'hello world ';
+#            } else {
+#                $true_sol = '你好世界';
+#            }
+#        }
+#        if (trim_sol($user_sol) ne trim_sol($true_sol)) {
+#            die "Solution to the captcha is incorrect.\n";
+#        }
+
+		if (!OpenResty::Handler::Captcha::validate_captcha($id,$user_sol)) {
             die "Solution to the captcha is incorrect.\n";
-        }
+		}
     } elsif (defined $password) {
         my $res = $openresty->select("select count(*) from _roles where name = " . Q($role) . " and login = 'password' and password = " . Q($password) . ";");
         ### with password: $res
