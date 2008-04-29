@@ -42,6 +42,9 @@ requires            ('Data::Structure::Util' => '0.15');
 requires            ('DateTime::Format::Pg');
 requires            ('DateTime::Format::Strptime');
 requires            ('Digest::MD5');
+# modules needed by new captcha mechanism
+requires			('Crypt::CBC');
+requires			('Crypt::Rijndael');
 
 recommends          ('Benchmark::Timer');
 recommends          ('HTTP::Server::Simple' => '0.27');
