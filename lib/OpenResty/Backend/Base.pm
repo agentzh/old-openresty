@@ -113,14 +113,19 @@ my %DefaultRules = (
 our @GlobalVersionDelta = (
     [
         '0.001' => <<'_EOC_',
-create table _general (
-    version varchar(10)
-);
-insert into _general (version) values ('0.001');
-create table _accounts (
-    id serial primary key,
-    name text unique not null
-);
+create or replace function _upgrade() returns integer as $$
+begin
+    create table _general (
+        version varchar(10)
+    );
+    insert into _general (version) values ('0.001');
+    create table _accounts (
+        id serial primary key,
+        name text unique not null
+    );
+    return 0;
+end;
+$$ language plpgsql;
 _EOC_
     ],
     [
@@ -131,8 +136,13 @@ _EOC_
     ],
 	[
 		'0.004' => <<'_EOC_',
-alter table _global._general add column captcha_key char(16) not null
-default 'aaaaaaaaaaaaaaaa';
+create or replace function _upgrade() returns integer as $$
+begin
+    alter table _global._general add column captcha_key char(16) not null
+    default 'aaaaaaaaaaaaaaaa';
+    return 0;
+end;
+$$ language plpgsql;
 _EOC_
 	],
 );
@@ -216,6 +226,7 @@ end;
 $$ language plpgsql;
 _EOC_
     ],
+    [ '0.004' => '' ],
 );
 
 sub upgrade_all {
@@ -229,6 +240,9 @@ sub upgrade_all {
     my $base = $self->get_upgrading_base;
     if ($base < 0) {
         warn "Global metamodel is up to date.\n";
+    } else {
+        #### Upgrading global metamodel...
+        $self->upgrade_global_metamodel($base);
     }
     my @accounts = $self->get_all_accounts;
     #warn "@accounts";
@@ -273,6 +287,7 @@ sub upgrade_global_metamodel {
         $self->add_empty_user("_global");
         $self->set_user("_global");
     }
+    ### Upgrading global metamodel...
     $self->_upgrade_metamodel($base, \@GlobalVersionDelta);
 }
 
@@ -304,12 +319,13 @@ sub _upgrade_metamodel {
     for my $i ($base..$max) {
         my $entry = $delta_table->[$i];
         my ($new_ver, $sql) = @$entry;
-        if (!$sql) { next; }
+        if (!$sql) {
+            $res = $self->do("update _general set version='$new_ver'");
+            next;
+        }
         warn "Upgrading account $user from $cur_ver to $new_ver...\n";
         #$sql .= "; update _general set version='$new_ver'";
-        $res = $self->do("$sql");
-        $res = $self->do("select _upgrade();");
-        $res = $self->do("update _general set version='$new_ver'");
+        $res = $self->do("$sql; select _upgrade(); update _general set version='$new_ver'");
         #for my $stmt (split /;\n/, $sql) {
             #warn "=======", $stmt, "=======\n";
             #next if $stmt =~ /^\s*$/;
@@ -319,7 +335,7 @@ sub _upgrade_metamodel {
         #}
         $cur_ver = $new_ver;
     }
-    return $res >= 0;
+    return !defined $res || $res >= 0;
 }
 
 sub ping {
