@@ -200,7 +200,7 @@ sub GET_captcha_column {
 		}
 
 		if ($test_mode) {
-			# testing mode
+			# We are in the testing mode
 			$MIN_TIMESPAN=1;	# change min valid timespan to 1s
 			$MAX_TIMESPAN=3;	# change max valid timespan to 3s
 		}
@@ -387,7 +387,7 @@ sub validate_captcha
 	return (0,"Captcha ID has expired.")  if $max_valid<$now;	# ans too late
 
 	# Construct cache key for captcha id. We cannot use captcha id directly, for the id itself
-	# could be append any character without affecting its decryption.
+	# could be appending any characters without affecting its decryption.
 	# Prepending "captcha:" to prevent cache key confliction...
 	my $cache_key=join($PLAINTEXT_SEP,"captcha:",$rand1,$lang,$solution,$min_valid,$max_valid,$rand2);
 	utf8::encode($cache_key);

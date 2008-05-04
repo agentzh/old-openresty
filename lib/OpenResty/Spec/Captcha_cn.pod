@@ -88,13 +88,13 @@ Captcha 最长有效时刻，以 UNIX 时戳形式表示，例如“1208361326�
 
 =head3 CAPTCHA ID ENCRYPTION/DECRYPTION
 
-最终的 Captcha id 是原始的 Captcha id 明文串经过 AES 加密（通过 C<Crypt::Rijndael> 和 C<Crypt::CBC> 模块）后再 Base64 编码，最后再将 [+/=] 分别替换为 [._-] （以便在 URL 中引用）后的结果，同时在前面附加了经过相同 Base64 编码步骤的对明文串的 MD5 摘要。例如，若 Captcha id 明文串为：
+最终的 Captcha id 是原始的 Captcha id 明文串经过 AES 加密（通过 C<Crypt::Rijndael> 和 C<Crypt::CBC> 模块）后再 Base64 编码、最后再将 [+/] 分别替换为 [._] （以便在 URL 中引用）、去掉末尾填充用的 = 后的结果，同时在前面附加了经过相同 Base64 编码步骤的对明文串的 MD5 摘要。例如，若 Captcha id 明文串为：
 
 	15768<\001>cn<\001>测试一下<\001>1208357712<\001>1208361326<\001>15768
 
 若选择密钥为 16 个 a（128 bits 密钥），则最终生成的 Captcha id 将为：
 
-	ZhFYSq_rtlPjKHfxZuZpoAGO6DnQcufQ3HyQlT50BHz6HmFx5M6uyPXPE4c0a60IR0JgchmTkHle2DjT3_F9ob.9gYnCKE6haFsQtPm6hGQA--
+	ZhFYSq_rtlPjKHfxZuZpoAGO6DnQcufQ3HyQlT50BHz6HmFx5M6uyPXPE4c0a60IR0JgchmTkHle2DjT3_F9ob.9gYnCKE6haFsQtPm6hGQA
 
 加密的示例代码如下：
 
@@ -112,7 +112,9 @@ Captcha 最长有效时刻，以 UNIX 时戳形式表示，例如“1208361326�
 			);
 	my $cipher=$algo->encrypt($plain);
 	my $digest=md5_base64($plain);
-	(my $result=$digest.encode_base64($cipher,""))=~y!+/=!._-!;
+	my $result=$digest.encode_base64($cipher,"");
+	$result=~s/=//g;
+	$result=~y!+/!._!;
 	print "Captcha ID: $result\n";
 
 解密的示例代码如下：
@@ -120,7 +122,7 @@ Captcha 最长有效时刻，以 UNIX 时戳形式表示，例如“1208361326�
 	use Crypt::CBC;
 	use MIME::Base64;
 	use Digest::MD5 'md5_base64';
-	my $result='ZhFYSq_rtlPjKHfxZuZpoAGO6DnQcufQ3HyQlT50BHz6HmFx5M6uyPXPE4c0a60IR0JgchmTkHle2DjT3_F9ob.9gYnCKE6haFsQtPm6hGQA--';
+	my $result='ZhFYSq_rtlPjKHfxZuZpoAGO6DnQcufQ3HyQlT50BHz6HmFx5M6uyPXPE4c0a60IR0JgchmTkHle2DjT3_F9ob.9gYnCKE6haFsQtPm6hGQA';
 	my $key='a' x 16;
 	my $algo=Crypt::CBC->new(
 			-key=>$key,
@@ -128,9 +130,9 @@ Captcha 最长有效时刻，以 UNIX 时戳形式表示，例如“1208361326�
 			-iv=>$key,
 			-cipher=>'Rijndael',
 			);
-	(my $base64=$result)=~y!._-!+/=!;
+	(my $base64=$result)=~y!._!+/!;
 	my ($digest,$cipher)=unpack("a22a*",$base64);
-	my $cipher=decode_base64($cipher);
+	$cipher=decode_base64($cipher);
 	my $plain=$algo->decrypt($cipher);
 	my ($rand1,$lang,$solution,$min_ts,$max_ts,$rand2)=split("\001",$plain);
 	if($digest ne md5_base64($plain)) {
