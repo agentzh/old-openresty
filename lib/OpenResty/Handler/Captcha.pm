@@ -10,8 +10,6 @@ use MIME::Base64;
 use Digest::MD5 qw/md5/;
 use Encode qw( encode decode is_utf8 );
 
-our $test_mode=0;	# whether enable testing mode
-
 my $PLAINTEXT_SEP="\001";	# separator character in plaintext str
 my $MIN_TIMESPAN=3;			# minimum timespan(sec) for a valid Captcha,
 							# verification will fail before this timespan.
@@ -199,7 +197,7 @@ sub GET_captcha_column {
 			die "Unsupported lang (only cn and en allowed): $lang\n";
 		}
 
-		if ($test_mode) {
+		if ($OpenResty::Config{"test_suite.test_mode"}) {
 			# We are in the testing mode
 			$MIN_TIMESPAN=1;	# change min valid timespan to 1s
 			$MAX_TIMESPAN=3;	# change max valid timespan to 3s
@@ -373,7 +371,7 @@ sub validate_captcha
 	return (0,"Captcha ID format is incorrect.") unless defined($solution);	# wrong format
 
 	# change true solution for testing purpose
-	if($test_mode) {
+	if($OpenResty::Config{"test_suite.test_mode"}) {
 		if ($lang eq 'en') {
 			$solution = 'hello world ';
 		} else {

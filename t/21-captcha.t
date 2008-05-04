@@ -1,11 +1,4 @@
 # vi:filetype=
-use OpenResty::Handler::Captcha;
-
-BEGIN {
-	# Enable testing mode
-	$OpenResty::Handler::Captcha::test_mode=1;
-}
-
 use t::OpenResty 'no_plan';
 
 run_tests;
