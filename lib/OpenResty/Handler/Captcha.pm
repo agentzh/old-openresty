@@ -388,7 +388,8 @@ sub validate_captcha
 
 	# Construct cache key for captcha id. We cannot use captcha id directly, for the id itself
 	# could be append any character without affecting its decryption.
-	my $cache_key=join($PLAINTEXT_SEP,$rand1,$lang,$solution,$min_valid,$max_valid,$rand2);
+	# Prepending "captcha:" to prevent cache key confliction...
+	my $cache_key=join($PLAINTEXT_SEP,"captcha:",$rand1,$lang,$solution,$min_valid,$max_valid,$rand2);
 	utf8::encode($cache_key);
 
 	# validate failed if the captcha id has been used
@@ -457,21 +458,28 @@ sub encrypt_captcha_id
 
 sub get_captcha_secretkey
 {
-	return "a" x 16;
-
-	# TODO: get captcha secret key from backend
 	my ($self,$openresty)=@_;
+
 	# 128 bits secret key for encryption/decryption
+	# Prepending "captcha:" to prevent cache key conflication...
 	my $key=$OpenResty::Cache->get("captcha:key");
 	return $key if defined($key) && length($key)==16;
+
+	my $cur_user=$openresty->current_user;
+	$openresty->set_user("_global");
 	my $res=$openresty->select("select captcha_key from _global._general",{use_hash=>1});
 	die "Unable to retrieve captcha secret key"
 		unless defined($res) && exists $res->{captcha_key};
+	$openresty->set_user($cur_user);
+
 	$key=$res->{captcha_key};
 	die "Captcha secret key length invalid, should be exactly 16 bytes"
 		unless length($key)==16;
+
 	# Cache the captcha secret key for 1 day
+	# Prepending "captcha:" to prevent cache key conflication...
 	$OpenResty::Cache->set("captcha:key"=>$key,3600*24);
+
 	return $key;
 }
 
