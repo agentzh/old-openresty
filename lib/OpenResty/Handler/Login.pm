@@ -56,7 +56,7 @@ sub login_by_sql {
     if (defined $captcha) {
         my ($id, $user_sol) = split /:/, $captcha, 2;
 
-		my ($rc,$err)=OpenResty::Handler::Captcha::validate_captcha($id,$user_sol);
+		my ($rc,$err)=OpenResty::Handler::Captcha::validate_captcha($openresty,$id,$user_sol);
 		if (!$rc) {
             die $err."\n";
 		}
@@ -139,7 +139,7 @@ sub login_by_perl {
             die "Cannot login as $account.$role via captchas.\n";
         }
 
-		my ($rc,$err)=OpenResty::Handler::Captcha::validate_captcha($id,$user_sol);
+		my ($rc,$err)=OpenResty::Handler::Captcha::validate_captcha($openresty,$id,$user_sol);
 		if (!$rc) {
             die $err."\n";
 		}
