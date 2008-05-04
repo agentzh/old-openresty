@@ -209,7 +209,7 @@ sub GET_captcha_column {
 		my $min_valid=time()+$MIN_TIMESPAN;
 		my $max_valid=time()+$MAX_TIMESPAN;
 
-        my $id = encrypt_captcha_id($lang,$solution,$min_valid,$max_valid);
+        my $id = encrypt_captcha_id($openresty,$lang,$solution,$min_valid,$max_valid);
 
         return $id;
     } else {
@@ -236,7 +236,7 @@ sub GET_captcha_value {
         my $id = $value;
 
 		# Decrypt captcha id to get info about the captcha
-		my ($rand1,$lang,$solution,$min_valid,$max_valid,$rand2)=decrypt_captcha_id($id);
+		my ($rand1,$lang,$solution,$min_valid,$max_valid,$rand2)=decrypt_captcha_id($openresty,$id);
 
 		# Exit if the captcha id is in wrong format
         die "Invalid captcha ID: $id\n" unless defined($solution);
@@ -366,8 +366,8 @@ sub trim_sol {
 
 sub validate_captcha
 {
-	my ($id,$word)=@_;
-	my ($rand1,$lang,$solution,$min_valid,$max_valid,$rand2)=decrypt_captcha_id($id);
+	my ($openresty,$id,$word)=@_;
+	my ($rand1,$lang,$solution,$min_valid,$max_valid,$rand2)=decrypt_captcha_id($openresty,$id);
 
 	# validate failed if the captcha id is in wrong format
 	return (0,"Captcha ID format is incorrect.") unless defined($solution);	# wrong format
@@ -407,11 +407,12 @@ sub validate_captcha
 
 sub decrypt_captcha_id
 {
-	my $id=shift||return ();
+	my ($openresty,$id)=@_;
+	return () if !defined($id);
 	$id=decode_base64_urlsafe($id);
 	my ($digest,$cipher)=unpack("a16a*",$id);
 
-	my $secret=get_captcha_secretkey();
+	my $secret=get_captcha_secretkey($openresty);
 	my $algo=Crypt::CBC->new(
 		-key=>$secret,
 		-header=>'none',
@@ -434,13 +435,13 @@ sub decrypt_captcha_id
 
 sub encrypt_captcha_id
 {
-	my ($lang,$solution,$min_valid,$max_valid)=@_;
+	my ($openresty,$lang,$solution,$min_valid,$max_valid)=@_;
 	my $rand=int(rand(10000));
 	# Add random number before and after captcha parameters
 	# in order to maximum obfuscate the cipher
 	my $plain=join($PLAINTEXT_SEP,$rand,$lang,$solution,$min_valid,$max_valid,$rand);
 
-	my $secret=get_captcha_secretkey();
+	my $secret=get_captcha_secretkey($openresty);
 	my $algo=Crypt::CBC->new(
 		-key=>$secret,
 		-header=>'none',
@@ -458,21 +459,22 @@ sub encrypt_captcha_id
 
 sub get_captcha_secretkey
 {
-	my ($self,$openresty)=@_;
+	my $openresty=shift;
 
 	# 128 bits secret key for encryption/decryption
 	# Prepending "captcha:" to prevent cache key conflication...
 	my $key=$OpenResty::Cache->get("captcha:key");
 	return $key if defined($key) && length($key)==16;
 
+	# Protect current user for restoring later, we don't want to break the outter context...
 	my $cur_user=$openresty->current_user;
 	$openresty->set_user("_global");
 	my $res=$openresty->select("select captcha_key from _global._general",{use_hash=>1});
 	die "Unable to retrieve captcha secret key"
-		unless defined($res) && exists $res->{captcha_key};
+		unless defined($res) && @$res>0 && exists $res->[0]{captcha_key};
 	$openresty->set_user($cur_user);
 
-	$key=$res->{captcha_key};
+	$key=$res->[0]{captcha_key};
 	die "Captcha secret key length invalid, should be exactly 16 bytes"
 		unless length($key)==16;
 
