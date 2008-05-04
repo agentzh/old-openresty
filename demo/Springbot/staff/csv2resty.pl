@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 #use Smart::Comments;
+use Encode qw(decode encode);
 use Params::Util qw(_HASH);
 use WWW::OpenResty::Simple;
 use Getopt::Std;
@@ -26,6 +27,7 @@ $resty->delete('/=/model/YahooStaff/~/~');
 my $inserted = 0;
 my @rows;
 while (<>) {
+    $_ = decode('utf8', $_);
     next if $. == 1;
     chomp;
     my @cols = split /,/;
