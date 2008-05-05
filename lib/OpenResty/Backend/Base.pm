@@ -319,13 +319,15 @@ sub _upgrade_metamodel {
     for my $i ($base..$max) {
         my $entry = $delta_table->[$i];
         my ($new_ver, $sql) = @$entry;
+        warn "Upgrading account $user from $cur_ver to $new_ver...\n";
         if (!$sql) {
             $res = $self->do("update _general set version='$new_ver'");
             next;
         }
-        warn "Upgrading account $user from $cur_ver to $new_ver...\n";
         #$sql .= "; update _general set version='$new_ver'";
-        $res = $self->do("$sql; select _upgrade(); update _general set version='$new_ver'");
+        $res = $self->do("$sql;");
+        $res = $self->do("select _upgrade();");
+        $res = $self->do("update _general set version='$new_ver'");
         #for my $stmt (split /;\n/, $sql) {
             #warn "=======", $stmt, "=======\n";
             #next if $stmt =~ /^\s*$/;
