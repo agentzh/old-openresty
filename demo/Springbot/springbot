@@ -11,7 +11,7 @@ use SpringBot;
 my $nick = 'chunbot';
 my $channel = '#eeee';
 my $charset = 'gbk';
-my $server = '10.62.136.8';
+my $server = '10.62.164.72';
 
 my ($account, $password);
 
