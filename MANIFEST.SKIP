@@ -27,6 +27,7 @@ bin/.*\.dat
 ^demo/Blog2/.*\.json
 ^demo/Blog2/script/reset\.mk
 ^demo/Blog2/script/upload
+^demo/Blog2/script/init\.pl
 ^demo/Admin/template/exceptions.tt
 ^demo/Admin/template/page-rent.tt
 ^demo/Admin/template/page-secondary.tt
