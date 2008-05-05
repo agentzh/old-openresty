@@ -197,7 +197,7 @@ sub GET_captcha_column {
 			die "Unsupported lang (only cn and en allowed): $lang\n";
 		}
 
-		if ($OpenResty::Config{"test_suite.test_mode"}) {
+		if ($OpenResty::Config{"frontend.test_mode"}) {
 			# We are in the testing mode
 			$MIN_TIMESPAN=1;	# change min valid timespan to 1s
 			$MAX_TIMESPAN=3;	# change max valid timespan to 3s
@@ -371,7 +371,7 @@ sub validate_captcha
 	return (0,"Captcha ID format is incorrect.") unless defined($solution);	# wrong format
 
 	# change true solution for testing purpose
-	if($OpenResty::Config{"test_suite.test_mode"}) {
+	if($OpenResty::Config{"frontend.test_mode"}) {
 		if ($lang eq 'en') {
 			$solution = 'hello world ';
 		} else {
