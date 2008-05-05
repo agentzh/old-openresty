@@ -36,7 +36,6 @@ demo/Blog2/css/themes/lilia/theme-bluecrush/titl.gif
 demo/Blog2/Makefile
 demo/Blog2/README
 demo/Blog2/script/blogadmin.pl
-demo/Blog2/script/init.pl
 demo/Blog2/TODO
 demo/Springbot/log/import.pl
 demo/Springbot/log/init.pl
