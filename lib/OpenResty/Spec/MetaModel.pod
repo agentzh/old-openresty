@@ -29,7 +29,8 @@ meta tables:
 The definition of the C<_general> table is
 
     create table _general (
-        version varchar(10)
+        version varchar(10),
+		captcha_key char(16)
     )
 
 Usually it stores the version and other general information of
