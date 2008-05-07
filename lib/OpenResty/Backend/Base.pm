@@ -433,12 +433,45 @@ _EOC_
     $self->set_user($cur_user);
 }
 
-sub import
+# generating random 16-bytes captcha secret key
+sub random_secret
 {
-	# doing some runtime patching here
-	# XXX: generating random 16-bytes captcha secret key
 	my @set=('0'..'9','a'..'z','A'..'Z');
 	my $key=join("",map {$set[int(rand(@set))]} (1..16));
+	return $key;
+}
+
+# check if the given string is a valid captcha secret
+# this sub should be called as a class method!
+sub is_valid_captcha_secret
+{
+	defined($_[1]) && length($_[1])==16 && $_[1]!~/[^0-9a-zA-Z]/;
+}
+
+# update the backend captcha secret
+sub update_captcha_secret
+{
+	my $self=shift||die;
+	my $secret=shift;
+
+	return undef unless $self->is_valid_captcha_secret($secret);
+
+	# quote string and escape any special characters to prevent SQL injection
+	$secret=$self->quote($secret);
+
+	# update captcha secret in the backend
+    my $cur_user = $self->{user};
+    $self->set_user('_global');
+    my $rv=$self->do("update _global._general set captcha_key=$secret");
+    $self->set_user($cur_user) if defined($cur_user);
+	return defined($rv)?1:undef;
+}
+
+# doing some runtime patching here
+sub import
+{
+	# use random captcha key on upgrading
+	my $key=random_secret();
 	for my $aref (@GlobalVersionDelta) {
 		$aref->[1]=~s/_SECRET_KEY_HOLDER_/$key/g;
 	}
