@@ -127,6 +127,11 @@ if ($cmd eq 'adduser') {
     require OpenResty::Shell;
     my $shell = OpenResty::Shell->new($backend);
     $shell->run;
+} elsif ($cmd eq 'updatekey') {
+	my $secret_key=shift;
+	# TODO: generate a random 16-bytes key if no one given
+	# verify the given key to make sure it's 16-bytes long
+	# update _global._general table's captcha_key field to the new secret key
 } else {
     die "Unknown command: $cmd\n";
 }

@@ -139,7 +139,7 @@ _EOC_
 create or replace function _upgrade() returns integer as $$
 begin
     alter table _global._general add column captcha_key char(16) not null
-    default 'aaaaaaaaaaaaaaaa';
+    default '_SECRET_KEY_HOLDER_';
     return 0;
 end;
 $$ language plpgsql;
@@ -431,6 +431,17 @@ _EOC_
     $self->set_user('_global');
     $self->do("insert into _accounts (name) values ('$cur_user')");
     $self->set_user($cur_user);
+}
+
+sub import
+{
+	# doing some runtime patching here
+	# XXX: generating random 16-bytes captcha secret key
+	my @set=('0'..'9','a'..'z','A'..'Z');
+	my $key=join("",map {$set[int(rand(@set))]} (1..16));
+	for my $aref (@GlobalVersionDelta) {
+		$aref->[1]=~s/_SECRET_KEY_HOLDER_/$key/g;
+	}
 }
 
 1;
