@@ -10,8 +10,6 @@ use MIME::Base64;
 use Digest::MD5 qw/md5/;
 use Encode qw( encode decode is_utf8 );
 
-our $test_mode=0;	# whether enable testing mode
-
 my $PLAINTEXT_SEP="\001";	# separator character in plaintext str
 my $MIN_TIMESPAN=3;			# minimum timespan(sec) for a valid Captcha,
 							# verification will fail before this timespan.
