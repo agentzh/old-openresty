@@ -11,7 +11,7 @@
                 [% IF NOT url.match('^\\w+://');
                         url = 'http://' _ url;
                     END -%]
-                <a href="[% url %]">[% comment.sender | html %]</a>
+                <a href="[% url | html %]">[% comment.sender | html %]</a>
             [% ELSE %]
                 [% comment.sender | html %] |
             [% END %]
