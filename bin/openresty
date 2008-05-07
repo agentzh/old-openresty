@@ -128,10 +128,17 @@ if ($cmd eq 'adduser') {
     my $shell = OpenResty::Shell->new($backend);
     $shell->run;
 } elsif ($cmd eq 'updatekey') {
-	my $secret_key=shift;
-	# TODO: generate a random 16-bytes key if no one given
-	# verify the given key to make sure it's 16-bytes long
-	# update _global._general table's captcha_key field to the new secret key
+	my $secret=shift||$backend->random_secret();
+
+	die "Invalid captcha secret, must be exactly 16 bytes long and contains only characters in [0-9a-zA-Z].\n"
+		unless $backend->is_valid_captcha_secret($secret);
+
+	# the secret format check is done before the updating occurs
+	unless($backend->update_captcha_secret($secret)) {
+		die "Failed to update captcha secret.\n"
+	} else {
+		print "Captcha secret updated.\n";
+	}
 } else {
     die "Unknown command: $cmd\n";
 }

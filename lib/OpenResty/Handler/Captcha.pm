@@ -470,7 +470,7 @@ sub get_captcha_secretkey
 	my $res=$openresty->select("select captcha_key from _global._general",{use_hash=>1});
 	die "Unable to retrieve captcha secret key"
 		unless defined($res) && @$res>0 && exists $res->[0]{captcha_key};
-	$openresty->set_user($cur_user);
+	$openresty->set_user($cur_user) if defined($cur_user);
 
 	$key=$res->[0]{captcha_key};
 	die "Captchb secret key length invalid, should be exactly 16 bytes"
