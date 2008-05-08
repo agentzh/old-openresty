@@ -401,7 +401,7 @@ An instance of HTTP-like commands could be
 Here the C<http://blah.blah.blah> part is omitted in the POST URL, so
 it's default to the current OpenResty server being requested. If a full
 URL is specified here, one can do some really cool things by invoking
-the resources some other OpenResty server.
+the resources of some other OpenResty server.
 
 Similarly, for the SQL-like command, a optional C<run on> clause can be
 specified to run "SQL" on remote OpenResty servers, such as:
@@ -436,9 +436,9 @@ One can invoke the C<PostComment> action like this:
     HTTP/1.0
 
 The server response would be an array of results for each command. If
-any of the commands fail, the whole action would fail. Even preious
-successful commands would be rolled back. That is, actions always run
-in a transaction.
+any of the commands fails, the whole action would fail. Even preious
+successfully executed commands would get rolled back.
+That is, actions always run in a transaction.
 
 With actions the user can encapsulate multiple OpenResty REST requests
 as well as SQL-like C<update> and C<delete> statements as a whole and

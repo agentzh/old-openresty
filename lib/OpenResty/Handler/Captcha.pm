@@ -473,7 +473,7 @@ sub get_captcha_secretkey
 	$openresty->set_user($cur_user) if defined($cur_user);
 
 	$key=$res->[0]{captcha_key};
-	die "Captchb secret key length invalid, should be exactly 16 bytes"
+	die "Captchc secret key length invalid, should be exactly 16 bytes"
 		unless length($key)==16;
 
 	# Cache the captcha secret key for 1 day
