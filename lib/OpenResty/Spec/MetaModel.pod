@@ -4,8 +4,8 @@ OpenResty::Spec::MetaModel - Metamodel for OpenResty backends
 
 =head1 VERSION
 
-This document describes the 0.003 version of the metamodel used in the
-OpenResty 0.2.2.
+This document describes the 0.004 version of the metamodel used in the
+OpenResty 0.3.0.
 
 =head1 DESCRIPTION
 
