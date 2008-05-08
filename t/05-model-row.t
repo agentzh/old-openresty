@@ -213,3 +213,63 @@ GET /=/model/Address/name/上海
 --- response
 []
 
+
+
+=== TEST 23: Insert data with id
+--- request
+POST /=/model/Address/~/~
+{"id":5,"name":"镇江"}
+--- response
+{"last_row":"/=/model/Address/id/5","rows_affected":1,"success":1}
+
+
+
+=== TEST 24: Insert data with id
+--- request
+POST /=/model/Address/~/~
+{"id":6,"name":"无锡"}
+--- response
+{"last_row":"/=/model/Address/id/6","rows_affected":1,"success":1}
+
+
+
+=== TEST 25: Insert data with id
+--- request
+POST /=/model/Address/~/~
+{"name":"无锡2"}
+--- response
+{"last_row":"/=/model/Address/id/7","rows_affected":1,"success":1}
+
+
+
+=== TEST 26: Insert multiple lines of data with explicit id
+--- request
+POST /=/model/Address/~/~
+[
+    {"id":8, "name":"foo"},
+    {"id":9, "name":"bar"}
+]
+--- response
+{"last_row":"/=/model/Address/id/9","rows_affected":2,"success":1}
+
+
+
+=== TEST 27: Insert multiple lines of data with explicit id
+--- request
+POST /=/model/Address/~/~
+[
+    {"name":"id10"},
+    {"name":"id11"},
+    {"name":"id12"}
+]
+--- response
+{"last_row":"/=/model/Address/id/12","rows_affected":3,"success":1}
+
+
+
+=== TEST 28: Get id 10
+--- request
+GET /=/model/Address/id/10
+--- response
+[{"id":"10","name":"id10","addr":null}]
+
