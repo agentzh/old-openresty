@@ -1,14 +1,14 @@
 #line 1
 package Test::Builder::Module;
 
+use strict;
+
 use Test::Builder;
 
 require Exporter;
-@ISA = qw(Exporter);
+our @ISA = qw(Exporter);
 
-$VERSION = '0.74';
-
-use strict;
+our $VERSION = '0.80';
 
 # 5.004's Exporter doesn't have export_to_level.
 my $_export_to_level = sub {
@@ -24,6 +24,9 @@ my $_export_to_level = sub {
 
 sub import {
     my($class) = shift;
+    
+    # Don't run all this when loading ourself.
+    return 1 if $class eq 'Test::Builder::Module';
 
     my $test = $class->builder;
 
@@ -67,12 +70,12 @@ sub _strip_imports {
 }
 
 
-#line 144
+#line 147
 
 sub import_extra {}
 
 
-#line 175
+#line 178
 
 sub builder {
     return Test::Builder->new;

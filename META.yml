@@ -43,6 +43,8 @@ requires:
   Clone: 0.22
   Config::Simple: 0
   Cookie::XS: 0.09
+  Crypt::CBC: 0
+  Crypt::Rijndael: 0
   DBD::Pg: 1.49
   DBI: 1.57
   Data::Structure::Util: 0.15
@@ -61,4 +63,4 @@ requires:
   Parse::Yapp: 0
   YAML::Syck: 1.04
   perl: 5.6.1
-version: 0.2.2
+version: 0.3.1

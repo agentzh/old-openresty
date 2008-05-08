@@ -1,16 +1,11 @@
 #line 1
 package Test::Builder;
 
-use 5.004;
-
-# $^C was only introduced in 5.005-ish.  We do this to prevent
-# use of uninitialized value warnings in older perls.
-$^C ||= 0;
-
+use 5.006;
 use strict;
-use vars qw($VERSION);
-$VERSION = '0.74';
-$VERSION = eval $VERSION;    # make the alpha version come out as a number
+
+our $VERSION = '0.80';
+$VERSION = eval { $VERSION }; # make the alpha version come out as a number
 
 # Make Test::Builder thread-safe for ithreads.
 BEGIN {
@@ -67,7 +62,7 @@ BEGIN {
 }
 
 
-#line 128
+#line 110
 
 my $Test = Test::Builder->new;
 sub new {
@@ -77,7 +72,7 @@ sub new {
 }
 
 
-#line 150
+#line 132
 
 sub create {
     my $class = shift;
@@ -88,7 +83,7 @@ sub create {
     return $self;
 }
 
-#line 169
+#line 151
 
 use vars qw($Level);
 
@@ -99,7 +94,6 @@ sub reset {
     # hash keys is just asking for pain.  Also, it was documented.
     $Level = 1;
 
-    $self->{Test_Died}    = 0;
     $self->{Have_Plan}    = 0;
     $self->{No_Plan}      = 0;
     $self->{Original_Pid} = $$;
@@ -118,23 +112,14 @@ sub reset {
     $self->{No_Header}  = 0;
     $self->{No_Ending}  = 0;
 
+    $self->{TODO}       = undef;
+
     $self->_dup_stdhandles unless $^C;
 
-    return undef;
+    return;
 }
 
-#line 221
-
-sub exported_to {
-    my($self, $pack) = @_;
-
-    if( defined $pack ) {
-        $self->{Exported_To} = $pack;
-    }
-    return $self->{Exported_To};
-}
-
-#line 243
+#line 207
 
 sub plan {
     my($self, $cmd, $arg) = @_;
@@ -173,7 +158,7 @@ sub plan {
     return 1;
 }
 
-#line 290
+#line 254
 
 sub expected_tests {
     my $self = shift;
@@ -192,7 +177,7 @@ sub expected_tests {
 }
 
 
-#line 315
+#line 279
 
 sub no_plan {
     my $self = shift;
@@ -201,7 +186,7 @@ sub no_plan {
     $self->{Have_Plan} = 1;
 }
 
-#line 330
+#line 294
 
 sub has_plan {
     my $self = shift;
@@ -212,7 +197,7 @@ sub has_plan {
 };
 
 
-#line 348
+#line 312
 
 sub skip_all {
     my($self, $reason) = @_;
@@ -227,7 +212,19 @@ sub skip_all {
     exit(0);
 }
 
-#line 382
+
+#line 339
+
+sub exported_to {
+    my($self, $pack) = @_;
+
+    if( defined $pack ) {
+        $self->{Exported_To} = $pack;
+    }
+    return $self->{Exported_To};
+}
+
+#line 369
 
 sub ok {
     my($self, $test, $name) = @_;
@@ -249,9 +246,12 @@ sub ok {
     Very confusing.
 ERR
 
-    my($pack, $file, $line) = $self->caller;
+    my $todo = $self->todo();
+    
+    # Capture the value of $TODO for the rest of this ok() call
+    # so it can more easily be found by other routines.
+    local $self->{TODO} = $todo;
 
-    my $todo = $self->todo($pack);
     $self->_unoverload_str(\$todo);
 
     my $out;
@@ -296,13 +296,14 @@ ERR
         my $msg = $todo ? "Failed (TODO)" : "Failed";
         $self->_print_diag("\n") if $ENV{HARNESS_ACTIVE};
 
-	if( defined $name ) {
-	    $self->diag(qq[  $msg test '$name'\n]);
-	    $self->diag(qq[  at $file line $line.\n]);
-	}
-	else {
-	    $self->diag(qq[  $msg test at $file line $line.\n]);
-	}
+    my(undef, $file, $line) = $self->caller;
+        if( defined $name ) {
+            $self->diag(qq[  $msg test '$name'\n]);
+            $self->diag(qq[  at $file line $line.\n]);
+        }
+        else {
+            $self->diag(qq[  $msg test at $file line $line.\n]);
+        }
     } 
 
     return $test ? 1 : 0;
@@ -361,7 +362,7 @@ sub _is_dualvar {
 
 
 
-#line 530
+#line 521
 
 sub is_eq {
     my($self, $got, $expect, $name) = @_;
@@ -418,6 +419,7 @@ sub _is_diag {
         }
     }
 
+    local $Level = $Level + 1;
     return $self->diag(sprintf <<DIAGNOSTIC, $got, $expect);
          got: %s
     expected: %s
@@ -425,7 +427,7 @@ DIAGNOSTIC
 
 }    
 
-#line 608
+#line 600
 
 sub isnt_eq {
     my($self, $got, $dont_expect, $name) = @_;
@@ -460,7 +462,7 @@ sub isnt_num {
 }
 
 
-#line 660
+#line 652
 
 sub like {
     my($self, $this, $regex, $name) = @_;
@@ -477,7 +479,7 @@ sub unlike {
 }
 
 
-#line 685
+#line 677
 
 
 my %numeric_cmps = map { ($_, 1) } 
@@ -500,7 +502,8 @@ sub cmp_ok {
 
         my $code = $self->_caller_context;
 
-        # Yes, it has to look like this or 5.4.5 won't see the #line directive.
+        # Yes, it has to look like this or 5.4.5 won't see the #line 
+        # directive.
         # Don't ask me, man, I just work here.
         $test = eval "
 $code" . "\$got $type \$expect;";
@@ -525,6 +528,8 @@ sub _cmp_diag {
     
     $got    = defined $got    ? "'$got'"    : 'undef';
     $expect = defined $expect ? "'$expect'" : 'undef';
+    
+    local $Level = $Level + 1;
     return $self->diag(sprintf <<DIAGNOSTIC, $got, $type, $expect);
     %s
         %s
@@ -544,7 +549,7 @@ sub _caller_context {
     return $code;
 }
 
-#line 771
+#line 766
 
 sub BAIL_OUT {
     my($self, $reason) = @_;
@@ -554,12 +559,12 @@ sub BAIL_OUT {
     exit 255;
 }
 
-#line 784
+#line 779
 
 *BAILOUT = \&BAIL_OUT;
 
 
-#line 796
+#line 791
 
 sub skip {
     my($self, $why) = @_;
@@ -591,7 +596,7 @@ sub skip {
 }
 
 
-#line 838
+#line 833
 
 sub todo_skip {
     my($self, $why) = @_;
@@ -620,7 +625,7 @@ sub todo_skip {
 }
 
 
-#line 916
+#line 911
 
 
 sub maybe_regex {
@@ -632,7 +637,7 @@ sub maybe_regex {
     my($re, $opts);
 
     # Check for qr/foo/
-    if( ref $regex eq 'Regexp' ) {
+    if( _is_qr($regex) ) {
         $usable_regex = $regex;
     }
     # Check for '/foo/' or 'm,foo,'
@@ -644,7 +649,18 @@ sub maybe_regex {
     }
 
     return $usable_regex;
-};
+}
+
+
+sub _is_qr {
+    my $regex = shift;
+    
+    # is_regexp() checks for regexes in a robust manner, say if they're
+    # blessed.
+    return re::is_regexp($regex) if defined &re::is_regexp;
+    return ref $regex eq 'Regexp';
+}
+
 
 sub _regex_ok {
     my($self, $this, $regex, $cmp, $name) = @_;
@@ -663,7 +679,8 @@ sub _regex_ok {
 
         local($@, $!, $SIG{__DIE__}); # isolate eval
 
-        # Yes, it has to look like this or 5.4.5 won't see the #line directive.
+        # Yes, it has to look like this or 5.4.5 won't see the #line 
+        # directive.
         # Don't ask me, man, I just work here.
         $test = eval "
 $code" . q{$test = $this =~ /$usable_regex/ ? 1 : 0};
@@ -677,6 +694,8 @@ $code" . q{$test = $this =~ /$usable_regex/ ? 1 : 0};
     unless( $ok ) {
         $this = defined $this ? "'$this'" : 'undef';
         my $match = $cmp eq '=~' ? "doesn't match" : "matches";
+
+        local $Level = $Level + 1;
         $self->diag(sprintf <<DIAGNOSTIC, $this, $match, $regex);
                   %s
     %13s '%s'
@@ -691,7 +710,7 @@ DIAGNOSTIC
 # I'm not ready to publish this.  It doesn't deal with array return
 # values from the code or context.
 
-#line 1000
+#line 1009
 
 sub _try {
     my($self, $code) = @_;
@@ -704,7 +723,7 @@ sub _try {
     return wantarray ? ($return, $@) : $return;
 }
 
-#line 1022
+#line 1031
 
 sub is_fh {
     my $self = shift;
@@ -720,7 +739,7 @@ sub is_fh {
 }
 
 
-#line 1067
+#line 1076
 
 sub level {
     my($self, $level) = @_;
@@ -732,7 +751,7 @@ sub level {
 }
 
 
-#line 1100
+#line 1109
 
 sub use_numbers {
     my($self, $use_nums) = @_;
@@ -744,7 +763,7 @@ sub use_numbers {
 }
 
 
-#line 1134
+#line 1143
 
 foreach my $attribute (qw(No_Header No_Ending No_Diag)) {
     my $method = lc $attribute;
@@ -758,12 +777,12 @@ foreach my $attribute (qw(No_Header No_Ending No_Diag)) {
         return $self->{$attribute};
     };
 
-    no strict 'refs';
+    no strict 'refs';   ## no critic
     *{__PACKAGE__.'::'.$method} = $code;
 }
 
 
-#line 1188
+#line 1197
 
 sub diag {
     my($self, @msgs) = @_;
@@ -790,7 +809,7 @@ sub diag {
     return 0;
 }
 
-#line 1225
+#line 1234
 
 sub _print {
     my($self, @msgs) = @_;
@@ -814,7 +833,7 @@ sub _print {
     print $fh $msg;
 }
 
-#line 1259
+#line 1268
 
 sub _print_diag {
     my $self = shift;
@@ -824,7 +843,7 @@ sub _print_diag {
     print $fh @_;
 }    
 
-#line 1296
+#line 1305
 
 sub output {
     my($self, $fh) = @_;
@@ -863,10 +882,9 @@ sub _new_fh {
         $fh = $file_or_fh;
     }
     else {
-        $fh = do { local *FH };
-        open $fh, ">$file_or_fh" or
+        open $fh, ">", $file_or_fh or
             $self->croak("Can't open test output log $file_or_fh: $!");
-	_autoflush($fh);
+        _autoflush($fh);
     }
 
     return $fh;
@@ -881,6 +899,7 @@ sub _autoflush {
 }
 
 
+my($Testout, $Testerr);
 sub _dup_stdhandles {
     my $self = shift;
 
@@ -888,29 +907,47 @@ sub _dup_stdhandles {
 
     # Set everything to unbuffered else plain prints to STDOUT will
     # come out in the wrong order from our own prints.
-    _autoflush(\*TESTOUT);
+    _autoflush($Testout);
     _autoflush(\*STDOUT);
-    _autoflush(\*TESTERR);
+    _autoflush($Testerr);
     _autoflush(\*STDERR);
 
-    $self->output(\*TESTOUT);
-    $self->failure_output(\*TESTERR);
-    $self->todo_output(\*TESTOUT);
+    $self->output        ($Testout);
+    $self->failure_output($Testerr);
+    $self->todo_output   ($Testout);
 }
 
 
 my $Opened_Testhandles = 0;
 sub _open_testhandles {
+    my $self = shift;
+    
     return if $Opened_Testhandles;
+    
     # We dup STDOUT and STDERR so people can change them in their
     # test suites while still getting normal test output.
-    open(TESTOUT, ">&STDOUT") or die "Can't dup STDOUT:  $!";
-    open(TESTERR, ">&STDERR") or die "Can't dup STDERR:  $!";
+    open( $Testout, ">&STDOUT") or die "Can't dup STDOUT:  $!";
+    open( $Testerr, ">&STDERR") or die "Can't dup STDERR:  $!";
+
+#    $self->_copy_io_layers( \*STDOUT, $Testout );
+#    $self->_copy_io_layers( \*STDERR, $Testerr );
+    
     $Opened_Testhandles = 1;
 }
 
 
-#line 1396
+sub _copy_io_layers {
+    my($self, $src, $dst) = @_;
+    
+    $self->_try(sub {
+        require PerlIO;
+        my @src_layers = PerlIO::get_layers($src);
+
+        binmode $dst, join " ", map ":$_", @src_layers if @src_layers;
+    });
+}
+
+#line 1423
 
 sub _message_at_caller {
     my $self = shift;
@@ -939,7 +976,7 @@ sub _plan_check {
     }
 }
 
-#line 1444
+#line 1471
 
 sub current_test {
     my($self, $num) = @_;
@@ -975,7 +1012,7 @@ sub current_test {
 }
 
 
-#line 1489
+#line 1516
 
 sub summary {
     my($self) = shift;
@@ -983,27 +1020,29 @@ sub summary {
     return map { $_->{'ok'} } @{ $self->{Test_Results} };
 }
 
-#line 1544
+#line 1571
 
 sub details {
     my $self = shift;
     return @{ $self->{Test_Results} };
 }
 
-#line 1569
+#line 1597
 
 sub todo {
     my($self, $pack) = @_;
 
-    $pack = $pack || $self->exported_to || $self->caller($Level);
+    return $self->{TODO} if defined $self->{TODO};
+
+    $pack = $pack || $self->caller(1) || $self->exported_to;
     return 0 unless $pack;
 
-    no strict 'refs';
+    no strict 'refs';   ## no critic
     return defined ${$pack.'::TODO'} ? ${$pack.'::TODO'}
                                      : 0;
 }
 
-#line 1590
+#line 1622
 
 sub caller {
     my($self, $height) = @_;
@@ -1013,9 +1052,9 @@ sub caller {
     return wantarray ? @caller : $caller[0];
 }
 
-#line 1602
+#line 1634
 
-#line 1616
+#line 1648
 
 #'#
 sub _sanity_check {
@@ -1028,7 +1067,7 @@ sub _sanity_check {
           'Somehow you got a different number of results than tests ran!');
 }
 
-#line 1637
+#line 1669
 
 sub _whoa {
     my($self, $check, $desc) = @_;
@@ -1041,7 +1080,7 @@ WHOA
     }
 }
 
-#line 1659
+#line 1691
 
 sub _my_exit {
     $? = $_[0];
@@ -1050,37 +1089,29 @@ sub _my_exit {
 }
 
 
-#line 1672
-
-$SIG{__DIE__} = sub {
-    # We don't want to muck with death in an eval, but $^S isn't
-    # totally reliable.  5.005_03 and 5.6.1 both do the wrong thing
-    # with it.  Instead, we use caller.  This also means it runs under
-    # 5.004!
-    my $in_eval = 0;
-    for( my $stack = 1;  my $sub = (CORE::caller($stack))[3];  $stack++ ) {
-        $in_eval = 1 if $sub =~ /^\(eval\)/;
-    }
-    $Test->{Test_Died} = 1 unless $in_eval;
-};
+#line 1704
 
 sub _ending {
     my $self = shift;
 
+    my $real_exit_code = $?;
     $self->_sanity_check();
 
     # Don't bother with an ending if this is a forked copy.  Only the parent
     # should do the ending.
+    if( $self->{Original_Pid} != $$ ) {
+        return;
+    }
+    
     # Exit if plan() was never called.  This is so "require Test::Simple" 
     # doesn't puke.
+    if( !$self->{Have_Plan} ) {
+        return;
+    }
+
     # Don't do an ending if we bailed out.
-    if( ($self->{Original_Pid} != $$) 			or
-	(!$self->{Have_Plan} && !$self->{Test_Died}) 	or
-	$self->{Bailed_Out}
-      )
-    {
-	_my_exit($?);
-	return;
+    if( $self->{Bailed_Out} ) {
+        return;
     }
 
     # Figure out if we passed or failed and print helpful messages.
@@ -1130,7 +1161,7 @@ Looks like you failed $num_failed test$s of $num_tests$qualifier.
 FAIL
         }
 
-        if( $self->{Test_Died} ) {
+        if( $real_exit_code ) {
             $self->diag(<<"FAIL");
 Looks like your test died just after $self->{Curr_Test}.
 FAIL
@@ -1154,7 +1185,7 @@ FAIL
     elsif ( $self->{Skip_All} ) {
         _my_exit( 0 ) && return;
     }
-    elsif ( $self->{Test_Died} ) {
+    elsif ( $real_exit_code ) {
         $self->diag(<<'FAIL');
 Looks like your test died before it could output anything.
 FAIL
@@ -1170,6 +1201,6 @@ END {
     $Test->_ending if defined $Test and !$Test->no_ending;
 }
 
-#line 1847
+#line 1871
 
 1;
