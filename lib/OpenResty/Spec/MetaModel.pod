@@ -38,10 +38,13 @@ the global metamodel itself. Note that the
 version of the metamodel is independent of the version number of the whole
 OpenResty server implementation. For instance, the OpenResty 0.1.8
 uses metamodel 0.001 while the versions earlier does not have a versioned
-metamodel. This table
-usually has only 1 row. But it's also fine to keep track of all the version
-history. The largest version number will be considered the current version
-of the metamodel in the I<current> user schema.
+metamodel.
+
+This table usually has only 1 row. But it's also fine to keep track of all the version history. The largest version number will be considered the current version of the metamodel in the I<current> user schema.
+
+The C<captcha_key> column stores the secret key used in captcha generation,
+whose value must be exactly 16 bytes long and contains only characters in
+C<[0-9a-zA-Z]>.
 
 =item _accounts
 

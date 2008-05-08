@@ -17,7 +17,7 @@ use Params::Util qw( _HASH _ARRAY0 );
 use JSON::XS ();
 
 my $step = 500;
-my $server = 'resty.eeeeworks.org';
+my $server = 'api.eeeeworks.org';
 GetOptions(
     'user|u=s' => \(my $user),
     'model=s' => \(my $model),

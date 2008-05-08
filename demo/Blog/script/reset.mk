@@ -10,6 +10,6 @@ export:
 
 import:
 	script/init.pl -u $(user) -p $(password) -s $(server)
-	../../bin/import-model.pl --reset --step 2 --no-id --user $(user) --password $(password) --model Post --server $(server) Post.json
-	../../bin/import-model.pl --reset --no-id --user $(user) --password $(password) --model Comment --server $(server) Comment.json
+	../../bin/import-model.pl --reset --step 2 --user $(user) --password $(password) --model Post --server $(server) Post.json
+	../../bin/import-model.pl --reset --user $(user) --password $(password) --model Comment --server $(server) Comment.json
 
