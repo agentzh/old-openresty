@@ -65,6 +65,7 @@ POST /=/model/Post
 {"success":1}
 
 
+
 === TEST 7: Insert some records
 --- request
 POST /=/model/Post/~/~
@@ -198,6 +199,7 @@ GET /=/feed/Post
 }
 
 
+
 === TEST 16: Obtain the feed content (XML)
 --- request
 GET /=/feed/Post/~/~
@@ -251,7 +253,7 @@ GET /=/feed/Post/~/~
 
 
 
-=== TEST 16: Create another feed
+=== TEST 17: Create another feed
 --- request
 POST /=/feed/Comment
 {
@@ -267,7 +269,7 @@ POST /=/feed/Comment
 
 
 
-=== TEST 17: Get the feed list again
+=== TEST 18: Get the feed list again
 --- request
 GET /=/feed
 --- response
@@ -277,7 +279,8 @@ GET /=/feed
 ]
 
 
-=== TEST 18: Delete feed Comment
+
+=== TEST 19: Delete feed Comment
 --- request
 DELETE /=/feed/Comment
 --- response
@@ -285,7 +288,7 @@ DELETE /=/feed/Comment
 
 
 
-=== TEST 19: Get the feed list again
+=== TEST 20: Get the feed list again
 --- request
 GET /=/feed
 --- response
@@ -295,7 +298,7 @@ GET /=/feed
 
 
 
-=== TEST 20: Delete feed Comment again
+=== TEST 21: Delete feed Comment again
 --- request
 DELETE /=/feed/Comment
 --- response

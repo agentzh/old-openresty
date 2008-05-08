@@ -642,10 +642,14 @@ sub insert_records {
     ### HERE 4...
 
     if (ref $data eq 'HASH') { # record found
-
-        my $sql = $self->insert_record($openresty, $insert, $data, $cols, 1);
+        my $with_explicit_id = 0;
+        my $sql = $self->insert_record($openresty, $insert, $data, $cols, 1, \$with_explicit_id);
+        if ($with_explicit_id) {
+            my $table = QI($model);
+            $sql .= "select setval(pg_get_serial_sequence('$table', 'id'), temp.max_id) from (select max(id) as max_id from $table) temp";
+        }
+        # XXX This is a hack...
         my $num = $openresty->do($sql);
-
         my $last_id = $openresty->last_insert_id($table);
 
         return { rows_affected => $num, last_row => "/=/model/$model/id/$last_id", success => $num?1:0 };
@@ -653,6 +657,7 @@ sub insert_records {
         if (@$data > $INSERT_LIMIT) {
             die "You can only insert $INSERT_LIMIT rows at a time.\n";
         }
+        my $with_explicit_id = 0;
         my $i = 0;
         my $sql;
         ### For loop...
@@ -660,14 +665,20 @@ sub insert_records {
             ++$i;
             _HASH($row_data) or
                 die "Bad data in row $i: ", $OpenResty::Dumper->($row_data), "\n";
-            $sql .= $self->insert_record($openresty, $insert, $row_data, $cols, $i);
+            $sql .= $self->insert_record($openresty, $insert, $row_data, $cols, $i, \$with_explicit_id);
         }
         ### HERE HANG...
+        if ($with_explicit_id) {
+            my $table = QI($model);
+            $sql .= "select setval(pg_get_serial_sequence('$table', 'id'), temp.max_id) from (select max(id) as max_id from $table) temp";
+        }
+
         my $success = $openresty->do($sql);
         my $rows_affected = 0;
         if ($success) {
             $rows_affected = @$data;
         }
+        # This is a hack...
         my $last_id = $openresty->last_insert_id($table);
         return { rows_affected => $rows_affected, last_row => "/=/model/$model/id/$last_id", success => $rows_affected?1:0 };
     } else {
@@ -676,7 +687,7 @@ sub insert_records {
 }
 
 sub insert_record {
-    my ($self, $openresty, $insert, $row_data, $cols, $row_num) = @_;
+    my ($self, $openresty, $insert, $row_data, $cols, $row_num, $ref_with_explicit_id) = @_;
     $insert = $insert->clone;
     #die $user;
     ### inserting record...
@@ -685,6 +696,12 @@ sub insert_record {
         _IDENT($col) or
             die "Bad column name in row $row_num: ", $OpenResty::Dumper->($col), "\n";
         # XXX croak on column "id"
+        if (lc($col) eq 'id') {
+            $col = 'id';
+            if ($ref_with_explicit_id) {
+                $$ref_with_explicit_id = 1;
+            }
+        }
         $insert->cols(QI($col));
         $insert->values(Q($val));
         $found = 1;
@@ -693,9 +710,6 @@ sub insert_record {
         die "No column specified in row $row_num.\n";
     }
     return "$insert";
-}
-
-sub bulk_insert_records {
 }
 
 sub process_order_by {
@@ -708,7 +722,6 @@ sub process_order_by {
         die "Invalid order_by value: $order_by\n";
     }
     foreach my $item (@sub_order_by){
-
         my ($col, $dir) = split ':', $item, 2;
         die "No column \"$col\" found in order_by.\n"
             unless $self->has_model_col($openresty, $model, $col);
