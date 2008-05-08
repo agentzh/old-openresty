@@ -1,6 +1,7 @@
 package t::OpenResty;
 
 use lib 'lib';
+use lib 'inc';
 use Test::Base -Base;
 use YAML::Syck ();
 #use JSON::Syck ();
