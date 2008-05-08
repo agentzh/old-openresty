@@ -135,11 +135,11 @@ _EOC_
         '0.003' => '',
     ],
 	[
-		'0.004' => <<'_EOC_',
+		'0.004' => <<"_EOC_",
 create or replace function _upgrade() returns integer as $$
 begin
     alter table _global._general add column captcha_key char(16) not null
-    default '_SECRET_KEY_HOLDER_';
+    default '${\(random_secret())}';
     return 0;
 end;
 $$ language plpgsql;
@@ -465,16 +465,6 @@ sub update_captcha_secret
     my $rv=$self->do("update _global._general set captcha_key=$secret");
     $self->set_user($cur_user) if defined($cur_user);
 	return defined($rv)?1:undef;
-}
-
-# doing some runtime patching here
-sub import
-{
-	# use random captcha key on upgrading
-	my $key=random_secret();
-	for my $aref (@GlobalVersionDelta) {
-		$aref->[1]=~s/_SECRET_KEY_HOLDER_/$key/g;
-	}
 }
 
 1;
