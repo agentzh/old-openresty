@@ -1,6 +1,6 @@
 package OpenResty;
 
-our $VERSION = '0.002002';
+our $VERSION = '0.003001';
 
 use strict;
 use warnings;
@@ -541,10 +541,9 @@ OpenResty - General-purpose web service platform for web applications
 
 =head1 VERSION
 
-This document describes OpenResty 0.2.2 released on April 23, 2008.
+This document describes OpenResty 0.3.0 released on May 9, 2008.
 
 =head1 DESCRIPTION
-
 
 This module implements the server-side OpenResty web service protocol. It provides scriptable and extensible web services for both server-side and client-side (pure AJAX) web applications.
 

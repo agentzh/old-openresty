@@ -1,8 +1,7 @@
 #line 1
 package Test::More;
 
-use 5.004;
-
+use 5.006;
 use strict;
 
 
@@ -17,7 +16,7 @@ sub _carp {
 
 
 use vars qw($VERSION @ISA @EXPORT %EXPORT_TAGS $TODO);
-$VERSION = '0.74';
+$VERSION = '0.80';
 $VERSION = eval $VERSION;    # make the alpha version come out as a number
 
 use Test::Builder::Module;
@@ -32,11 +31,11 @@ use Test::Builder::Module;
              plan
              can_ok  isa_ok
              diag
-	     BAIL_OUT
+             BAIL_OUT
             );
 
 
-#line 157
+#line 156
 
 sub plan {
     my $tb = Test::More->builder;
@@ -70,7 +69,7 @@ sub import_extra {
 }
 
 
-#line 257
+#line 256
 
 sub ok ($;$) {
     my($test, $name) = @_;
@@ -79,7 +78,7 @@ sub ok ($;$) {
     $tb->ok($test, $name);
 }
 
-#line 324
+#line 323
 
 sub is ($$;$) {
     my $tb = Test::More->builder;
@@ -96,7 +95,7 @@ sub isnt ($$;$) {
 *isn't = \&isnt;
 
 
-#line 369
+#line 368
 
 sub like ($$;$) {
     my $tb = Test::More->builder;
@@ -105,7 +104,7 @@ sub like ($$;$) {
 }
 
 
-#line 385
+#line 384
 
 sub unlike ($$;$) {
     my $tb = Test::More->builder;
@@ -114,7 +113,7 @@ sub unlike ($$;$) {
 }
 
 
-#line 425
+#line 424
 
 sub cmp_ok($$$;$) {
     my $tb = Test::More->builder;
@@ -123,7 +122,7 @@ sub cmp_ok($$$;$) {
 }
 
 
-#line 461
+#line 460
 
 sub can_ok ($@) {
     my($proto, @methods) = @_;
@@ -158,7 +157,7 @@ sub can_ok ($@) {
     return $ok;
 }
 
-#line 523
+#line 522
 
 sub isa_ok ($$;$) {
     my($object, $class, $obj_name) = @_;
@@ -212,7 +211,7 @@ WHOA
 }
 
 
-#line 592
+#line 591
 
 sub pass (;$) {
     my $tb = Test::More->builder;
@@ -224,7 +223,7 @@ sub fail (;$) {
     $tb->ok(0, @_);
 }
 
-#line 653
+#line 652
 
 sub use_ok ($;@) {
     my($module, @imports) = @_;
@@ -233,30 +232,28 @@ sub use_ok ($;@) {
 
     my($pack,$filename,$line) = caller;
 
-    # Work around a glitch in $@ and eval
-    my $eval_error;
-    {
-        local($@,$!,$SIG{__DIE__});   # isolate eval
-
-        if( @imports == 1 and $imports[0] =~ /^\d+(?:\.\d+)?$/ ) {
-            # probably a version check.  Perl needs to see the bare number
-            # for it to work with non-Exporter based modules.
-            eval <<USE;
+    my $code;
+    if( @imports == 1 and $imports[0] =~ /^\d+(?:\.\d+)?$/ ) {
+        # probably a version check.  Perl needs to see the bare number
+        # for it to work with non-Exporter based modules.
+        $code = <<USE;
 package $pack;
 use $module $imports[0];
+1;
 USE
-        }
-        else {
-            eval <<USE;
+    }
+    else {
+        $code = <<USE;
 package $pack;
-use $module \@imports;
+use $module \@{\$args[0]};
+1;
 USE
-        }
-        $eval_error = $@;
     }
 
-    my $ok = $tb->ok( !$eval_error, "use $module;" );
 
+    my($eval_result, $eval_error) = _eval($code, \@imports);
+    my $ok = $tb->ok( $eval_result, "use $module;" );
+    
     unless( $ok ) {
         chomp $eval_error;
         $@ =~ s{^BEGIN failed--compilation aborted at .*$}
@@ -271,7 +268,21 @@ DIAGNOSTIC
     return $ok;
 }
 
-#line 707
+
+sub _eval {
+    my($code) = shift;
+    my @args = @_;
+
+    # Work around oddities surrounding resetting of $@ by immediately
+    # storing it.
+    local($@,$!,$SIG{__DIE__});   # isolate eval
+    my $eval_result = eval $code;
+    my $eval_error  = $@;
+
+    return($eval_result, $eval_error);
+}
+
+#line 718
 
 sub require_ok ($) {
     my($module) = shift;
@@ -283,20 +294,20 @@ sub require_ok ($) {
     # Module names must be barewords, files not.
     $module = qq['$module'] unless _is_module_name($module);
 
-    local($!, $@, $SIG{__DIE__}); # isolate eval
-    local $SIG{__DIE__};
-    eval <<REQUIRE;
+    my $code = <<REQUIRE;
 package $pack;
 require $module;
+1;
 REQUIRE
 
-    my $ok = $tb->ok( !$@, "require $module;" );
+    my($eval_result, $eval_error) = _eval($code);
+    my $ok = $tb->ok( $eval_result, "require $module;" );
 
     unless( $ok ) {
-        chomp $@;
+        chomp $eval_error;
         $tb->diag(<<DIAGNOSTIC);
     Tried to require '$module'.
-    Error:  $@
+    Error:  $eval_error
 DIAGNOSTIC
 
     }
@@ -315,7 +326,7 @@ sub _is_module_name {
     $module =~ /^[a-zA-Z]\w*$/;
 }
 
-#line 784
+#line 795
 
 use vars qw(@Data_Stack %Refs_Seen);
 my $DNE = bless [], 'Does::Not::Exist';
@@ -422,7 +433,7 @@ sub _type {
     return '';
 }
 
-#line 930
+#line 941
 
 sub diag {
     my $tb = Test::More->builder;
@@ -431,7 +442,7 @@ sub diag {
 }
 
 
-#line 999
+#line 1010
 
 #'#
 sub skip {
@@ -459,7 +470,7 @@ sub skip {
 }
 
 
-#line 1086
+#line 1097
 
 sub todo_skip {
     my($why, $how_many) = @_;
@@ -480,7 +491,7 @@ sub todo_skip {
     last TODO;
 }
 
-#line 1139
+#line 1150
 
 sub BAIL_OUT {
     my $reason = shift;
@@ -489,7 +500,7 @@ sub BAIL_OUT {
     $tb->BAIL_OUT($reason);
 }
 
-#line 1178
+#line 1189
 
 #'#
 sub eq_array {
@@ -613,7 +624,7 @@ WHOA
 }
 
 
-#line 1309
+#line 1320
 
 sub eq_hash {
     local @Data_Stack;
@@ -646,7 +657,7 @@ sub _eq_hash {
     return $ok;
 }
 
-#line 1366
+#line 1377
 
 sub eq_set  {
     my($a1, $a2) = @_;
@@ -672,6 +683,6 @@ sub eq_set  {
     );
 }
 
-#line 1556
+#line 1567
 
 1;
