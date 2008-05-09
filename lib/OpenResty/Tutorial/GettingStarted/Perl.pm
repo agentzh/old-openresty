@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-OpenResty::Tutorial::GettingStarted - Zero to OpenResty for Perl
+OpenResty::Tutorial::GettingStarted::Perl - Zero to OpenResty for Perl
 programmers
 
 =head1 DESCRIPTION
@@ -11,6 +11,10 @@ This tutorial should give you everything you need to start with an
 OpenResty account using Perl.
 
 =head1 Prerequisites
+
+=over
+
+=item An OpenResty account
 
 You should already have an account on an OpenResty server. You can
 either set up an OpenResty server on your own machine or just request an
@@ -26,6 +30,26 @@ C<foo> account.
 
 Throughout this tutorial, we'll assume you own an account named C<foo>
 whose C<Admin> role's password is C<hello1234>.
+
+=item L<WWW::OpenResty::Simple>
+
+Because OpenResty's API is totally RESTful, that is, it's totally
+HTTP based. So it's completely okay to directly use a general HTTP
+client libary like L<LWP::UserAgent>. But to make things even easier,
+we'll stick with a CPAN module, L<WWW::OpenResty::Simple>, throughout the
+tutorial. In case you don't know, installing the L<WWW::OpenResty::Simple>
+module is as simple as
+
+    $ sudo cpan WWW::OpenResty::Simple
+
+Commands will differ slightly if you're on Win32:
+
+    C:\>cpan WWW::OpenResty::Simple
+
+=back
+
+Note that if you use an account on others' OpenResty servers (like ours),
+you need I<not> install the hairy L<OpenResty> module on CPAN.
 
 =head1 Just Mudding Around
 
