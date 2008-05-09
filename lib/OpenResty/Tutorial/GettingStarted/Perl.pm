@@ -2,21 +2,30 @@
 
 =head1 NAME
 
-OpenResty::Tutorial::GettingStarted - Zero to OpenResty for Perl programmers
+OpenResty::Tutorial::GettingStarted - Zero to OpenResty for Perl
+programmers
 
 =head1 DESCRIPTION
 
-This tutorial should give you everything you need to start with an OpenResty account using Perl.
+This tutorial should give you everything you need to start with an
+OpenResty account using Perl.
 
 =head1 Prerequisites
 
-You should already have an account on an OpenResty server. You can either set up an OpenResty server on your own machine or just request an account on our Yahoo! China's production server by sending an email to C<agentzh@yahoo.cn>. If you're running your own instance of the OpenResty server, you can use the following command to create an account (named C<foo>) for yourself:
+You should already have an account on an OpenResty server. You can
+either set up an OpenResty server on your own machine or just request an
+account on our Yahoo! China's production server by sending an email to
+C<agentzh@yahoo.cn>. If you're running your own instance of the OpenResty
+server, you can use the following command to create an account (named
+C<foo>) for yourself:
 
     $ bin/openresty adduser foo
 
-You'll be prompted to enter a password for the C<Admin> role of your C<foo> account.
+You'll be prompted to enter a password for the C<Admin> role of your
+C<foo> account.
 
-Throughout this tutorial, we'll assume you own an account named C<foo> whose C<Admin> role's password is C<hello1234>.
+Throughout this tutorial, we'll assume you own an account named C<foo>
+whose C<Admin> role's password is C<hello1234>.
 
 =head1 Just Mudding Around
 
