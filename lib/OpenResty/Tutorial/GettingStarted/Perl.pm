@@ -29,7 +29,8 @@ You'll be prompted to enter a password for the C<Admin> role of your
 C<foo> account.
 
 Throughout this tutorial, we'll assume you own an account named C<foo>
-whose C<Admin> role's password is C<hello1234>.
+whose C<Admin> role's password is C<hello1234>. And the account belongs
+to the server C<resty.eeeeworks.org>.
 
 =item L<WWW::OpenResty::Simple>
 
@@ -51,7 +52,38 @@ Commands will differ slightly if you're on Win32:
 Note that if you use an account on others' OpenResty servers (like ours),
 you need I<not> install the hairy L<OpenResty> module on CPAN.
 
+=head1 Login
+
+There's various different ways to login to your OpenResty account. But
+in a Perl script,
+we usually use the default L<Admin> role with full priviledges:
+
+    use WWW::OpenResty::Simple;
+    my $resty = WWW::OpenResty::Simple->new(
+      {
+        server =>   'resty.eeeeworks.org',
+      }
+    );
+    $resty->login('foo', 'hello1234');
+
+The first statement loads the L<WWW::OpenResty::Simple> module which
+we'll be using exclusively to manipulate our account.
+And in the second one, we created an instance of the
+L<WWW::OpenResty::Simple> class with the domain of the OpenResty
+server we're using. It might be a different value on your side
+(i.e. C<localhost>) if you're running your own instance of server.
+
+It's not good practice to hard code your password explicitly in your
+scripts. I wrote the sample code this way merely for the demonstration
+purpose.
+
 =head1 Just Mudding Around
+
+Usually we use OpenResty as a RESTy database. As with traditional
+relational database systems like mysql and PostgreSQL, we start by
+creating a "data schema". In OpenResty, C<Models> often resembles database
+tables (but they could be something else as well). You can define a new
+C<Model> like this:
 
 =head1 Importing huge amount of data
 
