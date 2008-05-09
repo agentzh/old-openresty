@@ -101,8 +101,8 @@ sub said {
         if ($@) { $self->log_error($@); }
     };
     my $enc = guess_charset($text, $charset);
-    warn "msg in charset: $enc\n";
-    warn "Charset:  $charset\n";
+    log_error("msg in charset: $enc\n");
+    log_error("Charset:  $charset\n");
     #from_to($text, $enc, 'utf8');
     #warn length($orig_text);
     #if (length($orig_text) > 4 and $enc ne 'ascii' and $enc ne $charset and $text !~ /^\[\w+\]: /) {
