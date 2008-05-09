@@ -60,9 +60,7 @@ we usually use the default L<Admin> role with full priviledges:
 
     use WWW::OpenResty::Simple;
     my $resty = WWW::OpenResty::Simple->new(
-      {
-        server =>   'resty.eeeeworks.org',
-      }
+      { server => 'resty.eeeeworks.org' }
     );
     $resty->login('foo', 'hello1234');
 
@@ -84,6 +82,11 @@ relational database systems like mysql and PostgreSQL, we start by
 creating a "data schema". In OpenResty, C<Models> often resembles database
 tables (but they could be something else as well). You can define a new
 C<Model> like this:
+
+    $resty->post(
+    );
+
+L<WWW::OpenResty::Simple> objects' C<post> method will issue an HTTP C<POST> command behind the scene.
 
 =head1 Importing huge amount of data
 
