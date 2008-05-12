@@ -18,6 +18,8 @@ my $ua = LWP::UserAgent->new;
 $ua->timeout(2);
 $ua->env_proxy;
 
+$SIG{CHLD} = "IGNORE";
+
 our @Brain = (
     [0 => qr{https?://[^\(\)（）？。]+} => \&process_url],
     [0 => qr{(?:哈你个头|[^A-Za-z]TMD[^A-Za-z]|\bTMD\b|\bshit\b|\bf[us]ck(?:ing)?\b|\bdammit\b|\bdamn(?:\s+it)?\b|\bbastard\b|perl.*?邪教)}i => \&punish_him],
@@ -33,7 +35,6 @@ our %EncodingMap = (
     'euc-cn' => 'gbk',
     'big5-eten' => 'big5',
 );
-
 
 our $Resty;
 
