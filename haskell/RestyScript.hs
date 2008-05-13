@@ -44,8 +44,11 @@ quoteIdent = quote '"'
 
 asSql :: SqlVal -> String
 asSql (String s) = quoteLiteral s
+asSql (Select cols) = "select " ++ (intercalate ", " $ map asSql cols)
 asSql (From models) = "from " ++ (intercalate ", " $ map asSql models)
 asSql (Model name) = quoteIdent name
+asSql (Column name) = quoteIdent name
+asSql (NullClause) = ""
 
 readStmt :: String -> String
 readStmt input = case parse parseStmt "RestyScript" input of
@@ -86,7 +89,7 @@ symbol = do x <- letter
             return (x:xs)
 
 listSep :: Parser ()
-listSep = string "," >> spaces
+listSep = try(spaces >> string ",") >> spaces
 
 parseSelect :: Parser SqlVal
 parseSelect = do string "select" >> many1 space
