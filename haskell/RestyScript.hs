@@ -23,6 +23,7 @@ data SqlVal = Select [SqlVal]
             | FuncCall (String, [SqlVal])
             | ComparisonExpr (String, SqlVal, SqlVal)
             | LogicalExpr (String, SqlVal, SqlVal)
+            | NullClause
                 deriving (Ord, Eq, Show)
 
 {- instance Show SqlVal where show = showVal -}
@@ -53,11 +54,12 @@ readStmt input = case parse parseStmt "RestyScript" input of
                                   (unwords $ map asSql vals)
 
 parseStmt :: Parser [SqlVal]
-parseStmt = sepBy1 parseClause spaces
+parseStmt = do select <- parseSelect
+               spaces
+               from <- parseFrom
+               return [select, from]
 
-parseClause :: Parser SqlVal
-parseClause = parseFrom
-{- 
+{-
           <|> parseWhere
           <|> parseLimit
           <|> parseLimit
@@ -68,9 +70,10 @@ parseClause = parseFrom
 -}
 
 parseFrom :: Parser SqlVal
-parseFrom = do endBy (string "from") (many1 space)
-               vals <- sepBy1 parseModel parseListSep
-               return $ From vals
+parseFrom = do string "from" >> many1 space
+               models <- sepBy1 parseModel listSep
+               return $ From models
+        <|> (return $ NullClause)
         <?> "from clause"
 
 parseModel :: Parser SqlVal
@@ -82,6 +85,17 @@ symbol = do x <- letter
             xs <- many alphaNum
             return (x:xs)
 
-parseListSep :: Parser ()
-parseListSep = spaces >> string "," >> spaces
+listSep :: Parser ()
+listSep = string "," >> spaces
+
+parseSelect :: Parser SqlVal
+parseSelect = do string "select" >> many1 space
+                 cols <- sepBy1 parseColumn listSep
+                 return $ Select cols
+          <?> "select clause"
+
+parseColumn :: Parser SqlVal
+parseColumn = do column <- symbol
+                 return $ Column column
+          <?> "selected column"
 
