@@ -16,7 +16,7 @@ run {
     run3 ['./restyscript', $block->in], \undef, \$stdout, \$stderr;
     is $? >> 8, 0, "compiler returns 0 - $desc";
     warn $stderr if $stderr;
-    my @ln = map { s/\s+$//g; $_ } split /\n+/, $stdout;
+    my @ln = split /\n+/, $stdout;
     is "$ln[0]\n", $block->ast, "AST ok - $desc";
     is "$ln[1]\n", $block->out, "Pg/SQL output ok - $desc";
 };
@@ -27,7 +27,7 @@ __DATA__
 --- in
 select foo, bar from Bah
 --- ast
-Select [Column "foo",Column "bar"] From [Model "Bah"] NullClause
+Select [Column "foo",Column "bar"] From [Model "Bah"]
 --- out
 select "foo", "bar" from "Bah"
 
@@ -37,7 +37,7 @@ select "foo", "bar" from "Bah"
 --- in
 select foo
 --- ast
-Select [Column "foo"] NullClause NullClause
+Select [Column "foo"]
 --- out
 select "foo"
 
@@ -46,7 +46,7 @@ select "foo"
 --- in
 select id,name , age from  Post , Comment
 --- ast
-Select [Column "id",Column "name",Column "age"] From [Model "Post",Model "Comment"] NullClause
+Select [Column "id",Column "name",Column "age"] From [Model "Post",Model "Comment"]
 --- out
 select "id", "name", "age" from "Post", "Comment"
 --- LAST

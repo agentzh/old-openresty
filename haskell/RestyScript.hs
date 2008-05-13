@@ -63,7 +63,8 @@ parseStmt = do select <- parseSelect
                from <- parseFrom
                spaces
                whereClause <- parseWhere
-               return [select, from, whereClause]
+               return $ filter (\x->x /= NullClause)
+                            [select, from, whereClause]
 
 {-
           <|> parseWhere
