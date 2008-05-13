@@ -6,3 +6,6 @@ restyscript: Main.o RestyScript.o
 %.o: %.hs
 	ghc -c $<
 
+test: all
+	-./restyscript 'select foo, bar from Bah'
+
