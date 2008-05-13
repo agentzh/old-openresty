@@ -21,8 +21,9 @@ data SqlVal = Select [SqlVal]
             | Variable (String, VarContext)
             | VariableWithDefault (String, SqlVal, VarContext)
             | FuncCall (String, [SqlVal])
-            | ComparisonExpr (String, SqlVal, SqlVal)
-            | LogicalExpr (String, SqlVal, SqlVal)
+            | ComparisonExpr (String, [SqlVal])
+            | OrExpr [SqlVal]
+            | AndExpr [SqlVal]
             | NullClause
                 deriving (Ord, Eq, Show)
 
@@ -60,7 +61,9 @@ parseStmt :: Parser [SqlVal]
 parseStmt = do select <- parseSelect
                spaces
                from <- parseFrom
-               return [select, from]
+               spaces
+               whereClause <- parseWhere
+               return [select, from, whereClause]
 
 {-
           <|> parseWhere
@@ -89,7 +92,7 @@ symbol = do x <- letter
             return (x:xs)
 
 listSep :: Parser ()
-listSep = try(spaces >> string ",") >> spaces
+listSep = opSep ","
 
 parseSelect :: Parser SqlVal
 parseSelect = do string "select" >> many1 space
@@ -101,4 +104,22 @@ parseColumn :: Parser SqlVal
 parseColumn = do column <- symbol
                  return $ Column column
           <?> "selected column"
+
+parseWhere :: Parser SqlVal
+parseWhere = do string "where" >> many1 space
+                cond <- parseOr
+                return $ Where cond
+         <|> (return $ NullClause)
+         <?> "where clause"
+
+parseOr :: Parser SqlVal
+parseOr = do args <- sepBy1 parseAnd (opSep "or")
+             return $ OrExpr args
+
+opSep :: String -> Parser ()
+opSep op = try(spaces >> string op) >> spaces
+
+parseAnd :: Parser SqlVal
+parseAnd = do args <- sepBy1 parseColumn (opSep "and")
+              return $ AndExpr args
 

@@ -7,9 +7,15 @@ restyscript: Main.o RestyScript.o
 	ghc -c $<
 
 test: all
-	-./restyscript 'select foo, bar from Bah'
+	prove sanity.t
+
+run: all
 	@echo ----------------------------
-	-./restyscript 'select foo'
+	-./restyscript ''
 	@echo ----------------------------
-	-./restyscript 'select id,name , age from  Post , Comment'
+	-./restyscript '
+	@echo ----------------------------
+	-./restyscript ''
+	@echo ----------------------------
+	-./restyscript '
 
