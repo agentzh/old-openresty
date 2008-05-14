@@ -96,3 +96,11 @@ select id from Post where a > b and a like b or b = c and d >= e or e <> d'
 --- out
 select "id" from "Post" where ((("a" > "b") and ("a" like "b")) or (("b" = "c") and ("d" >= "e")) or (("e" <> "d")))
 
+
+
+=== TEST 9: literal strings
+--- in
+select id from Post where 'a''\'' = 'b\\\n'
+--- out
+select "id" from "Post" where ((('a''''' = 'b\\\n')))
+
