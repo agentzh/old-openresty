@@ -5,6 +5,10 @@ module RestyScript.AST (
 data SqlVal = Select [SqlVal]
             | From [SqlVal]
             | Where SqlVal
+            | Limit SqlVal
+            | OrderBy [SqlVal]
+            | OrderPair (SqlVal, String)
+            | GroupBy SqlVal
             | Column SqlVal
             | Model SqlVal
             | Symbol String
@@ -17,6 +21,6 @@ data SqlVal = Select [SqlVal]
             | RelExpr (String, SqlVal, SqlVal)
             | OrExpr [SqlVal]
             | AndExpr [SqlVal]
-            | NullClause
+            | Null
                 deriving (Ord, Eq, Show)
 
