@@ -12,7 +12,7 @@ After that, you can build this compiler by the following command:
 
     $ make
 
-The resulting binary executable will be bin/openresty
+The resulting binary executable will be bin/restyscript
 
 To run the test suite, simply issue
 
