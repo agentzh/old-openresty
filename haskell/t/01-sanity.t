@@ -114,3 +114,11 @@ Select [Column (Symbol "id")] OrderBy [OrderPair (Column (Symbol "id"),"asc")]
 --- out
 select "id" order by "id" asc
 
+
+
+=== TEST 11: complicated order by
+--- in
+select id order by id desc, name , foo  asc
+--- out
+select "id" order by "id" desc, "name" asc, "foo" asc
+
