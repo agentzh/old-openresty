@@ -118,7 +118,15 @@ select "id" order by "id" asc
 
 === TEST 11: complicated order by
 --- in
-select id order by id desc, name , foo  asc
+select * order by id desc, name , foo  asc
 --- out
-select "id" order by "id" desc, "name" asc, "foo" asc
+select * order by "id" desc, "name" asc, "foo" asc
+
+
+
+=== TEST 12: group by
+--- in
+select sum(id) group by id
+--- out
+select sum("id") group by "id"
 

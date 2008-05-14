@@ -22,5 +22,6 @@ data SqlVal = Select [SqlVal]
             | OrExpr [SqlVal]
             | AndExpr [SqlVal]
             | Null
+            | AnyColumn
                 deriving (Ord, Eq, Show)
 
