@@ -131,8 +131,17 @@ opSep' op = keyword op >> spaces
 
 
 parseAnd :: Parser SqlVal
-parseAnd = do args <- sepBy1 parseRel (opSep' "and")
+parseAnd = do args <- sepBy1 parseLogicAtom (opSep' "and")
               return $ AndExpr args
+
+parseLogicAtom :: Parser SqlVal
+parseLogicAtom = parseRel
+             <|> do char '('
+                    spaces
+                    expr <- parseOr
+                    char ')'
+                    spaces
+                    return expr
 
 parseRel :: Parser SqlVal
 parseRel = do lhs <- parseTerm

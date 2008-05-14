@@ -4,7 +4,7 @@ bin/restyscript: src/RestyScript/AST.o src/RestyScript/Emitter.o src/RestyScript
 	cd src && ghc -package parsec -o ../$@ --make Main
 
 %.o: %.hs
-	cd src && ghc -c ../$<
+	cd src && ghc -package parsec -c ../$<
 
 test: all
 	prove -r t
