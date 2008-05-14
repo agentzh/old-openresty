@@ -3,7 +3,8 @@ README
 
 This is a RestyScript compiler for OpenResty written in Haskell.
 
-To build this program, you should first install GHC and its Parsec library. On Ubuntu/Debian, the following commands would be sufficient:
+To build this program, you should first install GHC and its Parsec
+library. On Ubuntu/Debian, the following commands would be sufficient:
 
     $ sudo apt-get install ghc6 libghc6-parsec-dev
 
