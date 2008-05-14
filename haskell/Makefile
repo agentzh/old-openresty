@@ -1,6 +1,6 @@
 all: restyscript
 
-restyscript: Main.o RestyScript.o
+restyscript: RestyScript.o Main.o
 	ghc -package parsec -o $@ $^
 
 %.o: %.hs
@@ -8,14 +8,4 @@ restyscript: Main.o RestyScript.o
 
 test: all
 	prove sanity.t
-
-run: all
-	@echo ----------------------------
-	-./restyscript ''
-	@echo ----------------------------
-	-./restyscript '
-	@echo ----------------------------
-	-./restyscript ''
-	@echo ----------------------------
-	-./restyscript '
 
