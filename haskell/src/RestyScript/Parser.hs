@@ -9,7 +9,8 @@ readView :: String -> String -> Either ParseError [SqlVal]
 readView = parse parseView
 
 parseView :: Parser [SqlVal]
-parseView = do select <- parseSelect
+parseView = do spaces
+               select <- parseSelect
                from <- parseFrom
                whereClause <- parseWhere
                moreClauses <- sepBy parseMoreClause spaces

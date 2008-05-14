@@ -133,7 +133,7 @@ select sum("id") group by "id"
 
 === TEST 13: select literals
 --- in
-select 3.14 , 25, sum ( 1 ) , * from Post
+ select 3.14 , 25, sum ( 1 ) , * from Post
 --- out
 select 3.14, 25, sum(1), * from "Post"
 
