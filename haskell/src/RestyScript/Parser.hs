@@ -87,6 +87,7 @@ relOp = string "="
          <|> try (string "<=")
          <|> try (string "<>")
          <|> string "<"
+         <|> string "!="
          <|> string "like"
 
 parseTerm :: Parser SqlVal

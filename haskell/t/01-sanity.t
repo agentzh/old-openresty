@@ -100,7 +100,7 @@ select "id" from "Post" where ((("a" > "b") and ("a" like "b")) or (("b" = "c") 
 
 === TEST 9: literal strings
 --- in
-select id from Post where 'a''\'' = 'b\\\n\r\b\a'
+select id from Post where 'a''\'' != 'b\\\n\r\b\a'
 --- out
-select "id" from "Post" where ((('a''''' = 'b\\\n\r\ba')))
+select "id" from "Post" where ((('a''''' != 'b\\\n\r\ba')))
 
