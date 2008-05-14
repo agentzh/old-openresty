@@ -97,7 +97,15 @@ select "id" from "Post" where ((("a" > "b") and ("a" like "b")) or (("b" = "c") 
 
 
 
-=== TEST 9: literal strings
+=== TEST 9: with parens in and/or
+--- in
+select id from Post where (( a > b ) and ( b < c or c > 1 ))
+--- out
+select "id" from "Post" where ((((((("a" > "b"))) and ((("b" < "c")) or (("c" > 1)))))))
+
+
+
+=== TEST 10: literal strings
 --- in
 select id from Post where 'a''\'' != 'b\\\n\r\b\a'
 --- out
@@ -105,7 +113,7 @@ select "id" from "Post" where ((('a''''' != 'b\\\n\r\ba')))
 
 
 
-=== TEST 10: order by
+=== TEST 11: order by
 --- in
 select id order  by  id
 --- ast
@@ -115,7 +123,7 @@ select "id" order by "id" asc
 
 
 
-=== TEST 11: complicated order by
+=== TEST 12: complicated order by
 --- in
 select * order by id desc, name , foo  asc
 --- out
@@ -123,7 +131,7 @@ select * order by "id" desc, "name" asc, "foo" asc
 
 
 
-=== TEST 12: group by
+=== TEST 13: group by
 --- in
 select sum(id) group by id
 --- out
@@ -131,7 +139,7 @@ select "sum"("id") group by "id"
 
 
 
-=== TEST 13: select literals
+=== TEST 14: select literals
 --- in
  select 3.14 , 25, sum ( 1 ) , * from Post
 --- out
@@ -139,7 +147,7 @@ select 3.14, 25, "sum"(1), * from "Post"
 
 
 
-=== TEST 14: quoted symbols
+=== TEST 15: quoted symbols
 --- in
 select "id", "date_part"("created") from "Post" where "id" = 1
 --- out
@@ -147,7 +155,7 @@ select "id", "date_part"("created") from "Post" where ((("id" = 1)))
 
 
 
-=== TEST 15: offset and limit
+=== TEST 16: offset and limit
 --- in
 select id from Post offset 3 limit 5
 --- out
@@ -155,7 +163,7 @@ select "id" from "Post" offset 3 limit 5
 
 
 
-=== TEST 16: offset and limit (with quoted values)
+=== TEST 17: offset and limit (with quoted values)
 --- in
 select id from Post offset '3' limit '5'
 --- out
@@ -163,7 +171,7 @@ select "id" from "Post" offset '3' limit '5'
 
 
 
-=== TEST 17: simple variable
+=== TEST 18: simple variable
 --- in
 select $var
 --- ast
@@ -173,7 +181,7 @@ select ?
 
 
 
-=== TEST 18: variable as model
+=== TEST 19: variable as model
 --- in
 select * from $model_name, $bar
 --- ast
@@ -183,7 +191,7 @@ select * from ?, ?
 
 
 
-=== TEST 19: variable in where, offset, limit and group by
+=== TEST 20: variable in where, offset, limit and group by
 --- in
 select * from A where $id > 0 offset $off limit $lim group by $foo
 --- ast
