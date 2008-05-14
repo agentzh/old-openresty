@@ -3,7 +3,6 @@ module RestyScript (
 ) where
 
 import RestyScript.Parser
-import RestyScript.AST
 import RestyScript.Emitter
 
 compileView :: String -> String -> Either String [String]
