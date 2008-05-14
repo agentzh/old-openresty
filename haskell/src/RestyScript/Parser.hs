@@ -12,27 +12,60 @@ parseView :: Parser [SqlVal]
 parseView = do select <- parseSelect
                from <- parseFrom
                whereClause <- parseWhere
-               return $ filter (\x->x /= NullClause)
-                            [select, from, whereClause]
+               moreClauses <- sepBy parseMoreClause spaces
+               spaces
+               eof
+               return $ filter (\x->x /= Null)
+                            [select, from, whereClause] ++ moreClauses
 
-{-
-          <|> parseLimit
-          <|> parseOffset
-          <|> parseGroupBy
-          <|> parseOrderBy
--}
+parseMoreClause :: Parser SqlVal
+parseMoreClause = parseOrderBy
+              <|> parseLimit
+              <|> parseOffset
+              <|> parseGroupBy
+
+parseLimit :: Parser SqlVal
+parseLimit = do string "limit" >> many1 space
+                x <- parseTerm
+                return $ Limit x
+         <?> "limit clause"
+
+parseOffset :: Parser SqlVal
+parseOffset = do string "offset" >> many1 space
+                 x <- parseTerm
+                 return $ Limit x
+          <?> "offset clause"
+
+parseOrderBy :: Parser SqlVal
+parseOrderBy = do string "order" >> many1 space >>
+                    string "by" >> many1 space
+                  pairs <- sepBy parseOrderPair listSep
+                  return $ OrderBy pairs
+           <?> "order by clause"
+
+parseOrderPair :: Parser SqlVal
+parseOrderPair = do col <- parseColumn
+                    dir <- (string "asc" <|> string "desc" <|> (return "asc"))
+                    return $ OrderPair (col, dir)
+
+parseGroupBy :: Parser SqlVal
+parseGroupBy = do string "group" >> many1 space >>
+                    string "by" >> many1 space
+                  x <- parseColumn
+                  return $ GroupBy x
 
 parseFrom :: Parser SqlVal
 parseFrom = do string "from" >> many1 space
                models <- sepBy1 parseModel listSep
                return $ From models
-        <|> (return $ NullClause)
+        <|> (return $ Null)
         <?> "from clause"
 
 parseModel :: Parser SqlVal
 parseModel = do model <- symbol
                 spaces
                 return $ Model $ Symbol model
+         <?> "model"
 
 symbol :: Parser String
 symbol = do x <- letter
@@ -58,7 +91,7 @@ parseWhere :: Parser SqlVal
 parseWhere = do string "where" >> many1 space
                 cond <- parseOr
                 return $ Where cond
-         <|> (return $ NullClause)
+         <|> (return Null)
          <?> "where clause"
 
 parseOr :: Parser SqlVal

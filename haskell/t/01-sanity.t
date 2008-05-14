@@ -92,7 +92,7 @@ select "id" from "Post" where ((("a" > "b")) or (("b" <= "c")))
 
 === TEST 8: and in or
 --- in
-select id from Post where a > b and a like b or b = c and d >= e or e <> d'
+select id from Post where a > b and a like b or b = c and d >= e or e <> d
 --- out
 select "id" from "Post" where ((("a" > "b") and ("a" like "b")) or (("b" = "c") and ("d" >= "e")) or (("e" <> "d")))
 
@@ -103,4 +103,14 @@ select "id" from "Post" where ((("a" > "b") and ("a" like "b")) or (("b" = "c") 
 select id from Post where 'a''\'' != 'b\\\n\r\b\a'
 --- out
 select "id" from "Post" where ((('a''''' != 'b\\\n\r\ba')))
+
+
+
+=== TEST 10: order by
+--- in
+select id order  by  id
+--- ast
+Select [Column (Symbol "id")] OrderBy [OrderPair (Column (Symbol "id"),"asc")]
+--- out
+select "id" order by "id" asc
 
