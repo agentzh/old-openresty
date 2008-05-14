@@ -5,6 +5,7 @@ module RestyScript (
 
 import Text.ParserCombinators.Parsec
 import Data.List (intercalate)
+import Numeric (showFloat)
 
 data SqlVal = Select [SqlVal]
             | From [SqlVal]
@@ -14,7 +15,7 @@ data SqlVal = Select [SqlVal]
             | Symbol String
             | QualifiedColumn (SqlVal, SqlVal)
             | Integer Integer
-            | Float Float
+            | Float Double
             | String String
             | Variable (String)
             | FuncCall (String, [SqlVal])
@@ -23,8 +24,6 @@ data SqlVal = Select [SqlVal]
             | AndExpr [SqlVal]
             | NullClause
                 deriving (Ord, Eq, Show)
-
-{- instance Show SqlVal where show = showVal -}
 
 quote :: Char -> String -> String
 quote sep s = [sep] ++ quoteChars s ++ [sep]
@@ -48,6 +47,8 @@ emitSql (Where cond) = "where " ++ (emitSql cond)
 emitSql (Model model) = emitSql model
 emitSql (Column col) = emitSql col
 emitSql (Symbol name) = quoteIdent name
+emitSql (Integer int) = show int
+emitSql (Float float) = showFloat float ""
 emitSql (OrExpr args) = "(" ++ (intercalate " or " $ map emitSql args) ++ ")"
 emitSql (AndExpr args) = "(" ++ (intercalate " and " $ map emitSql args) ++ ")"
 emitSql (RelExpr (op, lhs, rhs)) = "(" ++ (emitSql lhs) ++ " " ++ op ++ " " ++ (emitSql rhs) ++ ")"
@@ -61,9 +62,7 @@ readView file input = case parse parseView file input of
 
 parseView :: Parser [SqlVal]
 parseView = do select <- parseSelect
-               spaces
                from <- parseFrom
-               spaces
                whereClause <- parseWhere
                return $ filter (\x->x /= NullClause)
                             [select, from, whereClause]
@@ -87,6 +86,7 @@ parseFrom = do string "from" >> many1 space
 
 parseModel :: Parser SqlVal
 parseModel = do model <- symbol
+                spaces
                 return $ Model $ Symbol model
 
 symbol :: Parser String
@@ -105,8 +105,9 @@ parseSelect = do string "select" >> many1 space
 
 parseColumn :: Parser SqlVal
 parseColumn = do column <- symbol
+                 spaces
                  return $ Column $ Symbol column
-          <?> "selected column"
+          <?> "column"
 
 parseWhere :: Parser SqlVal
 parseWhere = do string "where" >> many1 space
@@ -120,18 +121,17 @@ parseOr = do args <- sepBy1 parseAnd (opSep "or")
              return $ OrExpr args
 
 opSep :: String -> Parser ()
-opSep op = try(spaces >> string op) >> spaces
+opSep op = string op >> spaces
 
 parseAnd :: Parser SqlVal
 parseAnd = do args <- sepBy1 parseRel (opSep "and")
               return $ AndExpr args
 
 parseRel :: Parser SqlVal
-parseRel = do lhs <- parseColumn
-              spaces
+parseRel = do lhs <- parseTerm
               op <- relOp
               spaces
-              rhs <- parseColumn
+              rhs <- parseTerm
               return $ RelExpr (op, lhs, rhs)
 
 relOp :: Parser String
@@ -142,4 +142,22 @@ relOp = string "="
          <|> try (string "<>")
          <|> string "<"
          <|> string "like"
+
+parseTerm :: Parser SqlVal
+parseTerm = parseColumn
+        <|> parseNumber
+
+
+parseNumber :: Parser SqlVal
+parseNumber = try (parseFloat)
+          <|> do int <- many1 digit
+                 spaces
+                 return $ Integer $ read int
+
+parseFloat :: Parser SqlVal
+parseFloat = do int <- many1 digit
+                char '.'
+                dec <- many1 digit
+                spaces
+                return $ Float $ read (int ++ "." ++ dec)
 
