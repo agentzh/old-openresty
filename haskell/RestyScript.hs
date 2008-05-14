@@ -6,6 +6,7 @@ module RestyScript (
 import Text.ParserCombinators.Parsec
 import Data.List (intercalate)
 import Numeric (showFloat)
+import Text.Printf (printf)
 
 data SqlVal = Select [SqlVal]
             | From [SqlVal]
@@ -48,7 +49,7 @@ emitSql (Model model) = emitSql model
 emitSql (Column col) = emitSql col
 emitSql (Symbol name) = quoteIdent name
 emitSql (Integer int) = show int
-emitSql (Float float) = showFloat float ""
+emitSql (Float float) = printf "%0f" float
 emitSql (OrExpr args) = "(" ++ (intercalate " or " $ map emitSql args) ++ ")"
 emitSql (AndExpr args) = "(" ++ (intercalate " and " $ map emitSql args) ++ ")"
 emitSql (RelExpr (op, lhs, rhs)) = "(" ++ (emitSql lhs) ++ " " ++ op ++ " " ++ (emitSql rhs) ++ ")"

@@ -68,7 +68,7 @@ select "id" from "Post" where ((("a" > "b")))
 --- in
 select id from Post where 00.003 > 3.14 or 3. > .0
 --- out
-select "id" from "Post" where (((3.0e-3 > 3.14)) or ((3.0 > 0.0)))
+select "id" from "Post" where (((0.003 > 3.14)) or ((3.0 > 0.0)))
 
 
 
