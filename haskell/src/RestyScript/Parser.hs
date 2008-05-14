@@ -139,12 +139,9 @@ parseTerm = parseNumber
 
 parseFuncCall :: Parser SqlVal
 parseFuncCall = do f <- symbol
-                   char '('
-                   spaces
+                   spaces >> char '(' >> spaces
                    args <- sepBy parseTerm listSep
-                   spaces
-                   char ')'
-                   spaces
+                   spaces >> char ')' >> spaces
                    return $ FuncCall (f, args)
 
 parseVariable :: Parser SqlVal
