@@ -29,9 +29,11 @@ data SqlVal = Select [SqlVal]
 quote :: Char -> String -> String
 quote sep s = [sep] ++ quoteChars s ++ [sep]
               where quoteChars (x:xs) =
-                        if x== sep
+                        if x == sep || x == '\\'
                             then x : x : quoteChars xs
-                            else x : quoteChars xs
+                            else case lookup x escapes of
+                                Just r -> r ++ quoteChars xs
+                                Nothing -> x : quoteChars xs
                     quoteChars [] = ""
 
 quoteLiteral :: String -> String
@@ -69,8 +71,6 @@ parseView = do select <- parseSelect
                             [select, from, whereClause]
 
 {-
-          <|> parseWhere
-          <|> parseLimit
           <|> parseLimit
           <|> parseOffset
           <|> parseGroupBy
@@ -134,6 +134,7 @@ parseRel = do lhs <- parseTerm
               spaces
               rhs <- parseTerm
               return $ RelExpr (op, lhs, rhs)
+         <?> "comparison expression"
 
 relOp :: Parser String
 relOp = string "="
@@ -147,13 +148,15 @@ relOp = string "="
 parseTerm :: Parser SqlVal
 parseTerm = parseColumn
         <|> parseNumber
-
+        <|> parseString
+        <?> "term"
 
 parseNumber :: Parser SqlVal
 parseNumber = try (parseFloat)
           <|> do int <- many1 digit
                  spaces
                  return $ Integer $ read int
+          <?> "number"
 
 parseFloat :: Parser SqlVal
 parseFloat = do int <- many1 digit
@@ -164,5 +167,32 @@ parseFloat = do int <- many1 digit
          <|> do char '.'
                 dec <- many1 digit
                 return $ Float $ read ("0." ++ dec)
+         <?> "floating-point number"
          where noEmpty s = if s == "" then "0" else s
+
+parseString :: Parser SqlVal
+parseString = do char '\''
+                 s <- many $ quotedChar '\''
+                 char '\''
+                 spaces
+                 return $ String s
+          <?> "string"
+
+unescapes :: [(Char, Char)]
+unescapes = zipWith pair "bnfrt" "\b\n\f\r\t"
+    where pair a b = (a, b)
+
+escapes :: [(Char, String)]
+escapes = zipWith ch "\b\n\f\r\t" "bnfrt"
+    where ch a b = (a, '\\':[b])
+
+quotedChar :: Char -> Parser Char
+quotedChar c = do char '\\'
+                  c <- anyChar
+                  return $ case lookup c unescapes of
+                            Just r -> r
+                            Nothing -> c
+           <|> noneOf [c]
+           <|> do try (string [c,c])
+                  return c
 
