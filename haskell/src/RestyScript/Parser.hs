@@ -78,7 +78,7 @@ listSep = opSep ","
 
 parseSelect :: Parser SqlVal
 parseSelect = do string "select" >> many1 space
-                 cols <- sepBy1 parseColumn listSep
+                 cols <- sepBy1 (parseTerm <|> parseAnyColumn) listSep
                  return $ Select cols
           <?> "select clause"
 
@@ -87,6 +87,11 @@ parseColumn = do column <- symbol
                  spaces
                  return $ Column $ Symbol column
           <?> "column"
+
+parseAnyColumn :: Parser SqlVal
+parseAnyColumn = do char '*'
+                    spaces
+                    return AnyColumn
 
 parseWhere :: Parser SqlVal
 parseWhere = do string "where" >> many1 space
@@ -125,10 +130,28 @@ relOp = string "="
          <|> string "like"
 
 parseTerm :: Parser SqlVal
-parseTerm = parseColumn
-        <|> parseNumber
+parseTerm = parseNumber
         <|> parseString
+        <|> parseVariable
+        <|> try (parseFuncCall)
+        <|> parseColumn
         <?> "term"
+
+parseFuncCall :: Parser SqlVal
+parseFuncCall = do f <- symbol
+                   char '('
+                   spaces
+                   args <- sepBy parseTerm listSep
+                   spaces
+                   char ')'
+                   spaces
+                   return $ FuncCall (f, args)
+
+parseVariable :: Parser SqlVal
+parseVariable = do char '$'
+                   v <- symbol
+                   spaces
+                   return $ Variable v
 
 parseNumber :: Parser SqlVal
 parseNumber = try (parseFloat)

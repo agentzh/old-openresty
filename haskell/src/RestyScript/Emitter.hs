@@ -22,13 +22,17 @@ quoteLiteral = quote '\''
 quoteIdent :: String -> String
 quoteIdent = quote '"'
 
+emitSqlForList ls = intercalate ", " $ map emitSql ls
+
 emitSql :: SqlVal -> String
 emitSql (String s) = quoteLiteral s
-emitSql (Select cols) = "select " ++ (intercalate ", " $ map emitSql cols)
-emitSql (From models) = "from " ++ (intercalate ", " $ map emitSql models)
+emitSql (FuncCall (f, args)) = f ++ "(" ++ (emitSqlForList args) ++ ")"
+emitSql (Select cols) = "select " ++ (emitSqlForList cols)
+emitSql (From models) = "from " ++ (emitSqlForList models)
 emitSql (Where cond) = "where " ++ (emitSql cond)
-emitSql (OrderBy pairs) = "order by " ++ (intercalate ", " $ map emitSql pairs)
+emitSql (OrderBy pairs) = "order by " ++ (emitSqlForList pairs)
 emitSql (OrderPair (col, dir)) = (emitSql col) ++ " " ++ dir
+emitSql (GroupBy col) = "group by " ++ emitSql col
 emitSql (Model model) = emitSql model
 emitSql (Column col) = emitSql col
 emitSql (Symbol name) = quoteIdent name
@@ -37,10 +41,10 @@ emitSql (Float float) = printf "%0f" float
 emitSql (OrExpr args) = "(" ++ (intercalate " or " $ map emitSql args) ++ ")"
 emitSql (AndExpr args) = "(" ++ (intercalate " and " $ map emitSql args) ++ ")"
 emitSql (RelExpr (op, lhs, rhs)) = "(" ++ (emitSql lhs) ++ " " ++ op ++ " " ++ (emitSql rhs) ++ ")"
-emitSql (Null) = ""
+emitSql Null = ""
+emitSql AnyColumn = "*"
 
 escapes :: [(Char, String)]
 escapes = zipWith ch "\b\n\f\r\t" "bnfrt"
     where ch a b = (a, '\\':[b])
-
 
