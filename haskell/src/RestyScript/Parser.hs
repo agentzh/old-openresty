@@ -46,6 +46,7 @@ parseOrderBy = do string "order" >> many1 space >>
 parseOrderPair :: Parser SqlVal
 parseOrderPair = do col <- parseColumn
                     dir <- (string "asc" <|> string "desc" <|> (return "asc"))
+                    spaces
                     return $ OrderPair (col, dir)
 
 parseGroupBy :: Parser SqlVal
