@@ -145,3 +145,11 @@ select "id", "date_part"("created") from "Post" where "id" = 1
 --- out
 select "id", "date_part"("created") from "Post" where ((("id" = 1)))
 
+
+
+=== TEST 15: offset and limit
+--- in
+select id from Post offset 3 limit 5
+--- out
+select "id" from "Post" offset 3 limit 5
+

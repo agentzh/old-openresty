@@ -28,12 +28,16 @@ emitSql :: SqlVal -> String
 emitSql (String s) = quoteLiteral s
 emitSql (FuncCall (f, args)) = (quoteIdent f) ++
                                   "(" ++ (emitSqlForList args) ++ ")"
+
 emitSql (Select cols) = "select " ++ (emitSqlForList cols)
 emitSql (From models) = "from " ++ (emitSqlForList models)
 emitSql (Where cond) = "where " ++ (emitSql cond)
 emitSql (OrderBy pairs) = "order by " ++ (emitSqlForList pairs)
-emitSql (OrderPair (col, dir)) = (emitSql col) ++ " " ++ dir
 emitSql (GroupBy col) = "group by " ++ emitSql col
+emitSql (Limit lim) = "limit " ++ emitSql lim
+emitSql (Offset offset) = "offset " ++ emitSql offset
+
+emitSql (OrderPair (col, dir)) = (emitSql col) ++ " " ++ dir
 emitSql (Model model) = emitSql model
 emitSql (Column col) = emitSql col
 emitSql (Symbol name) = quoteIdent name

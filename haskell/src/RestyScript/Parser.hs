@@ -35,11 +35,11 @@ parseLimit = do string "limit" >> many1 space
 parseOffset :: Parser SqlVal
 parseOffset = do string "offset" >> many1 space
                  x <- parseTerm
-                 return $ Limit x
+                 return $ Offset x
           <?> "offset clause"
 
 parseOrderBy :: Parser SqlVal
-parseOrderBy = do string "order" >> many1 space >>
+parseOrderBy = do try (string "order") >> many1 space >>
                     string "by" >> many1 space
                   pairs <- sepBy parseOrderPair listSep
                   return $ OrderBy pairs
