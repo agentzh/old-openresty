@@ -17,6 +17,7 @@ parseView = do select <- parseSelect
                eof
                return $ filter (\x->x /= Null)
                             [select, from, whereClause] ++ moreClauses
+        <?> "select statement"
 
 parseMoreClause :: Parser SqlVal
 parseMoreClause = parseOrderBy
