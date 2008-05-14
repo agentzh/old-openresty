@@ -27,17 +27,16 @@ __DATA__
 --- in
 select foo, bar from Bah
 --- ast
-Select [Column "foo",Column "bar"] From [Model "Bah"]
+Select [Column (Symbol "foo"),Column (Symbol "bar")] From [Model (Symbol "Bah")]
 --- out
 select "foo", "bar" from "Bah"
-
 
 
 === TEST 2: select only
 --- in
 select foo
 --- ast
-Select [Column "foo"]
+Select [Column (Symbol "foo")]
 --- out
 select "foo"
 
@@ -46,18 +45,29 @@ select "foo"
 --- in
 select id,name , age from  Post , Comment
 --- ast
-Select [Column "id",Column "name",Column "age"] From [Model "Post",Model "Comment"]
+Select [Column (Symbol "id"),Column (Symbol "name"),Column (Symbol "age")] From [Model (Symbol "Post"),Model (Symbol "Comment")]
 --- out
 select "id", "name", "age" from "Post", "Comment"
---- LAST
 
 
 
 === TEST 4: simple where clause
 --- in
-select id,name , age from  Post , Comment where a or b
+select id from Post where a > b
 --- ast
+Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr (">",Column (Symbol "a"),Column (Symbol "b"))]])
 --- out
+select "id" from "Post" where ((("a">"b")))
+
+
+=== TEST 5: simple or
+--- in
+select id from Post  where a > b or b <= c
+--- ast
+Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr (">",Column (Symbol "a"),Column (Symbol "b"))],AndExpr [RelExpr ("<=",Column (Symbol "b"),Column (Symbol "c"))]])
+--- out
+select "id" from "Post" where ((("a">"b")) or (("b"<="c")))
+--- LAST
 
 
 

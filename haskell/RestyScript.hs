@@ -1,6 +1,6 @@
 module RestyScript (
     SqlVal(..),
-    readStmt
+    readView
 ) where
 
 import Text.ParserCombinators.Parsec
@@ -12,16 +12,16 @@ data VarContext = SymbolContext | LiteralContext
 data SqlVal = Select [SqlVal]
             | From [SqlVal]
             | Where SqlVal
-            | Column String
-            | Model String
-            | QualifiedColumn (String, String)
+            | Column SqlVal
+            | Model SqlVal
+            | Symbol String
+            | QualifiedColumn (SqlVal, SqlVal)
             | Integer Integer
             | Float Float
             | String String
-            | Variable (String, VarContext)
-            | VariableWithDefault (String, SqlVal, VarContext)
+            | Variable (VarContext, String)
             | FuncCall (String, [SqlVal])
-            | ComparisonExpr (String, [SqlVal])
+            | RelExpr (String, SqlVal, SqlVal)
             | OrExpr [SqlVal]
             | AndExpr [SqlVal]
             | NullClause
@@ -43,22 +43,27 @@ quoteLiteral = quote '\''
 quoteIdent :: String -> String
 quoteIdent = quote '"'
 
-asSql :: SqlVal -> String
-asSql (String s) = quoteLiteral s
-asSql (Select cols) = "select " ++ (intercalate ", " $ map asSql cols)
-asSql (From models) = "from " ++ (intercalate ", " $ map asSql models)
-asSql (Model name) = quoteIdent name
-asSql (Column name) = quoteIdent name
-asSql (NullClause) = ""
+emitSql :: SqlVal -> String
+emitSql (String s) = quoteLiteral s
+emitSql (Select cols) = "select " ++ (intercalate ", " $ map emitSql cols)
+emitSql (From models) = "from " ++ (intercalate ", " $ map emitSql models)
+emitSql (Where cond) = "where " ++ (emitSql cond)
+emitSql (Model model) = emitSql model
+emitSql (Column col) = emitSql col
+emitSql (Symbol name) = quoteIdent name
+emitSql (OrExpr args) = "(" ++ (intercalate " or " $ map emitSql args) ++ ")"
+emitSql (AndExpr args) = "(" ++ (intercalate " and " $ map emitSql args) ++ ")"
+emitSql (RelExpr (op, lhs, rhs)) = "(" ++ (emitSql lhs) ++ op ++ (emitSql rhs) ++ ")"
+emitSql (NullClause) = ""
 
-readStmt :: String -> String
-readStmt input = case parse parseStmt "RestyScript" input of
-                    Left err -> "ERROR: " ++ show err
-                    Right vals -> (unwords $ map show vals) ++ "\n" ++
-                                  (unwords $ map asSql vals)
+readView :: String -> String -> Either String [String]
+readView file input = case parse parseView file input of
+                        Left err -> Left $ show err
+                        Right vals -> Right [dump show vals, dump emitSql vals]
+                        where dump f lst = unwords $ map f lst
 
-parseStmt :: Parser [SqlVal]
-parseStmt = do select <- parseSelect
+parseView :: Parser [SqlVal]
+parseView = do select <- parseSelect
                spaces
                from <- parseFrom
                spaces
@@ -85,7 +90,7 @@ parseFrom = do string "from" >> many1 space
 
 parseModel :: Parser SqlVal
 parseModel = do model <- symbol
-                return $ Model model
+                return $ Model $ Symbol model
 
 symbol :: Parser String
 symbol = do x <- letter
@@ -103,7 +108,7 @@ parseSelect = do string "select" >> many1 space
 
 parseColumn :: Parser SqlVal
 parseColumn = do column <- symbol
-                 return $ Column column
+                 return $ Column $ Symbol column
           <?> "selected column"
 
 parseWhere :: Parser SqlVal
@@ -121,6 +126,22 @@ opSep :: String -> Parser ()
 opSep op = try(spaces >> string op) >> spaces
 
 parseAnd :: Parser SqlVal
-parseAnd = do args <- sepBy1 parseColumn (opSep "and")
+parseAnd = do args <- sepBy1 parseRel (opSep "and")
               return $ AndExpr args
+
+parseRel :: Parser SqlVal
+parseRel = do lhs <- parseColumn
+              spaces
+              op <- relOp
+              spaces
+              rhs <- parseColumn
+              return $ RelExpr (op, lhs, rhs)
+
+relOp :: Parser String
+relOp = string "="
+         <|> try (string ">=")
+         <|> string ">"
+         <|> try (string "<=")
+         <|> string "<"
+         <|> string "like"
 
