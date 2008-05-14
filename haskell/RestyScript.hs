@@ -30,7 +30,7 @@ quote :: Char -> String -> String
 quote sep s = [sep] ++ quoteChars s ++ [sep]
               where quoteChars (x:xs) =
                         if x== sep
-                            then sep : quoteChars xs
+                            then x : x : quoteChars xs
                             else x : quoteChars xs
                     quoteChars [] = ""
 
