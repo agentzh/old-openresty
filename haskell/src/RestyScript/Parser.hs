@@ -102,9 +102,9 @@ parseSelect = do string "select" >> many1 space
           <?> "select clause"
 
 parseColumn :: Parser SqlVal
-parseColumn = do column <- symbol
+parseColumn = do col <- parseIdent
                  spaces
-                 return $ Column $ Symbol column
+                 return $ Column col
           <?> "column"
 
 parseAnyColumn :: Parser SqlVal
@@ -120,14 +120,18 @@ parseWhere = do string "where" >> many1 space
          <?> "where clause"
 
 parseOr :: Parser SqlVal
-parseOr = do args <- sepBy1 parseAnd (opSep "or")
+parseOr = do args <- sepBy1 parseAnd (opSep' "or")
              return $ OrExpr args
 
 opSep :: String -> Parser ()
 opSep op = string op >> spaces
 
+opSep' :: String -> Parser ()
+opSep' op = keyword op >> spaces
+
+
 parseAnd :: Parser SqlVal
-parseAnd = do args <- sepBy1 parseRel (opSep "and")
+parseAnd = do args <- sepBy1 parseRel (opSep' "and")
               return $ AndExpr args
 
 parseRel :: Parser SqlVal
@@ -146,7 +150,7 @@ relOp = string "="
          <|> try (string "<>")
          <|> string "<"
          <|> string "!="
-         <|> string "like"
+         <|> keyword "like"
 
 parseTerm :: Parser SqlVal
 parseTerm = parseNumber
@@ -155,6 +159,11 @@ parseTerm = parseNumber
         <|> try (parseFuncCall)
         <|> parseColumn
         <?> "term"
+
+keyword :: String -> Parser String
+keyword s = try (do string s
+                    notFollowedBy alphaNum
+                    return s)
 
 parseFuncCall :: Parser SqlVal
 parseFuncCall = do f <- symbol
