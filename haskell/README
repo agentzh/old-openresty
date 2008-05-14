@@ -14,6 +14,23 @@ After that, you can build this compiler by the following command:
 
 The resulting binary executable will be bin/restyscript
 
+One can play with it on the command line. For instance,
+
+    $ bin/restyscript 'select 3.14'
+    Select [Float 3.14]
+    select 3.14
+
+The first line of output depicts the interal AST (Abstract Syntax Tree)
+used by the compiler while the second line is the Pg/SQL emtted from
+the AST. In the sample above, the resulting Pg/SQl output is exactly
+the same as the RestyScript input.
+
+The compiler also comes with a test suite driven by Perl. The scaffold
+requires the CPAN modules Test::Base and IPC::Run3. Typically you can
+install these two by the following commands:
+
+    $ sudo cpan IPC::Run3 Test::Base
+
 To run the test suite, simply issue
 
     $ make test
