@@ -163,11 +163,31 @@ select "id" from "Post" offset '3' limit '5'
 
 
 
-=== TEST 17: variables
+=== TEST 17: simple variable
 --- in
 select $var
 --- ast
 Select [Variable "var"]
 --- out
 select ?
+
+
+
+=== TEST 18: variable as model
+--- in
+select * from $model_name, $bar
+--- ast
+Select [AnyColumn] From [Model (Variable "model_name"),Model (Variable "bar")]
+--- out
+select * from ?, ?
+
+
+
+=== TEST 19: variable in where, offset, limit and group by
+--- in
+select * from A where $id > 0 offset $off limit $lim group by $foo
+--- ast
+Select [AnyColumn] From [Model (Symbol "A")] Where (OrExpr [AndExpr [RelExpr (">",Variable "id",Integer 0)]]) Offset (Variable "off") Limit (Variable "lim") GroupBy (Column (Variable "foo"))
+--- out
+select * from "A" where (((? > 0))) offset ? limit ? group by ?
 
