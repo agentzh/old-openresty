@@ -65,15 +65,32 @@ parseFrom = do string "from" >> many1 space
         <?> "from clause"
 
 parseModel :: Parser SqlVal
-parseModel = do model <- symbol
+parseModel = do model <- parseIdent
                 spaces
-                return $ Model $ Symbol model
+                return $ Model model
          <?> "model"
 
+parseIdent :: Parser SqlVal
+parseIdent = do s <- symbol
+                return $ Symbol s
+         <|> do char '"'
+                s <- symbol
+                char '"'
+                return $ Symbol s
+         <|> parseVariable
+         <?> "identifier entry"
+
 symbol :: Parser String
-symbol = do x <- letter
-            xs <- many alphaNum
-            return (x:xs)
+symbol = do char '"'
+            s <- word
+            char '"'
+            return s
+     <|> word
+
+word :: Parser String
+word = do x <- letter
+          xs <- many (alphaNum <|> char '_')
+          return (x:xs)
 
 listSep :: Parser ()
 listSep = opSep ","
