@@ -50,7 +50,7 @@ emitSql (Column col) = emitSql col
 emitSql (Symbol name) = quoteIdent name
 emitSql (OrExpr args) = "(" ++ (intercalate " or " $ map emitSql args) ++ ")"
 emitSql (AndExpr args) = "(" ++ (intercalate " and " $ map emitSql args) ++ ")"
-emitSql (RelExpr (op, lhs, rhs)) = "(" ++ (emitSql lhs) ++ op ++ (emitSql rhs) ++ ")"
+emitSql (RelExpr (op, lhs, rhs)) = "(" ++ (emitSql lhs) ++ " " ++ op ++ " " ++ (emitSql rhs) ++ ")"
 emitSql (NullClause) = ""
 
 readView :: String -> String -> Either String [String]
@@ -139,6 +139,7 @@ relOp = string "="
          <|> try (string ">=")
          <|> string ">"
          <|> try (string "<=")
+         <|> try (string "<>")
          <|> string "<"
          <|> string "like"
 

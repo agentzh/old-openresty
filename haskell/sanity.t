@@ -32,6 +32,7 @@ Select [Column (Symbol "foo"),Column (Symbol "bar")] From [Model (Symbol "Bah")]
 select "foo", "bar" from "Bah"
 
 
+
 === TEST 2: select only
 --- in
 select foo
@@ -39,6 +40,7 @@ select foo
 Select [Column (Symbol "foo")]
 --- out
 select "foo"
+
 
 
 === TEST 3: spaces around separator (,)
@@ -57,7 +59,8 @@ select id from Post where a > b
 --- ast
 Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr (">",Column (Symbol "a"),Column (Symbol "b"))]])
 --- out
-select "id" from "Post" where ((("a">"b")))
+select "id" from "Post" where ((("a" > "b")))
+
 
 
 === TEST 5: simple or
@@ -66,14 +69,15 @@ select id from Post  where a > b or b <= c
 --- ast
 Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr (">",Column (Symbol "a"),Column (Symbol "b"))],AndExpr [RelExpr ("<=",Column (Symbol "b"),Column (Symbol "c"))]])
 --- out
-select "id" from "Post" where ((("a">"b")) or (("b"<="c")))
---- LAST
+select "id" from "Post" where ((("a" > "b")) or (("b" <= "c")))
 
 
 
-=== TEST 5: and in or
+=== TEST 6: and in or
 --- in
-select id,name , age from  Post , Comment where a and c or b and d or e'
+select id from Post where a > b and a like b or b = c and d >= e or e <> d'
 --- ast
+Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr (">",Column (Symbol "a"),Column (Symbol "b")),RelExpr ("like",Column (Symbol "a"),Column (Symbol "b"))],AndExpr [RelExpr ("=",Column (Symbol "b"),Column (Symbol "c")),RelExpr (">=",Column (Symbol "d"),Column (Symbol "e"))],AndExpr [RelExpr ("<>",Column (Symbol "e"),Column (Symbol "d"))]])
 --- out
+select "id" from "Post" where ((("a" > "b") and ("a" like "b")) or (("b" = "c") and ("d" >= "e")) or (("e" <> "d")))
 
