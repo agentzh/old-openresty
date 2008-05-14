@@ -161,3 +161,13 @@ select id from Post offset '3' limit '5'
 --- out
 select "id" from "Post" offset '3' limit '5'
 
+
+
+=== TEST 17: variables
+--- in
+select $var
+--- ast
+Select [Variable "var"]
+--- out
+select ?
+

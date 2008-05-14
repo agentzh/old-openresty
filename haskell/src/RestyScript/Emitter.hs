@@ -26,6 +26,7 @@ emitSqlForList ls = intercalate ", " $ map emitSql ls
 
 emitSql :: SqlVal -> String
 emitSql (String s) = quoteLiteral s
+emitSql (Variable v) = "?"
 emitSql (FuncCall (f, args)) = (quoteIdent f) ++
                                   "(" ++ (emitSqlForList args) ++ ")"
 
