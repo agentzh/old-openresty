@@ -35,3 +35,6 @@ To run the test suite, simply issue
 
     $ make test
 
+The test cases in the test suite (e.g. t/01-sanity.t) tells you what
+the compiler is currently able to do ;)
+
