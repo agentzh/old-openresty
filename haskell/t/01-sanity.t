@@ -59,7 +59,7 @@ select id from Post where a > b
 --- ast
 Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr (">",Column (Symbol "a"),Column (Symbol "b"))]])
 --- out
-select "id" from "Post" where ((("a" > "b")))
+select "id" from "Post" where "a" > "b"
 
 
 
@@ -67,7 +67,7 @@ select "id" from "Post" where ((("a" > "b")))
 --- in
 select id from Post where 00.003 > 3.14 or 3. > .0
 --- out
-select "id" from "Post" where (((0.003 > 3.14)) or ((3.0 > 0.0)))
+select "id" from "Post" where (0.003 > 3.14 or 3.0 > 0.0)
 
 
 
@@ -77,7 +77,7 @@ select id from Post where 256 > 0
 --- ast
 Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr (">",Integer 256,Integer 0)]])
 --- out
-select "id" from "Post" where (((256 > 0)))
+select "id" from "Post" where 256 > 0
 
 
 
@@ -85,7 +85,7 @@ select "id" from "Post" where (((256 > 0)))
 --- in
 select id from Post  where a > b or b <= c
 --- out
-select "id" from "Post" where ((("a" > "b")) or (("b" <= "c")))
+select "id" from "Post" where ("a" > "b" or "b" <= "c")
 
 
 
@@ -93,7 +93,7 @@ select "id" from "Post" where ((("a" > "b")) or (("b" <= "c")))
 --- in
 select id from Post where a > b and a like b or b = c and d >= e or e <> d
 --- out
-select "id" from "Post" where ((("a" > "b") and ("a" like "b")) or (("b" = "c") and ("d" >= "e")) or (("e" <> "d")))
+select "id" from "Post" where (("a" > "b" and "a" like "b") or ("b" = "c" and "d" >= "e") or "e" <> "d")
 
 
 
@@ -101,7 +101,7 @@ select "id" from "Post" where ((("a" > "b") and ("a" like "b")) or (("b" = "c") 
 --- in
 select id from Post where (( a > b ) and ( b < c or c > 1 ))
 --- out
-select "id" from "Post" where ((((((("a" > "b"))) and ((("b" < "c")) or (("c" > 1)))))))
+select "id" from "Post" where ("a" > "b" and ("b" < "c" or "c" > 1))
 
 
 
@@ -109,7 +109,7 @@ select "id" from "Post" where ((((((("a" > "b"))) and ((("b" < "c")) or (("c" > 
 --- in
 select id from Post where 'a''\'' != 'b\\\n\r\b\a'
 --- out
-select "id" from "Post" where ((('a''''' != 'b\\\n\r\ba')))
+select "id" from "Post" where 'a''''' != 'b\\\n\r\ba'
 
 
 
@@ -151,7 +151,7 @@ select 3.14, 25, "sum"(1), * from "Post"
 --- in
 select "id", "date_part"("created") from "Post" where "id" = 1
 --- out
-select "id", "date_part"("created") from "Post" where ((("id" = 1)))
+select "id", "date_part"("created") from "Post" where "id" = 1
 
 
 
@@ -197,5 +197,5 @@ select * from A where $id > 0 offset $off limit $lim group by $foo
 --- ast
 Select [AnyColumn] From [Model (Symbol "A")] Where (OrExpr [AndExpr [RelExpr (">",Variable "id",Integer 0)]]) Offset (Variable "off") Limit (Variable "lim") GroupBy (Column (Variable "foo"))
 --- out
-select * from "A" where (((? > 0))) offset ? limit ? group by ?
+select * from "A" where ? > 0 offset ? limit ? group by ?
 
