@@ -127,7 +127,7 @@ select * order by "id" desc, "name" asc, "foo" asc
 --- in
 select sum(id) group by id
 --- out
-select sum("id") group by "id"
+select "sum"("id") group by "id"
 
 
 
@@ -135,5 +135,13 @@ select sum("id") group by "id"
 --- in
  select 3.14 , 25, sum ( 1 ) , * from Post
 --- out
-select 3.14, 25, sum(1), * from "Post"
+select 3.14, 25, "sum"(1), * from "Post"
+
+
+
+=== TEST 14: quoted symbols
+--- in
+select "id", "date_part"("created") from "Post" where "id" = 1
+--- out
+select "id", "date_part"("created") from "Post" where ((("id" = 1)))
 
