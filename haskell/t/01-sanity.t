@@ -153,3 +153,11 @@ select id from Post offset 3 limit 5
 --- out
 select "id" from "Post" offset 3 limit 5
 
+
+
+=== TEST 16: offset and limit (with quoted values)
+--- in
+select id from Post offset '3' limit '5'
+--- out
+select "id" from "Post" offset '3' limit '5'
+
