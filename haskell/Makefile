@@ -1,16 +1,16 @@
-all: restyscript
+all: bin/restyscript
 
-restyscript: src/RestyScript/AST.o src/RestyScript/Emitter.o src/RestyScript/Parser.o src/RestyScript.o src/Main.o
-	ghc -package parsec -o $@ --make Main
+bin/restyscript: src/RestyScript/AST.o src/RestyScript/Emitter.o src/RestyScript/Parser.o src/RestyScript.o src/Main.o
+	cd src && ghc -package parsec -o ../$@ --make Main
 
 %.o: %.hs
-	ghc -c $<
+	cd src && ghc -c ../$<
 
 test: all
-	prove sanity.t
+	prove -r t
 
 clean:
-	-rm restyscript
+	-rm bin/restyscript
 	-find -name '*.o' -delete
 	-find -name '*.hi' -delete
 

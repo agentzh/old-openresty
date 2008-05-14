@@ -11,7 +11,7 @@ run {
     my $block = shift;
     my $desc = $block->description;
     my ($stdout, $stderr);
-    run3 ['./restyscript', $block->in], \undef, \$stdout, \$stderr;
+    run3 ['bin/restyscript', $block->in], \undef, \$stdout, \$stderr;
     is $? >> 8, 0, "compiler returns 0 - $desc";
     warn $stderr if $stderr;
     my @ln = split /\n+/, $stdout;
