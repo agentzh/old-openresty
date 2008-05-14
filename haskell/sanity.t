@@ -4,10 +4,8 @@ use strict;
 use warnings;
 
 use IPC::Run3;
-use Test::Base;
+use Test::Base 'no_plan';
 use Test::LongString;
-
-plan tests => 3 * blocks();
 
 run {
     my $block = shift;
@@ -17,7 +15,9 @@ run {
     is $? >> 8, 0, "compiler returns 0 - $desc";
     warn $stderr if $stderr;
     my @ln = split /\n+/, $stdout;
-    is "$ln[0]\n", $block->ast, "AST ok - $desc";
+    if (defined $block->ast) {
+        is "$ln[0]\n", $block->ast, "AST ok - $desc";
+    }
     is "$ln[1]\n", $block->out, "Pg/SQL output ok - $desc";
 };
 
@@ -66,8 +66,6 @@ select "id" from "Post" where ((("a" > "b")))
 === TEST 5: simple or
 --- in
 select id from Post  where a > b or b <= c
---- ast
-Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr (">",Column (Symbol "a"),Column (Symbol "b"))],AndExpr [RelExpr ("<=",Column (Symbol "b"),Column (Symbol "c"))]])
 --- out
 select "id" from "Post" where ((("a" > "b")) or (("b" <= "c")))
 
@@ -76,8 +74,6 @@ select "id" from "Post" where ((("a" > "b")) or (("b" <= "c")))
 === TEST 6: and in or
 --- in
 select id from Post where a > b and a like b or b = c and d >= e or e <> d'
---- ast
-Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr (">",Column (Symbol "a"),Column (Symbol "b")),RelExpr ("like",Column (Symbol "a"),Column (Symbol "b"))],AndExpr [RelExpr ("=",Column (Symbol "b"),Column (Symbol "c")),RelExpr (">=",Column (Symbol "d"),Column (Symbol "e"))],AndExpr [RelExpr ("<>",Column (Symbol "e"),Column (Symbol "d"))]])
 --- out
 select "id" from "Post" where ((("a" > "b") and ("a" like "b")) or (("b" = "c") and ("d" >= "e")) or (("e" <> "d")))
 
