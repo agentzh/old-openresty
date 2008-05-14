@@ -66,11 +66,9 @@ select "id" from "Post" where ((("a" > "b")))
 
 === TEST 5: floating-point numbers
 --- in
-select id from Post where 00.003 > 3.14
---- ast
-Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr (">",Float 3.0e-3,Float 3.14)]])
+select id from Post where 00.003 > 3.14 or 3. > .0
 --- out
-select "id" from "Post" where (((3.0e-3 > 3.14)))
+select "id" from "Post" where (((3.0e-3 > 3.14)) or ((3.0 > 0.0)))
 
 
 

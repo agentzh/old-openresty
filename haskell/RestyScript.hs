@@ -157,7 +157,11 @@ parseNumber = try (parseFloat)
 parseFloat :: Parser SqlVal
 parseFloat = do int <- many1 digit
                 char '.'
-                dec <- many1 digit
+                dec <- many digit
                 spaces
-                return $ Float $ read (int ++ "." ++ dec)
+                return $ Float $ read (int ++ "." ++ noEmpty dec)
+         <|> do char '.'
+                dec <- many1 digit
+                return $ Float $ read ("0." ++ dec)
+         where noEmpty s = if s == "" then "0" else s
 
