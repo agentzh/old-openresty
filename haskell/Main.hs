@@ -11,7 +11,7 @@ main = do args <- getArgs
             otherwise -> putStrLn "Usage: restyview <source>"
 
 processArg :: String -> IO ()
-processArg input = case readView "RestyScript" input of
+processArg input = case compileView "RestyScript" input of
                     Left err -> hPutStrLn stderr err
                     Right vals -> do putStrLn (vals!!0)
                                      putStrLn (vals!!1)
