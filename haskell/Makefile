@@ -1,6 +1,6 @@
 all: restyscript
 
-restyscript: RestyScript/AST.o RestyScript/Emitter.o RestyScript/Parser.o RestyScript.o Main.o
+restyscript: src/RestyScript/AST.o src/RestyScript/Emitter.o src/RestyScript/Parser.o src/RestyScript.o src/Main.o
 	ghc -package parsec -o $@ --make Main
 
 %.o: %.hs
