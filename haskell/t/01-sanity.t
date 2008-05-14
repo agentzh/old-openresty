@@ -5,7 +5,6 @@ use warnings;
 
 use IPC::Run3;
 use Test::Base 'no_plan';
-use Test::LongString;
 
 run {
     my $block = shift;
