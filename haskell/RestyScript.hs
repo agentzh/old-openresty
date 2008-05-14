@@ -6,9 +6,6 @@ module RestyScript (
 import Text.ParserCombinators.Parsec
 import Data.List (intercalate)
 
-data VarContext = SymbolContext | LiteralContext
-                deriving (Ord, Eq, Show)
-
 data SqlVal = Select [SqlVal]
             | From [SqlVal]
             | Where SqlVal
@@ -19,7 +16,7 @@ data SqlVal = Select [SqlVal]
             | Integer Integer
             | Float Float
             | String String
-            | Variable (VarContext, String)
+            | Variable (String)
             | FuncCall (String, [SqlVal])
             | RelExpr (String, SqlVal, SqlVal)
             | OrExpr [SqlVal]
