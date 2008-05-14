@@ -44,9 +44,11 @@ emitSql (Column col) = emitSql col
 emitSql (Symbol name) = quoteIdent name
 emitSql (Integer int) = show int
 emitSql (Float float) = printf "%0f" float
+emitSql (OrExpr [x]) = emitSql x
 emitSql (OrExpr args) = "(" ++ (intercalate " or " $ map emitSql args) ++ ")"
+emitSql (AndExpr [x]) = emitSql x
 emitSql (AndExpr args) = "(" ++ (intercalate " and " $ map emitSql args) ++ ")"
-emitSql (RelExpr (op, lhs, rhs)) = "(" ++ (emitSql lhs) ++ " " ++ op ++ " " ++ (emitSql rhs) ++ ")"
+emitSql (RelExpr (op, lhs, rhs)) = (emitSql lhs) ++ " " ++ op ++ " " ++ (emitSql rhs)
 emitSql Null = ""
 emitSql AnyColumn = "*"
 
