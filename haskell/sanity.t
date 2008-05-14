@@ -15,8 +15,9 @@ run {
     is $? >> 8, 0, "compiler returns 0 - $desc";
     warn $stderr if $stderr;
     my @ln = split /\n+/, $stdout;
-    if (defined $block->ast) {
-        is "$ln[0]\n", $block->ast, "AST ok - $desc";
+    my $ast = $block->ast;
+    if (defined $ast) {
+        is "$ln[0]\n", $ast, "AST ok - $desc";
     }
     is "$ln[1]\n", $block->out, "Pg/SQL output ok - $desc";
 };
@@ -63,7 +64,27 @@ select "id" from "Post" where ((("a" > "b")))
 
 
 
-=== TEST 5: simple or
+=== TEST 5: floating-point numbers
+--- in
+select id from Post where 00.003 > 3.14
+--- ast
+Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr (">",Float 3.0e-3,Float 3.14)]])
+--- out
+select "id" from "Post" where (((3.0e-3 > 3.14)))
+
+
+
+=== TEST 6: integral numbers
+--- in
+select id from Post where 256 > 0
+--- ast
+Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr (">",Integer 256,Integer 0)]])
+--- out
+select "id" from "Post" where (((256 > 0)))
+
+
+
+=== TEST 7: simple or
 --- in
 select id from Post  where a > b or b <= c
 --- out
@@ -71,7 +92,7 @@ select "id" from "Post" where ((("a" > "b")) or (("b" <= "c")))
 
 
 
-=== TEST 6: and in or
+=== TEST 8: and in or
 --- in
 select id from Post where a > b and a like b or b = c and d >= e or e <> d'
 --- out
