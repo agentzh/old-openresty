@@ -6,6 +6,7 @@ data SqlVal = Select [SqlVal]
             | From [SqlVal]
             | Where SqlVal
             | Limit SqlVal
+            | Offset SqlVal
             | OrderBy [SqlVal]
             | OrderPair (SqlVal, String)
             | GroupBy SqlVal
