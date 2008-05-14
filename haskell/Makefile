@@ -9,3 +9,8 @@ restyscript: RestyScript/AST.o RestyScript/Emitter.o RestyScript/Parser.o RestyS
 test: all
 	prove sanity.t
 
+clean:
+	-rm restyscript
+	-find -name '*.o' -delete
+	-find -name '*.hi' -delete
+
