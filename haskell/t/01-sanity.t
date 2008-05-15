@@ -210,9 +210,17 @@ select "select", 0.125 from "from" where ("where" > "or" or ("and" < "and" and "
 
 
 
-=== TEST 22: signed numbers
+=== TEST 22: signed negative numbers
 --- in
 select -3 , - 3 , -1.25,- .3
 --- out
 select -3, -3, -1.25, -0.3
+
+
+
+=== TEST 23: signed positive numbers
+--- in
+select +3 , + 3 , +1.25,+ .3
+--- out
+select 3, 3, 1.25, 0.3
 
