@@ -243,5 +243,6 @@ quotedChar c = do char '\\'
                             Just r -> r
                             Nothing -> c
            <|> noneOf [c]
-           <|> try (string [c,c]) >> return c
+           <|> do try (string [c,c])
+                  return c
 
