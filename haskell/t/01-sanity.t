@@ -59,7 +59,7 @@ select "id", "name", "age" from "Post", "Comment"
 --- in
 select id from Post where a > b
 --- ast
-Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr ">" (Column (Symbol "a")) (Column (Symbol "b"))]])
+Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (Compare ">" (Column (Symbol "a")) (Column (Symbol "b")))
 --- out
 select "id" from "Post" where "a" > "b"
 
@@ -77,7 +77,7 @@ select "id" from "Post" where (0.003 > 3.14 or 3.0 > 0.0)
 --- in
 select id from Post where 256 > 0
 --- ast
-Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr ">" (Integer 256) (Integer 0)]])
+Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (Compare ">" (Integer 256) (Integer 0))
 --- out
 select "id" from "Post" where 256 > 0
 
@@ -93,9 +93,9 @@ select "id" from "Post" where ("a" > "b" or "b" <= "c")
 
 === TEST 8: and in or
 --- in
-select id from Post where a > b and a like b or b = c and d >= e or e <> d
+select id from Post where a>b and a like b or b=c and d>=e or e<>d
 --- out
-select "id" from "Post" where (("a" > "b" and "a" like "b") or ("b" = "c" and "d" >= "e") or "e" <> "d")
+select "id" from "Post" where ((("a" > "b" and "a" like "b") or ("b" = "c" and "d" >= "e")) or "e" <> "d")
 
 
 
@@ -197,10 +197,9 @@ select * from ?, ?
 --- in
 select * from A where $id > 0 offset $off limit $lim group by $foo
 --- ast
-Select [AnyColumn] From [Model (Symbol "A")] Where (OrExpr [AndExpr [RelExpr ">" (Variable "id") (Integer 0)]]) Offset (Variable "off") Limit (Variable "lim") GroupBy (Column (Variable "foo"))
+Select [AnyColumn] From [Model (Symbol "A")] Where (Compare ">" (Variable "id") (Integer 0)) Offset (Variable "off") Limit (Variable "lim") GroupBy (Column (Variable "foo"))
 --- out
 select * from "A" where ? > 0 offset ? limit ? group by ?
-
 
 
 === TEST 21: weird identifiers
@@ -231,4 +230,12 @@ select 3, 3, 1.25, 0.3, 1
 select Foo.bar , Foo . bar , "Foo" . bar , "Foo"."bar" from Foo
 --- out
 select "Foo"."bar", "Foo"."bar", "Foo"."bar", "Foo"."bar" from "Foo"
+
+
+
+=== TEST 25: selected cols with parens
+--- in
+select (32) , ((5)) as item
+--- out
+select 32, 5 as "item"
 
