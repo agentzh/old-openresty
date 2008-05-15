@@ -27,7 +27,7 @@ emitSqlForList ls = intercalate ", " $ map emitSql ls
 emitSql :: SqlVal -> String
 emitSql (String s) = quoteLiteral s
 emitSql (Variable v) = "?"
-emitSql (FuncCall (f, args)) = (quoteIdent f) ++
+emitSql (FuncCall f args) = (quoteIdent f) ++
                                   "(" ++ (emitSqlForList args) ++ ")"
 
 emitSql (Select cols) = "select " ++ (emitSqlForList cols)
@@ -38,7 +38,7 @@ emitSql (GroupBy col) = "group by " ++ emitSql col
 emitSql (Limit lim) = "limit " ++ emitSql lim
 emitSql (Offset offset) = "offset " ++ emitSql offset
 
-emitSql (OrderPair (col, dir)) = (emitSql col) ++ " " ++ dir
+emitSql (OrderPair col dir) = (emitSql col) ++ " " ++ dir
 emitSql (Model model) = emitSql model
 emitSql (Column col) = emitSql col
 emitSql (Symbol name) = quoteIdent name
@@ -48,7 +48,7 @@ emitSql (OrExpr [x]) = emitSql x
 emitSql (OrExpr args) = "(" ++ (intercalate " or " $ map emitSql args) ++ ")"
 emitSql (AndExpr [x]) = emitSql x
 emitSql (AndExpr args) = "(" ++ (intercalate " and " $ map emitSql args) ++ ")"
-emitSql (RelExpr (op, lhs, rhs)) = (emitSql lhs) ++ " " ++ op ++ " " ++ (emitSql rhs)
+emitSql (RelExpr op lhs rhs) = (emitSql lhs) ++ " " ++ op ++ " " ++ (emitSql rhs)
 emitSql Null = ""
 emitSql AnyColumn = "*"
 

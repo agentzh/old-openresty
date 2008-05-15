@@ -8,18 +8,18 @@ data SqlVal = Select [SqlVal]
             | Limit SqlVal
             | Offset SqlVal
             | OrderBy [SqlVal]
-            | OrderPair (SqlVal, String)
+            | OrderPair SqlVal String
             | GroupBy SqlVal
             | Column SqlVal
             | Model SqlVal
             | Symbol String
-            | QualifiedColumn (SqlVal, SqlVal)
+            | QualifiedColumn SqlVal SqlVal
             | Integer Integer
             | Float Double
             | String String
-            | Variable (String)
-            | FuncCall (String, [SqlVal])
-            | RelExpr (String, SqlVal, SqlVal)
+            | Variable String
+            | FuncCall String [SqlVal]
+            | RelExpr String SqlVal SqlVal
             | OrExpr [SqlVal]
             | AndExpr [SqlVal]
             | Null
