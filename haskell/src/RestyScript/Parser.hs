@@ -176,10 +176,10 @@ parseArithAtom = parseNumber
              <|> parseVariable
              <|> try (parseFuncCall)
              <|> parseColumn
-             <|> do char '(' >> spaces
-                    t <- parseExpr
-                    char ')' >> spaces
-                    return t
+             <|> parens parseExpr
+
+parens :: Parser a -> Parser a
+parens = between (char '(' >> spaces) (char ')' >> spaces)
 
 keyword :: String -> Parser String
 keyword s = try (do string s
@@ -188,11 +188,13 @@ keyword s = try (do string s
 
 parseFuncCall :: Parser SqlVal
 parseFuncCall = do f <- symbol
-                   spaces >> char '(' >> spaces
-                   args <- (do v <- parseAnyColumn; return [v]) <|>
-                            sepBy parseExpr listSep
-                   spaces >> char ')' >> spaces
+                   args <- spaces >> parens parseArgs
                    return $ FuncCall f args
+
+parseArgs :: Parser [SqlVal]
+parseArgs = do v <- parseAnyColumn
+               return [v]
+        <|> sepBy parseExpr listSep
 
 parseVariable :: Parser SqlVal
 parseVariable = do v <- char '$' >> symbol
@@ -227,8 +229,9 @@ parseFloat sign = do int <- many1 digit
     where noEmpty s = if s == "" then "0" else s
 
 parseString :: Parser SqlVal
-parseString = do s <- char '\'' >> many (quotedChar '\'')
-                 char '\'' >> spaces
+parseString = do s <- between (char '\'') (char '\'')
+                        (many $ quotedChar '\'')
+                 spaces
                  return $ String s
           <?> "string"
 
