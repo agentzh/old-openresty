@@ -10,6 +10,8 @@ data SqlVal = Select [SqlVal]
             | OrderBy [SqlVal]
             | OrderPair SqlVal String
             | GroupBy SqlVal
+            | Alias SqlVal SqlVal
+            | Term SqlVal
             | Column SqlVal
             | Model SqlVal
             | Symbol String
@@ -19,9 +21,9 @@ data SqlVal = Select [SqlVal]
             | String String
             | Variable String
             | FuncCall String [SqlVal]
-            | RelExpr String SqlVal SqlVal
-            | OrExpr [SqlVal]
-            | AndExpr [SqlVal]
+            | Compare String SqlVal SqlVal
+            | Or SqlVal SqlVal
+            | And SqlVal SqlVal
             | Null
             | AnyColumn
                 deriving (Ord, Eq, Show)

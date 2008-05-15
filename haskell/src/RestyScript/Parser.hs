@@ -4,6 +4,7 @@ module RestyScript.Parser (
 
 import RestyScript.AST
 import Text.ParserCombinators.Parsec
+import Text.ParserCombinators.Parsec.Expr
 
 readView :: String -> String -> Either ParseError [SqlVal]
 readView = parse parseView
@@ -28,13 +29,13 @@ parseMoreClause = parseOrderBy
 
 parseLimit :: Parser SqlVal
 parseLimit = do string "limit" >> many1 space
-                x <- parseTerm
+                x <- parseExpr
                 return $ Limit x
          <?> "limit clause"
 
 parseOffset :: Parser SqlVal
 parseOffset = do string "offset" >> many1 space
-                 x <- parseTerm
+                 x <- parseExpr
                  return $ Offset x
           <?> "offset clause"
 
@@ -97,9 +98,17 @@ listSep = opSep ","
 
 parseSelect :: Parser SqlVal
 parseSelect = do string "select" >> many1 space
-                 cols <- sepBy1 (parseTerm <|> parseAnyColumn) listSep
+                 cols <- sepBy1 (parseSelectedItem <|> parseAnyColumn) listSep
                  return $ Select cols
           <?> "select clause"
+
+parseSelectedItem :: Parser SqlVal
+parseSelectedItem = do col <- parseExpr
+                       alias <- (keyword "as" >> spaces >> parseIdent)
+                                    <|> (return Null)
+                       return $ case alias of
+                            Null -> col
+                            otherwise -> Alias col alias
 
 parseColumn :: Parser SqlVal
 parseColumn = do a <- parseIdent
@@ -117,60 +126,51 @@ parseAnyColumn = do char '*'
 
 parseWhere :: Parser SqlVal
 parseWhere = do string "where" >> many1 space
-                cond <- parseOr
+                cond <- parseExpr
                 return $ Where cond
          <|> (return Null)
          <?> "where clause"
 
-parseOr :: Parser SqlVal
-parseOr = do args <- sepBy1 parseAnd (opSep' "or")
-             return $ OrExpr args
+parseExpr :: Parser SqlVal
+parseExpr = buildExpressionParser opTable parseArithAtom
+        <?> "expression"
+
+opTable = [
+            [
+                relOp ">=", relOp ">",
+                relOp "<=", relOp "<>", relOp "<",
+                relOp "=", relOp "!=", relOp' "like"],
+            [op' "and" And AssocLeft],
+            [op' "or" Or AssocLeft]
+            ]
+      where
+        op s f assoc
+           = Infix (do { reservedOp s; spaces; return f} <?> "operator") assoc
+        op' s f assoc
+           = Infix (do { reservedWord s; spaces; return f} <?> "operator") assoc
+        relOp s
+           = op s (Compare s) AssocNone
+        relOp' s
+           = op' s (Compare s) AssocNone
+
+reservedWord :: String -> Parser String
+reservedWord s = try(do string s; notFollowedBy alphaNum; spaces; return s)
+
+reservedOp :: String -> Parser String
+reservedOp s = try(do string s; spaces; return s)
 
 opSep :: String -> Parser ()
 opSep op = string op >> spaces
 
-opSep' :: String -> Parser ()
-opSep' op = keyword op >> spaces
-
-
-parseAnd :: Parser SqlVal
-parseAnd = do args <- sepBy1 parseLogicAtom (opSep' "and")
-              return $ AndExpr args
-
-parseLogicAtom :: Parser SqlVal
-parseLogicAtom = parseRel
-             <|> do char '('
-                    spaces
-                    expr <- parseOr
-                    char ')'
-                    spaces
-                    return expr
-
-parseRel :: Parser SqlVal
-parseRel = do lhs <- parseTerm
-              op <- relOp
-              spaces
-              rhs <- parseTerm
-              return $ RelExpr op lhs rhs
-         <?> "comparison expression"
-
-relOp :: Parser String
-relOp = string "="
-         <|> try (string ">=")
-         <|> string ">"
-         <|> try (string "<=")
-         <|> try (string "<>")
-         <|> string "<"
-         <|> string "!="
-         <|> keyword "like"
-
-parseTerm :: Parser SqlVal
-parseTerm = parseNumber
-        <|> parseString
-        <|> parseVariable
-        <|> try (parseFuncCall)
-        <|> parseColumn
-        <?> "term"
+parseArithAtom = parseNumber
+             <|> parseString
+             <|> parseVariable
+             <|> try (parseFuncCall)
+             <|> parseColumn
+             <|> do char '(' >> spaces
+                    t <- parseExpr
+                    char ')' >> spaces
+                    return t
 
 keyword :: String -> Parser String
 keyword s = try (do string s
@@ -180,7 +180,7 @@ keyword s = try (do string s
 parseFuncCall :: Parser SqlVal
 parseFuncCall = do f <- symbol
                    spaces >> char '(' >> spaces
-                   args <- sepBy parseTerm listSep
+                   args <- sepBy parseExpr listSep
                    spaces >> char ')' >> spaces
                    return $ FuncCall f args
 
