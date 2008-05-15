@@ -143,9 +143,14 @@ opTable = [
             [
                 relOp ">=", relOp ">",
                 relOp "<=", relOp "<>", relOp "<",
-                relOp "=", relOp "!=", relOp' "like"],
-            [op' "and" And AssocLeft],
-            [op' "or" Or AssocLeft]
+                relOp "=", relOp "!=", relOp' "like"
+                ],
+            [
+                op' "and" And AssocLeft
+                ],
+            [
+                op' "or" Or AssocLeft
+                ]
             ]
       where
         op s f assoc
@@ -190,8 +195,7 @@ parseFuncCall = do f <- symbol
                    return $ FuncCall f args
 
 parseVariable :: Parser SqlVal
-parseVariable = do char '$'
-                   v <- symbol
+parseVariable = do v <- char '$' >> symbol
                    spaces
                    return $ Variable v
 
@@ -213,22 +217,18 @@ parseInteger sign  = do digits <- many1 digit
 
 parseFloat :: String -> Parser SqlVal
 parseFloat sign = do int <- many1 digit
-                     char '.'
-                     dec <- many digit
+                     dec <- char '.' >> many digit
                      spaces
                      return $ Float $ read (sign ++ int ++ "." ++ noEmpty dec)
-              <|> do char '.'
-                     dec <- many1 digit
+              <|> do dec <- char '.' >> many1 digit
                      spaces
                      return $ Float $ read (sign ++ "0." ++ dec)
               <?> "floating-point number"
     where noEmpty s = if s == "" then "0" else s
 
 parseString :: Parser SqlVal
-parseString = do char '\''
-                 s <- many $ quotedChar '\''
-                 char '\''
-                 spaces
+parseString = do s <- char '\'' >> many (quotedChar '\'')
+                 char '\'' >> spaces
                  return $ String s
           <?> "string"
 
@@ -237,8 +237,7 @@ unescapes = zipWith pair "bnfrt" "\b\n\f\r\t"
     where pair a b = (a, b)
 
 quotedChar :: Char -> Parser Char
-quotedChar c = do char '\\'
-                  c <- anyChar
+quotedChar c = do c <- char '\\' >> anyChar
                   return $ case lookup c unescapes of
                             Just r -> r
                             Nothing -> c
