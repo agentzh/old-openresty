@@ -269,3 +269,11 @@ select * from Post as foo
 --- out
 select * from "Post" as "foo"
 
+
+
+=== TEST 29: from proc
+--- in
+select * from proc(32, 'hello'), blah(3) as poo
+--- out
+select * from "proc"(32, 'hello'), "blah"(3) as "poo"
+
