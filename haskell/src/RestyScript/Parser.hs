@@ -66,16 +66,16 @@ parseFrom = do string "from" >> many1 space
 
 parseModel :: Parser SqlVal
 parseModel = do model <- parseIdent
-                spaces
                 return $ Model model
          <?> "model"
 
 parseIdent :: Parser SqlVal
 parseIdent = do s <- symbol
+                spaces
                 return $ Symbol s
          <|> do char '"'
                 s <- symbol
-                char '"'
+                char '"' >> spaces
                 return $ Symbol s
          <|> parseVariable
          <?> "identifier entry"
@@ -188,23 +188,33 @@ parseVariable = do char '$'
                    return $ Variable v
 
 parseNumber :: Parser SqlVal
-parseNumber = try (parseFloat)
-          <|> do int <- many1 digit
-                 spaces
-                 return $ Integer $ read int
+parseNumber = do sign <- parseSign
+                 val <- (try (parseFloat sign) <|> parseInteger sign)
+                 return val
           <?> "number"
 
-parseFloat :: Parser SqlVal
-parseFloat = do int <- many1 digit
-                char '.'
-                dec <- many digit
-                spaces
-                return $ Float $ read (int ++ "." ++ noEmpty dec)
-         <|> do char '.'
-                dec <- many1 digit
-                return $ Float $ read ("0." ++ dec)
-         <?> "floating-point number"
-         where noEmpty s = if s == "" then "0" else s
+parseSign :: Parser String
+parseSign = do c <- oneOf "+-"
+               spaces
+               return $ if c == '+' then "" else "-"
+        <|> (return "")
+
+parseInteger :: String -> Parser SqlVal
+parseInteger sign  = do digits <- many1 digit
+                        spaces
+                        return $ Integer $ read (sign ++ digits)
+
+parseFloat :: String -> Parser SqlVal
+parseFloat sign = do int <- many1 digit
+                     char '.'
+                     dec <- many digit
+                     spaces
+                     return $ Float $ read (sign ++ int ++ "." ++ noEmpty dec)
+              <|> do char '.'
+                     dec <- many1 digit
+                     return $ Float $ read (sign ++ "0." ++ dec)
+              <?> "floating-point number"
+    where noEmpty s = if s == "" then "0" else s
 
 parseString :: Parser SqlVal
 parseString = do char '\''
