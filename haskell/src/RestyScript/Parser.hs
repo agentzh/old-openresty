@@ -221,7 +221,8 @@ parseFloat :: String -> Parser SqlVal
 parseFloat sign = do int <- many1 digit
                      dec <- char '.' >> many digit
                      spaces
-                     return $ Float $ read (sign ++ int ++ "." ++ noEmpty dec)
+                     return $ Float $
+                        read (sign ++ int ++ "." ++ noEmpty dec)
               <|> do dec <- char '.' >> many1 digit
                      spaces
                      return $ Float $ read (sign ++ "0." ++ dec)
