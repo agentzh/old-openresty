@@ -242,7 +242,7 @@ select 32, 5 as "item"
 
 === TEST 25: count(*)
 --- in
-select count(*) from Post
+select count(*), count ( * ) from Post
 --- out
-select "count"(*) from "Post"
+select "count"(*), "count"(*) from "Post"
 
