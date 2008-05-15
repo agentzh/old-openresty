@@ -220,7 +220,7 @@ select -3, -3, -1.25, -0.3
 
 === TEST 23: signed positive numbers
 --- in
-select +3 , + 3 , +1.25,+ .3
+select +3 , + 3 , +1.25,+ .3 , 1
 --- out
-select 3, 3, 1.25, 0.3
+select 3, 3, 1.25, 0.3, 1
 

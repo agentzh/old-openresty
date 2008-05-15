@@ -189,8 +189,7 @@ parseVariable = do char '$'
 
 parseNumber :: Parser SqlVal
 parseNumber = do sign <- parseSign
-                 val <- (try (parseFloat sign) <|> parseInteger sign)
-                 return val
+                 (try (parseFloat sign) <|> parseInteger sign)
           <?> "number"
 
 parseSign :: Parser String
@@ -212,6 +211,7 @@ parseFloat sign = do int <- many1 digit
                      return $ Float $ read (sign ++ int ++ "." ++ noEmpty dec)
               <|> do char '.'
                      dec <- many1 digit
+                     spaces
                      return $ Float $ read (sign ++ "0." ++ dec)
               <?> "floating-point number"
     where noEmpty s = if s == "" then "0" else s
