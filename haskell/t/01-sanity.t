@@ -202,6 +202,7 @@ Select [AnyColumn] From [Model (Symbol "A")] Where (Compare ">" (Variable "id") 
 select * from "A" where ? > 0 offset ? limit ? group by ?
 
 
+
 === TEST 21: weird identifiers
 --- in
 select select, 0.125 from from where where > or or and < and and order > 3.12 order by order, group group by by
@@ -225,6 +226,7 @@ select +3 , + 3 , +1.25,+ .3 , 1
 select 3, 3, 1.25, 0.3, 1
 
 
+
 === TEST 24: qualified columns
 --- in
 select Foo.bar , Foo . bar , "Foo" . bar , "Foo"."bar" from Foo
@@ -236,13 +238,34 @@ select "Foo"."bar", "Foo"."bar", "Foo"."bar", "Foo"."bar" from "Foo"
 === TEST 25: selected cols with parens
 --- in
 select (32) , ((5)) as item
+--- ast
+Select [Integer 32,Alias (Integer 5) (Symbol "item")]
 --- out
 select 32, 5 as "item"
 
 
-=== TEST 25: count(*)
+
+=== TEST 26: count(*)
 --- in
 select count(*), count ( * ) from Post
 --- out
 select "count"(*), "count"(*) from "Post"
+
+
+
+=== TEST 27: aliased cols
+--- in
+select id as foo, count(*) as bar from Post
+--- ast
+Select [Alias (Column (Symbol "id")) (Symbol "foo"),Alias (FuncCall "count" [AnyColumn]) (Symbol "bar")] From [Model (Symbol "Post")]
+--- out
+select "id" as "foo", "count"(*) as "bar" from "Post"
+
+
+
+=== TEST 28: alias for models
+--- in
+select * from Post as foo
+--- out
+select * from "Post" as "foo"
 

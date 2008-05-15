@@ -67,8 +67,17 @@ parseFrom = do string "from" >> many1 space
 
 parseModel :: Parser SqlVal
 parseModel = do model <- parseIdent
-                return $ Model model
+                alias <- parseModelAlias (Model model)
+                return $ case alias of
+                    Null -> Model model
+                    otherwise -> alias
          <?> "model"
+
+parseModelAlias :: SqlVal -> Parser SqlVal
+parseModelAlias model = do keyword "as" >> many1 space
+                           alias <- parseIdent
+                           return $ Alias model alias
+                    <|> return Null
 
 parseIdent :: Parser SqlVal
 parseIdent = do s <- symbol
