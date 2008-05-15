@@ -11,13 +11,11 @@ readView :: String -> String -> Either ParseError [SqlVal]
 readView = parse parseView
 
 parseView :: Parser [SqlVal]
-parseView = do spaces
-               select <- parseSelect
+parseView = do select <- spaces >> parseSelect
                from <- parseFrom
                whereClause <- parseWhere
                moreClauses <- sepBy parseMoreClause spaces
-               spaces
-               eof
+               spaces >> eof
                return $ filter (\x->x /= Null)
                             [select, from, whereClause] ++ moreClauses
         <?> "select statement"
@@ -29,41 +27,35 @@ parseMoreClause = parseOrderBy
               <|> parseGroupBy
 
 parseLimit :: Parser SqlVal
-parseLimit = do string "limit" >> many1 space
-                x <- parseExpr
-                return $ Limit x
+parseLimit = liftM Limit (string "limit" >> many1 space >> parseExpr)
          <?> "limit clause"
 
 parseOffset :: Parser SqlVal
-parseOffset = do string "offset" >> many1 space
-                 x <- parseExpr
-                 return $ Offset x
+parseOffset = liftM Offset (string "offset" >> many1 space >> parseExpr)
           <?> "offset clause"
 
 parseOrderBy :: Parser SqlVal
 parseOrderBy = do try (string "order") >> many1 space >>
                     string "by" >> many1 space
-                  pairs <- sepBy parseOrderPair listSep
-                  return $ OrderBy pairs
+                  liftM OrderBy $ sepBy parseOrderPair listSep
            <?> "order by clause"
 
 parseOrderPair :: Parser SqlVal
 parseOrderPair = do col <- parseColumn
-                    dir <- (string "asc" <|> string "desc" <|> (return "asc"))
+                    dir <- string "asc"
+                            <|> string "desc"
+                            <|> return "asc"
                     spaces
                     return $ OrderPair col dir
 
 parseGroupBy :: Parser SqlVal
-parseGroupBy = do string "group" >> many1 space >>
-                    string "by" >> many1 space
-                  x <- parseColumn
-                  return $ GroupBy x
+parseGroupBy = liftM GroupBy (string "group" >> many1 space >>
+                    string "by" >> many1 space >> parseColumn)
 
 parseFrom :: Parser SqlVal
-parseFrom = do string "from" >> many1 space
-               models <- sepBy1 parseFromItem listSep
-               return $ From models
-        <|> (return $ Null)
+parseFrom = liftM From (string "from" >> many1 space >>
+                sepBy1 parseFromItem listSep)
+        <|> return Null
         <?> "from clause"
 
 parseFromItem :: Parser SqlVal
