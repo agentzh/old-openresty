@@ -1,11 +1,12 @@
 #!/usr/bin/env perl
+# vi:filetype=
 
 use strict;
 use warnings;
 
 use IPC::Run3;
 use Test::Base 'no_plan';
-use Test::LongString;
+#use Test::LongString;
 
 run {
     my $block = shift;
@@ -19,7 +20,7 @@ run {
     if (defined $ast) {
         is "$ln[0]\n", $ast, "AST ok - $desc";
     }
-    is_string "$ln[1]\n", $block->out, "Pg/SQL output ok - $desc";
+    is "$ln[1]\n", $block->out, "Pg/SQL output ok - $desc";
 };
 
 __DATA__
@@ -223,4 +224,11 @@ select -3, -3, -1.25, -0.3
 select +3 , + 3 , +1.25,+ .3 , 1
 --- out
 select 3, 3, 1.25, 0.3, 1
+
+
+=== TEST 24: qualified columns
+--- in
+select Foo.bar , Foo . bar , "Foo" . bar , "Foo"."bar" from Foo
+--- out
+select "Foo"."bar", "Foo"."bar", "Foo"."bar", "Foo"."bar" from "Foo"
 

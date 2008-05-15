@@ -29,6 +29,7 @@ emitSql (String s) = quoteLiteral s
 emitSql (Variable v) = "?"
 emitSql (FuncCall f args) = (quoteIdent f) ++
                                   "(" ++ (emitSqlForList args) ++ ")"
+emitSql (QualifiedColumn model col) = (emitSql model) ++ "." ++ (emitSql col)
 
 emitSql (Select cols) = "select " ++ (emitSqlForList cols)
 emitSql (From models) = "from " ++ (emitSqlForList models)
