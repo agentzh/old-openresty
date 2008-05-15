@@ -5,6 +5,7 @@ module RestyScript.Parser (
 import RestyScript.AST
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Expr
+import Monad (liftM)
 
 readView :: String -> String -> Either ParseError [SqlVal]
 readView = parse parseView
@@ -60,24 +61,26 @@ parseGroupBy = do string "group" >> many1 space >>
 
 parseFrom :: Parser SqlVal
 parseFrom = do string "from" >> many1 space
-               models <- sepBy1 parseModel listSep
+               models <- sepBy1 parseFromItem listSep
                return $ From models
         <|> (return $ Null)
         <?> "from clause"
 
+parseFromItem :: Parser SqlVal
+parseFromItem = do model <- parseModel
+                   alias <- parseModelAlias
+                   return $ case alias of
+                                Null -> model
+                                otherwise -> Alias model alias
+
 parseModel :: Parser SqlVal
-parseModel = do model <- parseIdent
-                alias <- parseModelAlias (Model model)
-                return $ case alias of
-                    Null -> Model model
-                    otherwise -> alias
+parseModel = try(parseFuncCall)
+         <|> liftM Model parseIdent
          <?> "model"
 
-parseModelAlias :: SqlVal -> Parser SqlVal
-parseModelAlias model = do keyword "as" >> many1 space
-                           alias <- parseIdent
-                           return $ Alias model alias
-                    <|> return Null
+parseModelAlias :: Parser SqlVal
+parseModelAlias = liftM Model (keyword "as" >> many1 space >> parseIdent)
+              <|> return Null
 
 parseIdent :: Parser SqlVal
 parseIdent = do s <- symbol
