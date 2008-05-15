@@ -239,3 +239,10 @@ select (32) , ((5)) as item
 --- out
 select 32, 5 as "item"
 
+
+=== TEST 25: count(*)
+--- in
+select count(*) from Post
+--- out
+select "count"(*) from "Post"
+

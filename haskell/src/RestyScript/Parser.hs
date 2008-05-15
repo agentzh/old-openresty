@@ -180,7 +180,8 @@ keyword s = try (do string s
 parseFuncCall :: Parser SqlVal
 parseFuncCall = do f <- symbol
                    spaces >> char '(' >> spaces
-                   args <- sepBy parseExpr listSep
+                   args <- (do v <- parseAnyColumn; return [v]) <|>
+                            sepBy parseExpr listSep
                    spaces >> char ')' >> spaces
                    return $ FuncCall f args
 
