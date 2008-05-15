@@ -277,3 +277,37 @@ select * from proc(32, 'hello'), blah() as poo
 --- out
 select * from "proc"(32, 'hello'), "blah"() as "poo"
 
+
+
+=== TEST 30: arith
+--- in
+select 3+5/3*2 - 36 % 2
+--- ast
+Select [Arith "-" (Arith "+" (Integer 3) (Arith "*" (Arith "/" (Integer 5) (Integer 3)) (Integer 2))) (Arith "%" (Integer 36) (Integer 2))]
+--- out
+select ((3 + ((5 / 3) * 2)) - (36 % 2))
+
+
+
+=== TEST 31: arith (with parens)
+--- in
+select (3+5)/(3*2) - ( 36 % 2 )
+--- out
+select (((3 + 5) / (3 * 2)) - (36 % 2))
+
+
+
+=== TEST 32: string cat ||
+--- in
+select proc(2) || 'hello' || 5 - 2 + 5
+--- out
+select (("proc"(2) || 'hello') || ((5 - 2) + 5))
+
+
+
+=== TEST 33: ^
+--- in
+select 3*3*5^6^2
+--- out
+select ((3 * 3) * ((5 ^ 6) ^ 2))
+

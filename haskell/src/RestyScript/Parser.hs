@@ -141,6 +141,18 @@ parseExpr = buildExpressionParser opTable parseArithAtom
 
 opTable = [
             [
+                arithOp "^"
+                ],
+            [
+                arithOp "*", arithOp "/", arithOp "%"
+                ],
+            [
+                arithOp "+", arithOp "-"
+                ],
+            [
+                arithOp "||"
+                ],
+            [
                 relOp ">=", relOp ">",
                 relOp "<=", relOp "<>", relOp "<",
                 relOp "=", relOp "!=", relOp' "like"
@@ -161,6 +173,8 @@ opTable = [
            = op s (Compare s) AssocNone
         relOp' s
            = op' s (Compare s) AssocNone
+        arithOp s
+           = op s (Arith s) AssocLeft
 
 reservedWord :: String -> Parser String
 reservedWord s = try(do string s; notFollowedBy alphaNum; spaces; return s)
