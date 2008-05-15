@@ -48,6 +48,7 @@ emitSql (Float float) = printf "%0f" float
 emitSql (Or a b) = "(" ++ (emitSql a) ++ " or " ++  (emitSql b) ++ ")"
 emitSql (And a b) = "(" ++ (emitSql a) ++ " and " ++ (emitSql b) ++ ")"
 emitSql (Compare op lhs rhs) = (emitSql lhs) ++ " " ++ op ++ " " ++ (emitSql rhs)
+emitSql (Arith op lhs rhs) = "(" ++ (emitSql lhs) ++ " " ++ op ++ " " ++ (emitSql rhs) ++ ")"
 emitSql (Alias col alias) = (emitSql col) ++ " as " ++ (emitSql alias)
 emitSql Null = ""
 emitSql AnyColumn = "*"

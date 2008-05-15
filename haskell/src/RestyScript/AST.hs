@@ -22,6 +22,7 @@ data SqlVal = Select [SqlVal]
             | Variable String
             | FuncCall String [SqlVal]
             | Compare String SqlVal SqlVal
+            | Arith String SqlVal SqlVal
             | Or SqlVal SqlVal
             | And SqlVal SqlVal
             | Null
