@@ -102,9 +102,12 @@ parseSelect = do string "select" >> many1 space
           <?> "select clause"
 
 parseColumn :: Parser SqlVal
-parseColumn = do col <- parseIdent
+parseColumn = do a <- parseIdent
                  spaces
-                 return $ Column col
+                 b <- (char '.' >> spaces >> parseIdent) <|> (return Null)
+                 return $ case b of
+                    Null -> Column a
+                    otherwise -> QualifiedColumn a b
           <?> "column"
 
 parseAnyColumn :: Parser SqlVal
