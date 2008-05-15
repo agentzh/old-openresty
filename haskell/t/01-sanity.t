@@ -5,6 +5,7 @@ use warnings;
 
 use IPC::Run3;
 use Test::Base 'no_plan';
+use Test::LongString;
 
 run {
     my $block = shift;
@@ -16,7 +17,7 @@ run {
     my @ln = split /\n+/, $stdout;
     my $ast = $block->ast;
     if (defined $ast) {
-        is "$ln[0]\n", $ast, "AST ok - $desc";
+        is_string "$ln[0]\n", $ast, "AST ok - $desc";
     }
     is "$ln[1]\n", $block->out, "Pg/SQL output ok - $desc";
 };
@@ -57,7 +58,7 @@ select "id", "name", "age" from "Post", "Comment"
 --- in
 select id from Post where a > b
 --- ast
-Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr (">",Column (Symbol "a"),Column (Symbol "b"))]])
+Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr ">" (Column (Symbol "a")) (Column (Symbol "b"))]])
 --- out
 select "id" from "Post" where "a" > "b"
 
@@ -75,7 +76,7 @@ select "id" from "Post" where (0.003 > 3.14 or 3.0 > 0.0)
 --- in
 select id from Post where 256 > 0
 --- ast
-Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr (">",Integer 256,Integer 0)]])
+Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (OrExpr [AndExpr [RelExpr ">" (Integer 256) (Integer 0)]])
 --- out
 select "id" from "Post" where 256 > 0
 
@@ -117,7 +118,7 @@ select "id" from "Post" where 'a''''' != 'b\\\n\r\ba'
 --- in
 select id order  by  id
 --- ast
-Select [Column (Symbol "id")] OrderBy [OrderPair (Column (Symbol "id"),"asc")]
+Select [Column (Symbol "id")] OrderBy [OrderPair (Column (Symbol "id")) "asc"]
 --- out
 select "id" order by "id" asc
 
@@ -195,7 +196,7 @@ select * from ?, ?
 --- in
 select * from A where $id > 0 offset $off limit $lim group by $foo
 --- ast
-Select [AnyColumn] From [Model (Symbol "A")] Where (OrExpr [AndExpr [RelExpr (">",Variable "id",Integer 0)]]) Offset (Variable "off") Limit (Variable "lim") GroupBy (Column (Variable "foo"))
+Select [AnyColumn] From [Model (Symbol "A")] Where (OrExpr [AndExpr [RelExpr ">" (Variable "id") (Integer 0)]]) Offset (Variable "off") Limit (Variable "lim") GroupBy (Column (Variable "foo"))
 --- out
 select * from "A" where ? > 0 offset ? limit ? group by ?
 

@@ -49,7 +49,7 @@ parseOrderPair :: Parser SqlVal
 parseOrderPair = do col <- parseColumn
                     dir <- (string "asc" <|> string "desc" <|> (return "asc"))
                     spaces
-                    return $ OrderPair (col, dir)
+                    return $ OrderPair col dir
 
 parseGroupBy :: Parser SqlVal
 parseGroupBy = do string "group" >> many1 space >>
@@ -148,7 +148,7 @@ parseRel = do lhs <- parseTerm
               op <- relOp
               spaces
               rhs <- parseTerm
-              return $ RelExpr (op, lhs, rhs)
+              return $ RelExpr op lhs rhs
          <?> "comparison expression"
 
 relOp :: Parser String
@@ -179,7 +179,7 @@ parseFuncCall = do f <- symbol
                    spaces >> char '(' >> spaces
                    args <- sepBy parseTerm listSep
                    spaces >> char ')' >> spaces
-                   return $ FuncCall (f, args)
+                   return $ FuncCall f args
 
 parseVariable :: Parser SqlVal
 parseVariable = do char '$'
