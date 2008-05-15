@@ -17,9 +17,9 @@ run {
     my @ln = split /\n+/, $stdout;
     my $ast = $block->ast;
     if (defined $ast) {
-        is_string "$ln[0]\n", $ast, "AST ok - $desc";
+        is "$ln[0]\n", $ast, "AST ok - $desc";
     }
-    is "$ln[1]\n", $block->out, "Pg/SQL output ok - $desc";
+    is_string "$ln[1]\n", $block->out, "Pg/SQL output ok - $desc";
 };
 
 __DATA__
@@ -199,4 +199,20 @@ select * from A where $id > 0 offset $off limit $lim group by $foo
 Select [AnyColumn] From [Model (Symbol "A")] Where (OrExpr [AndExpr [RelExpr ">" (Variable "id") (Integer 0)]]) Offset (Variable "off") Limit (Variable "lim") GroupBy (Column (Variable "foo"))
 --- out
 select * from "A" where ? > 0 offset ? limit ? group by ?
+
+
+
+=== TEST 21: weird identifiers
+--- in
+select select, 0.125 from from where where > or or and < and and order > 3.12 order by order, group group by by
+--- out
+select "select", 0.125 from "from" where ("where" > "or" or ("and" < "and" and "order" > 3.12)) order by "order" asc, "group" asc group by "by"
+
+
+
+=== TEST 22: signed numbers
+--- in
+select -3 , - 3 , -1.25,- .3
+--- out
+select -3, -3, -1.25, -0.3
 
