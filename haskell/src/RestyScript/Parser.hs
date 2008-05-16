@@ -18,10 +18,16 @@ parseView = do ast <- parseSetExpr
 parseSetExpr :: Parser SqlVal
 parseSetExpr = buildExpressionParser setOpTable parseQuery
 
-setOpTable = [[ op "union", op "except", op "intersect" ]]
+setOpTable = [[
+                op "union", op "except", op "intersect" ]]
       where
         op s
-           = Infix (do { reservedWord s; spaces; return (SetOp s)}
+           = Infix (do { reservedWord s;
+                         spaces;
+                         suffix <- option "" (keyword "all");
+                         spaces;
+                         return $ SetOp $
+                            if suffix == "" then s else s ++ " all" }
                 <?> "operator") AssocLeft
 
 parseQuery :: Parser SqlVal
