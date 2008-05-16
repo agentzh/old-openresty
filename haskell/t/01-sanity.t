@@ -374,3 +374,12 @@ select 3 union (select 2 except select 3)
 --- out
 ((select 2) union (((select 3) intersect (select 2))))
 
+
+=== TEST 41: union all
+--- in
+select 2 union all select 2
+--- ast
+SetOp "union all" (Query [Select [Integer 2]]) (Query [Select [Integer 2]])
+--- out
+((select 2) union all (select 2))
+
