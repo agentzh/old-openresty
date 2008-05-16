@@ -335,6 +335,7 @@ SetOp "union" (Query [Select [Integer 2]]) (Query [Select [Integer 3]])
 ((select "count"(*) from "Post" limit 3) union (select "sum"(1) from "Comment"))
 
 
+
 === TEST 36: chained union
 --- in
 select 3 union select 2 union select 1;
@@ -366,7 +367,8 @@ select 3 union (select 2 except select 3)
 ((((select 2) union (select 3))) intersect (select 2))
 
 
-=== TEST 39: intersect
+
+=== TEST 40: intersect
 --- in
 (select 2) union ((select 3)intersect(select 2))
 --- out
