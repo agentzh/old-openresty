@@ -16,8 +16,8 @@ The resulting binary executable will be bin/restyscript
 
 One can play with it on the command line. For instance,
 
-    $ bin/restyscript 'select 3.14'
-    Select [Float 3.14]
+    $ echo 'select 3.14' | bin/restyscript
+    Query [Select [Float 3.14]]
     select 3.14
 
 The first line of output depicts the interal AST (Abstract Syntax Tree)
