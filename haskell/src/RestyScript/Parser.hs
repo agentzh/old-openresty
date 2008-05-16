@@ -12,8 +12,8 @@ readView = parse parseView
 
 parseView :: Parser [SqlVal]
 parseView = do select <- spaces >> parseSelect
-               from <- parseFrom
-               whereClause <- parseWhere
+               from <- option Null parseFrom
+               whereClause <- option Null parseWhere
                moreClauses <- sepBy parseMoreClause spaces
                spaces >> eof
                return $ filter (\x->x /= Null)
@@ -55,12 +55,11 @@ parseGroupBy = liftM GroupBy (string "group" >> many1 space >>
 parseFrom :: Parser SqlVal
 parseFrom = liftM From (string "from" >> many1 space >>
                 sepBy1 parseFromItem listSep)
-        <|> return Null
         <?> "from clause"
 
 parseFromItem :: Parser SqlVal
 parseFromItem = do model <- parseModel
-                   alias <- parseModelAlias
+                   alias <- option Null parseModelAlias
                    return $ case alias of
                                 Null -> model
                                 otherwise -> Alias model alias
@@ -72,7 +71,6 @@ parseModel = try(parseFuncCall)
 
 parseModelAlias :: Parser SqlVal
 parseModelAlias = liftM Model (keyword "as" >> many1 space >> parseIdent)
-              <|> return Null
 
 parseIdent :: Parser SqlVal
 parseIdent = do s <- symbol
@@ -108,8 +106,8 @@ parseSelect = do string "select" >> many1 space
 
 parseSelectedItem :: Parser SqlVal
 parseSelectedItem = do col <- parseExpr
-                       alias <- (keyword "as" >> spaces >> parseIdent)
-                                    <|> (return Null)
+                       alias <- option Null
+                            (keyword "as" >> spaces >> parseIdent)
                        return $ case alias of
                             Null -> col
                             otherwise -> Alias col alias
@@ -117,7 +115,7 @@ parseSelectedItem = do col <- parseExpr
 parseColumn :: Parser SqlVal
 parseColumn = do a <- parseIdent
                  spaces
-                 b <- (char '.' >> spaces >> parseIdent) <|> (return Null)
+                 b <- option Null (char '.' >> spaces >> parseIdent)
                  return $ case b of
                     Null -> Column a
                     otherwise -> QualifiedColumn a b
@@ -132,7 +130,6 @@ parseWhere :: Parser SqlVal
 parseWhere = do string "where" >> many1 space
                 cond <- parseExpr
                 return $ Where cond
-         <|> (return Null)
          <?> "where clause"
 
 parseExpr :: Parser SqlVal

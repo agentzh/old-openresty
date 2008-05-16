@@ -1,10 +1,13 @@
+#OPTS= -O2 -package parsec
+OPTS= -package parsec
+
 all: bin/restyscript
 
 bin/restyscript: src/RestyScript/AST.o src/RestyScript/Emitter.o src/RestyScript/Parser.o src/RestyScript.o src/Main.o
-	cd src && ghc -package parsec -o ../$@ --make Main
+	cd src && ghc $(OPTS) -o ../$@ --make Main
 
 %.o: %.hs
-	cd src && ghc -package parsec -c ../$<
+	cd src && ghc $(OPTS) -c ../$<
 
 test: all
 	prove -r t
