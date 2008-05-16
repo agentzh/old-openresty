@@ -25,6 +25,8 @@ quoteIdent = quote '"'
 emitSqlForList ls = intercalate ", " $ map emitSql ls
 
 emitSql :: SqlVal -> String
+emitSql (SetOp op lhs rhs) = "((" ++ (emitSql lhs) ++ ") " ++ op ++ " (" ++ (emitSql rhs) ++ "))"
+emitSql (Query lst) = unwords $ map emitSql lst
 emitSql (String s) = quoteLiteral s
 emitSql (Variable v) = "?"
 emitSql (FuncCall f args) = (quoteIdent f) ++

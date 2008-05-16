@@ -2,7 +2,9 @@ module RestyScript.AST (
     SqlVal(..)
 ) where
 
-data SqlVal = Select [SqlVal]
+data SqlVal = SetOp String SqlVal SqlVal
+            | Query [SqlVal]
+            | Select [SqlVal]
             | From [SqlVal]
             | Where SqlVal
             | Limit SqlVal

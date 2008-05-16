@@ -12,7 +12,8 @@ run {
     my $block = shift;
     my $desc = $block->description;
     my ($stdout, $stderr);
-    run3 ['bin/restyscript', $block->in], \undef, \$stdout, \$stderr;
+    my $stdin = $block->in;
+    run3 ['bin/restyscript'], \$stdin, \$stdout, \$stderr;
     is $? >> 8, 0, "compiler returns 0 - $desc";
     warn $stderr if $stderr;
     my @ln = split /\n+/, $stdout;
@@ -29,7 +30,7 @@ __DATA__
 --- in
 select foo, bar from Bah
 --- ast
-Select [Column (Symbol "foo"),Column (Symbol "bar")] From [Model (Symbol "Bah")]
+Query [Select [Column (Symbol "foo"),Column (Symbol "bar")],From [Model (Symbol "Bah")]]
 --- out
 select "foo", "bar" from "Bah"
 
@@ -39,7 +40,7 @@ select "foo", "bar" from "Bah"
 --- in
 select foo
 --- ast
-Select [Column (Symbol "foo")]
+Query [Select [Column (Symbol "foo")]]
 --- out
 select "foo"
 
@@ -49,7 +50,7 @@ select "foo"
 --- in
 select id,name , age from  Post , Comment
 --- ast
-Select [Column (Symbol "id"),Column (Symbol "name"),Column (Symbol "age")] From [Model (Symbol "Post"),Model (Symbol "Comment")]
+Query [Select [Column (Symbol "id"),Column (Symbol "name"),Column (Symbol "age")],From [Model (Symbol "Post"),Model (Symbol "Comment")]]
 --- out
 select "id", "name", "age" from "Post", "Comment"
 
@@ -59,7 +60,7 @@ select "id", "name", "age" from "Post", "Comment"
 --- in
 select id from Post where a > b
 --- ast
-Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (Compare ">" (Column (Symbol "a")) (Column (Symbol "b")))
+Query [Select [Column (Symbol "id")],From [Model (Symbol "Post")],Where (Compare ">" (Column (Symbol "a")) (Column (Symbol "b")))]
 --- out
 select "id" from "Post" where "a" > "b"
 
@@ -77,7 +78,7 @@ select "id" from "Post" where (0.003 > 3.14 or 3.0 > 0.0)
 --- in
 select id from Post where 256 > 0
 --- ast
-Select [Column (Symbol "id")] From [Model (Symbol "Post")] Where (Compare ">" (Integer 256) (Integer 0))
+Query [Select [Column (Symbol "id")],From [Model (Symbol "Post")],Where (Compare ">" (Integer 256) (Integer 0))]
 --- out
 select "id" from "Post" where 256 > 0
 
@@ -119,7 +120,7 @@ select "id" from "Post" where 'a''''' != 'b\\\n\r\ba'
 --- in
 select id order  by  id
 --- ast
-Select [Column (Symbol "id")] OrderBy [OrderPair (Column (Symbol "id")) "asc"]
+Query [Select [Column (Symbol "id")],OrderBy [OrderPair (Column (Symbol "id")) "asc"]]
 --- out
 select "id" order by "id" asc
 
@@ -177,7 +178,7 @@ select "id" from "Post" offset '3' limit '5'
 --- in
 select $var
 --- ast
-Select [Variable "var"]
+Query [Select [Variable "var"]]
 --- out
 select ?
 
@@ -187,7 +188,7 @@ select ?
 --- in
 select * from $model_name, $bar
 --- ast
-Select [AnyColumn] From [Model (Variable "model_name"),Model (Variable "bar")]
+Query [Select [AnyColumn],From [Model (Variable "model_name"),Model (Variable "bar")]]
 --- out
 select * from ?, ?
 
@@ -197,7 +198,7 @@ select * from ?, ?
 --- in
 select * from A where $id > 0 offset $off limit $lim group by $foo
 --- ast
-Select [AnyColumn] From [Model (Symbol "A")] Where (Compare ">" (Variable "id") (Integer 0)) Offset (Variable "off") Limit (Variable "lim") GroupBy (Column (Variable "foo"))
+Query [Select [AnyColumn],From [Model (Symbol "A")],Where (Compare ">" (Variable "id") (Integer 0)),Offset (Variable "off"),Limit (Variable "lim"),GroupBy (Column (Variable "foo"))]
 --- out
 select * from "A" where ? > 0 offset ? limit ? group by ?
 
@@ -239,7 +240,7 @@ select "Foo"."bar", "Foo"."bar", "Foo"."bar", "Foo"."bar" from "Foo"
 --- in
 select (32) , ((5)) as item
 --- ast
-Select [Integer 32,Alias (Integer 5) (Symbol "item")]
+Query [Select [Integer 32,Alias (Integer 5) (Symbol "item")]]
 --- out
 select 32, 5 as "item"
 
@@ -247,7 +248,9 @@ select 32, 5 as "item"
 
 === TEST 26: count(*)
 --- in
-select count(*), count ( * ) from Post
+select count(*),
+     count ( * )
+ from Post
 --- out
 select "count"(*), "count"(*) from "Post"
 
@@ -255,9 +258,10 @@ select "count"(*), "count"(*) from "Post"
 
 === TEST 27: aliased cols
 --- in
-select id as foo, count(*) as bar from Post
+select id as foo, count(*) as bar
+from Post
 --- ast
-Select [Alias (Column (Symbol "id")) (Symbol "foo"),Alias (FuncCall "count" [AnyColumn]) (Symbol "bar")] From [Model (Symbol "Post")]
+Query [Select [Alias (Column (Symbol "id")) (Symbol "foo"),Alias (FuncCall "count" [AnyColumn]) (Symbol "bar")],From [Model (Symbol "Post")]]
 --- out
 select "id" as "foo", "count"(*) as "bar" from "Post"
 
@@ -273,7 +277,8 @@ select * from "Post" as "foo"
 
 === TEST 29: from proc
 --- in
-select * from proc(32, 'hello'), blah() as poo
+select *
+from proc(32, 'hello'), blah() as poo
 --- out
 select * from "proc"(32, 'hello'), "blah"() as "poo"
 
@@ -283,7 +288,7 @@ select * from "proc"(32, 'hello'), "blah"() as "poo"
 --- in
 select 3+5/3*2 - 36 % 2
 --- ast
-Select [Arith "-" (Arith "+" (Integer 3) (Arith "*" (Arith "/" (Integer 5) (Integer 3)) (Integer 2))) (Arith "%" (Integer 36) (Integer 2))]
+Query [Select [Arith "-" (Arith "+" (Integer 3) (Arith "*" (Arith "/" (Integer 5) (Integer 3)) (Integer 2))) (Arith "%" (Integer 36) (Integer 2))]]
 --- out
 select ((3 + ((5 / 3) * 2)) - (36 % 2))
 
@@ -310,4 +315,60 @@ select (("proc"(2) || 'hello') || ((5 - 2) + 5))
 select 3*3*5^6^2
 --- out
 select ((3 * 3) * ((5 ^ 6) ^ 2))
+
+
+
+=== TEST 34: union
+--- in
+select 2 union select 3
+--- ast
+SetOp "union" (Query [Select [Integer 2]]) (Query [Select [Integer 3]])
+--- out
+((select 2) union (select 3))
+
+
+
+=== TEST 35: union 2
+--- in
+(select count(*) from "Post" limit 3) union select sum(1) from "Comment";
+--- out
+((select "count"(*) from "Post" limit 3) union (select "sum"(1) from "Comment"))
+
+
+=== TEST 36: chained union
+--- in
+select 3 union select 2 union select 1;
+--- out
+((((select 3) union (select 2))) union (select 1))
+
+
+
+=== TEST 37: chained union and except
+--- in
+select 3 union select 2 union select 1 except select 2;
+--- out
+((((((select 3) union (select 2))) union (select 1))) except (select 2))
+
+
+
+=== TEST 38: parens with set ops
+--- in
+select 3 union (select 2 except select 3)
+--- out
+((select 3) union (((select 2) except (select 3))))
+
+
+
+=== TEST 39: intersect
+--- in
+(select 2) union (select 3)intersect(select 2)
+--- out
+((((select 2) union (select 3))) intersect (select 2))
+
+
+=== TEST 39: intersect
+--- in
+(select 2) union ((select 3)intersect(select 2))
+--- out
+((select 2) union (((select 3) intersect (select 2))))
 

@@ -7,18 +7,32 @@ import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Expr
 import Monad (liftM)
 
-readView :: String -> String -> Either ParseError [SqlVal]
+readView :: String -> String -> Either ParseError SqlVal
 readView = parse parseView
 
-parseView :: Parser [SqlVal]
-parseView = do select <- spaces >> parseSelect
-               from <- option Null parseFrom
-               whereClause <- option Null parseWhere
-               moreClauses <- sepBy parseMoreClause spaces
-               spaces >> eof
-               return $ filter (\x->x /= Null)
-                            [select, from, whereClause] ++ moreClauses
-        <?> "select statement"
+parseView :: Parser SqlVal
+parseView = do ast <- parseSetExpr
+               spaces >> many (string ";" >> spaces) >> eof
+               return ast
+
+parseSetExpr :: Parser SqlVal
+parseSetExpr = buildExpressionParser setOpTable parseQuery
+
+setOpTable = [[ op "union", op "except", op "intersect" ]]
+      where
+        op s
+           = Infix (do { reservedWord s; spaces; return (SetOp s)}
+                <?> "operator") AssocLeft
+
+parseQuery :: Parser SqlVal
+parseQuery = do select <- spaces >> parseSelect
+                from <- option Null parseFrom
+                whereClause <- option Null parseWhere
+                moreClauses <- sepBy parseMoreClause spaces
+                return $ Query $ filter (\x->x /= Null)
+                    [select, from, whereClause] ++ moreClauses
+         <|> parens parseSetExpr
+         <?> "select statement"
 
 parseMoreClause :: Parser SqlVal
 parseMoreClause = parseOrderBy
@@ -27,33 +41,33 @@ parseMoreClause = parseOrderBy
               <|> parseGroupBy
 
 parseLimit :: Parser SqlVal
-parseLimit = liftM Limit (string "limit" >> many1 space >> parseExpr)
+parseLimit = liftM Limit (keyword "limit" >> many1 space >> parseExpr)
          <?> "limit clause"
 
 parseOffset :: Parser SqlVal
-parseOffset = liftM Offset (string "offset" >> many1 space >> parseExpr)
+parseOffset = liftM Offset (keyword "offset" >> many1 space >> parseExpr)
           <?> "offset clause"
 
 parseOrderBy :: Parser SqlVal
-parseOrderBy = do try (string "order") >> many1 space >>
-                    string "by" >> many1 space
+parseOrderBy = do try (keyword "order") >> many1 space >>
+                    keyword "by" >> many1 space
                   liftM OrderBy $ sepBy parseOrderPair listSep
            <?> "order by clause"
 
 parseOrderPair :: Parser SqlVal
 parseOrderPair = do col <- parseColumn
-                    dir <- string "asc"
-                            <|> string "desc"
+                    dir <- keyword "asc"
+                            <|> keyword "desc"
                             <|> return "asc"
                     spaces
                     return $ OrderPair col dir
 
 parseGroupBy :: Parser SqlVal
-parseGroupBy = liftM GroupBy (string "group" >> many1 space >>
-                    string "by" >> many1 space >> parseColumn)
+parseGroupBy = liftM GroupBy (keyword "group" >> many1 space >>
+                    keyword "by" >> many1 space >> parseColumn)
 
 parseFrom :: Parser SqlVal
-parseFrom = liftM From (string "from" >> many1 space >>
+parseFrom = liftM From (keyword "from" >> many1 space >>
                 sepBy1 parseFromItem listSep)
         <?> "from clause"
 
@@ -99,7 +113,7 @@ listSep :: Parser ()
 listSep = opSep ","
 
 parseSelect :: Parser SqlVal
-parseSelect = do string "select" >> many1 space
+parseSelect = do keyword "select" >> many1 space
                  cols <- sepBy1 (parseSelectedItem <|> parseAnyColumn) listSep
                  return $ Select cols
           <?> "select clause"
@@ -127,7 +141,7 @@ parseAnyColumn = do char '*'
                     return AnyColumn
 
 parseWhere :: Parser SqlVal
-parseWhere = do string "where" >> many1 space
+parseWhere = do keyword "where" >> many1 space
                 cond <- parseExpr
                 return $ Where cond
          <?> "where clause"
