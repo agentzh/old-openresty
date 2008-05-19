@@ -3,7 +3,7 @@ OPTS= -package parsec
 
 all: bin/restyscript
 
-bin/restyscript: src/RestyScript/AST.o src/RestyScript/Emitter.o src/RestyScript/Parser.o src/RestyScript.o src/Main.o
+bin/restyscript: src/RestyScript/AST.o src/RestyScript/Emitter/RestyScript.o src/RestyScript/Parser.o src/RestyScript.o src/Main.o
 	cd src && ghc $(OPTS) -o ../$@ --make Main
 
 %.o: %.hs
