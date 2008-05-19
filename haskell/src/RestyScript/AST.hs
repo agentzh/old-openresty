@@ -20,7 +20,7 @@ data SqlVal = SetOp String SqlVal SqlVal
             | Model SqlVal
             | Symbol String
             | QualifiedColumn SqlVal SqlVal
-            | Integer Integer
+            | Integer Int
             | Float Double
             | String String
             | Variable String
@@ -56,6 +56,7 @@ traverse visit merge node =
         Column c -> merge cur (self c)
         Model m -> merge cur (self m)
         QualifiedColumn lhs rhs -> mergeAll [cur, self lhs, self rhs]
+        Variable _ -> visit node
         FuncCall _ args -> mergeAll $ cur : map self args
         Compare _ lhs rhs -> mergeAll [cur, self lhs, self rhs]
         Arith _ lhs rhs -> mergeAll [cur, self lhs, self rhs]
