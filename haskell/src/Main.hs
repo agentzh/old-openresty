@@ -13,6 +13,7 @@ main = do args <- getArgs
           case args of
             "rs" : xs -> genRS
             "frags" : xs -> genFrags
+            x : xs -> die $ "Unknown command: " ++ x
             otherwise -> die "No command specified"
 
 genRS :: IO ()
@@ -30,6 +31,5 @@ genFrags :: IO ()
 genFrags = do input <- hGetContents stdin
               case readView "RestyScript" input of
                   Left err -> hPutStrLn stderr $ show err
-                  Right ast -> do putStrLn $ show ast
-                                  putStrLn $ RS.emit ast
+                  Right ast -> putStrLn $ show $ St.emit ast
 
