@@ -16,7 +16,7 @@ The resulting binary executable will be bin/restyscript
 
 One can play with it on the command line. For instance,
 
-    $ echo 'select 3.14' | bin/restyscript
+    $ echo 'select 3.14' | bin/restyscript rs
     Query [Select [Float 3.14]]
     select 3.14
 
@@ -35,6 +35,6 @@ To run the test suite, simply issue
 
     $ make test
 
-The test cases in the test suite (e.g. t/01-sanity.t) tell you what
+The test cases in the test suite (e.g. t/emit-rs.t) tell you what
 the compiler is currently able to do ;)
 
