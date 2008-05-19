@@ -12,7 +12,7 @@ main :: IO ()
 main = do args <- getArgs
           case args of
             "rs" : xs -> genRS
-            "frags" : xs -> genFrags
+            "stats" : xs -> genFrags
             x : xs -> die $ "Unknown command: " ++ x
             otherwise -> die "No command specified"
 
