@@ -270,6 +270,8 @@ select "id" as "foo", "count"(*) as "bar" from "Post"
 === TEST 28: alias for models
 --- in
 select * from Post as foo
+--- ast
+Query [Select [AnyColumn],From [Alias (Model (Symbol "Post")) (Symbol "foo")]]
 --- out
 select * from "Post" as "foo"
 
