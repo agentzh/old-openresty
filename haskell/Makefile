@@ -1,5 +1,5 @@
-#OPTS= -O2 -package parsec
-OPTS= -package parsec
+OPTS= -O2 -package parsec
+#OPTS= -package parsec
 
 all: bin/restyscript
 
