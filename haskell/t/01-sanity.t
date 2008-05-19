@@ -375,6 +375,7 @@ select 3 union (select 2 except select 3)
 ((select 2) union (((select 3) intersect (select 2))))
 
 
+
 === TEST 41: union all
 --- in
 select 2 union all select 2
@@ -382,4 +383,20 @@ select 2 union all select 2
 SetOp "union all" (Query [Select [Integer 2]]) (Query [Select [Integer 2]])
 --- out
 ((select 2) union all (select 2))
+
+
+
+=== TEST 42: type casting ::
+--- in
+select 32::float8
+--- out
+select 32::"float8"
+
+
+
+=== TEST 43: more complicated type casting ::
+--- in
+select ('2003-03' || '-01') :: date
+--- out
+select ('2003-03' || '-01')::"date"
 

@@ -9,6 +9,7 @@ data SqlVal = SetOp String SqlVal SqlVal
             | Where SqlVal
             | Limit SqlVal
             | Offset SqlVal
+            | TypeCast SqlVal SqlVal
             | OrderBy [SqlVal]
             | OrderPair SqlVal String
             | GroupBy SqlVal

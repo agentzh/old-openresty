@@ -157,6 +157,7 @@ parseExpr = buildExpressionParser opTable parseArithAtom
         <?> "expression"
 
 opTable = [
+            [ op "::" TypeCast AssocNone ],
             [
                 arithOp "^"
                 ],
