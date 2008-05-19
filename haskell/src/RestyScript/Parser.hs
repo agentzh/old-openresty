@@ -90,7 +90,7 @@ parseModel = try(parseFuncCall)
          <?> "model"
 
 parseModelAlias :: Parser SqlVal
-parseModelAlias = liftM Model (keyword "as" >> many1 space >> parseIdent)
+parseModelAlias = keyword "as" >> many1 space >> parseIdent
 
 parseIdent :: Parser SqlVal
 parseIdent = do s <- symbol
