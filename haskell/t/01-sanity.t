@@ -180,7 +180,7 @@ select $var
 --- ast
 Query [Select [Variable "var"]]
 --- out
-select ?
+select $var
 
 
 
@@ -190,7 +190,7 @@ select * from $model_name, $bar
 --- ast
 Query [Select [AnyColumn],From [Model (Variable "model_name"),Model (Variable "bar")]]
 --- out
-select * from ?, ?
+select * from $model_name, $bar
 
 
 
@@ -200,7 +200,7 @@ select * from A where $id > 0 offset $off limit $lim group by $foo
 --- ast
 Query [Select [AnyColumn],From [Model (Symbol "A")],Where (Compare ">" (Variable "id") (Integer 0)),Offset (Variable "off"),Limit (Variable "lim"),GroupBy (Column (Variable "foo"))]
 --- out
-select * from "A" where ? > 0 offset ? limit ? group by ?
+select * from "A" where $id > 0 offset $off limit $lim group by $foo
 
 
 
