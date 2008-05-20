@@ -1,5 +1,5 @@
 #OPTS= -O2 -package parsec
-OPTS= -package parsec -XFlexibleInstances
+OPTS= -package parsec -package json -XFlexibleInstances
 
 all: bin/restyscript
 

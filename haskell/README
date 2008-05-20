@@ -8,6 +8,16 @@ library. On Ubuntu/Debian, the following commands would be sufficient:
 
     $ sudo apt-get install ghc6 libghc6-parsec-dev
 
+The last dependency, the json library, requires a few more commands
+to install:
+
+    $ wget http://hackage.haskell.org/packages/archive/json/0.3.3/json-0.3.3.tar.gz
+    $ tar -xzf json-0.3.3.tar.gz
+    $ cd json-0.3.3
+    $ runghc Setup.hs configure --with-compiler=ghc-6.8.2
+    $ runghc Setup.hs build
+    $ sudo runghc Setup.hs install
+
 After that, you can build this compiler by the following command:
 
     $ make
