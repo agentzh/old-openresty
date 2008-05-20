@@ -205,7 +205,10 @@ opSep op = string op >> spaces
 
 parseArithAtom = parseNumber
              <|> parseString
-             <|> parseVariable
+             <|> try (do {
+                r <- parseVariable;
+                notFollowedBy (char '.' <|> char '(');
+                return r })
              <|> try (parseFuncCall)
              <|> parseColumn
              <|> parens parseExpr
@@ -219,8 +222,8 @@ keyword s = try (do string s
                     return s)
 
 parseFuncCall :: Parser SqlVal
-parseFuncCall = do f <- symbol
-                   args <- spaces >> parens parseArgs
+parseFuncCall = do f <- parseIdent
+                   args <- parens parseArgs
                    return $ FuncCall f args
 
 parseArgs :: Parser [SqlVal]

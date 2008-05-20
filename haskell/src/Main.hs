@@ -6,6 +6,7 @@ import RestyScript.AST
 import qualified RestyScript.Emitter.RestyScript as RS
 import qualified RestyScript.Emitter.Stats as St
 import qualified RestyScript.Emitter.RenameVar as Re
+import qualified RestyScript.Emitter.Fragments as Fr
 
 import System
 import System.IO
@@ -15,7 +16,8 @@ argHandles :: [(String, SqlVal -> IO ())]
 argHandles = [
     ("rs", putStrLn . RS.emit),
     ("stats", putStrLn . show . St.emit),
-    ("ast", putStrLn . show)]
+    ("ast", putStrLn . show),
+    ("frags", putStrLn . show . Fr.emit)]
 
 main :: IO ()
 main = do args <- getArgs
