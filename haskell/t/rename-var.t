@@ -120,3 +120,12 @@ select sum($b) from Post where (( $a > $b ) and ( $b < $c or $c > 1 ))
 --- out
 select sum($x) from Post where (( $a > $x ) and ( $x < $c or $c > 1 ))
 
+
+
+=== TEST 10: \t is 8 columns long
+--- in eval
+"select \tsum(\$b) from Post where\t\t ( \$a > \$b )"
+--- rename: b x
+--- out eval
+"select \tsum(\$x) from Post where\t\t ( \$a > \$x )\n"
+
