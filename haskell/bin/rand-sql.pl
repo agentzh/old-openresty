@@ -4,9 +4,9 @@ use strict;
 use warnings;
 use Parse::RandGen::Regexp;
 
-my $list_len = 100;
-my $cmp_a = 1000;
-my $cmp_b = 1000;
+my $list_len = 10;
+my $cmp_a = 10;
+my $cmp_b = 10;
 my $symbol = qr/[A-Za-z]\w*/;
 my $ident = qr/"$symbol"|\$$symbol|\$foo/;
 my $ident_list = qr/$ident(\s*,\s*$ident){$list_len,}/;

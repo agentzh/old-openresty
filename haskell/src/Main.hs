@@ -33,7 +33,7 @@ processArgs (a:as) input ast =
         then case as of
             old : new : as' -> do putStrLn $ Re.emit ast input old new
                                   processArgs as' input ast
-            otherwise -> die "The \"rename\" command requires two arguments."
+            _ -> die "The \"rename\" command requires two arguments."
         else case lookup a argHandles of
                     Just hdl -> hdl ast >> processArgs as input ast
                     Nothing -> die $ "Unknown command: " ++ a
