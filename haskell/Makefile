@@ -1,9 +1,9 @@
 #OPTS= -O2 -package parsec
-OPTS= -package parsec
+OPTS= -package parsec -XFlexibleInstances
 
 all: bin/restyscript
 
-bin/restyscript: src/RestyScript/AST.o src/RestyScript/Emitter/RestyScript.o src/RestyScript/Emitter/Stats.o src/RestyScript/Parser.o src/Main.o
+bin/restyscript: src/RestyScript/AST.o src/RestyScript/Emitter/RenameVar.o src/RestyScript/Emitter/RestyScript.o src/RestyScript/Emitter/Stats.o src/RestyScript/Parser.o src/Main.o
 	cd src && ghc $(OPTS) -o ../$@ --make Main
 
 %.o: %.hs

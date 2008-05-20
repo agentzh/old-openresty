@@ -228,10 +228,15 @@ parseArgs = do v <- parseAnyColumn
                return [v]
         <|> sepBy parseExpr listSep
 
+getPos :: Parser SrcPos
+getPos = do pos <- getPosition
+            return (sourceLine pos, sourceColumn pos)
+
 parseVariable :: Parser SqlVal
 parseVariable = do v <- char '$' >> symbol
+                   pos <- getPos
                    spaces
-                   return $ Variable v
+                   return $ Variable pos v
 
 parseNumber :: Parser SqlVal
 parseNumber = do sign <- parseSign

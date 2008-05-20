@@ -178,9 +178,20 @@ select "id" from "Post" offset '3' limit '5'
 --- in
 select $var
 --- ast
-Query [Select [Variable "var"]]
+Query [Select [Variable (1,12) "var"]]
 --- out
 select $var
+
+
+=== TEST 18: simple variable
+--- in
+select
+$var
+from Post
+--- ast
+Query [Select [Variable (2,5) "var"],From [Model (Symbol "Post")]]
+--- out
+select $var from "Post"
 
 
 
@@ -188,7 +199,7 @@ select $var
 --- in
 select * from $model_name, $bar
 --- ast
-Query [Select [AnyColumn],From [Model (Variable "model_name"),Model (Variable "bar")]]
+Query [Select [AnyColumn],From [Model (Variable (1,26) "model_name"),Model (Variable (1,32) "bar")]]
 --- out
 select * from $model_name, $bar
 
@@ -198,7 +209,7 @@ select * from $model_name, $bar
 --- in
 select * from A where $id > 0 offset $off limit $lim group by $foo
 --- ast
-Query [Select [AnyColumn],From [Model (Symbol "A")],Where (Compare ">" (Variable "id") (Integer 0)),Offset (Variable "off"),Limit (Variable "lim"),GroupBy (Column (Variable "foo"))]
+Query [Select [AnyColumn],From [Model (Symbol "A")],Where (Compare ">" (Variable (1,26) "id") (Integer 0)),Offset (Variable (1,42) "off"),Limit (Variable (1,53) "lim"),GroupBy (Column (Variable (1,67) "foo"))]
 --- out
 select * from "A" where $id > 0 offset $off limit $lim group by $foo
 
