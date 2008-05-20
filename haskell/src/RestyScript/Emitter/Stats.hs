@@ -5,14 +5,16 @@ module RestyScript.Emitter.Stats (
 
 import RestyScript.AST
 
-data Stats = Stats { modelList :: [String], funcList :: [String],
-    selectedMax :: Int, joinedMax :: Int, comparedCount :: Int,
-    queryCount :: Int }
+data Stats = Stats {
+    modelList :: [String], funcList :: [String],
+    selectedMax :: Int, joinedMax :: Int,
+    comparedCount :: Int, queryCount :: Int }
         deriving (Ord, Eq, Show)
 
-si = Stats { modelList = [], funcList = [],
-             selectedMax = 0, joinedMax = 0, comparedCount = 0,
-             queryCount = 0 }
+si = Stats {
+    modelList = [], funcList = [],
+    selectedMax = 0, joinedMax = 0,
+    comparedCount = 0, queryCount = 0 }
 
 instance Visit Stats where
 
@@ -42,7 +44,8 @@ findCompared _ st = st
 
 visit :: SqlVal -> Stats
 visit node = foldr (\f st -> f node st) si
-    [findModel, findFunc, findSelected, findJoined, findCompared, findQuery]
+    [findModel, findFunc,
+     findSelected, findJoined, findCompared, findQuery]
 
 merge :: Stats -> Stats -> Stats
 merge a b = Stats {

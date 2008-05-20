@@ -29,7 +29,7 @@ emit node = case node of
                         " (" ++ (emit rhs) ++ "))"
     Query lst -> unwords $ map emit lst
     String s -> quoteLiteral s
-    Variable v -> '$' : v
+    Variable _ v -> '$' : v
     FuncCall f args -> (quoteIdent f) ++
                                   "(" ++ (emitForList args) ++ ")"
     QualifiedColumn model col -> (emit model) ++ "." ++ (emit col)

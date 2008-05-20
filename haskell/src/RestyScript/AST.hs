@@ -1,8 +1,14 @@
 module RestyScript.AST (
     SqlVal(..),
     traverse,
-    Visit
+    Visit,
+    SrcPos
 ) where
+
+import Text.ParserCombinators.Parsec (SourcePos)
+import Text.ParserCombinators.Parsec.Pos (Line, Column)
+
+type SrcPos = (Line, Column)
 
 data SqlVal = SetOp String SqlVal SqlVal
             | Query [SqlVal]
@@ -23,7 +29,7 @@ data SqlVal = SetOp String SqlVal SqlVal
             | Integer Int
             | Float Double
             | String String
-            | Variable String
+            | Variable SrcPos String
             | FuncCall String [SqlVal]
             | Compare String SqlVal SqlVal
             | Arith String SqlVal SqlVal
@@ -56,7 +62,7 @@ traverse visit merge node =
         Column c -> merge cur (self c)
         Model m -> merge cur (self m)
         QualifiedColumn lhs rhs -> mergeAll [cur, self lhs, self rhs]
-        Variable _ -> visit node
+        Variable _ _ -> visit node
         FuncCall _ args -> mergeAll $ cur : map self args
         Compare _ lhs rhs -> mergeAll [cur, self lhs, self rhs]
         Arith _ lhs rhs -> mergeAll [cur, self lhs, self rhs]
