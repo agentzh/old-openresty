@@ -1,16 +1,19 @@
+#!/usr/bin/env perl
+
 use strict;
 use warnings;
 use Parse::RandGen::Regexp;
 
-my $list_len = 10;
-my $cmp_a = 1;
-my $cmp_b = 2;
-my $ident = qr/"[A-Za-z]\w*"/;
+my $list_len = 100;
+my $cmp_a = 1000;
+my $cmp_b = 1000;
+my $symbol = qr/"[A-Za-z]\w*"/;
+my $ident = qr/\$?$symbol/;
 my $ident_list = qr/$ident(\s*,\s*$ident){$list_len,}/;
 my $int = qr/[-+]?\d+/;
 my $float = qr/[-+]?(\d+\.(\d+)?|\.\d+)/;
 my $number = qr/$int|$float/;
-my $atom = qr/$number|$ident/;
+my $atom = qr/$variable|$number|$ident/;
 my $rel_op = qr/>|>=|<|<=|!=|<>| like /;
 my $cmp = qr/$atom\s*$rel_op\s*$atom/;
 my $logic_op = qr/and|or/;
