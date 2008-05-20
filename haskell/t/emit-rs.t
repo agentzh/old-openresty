@@ -65,7 +65,6 @@ $age from  Post , $comment
 Query [Select [Variable (1,12) "foo",Variable (2,5) "bar",Variable (3,5) "age"],From [Model (Symbol "Post"),Model (Variable (3,27) "comment")]]
 --- out
 select $foo, $bar, $age from "Post", $comment
---- LAST
 
 
 
@@ -209,7 +208,37 @@ select $var from "Post"
 
 
 
-=== TEST 21: variable as model
+=== TEST 21: var in qualified col
+--- in
+select $table.$col from $table
+--- ast
+Query [Select [QualifiedColumn (Variable (1,14) "table") (Variable (1,19) "col")],From [Model (Variable (1,31) "table")]]
+--- out
+select $table.$col from $table
+
+
+
+=== TEST 22: var in qualified col
+--- in
+select $table.col from $table
+--- ast
+Query [Select [QualifiedColumn (Variable (1,14) "table") (Symbol "col")],From [Model (Variable (1,30) "table")]]
+--- out
+select $table."col" from $table
+
+
+
+=== TEST 23: var in proc call
+--- in
+select $proc(32)
+--- ast
+Query [Select [FuncCall (Variable (1,13) "proc") [Integer 32]]]
+--- out
+select $proc(32)
+
+
+
+=== TEST 24: variable as model
 --- in
 select * from $model_name, $bar
 --- ast
@@ -219,7 +248,7 @@ select * from $model_name, $bar
 
 
 
-=== TEST 22: variable in where, offset, limit and group by
+=== TEST 25: variable in where, offset, limit and group by
 --- in
 select * from A where $id > 0 offset $off limit $lim group by $foo
 --- ast
@@ -229,7 +258,7 @@ select * from "A" where $id > 0 offset $off limit $lim group by $foo
 
 
 
-=== TEST 23: weird identifiers
+=== TEST 26: weird identifiers
 --- in
 select select, 0.125 from from where where > or or and < and and order > 3.12 order by order, group group by by
 --- out
@@ -237,7 +266,7 @@ select "select", 0.125 from "from" where ("where" > "or" or ("and" < "and" and "
 
 
 
-=== TEST 24: signed negative numbers
+=== TEST 27: signed negative numbers
 --- in
 select -3 , - 3 , -1.25,- .3
 --- out
@@ -245,7 +274,7 @@ select -3, -3, -1.25, -0.3
 
 
 
-=== TEST 25: signed positive numbers
+=== TEST 28: signed positive numbers
 --- in
 select +3 , + 3 , +1.25,+ .3 , 1
 --- out
@@ -253,7 +282,7 @@ select 3, 3, 1.25, 0.3, 1
 
 
 
-=== TEST 26: qualified columns
+=== TEST 29: qualified columns
 --- in
 select Foo.bar , Foo . bar , "Foo" . bar , "Foo"."bar" from Foo
 --- out
@@ -261,7 +290,7 @@ select "Foo"."bar", "Foo"."bar", "Foo"."bar", "Foo"."bar" from "Foo"
 
 
 
-=== TEST 27: selected cols with parens
+=== TEST 30: selected cols with parens
 --- in
 select (32) , ((5)) as item
 --- ast
@@ -271,7 +300,7 @@ select 32, 5 as "item"
 
 
 
-=== TEST 28: count(*)
+=== TEST 31: count(*)
 --- in
 select count(*),
      count ( * )
@@ -281,18 +310,18 @@ select "count"(*), "count"(*) from "Post"
 
 
 
-=== TEST 29: aliased cols
+=== TEST 32: aliased cols
 --- in
 select id as foo, count(*) as bar
 from Post
 --- ast
-Query [Select [Alias (Column (Symbol "id")) (Symbol "foo"),Alias (FuncCall "count" [AnyColumn]) (Symbol "bar")],From [Model (Symbol "Post")]]
+Query [Select [Alias (Column (Symbol "id")) (Symbol "foo"),Alias (FuncCall (Symbol "count") [AnyColumn]) (Symbol "bar")],From [Model (Symbol "Post")]]
 --- out
 select "id" as "foo", "count"(*) as "bar" from "Post"
 
 
 
-=== TEST 30: alias for models
+=== TEST 33: alias for models
 --- in
 select * from Post as foo
 --- ast
@@ -302,7 +331,7 @@ select * from "Post" as "foo"
 
 
 
-=== TEST 31: from proc
+=== TEST 34: from proc
 --- in
 select *
 from proc(32, 'hello'), blah() as poo
@@ -311,7 +340,7 @@ select * from "proc"(32, 'hello'), "blah"() as "poo"
 
 
 
-=== TEST 32: arith
+=== TEST 35: arith
 --- in
 select 3+5/3*2 - 36 % 2
 --- ast
@@ -321,7 +350,7 @@ select ((3 + ((5 / 3) * 2)) - (36 % 2))
 
 
 
-=== TEST 33: arith (with parens)
+=== TEST 36: arith (with parens)
 --- in
 select (3+5)/(3*2) - ( 36 % 2 )
 --- out
@@ -329,7 +358,7 @@ select (((3 + 5) / (3 * 2)) - (36 % 2))
 
 
 
-=== TEST 34: string cat ||
+=== TEST 37: string cat ||
 --- in
 select proc(2) || 'hello' || 5 - 2 + 5
 --- out
@@ -337,7 +366,7 @@ select (("proc"(2) || 'hello') || ((5 - 2) + 5))
 
 
 
-=== TEST 35: ^
+=== TEST 38: ^
 --- in
 select 3*3*5^6^2
 --- out
@@ -345,7 +374,7 @@ select ((3 * 3) * ((5 ^ 6) ^ 2))
 
 
 
-=== TEST 36: union
+=== TEST 39: union
 --- in
 select 2 union select 3
 --- ast
@@ -355,7 +384,7 @@ SetOp "union" (Query [Select [Integer 2]]) (Query [Select [Integer 3]])
 
 
 
-=== TEST 37: union 2
+=== TEST 40: union 2
 --- in
 (select count(*) from "Post" limit 3) union select sum(1) from "Comment";
 --- out
@@ -363,7 +392,7 @@ SetOp "union" (Query [Select [Integer 2]]) (Query [Select [Integer 3]])
 
 
 
-=== TEST 38: chained union
+=== TEST 41: chained union
 --- in
 select 3 union select 2 union select 1;
 --- out
@@ -371,7 +400,7 @@ select 3 union select 2 union select 1;
 
 
 
-=== TEST 39: chained union and except
+=== TEST 42: chained union and except
 --- in
 select 3 union select 2 union select 1 except select 2;
 --- out
@@ -379,7 +408,7 @@ select 3 union select 2 union select 1 except select 2;
 
 
 
-=== TEST 40: parens with set ops
+=== TEST 43: parens with set ops
 --- in
 select 3 union (select 2 except select 3)
 --- out
@@ -387,7 +416,7 @@ select 3 union (select 2 except select 3)
 
 
 
-=== TEST 41: intersect
+=== TEST 44: intersect
 --- in
 (select 2) union (select 3)intersect(select 2)
 --- out
@@ -395,7 +424,7 @@ select 3 union (select 2 except select 3)
 
 
 
-=== TEST 42: intersect
+=== TEST 45: intersect
 --- in
 (select 2) union ((select 3)intersect(select 2))
 --- out
@@ -403,7 +432,7 @@ select 3 union (select 2 except select 3)
 
 
 
-=== TEST 43: union all
+=== TEST 46: union all
 --- in
 select 2 union all select 2
 --- ast
@@ -413,7 +442,7 @@ SetOp "union all" (Query [Select [Integer 2]]) (Query [Select [Integer 2]])
 
 
 
-=== TEST 44: type casting ::
+=== TEST 47: type casting ::
 --- in
 select 32::float8
 --- out
@@ -421,7 +450,7 @@ select 32::"float8"
 
 
 
-=== TEST 45: more complicated type casting ::
+=== TEST 48: more complicated type casting ::
 --- in
 select ('2003-03' || '-01') :: date
 --- out

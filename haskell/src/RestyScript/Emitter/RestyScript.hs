@@ -1,24 +1,10 @@
 module RestyScript.Emitter.RestyScript where
 
 import RestyScript.AST
+import RestyScript.Util
+
 import Data.List (intercalate)
 import Text.Printf (printf)
-
-quote :: Char -> String -> String
-quote sep s = [sep] ++ quoteChars s ++ [sep]
-              where quoteChars (x:xs) =
-                        if x == sep || x == '\\'
-                            then x : x : quoteChars xs
-                            else case lookup x escapes of
-                                Just r -> r ++ quoteChars xs
-                                Nothing -> x : quoteChars xs
-                    quoteChars [] = ""
-
-quoteLiteral :: String -> String
-quoteLiteral = quote '\''
-
-quoteIdent :: String -> String
-quoteIdent = quote '"'
 
 emitForList ls = intercalate ", " $ map emit ls
 
@@ -30,7 +16,7 @@ emit node = case node of
     Query lst -> unwords $ map emit lst
     String s -> quoteLiteral s
     Variable _ v -> '$' : v
-    FuncCall f args -> (quoteIdent f) ++
+    FuncCall f args -> (emit f) ++
                                   "(" ++ (emitForList args) ++ ")"
     QualifiedColumn model col -> (emit model) ++ "." ++ (emit col)
 
@@ -55,8 +41,4 @@ emit node = case node of
     Alias col alias -> (emit col) ++ " as " ++ (emit alias)
     Null -> ""
     AnyColumn -> "*"
-
-escapes :: [(Char, String)]
-escapes = zipWith ch "\b\n\f\r\t" "bnfrt"
-    where ch a b = (a, '\\':[b])
 

@@ -19,7 +19,7 @@ si = Stats {
 instance Visit Stats where
 
 findFunc :: SqlVal -> Stats -> Stats
-findFunc (FuncCall func _) st = st { funcList = func : (funcList st) }
+findFunc (FuncCall (Symbol func)  _) st = st { funcList = func : (funcList st) }
 findFunc _ st = st
 
 findSelected :: SqlVal -> Stats -> Stats

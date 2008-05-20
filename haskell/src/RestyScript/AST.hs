@@ -30,7 +30,7 @@ data SqlVal = SetOp String SqlVal SqlVal
             | Float Double
             | String String
             | Variable SrcPos String
-            | FuncCall String [SqlVal]
+            | FuncCall SqlVal [SqlVal]
             | Compare String SqlVal SqlVal
             | Arith String SqlVal SqlVal
             | Or SqlVal SqlVal
