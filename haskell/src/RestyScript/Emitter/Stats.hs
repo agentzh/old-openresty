@@ -18,8 +18,14 @@ si = Stats {
 
 instance Visit Stats where
 
+findModel :: SqlVal -> Stats -> Stats
+findModel (Model (Symbol n)) st = st { modelList = [n] }
+findModel (Model (Variable _ n)) st = st { modelList = ['$':n] }
+findModel _ st = st
+
 findFunc :: SqlVal -> Stats -> Stats
 findFunc (FuncCall (Symbol func)  _) st = st { funcList = func : (funcList st) }
+findFunc (FuncCall (Variable _ func)  _) st = st { funcList = ('$':func) : (funcList st) }
 findFunc _ st = st
 
 findSelected :: SqlVal -> Stats -> Stats
@@ -33,10 +39,6 @@ findJoined _ st = st
 findQuery :: SqlVal -> Stats -> Stats
 findQuery (Query _) st = st { queryCount = 1 }
 findQuery _ st = st
-
-findModel :: SqlVal -> Stats -> Stats
-findModel (Model (Symbol n)) st = st { modelList = [n] }
-findModel _ st = st
 
 findCompared :: SqlVal -> Stats -> Stats
 findCompared (Compare _ _ _) st = st { comparedCount = 1 }

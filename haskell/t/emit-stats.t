@@ -144,9 +144,9 @@ Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCo
 
 === TEST 16: variable as model
 --- in
-select * from $model_name, $bar
+select * from $model_name, $bar, $foo(3)
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 2, comparedCount = 0, queryCount = 1}
+Stats {modelList = ["$model_name","$bar"], funcList = ["$foo"], selectedMax = 1, joinedMax = 3, comparedCount = 0, queryCount = 1}
 
 
 
