@@ -1,15 +1,29 @@
 module RestyScript.Emitter.Stats (
     Stats,
-    emit
+    emit,
+    emitJSON
 ) where
 
 import RestyScript.AST
+import Text.JSON
 
 data Stats = Stats {
     modelList :: [String], funcList :: [String],
     selectedMax :: Int, joinedMax :: Int,
     comparedCount :: Int, queryCount :: Int }
         deriving (Ord, Eq, Show)
+
+instance JSON Stats where
+    showJSON st =
+        JSObject $ toJSObject [
+                     ("modelList", showList $ modelList st),
+                     ("funcList", showList $ funcList st),
+                     ("selectedMax", showJSON $ selectedMax st),
+                     ("joinedMax", showJSON $ joinedMax st),
+                     ("comparedCount", showJSON $ comparedCount st),
+                     ("queryCount", showJSON $ queryCount st)]
+            where showList = JSArray . map showJSON
+    readJSON = undefined
 
 si = Stats {
     modelList = [], funcList = [],
@@ -60,4 +74,7 @@ merge a b = Stats {
 
 emit :: SqlVal -> Stats
 emit = traverse visit merge
+
+emitJSON :: SqlVal -> String
+emitJSON = encode . emit
 

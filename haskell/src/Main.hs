@@ -15,7 +15,7 @@ import System.Exit
 argHandles :: [(String, SqlVal -> IO ())]
 argHandles = [
     ("rs", putStrLn . RS.emit),
-    ("stats", putStrLn . show . St.emit),
+    ("stats", putStrLn . St.emitJSON),
     ("ast", putStrLn . show),
     ("frags", putStrLn . show . Fr.emit)]
 

@@ -26,7 +26,7 @@ __DATA__
 --- in
 select foo, bar from Bah
 --- out
-Stats {modelList = ["Bah"], funcList = [], selectedMax = 2, joinedMax = 1, comparedCount = 0, queryCount = 1}
+{"modelList":["Bah"],"funcList":[],"selectedMax":2,"joinedMax":1,"comparedCount":0,"queryCount":1}
 
 
 
@@ -34,7 +34,7 @@ Stats {modelList = ["Bah"], funcList = [], selectedMax = 2, joinedMax = 1, compa
 --- in
 select foo
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 1}
+{"modelList":[],"funcList":[],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":1}
 
 
 
@@ -42,7 +42,7 @@ Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCo
 --- in
 select id,name , age from  Post , Comment
 --- out
-Stats {modelList = ["Post","Comment"], funcList = [], selectedMax = 3, joinedMax = 2, comparedCount = 0, queryCount = 1}
+{"modelList":["Post","Comment"],"funcList":[],"selectedMax":3,"joinedMax":2,"comparedCount":0,"queryCount":1}
 
 
 
@@ -50,7 +50,7 @@ Stats {modelList = ["Post","Comment"], funcList = [], selectedMax = 3, joinedMax
 --- in
 select id from Post where a > b
 --- out
-Stats {modelList = ["Post"], funcList = [], selectedMax = 1, joinedMax = 1, comparedCount = 1, queryCount = 1}
+{"modelList":["Post"],"funcList":[],"selectedMax":1,"joinedMax":1,"comparedCount":1,"queryCount":1}
 
 
 
@@ -58,7 +58,7 @@ Stats {modelList = ["Post"], funcList = [], selectedMax = 1, joinedMax = 1, comp
 --- in
 select id from Post where 00.003 > 3.14 or 3. > .0
 --- out
-Stats {modelList = ["Post"], funcList = [], selectedMax = 1, joinedMax = 1, comparedCount = 2, queryCount = 1}
+{"modelList":["Post"],"funcList":[],"selectedMax":1,"joinedMax":1,"comparedCount":2,"queryCount":1}
 
 
 
@@ -66,7 +66,7 @@ Stats {modelList = ["Post"], funcList = [], selectedMax = 1, joinedMax = 1, comp
 --- in
 select id from Post where a>b and a like b or b=c and d>=e or e<>d
 --- out
-Stats {modelList = ["Post"], funcList = [], selectedMax = 1, joinedMax = 1, comparedCount = 5, queryCount = 1}
+{"modelList":["Post"],"funcList":[],"selectedMax":1,"joinedMax":1,"comparedCount":5,"queryCount":1}
 
 
 
@@ -74,7 +74,7 @@ Stats {modelList = ["Post"], funcList = [], selectedMax = 1, joinedMax = 1, comp
 --- in
 select id from Post where (( a > b ) and ( b < c or c > 1 ))
 --- out
-Stats {modelList = ["Post"], funcList = [], selectedMax = 1, joinedMax = 1, comparedCount = 3, queryCount = 1}
+{"modelList":["Post"],"funcList":[],"selectedMax":1,"joinedMax":1,"comparedCount":3,"queryCount":1}
 
 
 
@@ -82,7 +82,7 @@ Stats {modelList = ["Post"], funcList = [], selectedMax = 1, joinedMax = 1, comp
 --- in
 select id order  by  id
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 1}
+{"modelList":[],"funcList":[],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":1}
 
 
 
@@ -90,7 +90,7 @@ Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCo
 --- in
 select * order by id desc, name , foo  asc
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 1}
+{"modelList":[],"funcList":[],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":1}
 
 
 
@@ -98,7 +98,7 @@ Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCo
 --- in
 select sum(id) group by id
 --- out
-Stats {modelList = [], funcList = ["sum"], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 1}
+{"modelList":[],"funcList":["sum"],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":1}
 
 
 
@@ -106,7 +106,7 @@ Stats {modelList = [], funcList = ["sum"], selectedMax = 1, joinedMax = 0, compa
 --- in
  select 3.14 , 25, sum ( 1 ) , * from Post
 --- out
-Stats {modelList = ["Post"], funcList = ["sum"], selectedMax = 4, joinedMax = 1, comparedCount = 0, queryCount = 1}
+{"modelList":["Post"],"funcList":["sum"],"selectedMax":4,"joinedMax":1,"comparedCount":0,"queryCount":1}
 
 
 
@@ -114,7 +114,7 @@ Stats {modelList = ["Post"], funcList = ["sum"], selectedMax = 4, joinedMax = 1,
 --- in
 select "id", "date_part"("created") from "Post" where "id" = 1
 --- out
-Stats {modelList = ["Post"], funcList = ["date_part"], selectedMax = 2, joinedMax = 1, comparedCount = 1, queryCount = 1}
+{"modelList":["Post"],"funcList":["date_part"],"selectedMax":2,"joinedMax":1,"comparedCount":1,"queryCount":1}
 
 
 
@@ -122,7 +122,7 @@ Stats {modelList = ["Post"], funcList = ["date_part"], selectedMax = 2, joinedMa
 --- in
 select id from Post offset 3 limit 5
 --- out
-Stats {modelList = ["Post"], funcList = [], selectedMax = 1, joinedMax = 1, comparedCount = 0, queryCount = 1}
+{"modelList":["Post"],"funcList":[],"selectedMax":1,"joinedMax":1,"comparedCount":0,"queryCount":1}
 
 
 
@@ -130,7 +130,7 @@ Stats {modelList = ["Post"], funcList = [], selectedMax = 1, joinedMax = 1, comp
 --- in
 select id from Post offset '3' limit '5'
 --- out
-Stats {modelList = ["Post"], funcList = [], selectedMax = 1, joinedMax = 1, comparedCount = 0, queryCount = 1}
+{"modelList":["Post"],"funcList":[],"selectedMax":1,"joinedMax":1,"comparedCount":0,"queryCount":1}
 
 
 
@@ -138,7 +138,7 @@ Stats {modelList = ["Post"], funcList = [], selectedMax = 1, joinedMax = 1, comp
 --- in
 select $var
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 1}
+{"modelList":[],"funcList":[],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":1}
 
 
 
@@ -146,7 +146,7 @@ Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCo
 --- in
 select * from $model_name, $bar, $foo(3)
 --- out
-Stats {modelList = ["$model_name","$bar"], funcList = ["$foo"], selectedMax = 1, joinedMax = 3, comparedCount = 0, queryCount = 1}
+{"modelList":["$model_name","$bar"],"funcList":["$foo"],"selectedMax":1,"joinedMax":3,"comparedCount":0,"queryCount":1}
 
 
 
@@ -154,7 +154,7 @@ Stats {modelList = ["$model_name","$bar"], funcList = ["$foo"], selectedMax = 1,
 --- in
 select * from A where $id > 0 offset $off limit $lim group by $foo
 --- out
-Stats {modelList = ["A"], funcList = [], selectedMax = 1, joinedMax = 1, comparedCount = 1, queryCount = 1}
+{"modelList":["A"],"funcList":[],"selectedMax":1,"joinedMax":1,"comparedCount":1,"queryCount":1}
 
 
 
@@ -162,7 +162,7 @@ Stats {modelList = ["A"], funcList = [], selectedMax = 1, joinedMax = 1, compare
 --- in
 select select, 0.125 from from where where > or or and < and and order > 3.12 order by order, group group by by
 --- out
-Stats {modelList = ["from"], funcList = [], selectedMax = 2, joinedMax = 1, comparedCount = 3, queryCount = 1}
+{"modelList":["from"],"funcList":[],"selectedMax":2,"joinedMax":1,"comparedCount":3,"queryCount":1}
 
 
 
@@ -170,7 +170,7 @@ Stats {modelList = ["from"], funcList = [], selectedMax = 2, joinedMax = 1, comp
 --- in
 select Foo.bar , Foo . bar , "Foo" . bar , "Bar"."bar" from Foo
 --- out
-Stats {modelList = ["Foo"], funcList = [], selectedMax = 4, joinedMax = 1, comparedCount = 0, queryCount = 1}
+{"modelList":["Foo"],"funcList":[],"selectedMax":4,"joinedMax":1,"comparedCount":0,"queryCount":1}
 
 
 
@@ -178,7 +178,7 @@ Stats {modelList = ["Foo"], funcList = [], selectedMax = 4, joinedMax = 1, compa
 --- in
 select (32) , ((5)) as item
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 2, joinedMax = 0, comparedCount = 0, queryCount = 1}
+{"modelList":[],"funcList":[],"selectedMax":2,"joinedMax":0,"comparedCount":0,"queryCount":1}
 
 
 
@@ -188,7 +188,7 @@ select count(*),
      count ( * )
  from Post
 --- out
-Stats {modelList = ["Post"], funcList = ["count","count"], selectedMax = 2, joinedMax = 1, comparedCount = 0, queryCount = 1}
+{"modelList":["Post"],"funcList":["count","count"],"selectedMax":2,"joinedMax":1,"comparedCount":0,"queryCount":1}
 
 
 
@@ -197,15 +197,14 @@ Stats {modelList = ["Post"], funcList = ["count","count"], selectedMax = 2, join
 select id as foo, count(*) as bar
 from Post
 --- out
-Stats {modelList = ["Post"], funcList = ["count"], selectedMax = 2, joinedMax = 1, comparedCount = 0, queryCount = 1}
-
+{"modelList":["Post"],"funcList":["count"],"selectedMax":2,"joinedMax":1,"comparedCount":0,"queryCount":1}
 
 
 === TEST 23: alias for models
 --- in
 select * from Post as foo
 --- out
-Stats {modelList = ["Post"], funcList = [], selectedMax = 1, joinedMax = 1, comparedCount = 0, queryCount = 1}
+{"modelList":["Post"],"funcList":[],"selectedMax":1,"joinedMax":1,"comparedCount":0,"queryCount":1}
 
 
 
@@ -214,7 +213,7 @@ Stats {modelList = ["Post"], funcList = [], selectedMax = 1, joinedMax = 1, comp
 select *
 from proc(32, 'hello'), blah() as poo
 --- out
-Stats {modelList = [], funcList = ["proc","blah"], selectedMax = 1, joinedMax = 2, comparedCount = 0, queryCount = 1}
+{"modelList":[],"funcList":["proc","blah"],"selectedMax":1,"joinedMax":2,"comparedCount":0,"queryCount":1}
 
 
 
@@ -222,7 +221,7 @@ Stats {modelList = [], funcList = ["proc","blah"], selectedMax = 1, joinedMax = 
 --- in
 select 3+5/3*2 - 36 % 2
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 1}
+{"modelList":[],"funcList":[],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":1}
 
 
 
@@ -230,7 +229,7 @@ Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCo
 --- in
 select (3+5)/(3*2) - ( 36 % 2 )
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 1}
+{"modelList":[],"funcList":[],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":1}
 
 
 
@@ -238,7 +237,7 @@ Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCo
 --- in
 select proc(2) || 'hello' || 5 - 2 + 5
 --- out
-Stats {modelList = [], funcList = ["proc"], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 1}
+{"modelList":[],"funcList":["proc"],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":1}
 
 
 
@@ -246,7 +245,7 @@ Stats {modelList = [], funcList = ["proc"], selectedMax = 1, joinedMax = 0, comp
 --- in
 select 3*3*5^6^2
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 1}
+{"modelList":[],"funcList":[],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":1}
 
 
 
@@ -254,7 +253,7 @@ Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCo
 --- in
 select 2 union select 3
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 2}
+{"modelList":[],"funcList":[],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":2}
 
 
 
@@ -264,7 +263,7 @@ Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCo
 (select min(*) from Post, Student where b < 5) intersect
 (select sum(*), 3, 2 from Blah)
 --- out
-Stats {modelList = ["Post","Comment","Post","Student","Blah"], funcList = ["max","min","sum"], selectedMax = 3, joinedMax = 2, comparedCount = 2, queryCount = 3}
+{"modelList":["Post","Comment","Post","Student","Blah"],"funcList":["max","min","sum"],"selectedMax":3,"joinedMax":2,"comparedCount":2,"queryCount":3}
 
 
 
@@ -272,15 +271,14 @@ Stats {modelList = ["Post","Comment","Post","Student","Blah"], funcList = ["max"
 --- in
 (select count(*) from "Post" limit 3) union select sum(1) from "Comment";
 --- out
-Stats {modelList = ["Post","Comment"], funcList = ["count","sum"], selectedMax = 1, joinedMax = 1, comparedCount = 0, queryCount = 2}
-
+{"modelList":["Post","Comment"],"funcList":["count","sum"],"selectedMax":1,"joinedMax":1,"comparedCount":0,"queryCount":2}
 
 
 === TEST 32: chained union
 --- in
 select 3 union select 2 union select 1;
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 3}
+{"modelList":[],"funcList":[],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":3}
 
 
 
@@ -288,7 +286,7 @@ Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCo
 --- in
 select 3 union select 2 union select 1 except select 2;
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 4}
+{"modelList":[],"funcList":[],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":4}
 
 
 
@@ -296,7 +294,7 @@ Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCo
 --- in
 select 3 union (select 2 except select 3)
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 3}
+{"modelList":[],"funcList":[],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":3}
 
 
 
@@ -304,7 +302,7 @@ Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCo
 --- in
 select 2 union all select 2
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 2}
+{"modelList":[],"funcList":[],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":2}
 
 
 
@@ -312,7 +310,7 @@ Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCo
 --- in
 select 32::float8
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 1}
+{"modelList":[],"funcList":[],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":1}
 
 
 
@@ -320,5 +318,5 @@ Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCo
 --- in
 select ('2003-03' || '-01') :: date
 --- out
-Stats {modelList = [], funcList = [], selectedMax = 1, joinedMax = 0, comparedCount = 0, queryCount = 1}
+{"modelList":[],"funcList":[],"selectedMax":1,"joinedMax":0,"comparedCount":0,"queryCount":1}
 
