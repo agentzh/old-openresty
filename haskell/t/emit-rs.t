@@ -56,7 +56,20 @@ select "id", "name", "age" from "Post", "Comment"
 
 
 
-=== TEST 4: simple where clause
+=== TEST 4: spaces around separator (,)
+--- in
+select $foo,
+$bar ,
+$age from  Post , $comment
+--- ast
+Query [Select [Variable (1,12) "foo",Variable (2,5) "bar",Variable (3,5) "age"],From [Model (Symbol "Post"),Model (Variable (3,27) "comment")]]
+--- out
+select $foo, $bar, $age from "Post", $comment
+--- LAST
+
+
+
+=== TEST 5: simple where clause
 --- in
 select id from Post where a > b
 --- ast
@@ -66,7 +79,7 @@ select "id" from "Post" where "a" > "b"
 
 
 
-=== TEST 5: floating-point numbers
+=== TEST 6: floating-point numbers
 --- in
 select id from Post where 00.003 > 3.14 or 3. > .0
 --- out
@@ -74,7 +87,7 @@ select "id" from "Post" where (0.003 > 3.14 or 3.0 > 0.0)
 
 
 
-=== TEST 6: integral numbers
+=== TEST 7: integral numbers
 --- in
 select id from Post where 256 > 0
 --- ast
@@ -84,7 +97,7 @@ select "id" from "Post" where 256 > 0
 
 
 
-=== TEST 7: simple or
+=== TEST 8: simple or
 --- in
 select id from Post  where a > b or b <= c
 --- out
@@ -92,7 +105,7 @@ select "id" from "Post" where ("a" > "b" or "b" <= "c")
 
 
 
-=== TEST 8: and in or
+=== TEST 9: and in or
 --- in
 select id from Post where a>b and a like b or b=c and d>=e or e<>d
 --- out
@@ -100,7 +113,7 @@ select "id" from "Post" where ((("a" > "b" and "a" like "b") or ("b" = "c" and "
 
 
 
-=== TEST 9: with parens in and/or
+=== TEST 10: with parens in and/or
 --- in
 select id from Post where (( a > b ) and ( b < c or c > 1 ))
 --- out
@@ -108,7 +121,7 @@ select "id" from "Post" where ("a" > "b" and ("b" < "c" or "c" > 1))
 
 
 
-=== TEST 10: literal strings
+=== TEST 11: literal strings
 --- in
 select id from Post where 'a''\'' != 'b\\\n\r\b\a'
 --- out
@@ -116,7 +129,7 @@ select "id" from "Post" where 'a''''' != 'b\\\n\r\ba'
 
 
 
-=== TEST 11: order by
+=== TEST 12: order by
 --- in
 select id order  by  id
 --- ast
@@ -126,7 +139,7 @@ select "id" order by "id" asc
 
 
 
-=== TEST 12: complicated order by
+=== TEST 13: complicated order by
 --- in
 select * order by id desc, name , foo  asc
 --- out
@@ -134,7 +147,7 @@ select * order by "id" desc, "name" asc, "foo" asc
 
 
 
-=== TEST 13: group by
+=== TEST 14: group by
 --- in
 select sum(id) group by id
 --- out
@@ -142,7 +155,7 @@ select "sum"("id") group by "id"
 
 
 
-=== TEST 14: select literals
+=== TEST 15: select literals
 --- in
  select 3.14 , 25, sum ( 1 ) , * from Post
 --- out
@@ -150,7 +163,7 @@ select 3.14, 25, "sum"(1), * from "Post"
 
 
 
-=== TEST 15: quoted symbols
+=== TEST 16: quoted symbols
 --- in
 select "id", "date_part"("created") from "Post" where "id" = 1
 --- out
@@ -158,7 +171,7 @@ select "id", "date_part"("created") from "Post" where "id" = 1
 
 
 
-=== TEST 16: offset and limit
+=== TEST 17: offset and limit
 --- in
 select id from Post offset 3 limit 5
 --- out
@@ -166,7 +179,7 @@ select "id" from "Post" offset 3 limit 5
 
 
 
-=== TEST 17: offset and limit (with quoted values)
+=== TEST 18: offset and limit (with quoted values)
 --- in
 select id from Post offset '3' limit '5'
 --- out
@@ -174,7 +187,7 @@ select "id" from "Post" offset '3' limit '5'
 
 
 
-=== TEST 18: simple variable
+=== TEST 19: simple variable
 --- in
 select $var
 --- ast
@@ -183,7 +196,8 @@ Query [Select [Variable (1,12) "var"]]
 select $var
 
 
-=== TEST 18: simple variable
+
+=== TEST 20: simple variable
 --- in
 select
 $var
@@ -195,7 +209,7 @@ select $var from "Post"
 
 
 
-=== TEST 19: variable as model
+=== TEST 21: variable as model
 --- in
 select * from $model_name, $bar
 --- ast
@@ -205,7 +219,7 @@ select * from $model_name, $bar
 
 
 
-=== TEST 20: variable in where, offset, limit and group by
+=== TEST 22: variable in where, offset, limit and group by
 --- in
 select * from A where $id > 0 offset $off limit $lim group by $foo
 --- ast
@@ -215,7 +229,7 @@ select * from "A" where $id > 0 offset $off limit $lim group by $foo
 
 
 
-=== TEST 21: weird identifiers
+=== TEST 23: weird identifiers
 --- in
 select select, 0.125 from from where where > or or and < and and order > 3.12 order by order, group group by by
 --- out
@@ -223,7 +237,7 @@ select "select", 0.125 from "from" where ("where" > "or" or ("and" < "and" and "
 
 
 
-=== TEST 22: signed negative numbers
+=== TEST 24: signed negative numbers
 --- in
 select -3 , - 3 , -1.25,- .3
 --- out
@@ -231,7 +245,7 @@ select -3, -3, -1.25, -0.3
 
 
 
-=== TEST 23: signed positive numbers
+=== TEST 25: signed positive numbers
 --- in
 select +3 , + 3 , +1.25,+ .3 , 1
 --- out
@@ -239,7 +253,7 @@ select 3, 3, 1.25, 0.3, 1
 
 
 
-=== TEST 24: qualified columns
+=== TEST 26: qualified columns
 --- in
 select Foo.bar , Foo . bar , "Foo" . bar , "Foo"."bar" from Foo
 --- out
@@ -247,7 +261,7 @@ select "Foo"."bar", "Foo"."bar", "Foo"."bar", "Foo"."bar" from "Foo"
 
 
 
-=== TEST 25: selected cols with parens
+=== TEST 27: selected cols with parens
 --- in
 select (32) , ((5)) as item
 --- ast
@@ -257,7 +271,7 @@ select 32, 5 as "item"
 
 
 
-=== TEST 26: count(*)
+=== TEST 28: count(*)
 --- in
 select count(*),
      count ( * )
@@ -267,7 +281,7 @@ select "count"(*), "count"(*) from "Post"
 
 
 
-=== TEST 27: aliased cols
+=== TEST 29: aliased cols
 --- in
 select id as foo, count(*) as bar
 from Post
@@ -278,7 +292,7 @@ select "id" as "foo", "count"(*) as "bar" from "Post"
 
 
 
-=== TEST 28: alias for models
+=== TEST 30: alias for models
 --- in
 select * from Post as foo
 --- ast
@@ -288,7 +302,7 @@ select * from "Post" as "foo"
 
 
 
-=== TEST 29: from proc
+=== TEST 31: from proc
 --- in
 select *
 from proc(32, 'hello'), blah() as poo
@@ -297,7 +311,7 @@ select * from "proc"(32, 'hello'), "blah"() as "poo"
 
 
 
-=== TEST 30: arith
+=== TEST 32: arith
 --- in
 select 3+5/3*2 - 36 % 2
 --- ast
@@ -307,7 +321,7 @@ select ((3 + ((5 / 3) * 2)) - (36 % 2))
 
 
 
-=== TEST 31: arith (with parens)
+=== TEST 33: arith (with parens)
 --- in
 select (3+5)/(3*2) - ( 36 % 2 )
 --- out
@@ -315,7 +329,7 @@ select (((3 + 5) / (3 * 2)) - (36 % 2))
 
 
 
-=== TEST 32: string cat ||
+=== TEST 34: string cat ||
 --- in
 select proc(2) || 'hello' || 5 - 2 + 5
 --- out
@@ -323,7 +337,7 @@ select (("proc"(2) || 'hello') || ((5 - 2) + 5))
 
 
 
-=== TEST 33: ^
+=== TEST 35: ^
 --- in
 select 3*3*5^6^2
 --- out
@@ -331,7 +345,7 @@ select ((3 * 3) * ((5 ^ 6) ^ 2))
 
 
 
-=== TEST 34: union
+=== TEST 36: union
 --- in
 select 2 union select 3
 --- ast
@@ -341,7 +355,7 @@ SetOp "union" (Query [Select [Integer 2]]) (Query [Select [Integer 3]])
 
 
 
-=== TEST 35: union 2
+=== TEST 37: union 2
 --- in
 (select count(*) from "Post" limit 3) union select sum(1) from "Comment";
 --- out
@@ -349,7 +363,7 @@ SetOp "union" (Query [Select [Integer 2]]) (Query [Select [Integer 3]])
 
 
 
-=== TEST 36: chained union
+=== TEST 38: chained union
 --- in
 select 3 union select 2 union select 1;
 --- out
@@ -357,7 +371,7 @@ select 3 union select 2 union select 1;
 
 
 
-=== TEST 37: chained union and except
+=== TEST 39: chained union and except
 --- in
 select 3 union select 2 union select 1 except select 2;
 --- out
@@ -365,7 +379,7 @@ select 3 union select 2 union select 1 except select 2;
 
 
 
-=== TEST 38: parens with set ops
+=== TEST 40: parens with set ops
 --- in
 select 3 union (select 2 except select 3)
 --- out
@@ -373,7 +387,7 @@ select 3 union (select 2 except select 3)
 
 
 
-=== TEST 39: intersect
+=== TEST 41: intersect
 --- in
 (select 2) union (select 3)intersect(select 2)
 --- out
@@ -381,7 +395,7 @@ select 3 union (select 2 except select 3)
 
 
 
-=== TEST 40: intersect
+=== TEST 42: intersect
 --- in
 (select 2) union ((select 3)intersect(select 2))
 --- out
@@ -389,7 +403,7 @@ select 3 union (select 2 except select 3)
 
 
 
-=== TEST 41: union all
+=== TEST 43: union all
 --- in
 select 2 union all select 2
 --- ast
@@ -399,7 +413,7 @@ SetOp "union all" (Query [Select [Integer 2]]) (Query [Select [Integer 2]])
 
 
 
-=== TEST 42: type casting ::
+=== TEST 44: type casting ::
 --- in
 select 32::float8
 --- out
@@ -407,7 +421,7 @@ select 32::"float8"
 
 
 
-=== TEST 43: more complicated type casting ::
+=== TEST 45: more complicated type casting ::
 --- in
 select ('2003-03' || '-01') :: date
 --- out
