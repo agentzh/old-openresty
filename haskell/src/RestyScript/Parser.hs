@@ -35,7 +35,7 @@ parseQuery = do select <- spaces >> parseSelect
                 from <- option Null parseFrom
                 whereClause <- option Null parseWhere
                 moreClauses <- sepBy parseMoreClause spaces
-                return $ Query $ filter (\x->x /= Null)
+                return $ Query $ filter (Null /=)
                     [select, from, whereClause] ++ moreClauses
          <|> parens parseSetExpr
          <?> "select statement"
