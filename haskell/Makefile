@@ -16,4 +16,5 @@ clean:
 	-rm bin/restyscript
 	-find -name '*.o' -delete
 	-find -name '*.hi' -delete
+	-find -name '*.ho' -delete
 
