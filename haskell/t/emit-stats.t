@@ -200,6 +200,7 @@ from Post
 {"modelList":["Post"],"funcList":["count"],"selectedMax":2,"joinedMax":1,"comparedCount":0,"queryCount":1}
 
 
+
 === TEST 23: alias for models
 --- in
 select * from Post as foo
@@ -272,6 +273,7 @@ select 2 union select 3
 (select count(*) from "Post" limit 3) union select sum(1) from "Comment";
 --- out
 {"modelList":["Post","Comment"],"funcList":["count","sum"],"selectedMax":1,"joinedMax":1,"comparedCount":0,"queryCount":2}
+
 
 
 === TEST 32: chained union

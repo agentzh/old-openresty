@@ -1,30 +1,31 @@
 module RestyScript.Emitter.RenameVar where
 
-import Text.ParserCombinators.Parsec (sourceLine, sourceColumn)
-import Text.ParserCombinators.Parsec.Pos (Line, Column)
+import Text.ParserCombinators.Parsec.Pos (
+    SourcePos, incSourceColumn,
+    updatePosChar, setSourceLine, setSourceColumn)
 import RestyScript.AST
 
-instance Visit [SrcPos] where
+instance Visit [SourcePos] where
 
-findVar :: String -> SqlVal -> [SrcPos]
+findVar :: String -> SqlVal -> [SourcePos]
 findVar var node =
     case node of
         Variable pos name | name == var
-            -> [(fst pos, snd pos - length name)]
+            -> [pos]
         otherwise -> []
 
-rename :: String -> Line -> Column -> [SrcPos] -> Int -> String -> String
-rename src@(c:cs) ln col pos@(p:ps) varLen newVar
-    | (ln, col) == p = newVar ++
-            rename (drop varLen src) ln (col + varLen) ps varLen newVar
-    | c == '\n' = c : rename cs (succ ln) 1 pos varLen newVar
-    | c == '\t' = c : rename cs ln (col + 8 - (col-1) `mod` 8) pos varLen newVar
-    | otherwise = c : rename cs ln (succ col) pos varLen newVar
-rename [] _ _ _ _ _ = ""
-rename src _ _ [] _ _ = src
+rename :: String -> SourcePos -> [SourcePos] -> Int -> String -> String
+rename src@(c:cs) pos varPos@(p:ps) varLen newVar
+    | pos == p = newVar ++
+            rename (drop varLen src) (incSourceColumn pos varLen) ps varLen newVar
+    | otherwise = c : rename cs (updatePosChar pos c) varPos varLen newVar
+rename [] _ _ _ _ = ""
+rename src _ [] _ _ = src
 
 emit :: SqlVal -> String -> String -> String -> String
 emit ast input oldVar newVar =
     let pos = traverse (findVar oldVar) (++) ast
-    in rename input 1 1 pos (length oldVar) newVar
+    in if null pos
+         then input
+         else rename input (setSourceLine (setSourceColumn (head pos) 1) 1) pos (length oldVar) newVar
 
