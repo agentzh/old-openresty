@@ -38,15 +38,14 @@ select foo, bar from Bah
 select $foo
 --- out
 ["select ",["foo","unknown"]]
---- LAST
 
 
 
 === TEST 3: spaces around separator (,)
 --- in
-select id,name , age from  Post , Comment
+select id,$name , age from  $Post , Comment
 --- out
-select "id", "name", "age" from "Post", "Comment"
+["select \"id\", ",["name","unknown"],", \"age\" from ",["Post","literal"],", \"Comment\""]
 
 
 
@@ -55,20 +54,17 @@ select "id", "name", "age" from "Post", "Comment"
 select $foo,
 $bar ,
 $age from  Post , $comment
---- ast
-Query [Select [Variable (1,9) "foo",Variable (2,2) "bar",Variable (3,2) "age"],From [Model (Symbol "Post"),Model (Variable (3,20) "comment")]]
 --- out
-select $foo, $bar, $age from "Post", $comment
+["select ",["foo","unknown"],", ",["bar","unknown"],", ",["age","unknown"]," from \"Post\", ",["comment","literal"]]
 
 
 
 === TEST 5: simple where clause
 --- in
 select id from Post where a > b
---- ast
-Query [Select [Column (Symbol "id")],From [Model (Symbol "Post")],Where (Compare ">" (Column (Symbol "a")) (Column (Symbol "b")))]
 --- out
-select "id" from "Post" where "a" > "b"
+["select \"id\" from \"Post\" where \"a\" > \"b\""]
+--- LAST
 
 
 
