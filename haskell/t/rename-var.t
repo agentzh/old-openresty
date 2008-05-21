@@ -129,3 +129,12 @@ select sum($x) from Post where (( $a > $x ) and ( $x < $c or $c > 1 ))
 --- out eval
 "select \tsum(\$x) from Post where\t\t ( \$a > \$x )\n"
 
+
+
+=== TEST 11: $foo(...)
+--- in
+select $foo(3)
+--- rename: foo bar
+--- out
+select $bar(3)
+
