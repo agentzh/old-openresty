@@ -19,9 +19,11 @@ run {
     my @ln = split /\n+/, $stdout;
     my $ast = $block->ast;
     if (defined $ast) {
+        $ln[0] =~ s/"RestyScript" \(line (\d+), column (\d+)\)/($1,$2)/gs;
         is "$ln[0]\n", $ast, "AST ok - $desc";
     }
-    is "$ln[1]\n", $block->out, "Pg/SQL output ok - $desc";
+    my $out = $block->out;
+    is "$ln[1]\n", $out, "Pg/SQL output ok - $desc";
 };
 
 __DATA__
@@ -62,7 +64,7 @@ select $foo,
 $bar ,
 $age from  Post , $comment
 --- ast
-Query [Select [Variable (1,12) "foo",Variable (2,5) "bar",Variable (3,5) "age"],From [Model (Symbol "Post"),Model (Variable (3,27) "comment")]]
+Query [Select [Variable (1,9) "foo",Variable (2,2) "bar",Variable (3,2) "age"],From [Model (Symbol "Post"),Model (Variable (3,20) "comment")]]
 --- out
 select $foo, $bar, $age from "Post", $comment
 
@@ -190,7 +192,7 @@ select "id" from "Post" offset '3' limit '5'
 --- in
 select $var
 --- ast
-Query [Select [Variable (1,12) "var"]]
+Query [Select [Variable (1,9) "var"]]
 --- out
 select $var
 
@@ -202,7 +204,7 @@ select
 $var
 from Post
 --- ast
-Query [Select [Variable (2,5) "var"],From [Model (Symbol "Post")]]
+Query [Select [Variable (2,2) "var"],From [Model (Symbol "Post")]]
 --- out
 select $var from "Post"
 
@@ -212,7 +214,7 @@ select $var from "Post"
 --- in
 select $table.$col from $table
 --- ast
-Query [Select [QualifiedColumn (Variable (1,14) "table") (Variable (1,19) "col")],From [Model (Variable (1,31) "table")]]
+Query [Select [QualifiedColumn (Variable (1,9) "table") (Variable (1,16) "col")],From [Model (Variable (1,26) "table")]]
 --- out
 select $table.$col from $table
 
@@ -222,7 +224,7 @@ select $table.$col from $table
 --- in
 select $table.col from $table
 --- ast
-Query [Select [QualifiedColumn (Variable (1,14) "table") (Symbol "col")],From [Model (Variable (1,30) "table")]]
+Query [Select [QualifiedColumn (Variable (1,9) "table") (Symbol "col")],From [Model (Variable (1,25) "table")]]
 --- out
 select $table."col" from $table
 
@@ -232,7 +234,7 @@ select $table."col" from $table
 --- in
 select $proc(32)
 --- ast
-Query [Select [FuncCall (Variable (1,13) "proc") [Integer 32]]]
+Query [Select [FuncCall (Variable (1,9) "proc") [Integer 32]]]
 --- out
 select $proc(32)
 
@@ -242,7 +244,7 @@ select $proc(32)
 --- in
 select * from $model_name, $bar
 --- ast
-Query [Select [AnyColumn],From [Model (Variable (1,26) "model_name"),Model (Variable (1,32) "bar")]]
+Query [Select [AnyColumn],From [Model (Variable (1,16) "model_name"),Model (Variable (1,29) "bar")]]
 --- out
 select * from $model_name, $bar
 
@@ -252,7 +254,7 @@ select * from $model_name, $bar
 --- in
 select * from A where $id > 0 offset $off limit $lim group by $foo
 --- ast
-Query [Select [AnyColumn],From [Model (Symbol "A")],Where (Compare ">" (Variable (1,26) "id") (Integer 0)),Offset (Variable (1,42) "off"),Limit (Variable (1,53) "lim"),GroupBy (Column (Variable (1,67) "foo"))]
+Query [Select [AnyColumn],From [Model (Symbol "A")],Where (Compare ">" (Variable (1,24) "id") (Integer 0)),Offset (Variable (1,39) "off"),Limit (Variable (1,50) "lim"),GroupBy (Column (Variable (1,64) "foo"))]
 --- out
 select * from "A" where $id > 0 offset $off limit $lim group by $foo
 

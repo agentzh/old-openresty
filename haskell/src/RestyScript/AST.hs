@@ -1,14 +1,10 @@
 module RestyScript.AST (
     SqlVal(..),
     traverse,
-    Visit,
-    SrcPos
+    Visit
 ) where
 
-import Text.ParserCombinators.Parsec (SourcePos)
-import Text.ParserCombinators.Parsec.Pos (Line, Column)
-
-type SrcPos = (Line, Column)
+import Text.ParserCombinators.Parsec.Pos (SourcePos)
 
 data SqlVal = SetOp String SqlVal SqlVal
             | Query [SqlVal]
@@ -29,7 +25,7 @@ data SqlVal = SetOp String SqlVal SqlVal
             | Integer Int
             | Float Double
             | String String
-            | Variable SrcPos String
+            | Variable SourcePos String
             | FuncCall SqlVal [SqlVal]
             | Compare String SqlVal SqlVal
             | Arith String SqlVal SqlVal
