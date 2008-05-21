@@ -292,7 +292,7 @@ from Post
 --- in
 select * from Post as foo
 --- out
-select * from "Post" as "foo"
+["select * from \"Post\" as \"foo\""]
 --- LAST
 
 
