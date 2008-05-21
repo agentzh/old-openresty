@@ -59,7 +59,7 @@ traverse visit merge node =
         Model m -> merge cur (self m)
         QualifiedColumn lhs rhs -> mergeAll [cur, self lhs, self rhs]
         Variable _ _ -> visit node
-        FuncCall _ args -> mergeAll $ cur : map self args
+        FuncCall f args -> mergeAll $ cur : map self (f:args)
         Compare _ lhs rhs -> mergeAll [cur, self lhs, self rhs]
         Arith _ lhs rhs -> mergeAll [cur, self lhs, self rhs]
         Or lhs rhs -> mergeAll [cur, self lhs, self rhs]
