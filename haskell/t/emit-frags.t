@@ -35,9 +35,9 @@ select foo, bar from Bah
 
 === TEST 2: select only
 --- in
-select $foo
+select foo
 --- out
-["select ",["foo","unknown"]]
+["select \"foo\""]
 
 
 
@@ -45,7 +45,7 @@ select $foo
 --- in
 select id,$name , age from  $Post , Comment
 --- out
-["select \"id\", ",["name","unknown"],", \"age\" from ",["Post","literal"],", \"Comment\""]
+["select \"id\", ",["name","unknown"],", \"age\" from ",["Post","symbol"],", \"Comment\""]
 
 
 
@@ -55,7 +55,7 @@ select $foo,
 $bar ,
 $age from  Post , $comment
 --- out
-["select ",["foo","unknown"],", ",["bar","unknown"],", ",["age","unknown"]," from \"Post\", ",["comment","literal"]]
+["select ",["foo","unknown"],", ",["bar","unknown"],", ",["age","unknown"]," from \"Post\", ",["comment","symbol"]]
 
 
 
@@ -64,7 +64,6 @@ $age from  Post , $comment
 select id from Post where a > b
 --- out
 ["select \"id\" from \"Post\" where \"a\" > \"b\""]
---- LAST
 
 
 
@@ -72,17 +71,15 @@ select id from Post where a > b
 --- in
 select id from Post where 00.003 > 3.14 or 3. > .0
 --- out
-select "id" from "Post" where (0.003 > 3.14 or 3.0 > 0.0)
+["select \"id\" from \"Post\" where (0.003 > 3.14 or 3.0 > 0.0)"]
 
 
 
 === TEST 7: integral numbers
 --- in
 select id from Post where 256 > 0
---- ast
-Query [Select [Column (Symbol "id")],From [Model (Symbol "Post")],Where (Compare ">" (Integer 256) (Integer 0))]
 --- out
-select "id" from "Post" where 256 > 0
+["select \"id\" from \"Post\" where 256 > 0"]
 
 
 
@@ -90,7 +87,7 @@ select "id" from "Post" where 256 > 0
 --- in
 select id from Post  where a > b or b <= c
 --- out
-select "id" from "Post" where ("a" > "b" or "b" <= "c")
+["select \"id\" from \"Post\" where (\"a\" > \"b\" or \"b\" <= \"c\")"]
 
 
 
@@ -98,7 +95,7 @@ select "id" from "Post" where ("a" > "b" or "b" <= "c")
 --- in
 select id from Post where a>b and a like b or b=c and d>=e or e<>d
 --- out
-select "id" from "Post" where ((("a" > "b" and "a" like "b") or ("b" = "c" and "d" >= "e")) or "e" <> "d")
+["select \"id\" from \"Post\" where (((\"a\" > \"b\" and \"a\" like \"b\") or (\"b\" = \"c\" and \"d\" >= \"e\")) or \"e\" <> \"d\")"]
 
 
 
@@ -106,7 +103,7 @@ select "id" from "Post" where ((("a" > "b" and "a" like "b") or ("b" = "c" and "
 --- in
 select id from Post where (( a > b ) and ( b < c or c > 1 ))
 --- out
-select "id" from "Post" where ("a" > "b" and ("b" < "c" or "c" > 1))
+["select \"id\" from \"Post\" where (\"a\" > \"b\" and (\"b\" < \"c\" or \"c\" > 1))"]
 
 
 
@@ -114,17 +111,15 @@ select "id" from "Post" where ("a" > "b" and ("b" < "c" or "c" > 1))
 --- in
 select id from Post where 'a''\'' != 'b\\\n\r\b\a'
 --- out
-select "id" from "Post" where 'a''''' != 'b\\\n\r\ba'
+["select \"id\" from \"Post\" where 'a''''' != 'b\\\\\\n\\r\\ba'"]
 
 
 
 === TEST 12: order by
 --- in
 select id order  by  id
---- ast
-Query [Select [Column (Symbol "id")],OrderBy [OrderPair (Column (Symbol "id")) "asc"]]
 --- out
-select "id" order by "id" asc
+["select \"id\" order by \"id\" asc"]
 
 
 
@@ -132,7 +127,7 @@ select "id" order by "id" asc
 --- in
 select * order by id desc, name , foo  asc
 --- out
-select * order by "id" desc, "name" asc, "foo" asc
+["select * order by \"id\" desc, \"name\" asc, \"foo\" asc"]
 
 
 
@@ -140,7 +135,7 @@ select * order by "id" desc, "name" asc, "foo" asc
 --- in
 select sum(id) group by id
 --- out
-select "sum"("id") group by "id"
+["select \"sum\"(\"id\") group by \"id\""]
 
 
 
@@ -148,7 +143,7 @@ select "sum"("id") group by "id"
 --- in
  select 3.14 , 25, sum ( 1 ) , * from Post
 --- out
-select 3.14, 25, "sum"(1), * from "Post"
+["select 3.14, 25, \"sum\"(1), * from \"Post\""]
 
 
 
@@ -156,7 +151,7 @@ select 3.14, 25, "sum"(1), * from "Post"
 --- in
 select "id", "date_part"("created") from "Post" where "id" = 1
 --- out
-select "id", "date_part"("created") from "Post" where "id" = 1
+["select \"id\", \"date_part\"(\"created\") from \"Post\" where \"id\" = 1"]
 
 
 
@@ -164,7 +159,7 @@ select "id", "date_part"("created") from "Post" where "id" = 1
 --- in
 select id from Post offset 3 limit 5
 --- out
-select "id" from "Post" offset 3 limit 5
+["select \"id\" from \"Post\" offset 3 limit 5"]
 
 
 
@@ -172,17 +167,15 @@ select "id" from "Post" offset 3 limit 5
 --- in
 select id from Post offset '3' limit '5'
 --- out
-select "id" from "Post" offset '3' limit '5'
+["select \"id\" from \"Post\" offset '3' limit '5'"]
 
 
 
 === TEST 19: simple variable
 --- in
 select $var
---- ast
-Query [Select [Variable (1,9) "var"]]
 --- out
-select $var
+["select ",["var","unknown"]]
 
 
 
@@ -191,60 +184,48 @@ select $var
 select
 $var
 from Post
---- ast
-Query [Select [Variable (2,2) "var"],From [Model (Symbol "Post")]]
 --- out
-select $var from "Post"
+["select ",["var","unknown"]," from \"Post\""]
 
 
 
 === TEST 21: var in qualified col
 --- in
 select $table.$col from $table
---- ast
-Query [Select [QualifiedColumn (Variable (1,9) "table") (Variable (1,16) "col")],From [Model (Variable (1,26) "table")]]
 --- out
-select $table.$col from $table
+["select ",["table","symbol"],".",["col","symbol"]," from ",["table","symbol"]]
 
 
 
 === TEST 22: var in qualified col
 --- in
 select $table.col from $table
---- ast
-Query [Select [QualifiedColumn (Variable (1,9) "table") (Symbol "col")],From [Model (Variable (1,25) "table")]]
 --- out
-select $table."col" from $table
+["select ",["table","symbol"],".\"col\" from ",["table","symbol"]]
 
 
 
 === TEST 23: var in proc call
 --- in
 select $proc(32)
---- ast
-Query [Select [FuncCall (Variable (1,9) "proc") [Integer 32]]]
 --- out
-select $proc(32)
+["select ",["proc","symbol"],"(32)"]
 
 
 
 === TEST 24: variable as model
 --- in
 select * from $model_name, $bar
---- ast
-Query [Select [AnyColumn],From [Model (Variable (1,16) "model_name"),Model (Variable (1,29) "bar")]]
 --- out
-select * from $model_name, $bar
+["select * from ",["model_name","symbol"],", ",["bar","symbol"]]
 
 
 
 === TEST 25: variable in where, offset, limit and group by
 --- in
 select * from A where $id > 0 offset $off limit $lim group by $foo
---- ast
-Query [Select [AnyColumn],From [Model (Symbol "A")],Where (Compare ">" (Variable (1,24) "id") (Integer 0)),Offset (Variable (1,39) "off"),Limit (Variable (1,50) "lim"),GroupBy (Column (Variable (1,64) "foo"))]
 --- out
-select * from "A" where $id > 0 offset $off limit $lim group by $foo
+["select * from \"A\" where ",["id","unknown"]," > 0 offset ",["off","literal"]," limit ",["lim","literal"]," group by ",["foo","symbol"]]
 
 
 
@@ -252,7 +233,7 @@ select * from "A" where $id > 0 offset $off limit $lim group by $foo
 --- in
 select select, 0.125 from from where where > or or and < and and order > 3.12 order by order, group group by by
 --- out
-select "select", 0.125 from "from" where ("where" > "or" or ("and" < "and" and "order" > 3.12)) order by "order" asc, "group" asc group by "by"
+["select \"select\", 0.125 from \"from\" where (\"where\" > \"or\" or (\"and\" < \"and\" and \"order\" > 3.12)) order by \"order\" asc, \"group\" asc group by \"by\""]
 
 
 
@@ -260,7 +241,7 @@ select "select", 0.125 from "from" where ("where" > "or" or ("and" < "and" and "
 --- in
 select -3 , - 3 , -1.25,- .3
 --- out
-select -3, -3, -1.25, -0.3
+["select -3, -3, -1.25, -0.3"]
 
 
 
@@ -268,7 +249,7 @@ select -3, -3, -1.25, -0.3
 --- in
 select +3 , + 3 , +1.25,+ .3 , 1
 --- out
-select 3, 3, 1.25, 0.3, 1
+["select 3, 3, 1.25, 0.3, 1"]
 
 
 
@@ -276,17 +257,15 @@ select 3, 3, 1.25, 0.3, 1
 --- in
 select Foo.bar , Foo . bar , "Foo" . bar , "Foo"."bar" from Foo
 --- out
-select "Foo"."bar", "Foo"."bar", "Foo"."bar", "Foo"."bar" from "Foo"
+["select \"Foo\".\"bar\", \"Foo\".\"bar\", \"Foo\".\"bar\", \"Foo\".\"bar\" from \"Foo\""]
 
 
 
 === TEST 30: selected cols with parens
 --- in
-select (32) , ((5)) as item
---- ast
-Query [Select [Integer 32,Alias (Integer 5) (Symbol "item")]]
+select (32) , ((5)) as $item
 --- out
-select 32, 5 as "item"
+["select 32, 5 as ",["item","symbol"]]
 
 
 
@@ -296,7 +275,7 @@ select count(*),
      count ( * )
  from Post
 --- out
-select "count"(*), "count"(*) from "Post"
+["select \"count\"(*), \"count\"(*) from \"Post\""]
 
 
 
@@ -304,20 +283,17 @@ select "count"(*), "count"(*) from "Post"
 --- in
 select id as foo, count(*) as bar
 from Post
---- ast
-Query [Select [Alias (Column (Symbol "id")) (Symbol "foo"),Alias (FuncCall (Symbol "count") [AnyColumn]) (Symbol "bar")],From [Model (Symbol "Post")]]
 --- out
-select "id" as "foo", "count"(*) as "bar" from "Post"
+["select \"id\" as \"foo\", \"count\"(*) as \"bar\" from \"Post\""]
 
 
 
 === TEST 33: alias for models
 --- in
 select * from Post as foo
---- ast
-Query [Select [AnyColumn],From [Alias (Model (Symbol "Post")) (Symbol "foo")]]
 --- out
 select * from "Post" as "foo"
+--- LAST
 
 
 
