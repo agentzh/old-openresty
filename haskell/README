@@ -22,11 +22,11 @@ After that, you can build this compiler by the following command:
 
     $ make
 
-The resulting binary executable will be bin/restyscript
+The resulting binary executable will be bin/restyview
 
 One can play with it on the command line. For instance,
 
-    $ echo 'select 3.14' | bin/restyscript rs
+    $ echo 'select 3.14' | bin/restyview rs
     Query [Select [Float 3.14]]
     select 3.14
 
