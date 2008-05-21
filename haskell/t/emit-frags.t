@@ -302,59 +302,54 @@ select *
 from proc(32, 'hello'), blah() as poo
 --- out
 ["select * from \"proc\"(32, 'hello'), \"blah\"() as \"poo\""]
---- LAST
 
 
 
 === TEST 35: arith
 --- in
-select 3+5/3*2 - 36 % 2
---- ast
-Query [Select [Arith "-" (Arith "+" (Integer 3) (Arith "*" (Arith "/" (Integer 5) (Integer 3)) (Integer 2))) (Arith "%" (Integer 36) (Integer 2))]]
+select 3+5/$a*2 - 36 % 2
 --- out
-select ((3 + ((5 / 3) * 2)) - (36 % 2))
+["select ((3 + ((5 / ",["a","unknown"],") * 2)) - (36 % 2))"]
 
 
 
 === TEST 36: arith (with parens)
 --- in
-select (3+5)/(3*2) - ( 36 % 2 )
+select (3+$a)/(3*2) - ( $b % 2 )
 --- out
-select (((3 + 5) / (3 * 2)) - (36 % 2))
+["select (((3 + ",["a","unknown"],") / (3 * 2)) - (",["b","unknown"]," % 2))"]
 
 
 
 === TEST 37: string cat ||
 --- in
-select proc(2) || 'hello' || 5 - 2 + 5
+select proc($foo) || 'hello' || $bar || 5 - 2 + 5
 --- out
-select (("proc"(2) || 'hello') || ((5 - 2) + 5))
+["select (((\"proc\"(",["foo","unknown"],") || 'hello') || ",["bar","unknown"],") || ((5 - 2) + 5))"]
 
 
 
 === TEST 38: ^
 --- in
-select 3*3*5^6^2
+select 3*3*$a^$b^$c
 --- out
-select ((3 * 3) * ((5 ^ 6) ^ 2))
+["select ((3 * 3) * ((",["a","unknown"]," ^ ",["b","unknown"],") ^ ",["c","unknown"],"))"]
 
 
 
 === TEST 39: union
 --- in
 select 2 union select 3
---- ast
-SetOp "union" (Query [Select [Integer 2]]) (Query [Select [Integer 3]])
 --- out
-((select 2) union (select 3))
+["((select 2) union (select 3))"]
 
 
 
 === TEST 40: union 2
 --- in
-(select count(*) from "Post" limit 3) union select sum(1) from "Comment";
+(select count(*) from "Post" limit 3) union select $sum(1) from "Comment";
 --- out
-((select "count"(*) from "Post" limit 3) union (select "sum"(1) from "Comment"))
+["((select \"count\"(*) from \"Post\" limit 3) union (select ",["sum","symbol"],"(1) from \"Comment\"))"]
 
 
 
@@ -362,7 +357,7 @@ SetOp "union" (Query [Select [Integer 2]]) (Query [Select [Integer 3]])
 --- in
 select 3 union select 2 union select 1;
 --- out
-((((select 3) union (select 2))) union (select 1))
+["((((select 3) union (select 2))) union (select 1))"]
 
 
 
@@ -370,7 +365,7 @@ select 3 union select 2 union select 1;
 --- in
 select 3 union select 2 union select 1 except select 2;
 --- out
-((((((select 3) union (select 2))) union (select 1))) except (select 2))
+["((((((select 3) union (select 2))) union (select 1))) except (select 2))"]
 
 
 
@@ -378,7 +373,7 @@ select 3 union select 2 union select 1 except select 2;
 --- in
 select 3 union (select 2 except select 3)
 --- out
-((select 3) union (((select 2) except (select 3))))
+["((select 3) union (((select 2) except (select 3))))"]
 
 
 
@@ -386,7 +381,7 @@ select 3 union (select 2 except select 3)
 --- in
 (select 2) union (select 3)intersect(select 2)
 --- out
-((((select 2) union (select 3))) intersect (select 2))
+["((((select 2) union (select 3))) intersect (select 2))"]
 
 
 
@@ -394,17 +389,15 @@ select 3 union (select 2 except select 3)
 --- in
 (select 2) union ((select 3)intersect(select 2))
 --- out
-((select 2) union (((select 3) intersect (select 2))))
+["((select 2) union (((select 3) intersect (select 2))))"]
 
 
 
 === TEST 46: union all
 --- in
 select 2 union all select 2
---- ast
-SetOp "union all" (Query [Select [Integer 2]]) (Query [Select [Integer 2]])
 --- out
-((select 2) union all (select 2))
+["((select 2) union all (select 2))"]
 
 
 
@@ -412,13 +405,37 @@ SetOp "union all" (Query [Select [Integer 2]]) (Query [Select [Integer 2]])
 --- in
 select 32::float8
 --- out
-select 32::"float8"
+["select 32::\"float8\""]
 
 
 
-=== TEST 48: more complicated type casting ::
+=== TEST 48: type casting ::
 --- in
-select ('2003-03' || '-01') :: date
+select $foo::$bar
 --- out
-select ('2003-03' || '-01')::"date"
+["select ",["foo","unknown"],"::",["bar","symbol"]]
+
+
+
+=== TEST 49: type casting ::
+--- in
+select $foo::float8
+--- out
+["select ",["foo","unknown"],"::\"float8\""]
+
+
+
+=== TEST 50: type casting ::
+--- in
+select 32::$bar
+--- out
+["select 32::",["bar","symbol"]]
+
+
+
+=== TEST 51: more complicated type casting ::
+--- in
+select ('2003-03' || '-01' || $foo) :: date
+--- out
+["select (('2003-03' || '-01') || ",["foo","unknown"],")::\"date\""]
 
