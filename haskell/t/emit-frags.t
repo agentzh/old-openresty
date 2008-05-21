@@ -293,7 +293,6 @@ from Post
 select * from Post as foo
 --- out
 ["select * from \"Post\" as \"foo\""]
---- LAST
 
 
 
@@ -302,7 +301,8 @@ select * from Post as foo
 select *
 from proc(32, 'hello'), blah() as poo
 --- out
-select * from "proc"(32, 'hello'), "blah"() as "poo"
+["select * from \"proc\"(32, 'hello'), \"blah\"() as \"poo\""]
+--- LAST
 
 
 
