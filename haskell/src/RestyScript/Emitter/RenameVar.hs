@@ -24,8 +24,9 @@ rename src _ [] _ _ = src
 
 emit :: SqlVal -> String -> String -> String -> String
 emit ast input oldVar newVar =
-    let pos = traverse (findVar oldVar) (++) ast
-    in if null pos
+    let varPos = traverse (findVar oldVar) (++) ast
+    in if null varPos
          then input
-         else rename input (setSourceLine (setSourceColumn (head pos) 1) 1) pos (length oldVar) newVar
+         else rename input (newPos (head varPos) 1 1) varPos (length oldVar) newVar
+    where newPos pos ln col = setSourceLine (setSourceColumn pos col) ln
 

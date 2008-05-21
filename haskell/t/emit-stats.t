@@ -5,8 +5,10 @@ use strict;
 use warnings;
 
 use IPC::Run3;
-use Test::Base 'no_plan';
+use Test::Base;
 #use Test::LongString;
+
+plan tests => 2 * blocks();
 
 run {
     my $block = shift;

@@ -17,7 +17,7 @@ argHandles = [
     ("rs", putStrLn . RS.emit),
     ("stats", putStrLn . St.emitJSON),
     ("ast", putStrLn . show),
-    ("frags", putStrLn . show . Fr.emit)]
+    ("frags", putStrLn . Fr.emitJSON)]
 
 main :: IO ()
 main = do args <- getArgs
