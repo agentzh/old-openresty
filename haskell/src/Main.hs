@@ -11,10 +11,11 @@ import qualified RestyScript.Emitter.Fragments as Fr
 import System
 import System.IO
 import System.Exit
+import qualified Data.ByteString.Char8 as B
 
 argHandles :: [(String, SqlVal -> IO ())]
 argHandles = [
-    ("rs", putStrLn . RS.emit),
+    ("rs", B.putStrLn . RS.emit),
     ("stats", putStrLn . St.emitJSON),
     ("ast", putStrLn . show),
     ("frags", putStrLn . Fr.emitJSON)]
