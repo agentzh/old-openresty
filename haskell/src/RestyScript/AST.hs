@@ -1,7 +1,6 @@
 module RestyScript.AST (
     SqlVal(..),
-    traverse,
-    Visit
+    traverse
 ) where
 
 import Text.ParserCombinators.Parsec.Pos (SourcePos)
@@ -35,9 +34,7 @@ data SqlVal = SetOp String SqlVal SqlVal
             | AnyColumn
                 deriving (Ord, Eq, Show)
 
-class Visit a where
-
-traverse :: (Visit a) => (SqlVal->a) -> (a->a->a) -> SqlVal -> a
+traverse :: (SqlVal->a) -> (a->a->a) -> SqlVal -> a
 traverse visit merge node =
     let mergeAll = foldl1 merge
         cur = visit node

@@ -30,8 +30,6 @@ si = Stats {
     selectedMax = 0, joinedMax = 0,
     comparedCount = 0, queryCount = 0 }
 
-instance Visit Stats where
-
 findModel :: SqlVal -> Stats -> Stats
 findModel (Model (Symbol n)) st = st { modelList = [n] }
 findModel (Model (Variable _ n)) st = st { modelList = ['$':n] }
