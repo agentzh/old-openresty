@@ -1,6 +1,5 @@
-#OOPTS = -O2
-OPTS= $(OOPTS) -package parsec -package json -XFlexibleInstances -XOverloadedStrings
-#OPTS= -package parsec -package json -XFlexibleInstances
+OOPTS = -O2
+OPTS= $(OOPTS) -package parsec -package json -XFlexibleInstances -XOverloadedStrings -funbox-strict-fields
 
 all: bin/restyview
 

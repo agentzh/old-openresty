@@ -8,9 +8,9 @@ import RestyView.AST
 import Text.JSON
 
 data Stats = Stats {
-    modelList :: [String], funcList :: [String],
-    selectedMax :: Int, joinedMax :: Int,
-    comparedCount :: Int, queryCount :: Int }
+    modelList :: ![String], funcList :: ![String],
+    selectedMax :: !Int, joinedMax :: !Int,
+    comparedCount :: !Int, queryCount :: !Int }
         deriving (Ord, Eq, Show)
 
 instance JSON Stats where
