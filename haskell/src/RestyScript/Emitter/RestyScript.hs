@@ -3,7 +3,6 @@ module RestyScript.Emitter.RestyScript where
 import RestyScript.AST
 import RestyScript.Util
 
-import Data.List (intercalate)
 import Text.Printf (printf)
 import qualified Data.ByteString.Char8 as B
 
