@@ -61,9 +61,9 @@ $age from  Post , $comment
 
 === TEST 5: simple where clause
 --- in
-select id from Post where a > b
+select id from Post where a = '你好么？哈哈哈'
 --- out
-["select \"id\" from \"Post\" where \"a\" > \"b\""]
+["select \"id\" from \"Post\" where \"a\" = '你好么？哈哈哈'"]
 
 
 
