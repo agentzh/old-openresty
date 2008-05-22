@@ -3,13 +3,14 @@ README
 
 This is a RestyScript compiler for OpenResty written in Haskell.
 
-To build this program, you should first install GHC and its Parsec
-library. On Ubuntu/Debian, the following commands would be sufficient:
+To build this program, you should first install GHC 6.8.2 (or better)
+and its Parsec library. On Ubuntu/Debian, the following commands would
+be sufficient:
 
     $ sudo apt-get install ghc6 libghc6-parsec-dev
 
-The last two dependency, the json library and bytestring 0.9.1.0 (or later), requires a few more commands
-to install:
+The last two dependency, the json library and bytestring 0.9.1.0 (or
+better), requires a few more commands to install:
 
     $ wget http://hackage.haskell.org/packages/archive/json/0.3.3/json-0.3.3.tar.gz
     $ tar -xzf json-0.3.3.tar.gz
@@ -35,7 +36,7 @@ The resulting binary executable will be bin/restyview
 
 One can play with it on the command line. For instance,
 
-    $ echo 'select 3.14' | bin/restyview rs
+    $ echo 'select 3.14' | bin/restyview ast rs
     Query [Select [Float 3.14]]
     select 3.14
 
