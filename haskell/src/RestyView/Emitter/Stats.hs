@@ -1,10 +1,10 @@
-module RestyScript.Emitter.Stats (
+module RestyView.Emitter.Stats (
     Stats,
     emit,
     emitJSON
 ) where
 
-import RestyScript.AST
+import RestyView.AST
 import Text.JSON
 
 data Stats = Stats {

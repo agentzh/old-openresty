@@ -1,6 +1,6 @@
-module RestyScript.Emitter.RestyScript where
+module RestyView.Emitter.RestyScript where
 
-import RestyScript.AST
+import RestyView.AST
 import RestyScript.Util
 
 import Text.Printf (printf)
