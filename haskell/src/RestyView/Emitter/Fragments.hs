@@ -22,7 +22,7 @@ instance JSON VarType where
     showJSON VTUnknown = showJSON ("unknown"::String)
     readJSON = undefined
 
-data Fragment = FVariable String VarType | FString B.ByteString
+data Fragment = FVariable !String !VarType | FString !B.ByteString
     deriving (Ord, Eq, Show)
 
 instance JSON Fragment where

@@ -5,7 +5,7 @@ module RestyView.AST (
 
 import Text.ParserCombinators.Parsec.Pos (SourcePos)
 
-data SqlVal = SetOp String SqlVal SqlVal
+data SqlVal = SetOp !String SqlVal SqlVal
             | Query [SqlVal]
             | Select [SqlVal]
             | From [SqlVal]
@@ -14,20 +14,20 @@ data SqlVal = SetOp String SqlVal SqlVal
             | Offset SqlVal
             | TypeCast SqlVal SqlVal
             | OrderBy [SqlVal]
-            | OrderPair SqlVal String
+            | OrderPair SqlVal !String
             | GroupBy SqlVal
             | Alias SqlVal SqlVal
             | Column SqlVal
             | Model SqlVal
-            | Symbol String
+            | Symbol !String
             | QualifiedColumn SqlVal SqlVal
-            | Integer Int
-            | Float Double
-            | String String
-            | Variable SourcePos String
+            | Integer !Int
+            | Float !Double
+            | String !String
+            | Variable SourcePos !String
             | FuncCall SqlVal [SqlVal]
-            | Compare String SqlVal SqlVal
-            | Arith String SqlVal SqlVal
+            | Compare !String SqlVal SqlVal
+            | Arith !String SqlVal SqlVal
             | Or SqlVal SqlVal
             | And SqlVal SqlVal
             | Null
