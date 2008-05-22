@@ -17,9 +17,9 @@ data VarType = VTLiteral | VTSymbol | VTUnknown
     deriving (Ord, Eq, Show)
 
 instance JSON VarType where
-    showJSON VTSymbol = showJSON $ B.unpack "symbol"
-    showJSON VTLiteral = showJSON $ B.unpack "literal"
-    showJSON VTUnknown = showJSON $ B.unpack "unknown"
+    showJSON VTSymbol = showJSON ("symbol"::String)
+    showJSON VTLiteral = showJSON ("literal"::String)
+    showJSON VTUnknown = showJSON ("unknown"::String)
     readJSON = undefined
 
 data Fragment = FVariable String VarType | FString B.ByteString
