@@ -458,3 +458,13 @@ select ('2003-03' || '-01') :: date
 --- out
 select ('2003-03' || '-01')::"date"
 
+
+
+=== TEST 49: UTF-8
+--- in
+select '你好么？哈哈哈'
+from Post
+where 'hello' > 'グループ'
+--- out
+select '你好么？哈哈哈' from "Post" where 'hello' > 'グループ'
+
