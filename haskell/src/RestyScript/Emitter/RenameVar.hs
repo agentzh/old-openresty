@@ -5,8 +5,6 @@ import Text.ParserCombinators.Parsec.Pos (
     updatePosChar, setSourceLine, setSourceColumn)
 import RestyScript.AST
 
-instance Visit [SourcePos] where
-
 findVar :: String -> SqlVal -> [SourcePos]
 findVar var node =
     case node of
