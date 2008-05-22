@@ -1,7 +1,7 @@
-module RestyView.Emitter.RestyScript where
+module RestyView.Emitter.RestyView where
 
 import RestyView.AST
-import RestyScript.Util
+import RestyView.Util
 
 import Text.Printf (printf)
 import qualified Data.ByteString.Char8 as B

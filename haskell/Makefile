@@ -1,9 +1,10 @@
-OPTS= -O2 -package parsec -package json -XFlexibleInstances -XOverloadedStrings
+#OOPTS = -O2
+OPTS= $(OOPTS) -package parsec -package json -XFlexibleInstances -XOverloadedStrings
 #OPTS= -package parsec -package json -XFlexibleInstances
 
 all: bin/restyview
 
-bin/restyview: src/RestyScript/Util.o src/RestyView/AST.o src/RestyView/Emitter/RenameVar.o src/RestyView/Emitter/RestyScript.o src/RestyView/Emitter/Fragments.o src/RestyView/Emitter/Stats.o src/RestyView/Parser.o src/RestyView.o
+bin/restyview: src/RestyView/Util.o src/RestyView/AST.o src/RestyView/Emitter/RenameVar.o src/RestyView/Emitter/RestyView.o src/RestyView/Emitter/Fragments.o src/RestyView/Emitter/Stats.o src/RestyView/Parser.o src/RestyView.o
 	cd src && ghc $(OPTS) -o ../$@ --make RestyView
 
 %.o: %.hs
