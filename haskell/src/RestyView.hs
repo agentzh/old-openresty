@@ -1,12 +1,12 @@
 module Main where
 
-import RestyScript.Parser
-import RestyScript.AST
+import RestyView.Parser
+import RestyView.AST
 
-import qualified RestyScript.Emitter.RestyScript as RS
-import qualified RestyScript.Emitter.Stats as St
-import qualified RestyScript.Emitter.RenameVar as Re
-import qualified RestyScript.Emitter.Fragments as Fr
+import qualified RestyView.Emitter.RestyScript as RS
+import qualified RestyView.Emitter.Stats as St
+import qualified RestyView.Emitter.RenameVar as Re
+import qualified RestyView.Emitter.Fragments as Fr
 
 import System
 import System.IO
@@ -25,7 +25,7 @@ main = do args <- getArgs
           if null args
             then die "No command specified."
             else do input <- hGetContents stdin
-                    case readView "RestyScript" input of
+                    case readView "RestyView" input of
                         Left err -> die (show err)
                         Right ast -> processArgs args input ast
 

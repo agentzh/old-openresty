@@ -1,4 +1,4 @@
-module RestyScript.Emitter.Fragments (
+module RestyView.Emitter.Fragments (
     Fragment,
     VarType,
     emit,
@@ -6,7 +6,7 @@ module RestyScript.Emitter.Fragments (
 ) where
 
 import RestyScript.Util
-import RestyScript.AST
+import RestyView.AST
 
 import Data.List (intersperse)
 import Text.Printf (printf)
