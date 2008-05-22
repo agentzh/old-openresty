@@ -5,7 +5,7 @@ module RestyView.Emitter.Fragments (
     emitJSON
 ) where
 
-import RestyScript.Util
+import RestyView.Util
 import RestyView.AST
 
 import Data.List (intersperse)
