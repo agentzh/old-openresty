@@ -11,7 +11,7 @@ use Digest::MD5 qw/md5/;
 use Encode qw( encode decode is_utf8 );
 
 my $PLAINTEXT_SEP="\001";	# separator character in plaintext str
-my $MIN_TIMESPAN=3;			# minimum timespan(sec) for a valid Captcha,
+my $MIN_TIMESPAN=2;			# minimum timespan(sec) for a valid Captcha,
 							# verification will fail before this timespan.
 							# default to 3s.
 my $MAX_TIMESPAN=15*60;		# maximum timespan(sec) for a valid Captcha,
@@ -197,7 +197,8 @@ sub GET_captcha_column {
 			die "Unsupported lang (only cn and en allowed): $lang\n";
 		}
 
-		if ($OpenResty::Config{"frontend.test_mode"}) {
+                my $user = $openresty->{_user};
+		if ($OpenResty::Config{"frontend.test_mode"} && $user && $user eq 'tester') {
 			# We are in the testing mode
 			$MIN_TIMESPAN=1;	# change min valid timespan to 1s
 			$MAX_TIMESPAN=3;	# change max valid timespan to 3s
@@ -240,7 +241,7 @@ sub GET_captcha_value {
         die "Invalid captcha ID: $id\n" unless defined($solution);
 
 		# Exit if the max valid time of the captcha has expired
-		die "Captcha ID has expired: $id\n" if $max_valid<time();
+		die "Captcha ID has expired: $id\n" if $max_valid + 3600 <time();
 
 		# Generate image according to captcha info
 		if ($lang eq 'cn') {
@@ -371,7 +372,7 @@ sub validate_captcha
 	return (0,"Captcha ID format is incorrect.") unless defined($solution);	# wrong format
 
 	# change true solution for testing purpose
-	if($OpenResty::Config{"frontend.test_mode"}) {
+	if($OpenResty::Config{"frontend.test_mode"} && $openresty->{_user} eq 'tester') {
 		if ($lang eq 'en') {
 			$solution = 'hello world ';
 		} else {
@@ -382,7 +383,7 @@ sub validate_captcha
 	# validate failed if the captcha id has expired or not allowed to validate yet
 	my $now=time();
 	return (0,"Answered too quickly.") if $min_valid>$now;	# ans too early
-	return (0,"Captcha ID has expired.")  if $max_valid<$now;	# ans too late
+        return (0,"Captcha ID has expired.")  if $max_valid + 3600<$now;	# ans too late
 
 	# Construct cache key for captcha id. We cannot use captcha id directly, for the id itself
 	# could be appending any characters without affecting its decryption.
@@ -395,6 +396,8 @@ sub validate_captcha
 	return (0,"The captcha has been used.") if $used;	# ans used
 
 	# validate failed if user input doesn't match the solution in captcha id
+        #warn "Expected solution: $word\n";
+        #warn "Real solution: $solution\n";
 	return (0,"Solution to the captcha is incorrect.") if trim_sol($word) ne trim_sol($solution);	# wrong ans
 
 	# validate succeed, remember which captcha id has been used

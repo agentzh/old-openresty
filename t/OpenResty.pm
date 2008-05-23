@@ -192,6 +192,7 @@ sub run_test ($) {
         my $res = $client->request($body, $method, $url);
         if ($should_skip) { return; }
         ok $res->is_success, "request returns OK - $name";
+        if (!$res->is_success) { warn $res->status_line }
         #warn $res->content, '!!!!!!!!!!!!!!!';
         my $expected_res = $block->response || $block->response_like;
         if ($expected_res) {

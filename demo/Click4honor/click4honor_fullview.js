@@ -1,4 +1,5 @@
-var restyhost = 'http://resty.eeeeworks.org';
+//var restyhost = 'http://resty.eeeeworks.org';
+var restyhost = 'http://localhost';
 var account = 'qyliu';
 
 var openresty;
@@ -43,6 +44,8 @@ var itemsPerPage = 5;
 var captchaID;
 
 $(window).ready(init);
+
+function err (msg) { alert(msg) }
 
 function error (msg, id) {
     if (!id) id = "errmsg";
@@ -185,10 +188,10 @@ function submit() {
 }
 
 function supportCallback(res) {
-    /*if (!openresty.isSuccess(res)) {
-        error("Failed to support: " + JSON.stringify(res));
+    if (!openresty.isSuccess(res)) {
+        error("Failed to support: " + res.error);
     }
-    else */{
+    else {
         refreshCaptcha(res);
         getHonorlist();
     }
