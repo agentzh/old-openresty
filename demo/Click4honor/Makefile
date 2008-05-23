@@ -1,4 +1,5 @@
 all:
-	-cp ../../clients/js/*.js out/
-	-cp ../Blog/js/thirdparty/jquery.js out/
+	-cp ../../clients/js/openresty.js .
+	-cp ../../clients/js/JSON.js .
+	-cp ../Blog/js/thirdparty/jquery.js .
 
