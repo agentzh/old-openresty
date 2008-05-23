@@ -5,11 +5,11 @@ user=
 export:
 	-mkdir backup
 	-cp *.json backup
-	../../bin/export-model.pl --user $(user) --password $(password) --model Comment --server $(server) --out Comment.json
-	../../bin/export-model.pl --user $(user) --password $(password) --model Post --server $(server) --out Post.json
+	../../bin/export-model.pl --user $(user) --model Comment --server $(server) --out Comment.json --password $(password)
+	../../bin/export-model.pl --user $(user) --model Post --server $(server) --out Post.json --password $(password)
 
 import:
 	script/init.pl -u $(user) -p $(password) -s $(server)
-	../../bin/import-model.pl --reset --step 2 --no-id --user $(user) --password $(password) --model Post --server $(server) Post.json
-	../../bin/import-model.pl --reset --no-id --user $(user) --password $(password) --model Comment --server $(server) Comment.json
+	../../bin/import-model.pl --reset --step 2 --user $(user) --password $(password) --model Post --server $(server) Post.json
+	../../bin/import-model.pl --reset --user $(user) --password $(password) --model Comment --server $(server) Comment.json
 

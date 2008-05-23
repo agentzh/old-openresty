@@ -84,7 +84,7 @@ $Dumper = $ext2dumper{'.js'};
 $Importer = $ext2importer{'.js'};
 
 sub version {
-    (my $ver = $OpenResty::VERSION) =~ s{^(\d+)\.(\d{3})(\d{3})?$}{join '.', int($1), int($2), int($3)}e;
+    (my $ver = $OpenResty::VERSION) =~ s{^(\d+)\.(\d{3})(\d{3})$}{join '.', int($1), int($2), int($3)}e;
     $ver;
 }
 

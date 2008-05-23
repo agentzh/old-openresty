@@ -17,7 +17,7 @@ use Getopt::Std;
 my %opts;
 getopts('u:s:p:h', \%opts);
 if ($opts{h}) {
-    die "Usage: $0 -u <user> -p <password> -s <openresty_server> [big|small] [<json_file>]\n";
+    die "Usage: $0 -u <user> -p <password> -s <openresty_server>\n";
 }
 my $user = $opts{u} or
     die "No OpenResty account name specified via option -u\n";

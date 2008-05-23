@@ -649,14 +649,14 @@ select * from Post where id like '%Hello%'
 
 === TEST 56: random operators
 --- sql
-select sum(1) as count, sum(3+2 * (3 - 5^7)) from Post
+select sum(1) as count, sum(3+ 2 * (3 - 5^7)) from Post
 --- out: select sum ( 1 ) as count , sum ( 3 + 2 * ( 3 - 5 ^ 7 ) ) from "Post"
 
 
 
 === TEST 57: % and /
 --- sql
-select 32 % (3 ^ (7-5) / 25 )
+select 32 % (3 ^ (7- 5) / 25 )
 --- out: select 32 % ( 3 ^ ( 7 - 5 ) / 25 )
 
 

@@ -259,12 +259,12 @@ where_clause: 'where' condition
 condition: disjunction
          ;
 
-disjunction: conjunction 'or' conjunction
+disjunction: disjunction 'or' disjunction
             { join(' ', @_[1..$#_]) }
            | conjunction
            ;
 
-conjunction: comparison 'and' comparison
+conjunction: conjunction 'and' conjunction
                 { join(' ', @_[1..$#_]) }
            | comparison
            ;
@@ -288,6 +288,7 @@ operator: '>'
         | '<='
         | '<'
         | '<>'
+        | '!='
         | '='
         | 'like'
         ;
@@ -337,7 +338,7 @@ offset_clause: 'offset' literal
 
 %%
 
-#use Smart::Comments;
+#use Smart::Comments '####';
 
 sub _Error {
     my ($value) = $_[0]->YYCurval;
@@ -345,11 +346,13 @@ sub _Error {
     my $token = 1;
     ## $value
     my @expect = $_[0]->YYExpect;
-    ### expect: @expect
+    #### expect: @expect
     my ($what) = $value ? "input: \"$value\"" : "end of input";
 
     map { $_ = "'$_'" if $_ ne '' and !/^\w+$/ } @expect;
     my $expected = join " or ", @expect;
+    my $yydata = $_[0]->YYData;
+    #print substr($yydata->{input}, 0, 50);
     _SyntaxError(1, "Unexpected $what".($expected?" ($expected expected)":''), $.);
 }
 
@@ -381,20 +384,20 @@ sub _Lexer {
     ### lineno: $.
 
     for ($yydata->{input}) {
-        s/^\s*(\d+(?:\.\d+)?)\b//s
-                and return ('NUM', $1);
-        s/^\s*('(?:\\.|''|[^'])*')//
+        s/^\s*('(?:\\.|''|[^'])*')//s
                 and return ('STRING', $1);
-        s/^\s*"(\w*)"//
+        s/^\s*[-+]?(\.\d+|\d+\.\d*|\d+)//s
+                and return ('NUM', $1);
+        s/^\s*"(\w*)"//s
                 and return ('IDENT', $1);
-        s/^\s*(\$(\w*)\$.*?\$\2\$)//
+        s/^\s*(\$(\w*)\$.*?\$\2\$)//s
                 and return ('STRING', $1);
         if (s/^\s*(\*|as|select|and|or|from|where|delete|update|set|order\s+by|asc|desc|group\s+by|limit|offset|union\s+all|union|intersect|except)\b//is) {
             my $s = $1;
-            (my $token = $s) =~ s/\s+/ /g;
+            (my $token = $s) =~ s/\s+/ /gs;
             return (lc($token), lc($s));
         }
-        s/^\s*(<=|>=|<>|\|\||::|like\b)//s
+        s/^\s*(<=|>=|<>|!=|\|\||::|like\b)//s
                 and return (lc($1), lc($1));
         s/^\s*([A-Za-z][A-Za-z0-9_]*)\b//s
                 and return ('IDENT', $1);

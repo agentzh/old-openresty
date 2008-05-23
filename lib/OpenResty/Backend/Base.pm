@@ -136,13 +136,13 @@ _EOC_
     ],
 	[
 		'0.004' => <<"_EOC_",
-create or replace function _upgrade() returns integer as $$
+create or replace function _upgrade() returns integer as \$\$
 begin
     alter table _global._general add column captcha_key char(16) not null
     default '${\(random_secret())}';
     return 0;
 end;
-$$ language plpgsql;
+\$\$ language plpgsql;
 _EOC_
 	],
 );
@@ -287,18 +287,23 @@ sub upgrade_global_metamodel {
         $self->add_empty_user("_global");
         $self->set_user("_global");
     }
-    ### Upgrading global metamodel...
+    #### Upgrading global metamodel...
     $self->_upgrade_metamodel($base, \@GlobalVersionDelta);
 }
 
 sub upgrade_local_metamodel {
     my ($self, $base) = @_;
+
     if (!defined $base) { die "No upgrading base specified" }
     if ($base == 0) {
         if (!$self->has_user('_global')) {
+            my $user = $self->{user};
             $self->upgrade_global_metamodel(0);
+            $self->set_user($user);
         }
     }
+    #my @caller = caller;
+    #### upgrade_local_metamodel caller: @caller
     $self->_upgrade_metamodel($base, \@LocalVersionDelta);
 }
 
@@ -316,12 +321,16 @@ sub _upgrade_metamodel {
     }
     my $res;
     my $max = @$delta_table - 1;
+    #my @caller = caller;
+    #### caller: @caller
+    #### Upgrading meta model...
     for my $i ($base..$max) {
         my $entry = $delta_table->[$i];
         my ($new_ver, $sql) = @$entry;
         warn "Upgrading account $user from $cur_ver to $new_ver...\n";
         if (!$sql) {
             $res = $self->do("update _general set version='$new_ver'");
+            $cur_ver = $new_ver;
             next;
         }
         #$sql .= "; update _general set version='$new_ver'";
