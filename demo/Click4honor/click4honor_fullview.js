@@ -1,4 +1,4 @@
-var openapi;
+var openresty;
 /*var districts = [
 '北京',
 '上海',
@@ -105,7 +105,7 @@ function clearscore() {
 }
 
 function init () {
-    openapi = new OpenAPI.Client(
+    openresty = new OpenResty.Client(
         { server: restyhost, callback: '', user: 'qyliu.Public' }
     );
     listDistricts();
@@ -119,17 +119,17 @@ function refreshCaptcha(res) {
         errorclear("errmsg2");
         return;
     }
-    if(res && res.success == 0){ 
+    if(res && res.success == 0){
         //alert("Error: Wrong Captcha Input: " + JSON.stringify(res));
         //console.log(res.error);
         error("验证码输入错误", "errmsg2");
     }
-    openapi.callback = renderCaptcha;
-    openapi.get('/=/captcha/id');
+    openresty.callback = renderCaptcha;
+    openresty.get('/=/captcha/id');
 }
 
 function renderCaptcha(res) {
-    if (!openapi.isSuccess(res)) {
+    if (!openresty.isSuccess(res)) {
         error("Failed to get captcha id: " + JSON.stringify(res));
     }
     else {
@@ -139,7 +139,7 @@ function renderCaptcha(res) {
         img.src = restyhost + "/=/captcha/id/" + captchaID + "?lang=en";
         //error(captchaID);
     }
-    
+
 }
 
 function listDistricts() {
@@ -154,12 +154,12 @@ function listDistricts() {
 }
 
 function getHonorlist() {
-    openapi.callback = renderHonorlist;
-    openapi.get('/=/view/Honorlist/limit/500'); //top 500
+    openresty.callback = renderHonorlist;
+    openresty.get('/=/view/Honorlist/limit/500'); //top 500
 }
 
 function renderHonorlist(res) {
-    if (!openapi.isSuccess(res)) {
+    if (!openresty.isSuccess(res)) {
         error("Failed to get the honor list: " + JSON.stringify(res));
     }
     else {
@@ -190,8 +190,8 @@ function submit() {
     document.getElementById("captchainput").value = "";
     var sel = document.getElementById('wwww');
     var district = sel.value;
-    openapi.callback = function(res) { 
-        if (!openapi.isSuccess(res)) {
+    openresty.callback = function(res) {
+        if (!openresty.isSuccess(res)) {
             error("Failed to support: " + JSON.stringify(res));
         }
         else {
@@ -199,7 +199,7 @@ function submit() {
             //alert(district);
             var captchaValidation = captchaID + ':' + userSolution;
             var captchaUser = "qyliu.Poster";
-            //error(captchaValidation); 
+            //error(captchaValidation);
 
             var cccc = document.getElementById('cccc');
             var newscore = parseInt(cccc.innerHTML);
@@ -208,19 +208,19 @@ function submit() {
                 return;
             }
             var new_c = (res[0]?parseInt(res[0].c):0) + parseInt(cccc.innerHTML);
-            openapi.callback = supportCallback;
-            //(res[0]?openapi.putByGet:openapi.postByGet)({ c: new_c }, '/=/model/Honorlist/w/\'' + district + '\'');
+            openresty.callback = supportCallback;
+            //(res[0]?openresty.putByGet:openresty.postByGet)({ c: new_c }, '/=/model/Honorlist/w/\'' + district + '\'');
             if (res[0])
-                openapi.putByGet({ c: new_c }, '/=/model/Honorlist/w/' + district, { user: captchaUser, captcha: captchaValidation });
+                openresty.putByGet('/=/model/Honorlist/w/' + district, { user: captchaUser, captcha: captchaValidation }, { c: new_c });
             else
-                openapi.postByGet({ w: district, c: new_c }, '/=/model/Honorlist/~/~', { user: captchaUser, captcha: captchaValidation });
+                openresty.postByGet('/=/model/Honorlist/~/~', { user: captchaUser, captcha: captchaValidation }, { w: district, c: new_c });
         }
     };
-    openapi.get('/=/model/Honorlist/w/' + district);
+    openresty.get('/=/model/Honorlist/w/' + district);
 }
 
 function supportCallback(res) {
-    /*if (!openapi.isSuccess(res)) {
+    /*if (!openresty.isSuccess(res)) {
         error("Failed to support: " + JSON.stringify(res));
     }
     else */{
