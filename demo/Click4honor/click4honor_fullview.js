@@ -1,41 +1,7 @@
+var restyhost = 'http://resty.eeeeworks.org';
+var account = 'qyliu';
+
 var openresty;
-/*var districts = [
-'北京',
-'上海',
-'天津',
-'重庆',
-'四川',
-'贵州',
-'广东',
-'浙江',
-'福建',
-'湖南',
-'湖北',
-'山东',
-'山西',
-'河南',
-'河北',
-'吉林',
-'辽宁',
-'黑龙江',
-'安徽',
-'江苏',
-'江西',
-'海南',
-'陕西',
-'云南',
-'青海',
-'宁夏',
-'甘肃',
-'新疆',
-'西藏',
-'广西',
-'内蒙古',
-'深圳',
-'香港',
-'澳门',
-'台湾',
-];*/
 var districts = [
 '安徽',
 '澳门',
@@ -74,7 +40,6 @@ var districts = [
 '浙江',
 ];
 var itemsPerPage = 5;
-var restyhost = 'http://resty.eeeeworks.org';
 var captchaID;
 
 $(window).ready(init);
@@ -106,7 +71,7 @@ function clearscore() {
 
 function init () {
     openresty = new OpenResty.Client(
-        { server: restyhost, callback: '', user: 'qyliu.Public' }
+        { server: restyhost, callback: '', user: account + '.Public' }
     );
     listDistricts();
     getHonorlist();
