@@ -1,0 +1,8 @@
+* prefix +/-/not
+* subselect statements as in
+    select anchor from recommend where pid in (
+        select id from restaurant where id in (
+            select pid from categorie where anchor like '%川菜%'
+        )
+    ) group by anchor order by sum(number) desc;
+

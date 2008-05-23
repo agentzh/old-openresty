@@ -14,8 +14,7 @@ data SqlVal = SetOp !String SqlVal SqlVal
             | Offset SqlVal
             | TypeCast SqlVal SqlVal
             | OrderBy [SqlVal]
-            | OrderPair SqlVal !String
-            | GroupBy SqlVal
+            | OrderPair SqlVal !String | GroupBy SqlVal
             | Alias SqlVal SqlVal
             | Column SqlVal
             | Model SqlVal
