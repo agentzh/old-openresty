@@ -1,4 +1,5 @@
 AUTHORS
+bin/test-sql.pl
 bin/export-model.pl
 bin/fetch-font.pl
 bin/import-model.pl
@@ -75,6 +76,7 @@ demo/Blog/doc/graphviz.mk
 lib/OpenResty/FeedWriter/RSS.pm
 lib/OpenResty/Handler/Feed.pm
 lib/OpenResty/Spec/Captcha_cn.pod
+lib/OpenResty/Tutorial/GettingStarted/Perl.pod
 t/28-feed.t
 t/29-feed-writer-rss.t
 t/pgmock-data/28-feed.t.json
@@ -92,6 +94,8 @@ haskell/t/emit-stats.t
 haskell/t/rename-var.t
 haskell/TODO
 haskell/README
+haskell/Makefile
+haskell/bin/rand-sql.pl
 demo/Click4honor/click4honor_fullview.js
 demo/Click4honor/index.html
 demo/Click4honor/init.pl
