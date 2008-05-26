@@ -583,6 +583,10 @@ See L<OpenResty::Spec::Overview> for more detailed information.
 
 L<OpenResty::CheatSheet> also provides a good enough summary for the REST interface.
 
+You'll find my slides for the D2 conference interesting as well:
+
+L<http://agentzh.org/misc/openresty-d2.pdf>
+
 =head1 INSTALLATION
 
 This is a basic guideline for settting up an OpenResty server on your own machine. Someone has succeeded in setting up one on Windows XP using ActivePerl 5.8.8. The normal development environment is Linux though. If you have any particular question, feel free to ask us by sending an email to the authors.
@@ -783,7 +787,7 @@ L<OpenResty::Spec::Overview>, L<OpenResty::Spec::REST>, L<OpenResty::CheatSheet>
 Copyright (c) 2007, 2008 by Yahoo! China EEEE Works, Alibaba Inc.
 
 This module is free software; you can redistribute it and/or
-modify it under the terms of either the Artistic License 2.0.
+modify it under the Artistic License 2.0.
 A copy of this license can be obtained from
 
 L<http://opensource.org/licenses/artistic-license-2.0.php>

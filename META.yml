@@ -56,7 +56,7 @@ requires:
   FCGI: 0
   GD::SecurityImage: 1.64
   Hash::Merge: 0
-  JSON::XS: 2.1
+  JSON::XS: 2.2
   List::MoreUtils: 0
   List::Util: 0
   Params::Util: 0.22
