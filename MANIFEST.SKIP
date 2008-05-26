@@ -6,6 +6,9 @@ demo/Springbot/staff/staff_files
 \.hi$
 \.ho$
 \.o$
+^haskell/.*\.sql$
+^haskell/.*\.png$
+^haskell/bin/restyview$
 ^Makefile$
 ^bin/\.
 ~$
