@@ -1,5 +1,15 @@
 # vi:filetype=
-use t::OpenResty 'no_plan';
+
+use OpenResty::Config;
+my $reason;
+BEGIN {
+    OpenResty::Config->init;
+    if ($OpenResty::Config{'backend.type'} eq 'PgMocked' ||
+        $OpenResty::Config{'backend.recording'}) {
+        $reason = 'Skipped in PgMocked or recording mode since too many tests here.';
+    }
+}
+use t::OpenResty $reason ? (skip_all => $reason) : ('no_plan');
 
 run_tests;
 
@@ -215,6 +225,7 @@ GET /=/captcha/id/aa$SavedCapture
 GET /=/captcha/id/$SavedCapture
 --- response_like
 ^{"success":0,"error":"Captcha ID has expired: [0-9a-zA-Z._-]+"}$
+--- SKIP
 
 
 
@@ -258,6 +269,7 @@ GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
 GET /=/captcha/id/$SavedCapture
 --- response_like
 {"success":0,"error":"Captcha ID has expired: [0-9a-zA-Z._-]+"}
+--- SKIP
 
 
 
@@ -266,6 +278,7 @@ GET /=/captcha/id/$SavedCapture
 GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
 --- response
 {"success":0,"error":"Captcha ID has expired."}
+--- SKIP
 
 
 
