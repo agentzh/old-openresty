@@ -35,64 +35,77 @@ select -foo, +bar from Bah
 Query [Select [Minus (Column (Symbol "foo")),Plus (Column (Symbol "bar"))],From [Model (Symbol "Bah")]]
 --- out
 select (-"foo"), "bar" from "Bah"
---- LAST
 
 
 
 === TEST 2: simple for function
 --- in
 select -count(foo), +max(id) from Bah
+--- ast
+Query [Select [Minus (FuncCall (Symbol "count") [Column (Symbol "foo")]),Plus (FuncCall (Symbol "max") [Column (Symbol "id")])],From [Model (Symbol "Bah")]]
 --- out
-select -"count"("foo"), "max"("id") from "Bah"
+select (-"count"("foo")), "max"("id") from "Bah"
 
 
 
 === TEST 3: simple for var
 --- in
 select -$v, +$v from vertical
+--- ast
+Query [Select [Minus (Variable (1,10) "v"),Plus (Variable (1,15) "v")],From [Model (Symbol "vertical")]]
 --- out
-"select -",["v","unknown"],", ",["v","unknown"]," from \"vertical\"]
+select (-$v), $v from "vertical"
 
 
 
 === TEST 4: for column in bracketes
 --- in
 select -(foo), +(bar) from Bah
+--- ast
+Query [Select [Minus (Column (Symbol "foo")),Plus (Column (Symbol "bar"))],From [Model (Symbol "Bah")]]
 --- out
-["select -\"foo\", \"bar\" from \"Bah\""]
+select (-"foo"), "bar" from "Bah"
 
 
 
 === TEST 5: for function in bracketes
 --- in
 select -(count(foo)), +(max(id)) from Bah
+--- ast
+Query [Select [Minus (FuncCall (Symbol "count") [Column (Symbol "foo")]),Plus (FuncCall (Symbol "max") [Column (Symbol "id")])],From [Model (Symbol "Bah")]]
 --- out
-["select -\"count\"(foo) \"max\"(id) from \"Bah\""]
+select (-"count"("foo")), "max"("id") from "Bah"
 
 
 
 === TEST 6: for $var in bracketes
 --- in
 select -($v), +($v) from vertical
+--- ast
+Query [Select [Minus (Variable (1,11) "v"),Plus (Variable (1,18) "v")],From [Model (Symbol "vertical")]]
 --- out
-["select -",["v","unknown"],", ",["v","unknown"]," from \"vertical\"]
+select (-$v), $v from "vertical"
 
 
 
 === TEST 7: remove duplicated bracketes
 --- in
-select -((1)), +((no)), -((func(1)))), +(($v))
+select -((1)), +((no)), -((func(1))), +(($v))
+--- ast
+Query [Select [Minus (Integer 1),Plus (Column (Symbol "no")),Minus (FuncCall (Symbol "func") [Integer 1]),Plus (Variable (1,43) "v")]]
 --- out
-["select -1, \"no\", -\"func\"(1), ",["v","unknown"]]
+select -1, "no", (-"func"(1)), $v
 
 
 
 === TEST 8: complex expression
 --- in
 select -$k * 3 / -func(t - -v * +$c)
+--- ast
+Query [Select [(Arith "/" (Arith "*" (Minus (Variable (1,10) "k") (Integer 3)) (Minus (FuncCall (Symbol "func") [(Arith "-" (Column (Symbol "t")) (Arith "*" (Minus (Column (Symbol "v"))) (Plus (Variable (1,35) "c"))))]))))]]
 --- out
-["select ((-",["k","unknown"]," * 3) / -\"func\"(\"t\" - (-\"v\" * ",["c","unknown"],")))"]
-
+select (((-$k) * 3) / (-"func("t" - ((-"v") * $c))"))
+--- LAST
 
 
 === TEST 9: -- --> remove && ++ --> remove ?
