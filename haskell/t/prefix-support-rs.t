@@ -5,10 +5,8 @@ use strict;
 use warnings;
 
 use IPC::Run3;
-use Test::Base;
+use Test::Base 'no_plan';;
 #use Test::LongString;
-
-plan tests => 2 * blocks();
 
 run {
     my $block = shift;
@@ -36,9 +34,9 @@ __DATA__
 --- in
 select -foo, +bar from Bah
 --- ast
-Query [Select [Arith "-" ([Column (Symbol "foo")])],[Column (Symbol "bar")],From [Model (Symbol "Bah")]]
+Query [Select [Minus (Column (Symbol "foo")),Plus (Column (Symbol "bar"))],From [Model (Symbol "Bah")]]
 --- out
-select -"foo", "bar" from "Bah"
+select (-"foo"), "bar" from "Bah"
 --- LAST
 
 
