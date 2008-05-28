@@ -472,3 +472,13 @@ where 'hello' > 'グループ'
 --- out
 select '你好么？哈哈哈' from "Post" where 'hello' > 'グループ'
 
+
+
+=== TEST 50: precedence of -
+--- in
+select -3::"text";
+--- ast
+Query [Select [Minus (TypeCast (Integer 3) (Column (Symbol "text")))]]
+--- out
+select (-3::"text")
+
