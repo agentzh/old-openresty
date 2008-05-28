@@ -29,7 +29,7 @@ __DATA__
 --- in
 select -foo, +bar from Bah
 --- out
-["select -\"foo\", \"bar\" from \"Bah\""]
+["select (-\"foo\"), \"bar\" from \"Bah\""]
 
 
 
@@ -37,7 +37,7 @@ select -foo, +bar from Bah
 --- in
 select -count(foo), +max(id) from Bah
 --- out
-["select -\"count\"(foo), \"max\"(id) from \"Bah\""]
+["select (-\"count\"(\"foo\")), \"max\"(\"id\") from \"Bah\""]
 
 
 
@@ -45,7 +45,7 @@ select -count(foo), +max(id) from Bah
 --- in
 select -$v, +$v from vertical
 --- out
-["select -",["v","unknown"],", ",["v","unknown"]," from \"vertical\"]
+["select (-",["v","unknown"],"), ",["v","unknown"]," from \"vertical\""]
 
 
 
@@ -53,7 +53,7 @@ select -$v, +$v from vertical
 --- in
 select -(foo), +(bar) from Bah
 --- out
-["select -\"foo\", \"bar\" from \"Bah\""]
+["select (-\"foo\"), \"bar\" from \"Bah\""]
 
 
 
@@ -61,7 +61,7 @@ select -(foo), +(bar) from Bah
 --- in
 select -(count(foo)), +(max(id)) from Bah
 --- out
-["select -\"count\"(\"foo\") \"max\"(\"id\") from \"Bah\""]
+["select (-\"count\"(\"foo\")) \"max\"(\"id\") from \"Bah\""]
 
 
 
@@ -69,7 +69,7 @@ select -(count(foo)), +(max(id)) from Bah
 --- in
 select -($v), +($v) from vertical
 --- out
-["select -",["v","unknown"],", ",["v","unknown"]," from \"vertical\"]
+["select (-",["v","unknown"],"), ",["v","unknown"]," from \"vertical\""]
 
 
 
@@ -77,7 +77,7 @@ select -($v), +($v) from vertical
 --- in
 select -((1)), +((no)), -((func(1)))), +(($v))
 --- out
-["select -1, \"no\", -\"func\"(1), ",["v","unknown"]]
+["select -1, \"no\", (-\"func\"(1)), ",["v","unknown"]]
 
 
 
@@ -85,7 +85,7 @@ select -((1)), +((no)), -((func(1)))), +(($v))
 --- in
 select -$k * 3 / -func(t - -v * +$c)
 --- out
-["select ((-",["k","unknown"]," * 3) / -\"func\"(\"t\" - (-\"v\" * ",["c","unknown"],")))"]
+["select (((-",["k","unknown"],") * 3) / (-\"func\"(\"t\" - (-\"v\" * ",["c","unknown"],"))))"]
 
 
 
@@ -101,7 +101,7 @@ select -(-v), +(+v)
 --- in
 select +(-v), -(+v)
 --- out
-["select -\"v\", -\"v\""]
+["select (-\"v\"), (-\"v\")"]
 
 
 
@@ -117,7 +117,7 @@ select -32::float8
 --- in
 select -$foo::$bar, +$foo::$bar
 --- out
-["select -",["foo","unknown"],"::",["bar","symbol"],", ",["foo","unknown"],"::",["bar","symbol"]]
+["select (-",["foo","unknown"],"::",["bar","symbol"],"), ",["foo","unknown"],"::",["bar","symbol"]]
 
 
 
@@ -125,7 +125,7 @@ select -$foo::$bar, +$foo::$bar
 --- in
 select -$foo::float8, +$foo::float8
 --- out
-["select -",["foo","unknown"],"::\"float8\"",", ",["foo","unknown"],"::\"float8\""]
+["select (-",["foo","unknown"],"::\"float8\"), ",["foo","unknown"],"::\"float8\""]
 
 
 
@@ -133,7 +133,8 @@ select -$foo::float8, +$foo::float8
 --- in
 select 21::-$bar
 --- out
-[error]
+
+
 
 
 
@@ -141,7 +142,7 @@ select 21::-$bar
 --- in
 select 21::-float8
 --- out
-[error]
+
 
 
 
@@ -149,7 +150,8 @@ select 21::-float8
 --- in
 select 21::+$bar
 --- out
-[error]
+
+
 
 
 
@@ -157,7 +159,8 @@ select 21::+$bar
 --- in
 select 21::+float8
 --- out
-[error]
+
+
 
 
 
@@ -165,7 +168,7 @@ select 21::+float8
 --- in
 select ('2003-03' || '-01' || -$foo) :: date
 --- out
-["select (('2003-03' || '-01') || -",["foo",unknown],") :: date"]
+["select (('2003-03' || '-01') || (-",["foo",unknown],")) :: date"]
 
 
 
@@ -181,7 +184,7 @@ select ('2003-03' || '-01' || +$foo) :: date
 --- in
 select id from Post where -a > +b
 --- out
-["select \"id\" from \"Post\" where -\"a\" > \"b\""]
+["select \"id\" from \"Post\" where (-\"a\") > \"b\""]
 
 
 
@@ -197,7 +200,7 @@ select id from Post where -00.003 > +3.14 or -3. > +.0 or +3 > -1
 --- in
 select -$table.$col from $table
 --- out
-["select -",["table","symbol"],".",["col","symbol"]," from ",["table","symbol"]]
+["select (-",["table","symbol"],".",["col","symbol"],") from ",["table","symbol"]]
 
 
 
@@ -213,7 +216,7 @@ select +$table.col from $table
 --- in
 select $table.-$col from $table
 --- out
-[error]
+
 
 
 
@@ -221,7 +224,7 @@ select $table.-$col from $table
 --- in
 select -$proc(32)
 --- out
-["select -",["proc","symbol"],"(32)"]
+["select (-",["proc","symbol"],"(32))"]
 
 
 
@@ -230,7 +233,7 @@ select -$proc(32)
 select id as foo, -count(*) as bar
 from Post
 --- out
-["select \"id\" as \"foo\", -\"count\"(*) as \"bar\" from \"Post\""]
+["select \"id\" as \"foo\", (-\"count\"(*)) as \"bar\" from \"Post\""]
 
 
 
@@ -238,4 +241,4 @@ from Post
 --- in
 select * from test where not a > b or not (b < c) and (not c) = true
 --- out
-["select * from \"test\" where ((not (\"a\" > \"b\")) or ((not (\"b\" < \"c\")) and (not \"c\") = true))"]
+["select * from \"test\" where ((not \"a\" > \"b\") or ((not \"b\" < \"c\") and (not \"c\") = true))"]
