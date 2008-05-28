@@ -274,7 +274,7 @@ select -3 , - 3 , -1.25,- .3
 --- ast
 Query [Select [Minus (Integer 3),Minus (Integer 3),Minus (Float 1.25),Minus (Float 0.3)]]
 --- out
-select -3, -3, -1.25, -0.3
+select (-3), (-3), (-1.25), (-0.3)
 
 
 
@@ -481,4 +481,14 @@ select -3::"text";
 Query [Select [Minus (TypeCast (Integer 3) (Column (Symbol "text")))]]
 --- out
 select (-3::"text")
+
+
+
+=== TEST 51: precedence of -
+--- in
+select (-3)::"text";
+--- ast
+Query [Select [TypeCast (Minus (Integer 3)) (Column (Symbol "text"))]]
+--- out
+select (-3)::"text"
 

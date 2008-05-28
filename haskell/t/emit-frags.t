@@ -241,7 +241,7 @@ select select, 0.125 from from where where > or or and < and and order > 3.12 or
 --- in
 select -3 , - 3 , -1.25,- .3
 --- out
-["select -3, -3, -1.25, -0.3"]
+["select (-3), (-3), (-1.25), (-0.3)"]
 
 
 
