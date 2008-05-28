@@ -158,6 +158,7 @@ parseExpr = buildExpressionParser opTable parseArithAtom
 
 opTable = [
             [ op "::" TypeCast AssocNone ],
+            [  preOp "-" Minus, preOp "+" Plus ],
             [
                 arithOp "^"
                 ],
@@ -165,7 +166,7 @@ opTable = [
                 arithOp "*", arithOp "/", arithOp "%"
                 ],
             [
-                arithOp "+", arithOp "-", preOp "-" Minus, preOp "+" Plus
+                arithOp "+", arithOp "-"
                 ],
             [
                 arithOp "||"
