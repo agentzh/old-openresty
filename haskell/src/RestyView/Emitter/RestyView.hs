@@ -40,8 +40,6 @@ emit node = case node of
     Compare op lhs rhs -> B.concat [emit lhs, " ", bs op, " ", emit rhs]
     Arith op lhs rhs -> B.concat ["(", emit lhs, " ", bs op, " ", emit rhs, ")"]
 
-    Minus val@(Integer _) -> B.append "-" $ emit val
-    Minus val@(Float _) -> B.append "-" $ emit val
     Minus val -> B.concat ["(-", emit val, ")"]
     Plus val -> emit val
     Not val -> B.concat ["(not ", emit val, ")"]
