@@ -165,7 +165,7 @@ opTable = [
                 arithOp "*", arithOp "/", arithOp "%"
                 ],
             [
-                arithOp "+", arithOp "-"
+                arithOp "+", arithOp "-", preOp "-" Minus, preOp "+" Plus
                 ],
             [
                 arithOp "||"
@@ -175,6 +175,7 @@ opTable = [
                 relOp "<=", relOp "<>", relOp "<",
                 relOp "=", relOp "!=", relOp' "like"
                 ],
+            [   preOp' "not" Not ],
             [
                 op' "and" And AssocLeft
                 ],
@@ -183,6 +184,11 @@ opTable = [
                 ]
             ]
       where
+        preOp s f
+            = Prefix (do { reservedOp s; spaces; return f} <?> "operator")
+        preOp' s f
+            = Prefix (do { reservedWord s; spaces; return f} <?> "operator")
+
         op s f assoc
            = Infix (do { reservedOp s; spaces; return f} <?> "operator") assoc
         op' s f assoc
@@ -239,31 +245,25 @@ parseVariable = do char '$'
                    return $ Variable pos v
 
 parseNumber :: Parser SqlVal
-parseNumber = do sign <- parseSign
-                 (try (parseFloat sign) <|> parseInteger sign)
+parseNumber = try (parseFloat)
+          <|> parseInteger
           <?> "number"
 
-parseSign :: Parser String
-parseSign = do c <- oneOf "+-"
-               spaces
-               return $ if c == '+' then "" else "-"
-        <|> (return "")
+parseInteger :: Parser SqlVal
+parseInteger = do digits <- many1 digit
+                  spaces
+                  return $ Integer $ read digits
 
-parseInteger :: String -> Parser SqlVal
-parseInteger sign  = do digits <- many1 digit
-                        spaces
-                        return $ Integer $ read (sign ++ digits)
-
-parseFloat :: String -> Parser SqlVal
-parseFloat sign = do int <- many1 digit
-                     dec <- char '.' >> many digit
-                     spaces
-                     return $ Float $
-                        read (sign ++ int ++ "." ++ noEmpty dec)
-              <|> do dec <- char '.' >> many1 digit
-                     spaces
-                     return $ Float $ read (sign ++ "0." ++ dec)
-              <?> "floating-point number"
+parseFloat :: Parser SqlVal
+parseFloat = do int <- many1 digit
+                dec <- char '.' >> many digit
+                spaces
+                return $ Float $
+                   read (int ++ "." ++ noEmpty dec)
+         <|> do dec <- char '.' >> many1 digit
+                spaces
+                return $ Float $ read ("0." ++ dec)
+         <?> "floating-point number"
     where noEmpty s = if s == "" then "0" else s
 
 parseString :: Parser SqlVal

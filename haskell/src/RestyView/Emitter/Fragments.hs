@@ -87,6 +87,11 @@ emit node =
         And a b -> mergeAll [str "(", emit a, str " and ", emit b, str ")"]
         Compare op lhs rhs -> mergeAll [emit lhs, str $ B.concat [" ", bs op, " "], emit rhs]
         Arith op lhs rhs -> mergeAll [str "(", emit lhs, str $ B.concat [" ", bs op, " "], emit rhs, str ")"]
+        Minus val@(Integer _) -> merge (str "-") $ emit val
+        Minus val@(Float _) -> merge (str "-") $ emit val
+        Minus val -> mergeAll [str "(-", emit val, str ")"]
+        Plus val -> emit val
+        Not val -> mergeAll [str "(not ", emit val, str ")"]
         Null -> str ""
     where str s = [FString s]
           emitForList ls = join ", " $ map emit ls
