@@ -9,36 +9,37 @@ import qualified Data.ByteString.Char8 as B
 emitForList :: [SqlVal] -> B.ByteString
 emitForList ls = B.intercalate (B.pack ", ") $ map emit ls
 
+(~~) = B.append
+
 emit :: SqlVal -> B.ByteString
 emit node = case node of
-    TypeCast e t -> B.concat [emit e, "::", emit t]
-    SetOp op lhs rhs -> B.concat ["((", emit lhs, ") ", bs op,
-                        " (", emit rhs, "))"]
+    TypeCast e t -> emit e ~~ "::" ~~ emit t
+    SetOp op lhs rhs -> "((" ~~ emit lhs ~~ ") " ~~  bs op ~~
+                        " (" ~~ emit rhs ~~ "))"
     Query lst -> B.unwords $ map emit lst
     String s -> bs $ quoteLiteral s
-    Variable _ v -> '$' `B.cons` (bs v)
-    FuncCall f args -> B.concat [emit f,
-                                  "(", emitForList args, ")"]
-    QualifiedColumn model col -> B.concat [emit model, ".", emit col]
+    Variable _ v -> "$" ~~ (bs v)
+    FuncCall f args -> emit f ~~ "(" ~~ emitForList args ~~ ")"
+    QualifiedColumn model col -> emit model ~~ "." ~~ emit col
 
-    Select cols -> B.concat ["select ", emitForList cols]
-    From models -> B.concat ["from ", emitForList models]
-    Where cond -> B.concat ["where ", emit cond]
-    OrderBy pairs -> B.concat ["order by ", emitForList pairs]
-    GroupBy col -> B.concat ["group by ", emit col]
-    Limit lim -> B.concat ["limit ", emit lim]
-    Offset offset -> B.concat ["offset ", emit offset]
+    Select cols -> "select " ~~ emitForList cols
+    From models -> "from " ~~ emitForList models
+    Where cond -> "where " ~~ emit cond
+    OrderBy pairs -> "order by " ~~ emitForList pairs
+    GroupBy col -> "group by " ~~ emit col
+    Limit lim -> "limit " ~~ emit lim
+    Offset offset -> "offset " ~~ emit offset
 
-    OrderPair col dir -> B.concat [emit col, " ", bs dir]
+    OrderPair col dir -> emit col ~~ " " ~~ bs dir
     Model model -> emit model
     Column col -> emit col
     Symbol name -> bs $ quoteIdent name
     Integer int -> bs $ show int
     Float float -> bs $ printf "%0f" float
-    Or a b -> B.concat ["(", emit a, " or ", emit b, ")"]
-    And a b -> B.concat ["(", emit a, " and ", emit b, ")"]
-    Compare op lhs rhs -> B.concat [emit lhs, " ", bs op, " ", emit rhs]
-    Arith op lhs rhs -> B.concat ["(", emit lhs, " ", bs op, " ", emit rhs, ")"]
+    Or a b -> "(" ~~ emit a ~~ " or " ~~ emit b ~~ ")"
+    And a b -> "(" ~~ emit a ~~ " and " ~~ emit b ~~ ")"
+    Compare op lhs rhs -> emit lhs ~~ " " ~~ bs op ~~ " " ~~ emit rhs
+    Arith op lhs rhs -> "(" ~~ emit lhs ~~ " " ~~ bs op ~~ " " ~~ emit rhs ~~ ")"
 
     Minus val -> B.concat ["(-", emit val, ")"]
     Plus val -> emit val
