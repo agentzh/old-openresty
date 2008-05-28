@@ -28,6 +28,9 @@ data SqlVal = SetOp !String SqlVal SqlVal
             | FuncCall SqlVal [SqlVal]
             | Compare !String SqlVal SqlVal
             | Arith !String SqlVal SqlVal
+            | Minus SqlVal
+            | Plus SqlVal
+            | Not SqlVal
             | Or SqlVal SqlVal
             | And SqlVal SqlVal
             | Null

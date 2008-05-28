@@ -39,6 +39,7 @@ select -foo, +bar from Bah
 Query [Select [Arith "-" ([Column (Symbol "foo")])],[Column (Symbol "bar")],From [Model (Symbol "Bah")]]
 --- out
 select -"foo", "bar" from "Bah"
+--- LAST
 
 
 
