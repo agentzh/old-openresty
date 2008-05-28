@@ -25,8 +25,6 @@ run {
 
 __DATA__
 
-
-
 === TEST 1: simple for column
 --- in
 select -foo, +bar from Bah
@@ -63,7 +61,7 @@ select -(foo), +(bar) from Bah
 --- in
 select -(count(foo)), +(max(id)) from Bah
 --- out
-["select -\"count\"(foo) \"max\"(id) from \"Bah\""]
+["select -\"count\"(\"foo\") \"max\"(\"id\") from \"Bah\""]
 
 
 
@@ -171,7 +169,6 @@ select ('2003-03' || '-01' || -$foo) :: date
 
 
 
-
 === TEST 19: type casting ::
 --- in
 select ('2003-03' || '-01' || +$foo) :: date
@@ -220,8 +217,7 @@ select $table.-$col from $table
 
 
 
-
-=== TEST 23: var in proc call
+=== TEST 25: var in proc call
 --- in
 select -$proc(32)
 --- out
@@ -229,7 +225,7 @@ select -$proc(32)
 
 
 
-=== TEST 24: aliased cols
+=== TEST 26: aliased cols
 --- in
 select id as foo, -count(*) as bar
 from Post
@@ -238,7 +234,7 @@ from Post
 
 
 
-=== TEST 25: not
+=== TEST 27: not
 --- in
 select * from test where not a > b or not (b < c) and (not c) = true
 --- out
