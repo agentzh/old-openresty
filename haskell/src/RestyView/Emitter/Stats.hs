@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -funbox-strict-fields #-}
+
 module RestyView.Emitter.Stats (
     Stats,
     emit,

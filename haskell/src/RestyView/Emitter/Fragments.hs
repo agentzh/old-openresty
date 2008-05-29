@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -XOverloadedStrings -funbox-strict-fields #-}
+
 module RestyView.Emitter.Fragments (
     Fragment,
     VarType,

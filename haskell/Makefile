@@ -1,10 +1,8 @@
-OOPTS = -O2
-OPTS= $(OOPTS) -package parsec -package json -XFlexibleInstances -XOverloadedStrings -funbox-strict-fields -fwarn-incomplete-patterns
+#OOPTS = -O2 -prof -auto
+OPTS= $(OOPTS) -funbox-strict-fields -fwarn-incomplete-patterns
 
-all: bin/restyview
-
-bin/restyview: src/RestyView/Util.o src/RestyView/AST.o src/RestyView/Emitter/RenameVar.o src/RestyView/Emitter/RestyView.o src/RestyView/Emitter/Fragments.o src/RestyView/Emitter/Stats.o src/RestyView/Parser.o src/RestyView.o
-	cd src && ghc $(OPTS) -o ../$@ --make RestyView
+all:
+	ghc $(OPTS) -isrc --make src/RestyView.hs -o bin/restyview
 
 %.o: %.hs
 	cd src && ghc $(OPTS) -c ../$<
