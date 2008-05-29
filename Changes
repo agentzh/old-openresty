@@ -1,5 +1,14 @@
 Change Log for OpenResty
 
+0.3.1 May 26 2008
+* Now the Captcha handler no longer stores IDs in the cache.
+* Upgraded the metamodel to 0.004 by adding storage for the new Captcha API.
+* Fixed the global metamodel initialization logic (a fresh install works now)
+* Added massive documentation, like an initial draft for the Perl GettingStarted tutorial.
+* Added a new demo, Click4honor, which was an NCP widget.
+* Lots of improvements to the Blog demo.
+* Added a working Haskell implementation for the minisql compiler for view (restyview) under haskell/. But it is not yet hooked into the server.
+
 0.2.2 April 23 2008
 * Put OpenResty under Artistic Licence 2.0.
 * Fixed various nits in OpenResty::Spec::Overview.

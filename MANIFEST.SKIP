@@ -6,6 +6,7 @@ demo/Springbot/staff/staff_files
 \.hi$
 \.ho$
 \.o$
+^openresty-\d+\.\d+\.\d+/
 ^haskell/.*\.sql$
 ^haskell/.*\.png$
 ^haskell/bin/restyview$

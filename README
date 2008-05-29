@@ -2,7 +2,7 @@ NAME
     OpenResty - General-purpose web service platform for web applications
 
 VERSION
-    This document describes OpenResty 0.2.2 released on April 23, 2008.
+    This document describes OpenResty 0.3.1 released on May 26, 2008.
 
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
@@ -46,6 +46,10 @@ DESCRIPTION
 
     OpenResty::CheatSheet also provides a good enough summary for the REST
     interface.
+
+    You'll find my slides for the D2 conference interesting as well:
+
+    <http://agentzh.org/misc/openresty-d2.pdf>
 
 INSTALLATION
     This is a basic guideline for settting up an OpenResty server on your
@@ -236,8 +240,8 @@ License and Copyright
     Copyright (c) 2007, 2008 by Yahoo! China EEEE Works, Alibaba Inc.
 
     This module is free software; you can redistribute it and/or modify it
-    under the terms of either the Artistic License 2.0. A copy of this
-    license can be obtained from
+    under the Artistic License 2.0. A copy of this license can be obtained
+    from
 
     <http://opensource.org/licenses/artistic-license-2.0.php>
 

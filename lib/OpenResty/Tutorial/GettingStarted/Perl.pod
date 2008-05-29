@@ -58,7 +58,11 @@ There's various different ways to login to your OpenResty account. But
 in a Perl script,
 we usually use the default L<Admin> role with full priviledges:
 
+    use strict;
+    use warnings;
+    use utf8;
     use WWW::OpenResty::Simple;
+
     my $resty = WWW::OpenResty::Simple->new(
       { server => 'resty.eeeeworks.org' }
     );
@@ -84,6 +88,19 @@ tables (but they could be something else as well). You can define a new
 C<Model> like this:
 
     $resty->post(
+        '/=/model/Post',
+        {
+            description => 'blog posts',
+            columns => [
+                { name => 'author', default => 'Anonymous' },
+                { name => 'title', default => 'No title' },
+                { name => 'content' },
+                { name => 'created',
+                  type => 'timestamp (0) with time zone',
+                  default => ['now()'] },
+                { name => 'comments', type => 'integer', default => 0 }
+            ]
+        }
     );
 
 L<WWW::OpenResty::Simple> objects' C<post> method will issue an HTTP C<POST> command behind the scene.
