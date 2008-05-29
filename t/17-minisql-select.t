@@ -720,6 +720,8 @@ select * from yisou_comments_fetch_results($parentid,'',$orderby,$offset,$count,
 offset=0
 --- out: select * from yisou_comments_fetch_results ( $y$$y$ , $y$$y$ , $y$$y$ , $y$0$y$ , $y$$y$ , $y$$y$ , $y$$y$ , $y$$y$ )
 
+
+
 === TEST 64: for @@ operator
 --- sql
 select * from table where field @@ to_tsquery('chinesecfg', $keyword)
