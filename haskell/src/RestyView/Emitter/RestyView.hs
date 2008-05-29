@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -XOverloadedStrings #-}
+
 module RestyView.Emitter.RestyView where
 
 import RestyView.AST
