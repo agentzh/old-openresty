@@ -725,4 +725,4 @@ offset=0
 select * from table where field @@ to_tsquery('chinesecfg', $keyword)
 --- in_vars
 keyword='Hello'
---- out: select * from "table" where "field" @@ to_tsquery('chinesecfg', $y$Hello$y$ )
+--- out: select * from "table" where "field" @@ to_tsquery ( $y$chinesecfg$y$ , $y$'Hello'$y$ )
