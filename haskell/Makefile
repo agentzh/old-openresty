@@ -1,8 +1,9 @@
-#OOPTS = -O2 -prof -auto
-OPTS= $(OOPTS) -funbox-strict-fields -fwarn-incomplete-patterns
+#POPTS = -prof -auto-all -fhpc
+OOPTS = -O2
+OPTS= $(OOPTS) $(POPTS) -funbox-strict-fields -fwarn-incomplete-patterns
 
 all:
-	ghc $(OPTS) -isrc --make src/RestyView.hs -o bin/restyview
+	ghc -i $(OPTS) -isrc --make src/RestyView.hs -o bin/restyview
 
 %.o: %.hs
 	cd src && ghc $(OPTS) -c ../$<
