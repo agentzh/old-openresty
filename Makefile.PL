@@ -45,6 +45,7 @@ requires            ('Digest::MD5');
 # modules needed by new captcha mechanism
 requires			('Crypt::CBC');
 requires			('Crypt::Rijndael');
+requires                        ('MIME::Base64');
 
 recommends          ('Benchmark::Timer');
 recommends          ('HTTP::Server::Simple' => '0.27');

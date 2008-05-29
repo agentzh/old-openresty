@@ -59,6 +59,7 @@ requires:
   JSON::XS: 2.2
   List::MoreUtils: 0
   List::Util: 0
+  MIME::Base64: 0
   Params::Util: 0.22
   Parse::Yapp: 0
   YAML::Syck: 1.04
