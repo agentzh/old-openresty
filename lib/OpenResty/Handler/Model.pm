@@ -23,6 +23,7 @@ sub check_type {
                     bit \s* \( \s* \d+ \s* \) |
                     boolean |
                     text |
+                    varchar \s* \( \s* \d+ \s* \) |
                     integer |
                     serial |
                     real |
