@@ -728,3 +728,11 @@ select * from table where field @@ to_tsquery('chinesecfg', $keyword)
 --- in_vars
 keyword='Hello'
 --- out: select * from "table" where "field" @@ to_tsquery ( $y$chinesecfg$y$ , $y$'Hello'$y$ )
+
+
+
+=== TEST 65: for distinct 
+--- sql
+select distinct ca, cb from table where ca > 0
+--- out: select distinct "ca", "cb" from "table" where "ca" > 0;
+
