@@ -33,8 +33,8 @@ POST /=/model/Foo
           {"name":"age", "label": "年龄", "type":"integer"}
         ]
 }
---- response
-{"success":0,"error":"Syntax error found in the JSON input: '\"' expected, at character offset 31 [\"columns:\\n        [ ...\"]."}
+--- response_like
+{"success":0,"error":"Syntax error found in the JSON input: '\\"' expected, at character offset
 
 
 
