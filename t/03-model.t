@@ -126,8 +126,8 @@ POST /=/model/Baz
 {
   "description":"BAZ",
 }
---- response
-{"success":0,"error":"Syntax error found in the JSON input: '\"' expected, at character offset 25 [\"}\\n\"]."}
+--- response_like
+{"success":0,"error":"Syntax error found in the JSON input: '\\"' expected, at character offset 25
 
 
 
