@@ -71,6 +71,8 @@ POST /=/model/NetAddr/bigint
 --- response
 {"src":"/=/model/NetAddr/bigint","success":1}
 
+
+
 === TEST 7: Create a model with varchar types
 --- request
 POST /=/model/varcharTest
@@ -81,3 +83,5 @@ POST /=/model/varcharTest
     ]
 }
 --- response
+{"success":1}
+
