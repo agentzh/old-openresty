@@ -217,3 +217,33 @@ GET /=/view/Test123/description/~
 
 
 
+=== TEST 24: Definition a view for default value test
+--- request
+POST /=/view/Test2
+{ "definition":"select * from A limit $t | 1" }
+--- response
+{"success":1}
+
+
+
+=== TEST 25: Insert data for testing 
+--- request
+POST /=/model/A/~/~
+[
+	{ "title": "test1" },
+	{ "title": "test2" },
+	{ "title": "test3" },
+	{ "title": "test4" },
+	{ "title": "test5" },
+	{ "title": "test6" }
+]
+--- response
+{"last_row":"/=/model/A/id/6","rows_affected":6,"success":1}
+
+
+
+=== TEST 26: Default value test
+--- request
+GET /=/view/Test2/~/~?t=
+--- response
+[{"id":"1","title":"test1"}]
