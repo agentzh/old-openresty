@@ -5,6 +5,7 @@ module RestyScript.AST (
 
 import Text.ParserCombinators.Parsec.Pos (SourcePos)
 
+-- RestyScript AST datatype
 data RSVal = SetOp !String RSVal RSVal
             | Query [RSVal]
             | Select [RSVal]
