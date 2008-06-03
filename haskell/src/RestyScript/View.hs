@@ -1,7 +1,7 @@
 module Main where
 
-import RestyScript.Parser
-import RestyScript.AST
+import RestyScript.Parser.View
+import RestyScript.AST.View
 
 import qualified RestyScript.Emitter.RestyView as RS
 import qualified RestyScript.Emitter.Stats as St

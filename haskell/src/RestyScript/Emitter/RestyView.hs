@@ -50,5 +50,6 @@ emit node = case node of
     Alias col alias -> B.concat [emit col, " as ", emit alias]
     Null -> B.empty
     AnyColumn -> "*"
+    _ -> ""
     where bs = B.pack
 
