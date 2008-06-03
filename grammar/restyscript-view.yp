@@ -39,7 +39,9 @@ compound_select_stmt: '(' select_stmt ')' set_operator compound_select_stmt
 set_operator: 'union all' | 'union' | 'intersect' | 'except'
             ;
 
-select_stmt: 'select' pattern_list postfix_clause_list
+select_stmt: 'select' 'distinct' pattern_list postfix_clause_list
+             { join(' ', @_[1..$#_]) }
+           | 'select' pattern_list postfix_clause_list
              { join(' ', @_[1..$#_]) }
            | 'select' pattern_list
              { join(' ', @_[1..$#_]) }
@@ -393,7 +395,7 @@ sub _Lexer {
                 and return ('IDENT', $1);
         s/^\s*(\$(\w*)\$.*?\$\2\$)//s
                 and return ('STRING', $1);
-        if (s/^\s*(\*|as|select|and|or|from|where|delete|update|set|order\s+by|asc|desc|group\s+by|limit|offset|union\s+all|union|intersect|except)\b//is) {
+        if (s/^\s*(\*|as|select|distinct|and|or|from|where|delete|update|set|order\s+by|asc|desc|group\s+by|limit|offset|union\s+all|union|intersect|except)\b//is) {
             my $s = $1;
             (my $token = $s) =~ s/\s+/ /gs;
             return (lc($token), lc($s));
