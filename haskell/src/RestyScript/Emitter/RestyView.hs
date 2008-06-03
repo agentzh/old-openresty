@@ -8,12 +8,12 @@ import RestyScript.Util
 import Text.Printf (printf)
 import qualified Data.ByteString.Char8 as B
 
-emitForList :: [SqlVal] -> B.ByteString
+emitForList :: [RSVal] -> B.ByteString
 emitForList ls = B.intercalate (B.pack ", ") $ map emit ls
 
 (~~) = B.append
 
-emit :: SqlVal -> B.ByteString
+emit :: RSVal -> B.ByteString
 emit node = case node of
     TypeCast e t -> emit e ~~ "::" ~~ emit t
     SetOp op lhs rhs -> "((" ~~ emit lhs ~~ ") " ~~  bs op ~~

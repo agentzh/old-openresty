@@ -1,43 +1,43 @@
 module RestyScript.AST (
-    SqlVal(..),
+    RSVal(..),
     traverse
 ) where
 
 import Text.ParserCombinators.Parsec.Pos (SourcePos)
 
-data SqlVal = SetOp !String SqlVal SqlVal
-            | Query [SqlVal]
-            | Select [SqlVal]
-            | From [SqlVal]
-            | Where SqlVal
-            | Limit SqlVal
-            | Offset SqlVal
-            | TypeCast SqlVal SqlVal
-            | OrderBy [SqlVal]
-            | OrderPair SqlVal !String
-            | GroupBy SqlVal
-            | Alias SqlVal SqlVal
-            | Column SqlVal
-            | Model SqlVal
+data RSVal = SetOp !String RSVal RSVal
+            | Query [RSVal]
+            | Select [RSVal]
+            | From [RSVal]
+            | Where RSVal
+            | Limit RSVal
+            | Offset RSVal
+            | TypeCast RSVal RSVal
+            | OrderBy [RSVal]
+            | OrderPair RSVal !String
+            | GroupBy RSVal
+            | Alias RSVal RSVal
+            | Column RSVal
+            | Model RSVal
             | Symbol !String
-            | QualifiedColumn SqlVal SqlVal
+            | QualifiedColumn RSVal RSVal
             | Integer !Int
             | Float !Double
             | String !String
             | Variable SourcePos !String
-            | FuncCall SqlVal [SqlVal]
-            | Compare !String SqlVal SqlVal
-            | Arith !String SqlVal SqlVal
-            | Minus SqlVal
-            | Plus SqlVal
-            | Not SqlVal
-            | Or SqlVal SqlVal
-            | And SqlVal SqlVal
+            | FuncCall RSVal [RSVal]
+            | Compare !String RSVal RSVal
+            | Arith !String RSVal RSVal
+            | Minus RSVal
+            | Plus RSVal
+            | Not RSVal
+            | Or RSVal RSVal
+            | And RSVal RSVal
             | Null
             | AnyColumn
                 deriving (Ord, Eq, Show)
 
-traverse :: (SqlVal->a) -> (a->a->a) -> SqlVal -> a
+traverse :: (RSVal->a) -> (a->a->a) -> RSVal -> a
 traverse visit merge node =
     let mergeAll = foldl1 merge
         cur = visit node
