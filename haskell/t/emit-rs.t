@@ -30,7 +30,7 @@ __DATA__
 
 === TEST 1: basic
 --- in
-select foo, bar from Bah
+    select foo, bar from Bah
 --- ast
 Query [Select [Column (Symbol "foo"),Column (Symbol "bar")],From [Model (Symbol "Bah")]]
 --- out
@@ -40,7 +40,8 @@ select "foo", "bar" from "Bah"
 
 === TEST 2: select only
 --- in
-select foo
+   
+  select foo ; ;; 
 --- ast
 Query [Select [Column (Symbol "foo")]]
 --- out
@@ -50,7 +51,7 @@ select "foo"
 
 === TEST 3: spaces around separator (,)
 --- in
-select id,name , age from  Post , Comment
+select id,name , age from  Post , Comment;
 --- ast
 Query [Select [Column (Symbol "id"),Column (Symbol "name"),Column (Symbol "age")],From [Model (Symbol "Post"),Model (Symbol "Comment")]]
 --- out
