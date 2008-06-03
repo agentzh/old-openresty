@@ -12,7 +12,7 @@ traverse visit merge node =
     in case node of
         SetOp _ lhs rhs -> mergeAll [cur, self lhs, self rhs]
         Query q -> mergeAll $ cur : map self q
-        Select s -> mergeAll $ cur : map self s
+        Select m s -> mergeAll $ cur : map self s
         From f -> mergeAll $ cur : map self f
         Where w -> merge cur $ self w
         Limit l -> merge cur $ self l

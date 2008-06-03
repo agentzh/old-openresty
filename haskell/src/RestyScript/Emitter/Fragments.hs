@@ -68,7 +68,8 @@ emit node =
         FuncCall (Variable _ v) args -> [FVariable v VTSymbol, FString $ "("] <+> emitForList args <+> str ")"
         FuncCall f args -> emit f <+> str "(" <+> emitForList args <+> str ")"
         QualifiedColumn model col -> emit model <+> str "." <+> emit col
-        Select cols -> str "select " <+> emitForList cols
+        Select mod cols -> (str $ "select " ~~ mod') <+> emitForList cols
+            where mod' = if mod == "" then "" else bs mod ~~ " "
         From models -> str "from " <+> emitForList models
         Where cond -> str "where " <+> emit cond
         OrderBy pairs -> str "order by " <+> emitForList pairs

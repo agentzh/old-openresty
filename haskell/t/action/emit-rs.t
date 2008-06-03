@@ -57,7 +57,15 @@ update
     Foo set foo = 5 where $col>5 and name like '%hey' ;
     ;
 delete from Blah where $col=5
+ ;
 --- out
 update "Foo" set "foo" = 5 where ($col > 5 and "name" like '%hey');
 delete from "Blah" where $col = 5
+
+
+
+=== TEST 4: GET
+--- in
+GET '/=/version';
+--- out
 

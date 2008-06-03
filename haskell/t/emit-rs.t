@@ -32,7 +32,7 @@ __DATA__
 --- in
     select foo, bar from Bah
 --- ast
-Query [Select [Column (Symbol "foo"),Column (Symbol "bar")],From [Model (Symbol "Bah")]]
+Query [Select "" [Column (Symbol "foo"),Column (Symbol "bar")],From [Model (Symbol "Bah")]]
 --- out
 select "foo", "bar" from "Bah"
 
@@ -43,7 +43,7 @@ select "foo", "bar" from "Bah"
    
   select foo ; ;; 
 --- ast
-Query [Select [Column (Symbol "foo")]]
+Query [Select "" [Column (Symbol "foo")]]
 --- out
 select "foo"
 
@@ -53,7 +53,7 @@ select "foo"
 --- in
 select id,name , age from  Post , Comment;
 --- ast
-Query [Select [Column (Symbol "id"),Column (Symbol "name"),Column (Symbol "age")],From [Model (Symbol "Post"),Model (Symbol "Comment")]]
+Query [Select "" [Column (Symbol "id"),Column (Symbol "name"),Column (Symbol "age")],From [Model (Symbol "Post"),Model (Symbol "Comment")]]
 --- out
 select "id", "name", "age" from "Post", "Comment"
 
@@ -65,7 +65,7 @@ select $foo,
 $bar ,
 $age from  Post , $comment
 --- ast
-Query [Select [Variable (1,9) "foo",Variable (2,2) "bar",Variable (3,2) "age"],From [Model (Symbol "Post"),Model (Variable (3,20) "comment")]]
+Query [Select "" [Variable (1,9) "foo",Variable (2,2) "bar",Variable (3,2) "age"],From [Model (Symbol "Post"),Model (Variable (3,20) "comment")]]
 --- out
 select $foo, $bar, $age from "Post", $comment
 
@@ -75,7 +75,7 @@ select $foo, $bar, $age from "Post", $comment
 --- in
 select id from Post where a > b
 --- ast
-Query [Select [Column (Symbol "id")],From [Model (Symbol "Post")],Where (Compare ">" (Column (Symbol "a")) (Column (Symbol "b")))]
+Query [Select "" [Column (Symbol "id")],From [Model (Symbol "Post")],Where (Compare ">" (Column (Symbol "a")) (Column (Symbol "b")))]
 --- out
 select "id" from "Post" where "a" > "b"
 
@@ -93,7 +93,7 @@ select "id" from "Post" where (0.003 > 3.14 or 3.0 > 0.0)
 --- in
 select id from Post where 256 > 0
 --- ast
-Query [Select [Column (Symbol "id")],From [Model (Symbol "Post")],Where (Compare ">" (Integer 256) (Integer 0))]
+Query [Select "" [Column (Symbol "id")],From [Model (Symbol "Post")],Where (Compare ">" (Integer 256) (Integer 0))]
 --- out
 select "id" from "Post" where 256 > 0
 
@@ -135,7 +135,7 @@ select "id" from "Post" where 'a''''' != 'b\\\n\r\ba'
 --- in
 select id order  by  id
 --- ast
-Query [Select [Column (Symbol "id")],OrderBy [OrderPair (Column (Symbol "id")) "asc"]]
+Query [Select "" [Column (Symbol "id")],OrderBy [OrderPair (Column (Symbol "id")) "asc"]]
 --- out
 select "id" order by "id" asc
 
@@ -193,7 +193,7 @@ select "id" from "Post" offset '3' limit '5'
 --- in
 select $var
 --- ast
-Query [Select [Variable (1,9) "var"]]
+Query [Select "" [Variable (1,9) "var"]]
 --- out
 select $var
 
@@ -205,7 +205,7 @@ select
 $var
 from Post
 --- ast
-Query [Select [Variable (2,2) "var"],From [Model (Symbol "Post")]]
+Query [Select "" [Variable (2,2) "var"],From [Model (Symbol "Post")]]
 --- out
 select $var from "Post"
 
@@ -215,7 +215,7 @@ select $var from "Post"
 --- in
 select $table.$col from $table
 --- ast
-Query [Select [QualifiedColumn (Variable (1,9) "table") (Variable (1,16) "col")],From [Model (Variable (1,26) "table")]]
+Query [Select "" [QualifiedColumn (Variable (1,9) "table") (Variable (1,16) "col")],From [Model (Variable (1,26) "table")]]
 --- out
 select $table.$col from $table
 
@@ -225,7 +225,7 @@ select $table.$col from $table
 --- in
 select $table.col from $table
 --- ast
-Query [Select [QualifiedColumn (Variable (1,9) "table") (Symbol "col")],From [Model (Variable (1,25) "table")]]
+Query [Select "" [QualifiedColumn (Variable (1,9) "table") (Symbol "col")],From [Model (Variable (1,25) "table")]]
 --- out
 select $table."col" from $table
 
@@ -235,7 +235,7 @@ select $table."col" from $table
 --- in
 select $proc(32)
 --- ast
-Query [Select [FuncCall (Variable (1,9) "proc") [Integer 32]]]
+Query [Select "" [FuncCall (Variable (1,9) "proc") [Integer 32]]]
 --- out
 select $proc(32)
 
@@ -245,7 +245,7 @@ select $proc(32)
 --- in
 select * from $model_name, $bar
 --- ast
-Query [Select [AnyColumn],From [Model (Variable (1,16) "model_name"),Model (Variable (1,29) "bar")]]
+Query [Select "" [AnyColumn],From [Model (Variable (1,16) "model_name"),Model (Variable (1,29) "bar")]]
 --- out
 select * from $model_name, $bar
 
@@ -255,7 +255,7 @@ select * from $model_name, $bar
 --- in
 select * from A where $id > 0 offset $off limit $lim group by $foo
 --- ast
-Query [Select [AnyColumn],From [Model (Symbol "A")],Where (Compare ">" (Variable (1,24) "id") (Integer 0)),Offset (Variable (1,39) "off"),Limit (Variable (1,50) "lim"),GroupBy (Column (Variable (1,64) "foo"))]
+Query [Select "" [AnyColumn],From [Model (Symbol "A")],Where (Compare ">" (Variable (1,24) "id") (Integer 0)),Offset (Variable (1,39) "off"),Limit (Variable (1,50) "lim"),GroupBy (Column (Variable (1,64) "foo"))]
 --- out
 select * from "A" where $id > 0 offset $off limit $lim group by $foo
 
@@ -273,7 +273,7 @@ select "select", 0.125 from "from" where ("where" > "or" or ("and" < "and" and "
 --- in
 select -3 , - 3 , -1.25,- .3
 --- ast
-Query [Select [Minus (Integer 3),Minus (Integer 3),Minus (Float 1.25),Minus (Float 0.3)]]
+Query [Select "" [Minus (Integer 3),Minus (Integer 3),Minus (Float 1.25),Minus (Float 0.3)]]
 --- out
 select (-3), (-3), (-1.25), (-0.3)
 
@@ -283,7 +283,7 @@ select (-3), (-3), (-1.25), (-0.3)
 --- in
 select +3 , + 3 , +1.25,+ .3 , 1
 --- ast
-Query [Select [Plus (Integer 3),Plus (Integer 3),Plus (Float 1.25),Plus (Float 0.3),Integer 1]]
+Query [Select "" [Plus (Integer 3),Plus (Integer 3),Plus (Float 1.25),Plus (Float 0.3),Integer 1]]
 --- out
 select 3, 3, 1.25, 0.3, 1
 
@@ -301,7 +301,7 @@ select "Foo"."bar", "Foo"."bar", "Foo"."bar", "Foo"."bar" from "Foo"
 --- in
 select (32) , ((5)) as item
 --- ast
-Query [Select [Integer 32,Alias (Integer 5) (Symbol "item")]]
+Query [Select "" [Integer 32,Alias (Integer 5) (Symbol "item")]]
 --- out
 select 32, 5 as "item"
 
@@ -322,7 +322,7 @@ select "count"(*), "count"(*) from "Post"
 select id as foo, count(*) as bar
 from Post
 --- ast
-Query [Select [Alias (Column (Symbol "id")) (Symbol "foo"),Alias (FuncCall (Symbol "count") [AnyColumn]) (Symbol "bar")],From [Model (Symbol "Post")]]
+Query [Select "" [Alias (Column (Symbol "id")) (Symbol "foo"),Alias (FuncCall (Symbol "count") [AnyColumn]) (Symbol "bar")],From [Model (Symbol "Post")]]
 --- out
 select "id" as "foo", "count"(*) as "bar" from "Post"
 
@@ -332,7 +332,7 @@ select "id" as "foo", "count"(*) as "bar" from "Post"
 --- in
 select * from Post as foo
 --- ast
-Query [Select [AnyColumn],From [Alias (Model (Symbol "Post")) (Symbol "foo")]]
+Query [Select "" [AnyColumn],From [Alias (Model (Symbol "Post")) (Symbol "foo")]]
 --- out
 select * from "Post" as "foo"
 
@@ -351,7 +351,7 @@ select * from "proc"(32, 'hello'), "blah"() as "poo"
 --- in
 select 3+5/3*2 - 36 % 2
 --- ast
-Query [Select [Arith "-" (Arith "+" (Integer 3) (Arith "*" (Arith "/" (Integer 5) (Integer 3)) (Integer 2))) (Arith "%" (Integer 36) (Integer 2))]]
+Query [Select "" [Arith "-" (Arith "+" (Integer 3) (Arith "*" (Arith "/" (Integer 5) (Integer 3)) (Integer 2))) (Arith "%" (Integer 36) (Integer 2))]]
 --- out
 select ((3 + ((5 / 3) * 2)) - (36 % 2))
 
@@ -385,7 +385,7 @@ select ((3 * 3) * ((5 ^ 6) ^ 2))
 --- in
 select 2 union select 3
 --- ast
-SetOp "union" (Query [Select [Integer 2]]) (Query [Select [Integer 3]])
+SetOp "union" (Query [Select "" [Integer 2]]) (Query [Select "" [Integer 3]])
 --- out
 ((select 2) union (select 3))
 
@@ -443,7 +443,7 @@ select 3 union (select 2 except select 3)
 --- in
 select 2 union all select 2
 --- ast
-SetOp "union all" (Query [Select [Integer 2]]) (Query [Select [Integer 2]])
+SetOp "union all" (Query [Select "" [Integer 2]]) (Query [Select "" [Integer 2]])
 --- out
 ((select 2) union all (select 2))
 
@@ -479,7 +479,7 @@ select '你好么？哈哈哈' from "Post" where 'hello' > 'グループ'
 --- in
 select -3::"text";
 --- ast
-Query [Select [Minus (TypeCast (Integer 3) (Column (Symbol "text")))]]
+Query [Select "" [Minus (TypeCast (Integer 3) (Column (Symbol "text")))]]
 --- out
 select (-3::"text")
 
@@ -489,7 +489,7 @@ select (-3::"text")
 --- in
 select (-3)::"text";
 --- ast
-Query [Select [TypeCast (Minus (Integer 3)) (Column (Symbol "text"))]]
+Query [Select "" [TypeCast (Minus (Integer 3)) (Column (Symbol "text"))]]
 --- out
 select (-3)::"text"
 
@@ -507,7 +507,7 @@ select distinct * from "Boh"
 --- in
 select 2 union all select 2;
 --- out
-(select 2) union all (select 2);
+((select 2) union all (select 2))
 
 
 
@@ -515,7 +515,7 @@ select 2 union all select 2;
 --- in
 select 2 intersect all select -2.0;
 --- out
-(select 2) intersect all (select (-2.0))
+((select 2) intersect all (select (-2.0)))
 
 
 
@@ -523,4 +523,5 @@ select 2 intersect all select -2.0;
 --- in
 select * from "chen" except all select * from chen_bak
 --- out
-(select * from "chen") except all (select * from "chen_bak")
+((select * from "chen") except all (select * from "chen_bak"))
+
