@@ -38,7 +38,7 @@ bs = B.pack
 (~~) = B.append
 (<+>) = merge
 
-emit :: SqlVal -> [Fragment]
+emit :: RSVal -> [Fragment]
 emit node =
     case node of
         TypeCast (Variable _ v1) (Variable _ v2) -> [FVariable v1 VTUnknown, FString $ "::", FVariable v2 VTSymbol]
@@ -110,6 +110,6 @@ join :: String -> [[Fragment]] -> [Fragment]
 join sep [] = []
 join sep lst = foldl1 merge $ intersperse [FString $ bs sep] lst
 
-emitJSON :: SqlVal -> String
+emitJSON :: RSVal -> String
 emitJSON = encode . emit
 

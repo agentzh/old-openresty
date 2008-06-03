@@ -13,7 +13,7 @@ import System.IO
 import System.Exit
 import qualified Data.ByteString.Char8 as B
 
-argHandles :: [(String, SqlVal -> IO ())]
+argHandles :: [(String, RSVal -> IO ())]
 argHandles = [
     ("rs", B.putStrLn . RS.emit),
     ("stats", putStrLn . St.emitJSON),
@@ -29,7 +29,7 @@ main = do args <- getArgs
                         Left err -> die (show err)
                         Right ast -> processArgs args input ast
 
-processArgs :: [String] -> String -> SqlVal -> IO ()
+processArgs :: [String] -> String -> RSVal -> IO ()
 processArgs [] _ _ = return ()
 processArgs (a:as) input ast =
     if a == "rename"

@@ -7,15 +7,15 @@ import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Expr
 import Monad (liftM)
 
-readView :: String -> String -> Either ParseError SqlVal
+readView :: String -> String -> Either ParseError RSVal
 readView = parse parseView
 
-parseView :: Parser SqlVal
+parseView :: Parser RSVal
 parseView = do ast <- parseSetExpr
                spaces >> many (string ";" >> spaces) >> eof
                return ast
 
-parseSetExpr :: Parser SqlVal
+parseSetExpr :: Parser RSVal
 parseSetExpr = buildExpressionParser setOpTable parseQuery
 
 setOpTable = [[
@@ -30,7 +30,7 @@ setOpTable = [[
                             if suffix == "" then s else s ++ " all" }
                 <?> "operator") AssocLeft
 
-parseQuery :: Parser SqlVal
+parseQuery :: Parser RSVal
 parseQuery = do select <- spaces >> parseSelect
                 from <- option Null parseFrom
                 whereClause <- option Null parseWhere
@@ -40,27 +40,27 @@ parseQuery = do select <- spaces >> parseSelect
          <|> parens parseSetExpr
          <?> "select statement"
 
-parseMoreClause :: Parser SqlVal
+parseMoreClause :: Parser RSVal
 parseMoreClause = parseOrderBy
               <|> parseLimit
               <|> parseOffset
               <|> parseGroupBy
 
-parseLimit :: Parser SqlVal
+parseLimit :: Parser RSVal
 parseLimit = liftM Limit (keyword "limit" >> many1 space >> parseExpr)
          <?> "limit clause"
 
-parseOffset :: Parser SqlVal
+parseOffset :: Parser RSVal
 parseOffset = liftM Offset (keyword "offset" >> many1 space >> parseExpr)
           <?> "offset clause"
 
-parseOrderBy :: Parser SqlVal
+parseOrderBy :: Parser RSVal
 parseOrderBy = do try (keyword "order") >> many1 space >>
                     keyword "by" >> many1 space
                   liftM OrderBy $ sepBy parseOrderPair listSep
            <?> "order by clause"
 
-parseOrderPair :: Parser SqlVal
+parseOrderPair :: Parser RSVal
 parseOrderPair = do col <- parseColumn
                     dir <- keyword "asc"
                             <|> keyword "desc"
@@ -68,31 +68,31 @@ parseOrderPair = do col <- parseColumn
                     spaces
                     return $ OrderPair col dir
 
-parseGroupBy :: Parser SqlVal
+parseGroupBy :: Parser RSVal
 parseGroupBy = liftM GroupBy (keyword "group" >> many1 space >>
                     keyword "by" >> many1 space >> parseColumn)
 
-parseFrom :: Parser SqlVal
+parseFrom :: Parser RSVal
 parseFrom = liftM From (keyword "from" >> many1 space >>
                 sepBy1 parseFromItem listSep)
         <?> "from clause"
 
-parseFromItem :: Parser SqlVal
+parseFromItem :: Parser RSVal
 parseFromItem = do model <- parseModel
                    alias <- option Null parseModelAlias
                    return $ case alias of
                                 Null -> model
                                 otherwise -> Alias model alias
 
-parseModel :: Parser SqlVal
+parseModel :: Parser RSVal
 parseModel = try(parseFuncCall)
          <|> liftM Model parseIdent
          <?> "model"
 
-parseModelAlias :: Parser SqlVal
+parseModelAlias :: Parser RSVal
 parseModelAlias = keyword "as" >> many1 space >> parseIdent
 
-parseIdent :: Parser SqlVal
+parseIdent :: Parser RSVal
 parseIdent = do s <- symbol
                 spaces
                 return $ Symbol s
@@ -118,13 +118,13 @@ word = do x <- letter
 listSep :: Parser ()
 listSep = opSep ","
 
-parseSelect :: Parser SqlVal
+parseSelect :: Parser RSVal
 parseSelect = do keyword "select" >> many1 space
                  cols <- sepBy1 (parseSelectedItem <|> parseAnyColumn) listSep
                  return $ Select cols
           <?> "select clause"
 
-parseSelectedItem :: Parser SqlVal
+parseSelectedItem :: Parser RSVal
 parseSelectedItem = do col <- parseExpr
                        alias <- option Null
                             (keyword "as" >> spaces >> parseIdent)
@@ -132,7 +132,7 @@ parseSelectedItem = do col <- parseExpr
                             Null -> col
                             otherwise -> Alias col alias
 
-parseColumn :: Parser SqlVal
+parseColumn :: Parser RSVal
 parseColumn = do a <- parseIdent
                  spaces
                  b <- option Null (char '.' >> spaces >> parseIdent)
@@ -141,18 +141,18 @@ parseColumn = do a <- parseIdent
                     otherwise -> QualifiedColumn a b
           <?> "column"
 
-parseAnyColumn :: Parser SqlVal
+parseAnyColumn :: Parser RSVal
 parseAnyColumn = do char '*'
                     spaces
                     return AnyColumn
 
-parseWhere :: Parser SqlVal
+parseWhere :: Parser RSVal
 parseWhere = do keyword "where" >> many1 space
                 cond <- parseExpr
                 return $ Where cond
          <?> "where clause"
 
-parseExpr :: Parser SqlVal
+parseExpr :: Parser RSVal
 parseExpr = buildExpressionParser opTable parseArithAtom
         <?> "expression"
 
@@ -228,34 +228,34 @@ keyword s = try (do string s
                     notFollowedBy alphaNum
                     return s)
 
-parseFuncCall :: Parser SqlVal
+parseFuncCall :: Parser RSVal
 parseFuncCall = do f <- parseIdent
                    args <- parens parseArgs
                    return $ FuncCall f args
 
-parseArgs :: Parser [SqlVal]
+parseArgs :: Parser [RSVal]
 parseArgs = do v <- parseAnyColumn
                return [v]
         <|> sepBy parseExpr listSep
 
-parseVariable :: Parser SqlVal
+parseVariable :: Parser RSVal
 parseVariable = do char '$'
                    pos <- getPosition
                    v <- symbol
                    spaces
                    return $ Variable pos v
 
-parseNumber :: Parser SqlVal
+parseNumber :: Parser RSVal
 parseNumber = try (parseFloat)
           <|> parseInteger
           <?> "number"
 
-parseInteger :: Parser SqlVal
+parseInteger :: Parser RSVal
 parseInteger = do digits <- many1 digit
                   spaces
                   return $ Integer $ read digits
 
-parseFloat :: Parser SqlVal
+parseFloat :: Parser RSVal
 parseFloat = do int <- many1 digit
                 dec <- char '.' >> many digit
                 spaces
@@ -267,7 +267,7 @@ parseFloat = do int <- many1 digit
          <?> "floating-point number"
     where noEmpty s = if s == "" then "0" else s
 
-parseString :: Parser SqlVal
+parseString :: Parser RSVal
 parseString = do s <- between (char '\'') (char '\'')
                         (many $ quotedChar '\'')
                  spaces
