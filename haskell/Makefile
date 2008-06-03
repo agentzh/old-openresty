@@ -1,5 +1,5 @@
 #POPTS = -prof -auto-all -fhpc
-OOPTS = -O2
+#OOPTS = -O2
 OPTS= $(OOPTS) $(POPTS) -funbox-strict-fields -fwarn-incomplete-patterns
 
 all:

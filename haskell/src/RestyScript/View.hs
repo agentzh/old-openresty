@@ -3,7 +3,7 @@ module Main where
 import RestyScript.Parser.View
 import RestyScript.AST.View
 
-import qualified RestyScript.Emitter.RestyView as RS
+import qualified RestyScript.Emitter.RestyScript as RS
 import qualified RestyScript.Emitter.Stats as St
 import qualified RestyScript.Emitter.RenameVar as Re
 import qualified RestyScript.Emitter.Fragments as Fr
