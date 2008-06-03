@@ -8,8 +8,8 @@ import RestyScript.Util
 import Text.Printf (printf)
 import qualified Data.ByteString.Char8 as B
 
-emitForList :: [RSVal] -> B.ByteString
-emitForList ls = B.intercalate (B.pack ", ") $ map emit ls
+join :: B.ByteString -> [RSVal] -> B.ByteString
+join sep ls = B.intercalate sep $ map emit ls
 
 (~~) = B.append
 
@@ -21,13 +21,13 @@ emit node = case node of
     Query lst -> B.unwords $ map emit lst
     String s -> bs $ quoteLiteral s
     Variable _ v -> "$" ~~ (bs v)
-    FuncCall f args -> emit f ~~ "(" ~~ emitForList args ~~ ")"
+    FuncCall f args -> emit f ~~ "(" ~~ join ", " args ~~ ")"
     QualifiedColumn model col -> emit model ~~ "." ~~ emit col
 
-    Select cols -> "select " ~~ emitForList cols
-    From models -> "from " ~~ emitForList models
+    Select cols -> "select " ~~ join ", " cols
+    From models -> "from " ~~ join ", " models
     Where cond -> "where " ~~ emit cond
-    OrderBy pairs -> "order by " ~~ emitForList pairs
+    OrderBy pairs -> "order by " ~~ join ", " pairs
     GroupBy col -> "group by " ~~ emit col
     Limit lim -> "limit " ~~ emit lim
     Offset offset -> "offset " ~~ emit offset
@@ -43,13 +43,16 @@ emit node = case node of
     Compare op lhs rhs -> emit lhs ~~ " " ~~ bs op ~~ " " ~~ emit rhs
     Arith op lhs rhs -> "(" ~~ emit lhs ~~ " " ~~ bs op ~~ " " ~~ emit rhs ~~ ")"
 
-    Minus val -> B.concat ["(-", emit val, ")"]
+    Minus val -> "(-" ~~ emit val ~~ ")"
     Plus val -> emit val
-    Not val -> B.concat ["(not ", emit val, ")"]
+    Not val -> "(not " ~~ emit val ~~ ")"
 
-    Alias col alias -> B.concat [emit col, " as ", emit alias]
+    Alias col alias -> emit col ~~ " as " ~~ emit alias
     Null -> B.empty
     AnyColumn -> "*"
-    _ -> ""
+    Action cmds -> join ";\n" cmds
+    Delete model cond -> "delete from " ~~ emit model ~~ " " ~~ emit cond
+    Update model assign cond -> "update " ~~ emit model ~~ " set " ~~ emit assign ~~ " " ~~ emit cond
+    Assign col expr -> emit col ~~ " = " ~~ emit expr
     where bs = B.pack
 

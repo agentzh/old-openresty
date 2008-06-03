@@ -36,8 +36,8 @@ data RSVal = SetOp !String RSVal RSVal
            | Null
            | AnyColumn
            | Action [RSVal]
-           | Delete RSVal RSVal
-           | Update RSVal RSVal RSVal
-           | Assign RSVal RSVal
+           | Delete RSVal RSVal -- Delete model cond
+           | Update RSVal RSVal RSVal -- Update model assign cond
+           | Assign RSVal RSVal -- Assign col expr
                deriving (Ord, Eq, Show)
 
