@@ -1,107 +1,30 @@
-module RestyScript.Parser (
-    readView
-) where
+module RestyScript.Parser where
 
 import RestyScript.AST.View
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Expr
 import Monad (liftM)
 
-readView :: String -> String -> Either ParseError RSVal
-readView = parse parseView
+unescapes :: [(Char, Char)]
+unescapes = zipWith pair "bnfrt" "\b\n\f\r\t"
+    where pair a b = (a, b)
 
-parseView :: Parser RSVal
-parseView = do ast <- parseSetExpr
-               spaces >> many (string ";" >> spaces) >> eof
-               return ast
+quotedChar :: Char -> Parser Char
+quotedChar c = do c <- char '\\' >> anyChar
+                  return $ case lookup c unescapes of
+                            Just r -> r
+                            Nothing -> c
+           <|> noneOf [c]
+           <|> do try (string [c,c])
+                  return c
 
-parseSetExpr :: Parser RSVal
-parseSetExpr = buildExpressionParser setOpTable parseQuery
+parens :: Parser a -> Parser a
+parens = between (char '(' >> spaces) (char ')' >> spaces)
 
-setOpTable = [[
-                op "union", op "except", op "intersect" ]]
-      where
-        op s
-           = Infix (do { reservedWord s;
-                         spaces;
-                         suffix <- option "" (keyword "all");
-                         spaces;
-                         return $ SetOp $
-                            if suffix == "" then s else s ++ " all" }
-                <?> "operator") AssocLeft
-
-parseQuery :: Parser RSVal
-parseQuery = do select <- spaces >> parseSelect
-                from <- option Null parseFrom
-                whereClause <- option Null parseWhere
-                moreClauses <- sepBy parseMoreClause spaces
-                return $ Query $ filter (Null /=)
-                    [select, from, whereClause] ++ moreClauses
-         <|> parens parseSetExpr
-         <?> "select statement"
-
-parseMoreClause :: Parser RSVal
-parseMoreClause = parseOrderBy
-              <|> parseLimit
-              <|> parseOffset
-              <|> parseGroupBy
-
-parseLimit :: Parser RSVal
-parseLimit = liftM Limit (keyword "limit" >> many1 space >> parseExpr)
-         <?> "limit clause"
-
-parseOffset :: Parser RSVal
-parseOffset = liftM Offset (keyword "offset" >> many1 space >> parseExpr)
-          <?> "offset clause"
-
-parseOrderBy :: Parser RSVal
-parseOrderBy = do try (keyword "order") >> many1 space >>
-                    keyword "by" >> many1 space
-                  liftM OrderBy $ sepBy parseOrderPair listSep
-           <?> "order by clause"
-
-parseOrderPair :: Parser RSVal
-parseOrderPair = do col <- parseColumn
-                    dir <- keyword "asc"
-                            <|> keyword "desc"
-                            <|> return "asc"
-                    spaces
-                    return $ OrderPair col dir
-
-parseGroupBy :: Parser RSVal
-parseGroupBy = liftM GroupBy (keyword "group" >> many1 space >>
-                    keyword "by" >> many1 space >> parseColumn)
-
-parseFrom :: Parser RSVal
-parseFrom = liftM From (keyword "from" >> many1 space >>
-                sepBy1 parseFromItem listSep)
-        <?> "from clause"
-
-parseFromItem :: Parser RSVal
-parseFromItem = do model <- parseModel
-                   alias <- option Null parseModelAlias
-                   return $ case alias of
-                                Null -> model
-                                otherwise -> Alias model alias
-
-parseModel :: Parser RSVal
-parseModel = try(parseFuncCall)
-         <|> liftM Model parseIdent
-         <?> "model"
-
-parseModelAlias :: Parser RSVal
-parseModelAlias = keyword "as" >> many1 space >> parseIdent
-
-parseIdent :: Parser RSVal
-parseIdent = do s <- symbol
-                spaces
-                return $ Symbol s
-         <|> do char '"'
-                s <- symbol
-                char '"' >> spaces
-                return $ Symbol s
-         <|> parseVariable
-         <?> "identifier entry"
+keyword :: String -> Parser String
+keyword s = try (do string s
+                    notFollowedBy alphaNum
+                    return s)
 
 symbol :: Parser String
 symbol = do char '"'
@@ -117,34 +40,6 @@ word = do x <- letter
 
 listSep :: Parser ()
 listSep = opSep ","
-
-parseSelect :: Parser RSVal
-parseSelect = do keyword "select" >> many1 space
-                 cols <- sepBy1 (parseSelectedItem <|> parseAnyColumn) listSep
-                 return $ Select cols
-          <?> "select clause"
-
-parseSelectedItem :: Parser RSVal
-parseSelectedItem = do col <- parseExpr
-                       alias <- option Null
-                            (keyword "as" >> spaces >> parseIdent)
-                       return $ case alias of
-                            Null -> col
-                            otherwise -> Alias col alias
-
-parseColumn :: Parser RSVal
-parseColumn = do a <- parseIdent
-                 spaces
-                 b <- option Null (char '.' >> spaces >> parseIdent)
-                 return $ case b of
-                    Null -> Column a
-                    otherwise -> QualifiedColumn a b
-          <?> "column"
-
-parseAnyColumn :: Parser RSVal
-parseAnyColumn = do char '*'
-                    spaces
-                    return AnyColumn
 
 parseWhere :: Parser RSVal
 parseWhere = do keyword "where" >> many1 space
@@ -220,23 +115,21 @@ parseArithAtom = parseNumber
              <|> parseColumn
              <|> parens parseExpr
 
-parens :: Parser a -> Parser a
-parens = between (char '(' >> spaces) (char ')' >> spaces)
-
-keyword :: String -> Parser String
-keyword s = try (do string s
-                    notFollowedBy alphaNum
-                    return s)
-
 parseFuncCall :: Parser RSVal
 parseFuncCall = do f <- parseIdent
                    args <- parens parseArgs
                    return $ FuncCall f args
 
+
 parseArgs :: Parser [RSVal]
 parseArgs = do v <- parseAnyColumn
                return [v]
         <|> sepBy parseExpr listSep
+
+parseAnyColumn :: Parser RSVal
+parseAnyColumn = do char '*'
+                    spaces
+                    return AnyColumn
 
 parseVariable :: Parser RSVal
 parseVariable = do char '$'
@@ -274,16 +167,28 @@ parseString = do s <- between (char '\'') (char '\'')
                  return $ String s
           <?> "string"
 
-unescapes :: [(Char, Char)]
-unescapes = zipWith pair "bnfrt" "\b\n\f\r\t"
-    where pair a b = (a, b)
+parseColumn :: Parser RSVal
+parseColumn = do a <- parseIdent
+                 spaces
+                 b <- option Null (char '.' >> spaces >> parseIdent)
+                 return $ case b of
+                    Null -> Column a
+                    otherwise -> QualifiedColumn a b
+          <?> "column"
 
-quotedChar :: Char -> Parser Char
-quotedChar c = do c <- char '\\' >> anyChar
-                  return $ case lookup c unescapes of
-                            Just r -> r
-                            Nothing -> c
-           <|> noneOf [c]
-           <|> do try (string [c,c])
-                  return c
+parseModel :: Parser RSVal
+parseModel = try(parseFuncCall)
+         <|> liftM Model parseIdent
+         <?> "model"
+
+parseIdent :: Parser RSVal
+parseIdent = do s <- symbol
+                spaces
+                return $ Symbol s
+         <|> do char '"'
+                s <- symbol
+                char '"' >> spaces
+                return $ Symbol s
+         <|> parseVariable
+         <?> "identifier entry"
 

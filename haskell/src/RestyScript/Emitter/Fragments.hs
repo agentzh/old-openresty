@@ -96,6 +96,7 @@ emit node =
         Plus val -> emit val
         Not val -> str "(not " <+> emit val <+> str ")"
         Null -> str ""
+        _ -> str ""
     where str s = [FString s]
           emitForList ls = join ", " $ map emit ls
 
