@@ -1,4 +1,4 @@
-module RestyView.Util (
+module RestyScript.Util (
     quoteLiteral,
     quoteIdent
 ) where

@@ -1,4 +1,4 @@
-module RestyView.AST (
+module RestyScript.AST (
     SqlVal(..),
     traverse
 ) where

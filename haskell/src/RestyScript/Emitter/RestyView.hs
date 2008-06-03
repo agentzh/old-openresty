@@ -1,9 +1,9 @@
 {-# OPTIONS_GHC -XOverloadedStrings #-}
 
-module RestyView.Emitter.RestyView where
+module RestyScript.Emitter.RestyView where
 
-import RestyView.AST
-import RestyView.Util
+import RestyScript.AST
+import RestyScript.Util
 
 import Text.Printf (printf)
 import qualified Data.ByteString.Char8 as B

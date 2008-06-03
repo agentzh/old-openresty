@@ -1,12 +1,12 @@
 module Main where
 
-import RestyView.Parser
-import RestyView.AST
+import RestyScript.Parser
+import RestyScript.AST
 
-import qualified RestyView.Emitter.RestyView as RS
-import qualified RestyView.Emitter.Stats as St
-import qualified RestyView.Emitter.RenameVar as Re
-import qualified RestyView.Emitter.Fragments as Fr
+import qualified RestyScript.Emitter.RestyView as RS
+import qualified RestyScript.Emitter.Stats as St
+import qualified RestyScript.Emitter.RenameVar as Re
+import qualified RestyScript.Emitter.Fragments as Fr
 
 import System
 import System.IO
