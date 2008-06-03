@@ -7,7 +7,7 @@ import Text.ParserCombinators.Parsec.Pos (SourcePos)
 -- RestyScript AST datatype
 data RSVal = SetOp !String RSVal RSVal
            | Query [RSVal]
-           | Select [RSVal]
+           | Select !String [RSVal] -- Select modifier entries
            | From [RSVal]
            | Where RSVal
            | Limit RSVal
