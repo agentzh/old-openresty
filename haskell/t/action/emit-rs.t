@@ -67,5 +67,8 @@ delete from "Blah" where $col = 5
 === TEST 4: GET
 --- in
 GET '/=/version';
+--- ast
+Action [HttpCmd "GET" (String "/=/version") Null]
 --- out
+GET '/=/version'
 

@@ -39,5 +39,9 @@ data RSVal = SetOp !String RSVal RSVal
            | Delete RSVal RSVal -- Delete model cond
            | Update RSVal RSVal RSVal -- Update model assign cond
            | Assign RSVal RSVal -- Assign col expr
+           | HttpCmd !String RSVal RSVal -- HttpCmd method url content
+           | Object [RSVal]  -- Object [pair]
+           | Pair RSVal RSVal -- Pair key value
+           | Array [RSVal]  -- Array [elem]
                deriving (Ord, Eq, Show)
 
