@@ -1,12 +1,12 @@
 {-# OPTIONS_GHC -funbox-strict-fields #-}
 
-module RestyView.Emitter.Stats (
+module RestyScript.Emitter.Stats (
     Stats,
     emit,
     emitJSON
 ) where
 
-import RestyView.AST
+import RestyScript.AST
 import Text.JSON
 
 data Stats = Stats {

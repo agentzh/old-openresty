@@ -1,14 +1,14 @@
 {-# OPTIONS_GHC -XOverloadedStrings -funbox-strict-fields #-}
 
-module RestyView.Emitter.Fragments (
+module RestyScript.Emitter.Fragments (
     Fragment,
     VarType,
     emit,
     emitJSON
 ) where
 
-import RestyView.Util
-import RestyView.AST
+import RestyScript.Util
+import RestyScript.AST
 
 import Data.List (intersperse)
 import Text.Printf (printf)

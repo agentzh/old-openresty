@@ -1,9 +1,9 @@
-module RestyView.Emitter.RenameVar where
+module RestyScript.Emitter.RenameVar where
 
 import Text.ParserCombinators.Parsec.Pos (
     SourcePos, incSourceColumn,
     updatePosChar, setSourceLine, setSourceColumn)
-import RestyView.AST
+import RestyScript.AST
 
 findVar :: String -> SqlVal -> [SourcePos]
 findVar var node =
