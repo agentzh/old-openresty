@@ -2,7 +2,7 @@ module RestyScript.Parser (
     readView
 ) where
 
-import RestyScript.AST
+import RestyScript.AST.View
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Expr
 import Monad (liftM)

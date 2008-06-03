@@ -4,6 +4,7 @@ OPTS= $(OOPTS) $(POPTS) -funbox-strict-fields -fwarn-incomplete-patterns
 
 all:
 	ghc -i $(OPTS) -isrc --make src/RestyScript/View.hs -o bin/restyview
+	ghc -i $(OPTS) -isrc --make src/RestyScript/Action.hs -o bin/restyaction
 
 %.o: %.hs
 	cd src && ghc $(OPTS) -c ../$<

@@ -3,7 +3,7 @@ module RestyScript.Emitter.RenameVar where
 import Text.ParserCombinators.Parsec.Pos (
     SourcePos, incSourceColumn,
     updatePosChar, setSourceLine, setSourceColumn)
-import RestyScript.AST
+import RestyScript.AST.View
 
 findVar :: String -> RSVal -> [SourcePos]
 findVar var node =
