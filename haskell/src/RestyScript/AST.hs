@@ -36,5 +36,8 @@ data RSVal = SetOp !String RSVal RSVal
            | Null
            | AnyColumn
            | Action [RSVal]
+           | Delete RSVal RSVal
+           | Update RSVal RSVal RSVal
+           | Assign RSVal RSVal
                deriving (Ord, Eq, Show)
 

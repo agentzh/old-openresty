@@ -1,8 +1,8 @@
 {-# OPTIONS_GHC -XOverloadedStrings #-}
 
-module RestyScript.Emitter.RestyView where
+module RestyScript.Emitter.RestyScript where
 
-import RestyScript.AST.View
+import RestyScript.AST
 import RestyScript.Util
 
 import Text.Printf (printf)

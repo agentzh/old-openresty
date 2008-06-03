@@ -136,13 +136,10 @@ select 21::-$bar
 
 
 
-
-
 === TEST 15: type casting ::
 --- in
 select 21::-float8
 --- out
-
 
 
 
@@ -153,14 +150,10 @@ select 21::+$bar
 
 
 
-
-
 === TEST 17: type casting ::
 --- in
 select 21::+float8
 --- out
-
-
 
 
 
@@ -216,7 +209,6 @@ select +$table.col from $table
 --- in
 select $table.-$col from $table
 --- out
-
 
 
 
