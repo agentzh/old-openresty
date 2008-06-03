@@ -2,7 +2,7 @@
 
 module RestyScript.Emitter.RestyView where
 
-import RestyScript.AST
+import RestyScript.AST.View
 import RestyScript.Util
 
 import Text.Printf (printf)
