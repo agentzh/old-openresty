@@ -94,7 +94,7 @@ select -((1)), +((no)), -((func(1))), +(($v))
 --- ast
 Query [Select [Minus (Integer 1),Plus (Column (Symbol "no")),Minus (FuncCall (Symbol "func") [Integer 1]),Plus (Variable (1,43) "v")]]
 --- out
-select -1, "no", (-"func"(1)), $v
+select (-1), "no", (-"func"(1)), $v
 
 
 
@@ -102,9 +102,9 @@ select -1, "no", (-"func"(1)), $v
 --- in
 select -$k * 3 / -func(t - -v * +$c)
 --- ast
-Query [Select [(Arith "/" (Arith "*" (Minus (Variable (1,10) "k") (Integer 3)) (Minus (FuncCall (Symbol "func") [(Arith "-" (Column (Symbol "t")) (Arith "*" (Minus (Column (Symbol "v"))) (Plus (Variable (1,35) "c"))))]))))]]
+Query [Select [Arith "/" (Arith "*" (Minus (Variable (1,10) "k")) (Integer 3)) (Minus (FuncCall (Symbol "func") [Arith "-" (Column (Symbol "t")) (Arith "*" (Minus (Column (Symbol "v"))) (Plus (Variable (1,35) "c")))]))]]
 --- out
-select (((-$k) * 3) / (-"func("t" - ((-"v") * $c))"))
+select (((-$k) * 3) / (-"func"("t" - ((-"v") * $c))))
 --- LAST
 
 

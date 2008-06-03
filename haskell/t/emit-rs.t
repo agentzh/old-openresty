@@ -493,3 +493,34 @@ Query [Select [TypeCast (Minus (Integer 3)) (Column (Symbol "text"))]]
 --- out
 select (-3)::"text"
 
+
+
+=== TEST 52: distinct
+--- in
+select distinct * from "Boh";
+--- out
+select distinct * from "Boh"
+
+
+
+=== TEST 53: union all
+--- in
+select 2 union all select 2;
+--- out
+(select 2) union all (select 2);
+
+
+
+=== TEST 54: intersect all
+--- in
+select 2 intersect all select -2.0;
+--- out
+(select 2) intersect all (select (-2.0))
+
+
+
+=== TEST 55: except all
+--- in
+select * from "chen" except all select * from chen_bak
+--- out
+(select * from "chen") except all (select * from "chen_bak")
