@@ -34,9 +34,11 @@ After that, you can build this compiler by the following command:
 
     $ make
 
-The resulting binary executables will be bin/restyview and bin/restyaction.
+The resulting binary executables will be bin/restyview and
+bin/restyaction.
 
-To build an optimized version of the compilers, you can use
+To build an optimized version (with -O2 set) of the compilers, you
+can use
 
     $ make optimized
 
