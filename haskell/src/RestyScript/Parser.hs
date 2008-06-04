@@ -162,7 +162,7 @@ parseFloat = do int <- many1 digit
 
 parseString :: Parser RSVal
 parseString = do s <- between (char '\'') (char '\'')
-                        (many $ quotedChar '\'')
+                         $ many $ quotedChar '\''
                  spaces
                  return $ String s
           <?> "string"
