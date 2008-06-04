@@ -105,7 +105,7 @@ POST '/=/model/Post/~/~' []
 
 
 
-=== TEST 8: POST an simple array
+=== TEST 8: POST a simple array
 --- in
 POST
 '/=/model/Post/' || '~/~'
