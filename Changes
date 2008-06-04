@@ -1,5 +1,13 @@
 Change Log for OpenResty
 
+0.3.2 June 3 2008
+* The perl minisql parser now accepts tsearch2 queries.
+* Added support for varchar(\d+) for Model columns' types.
+* Added support for select distinct ... in the perl minisql parser.
+* Worked around a JSON::XS issue in perl 5.10.0 in t/13-count.t and t/03-model.t
+* Updated the bundled Module::Install to the latest version on CPAN [RT #36389].
+* Various improvements for the Haskell version of restyview compiler under haskell/.
+
 0.3.1 May 26 2008
 * Now the Captcha handler no longer stores IDs in the cache.
 * Upgraded the metamodel to 0.004 by adding storage for the new Captcha API.
