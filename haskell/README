@@ -36,6 +36,10 @@ After that, you can build this compiler by the following command:
 
 The resulting binary executables will be bin/restyview and bin/restyaction.
 
+You can running the test suite this way:
+
+    $ make test
+
 One can play with it on the command line. For instance,
 
     $ echo 'select 3.14' | bin/restyview ast rs
