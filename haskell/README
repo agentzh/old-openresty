@@ -1,7 +1,9 @@
 README
 ======
 
-This is a RestyScript compiler for OpenResty written in Haskell.
+This is the repository for two RestyScript compilers for OpenResty
+written in Haskell. They are the restyview and restyaction compilers,
+respectively.
 
 To build this program, you should first install GHC 6.8.2 (or better)
 and its Parsec library. On Ubuntu/Debian, the following commands would
@@ -55,6 +57,7 @@ To run the test suite, simply issue
 
     $ make test
 
-The test cases in the test suite (e.g. t/emit-rs.t) tell you what
-the compiler is currently able to do ;)
+The test cases in the test suite (e.g. t/emit-rs.t and t/action/emit-rs.t)
+tell you what these two compilers currently able to do.
+
 
