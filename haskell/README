@@ -75,6 +75,6 @@ To run the test suite, simply issue
     $ make test
 
 The test cases in the test suite (e.g. t/emit-rs.t and t/action/emit-rs.t)
-tell you what these two compilers currently able to do.
+tell you what these two compilers are currently able to do.
 
 
