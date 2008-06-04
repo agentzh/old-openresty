@@ -138,3 +138,12 @@ select $foo(3)
 --- out
 select $bar(3)
 
+
+
+=== TEST 12: prefix -/+/not
+--- in
+select -$foo, +$foo where not $foo > 3
+--- rename: foo bar
+--- out
+select -$bar, +$bar where not $bar > 3
+
