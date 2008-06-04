@@ -129,3 +129,16 @@ POST '/=/model/~'
 --- out
 POST '/=/model/~' {'description': 'A simple test', 'columns': [{'name': 'name', 'type': 'text'}, {'name': 'created', 'type': 'timestamp (0) with time zone', 'default': ['now()']}]}
 
+
+
+=== TEST 10: with variables
+--- in
+            update Post
+            set comments = comments + 1
+            where id = $post_id;
+            POST '/=/model/Comment/~/~'
+            { "sender": $sender, "body": $body, "post": $post_id };
+--- out
+update "Post" set "comments" = ("comments" + 1) where "id" = $post_id;
+POST '/=/model/Comment/~/~' {'sender': $sender, 'body': $body, 'post': $post_id}
+
