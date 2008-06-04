@@ -10,6 +10,9 @@ demo/Springbot/staff/staff_files
 ^haskell/.*\.sql$
 ^haskell/.*\.png$
 ^haskell/bin/restyview$
+^haskell/\.hpc
+^haskell/hpc_
+^haskell/[^/]+.html$
 ^Makefile$
 ^bin/\.
 ~$
