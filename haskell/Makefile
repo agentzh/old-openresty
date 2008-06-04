@@ -1,5 +1,4 @@
 #POPTS = -prof -auto-all -fhpc
-#OOPTS = -O2
 OPTS= $(OOPTS) $(POPTS) -funbox-strict-fields -fwarn-incomplete-patterns
 
 all:
@@ -17,4 +16,7 @@ clean:
 	-find -name '*.o' -delete
 	-find -name '*.hi' -delete
 	-find -name '*.ho' -delete
+
+optimized: OOPTS = -O2
+optimized: all
 
