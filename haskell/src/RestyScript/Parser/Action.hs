@@ -3,7 +3,7 @@ module RestyScript.Parser.Action (
 ) where
 
 import RestyScript.Parser
-import RestyScript.AST.Action
+import RestyScript.AST
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Expr
 import Monad (liftM, msum)
