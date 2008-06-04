@@ -6,7 +6,7 @@ module RestyScript.Emitter.Stats (
     emitJSON
 ) where
 
-import RestyScript.AST.View
+import RestyScript.AST
 import Text.JSON
 
 data Stats = Stats {

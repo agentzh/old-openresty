@@ -3,7 +3,7 @@ module RestyScript.Parser.View (
 ) where
 
 import RestyScript.Parser
-import RestyScript.AST.View
+import RestyScript.AST
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Expr
 import Monad (liftM)

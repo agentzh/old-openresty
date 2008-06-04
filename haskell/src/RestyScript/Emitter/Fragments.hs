@@ -8,7 +8,7 @@ module RestyScript.Emitter.Fragments (
 ) where
 
 import RestyScript.Util
-import RestyScript.AST.View
+import RestyScript.AST
 
 import Data.List (intersperse)
 import Text.Printf (printf)
