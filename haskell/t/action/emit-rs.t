@@ -64,11 +64,54 @@ delete from "Blah" where $col = 5
 
 
 
-=== TEST 4: GET
+=== TEST 4: simple GET
 --- in
 GET '/=/version';
 --- ast
 Action [HttpCmd "GET" (String "/=/version") Null]
 --- out
 GET '/=/version'
+
+
+
+=== TEST 5: GET with expr
+--- in
+GET ( '/=/'||'ver') || 'sion'
+--- ast
+Action [HttpCmd "GET" (Arith "||" (Arith "||" (String "/=/") (String "ver")) (String "sion")) Null]
+--- out
+GET (('/=/' || 'ver') || 'sion')
+
+
+
+=== TEST 6: simple POST
+--- in
+POST '/=/model/Post/~/~'
+{ "author": "hello" }
+--- ast
+Action [HttpCmd "POST" (String "/=/model/Post/~/~") (Object [Pair (String "author") (String "hello")])]
+--- out
+POST '/=/model/Post/~/~' {'author': 'hello'}
+
+
+
+=== TEST 7: POST an empty array
+--- in
+POST "/=/model/Post/~/~"[]
+--- ast
+Action [HttpCmd "POST" (String "/=/model/Post/~/~") (Array [])]
+--- out
+POST '/=/model/Post/~/~' []
+
+
+
+=== TEST 8: POST an simple array
+--- in
+POST
+'/=/model/Post/' || '~/~'
+[1,2.5,"hi"||'hey']
+--- ast
+Action [HttpCmd "POST" (Arith "||" (String "/=/model/Post/") (String "~/~")) (Array [Integer 1,Float 2.5,Arith "||" (String "hi") (String "hey")])]
+--- out
+POST ('/=/model/Post/' || '~/~') [1, 2.5, ('hi' || 'hey')]
 
