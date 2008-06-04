@@ -9,8 +9,8 @@ be sufficient:
 
     $ sudo apt-get install ghc6 libghc6-parsec-dev
 
-The last two dependency, the json library and bytestring 0.9.1.0 (or
-better), requires a few more commands to install:
+The last two dependencies, the json library and bytestring 0.9.1.0 (or
+better), require a few more commands to install:
 
     $ wget http://hackage.haskell.org/packages/archive/json/0.3.3/json-0.3.3.tar.gz
     $ tar -xzf json-0.3.3.tar.gz
@@ -32,7 +32,7 @@ After that, you can build this compiler by the following command:
 
     $ make
 
-The resulting binary executable will be bin/restyview
+The resulting binary executables will be bin/restyview and bin/restyaction.
 
 One can play with it on the command line. For instance,
 
