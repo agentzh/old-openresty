@@ -127,7 +127,7 @@ PUT '/=/foo' 32.5
 
 
 
-=== TEST 9: PUT a hash of lists of hashes
+=== TEST 10: PUT a hash of lists of hashes
 --- in
 POST '/=/model/~'
 { "description": "A simple test",
@@ -141,7 +141,7 @@ POST '/=/model/~' {'description': 'A simple test', 'columns': [{'name': 'name', 
 
 
 
-=== TEST 10: with variables
+=== TEST 11: with variables
 --- in
             update Post
             set comments = comments + 1
@@ -151,4 +151,18 @@ POST '/=/model/~' {'description': 'A simple test', 'columns': [{'name': 'name', 
 --- out
 update "Post" set "comments" = ("comments" + 1) where "id" = $post_id;
 POST '/=/model/Comment/~/~' {'sender': $sender, 'body': $body, 'post': $post_id}
+
+
+
+=== TEST 12: try delete
+--- in
+DELETE '/=/model';
+DELETE '/=/view';
+DELETE '/=/role'
+--- ast
+Action [HttpCmd "DELETE" (String "/=/model") Null,HttpCmd "DELETE" (String "/=/view") Null,HttpCmd "DELETE" (String "/=/role") Null]
+--- out
+DELETE '/=/model' ;
+DELETE '/=/view' ;
+DELETE '/=/role'
 
