@@ -36,6 +36,12 @@ After that, you can build this compiler by the following command:
 
 The resulting binary executables will be bin/restyview and bin/restyaction.
 
+To build an optimized version of the compilers, you can use
+
+    $ make optimized
+
+instead.
+
 You can running the test suite this way:
 
     $ make test
