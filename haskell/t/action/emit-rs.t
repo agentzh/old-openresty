@@ -115,3 +115,17 @@ Action [HttpCmd "POST" (Arith "||" (String "/=/model/Post/") (String "~/~")) (Ar
 --- out
 POST ('/=/model/Post/' || '~/~') [1, 2.5, ('hi' || 'hey')]
 
+
+
+=== TEST 9: PUT a hash of lists of hashes
+--- in
+POST '/=/model/~'
+{ "description": "A simple test",
+    "columns": [
+        { "name": "name", 'type': 'text'},
+        { "name":"created","type":"timestamp (0) with time zone", default: ["now()"] }
+    ]
+}
+--- out
+POST '/=/model/~' {'description': 'A simple test', 'columns': [{'name': 'name', 'type': 'text'}, {'name': 'created', 'type': 'timestamp (0) with time zone', 'default': ['now()']}]}
+
