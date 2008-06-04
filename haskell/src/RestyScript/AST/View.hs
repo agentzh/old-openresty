@@ -31,5 +31,8 @@ traverse visit merge node =
         Arith _ lhs rhs -> mergeAll [cur, self lhs, self rhs]
         Or lhs rhs -> mergeAll [cur, self lhs, self rhs]
         And lhs rhs -> mergeAll [cur, self lhs, self rhs]
+        Minus val -> mergeAll [cur, self val]
+        Plus val -> mergeAll [cur, self val]
+        Not val -> mergeAll [cur, self val]
         otherwise -> cur
 
