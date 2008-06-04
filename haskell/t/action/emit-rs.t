@@ -117,6 +117,16 @@ POST ('/=/model/Post/' || '~/~') [1, 2.5, ('hi' || 'hey')]
 
 
 
+=== TEST 9: PUT a literal
+--- in
+PUT '/=/foo' 32.5
+--- ast
+Action [HttpCmd "PUT" (String "/=/foo") (Float 32.5)]
+--- out
+PUT '/=/foo' 32.5
+
+
+
 === TEST 9: PUT a hash of lists of hashes
 --- in
 POST '/=/model/~'
