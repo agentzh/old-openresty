@@ -13,7 +13,7 @@ test: all
 	prove -r t
 
 clean:
-	-rm bin/restyscript bin/restyview
+	-rm bin/restyaction bin/restyview
 	-find -name '*.o' -delete
 	-find -name '*.hi' -delete
 	-find -name '*.ho' -delete
