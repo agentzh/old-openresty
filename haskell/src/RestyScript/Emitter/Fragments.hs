@@ -1,10 +1,7 @@
 {-# OPTIONS_GHC -XOverloadedStrings -funbox-strict-fields #-}
 
 module RestyScript.Emitter.Fragments (
-    Fragment,
-    VarType,
-    emit,
-    emitJSON
+    Fragment, VarType, emit, emitJSON
 ) where
 
 import RestyScript.Util
@@ -16,7 +13,6 @@ import Text.JSON
 import qualified Data.ByteString.Char8 as B
 
 data VarType = VTLiteral | VTSymbol | VTUnknown
-    deriving (Ord, Eq, Show)
 
 instance JSON VarType where
     showJSON VTSymbol = showJSON ("symbol"::String)
@@ -24,12 +20,17 @@ instance JSON VarType where
     showJSON VTUnknown = showJSON ("unknown"::String)
     readJSON = undefined
 
-data Fragment = FVariable !String !VarType | FString !B.ByteString
-    deriving (Ord, Eq, Show)
+data Fragment = FVariable !String !VarType
+              | FString !B.ByteString
+              | FSql [Fragment]
+              | FHttpCmd !String [Fragment] [Fragment]
 
 instance JSON Fragment where
-    showJSON (FString s) = showJSON $ B.unpack s
-    showJSON (FVariable v t) = JSArray [showJSON v, showJSON t]
+    showJSON val = case val of
+        FString s -> showJSON $ B.unpack s
+        FVariable v t -> JSArray [showJSON v, showJSON t]
+        FHttpCmd meth url content -> JSArray [showJSON meth, showJSON url, showJSON content]
+        FSql frags -> JSArray [JSArray $ map showJSON frags]
     readJSON = undefined
 
 bs :: String -> B.ByteString
@@ -97,6 +98,14 @@ emit node =
         Plus val -> emit val
         Not val -> str "(not " <+> emit val <+> str ")"
         Null -> str ""
+        Action cmds -> map p cmds
+            where p :: RSVal -> Fragment
+                  p x = case x of
+                    HttpCmd meth url content -> FHttpCmd meth (emit url) (emit content)
+
+                    otherwise -> FSql $ emit x
+        Object ps -> str "{" <+> (foldl1 merge $ map emit ps) <+> str "}"
+        Delete model cond -> str "delete from " <+> emit model <+> str " " <+> emit cond
         _ -> str ""
     where str s = [FString s]
           emitForList ls = join ", " $ map emit ls
