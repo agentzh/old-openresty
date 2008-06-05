@@ -24,13 +24,16 @@ data Fragment = FVariable !String !VarType
               | FString !B.ByteString
               | FSql [Fragment]
               | FHttpCmd !String [Fragment] [Fragment]
+              | FNull
 
 instance JSON Fragment where
     showJSON val = case val of
         FString s -> showJSON $ B.unpack s
         FVariable v t -> JSArray [showJSON v, showJSON t]
+        FHttpCmd meth url [FNull] -> JSArray [showJSON meth, showJSON url]
         FHttpCmd meth url content -> JSArray [showJSON meth, showJSON url, showJSON content]
         FSql frags -> JSArray [JSArray $ map showJSON frags]
+        FNull -> showJSON (""::String)
     readJSON = undefined
 
 bs :: String -> B.ByteString
@@ -69,8 +72,7 @@ emit node =
         FuncCall (Variable _ v) args -> [FVariable v VTSymbol, FString $ "("] <+> emitForList args <+> str ")"
         FuncCall f args -> emit f <+> str "(" <+> emitForList args <+> str ")"
         QualifiedColumn model col -> emit model <+> str "." <+> emit col
-        Select mod cols -> (str $ "select " ~~ mod') <+> emitForList cols
-            where mod' = if mod == "" then "" else bs mod ~~ " "
+        Select cols -> str "select " <+> emitForList cols
         From models -> str "from " <+> emitForList models
         Where cond -> str "where " <+> emit cond
         OrderBy pairs -> str "order by " <+> emitForList pairs
@@ -101,16 +103,28 @@ emit node =
         Action cmds -> map p cmds
             where p :: RSVal -> Fragment
                   p x = case x of
-                    HttpCmd meth url content -> FHttpCmd meth (emit url) (emit content)
+                    HttpCmd meth url Null -> FHttpCmd meth (emitLit url) [FNull]
+                    HttpCmd meth url content -> FHttpCmd meth (emitLit url) (emit content)
 
                     otherwise -> FSql $ emit x
         Object ps -> str "{" <+> (foldl1 merge $ map emit ps) <+> str "}"
         Delete model cond -> str "delete from " <+> emit model <+> str " " <+> emit cond
         Update model assign cond -> str "update " <+> emit model <+> str " set " <+> emit assign <+> str " " <+> emit cond
         Assign col expr -> emit col <+> str " = " <+> emit expr
-        _ -> str ""
+        Distinct ls -> str "distinct " <+> emitForList ls
+        All ls -> str "all " <+> emitForList ls
+        Pair k v -> emitLit k <+> str ": " <+> emit v
+        Array xs -> []
+        Concat _ _ -> []
+        HttpCmd _ _ _ -> []  -- this shouldn't happen
+
     where str s = [FString s]
           emitForList ls = join ", " $ map emit ls
+
+emitLit :: RSVal -> [Fragment]
+emitLit node = case node of
+    Variable _ v -> [FVariable v VTLiteral]
+    otherwise -> emit node
 
 merge :: [Fragment] -> [Fragment] -> [Fragment]
 merge [] b = b

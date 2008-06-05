@@ -105,8 +105,10 @@ reservedOp s = try(do string s; spaces; return s)
 opSep :: String -> Parser ()
 opSep op = string op >> spaces
 
+parseArithAtom :: Parser RSVal
 parseArithAtom = parseNumber
              <|> parseString
+             <|> parseDistinct
              <|> try (do {
                 r <- parseVariable;
                 notFollowedBy (char '.' <|> char '(');
@@ -114,6 +116,16 @@ parseArithAtom = parseNumber
              <|> try (parseFuncCall)
              <|> parseColumn
              <|> parens parseExpr
+
+parseDistinct :: Parser RSVal
+parseDistinct = do
+    mod <- (keyword "distinct" <|> keyword "all")
+    spaces
+    cols <- sepBy1 parseExpr listSep
+    spaces
+    return $ case mod of
+        "distinct" -> Distinct cols
+        otherwise -> All cols
 
 parseFuncCall :: Parser RSVal
 parseFuncCall = do f <- parseIdent

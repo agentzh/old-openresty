@@ -7,7 +7,7 @@ import Text.ParserCombinators.Parsec.Pos (SourcePos)
 -- RestyScript AST datatype
 data RSVal = SetOp !String RSVal RSVal
            | Query [RSVal]
-           | Select !String [RSVal] -- Select modifier entries
+           | Select [RSVal] -- Select entries
            | From [RSVal]
            | Where RSVal
            | Limit RSVal
@@ -43,6 +43,9 @@ data RSVal = SetOp !String RSVal RSVal
            | Object [RSVal]  -- Object [pair]
            | Pair RSVal RSVal -- Pair key value
            | Array [RSVal]  -- Array [elem]
+           | Concat RSVal RSVal
+           | Distinct [RSVal]
+           | All [RSVal]
                deriving (Ord, Eq, Show)
 
 traverse :: (RSVal->a) -> (a->a->a) -> RSVal -> a
@@ -53,7 +56,7 @@ traverse visit merge node =
     in case node of
         SetOp _ lhs rhs -> mergeAll [cur, self lhs, self rhs]
         Query q -> mergeAll $ cur : map self q
-        Select _ s -> mergeAll $ cur : map self s
+        Select s -> mergeAll $ cur : map self s
         From f -> mergeAll $ cur : map self f
         Where w -> merge cur $ self w
         Limit l -> merge cur $ self l
@@ -88,6 +91,14 @@ traverse visit merge node =
         Object ps -> mergeAll $ cur : map self ps
         Array xs -> mergeAll $ cur : map self xs
         Pair k v -> mergeAll [cur, self k, self v]
-
-        otherwise -> cur
+        Concat a b -> mergeAll [cur, self a, self b]
+        AnyColumn -> cur
+        Null -> cur
+        String _ -> cur
+        Float _ -> cur
+        Integer _ -> cur
+        Symbol _ -> cur
+        All _ -> cur
+        Distinct _ -> cur
+        -- otherwise -> cur
 

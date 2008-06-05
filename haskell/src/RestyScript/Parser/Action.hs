@@ -33,14 +33,8 @@ parseHttp = do cmd <- msum $ map keyword httpCmds
                return $ HttpCmd cmd url content
 
 litOpTable = [
-            [ arithOp "||" ]
-            ]
-    where
-        op s f assoc
-           = Infix (do { reservedOp s; spaces; return f} <?> "operator") assoc
-        arithOp s
-           = op s (Arith s) AssocLeft
-
+     [Infix (do { reservedOp "||"; spaces; return Concat} <?> "operator") AssocLeft]
+    ]
 
 parseLitExpr :: Parser RSVal
 parseLitExpr = buildExpressionParser litOpTable parseLitAtom

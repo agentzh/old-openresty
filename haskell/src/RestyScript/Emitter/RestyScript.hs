@@ -24,8 +24,7 @@ emit node = case node of
     FuncCall f args -> emit f ~~ "(" ~~ join ", " args ~~ ")"
     QualifiedColumn model col -> emit model ~~ "." ~~ emit col
 
-    Select mod cols -> "select " ~~ mod' ~~ join ", " cols
-        where mod' = if mod == "" then "" else bs mod ~~ " "
+    Select cols -> "select " ~~ join ", " cols
     From models -> "from " ~~ join ", " models
     Where cond -> "where " ~~ emit cond
     OrderBy pairs -> "order by " ~~ join ", " pairs
@@ -59,5 +58,9 @@ emit node = case node of
     Object ps -> "{" ~~ join ", " ps  ~~ "}"
     Array xs -> "[" ~~ join ", " xs  ~~ "]"
     Pair k v -> emit k ~~ ": " ~~ emit v
+    Concat a b -> "(" ~~ emit a ~~ " || " ~~ emit b ~~ ")"
+
+    Distinct ls -> "distinct " ~~ join ", " ls
+    All ls -> "all " ~~ join ", " ls
     where bs = B.pack
 
