@@ -104,7 +104,7 @@ select -$k * 3 / -func(t - -v * +$c)
 --- ast
 Query [Select [Arith "/" (Arith "*" (Minus (Variable (1,10) "k")) (Integer 3)) (Minus (FuncCall (Symbol "func") [Arith "-" (Column (Symbol "t")) (Arith "*" (Minus (Column (Symbol "v"))) (Plus (Variable (1,35) "c")))]))]]
 --- out
-select (((-$k) * 3) / (-"func"("t" - ((-"v") * $c))))
+select (((-$k) * 3) / (-"func"(("t" - ((-"v") * $c)))))
 --- LAST
 
 
