@@ -23,8 +23,8 @@ instance JSON VarType where
 
 data Fragment = FVariable !String !VarType
               | FString !B.ByteString
-              | FSql [Fragment]
-              | FHttpCmd !String [Fragment] [Fragment]
+              | FSql ![Fragment]
+              | FHttpCmd !String ![Fragment] ![Fragment]
               | FNull
 
 instance JSON Fragment where
