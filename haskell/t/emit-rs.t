@@ -525,3 +525,18 @@ select * from "chen" except all select * from chen_bak
 --- out
 ((select * from "chen") except all (select * from "chen_bak"))
 
+
+
+=== TEST 56: distinct in count
+--- in
+select count(distinct rev) + 1 - 5 from logs
+--- out
+select "count"(distinct "rev") + 1 - 5 from "logs"
+
+
+
+=== TESt 57: distinct in column
+--- in
+select distinct rev from logs
+--- out
+select distinct "rev" from "logs"
