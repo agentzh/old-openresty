@@ -18,7 +18,7 @@ run {
     my $rename = $block->rename;
     if (!$rename) { die "No rename section defined for $desc" }
     my ($old, $new) = split /\s+/, $rename;
-    run3 [qw< bin/restyaction rename >, $old, $new],
+    run3 [qw< bin/restyscript action rename >, $old, $new],
         \$stdin, \$stdout, \$stderr;
     is $? >> 8, 0, "compiler returns 0 - $desc";
     warn $stderr if $stderr;

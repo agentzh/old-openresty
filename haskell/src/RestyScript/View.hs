@@ -1,6 +1,7 @@
 module Main where
 
-import RestyScript.Parser.View
+import qualified RestyScript.Parser.View as ViewParser
+import qualified RestyScript.Parser.Action as ActionParser
 import RestyScript.AST
 
 import qualified RestyScript.Emitter.RestyScript as RS
@@ -22,13 +23,26 @@ argHandles = [
 
 main :: IO ()
 main = do args <- getArgs
-          if null args
-            then die "No command specified."
-            else do input <- hGetContents stdin
-                    case readView "RestyView" input of
-                        Left err -> die (show err)
-                        Right ast -> processArgs args input ast
+          die (head args)
+          if length args < 2
+            then help
+            else case category of
+                "view" -> do input <- hGetContents stdin
+                          case readView "RestyView" input of
+                              Left err -> die (show err)
+                              Right ast -> processArgs args' input ast
+                "action" -> do input <- hGetContents stdin
+                            case readView "RestyAction" input of
+                                 Left err -> die (show err)
+                                 Right ast -> processArgs args' input ast
+                otherwise -> die "Unknown category: " ++ category ++
+                        "\n\tOnly \"view\" or \"action\" are allowed\n"
+                    where category = head args
+                          args' = tail args
 
+help :: IO ()
+help = die "Usage: restyscript <view|action> <command>...\n" ++
+    "<command> could be either \"frags\", \"ast\", \"rs\", \"rename <oldvar> <newvar>\", \"stats\"\n"
 processArgs :: [String] -> String -> RSVal -> IO ()
 processArgs [] _ _ = return ()
 processArgs (a:as) input ast =
