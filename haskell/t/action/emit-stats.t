@@ -15,7 +15,7 @@ run {
     my $desc = $block->description;
     my ($stdout, $stderr);
     my $stdin = $block->in;
-    run3 [qw< bin/restyaction stats >], \$stdin, \$stdout, \$stderr;
+    run3 [qw< bin/restyscript action stats >], \$stdin, \$stdout, \$stderr;
     is $? >> 8, 0, "compiler returns 0 - $desc";
     warn $stderr if $stderr;
     my $out = $block->out;
