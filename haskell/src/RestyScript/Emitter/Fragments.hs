@@ -12,12 +12,13 @@ import Text.Printf (printf)
 import Text.JSON
 import qualified Data.ByteString.Char8 as B
 
-data VarType = VTLiteral | VTSymbol | VTUnknown
+data VarType = VTLiteral | VTSymbol | VTUnknown | VTQuoted
 
 instance JSON VarType where
     showJSON VTSymbol = showJSON ("symbol"::String)
     showJSON VTLiteral = showJSON ("literal"::String)
     showJSON VTUnknown = showJSON ("unknown"::String)
+    showJSON VTQuoted = showJSON ("quoted"::String)
     readJSON = undefined
 
 data Fragment = FVariable !String !VarType
@@ -104,7 +105,7 @@ emit node =
             where p :: RSVal -> Fragment
                   p x = case x of
                     HttpCmd meth url Null -> FHttpCmd meth (emitLit url) [FNull]
-                    HttpCmd meth url content -> FHttpCmd meth (emitLit url) (emit content)
+                    HttpCmd meth url content -> FHttpCmd meth (emitLit url) (emitForJSON True content)
 
                     otherwise -> FSql $ emit x
         Object ps -> str "{" <+> (foldl1 merge $ map emit ps) <+> str "}"
@@ -113,17 +114,29 @@ emit node =
         Assign col expr -> emit col <+> str " = " <+> emit expr
         Distinct ls -> str "distinct " <+> emitForList ls
         All ls -> str "all " <+> emitForList ls
-        Pair k v -> emitLit k <+> str ": " <+> emit v
-        Array xs -> []
+        Pair k v -> str "\"" <+> emitLit k <+> str "\": " <+> emitForJSON True v
+        Array xs -> str "[" <+> (join ", " $ map (emitForJSON True) xs) <+> str "]"
         Concat a b -> emitLit a <+> emitLit b
         HttpCmd _ _ _ -> []  -- this shouldn't happen
 
-    where str s = [FString s]
-          emitForList ls = join ", " $ map emit ls
+    where emitForList ls = join ", " $ map emit ls
+
+str :: B.ByteString -> [Fragment]
+str s = [FString s]
+
+emitForJSON :: Bool -> RSVal -> [Fragment]
+emitForJSON toplevel n = case n of
+    Variable _ v -> [FVariable v t]
+        where t = if toplevel then VTLiteral else VTQuoted
+    String s -> if toplevel then [FString $ bs $ quoteIdent s] else str $ bs s
+    Concat a b -> if toplevel
+                    then str "\"" <+> emitForJSON False a <+> emitForJSON False b <+> str "\""
+                    else emitLit a <+> emitLit b
+    otherwise -> emitLit n
 
 emitLit :: RSVal -> [Fragment]
 emitLit node = case node of
-    Variable _ v -> [FVariable v VTLiteral]
+    Variable _ v -> [FVariable v VTQuoted]
     String s -> [FString $ bs s]
     otherwise -> emit node
 
