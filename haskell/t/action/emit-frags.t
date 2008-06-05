@@ -30,18 +30,35 @@ __DATA__
 delete from $foo where $foo > $id;
 --- out
 [[["delete from ",["foo","symbol"]," where ",["foo","unknown"]," > ",["id","unknown"]]]]
---- LAST
 
 
-=== TEST 2: basic update
+
+=== TEST 2: basic delete
+--- in
+delete from Foo where col > $id;
+--- out
+[[["delete from \"Foo\" where \"col\" > ",["id","unknown"]]]]
+
+
+
+=== TEST 3: basic update
 --- in
 update $blah set $foo=$blah+1
 --- out
-update $abc set $foo=$abc+1
+[[["update ",["blah","symbol"]," set ",["foo","symbol"]," = (",["blah","unknown"]," + 1) "]]]
 
 
 
-=== TEST 3: update with delete
+=== TEST 4: basic update
+--- in
+update Foo set col=col+1
+--- out
+[[["update \"Foo\" set \"col\" = (\"col\" + 1) "]]]
+--- LAST
+
+
+
+=== TEST 5: update with delete
 --- in
 update
     Foo set foo = $foo where $foo>$bar and $foo like '%hey' ;
@@ -57,7 +74,7 @@ delete from $abc where $abc=5
 
 
 
-=== TEST 4: simple GET
+=== TEST 6: simple GET
 --- in
 GET $bah;
 --- out
@@ -66,7 +83,7 @@ GET $foo;
 
 
 
-=== TEST 5: GET with expr
+=== TEST 7: GET with expr
 --- in
 GET ( '/=/'||$foo) || $foo
 --- out
@@ -74,7 +91,7 @@ GET ( '/=/'||$bar) || $bar
 
 
 
-=== TEST 6: simple POST
+=== TEST 8: simple POST
 --- in
 POST '/=/model/Post/~/~' || $foo
 { $foo: "hello" || $foo }
@@ -84,8 +101,7 @@ POST '/=/model/Post/~/~' || $bar
 
 
 
-
-=== TEST 8: POST a simple array
+=== TEST 9: POST a simple array
 --- in
 POST
 '/=/model/Post/' || '~/~'
@@ -97,8 +113,7 @@ POST
 
 
 
-
-=== TEST 9: PUT a literal
+=== TEST 10: PUT a literal
 --- in
 PUT '/=/foo' $foo
 --- out
@@ -106,7 +121,7 @@ PUT '/=/foo' $bar
 
 
 
-=== TEST 10: PUT a hash of lists of hashes
+=== TEST 11: PUT a hash of lists of hashes
 --- in
 POST '/=/model/~'
 { "description": $type,
@@ -126,8 +141,7 @@ POST '/=/model/~'
 
 
 
-
-=== TEST 11: with variables and some noises
+=== TEST 12: with variables and some noises
 --- in
             update Post
             set comments = comments + 1
@@ -143,7 +157,7 @@ POST '/=/model/~'
 
 
 
-=== TEST 12: try delete
+=== TEST 13: try delete
 --- in
 DELETE '/=/model' || $foo;
 DELETE '/=/view';

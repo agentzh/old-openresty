@@ -37,6 +37,7 @@ delete from $foo where $foo > $id;
 delete from $bar where $bar > $id;
 
 
+
 === TEST 2: basic update
 --- in
 update $blah set $foo=$blah+1
@@ -93,8 +94,7 @@ POST '/=/model/Post/~/~' || $bar
 
 
 
-
-=== TEST 8: POST a simple array
+=== TEST 7: POST a simple array
 --- in
 POST
 '/=/model/Post/' || '~/~'
@@ -107,8 +107,7 @@ POST
 
 
 
-
-=== TEST 9: PUT a literal
+=== TEST 8: PUT a literal
 --- in
 PUT '/=/foo' $foo
 --- rename: foo bar
@@ -117,7 +116,7 @@ PUT '/=/foo' $bar
 
 
 
-=== TEST 10: PUT a hash of lists of hashes
+=== TEST 9: PUT a hash of lists of hashes
 --- in
 POST '/=/model/~'
 { "description": $type,
@@ -138,8 +137,7 @@ POST '/=/model/~'
 
 
 
-
-=== TEST 11: with variables and some noises
+=== TEST 10: with variables and some noises
 --- in
             update Post
             set comments = comments + 1
@@ -156,7 +154,7 @@ POST '/=/model/~'
 
 
 
-=== TEST 12: try delete
+=== TEST 11: try delete
 --- in
 DELETE '/=/model' || $foo;
 DELETE '/=/view';
