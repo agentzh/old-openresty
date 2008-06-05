@@ -106,6 +106,8 @@ emit node =
                     otherwise -> FSql $ emit x
         Object ps -> str "{" <+> (foldl1 merge $ map emit ps) <+> str "}"
         Delete model cond -> str "delete from " <+> emit model <+> str " " <+> emit cond
+        Update model assign cond -> str "update " <+> emit model <+> str " set " <+> emit assign <+> str " " <+> emit cond
+        Assign col expr -> emit col <+> str " = " <+> emit expr
         _ -> str ""
     where str s = [FString s]
           emitForList ls = join ", " $ map emit ls
