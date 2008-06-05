@@ -131,7 +131,6 @@ POST '/=/model/~'
 }
 --- out
 [["POST",["/=/model/~"],["{\"description\": ",["type","literal"],", \"columns\": [{\"name\": \"name\", \"",["type","quoted"],"\": \"text\"}, {\"name\": \"created\", \"",["type","quoted"],"\": \"timestamp (0) with time zone\", \"default\": [",["type","literal"],"]}]}"]]]
---- LAST
 
 
 
@@ -143,11 +142,7 @@ POST '/=/model/~'
             POST '/=/model/Comment/~/~'
             { "sender": $sender, "body": $body, "$post_id": $post_id };
 --- out
-            update Post
-            set comments = comments + 1
-            where id = $post;
-            POST '/=/model/Comment/~/~'
-            { "sender": $sender, "body": $body, "$post_id": $post };
+[[["update \"Post\" set \"comments\" = (\"comments\" + 1) where \"id\" = ",["post_id","unknown"]]],["POST",["/=/model/Comment/~/~"],["{\"sender\": ",["sender","literal"],", \"body\": ",["body","literal"],", \"$post_id\": ",["post_id","literal"],"}"]]]
 
 
 
@@ -157,7 +152,5 @@ DELETE '/=/model' || $foo;
 DELETE '/=/view';
 DELETE $foo
 --- out
-DELETE '/=/model' || $abc;
-DELETE '/=/view';
-DELETE $abc
+[["DELETE",["/=/model",["foo","quoted"]]],["DELETE",["/=/view"]],["DELETE",[["foo","quoted"]]]]
 
