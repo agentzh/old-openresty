@@ -1,13 +1,13 @@
 README
 ======
 
-This is the repository for two RestyScript compilers for OpenResty
-written in Haskell. They are the restyview and restyaction compilers,
-respectively.
+This is the repository for the RestyScript compiler for OpenResty
+written in Haskell. Support for both OpenResty Views and Actions
+is provided.
 
-To build this program, you should first install GHC 6.8.2 (or better)
-and its Parsec library. On Ubuntu/Debian, the following commands would
-be sufficient:
+To build this program, you should first install GHC 6.8.2 (or better),
+its Parsec, bytestring, and json libraries. On Ubuntu/Debian, the
+following commands would install the first two prerequisites.
 
     $ sudo apt-get install ghc6 libghc6-parsec-dev
 
@@ -21,7 +21,7 @@ better), require a few more commands to install:
     $ runghc Setup.hs build
     $ sudo runghc Setup.hs install
 
-And for bytestring:
+And similarly
 
     $ wget http://hackage.haskell.org/packages/archive/bytestring/0.9.1.0/bytestring-0.9.1.0.tar.gz
     $ tar -xzf bytestring-0.9.1.0.tar.gz
@@ -34,8 +34,7 @@ After that, you can build this compiler by the following command:
 
     $ make
 
-The resulting binary executables will be bin/restyview and
-bin/restyaction.
+The resulting binary executable will be bin/restyscript.
 
 To build an optimized version (with -O2 set) of the compilers, you
 can use
@@ -51,7 +50,7 @@ default make target.
 
 You can play with it on the command line. For instance,
 
-    $ echo 'select 3.14' | bin/restyview ast rs
+    $ echo 'select 3.14' | bin/restyscript view ast rs
     Query [Select [Float 3.14]]
     select 3.14
 
@@ -70,7 +69,7 @@ To run the test suite, simply issue
 
     $ make test
 
-The test cases in the test suite (e.g. t/emit-rs.t and t/action/emit-rs.t)
-tell you what these two compilers are currently able to do.
-
+The test cases in the test suite (e.g. t/emit-frags.t and
+t/action/emit-frags.t) tell you what these two compilers are currently
+able to do.
 
