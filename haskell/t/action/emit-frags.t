@@ -73,7 +73,7 @@ delete from $foo where $foo=5
 --- in
 GET $bah;
 --- out
-[["GET",[["bah","literal"]]]]
+[["GET",[["bah","quoted"]]]]
 
 
 
@@ -81,7 +81,7 @@ GET $bah;
 --- in
 GET ( '/=/'||$foo) || $foo
 --- out
-[["GET",["/=/",["foo","literal"],["foo","literal"]]]]
+[["GET",["/=/",["foo","quoted"],["foo","quoted"]]]]
 
 
 
@@ -90,9 +90,6 @@ GET ( '/=/'||$foo) || $foo
 GET ( '/=/'|| 'ver') || 'sion'
 --- out
 [["GET",["/=/version"]]]
---- LAST
-
-
 
 
 
@@ -101,8 +98,7 @@ GET ( '/=/'|| 'ver') || 'sion'
 POST '/=/model/Post/~/~' || $foo
 { $foo: "hello" || $foo }
 --- out
-POST '/=/model/Post/~/~' || $bar
-{ $bar: "hello" || $bar }
+[["POST",["/=/model/Post/~/~",["foo","quoted"]],["{\"",["foo","quoted"],"\": \"hello",["foo","quoted"],"\"}"]]]
 
 
 
@@ -112,9 +108,7 @@ POST
 '/=/model/Post/' || '~/~'
 [1,$foo,2.5,"hi"||$foo]
 --- out
-POST
-'/=/model/Post/' || '~/~'
-[1,$abc,2.5,"hi"||$abc]
+[["POST",["/=/model/Post/~/~"],["[1, ",["foo","literal"],", 2.5, \"hi",["foo","quoted"],"\"]"]]]
 
 
 
@@ -122,7 +116,8 @@ POST
 --- in
 PUT '/=/foo' $foo
 --- out
-PUT '/=/foo' $bar
+[["PUT",["/=/foo"],[["foo","literal"]]]]
+--- LAST
 
 
 
