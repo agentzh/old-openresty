@@ -117,7 +117,6 @@ POST
 PUT '/=/foo' $foo
 --- out
 [["PUT",["/=/foo"],[["foo","literal"]]]]
---- LAST
 
 
 
@@ -131,13 +130,8 @@ POST '/=/model/~'
     ]
 }
 --- out
-POST '/=/model/~'
-{ "description": $abc,
-    "columns": [
-        { "name": "name", $abc: 'text'},
-        { "name":"created",$abc:"timestamp (0) with time zone", default: [$abc] }
-    ]
-}
+[["POST",["/=/model/~"],["{\"description\": ",["type","literal"],", \"columns\": [{\"name\": \"name\", \"",["type","quoted"],"\": \"text\"}, {\"name\": \"created\", \"",["type","quoted"],"\": \"timestamp (0) with time zone\", \"default\": [",["type","literal"],"]}]}"]]]
+--- LAST
 
 
 

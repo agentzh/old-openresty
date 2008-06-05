@@ -108,13 +108,13 @@ emit node =
                     HttpCmd meth url content -> FHttpCmd meth (emitLit url) (emitForJSON True content)
 
                     otherwise -> FSql $ emit x
-        Object ps -> str "{" <+> (foldl1 merge $ map emit ps) <+> str "}"
         Delete model cond -> str "delete from " <+> emit model <+> str " " <+> emit cond
         Update model assign cond -> str "update " <+> emit model <+> str " set " <+> emit assign <+> str " " <+> emit cond
         Assign col expr -> emit col <+> str " = " <+> emit expr
         Distinct ls -> str "distinct " <+> emitForList ls
         All ls -> str "all " <+> emitForList ls
         Pair k v -> str "\"" <+> emitLit k <+> str "\": " <+> emitForJSON True v
+        Object ps -> str "{" <+> (join ", " $ map emit ps) <+> str "}"
         Array xs -> str "[" <+> (join ", " $ map (emitForJSON True) xs) <+> str "]"
         Concat a b -> emitLit a <+> emitLit b
         HttpCmd _ _ _ -> []  -- this shouldn't happen
