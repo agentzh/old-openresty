@@ -115,7 +115,7 @@ emit node =
         All ls -> str "all " <+> emitForList ls
         Pair k v -> emitLit k <+> str ": " <+> emit v
         Array xs -> []
-        Concat _ _ -> []
+        Concat a b -> emitLit a <+> emitLit b
         HttpCmd _ _ _ -> []  -- this shouldn't happen
 
     where str s = [FString s]
@@ -124,6 +124,7 @@ emit node =
 emitLit :: RSVal -> [Fragment]
 emitLit node = case node of
     Variable _ v -> [FVariable v VTLiteral]
+    String s -> [FString $ bs s]
     otherwise -> emit node
 
 merge :: [Fragment] -> [Fragment] -> [Fragment]
