@@ -74,7 +74,6 @@ delete from $foo where $foo=5
 GET $bah;
 --- out
 [["GET",[["bah","literal"]]]]
---- LAST
 
 
 
@@ -82,11 +81,22 @@ GET $bah;
 --- in
 GET ( '/=/'||$foo) || $foo
 --- out
-GET ( '/=/'||$bar) || $bar
+[["GET",["/=/",["foo","literal"],["foo","literal"]]]]
 
 
 
-=== TEST 8: simple POST
+=== TEST 8: GET with expr
+--- in
+GET ( '/=/'|| 'ver') || 'sion'
+--- out
+[["GET",["/=/version"]]]
+--- LAST
+
+
+
+
+
+=== TEST 9: simple POST
 --- in
 POST '/=/model/Post/~/~' || $foo
 { $foo: "hello" || $foo }
@@ -96,7 +106,7 @@ POST '/=/model/Post/~/~' || $bar
 
 
 
-=== TEST 9: POST a simple array
+=== TEST 10: POST a simple array
 --- in
 POST
 '/=/model/Post/' || '~/~'
@@ -108,7 +118,7 @@ POST
 
 
 
-=== TEST 10: PUT a literal
+=== TEST 11: PUT a literal
 --- in
 PUT '/=/foo' $foo
 --- out
@@ -116,7 +126,7 @@ PUT '/=/foo' $bar
 
 
 
-=== TEST 11: PUT a hash of lists of hashes
+=== TEST 12: PUT a hash of lists of hashes
 --- in
 POST '/=/model/~'
 { "description": $type,
@@ -136,7 +146,7 @@ POST '/=/model/~'
 
 
 
-=== TEST 12: with variables and some noises
+=== TEST 13: with variables and some noises
 --- in
             update Post
             set comments = comments + 1
@@ -152,7 +162,7 @@ POST '/=/model/~'
 
 
 
-=== TEST 13: try delete
+=== TEST 14: try delete
 --- in
 DELETE '/=/model' || $foo;
 DELETE '/=/view';
