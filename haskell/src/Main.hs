@@ -45,7 +45,9 @@ processArgs args =
 
 help :: IO ()
 help = die $ "Usage: restyscript <view|action> <command>...\n" ++
-    "<command> could be either \"frags\", \"ast\", \"rs\", \"rename <oldvar> <newvar>\", \"stats\"\n"
+    "<command> could be either \"frags\", \"ast\", \"rs\", " ++
+    "\"rename <oldvar> <newvar>\", \"stats\"\n"
+
 processCmds :: [String] -> String -> RSVal -> IO ()
 processCmds [] _ _ = return ()
 processCmds (a:as) input ast =
