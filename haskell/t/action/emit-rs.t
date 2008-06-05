@@ -78,7 +78,7 @@ GET '/=/version'
 --- in
 GET ( '/=/'||'ver') || 'sion'
 --- ast
-Action [HttpCmd "GET" (Arith "||" (Arith "||" (String "/=/") (String "ver")) (String "sion")) Null]
+Action [HttpCmd "GET" (Concat (Concat (String "/=/") (String "ver")) (String "sion")) Null]
 --- out
 GET (('/=/' || 'ver') || 'sion')
 
@@ -111,7 +111,7 @@ POST
 '/=/model/Post/' || '~/~'
 [1,2.5,"hi"||'hey']
 --- ast
-Action [HttpCmd "POST" (Arith "||" (String "/=/model/Post/") (String "~/~")) (Array [Integer 1,Float 2.5,Arith "||" (String "hi") (String "hey")])]
+Action [HttpCmd "POST" (Concat (String "/=/model/Post/") (String "~/~")) (Array [Integer 1,Float 2.5,Concat (String "hi") (String "hey")])]
 --- out
 POST ('/=/model/Post/' || '~/~') [1, 2.5, ('hi' || 'hey')]
 

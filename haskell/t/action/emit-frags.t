@@ -54,7 +54,6 @@ update $blah set $foo=$blah+1
 update Foo set col=col+1
 --- out
 [[["update \"Foo\" set \"col\" = (\"col\" + 1) "]]]
---- LAST
 
 
 
@@ -66,11 +65,7 @@ update
 delete from $foo where $foo=5
  ;
 --- out
-update
-    Foo set foo = $abc where $abc>$bar and $abc like '%hey' ;
-    ;
-delete from $abc where $abc=5
- ;
+[[["update \"Foo\" set \"foo\" = ",["foo","unknown"]," where (",["foo","unknown"]," > ",["bar","unknown"]," and ",["foo","unknown"]," like '%hey')"]],[["delete from ",["foo","symbol"]," where ",["foo","unknown"]," = 5"]]]
 
 
 
@@ -78,8 +73,8 @@ delete from $abc where $abc=5
 --- in
 GET $bah;
 --- out
---- out
-GET $foo;
+[["GET",[["bah","literal"]]]]
+--- LAST
 
 
 

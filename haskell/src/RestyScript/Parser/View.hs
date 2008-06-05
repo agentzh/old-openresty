@@ -1,5 +1,5 @@
 module RestyScript.Parser.View (
-    readView
+    readView, parseSelectedItem
 ) where
 
 import RestyScript.Parser
@@ -90,11 +90,25 @@ parseModelAlias = keyword "as" >> many1 space >> parseIdent
 
 parseSelect :: Parser RSVal
 parseSelect = do keyword "select" >> many1 space
-                 modifier <- option "" (keyword "all" <|> keyword "distinct")
-                 spaces
-                 cols <- sepBy1 (parseSelectedItem <|> parseAnyColumn) listSep
-                 return $ Select modifier cols
-          <?> "select clause"
+                 cols <- parseModifiedQuery
+                 return $ Select cols
+
+parseModifiedQuery :: Parser [RSVal]
+parseModifiedQuery = do
+    mod <- option "" (keyword "distinct" <|> keyword "all")
+    spaces
+    lst <- parseSelectedItemList
+    spaces
+    return $ case mod of
+        "distinct" -> [Distinct lst]
+        "all" -> [All lst]
+        otherwise -> lst
+
+parseSelectedItemList :: Parser [RSVal]
+parseSelectedItemList = do
+    cols <- sepBy1 (parseSelectedItem <|> parseAnyColumn) listSep
+    spaces
+    return cols
 
 parseSelectedItem :: Parser RSVal
 parseSelectedItem = do col <- parseExpr
@@ -103,5 +117,4 @@ parseSelectedItem = do col <- parseExpr
                        return $ case alias of
                             Null -> col
                             otherwise -> Alias col alias
-
 

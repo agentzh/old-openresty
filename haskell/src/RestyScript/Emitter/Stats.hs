@@ -43,7 +43,7 @@ findFunc (FuncCall (Variable _ func)  _) st = st { funcList = ('$':func) : (func
 findFunc _ st = st
 
 findSelected :: RSVal -> Stats -> Stats
-findSelected (Select _ lst) st = st { selectedMax = length lst }
+findSelected (Select lst) st = st { selectedMax = length lst }
 findSelected _ st = st
 
 findJoined :: RSVal -> Stats -> Stats
