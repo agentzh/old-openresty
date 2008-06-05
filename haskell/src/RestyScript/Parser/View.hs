@@ -1,5 +1,5 @@
 module RestyScript.Parser.View (
-    readView, parseSelectedItem
+    readView, parseView
 ) where
 
 import RestyScript.Parser
