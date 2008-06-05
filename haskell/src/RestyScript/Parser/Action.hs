@@ -3,6 +3,7 @@ module RestyScript.Parser.Action (
 ) where
 
 import RestyScript.Parser
+import RestyScript.Parser.View
 import RestyScript.AST
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Expr
@@ -21,6 +22,7 @@ parseStmt :: Parser RSVal
 parseStmt = parseDelete
         <|> parseUpdate
         <|> parseHttp
+        <|> parseView
         <?> "RestyAction statement"
 
 httpCmds = ["GET", "PUT", "DELETE", "POST"]
