@@ -420,7 +420,7 @@ the C<;> separator to define a full action object:
         "
             update Post
             set comments = comments + 1
-            where id = $post_id";
+            where id = $post_id;
             POST '/=/model/Comment/~/~'
             { "sender": $sender, "body": $body, "post": $post_id }
         "
