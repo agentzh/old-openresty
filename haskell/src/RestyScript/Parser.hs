@@ -69,7 +69,8 @@ opTable = [
             [
                 relOp ">=", relOp ">",
                 relOp "<=", relOp "<>", relOp "<",
-                relOp "=", relOp "!=", relOp' "like"
+                relOp "=", relOp "!=", relOp' "like",
+                relOp "@@"
                 ],
             [   preOp' "not" Not ],
             [
