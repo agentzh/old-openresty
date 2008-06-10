@@ -109,6 +109,7 @@ parseArithAtom :: Parser RSVal
 parseArithAtom = parseNumber
              <|> parseString
              <|> parseDistinct
+             <|> try (parseVerbatimString)
              <|> try (do {
                 r <- parseVariable;
                 notFollowedBy (char '.' <|> char '(');
@@ -178,6 +179,17 @@ parseString = do s <- between (char '\'') (char '\'')
                  spaces
                  return $ String s
           <?> "string"
+
+parseVerbatimString :: Parser RSVal
+parseVerbatimString = do delim <- char '$' >> identifier
+                         char '$'
+                         str <- manyTill anyChar (try (char '$' >> string delim >> char '$'))
+                         return $ String str
+
+identifier :: Parser String
+identifier = do c <- letter <|> char '_'
+                s <- many (alphaNum <|> char '_')
+                return (c : s)
 
 parseColumn :: Parser RSVal
 parseColumn = do a <- parseIdent

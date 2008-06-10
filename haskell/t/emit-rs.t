@@ -537,9 +537,41 @@ select (("count"(distinct "rev") + 1) - 5) from "logs"
 
 
 
-=== TESt 57: distinct in column
+=== TEST 57: distinct in column
 --- in
 select distinct rev from logs
 --- out
 select distinct "rev" from "logs"
+
+
+
+=== TEST 58: $q$...$q$
+--- in
+select $q$'abc\'$q$ from Hello
+--- out
+select '''abc\\''' from "Hello"
+
+
+
+=== TEST 59: $_$...$_$
+--- in
+select $_$hello," world$_$ from Hello
+--- out
+select 'hello," world' from "Hello"
+
+
+
+=== TEST 60: $_123a_$...$_123a_$
+--- in
+select $_123a_$hello,"'\ world$_123a_$ from Hello
+--- out
+select 'hello,"''\\ world' from "Hello"
+
+
+
+=== TEST 61: $q$$q$
+--- in
+select $q$$q$;
+--- out
+select ''
 
