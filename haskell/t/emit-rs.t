@@ -591,3 +591,23 @@ select true, false, null
 --- out
 select true, false, null
 
+
+
+=== TEST 64: where bool
+--- in
+select *
+from Post
+where true
+--- out
+select * from "Post" where true
+
+
+
+=== TEST 65: where bool and bool
+--- in
+select *
+from Post
+where true and false
+--- out
+select * from "Post" where (true and false)
+
