@@ -33,7 +33,7 @@ sub rename {
     my $stdin = $self->{_src};
     run3 [$ExePath, $type, 'rename', $var, $newvar], \$stdin, \$stdout, \$stderr;
     if ($? != 0) {
-        croak ($stderr || "Failed to call \"$ExePath $type rename $var $newvar\": returned status code " . ($? >> 8));
+        die ($stderr || "Failed to call \"$ExePath $type rename $var $newvar\": returned status code " . ($? >> 8) . "\n");
     }
     $stdout;
 }
@@ -45,7 +45,7 @@ sub compile {
     my $stdin = $self->{_src};
     run3 [$ExePath, $type, 'frags', 'stats'], \$stdin, \$stdout, \$stderr;
     if ($? != 0) {
-        croak ($stderr || "Failed to call \"$ExePath $type frags stats\": returned status code " . ($? >> 8));
+        die ($stderr || "Failed to call \"$ExePath $type frags stats\": returned status code " . ($? >> 8) . "\n");
     }
     my @ln = split /\n/, $stdout;
     return ($json->decode($ln[0]), $json->decode($ln[1]))
