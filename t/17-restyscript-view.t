@@ -2,9 +2,9 @@
 
 use Test::Base;
 
-#use Smart::Comments;
+use Smart::Comments;
 use lib 'lib';
-use OpenResty::RestyScript::View;
+use OpenResty::RestyScript;
 
 #plan tests => 3 * blocks();
 
@@ -37,29 +37,28 @@ run {
         } @ln;
     }
 
-    my $select = OpenResty::RestyScript::View->new;
     my $sql = $block->sql or die "$name - No --- sql section found.\n";
-    my $res;
+    my $view = OpenResty::RestyScript->new('view', $sql);
+    my ($frags, $stats);
     eval {
-        $res = $select->parse(
-            $sql,
-            {
-                quote => \&quote,
-                quote_ident => \&quote_ident,
-                vars => \%in_vars,
-            }
-        );
+        ($frags, $stats) = $view->compile;
     };
+    ### Fragments: $frags
+    ### Stats: $stats
+    my $res;
+    if ($@ && !defined $block->error) { warn $@ }
     my $error = $block->error || '';
     $error =~ s/^\s+$//g;
     is $@, $error, "$name - parse ok";
+    %in_vars,
     my (@models, @cols, @vars, @unbound);
-    if ($res) {
-        @models = grep { defined $_ && $_ ne '' } @{ $res->{models} };
-        @cols = grep { defined $_ && $_ ne '' } @{ $res->{columns} };
+    if ($stats) {
+        @models = @{ $stats->{modelList} };
         @vars = grep { defined $_ && $_ ne '' } @{ $res->{vars} };
         @unbound = grep { defined $_ && $_ ne '' } @{ $res->{unbound} };
     }
+    ### @models
+    my $pgsql = join '', @$frags;
     my $ex_models = $block->models;
     if (defined $ex_models) {
         is join(' ', @models), $block->models, "$name - model list ok";
@@ -69,7 +68,7 @@ run {
         is join(' ', @cols), $block->cols, "$name - model cols ok";
     }
     if (defined $block->out) {
-        is $res->{sql}, $block->out, "$name - sql emittion ok";
+        is $pgsql, $block->out, "$name - sql emittion ok";
     }
     my $ex_vars = $block->vars;
     if (defined $ex_vars) {
@@ -90,6 +89,7 @@ select * from Carrie
 --- models: Carrie
 --- cols:
 --- out: select * from "Carrie"
+--- LAST
 
 
 
