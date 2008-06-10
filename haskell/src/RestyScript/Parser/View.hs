@@ -33,10 +33,10 @@ setOpTable = [[
 
 parseQuery :: Parser RSVal
 parseQuery = do select <- spaces >> parseSelect
-                from <- option Null parseFrom
-                whereClause <- option Null parseWhere
+                from <- option Empty parseFrom
+                whereClause <- option Empty parseWhere
                 moreClauses <- sepBy parseMoreClause spaces
-                return $ Query $ filter (Null /=)
+                return $ Query $ filter (Empty /=)
                     [select, from, whereClause] ++ moreClauses
          <|> parens parseSetExpr
          <?> "select statement"

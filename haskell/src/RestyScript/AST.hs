@@ -33,6 +33,7 @@ data RSVal = SetOp !String !RSVal !RSVal
            | Not !RSVal
            | Or !RSVal !RSVal
            | And !RSVal !RSVal
+           | Empty
            | Null
            | AnyColumn
            | Action ![RSVal]
@@ -46,6 +47,8 @@ data RSVal = SetOp !String !RSVal !RSVal
            | Concat !RSVal !RSVal
            | Distinct ![RSVal]
            | All ![RSVal]
+           | RSTrue
+           | RSFalse
                deriving (Eq, Show)
 
 traverse :: (RSVal->a) -> (a->a->a) -> RSVal -> a
@@ -93,11 +96,14 @@ traverse visit merge node =
         Pair k v -> mergeAll [cur, self k, self v]
         Concat a b -> mergeAll [cur, self a, self b]
         AnyColumn -> cur
+        Empty -> cur
         Null -> cur
         String _ -> cur
         Float _ -> cur
         Integer _ -> cur
         Symbol _ -> cur
+        RSTrue -> cur
+        RSFalse -> cur
         All _ -> cur
         Distinct _ -> cur
         -- otherwise -> cur

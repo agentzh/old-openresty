@@ -48,7 +48,8 @@ emit node = case node of
     Not val -> "(not " ~~ emit val ~~ ")"
 
     Alias col alias -> emit col ~~ " as " ~~ emit alias
-    Null -> B.empty
+    Empty -> B.empty
+    Null -> "null"
     AnyColumn -> "*"
     Action cmds -> join ";\n" cmds
     Delete model cond -> "delete from " ~~ emit model ~~ " " ~~ emit cond
@@ -62,5 +63,7 @@ emit node = case node of
 
     Distinct ls -> "distinct " ~~ join ", " ls
     All ls -> "all " ~~ join ", " ls
+    RSTrue -> "true"
+    RSFalse -> "false"
     where bs = B.pack
 

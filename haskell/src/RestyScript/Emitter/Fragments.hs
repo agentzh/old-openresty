@@ -100,11 +100,12 @@ emit node =
         Minus val -> str "(-" <+> emit val <+> str ")"
         Plus val -> emit val
         Not val -> str "(not " <+> emit val <+> str ")"
-        Null -> str ""
+        Empty -> str ""
+        Null -> str "null"
         Action cmds -> map p cmds
             where p :: RSVal -> Fragment
                   p x = case x of
-                    HttpCmd meth url Null -> FHttpCmd meth (emitLit url) [FNull]
+                    HttpCmd meth url Empty -> FHttpCmd meth (emitLit url) [FNull]
                     HttpCmd meth url content -> FHttpCmd meth (emitLit url) (emitForJSON True content)
 
                     otherwise -> FSql $ emit x
@@ -117,6 +118,8 @@ emit node =
         Object ps -> str "{" <+> (join ", " $ map emit ps) <+> str "}"
         Array xs -> str "[" <+> (join ", " $ map (emitForJSON True) xs) <+> str "]"
         Concat a b -> emitLit a <+> emitLit b
+        RSTrue -> str "true"
+        RSFalse -> str "false"
         HttpCmd _ _ _ -> []  -- this shouldn't happen
 
     where emitForList ls = join ", " $ map emit ls

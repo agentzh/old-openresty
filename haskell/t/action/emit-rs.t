@@ -45,7 +45,7 @@ delete from "Foo" where "id" > 3
 --- in
 update Foo set foo=foo+1
 --- ast
-Action [Update (Model (Symbol "Foo")) (Assign (Column (Symbol "foo")) (Arith "+" (Column (Symbol "foo")) (Integer 1))) Null]
+Action [Update (Model (Symbol "Foo")) (Assign (Column (Symbol "foo")) (Arith "+" (Column (Symbol "foo")) (Integer 1))) Empty]
 --- out
 update "Foo" set "foo" = ("foo" + 1)
 
@@ -68,7 +68,7 @@ delete from "Blah" where $col = 5
 --- in
 GET '/=/version';
 --- ast
-Action [HttpCmd "GET" (String "/=/version") Null]
+Action [HttpCmd "GET" (String "/=/version") Empty]
 --- out
 GET '/=/version'
 
@@ -78,7 +78,7 @@ GET '/=/version'
 --- in
 GET ( '/=/'||'ver') || 'sion'
 --- ast
-Action [HttpCmd "GET" (Concat (Concat (String "/=/") (String "ver")) (String "sion")) Null]
+Action [HttpCmd "GET" (Concat (Concat (String "/=/") (String "ver")) (String "sion")) Empty]
 --- out
 GET (('/=/' || 'ver') || 'sion')
 
@@ -160,7 +160,7 @@ DELETE '/=/model';
 DELETE '/=/view';
 DELETE '/=/role'
 --- ast
-Action [HttpCmd "DELETE" (String "/=/model") Null,HttpCmd "DELETE" (String "/=/view") Null,HttpCmd "DELETE" (String "/=/role") Null]
+Action [HttpCmd "DELETE" (String "/=/model") Empty,HttpCmd "DELETE" (String "/=/view") Empty,HttpCmd "DELETE" (String "/=/role") Empty]
 --- out
 DELETE '/=/model' ;
 DELETE '/=/view' ;
