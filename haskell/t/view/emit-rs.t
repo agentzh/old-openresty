@@ -611,3 +611,11 @@ where true and false
 --- out
 select * from "Post" where (true and false)
 
+
+
+=== TEST 66: @@
+--- in
+select * from table where field @@ to_tsquery('chinesecfg', $keyword)
+--- out
+select * from "table" where "field" @@ "to_tsquery"('chinesecfg', $keyword)
+
