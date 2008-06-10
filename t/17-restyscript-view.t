@@ -1,8 +1,10 @@
 # vi:filetype=
 
+# Tests for the OpenResty::RestyScript module.
+
 use Test::Base;
 
-use Smart::Comments;
+#use Smart::Comments;
 use lib 'lib';
 use OpenResty::RestyScript;
 
@@ -47,10 +49,13 @@ run {
     ### Stats: $stats
     my $res;
     if ($@ && !defined $block->error) { warn $@ }
-    my $error = $block->error || '';
-    $error =~ s/^\s+$//g;
-    is $@, $error, "$name - parse ok";
-    %in_vars,
+    elsif (defined $block->error) {
+        my $error = $block->error || '';
+        $error =~ s/^\s+$//g;
+        (my $got = $@) =~ s/^expecting .*\n//ms;
+        is $got, $error, "$name - error msg ok";
+    }
+    #%in_vars,
     my (@models, @cols, @vars, @unbound);
     if ($stats) {
         @models = @{ $stats->{modelList} };
@@ -58,7 +63,7 @@ run {
         @unbound = grep { defined $_ && $_ ne '' } @{ $res->{unbound} };
     }
     ### @models
-    my $pgsql = join '', @$frags;
+    my $pgsql = $frags ? (join '', @$frags) : '';
     my $ex_models = $block->models;
     if (defined $ex_models) {
         is join(' ', @models), $block->models, "$name - model list ok";
@@ -68,7 +73,8 @@ run {
         is join(' ', @cols), $block->cols, "$name - model cols ok";
     }
     if (defined $block->out) {
-        is $pgsql, $block->out, "$name - sql emittion ok";
+        (my $expected = $block->out) =~ s/\n$//g;
+        is $pgsql, $expected, "$name - sql emittion ok";
     }
     my $ex_vars = $block->vars;
     if (defined $ex_vars) {
@@ -89,7 +95,6 @@ select * from Carrie
 --- models: Carrie
 --- cols:
 --- out: select * from "Carrie"
---- LAST
 
 
 
@@ -98,8 +103,7 @@ select * from Carrie
 select * from Carrie where name='zhxj'
 --- error
 --- models: Carrie
---- cols: name
---- out: select * from "Carrie" where "name" = $y$zhxj$y$
+--- out: select * from "Carrie" where "name" = 'zhxj'
 
 
 
@@ -115,7 +119,8 @@ select * from Carrie;
 --- sql
 select * from Carrie blah
 --- error
-line 1: error: Unexpected input: "blah".
+"RestyView" (line 1, column 22):
+unexpected "b"
 
 
 
@@ -125,7 +130,8 @@ select *
 from Carrie
 where
 --- error
-line 3: error: Unexpected end of input (NUM or VAR or IDENT or '(' or STRING expected).
+"RestyView" (line 4, column 1):
+unexpected end of input
 
 
 
@@ -136,8 +142,7 @@ from Carrie
 where name='zhxj';
 --- error
 --- models: Carrie
---- cols: name
---- out: select count ( * ) from "Carrie" where "name" = $y$zhxj$y$
+--- out: select "count"(*) from "Carrie" where "name" = 'zhxj'
 
 
 
@@ -149,8 +154,8 @@ where name='zhxj'
 group by name
 --- error
 --- models: People Blah
---- cols: name name
---- out: select sum ( * ) as blah from "People" , "Blah" where "name" = $y$zhxj$y$ group by "name"
+--- out
+select "sum"(*) as "blah" from "People", "Blah" where "name" = 'zhxj' group by "name"
 
 
 
@@ -161,7 +166,8 @@ from People, Blah
 where name='zhxj';
 group by name
 --- error
-line 4: error: Unexpected input: "group by".
+"RestyView" (line 4, column 1):
+unexpected "g"
 
 
 
@@ -172,8 +178,7 @@ from foo
 where name = 'Hi' and age > 4;
 --- error
 --- models: foo
---- cols: name age
---- out: select * from "foo" where "name" = $y$Hi$y$ and "age" > 4
+--- out: select * from "foo" where ("name" = 'Hi' and "age" > 4)
 
 
 
@@ -184,8 +189,7 @@ from blah
 where name = 'Hi' or age <= 3;
 --- error
 --- models: blah
---- cols: name age
---- out: select * from "blah" where "name" = $y$Hi$y$ or "age" <= 3
+--- out: select * from "blah" where ("name" = 'Hi' or "age" <= 3)
 
 
 
@@ -195,7 +199,7 @@ select *
 from blah
 where name = '''Hi' or age <= 3;
 --- error
---- out: select * from "blah" where "name" = $y$'Hi$y$ or "age" <= 3
+--- out: select * from "blah" where ("name" = '''Hi' or "age" <= 3)
 
 
 
@@ -205,7 +209,8 @@ select *
 from blah
 where name = ''''Hi' or age <= 3;
 --- error
-line 3: error: Unexpected input: "Hi".
+"RestyView" (line 3, column 18):
+unexpected "H"
 
 
 
@@ -216,8 +221,7 @@ from blah
 where name = ''
 --- error
 --- models: blah
---- cols: name
---- out: select * from "blah" where "name" = $y$$y$ 
+--- out: select * from "blah" where "name" = ''
 
 
 
@@ -228,8 +232,7 @@ from blah
 where name = '' or age <= 3;
 --- error
 --- models: blah
---- cols: name age
---- out: select * from "blah" where "name" = $y$$y$ or "age" <= 3
+--- out: select * from "blah" where ("name" = '' or "age" <= 3)
 
 
 
@@ -239,7 +242,8 @@ select *
 from blah
 where name = '\'' and #@!##$@ --' or age <= 3;
 --- error
-line 3: error: Unexpected input: "#" (NUM or VAR or IDENT or '(' or STRING expected).
+"RestyView" (line 3, column 23):
+unexpected "#"
 
 
 
@@ -250,8 +254,7 @@ from blah
 where name = $q$Laser's gift...$$ \n\nhehe $q$ and age > 3;
 --- error
 --- models: blah
---- cols: name age
---- out: select * from "blah" where "name" = $y$Laser's gift...$$ \n\nhehe $y$ and "age" > 3
+--- out: select * from "blah" where ("name" = 'Laser''s gift...$$ \\n\\nhehe ' and "age" > 3)
 
 
 
@@ -261,35 +264,43 @@ select *
 from blah
 where name = $q$Laser's gift...$q$ update nhehe $q$ and age > 3;
 --- error
-line 3: error: Unexpected input: "update".
+"RestyView" (line 3, column 36):
+unexpected "u"
 
 
 
-=== TEST 18: $q$q$q$
+=== TEST 18: $q$ ... $a$ ... $q$
+--- sql
+select *
+from blah
+where name = $q$Laser's gift...$a$ update nhehe $q$ and age > 3;
+--- out
+select * from "blah" where ("name" = 'Laser''s gift...$a$ update nhehe ' and "age" > 3)
+
+
+
+=== TEST 19: $q$q$q$
 --- sql
 select *
 from blah
 where name = $q$q$q$ and age > 3;
 --- error
 --- models: blah
---- cols: name age
---- out: select * from "blah" where "name" = $y$q$y$ and "age" > 3
+--- out: select * from "blah" where ("name" = 'q' and "age" > 3)
 
 
 
-=== TEST 19: empty string literals
+=== TEST 20: empty string literals
 --- sql
 select *
 from Book, Student
 where Book.browser = Student.name and Book.title = '' or age <= 3;
 --- error
---- models: Book Student Book Student Book
---- cols: browser name title age
---- out: select * from "Book" , "Student" where "Book"."browser" = "Student"."name" and "Book"."title" = $y$$y$ or "age" <= 3
+--- models: Book Student
+--- out: select * from "Book", "Student" where (("Book"."browser" = "Student"."name" and "Book"."title" = '') or "age" <= 3)
 
 
-
-=== TEST 20: offset & limit
+=== TEST 21: offset & limit
 --- sql
 select * from Carrie limit 1 offset 0
 --- error
@@ -297,67 +308,65 @@ select * from Carrie limit 1 offset 0
 
 
 
-=== TEST 21: proc call
+=== TEST 22: proc call
 --- sql
 select hello(1) from Carrie limit 1 offset 0
 --- error
---- out: select hello ( 1 ) from "Carrie" limit 1 offset 0
+--- out: select "hello"(1) from "Carrie" limit 1 offset 0
 
 
 
-=== TEST 22: proc call with more parameters
+=== TEST 23: proc call with more parameters
 --- sql
 select hello(1, '2') from Carrie limit 1 offset 0
 --- error
---- out: select hello ( 1 , $y$2$y$ ) from "Carrie" limit 1 offset 0
+--- out: select "hello"(1, '2') from "Carrie" limit 1 offset 0
 
 
 
-=== TEST 23: proc names with underscores
+=== TEST 24: proc names with underscores
 --- sql
 select hello_world(1, '2') from Carrie limit 1 offset 0
 --- models: Carrie
---- cols:
---- out: select hello_world ( 1 , $y$2$y$ ) from "Carrie" limit 1 offset 0
-
-
-
-=== TEST 24: from a proc call
---- sql
-select * from hello_world(1, '2')
---- models:
---- cols:
---- out: select * from hello_world ( 1 , $y$2$y$ )
+--- out: select "hello_world"(1, '2') from "Carrie" limit 1 offset 0
 
 
 
 === TEST 25: from a proc call
 --- sql
+select * from hello_world(1, '2')
+--- models:
+--- out: select * from "hello_world"(1, '2')
+
+
+
+=== TEST 26: from a proc call
+--- sql
 select * from foo where bar = 'a''b\'\\' and a >= 3
 --- models: foo
---- cols: bar a
---- out: select * from "foo" where "bar" = $y$a'b'\$y$ and "a" >= 3
-
-
-
-=== TEST 26: Test the literal
---- sql
-select * from foo where bar = '\n\t\r\'\\'''
---- error
---- out: select * from "foo" where "bar" = $y${NEW_LINE}{TAB}{RETURN}'\'$y$
+--- out: select * from "foo" where ("bar" = 'a''b''\\' and "a" >= 3)
 
 
 
 === TEST 27: Test the literal
 --- sql
-select * from foo where bar = $$hi$$
+select * from foo where bar = '\n\t\r\'\\'''
 --- error
---- unbound:
---- out: select * from "foo" where "bar" = $y$hi$y$
+--- out: select * from "foo" where "bar" = '\n\t\r''\\'''
 
 
 
 === TEST 28: Test the literal
+--- sql
+select * from foo where bar = $$hi$$
+--- error
+--- unbound:
+--- out: select * from "foo" where "bar" = 'hi'
+--- LAST
+
+
+
+=== TEST 29: Test the literal
 --- sql
 select * from foo where bar = $hello$hi$h$$hello$ and a>3
 --- error
@@ -366,7 +375,7 @@ select * from foo where bar = $hello$hi$h$$hello$ and a>3
 
 
 
-=== TEST 29: variable interpolation
+=== TEST 30: variable interpolation
 --- sql
 select * from $model where $col = 'hello'
 --- models:
@@ -377,7 +386,7 @@ select * from $model where $col = 'hello'
 
 
 
-=== TEST 30: variable interpolation
+=== TEST 31: variable interpolation
 --- sql
 select * from $model where $col = 'hello'
 --- in_vars
@@ -391,7 +400,7 @@ col=foo
 
 
 
-=== TEST 31: variable interpolation
+=== TEST 32: variable interpolation
 --- sql
 select * from $model where col = $value order by $col
 --- in_vars
@@ -406,7 +415,7 @@ value='howdy'
 
 
 
-=== TEST 32: default values for vars
+=== TEST 33: default values for vars
 --- sql
 select * from $model where col = $value|'val' order by $col
 --- models:
@@ -417,7 +426,7 @@ select * from $model where col = $value|'val' order by $col
 
 
 
-=== TEST 33: default values for vars
+=== TEST 34: default values for vars
 --- sql
 select * from $model where col = $value|'val' order by $col
 --- in_vars
@@ -431,7 +440,7 @@ col=baz
 
 
 
-=== TEST 34: default values for vars (override it)
+=== TEST 35: default values for vars (override it)
 --- sql
 select * from $model where col = $value|'val' order by $col
 --- in_vars
@@ -446,7 +455,7 @@ value='howdy''!'
 
 
 
-=== TEST 35: default values for vars (columns)
+=== TEST 36: default values for vars (columns)
 --- sql
 select * from $model where col = $value|'val' order by $col|id
 --- in_vars
@@ -458,7 +467,7 @@ model=blah
 
 
 
-=== TEST 36: default values for vars (columns)
+=== TEST 37: default values for vars (columns)
 --- sql
 select * from $model where col = $value|'val' order by $col|id
 --- in_vars
@@ -472,7 +481,7 @@ col=baz
 
 
 
-=== TEST 37: unbound vars in literals
+=== TEST 38: unbound vars in literals
 --- sql
 select * from $model_1, $model_2 where $col = $value and $blah = $val2 | 32
 --- in_vars
@@ -484,7 +493,7 @@ model_1=Cat
 
 
 
-=== TEST 38: keywords in uppercase
+=== TEST 39: keywords in uppercase
 --- sql
 SELECT * FROM shangtest WHERE col='value'
 --- error
@@ -494,7 +503,7 @@ SELECT * FROM shangtest WHERE col='value'
 
 
 
-=== TEST 39: keywords in lower and upper case
+=== TEST 40: keywords in lower and upper case
 --- sql
 sEleCt * frOM shangtest WHerE col='value'
 --- error
@@ -504,7 +513,7 @@ sEleCt * frOM shangtest WHerE col='value'
 
 
 
-=== TEST 40: nude keywords
+=== TEST 41: nude keywords
 --- sql
 select * from from where select='abc'
 --- error
@@ -512,7 +521,7 @@ line 1: error: Unexpected input: "from" (VAR or IDENT expected).
 
 
 
-=== TEST 41: keywords with "
+=== TEST 42: keywords with "
 --- sql
 select * from "from" where "select"='abc'
 --- error
@@ -522,7 +531,7 @@ select * from "from" where "select"='abc'
 
 
 
-=== TEST 42: order by with asc
+=== TEST 43: order by with asc
 --- sql
 select * from blah order by id asc
 --- error
@@ -530,7 +539,7 @@ select * from blah order by id asc
 
 
 
-=== TEST 43: order by with asc/desc
+=== TEST 44: order by with asc/desc
 --- sql
 select * from blah order by id desc, name asc
 --- error
@@ -538,7 +547,7 @@ select * from blah order by id desc, name asc
 
 
 
-=== TEST 44:offset & limit with vars
+=== TEST 45:offset & limit with vars
 --- sql
 select * from blah offset $offset | 0 limit $limit | 32
 --- in_vars
@@ -547,7 +556,7 @@ select * from blah offset $offset | 0 limit $limit | 32
 
 
 
-=== TEST 45: column alias
+=== TEST 46: column alias
 --- sql
 select Post.id as ID from Post
 --- out: select "Post"."id" as ID from "Post"
@@ -556,7 +565,7 @@ select Post.id as ID from Post
 
 
 
-=== TEST 46: union
+=== TEST 47: union
 --- sql
 (select Blah) union ( select Foo where id >= 3 )
 --- out: ( select "Blah" ) union ( select "Foo" where "id" >= 3 )
@@ -565,7 +574,7 @@ select Post.id as ID from Post
 
 
 
-=== TEST 47: intersect
+=== TEST 48: intersect
 --- sql
 ( select Blah ) intersect (select Foo where id >= 3)
 --- out: ( select "Blah" ) intersect ( select "Foo" where "id" >= 3 )
@@ -574,7 +583,7 @@ select Post.id as ID from Post
 
 
 
-=== TEST 48: except
+=== TEST 49: except
 --- sql
 (select Blah) except(  select Foo where id >= 3)
 --- out: ( select "Blah" ) except ( select "Foo" where "id" >= 3 )
@@ -583,7 +592,7 @@ select Post.id as ID from Post
 
 
 
-=== TEST 49: big union
+=== TEST 50: big union
 --- sql
         (select id, title
         from Post
@@ -600,13 +609,13 @@ select Post.id as ID from Post
 
 
 
-=== TEST 50: select literals
+=== TEST 51: select literals
 --- sql: select 0 as id, 'a' as title, 32
 --- out: select 0 as id , $y$a$y$ as title , 32
 
 
 
-=== TEST 51: regression in 19-view.t
+=== TEST 52: regression in 19-view.t
 --- sql: select $select_col from A order by $order_by
 --- in_vars
 select_col=id
@@ -615,13 +624,13 @@ order_by=id
 
 
 
-=== TEST 52: union all
+=== TEST 53: union all
 --- sql: (select 3) union all (select 4)
 --- out: ( select 3 ) union all ( select 4 )
 
 
 
-=== TEST 53: date_part
+=== TEST 54: date_part
 --- sql
 select id, title, date_part('day', created) as day
 from Post
@@ -630,7 +639,7 @@ where date_part('year', created) = 2008
 
 
 
-=== TEST 54: bug
+=== TEST 55: bug
 --- sql
 select count(*)
 from $model
@@ -639,7 +648,7 @@ from $model
 
 
 
-=== TEST 55: like and other operators
+=== TEST 56: like and other operators
 --- sql
 select * from Post where id like '%Hello%'
 --- out: select * from "Post" where "id" like $y$%Hello%$y$
@@ -647,28 +656,28 @@ select * from Post where id like '%Hello%'
 
 
 
-=== TEST 56: random operators
+=== TEST 57: random operators
 --- sql
 select sum(1) as count, sum(3+ 2 * (3 - 5^7)) from Post
 --- out: select sum ( 1 ) as count , sum ( 3 + 2 * ( 3 - 5 ^ 7 ) ) from "Post"
 
 
 
-=== TEST 57: % and /
+=== TEST 58: % and /
 --- sql
 select 32 % (3 ^ (7- 5) / 25 )
 --- out: select 32 % ( 3 ^ ( 7 - 5 ) / 25 )
 
 
 
-=== TEST 58: ||
+=== TEST 59: ||
 --- sql
 select '32' || '56'
 --- out: select $y$32$y$ || $y$56$y$
 
 
 
-=== TEST 59: || in proc calls
+=== TEST 60: || in proc calls
 --- sql
 select date_part('year', created) || date_part('mon' || 'th', created) from Post
 --- out: select date_part ( $y$year$y$ , "created" ) || date_part ( $y$mon$y$ || $y$th$y$ , "created" ) from "Post"
@@ -676,7 +685,7 @@ select date_part('year', created) || date_part('mon' || 'th', created) from Post
 
 
 
-=== TEST 60: || with vars
+=== TEST 61: || with vars
 --- sql
 select * from Post where title like '%' || $keyword || '%'
 --- in_vars
@@ -685,7 +694,7 @@ keyword=Perl
 
 
 
-=== TEST 61: blog archive listing
+=== TEST 62: blog archive listing
 --- sql
     select (date_part('year', created) || '-'
                 || date_part('month', created) || '-01')::date
@@ -700,7 +709,7 @@ keyword=Perl
 
 
 
-=== TEST 62: try to_char
+=== TEST 63: try to_char
 --- sql
     select to_char(created, 'YYYY-MM-01') :: date as year_month,
         sum(1) as count
@@ -713,7 +722,7 @@ keyword=Perl
 
 
 
-=== TEST 63: carrie's view
+=== TEST 64: carrie's view
 --- sql
 select * from yisou_comments_fetch_results($parentid,'',$orderby,$offset,$count,$child_offset,$child_count,$dsc)
 --- in_vars
@@ -722,7 +731,7 @@ offset=0
 
 
 
-=== TEST 64: for @@ operator
+=== TEST 65: for @@ operator
 --- sql
 select * from table where field @@ to_tsquery('chinesecfg', $keyword)
 --- in_vars
@@ -731,7 +740,7 @@ keyword='Hello'
 
 
 
-=== TEST 65: for distinct 
+=== TEST 66: for distinct 
 --- sql
 select distinct ca, cb from table where ca > 0
 --- out: select distinct "ca" , "cb" from "table" where "ca" > 0
