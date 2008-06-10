@@ -236,7 +236,7 @@ t/13-count.t
 t/14-admin.t
 t/15-default.t
 t/16-minisql.t
-t/17-minisql-select.t
+t/17-restyscript-view.t
 t/18-url-params.t
 t/19-view.t
 t/20-role.t
