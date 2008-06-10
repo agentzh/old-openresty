@@ -181,7 +181,7 @@ parseString = do s <- between (char '\'') (char '\'')
           <?> "string"
 
 parseVerbatimString :: Parser RSVal
-parseVerbatimString = do delim <- char '$' >> identifier
+parseVerbatimString = do delim <- char '$' >> option "" identifier
                          char '$'
                          str <- manyTill anyChar (try (char '$' >> string delim >> char '$'))
                          spaces
