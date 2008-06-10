@@ -108,7 +108,7 @@ POST '/=/model/Post/~/~' []
 === TEST 8: POST a simple array
 --- in
 POST
-'/=/model/Post/' || '~/~'
+'/=/model/Post/' || $_$~/~$_$
 [1,2.5,"hi"||'hey']
 --- ast
 Action [HttpCmd "POST" (Concat (String "/=/model/Post/") (String "~/~")) (Array [Integer 1,Float 2.5,Concat (String "hi") (String "hey")])]
@@ -132,12 +132,12 @@ PUT '/=/foo' 32.5
 POST '/=/model/~'
 { "description": "A simple test",
     "columns": [
-        { "name": "name", 'type': 'text'},
+        { "name": $y$name'"\$y$, 'type': 'text'},
         { "name":"created","type":"timestamp (0) with time zone", default: ["now()"] }
     ]
 }
 --- out
-POST '/=/model/~' {'description': 'A simple test', 'columns': [{'name': 'name', 'type': 'text'}, {'name': 'created', 'type': 'timestamp (0) with time zone', 'default': ['now()']}]}
+POST '/=/model/~' {'description': 'A simple test', 'columns': [{'name': 'name''"\\', 'type': 'text'}, {'name': 'created', 'type': 'timestamp (0) with time zone', 'default': ['now()']}]}
 
 
 

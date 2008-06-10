@@ -184,6 +184,8 @@ parseVerbatimString :: Parser RSVal
 parseVerbatimString = do delim <- char '$' >> identifier
                          char '$'
                          str <- manyTill anyChar (try (char '$' >> string delim >> char '$'))
+                         spaces
+                         -- char '$' >> string delim >> char '$'
                          return $ String str
 
 identifier :: Parser String

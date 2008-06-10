@@ -46,10 +46,11 @@ parseLitAtom :: Parser RSVal
 parseLitAtom = parseNumber
            <|> parseString
            <|> parseDString
+           <|> try (parseVerbatimString)
            <|> parseVariable
            <|> parens parseLitExpr
 
--- double quoted strings in the context of HTTP commands
+-- Double quoted strings in the context of HTTP commands
 parseDString :: Parser RSVal
 parseDString = do s <- between (char '"' >> spaces) (char '"' >> spaces)
                         $ many $ quotedChar '"'
