@@ -121,11 +121,11 @@ parseArithAtom = parseNumber
              <|> parens parseExpr
 
 parseBool :: Parser RSVal
-parseBool = (keyword "true" >> return RSTrue)
-        <|> (keyword "false" >> return RSFalse)
+parseBool = (keyword "true" >> spaces >> return RSTrue)
+        <|> (keyword "false" >> spaces >> return RSFalse)
 
 parseNull :: Parser RSVal
-parseNull = keyword "null" >> return Null
+parseNull = keyword "null" >> spaces >> return Null
 
 parseDistinct :: Parser RSVal
 parseDistinct = do
