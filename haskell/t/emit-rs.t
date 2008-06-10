@@ -575,3 +575,11 @@ select $q$$q$;
 --- out
 select ''
 
+
+
+=== TEST 61: $$..$$
+--- in
+select $$$$, $$abc$$;
+--- out
+select '', 'abc'
+
