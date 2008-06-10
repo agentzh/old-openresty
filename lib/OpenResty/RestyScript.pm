@@ -6,6 +6,9 @@ use warnings;
 use FindBin;
 use Carp qw(croak);
 use IPC::Run3;
+use JSON::XS;
+
+my $json = JSON::XS->new->utf8;
 
 my $ExePath = "$FindBin::Bin/../haskell/bin/restyscript";
 
@@ -30,7 +33,7 @@ sub rename {
     my $stdin = $self->{_src};
     run3 [$ExePath, $type, 'rename', $var, $newvar], \$stdin, \$stdout, \$stderr;
     if ($? != 0) {
-        croak ($stderr || "Failed to call \"$ExePath $type rename $var $newvar\": returned status code " . ($? >> 8);
+        croak ($stderr || "Failed to call \"$ExePath $type rename $var $newvar\": returned status code " . ($? >> 8));
     }
     $stdout;
 }
@@ -42,9 +45,10 @@ sub compile {
     my $stdin = $self->{_src};
     run3 [$ExePath, $type, 'frags', 'stats'], \$stdin, \$stdout, \$stderr;
     if ($? != 0) {
-        croak ($stderr || "Failed to call \"$ExePath $type frags stats\": returned status code " . ($? >> 8);
+        croak ($stderr || "Failed to call \"$ExePath $type frags stats\": returned status code " . ($? >> 8));
     }
-    $stdout;
+    my @ln = split /\n/, $stdout;
+    return ($json->decode($ln[0]), $json->decode($ln[1]))
 }
 
 1;
