@@ -16,11 +16,21 @@ run {
     my ($stdout, $stderr);
     my $stdin = $block->in;
     run3 [qw< bin/restyscript view frags >], \$stdin, \$stdout, \$stderr;
-    is $? >> 8, 0, "compiler returns 0 - $desc";
-    warn $stderr if $stderr;
+    if (defined $block->error) {
+        is $? >> 8, 1, "compiler returns 0 - $desc";
+    } else {
+        is $? >> 8, 0, "compiler returns 0 - $desc";
+    }
+    if (defined $block->error && $stderr) {
+        is $stderr, $block->error, "expected error msg - $desc";
+    } elsif ($stderr) {
+        warn $stderr
+    }
     my @ln = split /\n+/, $stdout;
     my $out = $block->out;
-    is "$ln[0]\n", $out, "Pg/SQL output ok - $desc";
+    if (defined $out) {
+        is "$ln[0]\n", $out, "Pg/SQL output ok - $desc";
+    }
 };
 
 __DATA__
@@ -61,7 +71,7 @@ select -(foo), +(bar) from Bah
 --- in
 select -(count(foo)), +(max(id)) from Bah
 --- out
-["select (-\"count\"(\"foo\")) \"max\"(\"id\") from \"Bah\""]
+["select (-\"count\"(\"foo\")), \"max\"(\"id\") from \"Bah\""]
 
 
 
@@ -75,9 +85,9 @@ select -($v), +($v) from vertical
 
 === TEST 7: remove duplicated bracketes
 --- in
-select -((1)), +((no)), -((func(1)))), +(($v))
+select -((1)), +((no)), -((func(1))), +(($v))
 --- out
-["select -1, \"no\", (-\"func\"(1)), ",["v","unknown"]]
+["select (-1), \"no\", (-\"func\"(1)), ",["v","unknown"]]
 
 
 
@@ -85,7 +95,7 @@ select -((1)), +((no)), -((func(1)))), +(($v))
 --- in
 select -$k * 3 / -func(t - -v * +$c)
 --- out
-["select (((-",["k","unknown"],") * 3) / (-\"func\"(\"t\" - (-\"v\" * ",["c","unknown"],"))))"]
+["select (((-",["k","unknown"],") * 3) / (-\"func\"((\"t\" - ((-\"v\") * ",["c","unknown"],")))))"]
 
 
 
@@ -93,7 +103,7 @@ select -$k * 3 / -func(t - -v * +$c)
 --- in
 select -(-v), +(+v)
 --- out
-["select \"v\", \"v\"]
+["select (-(-\"v\")), \"v\""]
 
 
 
@@ -109,7 +119,7 @@ select +(-v), -(+v)
 --- in
 select -32::float8
 --- out
-["select -32::\"float8\""]
+["select (-32::\"float8\")"]
 
 
 
@@ -123,45 +133,57 @@ select -$foo::$bar, +$foo::$bar
 
 === TEST 13: type casting ::
 --- in
+select 21::-$bar
+--- error
+"RestyView" (line 1, column 12):
+unexpected "-"
+expecting white space, number, string, "distinct", "all", "$", identifier entry, column or "("
+
+
+
+=== TEST 14: type casting ::
+--- in
+select 21::-float8
+--- error
+"RestyView" (line 1, column 12):
+unexpected "-"
+expecting white space, number, string, "distinct", "all", "$", identifier entry, column or "("
+
+
+
+=== TEST 15: type casting ::
+--- in
+select 21::+$bar
+--- error
+"RestyView" (line 1, column 12):
+unexpected "+"
+expecting white space, number, string, "distinct", "all", "$", identifier entry, column or "("
+
+
+
+=== TEST 16: type casting ::
+--- in
+select 21::+float8
+--- error
+"RestyView" (line 1, column 12):
+unexpected "+"
+expecting white space, number, string, "distinct", "all", "$", identifier entry, column or "("
+
+
+
+=== TEST 17: type casting ::
+--- in
 select -$foo::float8, +$foo::float8
 --- out
 ["select (-",["foo","unknown"],"::\"float8\"), ",["foo","unknown"],"::\"float8\""]
 
 
 
-=== TEST 14: type casting ::
---- in
-select 21::-$bar
---- out
-
-
-
-=== TEST 15: type casting ::
---- in
-select 21::-float8
---- out
-
-
-
-=== TEST 16: type casting ::
---- in
-select 21::+$bar
---- out
-
-
-
-=== TEST 17: type casting ::
---- in
-select 21::+float8
---- out
-
-
-
-=== TEST 18: type casting :: 
+=== TEST 18: type casting ::
 --- in
 select ('2003-03' || '-01' || -$foo) :: date
 --- out
-["select (('2003-03' || '-01') || (-",["foo",unknown],")) :: date"]
+["select (('2003-03' || '-01') || (-",["foo","unknown"],"))::\"date\""]
 
 
 
@@ -169,7 +191,7 @@ select ('2003-03' || '-01' || -$foo) :: date
 --- in
 select ('2003-03' || '-01' || +$foo) :: date
 --- out
-["select (('2003-03' || '-01') || ",["foo",unknown],") :: date"]
+["select (('2003-03' || '-01') || ",["foo","unknown"],")::\"date\""]
 
 
 
@@ -185,7 +207,7 @@ select id from Post where -a > +b
 --- in
 select id from Post where -00.003 > +3.14 or -3. > +.0 or +3 > -1
 --- out
-["select \"id\" from \"Post\" where ((-0.003 > 3.14 or -3.0 > 0.0) or 3 > -1)"]
+["select \"id\" from \"Post\" where (((-0.003) > 3.14 or (-3.0) > 0.0) or 3 > (-1))"]
 
 
 
@@ -208,7 +230,10 @@ select +$table.col from $table
 === TEST 24: var in qualified col
 --- in
 select $table.-$col from $table
---- out
+--- error
+"RestyView" (line 1, column 15):
+unexpected "-"
+expecting white space or identifier entry
 
 
 
@@ -234,3 +259,4 @@ from Post
 select * from test where not a > b or not (b < c) and (not c) = true
 --- out
 ["select * from \"test\" where ((not \"a\" > \"b\") or ((not \"b\" < \"c\") and (not \"c\") = true))"]
+

@@ -577,7 +577,7 @@ select ''
 
 
 
-=== TEST 61: $$..$$
+=== TEST 62: $$..$$
 --- in
 select $$$$, $$abc$$;
 --- out
