@@ -583,3 +583,11 @@ select $$$$, $$abc$$;
 --- out
 select '', 'abc'
 
+
+
+=== TEST 63: true and false and null
+--- in
+select true, false, null
+--- out
+select true, false, null
+

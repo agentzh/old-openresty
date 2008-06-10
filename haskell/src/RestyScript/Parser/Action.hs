@@ -31,7 +31,7 @@ parseHttp :: Parser RSVal
 parseHttp = do cmd <- msum $ map keyword httpCmds
                spaces
                url <- parseLitExpr
-               content <- option Null parseJSON
+               content <- option Empty parseJSON
                return $ HttpCmd cmd url content
 
 litOpTable = [
@@ -98,7 +98,7 @@ parseUpdate :: Parser RSVal
 parseUpdate = do keyword "update" >> spaces
                  model <- parseModel
                  assign <- keyword "set" >> spaces >> parseAssign
-                 cond <- option Null parseWhere
+                 cond <- option Empty parseWhere
                  return $ Update model assign cond
           <?> "SQL update statement"
 

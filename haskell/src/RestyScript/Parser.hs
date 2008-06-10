@@ -108,6 +108,8 @@ opSep op = string op >> spaces
 parseArithAtom :: Parser RSVal
 parseArithAtom = parseNumber
              <|> parseString
+             <|> parseBool
+             <|> parseNull
              <|> parseDistinct
              <|> try (parseVerbatimString)
              <|> try (do {
@@ -117,6 +119,13 @@ parseArithAtom = parseNumber
              <|> try (parseFuncCall)
              <|> parseColumn
              <|> parens parseExpr
+
+parseBool :: Parser RSVal
+parseBool = (keyword "true" >> return RSTrue)
+        <|> (keyword "false" >> return RSFalse)
+
+parseNull :: Parser RSVal
+parseNull = keyword "null" >> return Null
 
 parseDistinct :: Parser RSVal
 parseDistinct = do
@@ -196,9 +205,9 @@ identifier = do c <- letter <|> char '_'
 parseColumn :: Parser RSVal
 parseColumn = do a <- parseIdent
                  spaces
-                 b <- option Null (char '.' >> spaces >> parseIdent)
+                 b <- option Empty (char '.' >> spaces >> parseIdent)
                  return $ case b of
-                    Null -> Column a
+                    Empty -> Column a
                     otherwise -> QualifiedColumn a b
           <?> "column"
 

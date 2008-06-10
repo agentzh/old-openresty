@@ -22,6 +22,7 @@ run {
         is $? >> 8, 0, "compiler returns 0 - $desc";
     }
     if (defined $block->error && $stderr) {
+        $stderr =~ s/^expecting .*\n//ms;
         is $stderr, $block->error, "expected error msg - $desc";
     } elsif ($stderr) {
         warn $stderr
@@ -137,7 +138,6 @@ select 21::-$bar
 --- error
 "RestyView" (line 1, column 12):
 unexpected "-"
-expecting white space, number, string, "distinct", "all", "$", identifier entry, column or "("
 
 
 
@@ -147,7 +147,6 @@ select 21::-float8
 --- error
 "RestyView" (line 1, column 12):
 unexpected "-"
-expecting white space, number, string, "distinct", "all", "$", identifier entry, column or "("
 
 
 
@@ -157,7 +156,6 @@ select 21::+$bar
 --- error
 "RestyView" (line 1, column 12):
 unexpected "+"
-expecting white space, number, string, "distinct", "all", "$", identifier entry, column or "("
 
 
 
@@ -167,7 +165,6 @@ select 21::+float8
 --- error
 "RestyView" (line 1, column 12):
 unexpected "+"
-expecting white space, number, string, "distinct", "all", "$", identifier entry, column or "("
 
 
 
@@ -233,7 +230,6 @@ select $table.-$col from $table
 --- error
 "RestyView" (line 1, column 15):
 unexpected "-"
-expecting white space or identifier entry
 
 
 
