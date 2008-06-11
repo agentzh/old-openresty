@@ -55,6 +55,7 @@ emit node = case node of
     Delete model cond -> "delete from " ~~ emit model ~~ " " ~~ emit cond
     Update model assign cond -> "update " ~~ emit model ~~ " set " ~~ emit assign ~~ " " ~~ emit cond
     Assign col expr -> emit col ~~ " = " ~~ emit expr
+    HttpCmd meth url Empty -> bs meth ~~ " " ~~ emit url
     HttpCmd meth url content -> bs meth ~~ " " ~~ emit url ~~ " " ~~ emit content
     Object ps -> "{" ~~ join ", " ps  ~~ "}"
     Array xs -> "[" ~~ join ", " xs  ~~ "]"
