@@ -172,9 +172,10 @@ DELETE '/=/role'
 --- ast
 Action [HttpCmd "DELETE" (String "/=/model") Empty,HttpCmd "DELETE" (String "/=/view") Empty,HttpCmd "DELETE" (String "/=/role") Empty]
 --- out
-DELETE '/=/model' ;
-DELETE '/=/view' ;
+DELETE '/=/model';
+DELETE '/=/view';
 DELETE '/=/role'
+
 
 
 === TEST 13: invalid input
@@ -190,7 +191,7 @@ unexpected "a"
 --- in
 GET '/=/version'; select 1; select 2; DELETE '/=/model'
 --- out
-GET '/=/version' ;
+GET '/=/version';
 select 1;
 select 2;
 DELETE '/=/model'
