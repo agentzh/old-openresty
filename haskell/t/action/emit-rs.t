@@ -184,3 +184,14 @@ DELETE '/=/role'
 "action" (line 1, column 2):
 unexpected "a"
 
+
+
+=== TEST 14: select & select
+--- in
+GET '/=/version'; select 1; select 2; DELETE '/=/model'
+--- out
+GET '/=/version' ;
+select 1;
+select 2;
+DELETE '/=/model'
+

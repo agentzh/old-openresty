@@ -9,11 +9,14 @@ import Text.ParserCombinators.Parsec.Expr
 import Monad (liftM)
 
 readView :: String -> String -> Either ParseError RSVal
-readView = parse parseView
+readView = parse (do {
+    ast <- parseView;
+    many (string ";" >> spaces) >> eof;
+    return ast })
 
 parseView :: Parser RSVal
 parseView = do ast <- (spaces >> parseSetExpr)
-               spaces >> many (string ";" >> spaces) >> eof
+               spaces
                return ast
 
 parseSetExpr :: Parser RSVal
