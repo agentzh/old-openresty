@@ -147,3 +147,12 @@ select -$foo, +$foo where not $foo > 3
 --- out
 select -$bar, +$bar where not $bar > 3
 
+
+
+=== TEST 13: verbatim quotes' noises
+--- in
+select $foo , $foo$hello$foo$ from Post
+--- rename: foo bar
+--- out
+select $bar , $foo$hello$foo$ from Post
+

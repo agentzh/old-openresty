@@ -14,8 +14,18 @@ run {
     my ($stdout, $stderr);
     my $stdin = $block->in;
     run3 [qw< bin/restyscript view ast rs >], \$stdin, \$stdout, \$stderr;
-    is $? >> 8, 0, "compiler returns 0 - $desc";
-    warn $stderr if $stderr;
+    if (defined $block->error) {
+        is $? >> 8, 1, "compiler returns 0 - $desc";
+    } else {
+        is $? >> 8, 0, "compiler returns 0 - $desc";
+    }
+    if (defined $block->error && $stderr) {
+        $stderr =~ s/^expecting .*\n//ms;
+        is $stderr, $block->error, "expected error msg - $desc";
+        return;
+    } elsif ($stderr) {
+        warn $stderr
+    }
     my @ln = split /\n+/, $stdout;
     my $ast = $block->ast;
     if (defined $ast) {
@@ -618,4 +628,21 @@ select * from "Post" where (true and false)
 select * from table where field @@ to_tsquery('chinesecfg', $keyword)
 --- out
 select * from "table" where "field" @@ "to_tsquery"('chinesecfg', $keyword)
+
+
+
+=== TEST 67: Test potential ambiguity between variables and verbatim quotes (the wrong way)
+--- in
+select $foo , $foo$hello$foo from Post
+--- error
+"view" (line 1, column 19):
+unexpected "$"
+
+
+
+=== TEST 68: Test potential ambiguity between variables and verbatim quotes (the right way)
+--- in
+select $foo , $foo$hello$foo$ from Post
+--- out
+select $foo, 'hello' from "Post"
 
