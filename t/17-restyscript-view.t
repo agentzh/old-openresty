@@ -2,7 +2,21 @@
 
 # Tests for the OpenResty::RestyScript module.
 
-use Test::Base;
+my $skip;
+my $ExePath;
+BEGIN {
+    use FindBin;
+    $ExePath = "$FindBin::Bin/../haskell/bin/restyscript";
+    if (!-f $ExePath) {
+        $skip = "$ExePath is not found.\n";
+        return;
+    }
+    if (!-x $ExePath) {
+        $skip = "$ExePath is not an executable.\n";
+        return;
+    }
+};
+use Test::Base $skip ? (skip_all => $skip) : ();
 
 #use Smart::Comments;
 use lib 'lib';
