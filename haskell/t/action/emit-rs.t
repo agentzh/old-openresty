@@ -14,8 +14,18 @@ run {
     my ($stdout, $stderr);
     my $stdin = $block->in;
     run3 [qw< bin/restyscript action ast rs >], \$stdin, \$stdout, \$stderr;
-    is $? >> 8, 0, "compiler returns 0 - $desc";
-    warn $stderr if $stderr;
+    if (defined $block->error) {
+        is $? >> 8, 1, "compiler returns 0 - $desc";
+    } else {
+        is $? >> 8, 0, "compiler returns 0 - $desc";
+    }
+    if (defined $block->error && $stderr) {
+        $stderr =~ s/^expecting .*\n//ms;
+        is $stderr, $block->error, "expected error msg - $desc";
+        return;
+    } elsif ($stderr) {
+        warn $stderr
+    }
     my @ln = split /\n+/, $stdout;
     my $ast = $block->ast;
     if (defined $ast) {
@@ -165,4 +175,12 @@ Action [HttpCmd "DELETE" (String "/=/model") Empty,HttpCmd "DELETE" (String "/=/
 DELETE '/=/model' ;
 DELETE '/=/view' ;
 DELETE '/=/role'
+
+
+=== TEST 13: invalid input
+--- in
+ abc
+--- error
+"action" (line 1, column 2):
+unexpected "a"
 
