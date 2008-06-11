@@ -23,7 +23,7 @@ parseStmt = parseDelete
         <|> parseUpdate
         <|> parseHttp
         <|> parseView
-        <?> "RestyAction statement"
+        <?> "action statement"
 
 httpCmds = ["GET", "PUT", "DELETE", "POST"]
 
