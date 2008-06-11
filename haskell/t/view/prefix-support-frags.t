@@ -136,7 +136,7 @@ select -$foo::$bar, +$foo::$bar
 --- in
 select 21::-$bar
 --- error
-"RestyView" (line 1, column 12):
+"view" (line 1, column 12):
 unexpected "-"
 
 
@@ -145,7 +145,7 @@ unexpected "-"
 --- in
 select 21::-float8
 --- error
-"RestyView" (line 1, column 12):
+"view" (line 1, column 12):
 unexpected "-"
 
 
@@ -154,7 +154,7 @@ unexpected "-"
 --- in
 select 21::+$bar
 --- error
-"RestyView" (line 1, column 12):
+"view" (line 1, column 12):
 unexpected "+"
 
 
@@ -163,7 +163,7 @@ unexpected "+"
 --- in
 select 21::+float8
 --- error
-"RestyView" (line 1, column 12):
+"view" (line 1, column 12):
 unexpected "+"
 
 
@@ -228,7 +228,7 @@ select +$table.col from $table
 --- in
 select $table.-$col from $table
 --- error
-"RestyView" (line 1, column 15):
+"view" (line 1, column 15):
 unexpected "-"
 
 

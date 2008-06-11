@@ -19,7 +19,7 @@ run {
     my @ln = split /\n+/, $stdout;
     my $ast = $block->ast;
     if (defined $ast) {
-        $ln[0] =~ s/"RestyView" \(line (\d+), column (\d+)\)/($1,$2)/gs;
+        $ln[0] =~ s/"view" \(line (\d+), column (\d+)\)/($1,$2)/gs;
         is "$ln[0]\n", $ast, "AST ok - $desc";
     }
     my $out = $block->out;

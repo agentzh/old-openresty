@@ -33,11 +33,11 @@ processArgs args =
         args' = tail args
     in case category of
         "view" -> do input <- hGetContents stdin
-                     case readView "RestyView" input of
+                     case readView category input of
                         Left err -> die (show err)
                         Right ast -> processCmds args' input ast
         "action" -> do input <- hGetContents stdin
-                       case readAction "RestyAction" input of
+                       case readAction category input of
                             Left err -> die (show err)
                             Right ast -> processCmds args' input ast
         otherwise -> die $ "Unknown category: " ++ category ++
