@@ -148,7 +148,7 @@ select * from Carrie;
 --- sql
 select * from Carrie blah
 --- error
-"RestyView" (line 1, column 22):
+"view" (line 1, column 22):
 unexpected "b"
 
 
@@ -159,7 +159,7 @@ select *
 from Carrie
 where
 --- error
-"RestyView" (line 4, column 1):
+"view" (line 4, column 1):
 unexpected end of input
 
 
@@ -195,7 +195,7 @@ from People, Blah
 where name='zhxj';
 group by name
 --- error
-"RestyView" (line 4, column 1):
+"view" (line 4, column 1):
 unexpected "g"
 
 
@@ -238,7 +238,7 @@ select *
 from blah
 where name = ''''Hi' or age <= 3;
 --- error
-"RestyView" (line 3, column 18):
+"view" (line 3, column 18):
 unexpected "H"
 
 
@@ -271,7 +271,7 @@ select *
 from blah
 where name = '\'' and #@!##$@ --' or age <= 3;
 --- error
-"RestyView" (line 3, column 23):
+"view" (line 3, column 23):
 unexpected "#"
 
 
@@ -293,7 +293,7 @@ select *
 from blah
 where name = $q$Laser's gift...$q$ update nhehe $q$ and age > 3;
 --- error
-"RestyView" (line 3, column 36):
+"view" (line 3, column 36):
 unexpected "u"
 
 
@@ -490,7 +490,7 @@ select * from blah order by id desc, name asc
 select * from blah offset $offset | 0 limit $limit | 32
 --- in_vars
 --- error
-"RestyView" (line 1, column 35):
+"view" (line 1, column 35):
 unexpected "|"
 
 
