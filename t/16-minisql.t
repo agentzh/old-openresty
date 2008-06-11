@@ -74,34 +74,35 @@ hello=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"
 
 
 
-=== TEST 8: use minisql to find record
+=== TEST 8: The .Select action is now disallowed
 --- request
 POST /=/action/.Select/lang/minisql
+"select * from Carrie where title = 'hello carrie' and num=10;"
+--- response
+{"error":"Action not found: .Select","success":0}
+
+
+
+=== TEST 9: use minisql to find record
+--- request
+POST /=/action/RunView/~/~
 "select * from Carrie where title = 'hello carrie' and num=10;"
 --- response
 [{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}]
 
 
 
-=== TEST 9: use minisql through GET & .Select
+=== TEST 10: use minisql through GET & .Select
 --- request
-GET /=/post/action/.Select/lang/minisql?var=foo&data="select * from Carrie where url = 'http://www.carriezh.cn/' and num=10"
+GET /=/post/action/RunView/~/~?var=foo&data="select * from Carrie where url = 'http://www.carriezh.cn/' and num=10"
 --- response
 foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
 
 
 
-=== TEST 10: test for offset & count
+=== TEST 11: test for offset & count
 --- request
-GET /=/post/action/.Select/lang/minisql?var=foo&offset=0&count=1&data="select * from Carrie"
---- response
-foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
-
-
-
-=== TEST 11: OFFSET & limit in minisql
---- request
-GET /=/post/action/.Select/lang/minisql?var=foo&data="select * from Carrie limit 1 offset 0"
+GET /=/post/action/RunView/~/~?var=foo&data="select * from Carrie offset 0 limit 1"
 --- response
 foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
 
@@ -109,35 +110,52 @@ foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"
 
 === TEST 12: OFFSET & limit in minisql
 --- request
-POST /=/action/.Select/lang/minisql?var=foo
+GET /=/post/action/RunView/~/~?var=foo&data="select * from Carrie limit 1 offset 0"
+--- response
+foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
+
+
+
+=== TEST 13: OFFSET & limit in minisql
+--- request
+POST /=/action/RunView/~/~?var=foo
 "select * from Carrie limit 1 offset 1"
 --- response
 foo=[{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}];
 
 
 
-=== TEST 13: Try to reference meta models
+=== TEST 14: Try to reference meta models
 --- request
-POST /=/action/.Select/lang/minisql?var=foo
+POST /=/action/RunView/~/~?var=foo
 "select * from _models limit 1 offset 1"
 --- response
-foo={"success":0,"error":"line 1: error: Unexpected input: \"_\" (VAR or IDENT expected)."};
+foo={"error":"\"view\" (line 1, column 15):\nunexpected \"_\"\nexpecting space or model","success":0};
 
 
 
-=== TEST 14: Reference nonexistent models
+=== TEST 15: Reference nonexistent models
 --- request
-POST /=/action/.Select/lang/minisql
+POST /=/action/RunView/~/~
 "select * from BlahBlah limit 1 offset 1"
 --- response
 {"success":0,"error":"Model \"BlahBlah\" not found."}
 
 
 
-=== TEST 15: Empty miniSQL string
+=== TEST 16: Empty miniSQL string
 --- request
-POST /=/action/.Select/lang/minisql
+POST /=/action/RunView/~/~
 ""
 --- response
-{"success":0,"error":"miniSQL must be an non-empty literal string: \"\""}
+{"error":"Restyscript source must be an non-empty literal string: \"\"","success":0}
+
+
+
+=== TEST 17: Empty miniSQL string
+--- request
+POST /=/action/RunView/~/~
+["abc"]
+--- response
+{"error":"Restyscript source must be an non-empty literal string: [\"abc\"]","success":0}
 

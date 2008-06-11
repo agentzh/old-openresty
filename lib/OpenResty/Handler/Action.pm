@@ -6,7 +6,7 @@ use warnings;
 
 use OpenResty::Util;
 use Params::Util qw( _HASH _STRING );
-use OpenResty::RestyScript::View;
+use OpenResty::RestyScript;
 
 sub POST_action_exec {
     my ($self, $openresty, $bits) = @_;
@@ -14,37 +14,43 @@ sub POST_action_exec {
     my $params = {
         $bits->[2] => $bits->[3]
     };
-    my $lang = $params->{lang};
-    if (!defined $lang) {
-        die "The 'lang' param is required in the Select action.\n";
+    if ($action eq 'RunView') {
+        return $self->run_view($openresty);
     }
-    if (lc($lang) ne 'minisql') {
-        die "Only the miniSQL language is supported for Select.\n";
-    }
+
+    die "Action not found: $action\n";
+}
+
+sub run_view {
+    my ($self, $openresty) = @_;
+
     my $sql = $openresty->{_req_data};
     ### Action sql: $sql
+    if (length $sql > 5_000) { # more than 10 KB
+        die "SQL input too large (must be under 5 KB)\n";
+    }
 
     _STRING($sql) or
-        die "miniSQL must be an non-empty literal string: ", $OpenResty::Dumper->($sql), "\n";
+        die "Restyscript source must be an non-empty literal string: ", $OpenResty::Dumper->($sql), "\n";
    #warn "SQL 1: $sql\n";
-    my $select = OpenResty::RestyScript::View->new;
-    my $res = $select->parse(
-        $sql,
-        {
-            quote => \&Q, quote_ident => \&QI,
-            limit => $openresty->{_limit}, offset => $openresty->{_offset}
+
+    my $view = OpenResty::RestyScript->new('view', $sql);
+    my ($frags, $stats) = $view->compile;
+    ### $frags
+    ### $stats
+    if (!$frags && !$stats) { die "Failed to invoke RunView\n" }
+
+    for my $frag (@$frags) {
+        if (ref $frag) {
+            die "Variables not allowed in the input to runView: $frag->[0]\n";
         }
-    );
-    if (_HASH($res)) {
-        my $sql = $res->{sql};
-        $sql = $self->append_limit_offset($openresty, $sql, $res);
-        my @models = @{ $res->{models} };
-        my @cols = @{ $res->{columns} };
-        $self->validate_model_names($openresty, \@models);
-        $self->validate_col_names($openresty, \@models, \@cols);
-       #warn "SQL 2: $sql\n";
-        $openresty->select("$sql", {use_hash => 1, read_only => 1});
     }
+
+    my @models = @{ $stats->{modelList} };
+    $self->validate_model_names($openresty, \@models);
+    my $pg_sql = $frags->[0];
+
+    $openresty->select($pg_sql, {use_hash => 1, read_only => 1});
 }
 
 sub append_limit_offset {
@@ -71,11 +77,6 @@ sub validate_model_names {
             die "Model \"$model\" not found.\n";
         }
     }
-}
-
-sub validate_col_names {
-    my ($self, $openresty, $models, $cols) = @_;
-    # XXX TODO...
 }
 
 1;

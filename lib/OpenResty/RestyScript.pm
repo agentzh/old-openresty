@@ -3,9 +3,10 @@ package OpenResty::RestyScript;
 use strict;
 use warnings;
 
+#use Smart::Comments;
 use FindBin;
 use Carp qw(croak);
-use IPC::Run3;
+use IPC::Run qw(run timeout);
 use JSON::XS;
 
 my $json = JSON::XS->new->utf8;
@@ -31,10 +32,9 @@ sub rename {
     my ($stdout, $stderr);
     my $type = $self->{_type};
     my $stdin = $self->{_src};
-    run3 [$ExePath, $type, 'rename', $var, $newvar], \$stdin, \$stdout, \$stderr;
-    if ($? != 0) {
-        die ($stderr || "Failed to call \"$ExePath $type rename $var $newvar\": returned status code " . ($? >> 8) . "\n");
-    }
+    run [$ExePath, $type, 'rename', $var, $newvar], \$stdin, \$stdout, \$stderr, timeout(1) or
+        die $stderr || "Failed to call \"$ExePath $type rename $var $newvar\": returned status code " . ($? >> 8) . "\n";
+
     $stdout;
 }
 
@@ -43,10 +43,11 @@ sub compile {
     my ($stdout, $stderr);
     my $type = $self->{_type};
     my $stdin = $self->{_src};
-    run3 [$ExePath, $type, 'frags', 'stats'], \$stdin, \$stdout, \$stderr;
-    if ($? != 0) {
-        die ($stderr || "Failed to call \"$ExePath $type frags stats\": returned status code " . ($? >> 8) . "\n");
-    }
+    ### $stdin
+    run [$ExePath, $type, 'frags', 'stats'], \$stdin, \$stdout, \$stderr, timeout(1) or
+        die $stderr || "Failed to call \"$ExePath $type fargs stats\" returned status code " . ($? >> 8) . "\n";
+
+    ### $stdout
     my @ln = split /\n/, $stdout;
     return ($json->decode($ln[0]), $json->decode($ln[1]))
 }

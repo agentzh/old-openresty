@@ -46,6 +46,8 @@ requires            ('Digest::MD5');
 requires			('Crypt::CBC');
 requires			('Crypt::Rijndael');
 requires                        ('MIME::Base64');
+requires                        ('IPC::Run3');
+requires                        ('IPC::Run');
 
 recommends          ('Benchmark::Timer');
 recommends          ('HTTP::Server::Simple' => '0.27');
