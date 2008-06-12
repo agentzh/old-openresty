@@ -1,6 +1,6 @@
 # vi:filetype=
 
-# Tests for the OpenResty::RestyScript module.
+# Tests for the OpenResty::RestyScript module. (View part)
 
 my $skip;
 my $ExePath;
