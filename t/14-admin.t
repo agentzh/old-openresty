@@ -1,5 +1,8 @@
 # vi:filetype=
 
+# The Admin API is a just hack,
+# which will be removed once the Action API is implemented.
+
 use t::OpenResty;
 
 plan tests => 3 * blocks();
@@ -135,7 +138,7 @@ GRANT SELECT ON TABLE _books to anonymous;"
 
 === TEST 12: select proc
 --- request
-GET /=/post/action/.Select/lang/minisql?data="select hello_world0(1,0)"
+GET /=/post/action/RunView/~/~?data="select hello_world0(1,0)"
 --- response
 [{"hello_world0":"(1,\"Larry Wall\",2)"}]
 
@@ -164,7 +167,7 @@ GRANT SELECT ON TABLE _books2 to anonymous;"
 
 === TEST 14: select * from proc() as ....
 --- request
-GET /=/post/action/.Select/lang/minisql?var=sss&data="select * from hello_world4(1,0)"
+GET /=/post/action/RunView/~/~?var=sss&data="select * from hello_world4(1,0)"
 --- response
 sss=[];
 
