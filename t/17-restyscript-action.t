@@ -18,7 +18,7 @@ BEGIN {
 };
 use Test::Base $skip ? (skip_all => $skip) : ();
 
-#use Smart::Comments;
+use Smart::Comments;
 use lib 'lib';
 use OpenResty::RestyScript;
 
@@ -54,7 +54,7 @@ run {
     }
 
     my $sql = $block->sql or die "$name - No --- sql section found.\n";
-    my $view = OpenResty::RestyScript->new('view', $sql);
+    my $view = OpenResty::RestyScript->new('action', $sql);
     my ($frags, $stats);
     eval {
         ($frags, $stats) = $view->compile;
@@ -93,31 +93,44 @@ run {
         is join(' ', @models), $block->models, "$name - model list ok";
     }
 
-    my @bits;
-    for my $frag (@$frags) {
-        if (ref $frag) {  # being a variable
-            my ($var, $type) = @$frag;
-            my $quote = $type eq 'symbol' ? \&quote_ident : \&quote;
-            push @vars, $var;
-            if (!defined $in_vars{$var}) {
-                push @unbound, $var;
-                push @bits, $quote->('');
-            } else {
-                push @bits, $quote->($in_vars{$var});
+    my @out_cmds;
+    my $cmds = $frags;
+    for my $cmd (@$cmds) {
+        croak "Invalid command: ", Dumper($cmd) unless ref $cmd;
+        if (@$cmd == 1 and ref $cmd->[0]) {   # being a SQL command
+            my $cmd = $cmd->[0];
+            ### $cmd
+
+            my @bits;
+            for my $frag (@$cmd) {
+                if (ref $frag) {  # being a variable
+                    my ($var, $type) = @$frag;
+                    my $quote = $type eq 'symbol' ? \&quote_ident : \&quote;
+                    push @vars, $var;
+                    if (!defined $in_vars{$var}) {
+                        push @unbound, $var;
+                        push @bits, $quote->('');
+                    } else {
+                        push @bits, $quote->($in_vars{$var});
+                    }
+                } else {
+                    push @bits, $frag;
+                }
             }
-        } else {
-            push @bits, $frag;
+            push @out_cmds, @bits ? (join '', @bits) : '';
+        } else { # being an HTTP command
+            ### HTTP cmd: $cmd
         }
     }
 
-    my $pgsql = @bits ? (join '', @bits) : '';
+    my $out = @out_cmds ? (join "\n", @out_cmds) : '';
     my $ex_cols = $block->cols;
     if (defined $ex_cols) {
         is join(' ', @cols), $block->cols, "$name - model cols ok";
     }
     if (defined $block->out) {
         (my $expected = $block->out) =~ s/\n$//g;
-        is $pgsql, $expected, "$name - sql emittion ok";
+        is $out, $expected, "$name - sql emittion ok";
     }
     my $ex_vars = $block->vars;
     if (defined $ex_vars) {
@@ -133,10 +146,14 @@ __DATA__
 
 === TEST 1: Simple
 --- sql
-select * from Carrie
+select * from
+    Carrie; select * from Post
 --- error
---- models: Carrie
---- out: select * from "Carrie"
+--- models: Carrie Post
+--- out
+select * from "Carrie"
+select * from "Post"
+--- LAST
 
 
 
