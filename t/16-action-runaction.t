@@ -232,3 +232,14 @@ GET /=/model/Carrie/~/~
 --- response
 [{"num":"8","url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
 
+
+
+=== TEST 25: Insert some more data via actions
+--- request
+POST /=/action/RunAction/~/~
+"POST '/=/model/Carrie' || '/~/~'
+[{num: 5, url: 'yahoo.cn', title: 'Yahoo'},
+{'num': 6, url: 'google' || '.com', \"title\": 'Google'}]"
+--- response
+[{"success":1,"rows_affected":2,"last_row":"/=/model/Carrie/id/4"}]
+
