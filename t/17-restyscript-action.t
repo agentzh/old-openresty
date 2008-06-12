@@ -140,6 +140,10 @@ run {
         } else { # being an HTTP command
             ### HTTP cmd: $cmd
             my ($http_meth, $url, $content) = @$cmd;
+            if ($http_meth ne 'POST' and $http_meth ne 'PUT' and $content) {
+                die "Content part not allowed for $http_meth\n";
+            }
+
             my @bits = "$http_meth ";
             for my $frag (@$url) {
                 if (ref $frag) { # being a variable
@@ -155,9 +159,6 @@ run {
                 } else {
                     push @bits, $frag;
                 }
-            }
-            if ($http_meth ne 'POST' and $http_meth ne 'PUT' and $content) {
-                die "Content part not allowed for $http_meth\n";
             }
             push @bits, ' ';
             for my $frag (@$content) {
