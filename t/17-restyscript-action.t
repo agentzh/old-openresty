@@ -27,6 +27,8 @@ use OpenResty::RestyScript;
 
 plan 'no_plan';
 
+# For Action handler, we should use DBI's quote and quote_ident respectively. The version below is just for the testing purpose.
+
 sub quote {
     my $s = shift;
     if (!defined $s) { $s = '' }
