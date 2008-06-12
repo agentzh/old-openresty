@@ -103,8 +103,13 @@ run {
         is join(' ', @models), $block->models, "$name - model list ok";
     }
 
+    # XXX FIX ME
+    # for the real action handler, we need to do typechecking in a
+    # separate pass. Below is merely a hack regarding type inferencing
+
     my @out_cmds;
     my $cmds = $frags;
+
     for my $cmd (@$cmds) {
         croak "Invalid command: ", Dumper($cmd) unless ref $cmd;
         if (@$cmd == 1 and ref $cmd->[0]) {   # being a SQL command
@@ -152,15 +157,28 @@ run {
             if ($http_meth ne 'POST' and $http_meth ne 'PUT' and $content) {
                 die "Content part not allowed for $http_meth\n";
             }
+            push @bits, ' ';
             for my $frag (@$content) {
-                # XXX
+                if (ref $frag) { # being a variable
+                    my ($var, $type) = @$frag; # type could only be literal or quoted here
+                    my $quote = $type eq 'quoted' ? \&quote_only : \&quote_ident;
+                    push @vars, $var;
+                    if (!defined $in_vars{$var}) {
+                        push @unbound, $var;
+                        push @bits, $quote->('');
+                    } else {
+                        push @bits, $quote->($in_vars{$var});
+                    }
+                } else {
+                    push @bits, $frag;
+                }
             }
             push @out_cmds, @bits ? (join '', @bits) : '';
         }
     }
 
     my $out = @out_cmds ? (join "\n", @out_cmds) : '';
-    $out =~ s/\s+$/\n/gsm;
+    $out =~ s/\s+$//gsm;
     $out =~ s/\n$//g;
     ### $out
     if (defined $block->out) {
@@ -292,7 +310,6 @@ GET ( '/=/'||$foo) || $foo
 foo=version/
 --- out
 GET /=/version/version/
---- LAST
 
 
 
@@ -300,7 +317,7 @@ GET /=/version/version/
 --- sql
 GET ( '/=/'|| 'ver') || 'sion'
 --- out
-[["GET",["/=/version"]]]
+GET /=/version
 
 
 
@@ -308,30 +325,47 @@ GET ( '/=/'|| 'ver') || 'sion'
 --- sql
 POST '/=/model/Post/~/~' || $foo
 { $foo: "hello" || $foo }
+--- in_vars
+foo=
 --- out
-[["POST",["/=/model/Post/~/~",["foo","quoted"]],["{\"",["foo","quoted"],"\": \"hello",["foo","quoted"],"\"}"]]]
+POST /=/model/Post/~/~ {"": "hello"}
 
 
 
-=== TEST 13: POST a simple array
+=== TEST 13: simple POST (nonempty foo)
+--- sql
+POST '/=/model/Post/~/~' || $foo
+{ $foo: "hello" || $foo }
+--- in_vars
+foo=.json
+--- out
+POST /=/model/Post/~/~.json {".json": "hello.json"}
+
+
+
+=== TEST 14: POST a simple array
 --- sql
 POST
 '/=/model/Post/' || '~/~'
 [1,$foo,2.5,"hi"||$foo]
+--- in_vars
+foo=, world
 --- out
-[["POST",["/=/model/Post/~/~"],["[1, ",["foo","literal"],", 2.5, \"hi",["foo","quoted"],"\"]"]]]
+POST /=/model/Post/~/~ [1, ", world", 2.5, "hi, world"]
 
 
 
-=== TEST 14: PUT a literal
+=== TEST 15: PUT a literal
 --- sql
 PUT '/=/foo' $foo
+--- vars: foo
+--- models:
 --- out
-[["PUT",["/=/foo"],[["foo","literal"]]]]
+PUT /=/foo ""
 
 
 
-=== TEST 15: PUT a hash of lists of hashes
+=== TEST 16: PUT a hash of lists of hashes
 --- sql
 POST '/=/model/~'
 { "description": $type,
@@ -340,28 +374,44 @@ POST '/=/model/~'
         { "name":"created",$type:"timestamp (0) with time zone", default: [$type] }
     ]
 }
+--- vars: type type type type
+--- in_vars
+type=bigint
 --- out
-[["POST",["/=/model/~"],["{\"description\": ",["type","literal"],", \"columns\": [{\"name\": \"name\", \"",["type","quoted"],"\": \"text\"}, {\"name\": \"created\", \"",["type","quoted"],"\": \"timestamp (0) with time zone\", \"default\": [",["type","literal"],"]}]}"]]]
+POST /=/model/~ {"description": "bigint", "columns": [{"name": "name", "bigint": "text"}, {"name": "created", "bigint": "timestamp (0) with time zone", "default": ["bigint"]}]}
 
 
 
-=== TEST 16: with variables and some noises
+=== TEST 17: with variables and some noises
 --- sql
             update Post
             set comments = comments + 1
             where id = $post_id;
             POST '/=/model/Comment/~/~'
             { "sender": $sender, "body": $body, "$post_id": $post_id };
+--- vars: post_id sender body post_id
+--- in_vars
+post_id=32
+sender=agentzh
+body=Hello, world!
+--- models: Post
 --- out
-[[["update \"Post\" set \"comments\" = (\"comments\" + 1) where \"id\" = ",["post_id","unknown"]]],["POST",["/=/model/Comment/~/~"],["{\"sender\": ",["sender","literal"],", \"body\": ",["body","literal"],", \"$post_id\": ",["post_id","literal"],"}"]]]
+update "Post" set "comments" = ("comments" + 1) where "id" = $y$32$y$
+POST /=/model/Comment/~/~ {"sender": "agentzh", "body": "Hello, world!", "$post_id": "32"}
 
 
 
-=== TEST 17: try delete
+=== TEST 18: try delete
 --- sql
 DELETE '/=/model' || $foo;
 DELETE '/=/view';
 DELETE $foo
+--- models:
+--- vars: foo foo
+--- in_vars
+foo=/=/hi
 --- out
-[["DELETE",["/=/model",["foo","quoted"]]],["DELETE",["/=/view"]],["DELETE",[["foo","quoted"]]]]
+DELETE /=/model/=/hi
+DELETE /=/view
+DELETE /=/hi
 

@@ -24,7 +24,7 @@ use OpenResty::RestyScript;
 
 #plan tests => 3 * blocks();
 
-plan 'no_plan';
+plan tests => 117;
 
 sub quote {
     my $s = shift;
