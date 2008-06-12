@@ -147,10 +147,88 @@ POST /=/action/RunAction/~/~
 
 
 
-=== TEST 16: Empty miniSQL string
+=== TEST 16: Invalid POST content
 --- request
 POST /=/action/RunAction/~/~
 ["abc"]
 --- response
 {"error":"Restyscript source must be an non-empty literal string: [\"abc\"]","success":0}
+
+
+
+=== TEST 17: GET rows
+--- request
+GET /=/model/Carrie/~/~
+--- response
+[
+    {"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},
+    {"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}
+]
+
+
+
+=== TEST 18: Update some rows
+--- request
+POST /=/action/RunAction/~/~
+"update Carrie set num=5 where num=10 or num=1"
+--- response
+[{"success":1,"rows_affected":2}]
+
+
+
+=== TEST 19: check rows again
+--- request
+GET /=/model/Carrie/~/~
+--- response
+[
+    {"num":"5","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},
+    {"num":"5","url":"http://zhangxiaojue.cn","title":"second","id":"2"}
+]
+
+
+
+=== TEST 20: run the action again
+--- request
+POST /=/action/RunAction/~/~
+"update Carrie set num=5 where num=10 or num=1"
+--- response
+[{"success":1,"rows_affected":0}]
+
+
+
+=== TEST 21: Do two updates
+--- request
+POST /=/action/RunAction/~/~
+"update Carrie set num=7 where id=1;
+update Carrie set num=8 where id=2"
+--- response
+[{"rows_affected":1,"success":1},{"rows_affected":1,"success":1}]
+
+
+
+=== TEST 22: check rows again
+--- request
+GET /=/model/Carrie/~/~
+--- response
+[
+    {"num":"7","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},
+    {"num":"8","url":"http://zhangxiaojue.cn","title":"second","id":"2"}
+]
+
+
+
+=== TEST 23: Delete rows
+--- request
+POST /=/action/RunAction/~/~
+"delete from Carrie\n where num = 7;;"
+--- response
+[{"success":1,"rows_affected":1}]
+
+
+
+=== TEST 24: check rows again
+--- request
+GET /=/model/Carrie/~/~
+--- response
+[{"num":"8","url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
 
