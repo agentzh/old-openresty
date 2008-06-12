@@ -14,14 +14,16 @@ sub POST_action_exec {
     my $params = {
         $bits->[2] => $bits->[3]
     };
-    if ($action eq 'RunView') {
-        return $self->run_view($openresty);
+
+    my $meth = "exec_$action";
+    if ($self->can($meth)) {
+        return $self->$meth($openresty);
     }
 
     die "Action not found: $action\n";
 }
 
-sub run_view {
+sub exec_RunView {
     my ($self, $openresty) = @_;
 
     my $sql = $openresty->{_req_data};
@@ -51,22 +53,6 @@ sub run_view {
     my $pg_sql = $frags->[0];
 
     $openresty->select($pg_sql, {use_hash => 1, read_only => 1});
-}
-
-sub append_limit_offset {
-    my ($self, $openresty, $sql, $res) = @_;
-    #my $order_by $cgi->url
-    my $limit = $res->{limit};
-    if (defined $limit) {
-        $sql =~ s/;\s*$/ limit $limit/s or
-            $sql .= " limit $limit";
-    }
-    my $offset = $res->{offset};
-    if (defined $offset) {
-        $sql =~ s/;\s*$/ offset $offset;/s or
-            $sql .= " offset $offset";
-    }
-    return "$sql;\n";
 }
 
 sub validate_model_names {
