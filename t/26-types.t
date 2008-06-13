@@ -88,6 +88,9 @@ POST /=/model/varcharTest
 
 
 === TEST 8: Create a model with tsquery types
+XXX FIX ME
+I have to skip this test since it cannot pass on Pg instances without
+tsearch2 installed.
 --- request
 POST /=/model/tsqueryTest
 {
@@ -98,4 +101,5 @@ POST /=/model/tsqueryTest
 }
 --- response
 {"success":1}
+--- SKIP
 
