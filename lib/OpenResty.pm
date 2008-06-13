@@ -635,20 +635,13 @@ Most of the time, you need to change C<type=PgMocked> to C<type=Pg>, as well as 
 
 =item 4.
 
-Give read/write access to lighttpd's log file (optional):
-
-    $ chmod 777 /var/log/lighttpd/error.log
-    $ chmod 777 /var/log/lighttpd
-
-=item 5.
-
 For the Pg backend, one needs to create the "anonymous" role in his database (like "test"):
 
     $ createuser -r anonymous
 
 You shouldn't grant any permissions to it.
 
-=item 6.
+=item 5.
 
 Create a "tester" user account for our test suite in OpenResty (drop it if it already exists):
 
@@ -665,7 +658,7 @@ Now you can already run the test suite without a lighttpd server (but with a tru
 
     $ make test
 
-=item 7.
+=item 6.
 
 Sample lighttpd configuration:
 

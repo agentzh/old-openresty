@@ -43,5 +43,12 @@ sub new {
      return $CGI::Q = $self->SUPER::new($initializer, @param);
 }
 
+package FCGI::Stream;
+
+# to work around an IPC::Run issue...
+sub FILENO {
+    1;
+}
+
 1;
 
