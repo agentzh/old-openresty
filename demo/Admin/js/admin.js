@@ -189,7 +189,7 @@ function getPager (name, page, prefix) {
         renderPager(res, page, prefix);
     };
     openresty.postByGet(
-        '/=/action/.Select/lang/minisql',
+        '/=/action/RunView/~/~',
         "select count(*) as count from " + name
     );
 }

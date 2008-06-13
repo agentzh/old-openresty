@@ -127,8 +127,14 @@ sub exec_RunAction {
     $self->validate_model_names($openresty, \@models);
 
     my @outputs;
+    my $i = 0;
     for my $cmd (@final_cmds) {
+        $i++;
         if (ref $cmd) { # being an HTTP method
+            my ($http_meth, $url, $content) = @$cmd;
+            if ($url !~ m{^/=/}) {
+                die "Error in command $i: url does not start by \"/=/\"\n";
+            }
             die "HTTP commands not implemented yet.\n";
         } else {
             my $pg_sql = $cmd;
