@@ -20,6 +20,7 @@ sub check_type {
                     cidr |
                     inet |
                     macaddr |
+                    tsquery |
                     bit \s* \( \s* \d+ \s* \) |
                     boolean |
                     text |
