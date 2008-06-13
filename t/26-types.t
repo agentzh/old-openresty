@@ -85,6 +85,8 @@ POST /=/model/varcharTest
 --- response
 {"success":1}
 
+
+
 === TEST 8: Create a model with tsquery types
 --- request
 POST /=/model/tsqueryTest
