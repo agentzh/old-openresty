@@ -21,6 +21,7 @@ sub check_type {
                     inet |
                     macaddr |
                     tsquery |
+                    tsvector |
                     bit \s* \( \s* \d+ \s* \) |
                     boolean |
                     text |
