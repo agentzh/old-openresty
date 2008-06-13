@@ -85,3 +85,15 @@ POST /=/model/varcharTest
 --- response
 {"success":1}
 
+=== TEST 8: Create a model with tsquery types
+--- request
+POST /=/model/tsqueryTest
+{
+    "description": "Type testing",
+    "columns": [
+        { "name": "title", "type": "tsquery", "label": "Test for tsquery type" }
+    ]
+}
+--- response
+{"success":1}
+
