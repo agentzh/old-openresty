@@ -255,7 +255,7 @@ GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 --- request
 GET /=/delete/Test2/~/~?user=$TestAccount&password=$TestPass
 --- response
-{"success":0,"error":"Permission denied for the \"Admin\" role."}
+{"error":"Unknown URL catagory: Test2","success":0}
 
 
 
