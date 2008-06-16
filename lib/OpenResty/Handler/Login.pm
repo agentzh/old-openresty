@@ -56,10 +56,10 @@ sub login_by_sql {
     if (defined $captcha) {
         my ($id, $user_sol) = split /:/, $captcha, 2;
 
-		my ($rc,$err)=OpenResty::Handler::Captcha::validate_captcha($openresty,$id,$user_sol);
-		if (!$rc) {
+        my ($rc,$err)=OpenResty::Handler::Captcha::validate_captcha($openresty,$id,$user_sol);
+        if (!$rc) {
             die $err."\n";
-		}
+        }
     }
 
     $openresty->set_role($role);
@@ -139,10 +139,10 @@ sub login_by_perl {
             die "Cannot login as $account.$role via captchas.\n";
         }
 
-		my ($rc,$err)=OpenResty::Handler::Captcha::validate_captcha($openresty,$id,$user_sol);
-		if (!$rc) {
+        my ($rc,$err)=OpenResty::Handler::Captcha::validate_captcha($openresty,$id,$user_sol);
+        if (!$rc) {
             die $err."\n";
-		}
+        }
     } elsif (defined $password) {
         my $res = $openresty->select("select count(*) from _roles where name = " . Q($role) . " and login = 'password' and password = " . Q($password) . ";");
         ### with password: $res
@@ -150,12 +150,17 @@ sub login_by_perl {
             die "Password for $account.$role is incorrect.\n";
         }
     } else {
-        my $res = $openresty->select("select count(*) from _roles where name = " . Q($role) . " and login = 'anonymous';");
-        ### no password: $res
-        ### no password (2): $res->[0][0]
-        if ($res->[0][0] == 0) {
-            ### dying...
-            die "Password for $account.$role is required.\n";
+        if ($role eq 'Admin') {
+            die "$account.$role is not anonymous.\n";
+        }
+        if ($role ne 'Public') {
+            my $res = $openresty->select("select count(*) from _roles where name = " . Q($role) . " and login = 'anonymous';");
+            ### no password: $res
+            ### no password (2): $res->[0][0]
+            if ($res->[0][0] == 0) {
+                ### dying...
+                die "$account.$role is not anonymous.\n";
+            }
         }
     }
     $openresty->set_role($role);
@@ -168,7 +173,7 @@ sub login_by_perl {
 
     #my $captcha_from_cookie = $openresty->{_captcha_from_cookie};
     #if ($captcha_from_cookie) {
-	    #$OpenResty::Cache->remove($captcha_from_cookie);
+        #$OpenResty::Cache->remove($captcha_from_cookie);
     #}
 
     my $uuid = $OpenResty::UUID->create_str;

@@ -24,6 +24,8 @@ if ($backend->has_user("agentz")) {
     $backend->drop_user("agentz");
 }
 
+ok ! $backend->has_user("agentz"), "agentz has indeed been removed";
+
 my $res = $backend->add_user("agentz", 'blahblahblah');
 cmp_ok $res, '>', -1, "user added okay";
 

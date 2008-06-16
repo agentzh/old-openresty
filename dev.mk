@@ -3,7 +3,9 @@ define CMDS
     -perl -Iblib -c bin/openresty
     -sudo killall lighttpd
     sudo /etc/init.d/lighttpd restart
-    rm  -f t/cur-timer.dat
+    sleep 2
+    -sudo rm -rf /tmp/FileCache
+    -rm  -f t/cur-timer.dat
     -time prove -Ilib -r t
     bin/perf
 endef

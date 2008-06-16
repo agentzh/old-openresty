@@ -12,7 +12,7 @@ __DATA__
 --- request
 GET /=/login/$TestAccount.Admin?callback=foo
 --- response
-foo({"success":0,"error":"Password for $TestAccount.Admin is required."});
+foo({"success":0,"error":"$TestAccount.Admin is not anonymous."});
 
 
 

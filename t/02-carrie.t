@@ -20,7 +20,7 @@ DELETE /=/model?user=.Admin
 --- request
 DELETE /=/model?user=$TestAccount
 --- response
-{"success":0,"error":"Password for $TestAccount.Admin is required."}
+{"success":0,"error":"$TestAccount.Admin is not anonymous."}
 
 
 

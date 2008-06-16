@@ -118,9 +118,6 @@ sub init {
         #die "Backend connection lost: ", $db_state, "\n";
     }
 
-    my $as_html = $cgi->url_param('as_html') || 0;
-    $self->{_as_html} = $as_html;
-
     $self->{_use_cookie}  = $cgi->url_param('use_cookie') || 0;
     $self->{_session}  = $cgi->url_param('session');
 
@@ -313,8 +310,7 @@ sub response {
     }
 
     print "HTTP/1.1 200 OK\n";
-    my $as_html = $self->{_as_html};
-    my $type = $self->{_type} || ($as_html ? 'text/html' : 'text/plain');
+    my $type = $self->{_type} || 'text/plain';
     #warn $s;
     my $str = '';
     if (my $bin_data = $self->{_bin_data}) {
@@ -361,17 +357,13 @@ sub response {
     }
     $str =~ s/\n+$//s;
 
-    if ($as_html) {
-        $str = "<html><body><script type=\"text/javascript\">parent.location.hash = ".$Dumper->($str)."</script></body></html>";
-    }
-
     my $meth = $self->{_http_method};
     my $last_res_id = $cgi->url_param('last_response');
     ### $last_res_id;
     ### $meth;
     if (defined $last_res_id) {
         #warn "!!!!!!!!!!!!!!!!!!!!!!!!!!wdy!";
-        $Cache->set("lastres:".$last_res_id, $str); # expire in 3 min
+        $Cache->set_last_res($last_res_id, $str);
     }
     #warn ">>>>>>>>>>>>Cookies<<<<<<<<<<<<<<: @cookies\n";
     print $cgi->header(
@@ -407,13 +399,16 @@ sub emit_data {
 
 sub has_role {
     my ($self, $role) = @_;
+    return 1 if $role eq 'Admin' or $role eq 'Public'; # shortcut...
     _IDENT($role) or
         die "Bad role name: ", $OpenResty::Dumper->($role), "\n";
-    my $select = OpenResty::SQL::Select->new('count(*)')
+    my $select = OpenResty::SQL::Select->new('id')
         ->from('_roles')
         ->where(name => Q($role))
         ->limit(1);
-    return $self->select("$select")->[0][0];
+    my $ret;
+    eval { $ret = $self->select("$select",)->[0][0]; };
+    return $ret;
 }
 
 sub current_user_can {
@@ -442,10 +437,13 @@ sub has_feed {
 
     _IDENT($feed) or die "Bad feed name: $feed\n";
 
-    my $select = OpenResty::SQL::Select->new('count(name)')
+    my $select = OpenResty::SQL::Select->new('id')
         ->from('_feeds')
-        ->where(name => Q($feed));
-    return $self->select("$select",)->[0][0];
+        ->where(name => Q($feed))
+        ->limit(1);
+    my $ret;
+    eval { $ret = $self->select("$select")->[0][0]; };
+    return $ret;
 }
 
 sub has_view {
@@ -453,40 +451,44 @@ sub has_view {
 
     _IDENT($view) or die "Bad view name: $view\n";
 
-    my $select = OpenResty::SQL::Select->new('count(name)')
+    my $select = OpenResty::SQL::Select->new('id')
         ->from('_views')
         ->where(name => Q($view))
         ->limit(1);
-    return $self->select("$select",)->[0][0];
+    my $ret;
+    eval { $ret = $self->select("$select")->[0][0]; };
+    return $ret;
 }
 
 sub has_model {
     my ($self, $model) = @_;
     _IDENT($model) or die "Bad model name: $model\n";
-    my $retval;
-    my $select = OpenResty::SQL::Select->new('count(name)')
+    if ($Cache->get_has_model($model)) {
+        #warn "has model cache HIT\n";
+        return 1;
+    }
+    my $select = OpenResty::SQL::Select->new('id')
         ->from('_models')
         ->where(name => Q($model))
         ->limit(1);
-    eval {
-        $retval = $self->select("$select")->[0][0];
-    };
-    return $retval + 0;
+    my $ret;
+    eval { $ret = $self->select("$select")->[0][0]; };
+    if ($ret) { $Cache->set_has_model($model) }
+    return $ret;
 }
 
 sub has_user {
     my ($self, $user) = @_;
-    return $Backend->has_user($user);
-}
-
-sub add_user {
-    my ($self, $user) = @_;
-    $Backend->add_user($user);
-}
-
-sub drop_user {
-    my ($self, $user) = @_;
-    $Backend->drop_user($user);
+    if ($user && $Cache->get_has_user($user)) {
+        #warn "Cache hit for has_user!";
+        return 1;
+    } else {
+        my $res = $Backend->has_user($user);
+        if ($res) {
+            $Cache->set_has_user($user);
+        }
+        return $res;
+    }
 }
 
 sub set_user {

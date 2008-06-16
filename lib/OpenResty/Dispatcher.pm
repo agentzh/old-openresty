@@ -157,7 +157,7 @@ sub process_request {
             $openresty->fatal("No last response ID specified.");
             return;
         }
-        my $res = $OpenResty::Cache->get("lastres:".$last_res_id);
+        my $res = $OpenResty::Cache->get_last_res($last_res_id);
         if (!defined $res) {
             $openresty->fatal("No last response found for ID $last_res_id");
             return;
