@@ -52,6 +52,7 @@ sub DELETE_model_list {
 
     my $sql;
     for my $table (@tables) {
+        $OpenResty::Cache->remove_has_model($table);
         $sql .= $self->drop_table($openresty, $table);
     }
     if ($sql) {
@@ -609,6 +610,7 @@ sub has_model_col {
 
 sub drop_table {
     my ($self, $openresty, $table) = @_;
+    $OpenResty::Cache->remove_has_model($table);
     return (<<_EOC_);
 drop table if exists "$table";
 delete from _models where table_name='$table';
@@ -912,6 +914,7 @@ sub alter_model {
         if ($openresty->has_model($new_model)) {
             die "Model \"$new_model\" already exists.\n";
         }
+        $OpenResty::Cache->remove_has_model($model);
         my $new_table = $new_model;
         $sql .=
             "update _models set table_name='$new_table', name='$new_model' where name='$model';\n" .

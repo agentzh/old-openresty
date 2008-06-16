@@ -385,6 +385,7 @@ sub drop_user {
     if ($self->has_user('_global')) {
         $self->set_user('_global');
         $self->do("delete from _accounts where name ='$user'");
+        $OpenResty::Cache->remove_has_user($user) if $OpenResty::Cache;
     }
 }
 

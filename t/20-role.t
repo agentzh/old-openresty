@@ -12,7 +12,7 @@ __DATA__
 --- request
 GET /=/login/$TestAccount.Admin
 --- response
-{"error":"Password for $TestAccount.Admin is required.","success":0}
+{"error":"$TestAccount.Admin is not anonymous.","success":0}
 
 
 
@@ -623,7 +623,7 @@ GET /=/role/Poster/~/~
 --- request
 GET /=/login/$TestAccount.Poster
 --- response
-{"error":"Password for $TestAccount.Poster is required.","success":0}
+{"error":"$TestAccount.Poster is not anonymous.","success":0}
 
 
 
