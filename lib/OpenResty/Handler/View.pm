@@ -77,6 +77,7 @@ sub PUT_view {
     if (defined $new_name) {
         _IDENT($new_name) or
             die "Bad view name: ", $OpenResty::Dumper->($new_name), "\n";
+        $OpenResty::Cache->remove_has_view($view);
         $update->set( name => Q($new_name) );
     }
 
@@ -226,12 +227,18 @@ sub DELETE_view {
     if (!$openresty->has_view($view)) {
         die "View \"$view\" not found.\n";
     }
+    $OpenResty::Cache->remove_has_view($view);
     my $sql = "delete from _views where name = " . Q($view);
     return { success => $openresty->do($sql) >= 0 ? 1 : 0 };
 }
 
 sub DELETE_view_list {
     my ($self, $openresty, $bits) = @_;
+
+    my $views = $self->get_views($openresty);
+    for my $view (@$views) {
+        $OpenResty::Cache->remove_has_view($view);
+    }
     my $sql = "truncate _views;";
     return { success => $openresty->do($sql) >= 0 ? 1 : 0 };
 }

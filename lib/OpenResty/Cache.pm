@@ -106,5 +106,21 @@ sub remove_has_model {
     $self->remove("hasmodel:$model");
 }
 
+sub get_has_view {
+    my ($self, $view) = @_;
+    #return undef;
+    $self->get("hasview:$view")
+}
+
+sub set_has_view {
+    my ($self, $view) = @_;
+    $self->set("hasview:$view", 1, 3 * 60, 'trivial');
+}
+
+sub remove_has_view {
+    my ($self, $view) = @_;
+    $self->remove("hasview:$view");
+}
+
 1;
 
