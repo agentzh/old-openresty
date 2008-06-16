@@ -451,12 +451,17 @@ sub has_view {
 
     _IDENT($view) or die "Bad view name: $view\n";
 
+    if ($Cache->get_has_view($view)) {
+        #warn "has model cache HIT\n";
+        return 1;
+    }
     my $select = OpenResty::SQL::Select->new('id')
         ->from('_views')
         ->where(name => Q($view))
         ->limit(1);
     my $ret;
     eval { $ret = $self->select("$select")->[0][0]; };
+    if ($ret) { $Cache->set_has_view($view) }
     return $ret;
 }
 

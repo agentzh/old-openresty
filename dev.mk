@@ -24,7 +24,10 @@ debug: all
 %.t: all force
 	perl -c bin/openresty
 	sudo /etc/init.d/lighttpd restart
-	-time prove -Ilib $@
+	-sudo rm -rf /tmp/FileCache
+	-rm  -f t/cur-timer.dat
+	-prove -Ilib $@
+	bin/perf
 
 force:
 
