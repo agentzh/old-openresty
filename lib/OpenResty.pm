@@ -456,6 +456,7 @@ sub has_view {
         #warn "has model cache HIT\n";
         return 1;
     }
+    #warn "HERE!!! has_view: $view";
     my $select = OpenResty::SQL::Select->new('id')
         ->from('_views')
         ->where(name => Q($view))
