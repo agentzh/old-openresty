@@ -70,7 +70,7 @@ POST /=/model/Foo?user=$TestAccount2&password=$TestPass2
 
 
 
-=== TEST 5: Create a new view in A
+=== TEST 8: Create a new view in A
 --- request
 POST /=/view/Foo?user=$TestAccount&password=$TestPass
 { "definition": "select 3" }
@@ -78,14 +78,16 @@ POST /=/view/Foo?user=$TestAccount&password=$TestPass
 {"success":1}
 
 
-=== TEST 6: Get the view in A
+
+=== TEST 9: Get the view in A
 --- request
 GET /=/view/Foo?user=$TestAccount&password=$TestPass
 --- response
 {"name":"Foo","description":null,"definition":"select 3"}
 
 
-=== TEST 7: Create a new view in B
+
+=== TEST 10: Create a new view in B
 --- request
 POST /=/view/Foo?user=$TestAccount2&password=$TestPass2
 { "definition": "select 3" }

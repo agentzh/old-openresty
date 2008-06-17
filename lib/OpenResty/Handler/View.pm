@@ -35,6 +35,18 @@ sub get_views {
     return $openresty->select("$select", { use_hash => 1 });
 }
 
+sub get_view_names {
+    my ($self, $openresty) = @_;
+    my $select = OpenResty::SQL::Select->new(
+        qw< name >
+    )->from('_views');
+    my $res = $openresty->select("$select");
+    if ($res && ref $res) {
+        @$res = map { @$_ } @$res;
+    }
+    $res;
+}
+
 sub GET_view_list {
     my ($self, $openresty, $bits) = @_;
     my $views = $self->get_views($openresty);
@@ -69,7 +81,7 @@ sub PUT_view {
         die "column spec must be a non-empty HASH.\n";
     ### $view
     ### $data
-    die "View \"$view\" not found.\n" unless $openresty->has_view($user, $view);
+    die "View \"$view\" not found.\n" unless $openresty->has_view($view);
 
     my $update = OpenResty::SQL::Update->new('_views');
     $update->where(name => Q($view));
@@ -147,7 +159,7 @@ sub GET_view_exec {
     my $user = $openresty->current_user;
     my $view = $bits->[1];
 
-    die "View \"$view\" not found.\n" unless $openresty->has_view($user, $view);
+    die "View \"$view\" not found.\n" unless $openresty->has_view($view);
     return $self->exec_view($openresty, $view, $bits, $openresty->{_cgi});
 }
 
@@ -239,8 +251,9 @@ sub DELETE_view_list {
     my ($self, $openresty, $bits) = @_;
     my $user = $openresty->current_user;
 
-    my $views = $self->get_views($openresty);
+    my $views = $self->get_view_names($openresty);
     for my $view (@$views) {
+        #warn "View $view...\n";
         $OpenResty::Cache->remove_has_view($user, $view);
     }
     my $sql = "truncate _views;";
