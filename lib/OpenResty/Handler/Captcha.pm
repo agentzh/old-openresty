@@ -401,7 +401,7 @@ sub validate_captcha
 	return (0,"Solution to the captcha is incorrect.") if trim_sol($word) ne trim_sol($solution);	# wrong ans
 
 	# validate succeed, remember which captcha id has been used
-	$OpenResty::Cache->set($cache_key=>1,$MAX_TIMESPAN);
+	$OpenResty::Cache->set($cache_key=>1, $MAX_TIMESPAN);
 
 	return (1,"Verification succeeded.");
 }
@@ -464,7 +464,7 @@ sub get_captcha_secretkey
 
 	# 128 bits secret key for encryption/decryption
 	# Prepending "captcha:" to prevent cache key conflication...
-	my $key=$OpenResty::Cache->get("captcha:key");
+	my $key = $OpenResty::Cache->get("captcha:key");
 	return $key if defined($key) && length($key)==16;
 
 	# Protect current user for restoring later, we don't want to break the outter context...
@@ -481,7 +481,7 @@ sub get_captcha_secretkey
 
 	# Cache the captcha secret key for 1 day
 	# Prepending "captcha:" to prevent cache key conflication...
-	$OpenResty::Cache->set("captcha:key"=>$key,3600*24);
+	$OpenResty::Cache->set("captcha:key"=>$key, 3600*24, 'trivial');
 
 	return $key;
 }

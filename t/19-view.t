@@ -21,6 +21,7 @@ DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
 DELETE /=/view
 --- response
 {"success":1}
+--- LAST
 
 
 

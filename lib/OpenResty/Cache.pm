@@ -6,6 +6,8 @@ use FindBin;
 
 # This is a hack...
 
+our $NoTrivial = 0;
+
 sub new {
     my $class = ref $_[0] ? ref shift : shift;
     my $params = shift;
@@ -35,6 +37,10 @@ sub new {
     } else {
         die "Invalid cache.type value: $type\n";
     }
+    my $backend_type = $OpenResty::Config{'backend.type'} || '';
+    $NoTrivial = $OpenResty::Config{'backend.recording'} ||
+        $backend_type eq 'PgMocked';
+
     $self->{obj} = $obj;
     return $self;
 }
@@ -42,6 +48,7 @@ sub new {
 # expire_in is in seconds...
 sub set {
     my ($self, $key, $val, $expire_in, $trivial) = @_;
+    return undef if $trivial && $NoTrivial;
     $self->{obj}->set($key, $val, $expire_in);
 }
 

@@ -13,7 +13,11 @@ demo/Springbot/staff/staff_files
 ^haskell/\.hpc
 ^haskell/hpc_
 ^haskell/[^/]+.html$
+^haskell/.*\.prof$
+^haskell/.*\.tix$
+^haskell/bin/restyscript$
 ^Makefile$
+^t/slow\.pl$
 ^bin/\.
 ~$
 \.old$
