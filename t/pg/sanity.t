@@ -17,7 +17,7 @@ BEGIN {
 use Test::More $reason ? (skip_all => $reason) : 'no_plan';
 
 OpenResty::Config->init('.');
-my $backend = OpenResty::Backend::Pg->new({ RaiseError => 0 });
+my $backend = OpenResty::Backend::Pg->new({ RaiseError => 0, PrintWarn => 0 });
 ok $backend, "database handle okay";
 if ($backend->has_user("agentz")) {
 #    $backend->do("drop table test cascade");

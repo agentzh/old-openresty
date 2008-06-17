@@ -1,5 +1,6 @@
 package t::OpenResty;
 
+#use Smart::Comments '####';
 use lib 'lib';
 use lib 'inc';
 use Test::Base -Base;
@@ -8,7 +9,6 @@ use YAML::Syck ();
 use JSON::XS ();
 use Digest::MD5 qw(md5_hex);
 
-#use Smart::Comments '####';
 my $client_module;
 use OpenResty::Config;
 BEGIN {
@@ -36,7 +36,7 @@ my $SavedCapture;
 
 our $server = $ENV{'OPENRESTY_TEST_SERVER'} ||
     $OpenResty::Config{'test_suite.server'} ||
-    die "No server specified.\n";
+    die "No test_suite.server specified.\n";
 our ($user, $password, $host);
 if ($server =~ /^(\w+):(\S+)\@(\S+)$/) {
     ($user, $password, $host) = ($1, $2, $3);
@@ -44,6 +44,22 @@ if ($server =~ /^(\w+):(\S+)\@(\S+)$/) {
     die "test_suite.server syntax error in conf file: $server\n";
 }
 $password = md5_hex($password);
+
+our $server2 = $ENV{'OPENRESTY_TEST_SERVER2'} ||
+    $OpenResty::Config{'test_suite.server2'} ||
+    die "No test_suite.server2 specified.\n";
+our ($user2, $password2, $host2);
+if ($server2 =~ /^(\w+):(\S+)\@(\S+)$/) {
+    ($user2, $password2, $host2) = ($1, $2, $3);
+} else {
+    die "test_suite.server2 syntax error in conf file: $server2\n";
+}
+if ($host2 ne $host) { die "The two host names for test_suite.server and test_suite.server2 must be the same.\n"; }
+
+$password2 = md5_hex($password2);
+
+#### $user2
+#### $password2
 
 $host = "http://$host" if $host !~ m{^http://};
 
@@ -86,13 +102,9 @@ sub smart_like ($$$$) {
     #warn "Pattern: $pattern";
     if (defined $got && $got !~ m/$pattern/) {
         if ($format eq 'json') {
-            #### old got: $got
-            #### old expected: $expected
             eval {
                 $got = canon_json($got);
             };
-            #### $got
-            #### $expected
         } elsif ($format eq 'yaml') {
             eval {
                 $got = canon_yaml($got);
@@ -101,7 +113,6 @@ sub smart_like ($$$$) {
     }
     like $got, qr/$pattern/, $desc;
 }
-
 
 sub smart_is ($$$$) {
     my ($got, $expected, $desc, $format) = @_;
@@ -160,10 +171,10 @@ sub run_test ($) {
         return;
     }
 
-	my $sleep_before=$block->sleep_before;
-	if($sleep_before) {
-		sleep $sleep_before;
-	}
+    my $sleep_before=$block->sleep_before;
+    if($sleep_before) {
+        sleep $sleep_before;
+    }
 
     my $charset = $block->charset || 'UTF-8';
     my $format = $block->format || 'JSON';
@@ -172,6 +183,8 @@ sub run_test ($) {
     if ($request) {
         $request =~ s/\$TestAccount\b/$user/g;
         $request =~ s/\$TestPass\b/$password/g;
+        $request =~ s/\$TestAccount2\b/$user2/g;
+        $request =~ s/\$TestPass2\b/$password2/g;
     }
     if ($request =~ /^(GET|POST|HEAD|PUT|DELETE)\s+([^\n]+)\s*\n(.*)/s) {
         my ($method, $url, $body) = ($1, $2, $3);
@@ -198,6 +211,8 @@ sub run_test ($) {
         if ($expected_res) {
             $expected_res =~ s/\$TestAccount\b/$user/g;
             $expected_res =~ s/\$TestPass\b/$password/g;
+            $expected_res =~ s/\$TestAccount2\b/$user2/g;
+            $expected_res =~ s/\$TestPass2\b/$password2/g;
         }
         if ($format eq 'JSON' and $expected_res) {
             $expected_res =~ s/\n[ \t]*([^\n\s])/$1/sg;
@@ -225,10 +240,10 @@ sub run_test ($) {
             like $res->header('Content-Type'), qr/\Q; charset=$charset\E$/, "charset okay - $name";
         }
 
-		my $sleep_after=$block->sleep_after;
-		if($sleep_after) {
-			sleep $sleep_after;
-		}
+        my $sleep_after=$block->sleep_after;
+        if($sleep_after) {
+            sleep $sleep_after;
+        }
     } else {
         my ($firstline) = ($request =~ /^([^\n]*)/s);
         die "Invalid request head: \"$firstline\" in $name\n";

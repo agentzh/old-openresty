@@ -467,8 +467,9 @@ sub has_view {
 
 sub has_model {
     my ($self, $model) = @_;
+    my $user = $self->current_user;
     _IDENT($model) or die "Bad model name: $model\n";
-    if ($Cache->get_has_model($model)) {
+    if ($Cache->get_has_model($user, $model)) {
         #warn "has model cache HIT\n";
         return 1;
     }
@@ -478,7 +479,7 @@ sub has_model {
         ->limit(1);
     my $ret;
     eval { $ret = $self->select("$select")->[0][0]; };
-    if ($ret) { $Cache->set_has_model($model) }
+    if ($ret) { $Cache->set_has_model($user, $model) }
     return $ret;
 }
 
@@ -504,6 +505,7 @@ sub set_user {
 
 sub current_user {
     my ($self) = @_;
+    # warn "!!!", $self->{_user};
     $self->{_user};
 }
 

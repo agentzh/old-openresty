@@ -92,18 +92,18 @@ sub remove_last_res {
 }
 
 sub get_has_model {
-    my ($self, $model) = @_;
-    $self->get("hasmodel:$model")
+    my ($self, $user, $model) = @_;
+    $self->get("hasmodel:$user:$model")
 }
 
 sub set_has_model {
-    my ($self, $model) = @_;
-    $self->set("hasmodel:$model", 1, 3 * 60, 'trivial');
+    my ($self, $user, $model) = @_;
+    $self->set("hasmodel:$user:$model", 1, 3 * 60, 'trivial');
 }
 
 sub remove_has_model {
-    my ($self, $model) = @_;
-    $self->remove("hasmodel:$model");
+    my ($self, $user, $model) = @_;
+    $self->remove("hasmodel:$user:$model");
 }
 
 sub get_has_view {
