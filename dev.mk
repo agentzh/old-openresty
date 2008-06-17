@@ -36,7 +36,7 @@ par_dir=openresty-$(today)
 par_file=$(par_dir).par
 
 par:
-	echo 'exit' | pp -p -x -I lib -M GD::SecurityImage -M OpenResty::FastCGI -M HTTP::Server::Simple -M Cache::Cache -M Term::ReadKey -M Cache::Memcached::Fast -o $(par_file) bin/openresty
+	(echo ''; echo 'exit') | pp -p -x -I lib -M OpenResty::Backend::PgFarm -M GD::SecurityImage -M OpenResty::FastCGI -M HTTP::Server::Simple -M Cache::Cache -M Term::ReadKey -M Cache::Memcached::Fast -o $(par_file) bin/openresty
 	@echo
 	@echo $(par_file) generated.
 	-rm -rf $(par_dir)
