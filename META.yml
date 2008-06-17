@@ -57,6 +57,8 @@ requires:
   FCGI: 0
   GD::SecurityImage: 1.64
   Hash::Merge: 0
+  IPC::Run: 0
+  IPC::Run3: 0
   JSON::XS: 2.2
   List::MoreUtils: 0
   List::Util: 0

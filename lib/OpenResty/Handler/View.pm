@@ -3,6 +3,7 @@ package OpenResty::Handler::View;
 use strict;
 use warnings;
 
+#use Smart::Comments;
 use OpenResty::Util;
 use Params::Util qw( _HASH _STRING );
 use OpenResty::Limits;
@@ -41,7 +42,8 @@ sub get_view_names {
         qw< name >
     )->from('_views');
     my $res = $openresty->select("$select");
-    if ($res && ref $res) {
+    ### $res
+    if ($res && ref $res && ref $res->[0]) {
         @$res = map { @$_ } @$res;
     }
     $res;

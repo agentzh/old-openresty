@@ -100,19 +100,14 @@ INSTALLATION
         is a mocked PostgreSQL database which is useful only for testing
         purposes.
 
-    4.  Give read/write access to lighttpd's log file (optional):
-
-            $ chmod 777 /var/log/lighttpd/error.log
-            $ chmod 777 /var/log/lighttpd
-
-    5.  For the Pg backend, one needs to create the "anonymous" role in his
+    4.  For the Pg backend, one needs to create the "anonymous" role in his
         database (like "test"):
 
             $ createuser -r anonymous
 
         You shouldn't grant any permissions to it.
 
-    6.  Create a "tester" user account for our test suite in OpenResty (drop
+    5.  Create a "tester" user account for our test suite in OpenResty (drop
         it if it already exists):
 
             $ bin/openresty deluser tester
@@ -125,12 +120,37 @@ INSTALLATION
             use_http=0
             server=tester:password@localhost
 
-        Now you can already run the test suite without a lighttpd server
+    6.  To have OpenResty's built-in actions "RunView" and "RunAction"
+        working, you need to build the restyscript compiler in the
+        subdirectory haskell/. It is written in Haskell and please see the
+        README file in haskell/ for detailed installation instruction:
+
+        <http://svn.openfoundry.org/openapi/trunk/haskell/README>
+
+        If you're really nervous about installing GHC and other Haskell
+        libraries, you can fetch a binary version of the restyscript
+        compiler if you're on an 32-bit x86 linux:
+
+            $ wget 'http://resty.eeeeworks.org/restyscript' -O haskell/bin/restyscript
+            $ chmod +x haskell/bin/restyscript
+
+        A quick test would be
+
+            $ echo 'select 3' | haskell/bin/restyscript view rs
+            select 3
+
+    7.  Now you can already run the test suite without a lighttpd server
         (but with a true Pg backend):
 
             $ make test
 
-    7.  Sample lighttpd configuration:
+        Also, it's already possible to start the OpenResty server using the
+        standalone server provided by HTTP::Server::Simple:
+
+            $ bin/openresty start
+            HTTP::Server::Simple: You can connect to your server at http://localhost:8000/
+
+    8.  Sample lighttpd configuration:
 
             # lighttpd.conf
 
@@ -161,8 +181,7 @@ INSTALLATION
 
             # url.access-deny            = ( "~", ".inc" )
 
-    HOW TO TEST ONE SPECIFIC TEST SUITE FILE
-
+  HOW TO TEST ONE SPECIFIC TEST SUITE FILE
     It's also possible to debug a simple .t file, for instance,
 
         make t/01-sanity.t -f dev.mk

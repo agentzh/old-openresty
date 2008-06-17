@@ -453,7 +453,7 @@ sub has_view {
     _IDENT($view) or die "Bad view name: $view\n";
 
     if ($Cache->get_has_view($user, $view)) {
-        #warn "has model cache HIT\n";
+        #warn "has view cache HIT\n";
         return 1;
     }
     #warn "HERE!!! has_view: $view";
