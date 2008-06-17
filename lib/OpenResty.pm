@@ -665,11 +665,39 @@ Give a password (say, "password") to its Admin role. Update your F<etc/site_open
     use_http=0
     server=tester:password@localhost
 
+=item 6.
+
+To have OpenResty's built-in actions C<RunView> and C<RunAction> working, you
+need to build the F<restyscript> compiler in the subdirectory F<haskell/>. It
+is written in Haskell and please see the README file in F<haskell/> for
+detailed installation instruction:
+
+L<http://svn.openfoundry.org/openapi/trunk/haskell/README>
+
+If you're really nervous about installing GHC and other Haskell libraries,
+you can fetch a binary version of the F<restyscript> compiler if you're
+on an 32-bit x86 linux:
+
+    $ wget 'http://resty.eeeeworks.org/restyscript' -O haskell/bin/restyscript
+    $ chmod +x haskell/bin/restyscript
+
+A quick test would be
+
+    $ echo 'select 3' | haskell/bin/restyscript view rs
+    select 3
+
+=item 7.
+
 Now you can already run the test suite without a lighttpd server (but with a true Pg backend):
 
     $ make test
 
-=item 6.
+Also, it's already possible to start the OpenResty server using the standalone server provided by L<HTTP::Server::Simple>:
+
+    $ bin/openresty start
+    HTTP::Server::Simple: You can connect to your server at http://localhost:8000/
+
+=item 8.
 
 Sample lighttpd configuration:
 
@@ -704,7 +732,7 @@ And also make sure the following line is commented out:
 
 =back
 
-HOW TO TEST ONE SPECIFIC TEST SUITE FILE
+=head2 HOW TO TEST ONE SPECIFIC TEST SUITE FILE
 
 It's also possible to debug a simple .t file, for instance,
 
