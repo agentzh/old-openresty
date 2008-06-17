@@ -58,6 +58,7 @@ for (my $i = 0 ; $i < USER_COUNT; $i ++) {
     }
     $backend->add_user($name, 'blahblahblah');
     my $machine = $backend->has_user($name);
+    $res = $backend->drop_user($name);
     $cnt{$machine}++;
     print STDERR "$name\@$machine  ";
     push @userdb, $name;
@@ -65,10 +66,6 @@ for (my $i = 0 ; $i < USER_COUNT; $i ++) {
 
 #warn dump(\%cnt);
 is scalar(keys %cnt), NODE_COUNT, 'all nodes been visited';
-for my $b (@userdb) {
-    #warn "$b...";
-    $res = $backend->drop_user($b);
-}
 
 sub dump {
     my $var = shift;
