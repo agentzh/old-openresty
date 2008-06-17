@@ -15,7 +15,7 @@ sub new {
     if ($@) {
         die $@;
     }
-    $backend_class->new;
+    $backend_class->new({ PrintWarn => 0 });
 }
 
 1;
