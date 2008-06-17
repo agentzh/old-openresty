@@ -665,7 +665,15 @@ GET /=/view/Foo/val/2
 
 
 
-=== TEST 72: Invoke the view (bad fixed var name)
+=== TEST 72: Escaped char
+--- request
+GET /=/view/Foo/val/林\?col=title
+--- response
+[]
+
+
+
+=== TEST 73: Invoke the view (bad fixed var name)
 --- request
 GET /=/view/Foo/!@/2
 --- response
@@ -673,7 +681,7 @@ GET /=/view/Foo/!@/2
 
 
 
-=== TEST 73: Invoke the view (another way)
+=== TEST 74: Invoke the view (another way)
 --- request
 GET /=/view/Foo/~/~?val=2
 --- response
@@ -686,7 +694,7 @@ GET /=/view/Foo/~/~?val=2
 
 
 
-=== TEST 74: Invoke the view (bad free var name)
+=== TEST 75: Invoke the view (bad free var name)
 --- request
 GET /=/view/Foo/~/~?!@=2
 --- response
@@ -694,7 +702,7 @@ GET /=/view/Foo/~/~?!@=2
 
 
 
-=== TEST 75: Invoke the view (bad symbol)
+=== TEST 76: Invoke the view (bad symbol)
 --- request
 GET /=/view/Foo/~/~?val=2&col=id"
 --- response
@@ -702,7 +710,7 @@ GET /=/view/Foo/~/~?val=2&col=id"
 
 
 
-=== TEST 76: Invoke the view (overriding vars)
+=== TEST 77: Invoke the view (overriding vars)
 --- request
 GET /=/view/Foo/~/~?val=2&col=id
 --- response
@@ -715,7 +723,7 @@ GET /=/view/Foo/~/~?val=2&col=id
 
 
 
-=== TEST 77: bug
+=== TEST 78: bug
 --- request
 POST /=/view/RowCount
 { "definition": "select count(*) from $model" }
