@@ -68,3 +68,27 @@ POST /=/model/Foo?user=$TestAccount2&password=$TestPass2
 --- response
 {"success":1,"warning":"No 'columns' specified for model \"Foo\"."}
 
+
+
+=== TEST 5: Create a new view in A
+--- request
+POST /=/view/Foo?user=$TestAccount&password=$TestPass
+{ "definition": "select 3" }
+--- response
+{"success":1}
+
+
+=== TEST 6: Get the view in A
+--- request
+GET /=/view/Foo?user=$TestAccount&password=$TestPass
+--- response
+{"name":"Foo","description":null,"definition":"select 3"}
+
+
+=== TEST 7: Create a new view in B
+--- request
+POST /=/view/Foo?user=$TestAccount2&password=$TestPass2
+{ "definition": "select 3" }
+--- response
+{"success":1}
+

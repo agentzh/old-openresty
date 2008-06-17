@@ -107,19 +107,19 @@ sub remove_has_model {
 }
 
 sub get_has_view {
-    my ($self, $view) = @_;
+    my ($self, $user, $view) = @_;
     #return undef;
-    $self->get("hasview:$view")
+    $self->get("hasview:$user:$view")
 }
 
 sub set_has_view {
-    my ($self, $view) = @_;
-    $self->set("hasview:$view", 1, 3 * 60, 'trivial');
+    my ($self, $user, $view) = @_;
+    $self->set("hasview:$user:$view", 1, 3 * 60, 'trivial');
 }
 
 sub remove_has_view {
-    my ($self, $view) = @_;
-    $self->remove("hasview:$view");
+    my ($self, $user, $view) = @_;
+    $self->remove("hasview:$user:$view");
 }
 
 1;

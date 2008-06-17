@@ -448,10 +448,11 @@ sub has_feed {
 
 sub has_view {
     my ($self, $view) = @_;
+    my $user = $self->current_user;
 
     _IDENT($view) or die "Bad view name: $view\n";
 
-    if ($Cache->get_has_view($view)) {
+    if ($Cache->get_has_view($user, $view)) {
         #warn "has model cache HIT\n";
         return 1;
     }
@@ -461,7 +462,7 @@ sub has_view {
         ->limit(1);
     my $ret;
     eval { $ret = $self->select("$select")->[0][0]; };
-    if ($ret) { $Cache->set_has_view($view) }
+    if ($ret) { $Cache->set_has_view($user, $view) }
     return $ret;
 }
 
