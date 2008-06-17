@@ -1,6 +1,7 @@
 Change Log for OpenResty
 
-0.3.3 June 17 2008
+0.3.5 Jun 17 2008
+* Now we require 2 OpenResty test accounts to run the test suite.
 * Optimized the server by reducing DB queries via agressive user of caching.
 * Bypassed some checks for builtin roles Admin and Public to reduce DB uses.
 * Added tsearch2 related data types tsvector and tsquery to the Model API.
@@ -8,6 +9,7 @@ Change Log for OpenResty
 * Renamed the builtin action .Select to RunView and also reimplemented it by the restyscript compiler in Haskell.
 * Implemented half of the RunAction builtin action via the restyscript compiler in Haskell.
 * Added a new "trivial" param to OpenResty::Cache's set method to identify not-so-important caching which is disabled by the backend.recording option or backend.type option in the config file.
+* Updated the INSTALLATION doc to mention a second test account required to run the test suite.
 
 0.3.2 June 3 2008
 * The perl minisql parser now accepts tsearch2 queries.

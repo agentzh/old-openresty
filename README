@@ -2,7 +2,7 @@ NAME
     OpenResty - General-purpose web service platform for web applications
 
 VERSION
-    This document describes OpenResty 0.3.3 released on June 17, 2008.
+    This document describes OpenResty 0.3.5 released on June 17, 2008.
 
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
@@ -113,12 +113,19 @@ INSTALLATION
             $ bin/openresty deluser tester
             $ bin/openresty adduser tester
 
-        Give a password (say, "password") to its Admin role. Update your
-        etc/site_openresty.conf to reflect your these settings:
+        Give a password (say, "password") to its Admin role. Also create a
+        second user account "tester2":
+
+            $ bin/openresty adduser tester2
+
+        Update your etc/site_openresty.conf to reflect your these settings:
 
             [test_suite]
             use_http=0
             server=tester:password@localhost
+            server2=tester2:password@localhost
+
+        You may have your own passwords here though.
 
     6.  To have OpenResty's built-in actions "RunView" and "RunAction"
         working, you need to build the restyscript compiler in the

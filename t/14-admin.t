@@ -3,7 +3,20 @@
 # The Admin API is a just hack,
 # which will be removed once the Action API is implemented.
 
-use t::OpenResty;
+my $ExePath;
+BEGIN {
+    use FindBin;
+    $ExePath = "$FindBin::Bin/../haskell/bin/restyscript";
+    if (!-f $ExePath) {
+        $skip = "$ExePath is not found.\n";
+        return;
+    }
+    if (!-x $ExePath) {
+        $skip = "$ExePath is not an executable.\n";
+        return;
+    }
+};
+use t::OpenResty $skip ? (skip_all => $skip) : ();
 
 plan tests => 3 * blocks();
 

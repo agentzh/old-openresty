@@ -1,6 +1,6 @@
 package OpenResty;
 
-our $VERSION = '0.003003';
+our $VERSION = '0.003005';
 
 use strict;
 use warnings;
@@ -552,7 +552,7 @@ OpenResty - General-purpose web service platform for web applications
 
 =head1 VERSION
 
-This document describes OpenResty 0.3.3 released on June 17, 2008.
+This document describes OpenResty 0.3.5 released on June 17, 2008.
 
 =head1 DESCRIPTION
 
@@ -659,11 +659,19 @@ Create a "tester" user account for our test suite in OpenResty (drop it if it al
     $ bin/openresty deluser tester
     $ bin/openresty adduser tester
 
-Give a password (say, "password") to its Admin role. Update your F<etc/site_openresty.conf> to reflect your these settings:
+Give a password (say, "password") to its Admin role. Also create a second
+user account "tester2":
+
+    $ bin/openresty adduser tester2
+
+Update your F<etc/site_openresty.conf> to reflect your these settings:
 
     [test_suite]
     use_http=0
     server=tester:password@localhost
+    server2=tester2:password@localhost
+
+You may have your own passwords here though.
 
 =item 6.
 
