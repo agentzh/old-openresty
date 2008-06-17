@@ -31,8 +31,9 @@ debug: all
 
 force:
 
-today=$(shell date '+%Y-%m-%d')
-par_dir=openresty-$(today)
+today=$(shell date '+%Y%m%d')
+version=$(shell tail -n1 META.yml | awk '{print $$2}')
+par_dir=openresty-$(version)-$(today)
 par_file=$(par_dir).par
 
 par:
