@@ -394,7 +394,7 @@ sub validate_captcha
 	utf8::encode($cache_key);
 
 	# validate failed if the captcha id has been used
-	my $used=$OpenResty::Cache->get($cache_key);
+	my $used = $OpenResty::Cache->get($cache_key);
 	return (0,"The captcha has been used.") if $used;	# ans used
 
 	# validate failed if user input doesn't match the solution in captcha id
@@ -403,7 +403,8 @@ sub validate_captcha
 	return (0,"Solution to the captcha is incorrect.") if trim_sol($word) ne trim_sol($solution);	# wrong ans
 
 	# validate succeed, remember which captcha id has been used
-	$OpenResty::Cache->set($cache_key=>1, $MAX_TIMESPAN);
+        #warn $cache_key, "\n";
+	$OpenResty::Cache->set($cache_key => 1, $MAX_TIMESPAN);
 
 	return (1,"Verification succeeded.");
 }

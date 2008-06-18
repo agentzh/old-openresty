@@ -32,8 +32,10 @@ sub rename {
     my ($stdout, $stderr);
     my $type = $self->{_type};
     my $stdin = $self->{_src};
-    run [$ExePath, $type, 'rename', $var, $newvar], \$stdin, \$stdout, \$stderr, timeout(1) or
+    run [$ExePath, $type, 'rename', $var, $newvar], \$stdin, \$stdout, \$stderr, timeout(1);
+    if (!$stdout) {
         die $stderr || "Failed to call \"$ExePath $type rename $var $newvar\": returned status code " . ($? >> 8) . "\n";
+    }
 
     $stdout;
 }
@@ -43,9 +45,16 @@ sub compile {
     my ($stdout, $stderr);
     my $type = $self->{_type};
     my $stdin = $self->{_src};
-    ### $stdin
-    run [$ExePath, $type, 'frags', 'stats'], \$stdin, \$stdout, \$stderr, timeout(1) or
-        die $stderr || "Failed to call \"$ExePath $type fargs stats\" returned status code " . ($? >> 8) . "\n";
+
+    # Note that we can't use the "run ... or die ..." idiom here due to
+    # some mysterious failures (status code ) on our
+    # production machines (redhat 4)
+    run [$ExePath, $type, 'frags', 'stats'], \$stdin, \$stdout, \$stderr, timeout(1);
+    #warn "STDOUT: $stdout\n";
+    #warn "STDERR: $stderr\n";
+    if (!$stdout) {
+        die $stderr || "Failed to call \"$ExePath $type frags stats\" returned status code " . ($? >> 8) . "\n";
+    }
 
     ### $stdout
     my @ln = split /\n/, $stdout;
