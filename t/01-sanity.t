@@ -400,7 +400,7 @@ PUT /=/model/MyFavorites/count
 PUT /=/model/MyFavorites/count
 { "type": "real" }
 --- response_like
-^{"success":0,"error":"DBD::Pg::db (?:do|selectall_arrayref) failed:.*
+^{"success":0,"error":"DBD::Pg::db (?:do|selectall_arrayref) failed:.*?column \\"count\\" cannot be cast to type \\"pg_catalog\.float4\\"
 
 
 
