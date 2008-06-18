@@ -46,6 +46,7 @@ par:
 	cd $(par_dir) && unzip -q $(par_file)
 	rm $(par_dir)/$(par_file)
 	chmod a+x $(par_dir)/script/openresty
+	mv $(par_dir)/script $(par_dir)/bin
 	cd $(par_dir) && mkdir -p haskell/bin etc font
 	cp haskell/bin/restyscript $(par_dir)/haskell/bin/
 	cp etc/*.conf $(par_dir)/etc/

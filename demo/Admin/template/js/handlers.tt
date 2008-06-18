@@ -40,7 +40,7 @@ function render[% cat | ucfirst %]Menu (res) {
             { active_item: '[% cat | ucfirst %]s', submenu: res }
         )
     ).postprocess();
-    $("#logout-link").click(removeCookies);
+    $("#logout-link").click(logout);
 }
 
 function get[% cat | ucfirst %] (name) {

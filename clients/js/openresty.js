@@ -22,6 +22,10 @@ OpenResty.Client.prototype.isSuccess = function (res) {
     return !(typeof res == 'object' && res.success == 0 && res.error);
 };
 
+OpenResty.Client.prototype.logout = function () {
+    this.get('/=/logout');
+};
+
 OpenResty.Client.prototype.login = function (user, password) {
     this.user = user;
     var userCallback = this.callback;

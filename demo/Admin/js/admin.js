@@ -134,6 +134,16 @@ function error (msg) {
     alert(msg);
 }
 
+function logout () {
+    openresty.callback = function (res) {
+        if (!openresty.isSuccess(res)) {
+            error("Failed to logout: " + res.error);
+        }
+    };
+    openresty.logout();
+    removeCookies();
+}
+
 function removeCookies () {
     //alert("Hey!");
     $.cookie(serverCookie, null, { path: '/' });
