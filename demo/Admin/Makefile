@@ -14,10 +14,10 @@ all:
 	cp js/*.js out/
 	cp js/*/*.js out/
 	cp css/*.css out/
-	tar cvf site-binary.tar out
-	gzip --best site-binary.tar
+	tar cf site-binary.tar out
+	gzip -q --best site-binary.tar
 	mv site-binary.tar.gz out/
 
-upload:
+upload: all
 	scp -l 10000 -r `pwd`/out agentz@resty.eeeeworks.org:~/admin
 

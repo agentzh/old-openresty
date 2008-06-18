@@ -120,7 +120,7 @@ sub new {
         $t_file = $&;
         $class->start_playing_file($t_file);
     } else {
-        die "The PgMocked backend can only work when test_suite.use_http is set to true.\n";
+        die "The PgMocked backend is for testing only and it can only work when test_suite.use_http is set to 0.\n";
     }
     return bless {}, $class;
 }
