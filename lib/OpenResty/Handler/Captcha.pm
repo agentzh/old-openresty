@@ -10,7 +10,7 @@ use MIME::Base64;
 use Digest::MD5 qw/md5/;
 use Encode qw( encode decode is_utf8 );
 
-my $PLAINTEXT_SEP="\001";	# separator character in plaintext str
+my $PLAINTEXT_SEP=":";	# separator character in plaintext str
 my $MIN_TIMESPAN=1;			# minimum timespan(sec) for a valid Captcha,
 							# verification will fail before this timespan.
 							# default to 3s.
@@ -387,8 +387,8 @@ sub validate_captcha
 
 	# Construct cache key for captcha id. We cannot use captcha id directly, for the id itself
 	# could be appending any characters without affecting its decryption.
-	# Prepending "captcha:" to prevent cache key confliction...
-	my $cache_key=join($PLAINTEXT_SEP,"captcha:",$rand1,$lang,$solution,$min_valid,$max_valid,$rand2);
+	# Prepending "captcha" to prevent cache key confliction...
+	my $cache_key=join($PLAINTEXT_SEP,"captcha",$rand1,$lang,$solution,$min_valid,$max_valid,$rand2);
 	utf8::encode($cache_key);
 
 	# validate failed if the captcha id has been used
