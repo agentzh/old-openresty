@@ -37,7 +37,7 @@ par_dir=openresty-$(version)-$(today)
 par_file=$(par_dir).par
 
 par:
-	(echo ''; echo 'exit') | pp -p -x -I lib -M OpenResty::Backend::PgFarm -M GD::SecurityImage -M OpenResty::FastCGI -M HTTP::Server::Simple -M Cache::Cache -M Term::ReadKey -M Cache::Memcached::Fast -o $(par_file) bin/openresty
+	(echo ''; echo 'exit') | pp -p -x -I lib -M Crypt::Rijndael -M OpenResty::Backend::PgFarm -M GD::SecurityImage -M OpenResty::FastCGI -M HTTP::Server::Simple -M Cache::Cache -M Term::ReadKey -M Cache::Memcached::Fast -o $(par_file) bin/openresty
 	@echo
 	@echo $(par_file) generated.
 	-rm -rf $(par_dir)
@@ -52,5 +52,7 @@ par:
 	cp font/*.ttf $(par_dir)/font/
 	tar cf $(par_dir).tar $(par_dir)
 	gzip --best -f $(par_dir).tar
+	rm $(par_file)
+	rm -rf $(par_dir)
 	echo $(par_dir).tar.gz generated.
 
