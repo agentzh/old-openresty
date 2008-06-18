@@ -12,9 +12,7 @@ test: all
 
 clean:
 	-rm bin/restyscript
-	-find -name '*.o' -delete
-	-find -name '*.hi' -delete
-	-find -name '*.ho' -delete
+	-rm `find -name '*.o'` `find -name '*.hi'` `find -name '*.ho'`
 
 optimized: OOPTS = -O2
 optimized: all
