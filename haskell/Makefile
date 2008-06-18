@@ -19,3 +19,6 @@ clean:
 optimized: OOPTS = -O2
 optimized: all
 
+optimized2: OOPTS = -fvia-c -optc-O3 -O2
+optimized2: all
+
