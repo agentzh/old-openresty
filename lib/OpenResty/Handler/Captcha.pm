@@ -388,7 +388,9 @@ sub validate_captcha
 	# Construct cache key for captcha id. We cannot use captcha id directly, for the id itself
 	# could be appending any characters without affecting its decryption.
 	# Prepending "captcha" to prevent cache key confliction...
-	my $cache_key=join($PLAINTEXT_SEP,"captcha",$rand1,$lang,$solution,$min_valid,$max_valid,$rand2);
+	# NOTE: the solution used here should not contains whitespaces, because it will be used as
+	# part of the cache key!
+	my $cache_key=join($PLAINTEXT_SEP,"captcha",$rand1,$lang,trim_sol($solution),$min_valid,$max_valid,$rand2);
 	utf8::encode($cache_key);
 
 	# validate failed if the captcha id has been used
