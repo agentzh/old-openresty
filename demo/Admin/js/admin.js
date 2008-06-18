@@ -30,7 +30,7 @@ $.fn.postprocess = function (className, options) {
                 var data = $(this).attr('resty_value');
                 var type = $(this).attr('resty_type');
                 //debug(type);
-                if (data.length > 128 || /\n.*?\n/.test(data)) {
+                if ((data && data.length > 128) || /\n.*?\n/.test(data)) {
                     type = 'textarea';
                 }
                 if (!type) type = 'text';
