@@ -58,7 +58,7 @@ OpenResty 系统中原有的 Captcha 图片生成基于 C<GD::SecurityImage> 模
 
 Captcha id 明文格式为：
 
-	<rand> <\001> <lang> <\001> <solution> <\001> <min_ts> <\001> <max_ts> <\001> <rand>
+	<rand> : <lang> : <solution> : <min_ts> : <max_ts> : <rand>
 
 其中各个部分的含义如下：
 
@@ -90,11 +90,11 @@ Captcha 最长有效时刻，以 UNIX 时戳形式表示，例如“1208361326�
 
 最终的 Captcha id 是原始的 Captcha id 明文串经过 AES 加密（通过 C<Crypt::Rijndael> 和 C<Crypt::CBC> 模块）后再 Base64 编码、最后再将 [+/] 分别替换为 [._] （以便在 URL 中引用）、去掉末尾填充用的 = 后的结果，同时在前面附加了经过相同 Base64 编码步骤的对明文串的 MD5 摘要。例如，若 Captcha id 明文串为：
 
-	15768<\001>cn<\001>测试一下<\001>1208357712<\001>1208361326<\001>15768
+	15768:cn:测试一下:1208357712:1208361326:15768
 
 若选择密钥为 16 个 a（128 bits 密钥），则最终生成的 Captcha id 将为：
 
-	ZhFYSq_rtlPjKHfxZuZpoAGO6DnQcufQ3HyQlT50BHz6HmFx5M6uyPXPE4c0a60IR0JgchmTkHle2DjT3_F9ob.9gYnCKE6haFsQtPm6hGQA
+	x4MHdt6WW_yjP8Ip6hm1mQAHui6sX6dTuKSUHNjl9TUDDKHWlLfi5mOGZ11Hu01_HR_zmc4x8_V4fqqvnIfBZUmmibdmCSBYT.DEMCI6oRmg
 
 加密的示例代码如下：
 
@@ -102,7 +102,7 @@ Captcha 最长有效时刻，以 UNIX 时戳形式表示，例如“1208361326�
 	use MIME::Base64;
 	use Digest::MD5 'md5_base64';
 	my $rand=15768;
-	my $plain=join("\001",$rand,'cn','测试一下','1208357712','1208361326',$rand);
+	my $plain=join(":",$rand,'cn','测试一下','1208357712','1208361326',$rand);
 	my $key='a' x 16;
 	my $algo=Crypt::CBC->new(
 			-key=>$key,
@@ -122,7 +122,7 @@ Captcha 最长有效时刻，以 UNIX 时戳形式表示，例如“1208361326�
 	use Crypt::CBC;
 	use MIME::Base64;
 	use Digest::MD5 'md5_base64';
-	my $result='ZhFYSq_rtlPjKHfxZuZpoAGO6DnQcufQ3HyQlT50BHz6HmFx5M6uyPXPE4c0a60IR0JgchmTkHle2DjT3_F9ob.9gYnCKE6haFsQtPm6hGQA';
+	my $result='x4MHdt6WW_yjP8Ip6hm1mQAHui6sX6dTuKSUHNjl9TUDDKHWlLfi5mOGZ11Hu01_HR_zmc4x8_V4fqqvnIfBZUmmibdmCSBYT.DEMCI6oRmg';
 	my $key='a' x 16;
 	my $algo=Crypt::CBC->new(
 			-key=>$key,
@@ -134,7 +134,7 @@ Captcha 最长有效时刻，以 UNIX 时戳形式表示，例如“1208361326�
 	my ($digest,$cipher)=unpack("a22a*",$base64);
 	$cipher=decode_base64($cipher);
 	my $plain=$algo->decrypt($cipher);
-	my ($rand1,$lang,$solution,$min_ts,$max_ts,$rand2)=split("\001",$plain);
+	my ($rand1,$lang,$solution,$min_ts,$max_ts,$rand2)=split(":",$plain);
 	if($digest ne md5_base64($plain)) {
 		print "Invalid captcha ID!\n";
 		exit;
