@@ -306,7 +306,15 @@ GET /=/feed/Post/count/*
 
 
 
-=== TEST 20: Create another feed
+=== TEST 20: another security hole suggested by laser++
+--- request
+GET /=/feed/Post/count/-1
+--- response
+{"success":0,"error":"No entries found"}
+
+
+
+=== TEST 21: Create another feed
 --- request
 POST /=/feed/Comment
 {
@@ -322,7 +330,7 @@ POST /=/feed/Comment
 
 
 
-=== TEST 21: Get the feed list again
+=== TEST 22: Get the feed list again
 --- request
 GET /=/feed
 --- response
@@ -333,7 +341,7 @@ GET /=/feed
 
 
 
-=== TEST 22: Delete feed Comment
+=== TEST 23: Delete feed Comment
 --- request
 DELETE /=/feed/Comment
 --- response
@@ -341,7 +349,7 @@ DELETE /=/feed/Comment
 
 
 
-=== TEST 23: Get the feed list again
+=== TEST 24: Get the feed list again
 --- request
 GET /=/feed
 --- response
@@ -351,7 +359,7 @@ GET /=/feed
 
 
 
-=== TEST 24: Delete feed Comment again
+=== TEST 25: Delete feed Comment again
 --- request
 DELETE /=/feed/Comment
 --- response
