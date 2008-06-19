@@ -2,7 +2,7 @@
 
 use t::OpenResty;
 
-plan tests => 3 * blocks();
+plan tests => 3 * blocks() - 3;
 
 run_tests;
 
@@ -117,7 +117,7 @@ POST /=/feed/Post
 POST /=/view/PostFeed
 {
   "description": "View for post feeds",
-  "definition": "select author, title, 'http://blog.agentzh.org/#post-' || id as link, content, created_on as published, 'http://blog.agentzh.org/#post-' || id || ':comments' as comments from Post order by created_on desc limit 20"
+  "definition": "select author, title, 'http://blog.agentzh.org/#post-' || id as link, content, created_on as published, 'http://blog.agentzh.org/#post-' || id || ':comments' as comments from Post order by created_on desc limit $count | 20"
 }
 --- response
 {"success":1}
@@ -253,7 +253,60 @@ GET /=/feed/Post/~/~
 
 
 
-=== TEST 17: Create another feed
+=== TEST 17: Obtain the feed content using param (XML)
+--- request
+GET /=/feed/Post/count/1
+--- res_type: application/rss+xml; charset=utf-8
+--- format: feed
+--- response
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+  <title>Human &amp; Machine - Blog posts</title>
+  <link>http://blog.agentzh.org</link>
+  <language>en</language>
+  <copyright>Copyright 2008 by Agent Zhang</copyright>
+  <generator>OpenResty RSS Feed Writer</generator>
+  <pubDate>XXX</pubDate>
+  <lastBuildDate>XXX</lastBuildDate>
+  <image>
+    <url>http://localhost/Blog/out/me.jpg</url>
+    <link>http://blog.agentzh.org</link>
+    <title>Human &amp; Machine - Blog posts</title>
+  </image>
+  <item>
+    <title>Hello, world</title>
+    <link>http://blog.agentzh.org/#post-1</link>
+    <description>&lt;h1&gt;This is my first program ;)&lt;/h1&gt;</description>
+    <author>agentzh</author>
+    <comments>http://blog.agentzh.org/#post-1:comments</comments>
+    <pubDate>2008-03-12T15:20:00Z</pubDate>
+    <guid isPermaLink="true">http://blog.agentzh.org/#post-1</guid>
+  </item>
+  </channel>
+</rss>
+
+
+
+=== TEST 18: security hole suggested by laser++
+--- debug: 1
+--- request
+GET /=/feed/Post/count/*
+--- response
+{"success":0,"error":"invalid input syntax for integer: \"*\""}
+
+
+
+=== TEST 19: security hole suggested by laser++
+--- debug: 0
+--- request
+GET /=/feed/Post/count/*
+--- response
+{"success":0,"error":"Operation failed."}
+
+
+
+=== TEST 20: Create another feed
 --- request
 POST /=/feed/Comment
 {
@@ -269,7 +322,7 @@ POST /=/feed/Comment
 
 
 
-=== TEST 18: Get the feed list again
+=== TEST 21: Get the feed list again
 --- request
 GET /=/feed
 --- response
@@ -280,7 +333,7 @@ GET /=/feed
 
 
 
-=== TEST 19: Delete feed Comment
+=== TEST 22: Delete feed Comment
 --- request
 DELETE /=/feed/Comment
 --- response
@@ -288,7 +341,7 @@ DELETE /=/feed/Comment
 
 
 
-=== TEST 20: Get the feed list again
+=== TEST 23: Get the feed list again
 --- request
 GET /=/feed
 --- response
@@ -298,7 +351,7 @@ GET /=/feed
 
 
 
-=== TEST 21: Delete feed Comment again
+=== TEST 24: Delete feed Comment again
 --- request
 DELETE /=/feed/Comment
 --- response
