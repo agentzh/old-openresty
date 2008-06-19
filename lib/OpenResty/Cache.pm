@@ -41,6 +41,9 @@ sub new {
     $NoTrivial = $OpenResty::Config{'backend.recording'} ||
         $backend_type eq 'PgMocked';
 
+    if ($obj->can('purge')) {
+        $obj->purge();
+    }
     $self->{obj} = $obj;
     return $self;
 }
