@@ -379,8 +379,8 @@ POST /=/model/MyFavorites/~
 --- request
 PUT /=/model/MyFavorites/count
 { "name": "count", "type": "real" }
---- response_like
-^{"success":0,"error":"DBD::Pg::db (?:do|selectall_arrayref) failed:.*
+--- response
+{"error":"column \"count\" of relation \"MyFavorites\" already exists","success":0}
 
 
 
@@ -399,8 +399,8 @@ PUT /=/model/MyFavorites/count
 --- request
 PUT /=/model/MyFavorites/count
 { "type": "real" }
---- response_like
-^{"success":0,"error":"DBD::Pg::db (?:do|selectall_arrayref) failed:.*?column \\"count\\" cannot be cast to type \\"pg_catalog\.float4\\"
+--- response
+{"error":"column \"count\" cannot be cast to type \"pg_catalog.float4\"","success":0}
 
 
 
