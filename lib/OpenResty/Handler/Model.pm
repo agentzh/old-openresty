@@ -19,6 +19,7 @@ sub check_type {
                     bigint |
                     cidr |
                     inet |
+                    ip4r |
                     macaddr |
                     tsquery |
                     tsvector |
