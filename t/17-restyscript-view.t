@@ -705,7 +705,14 @@ keyword='Hello'
 
 
 
-=== TEST 60: for distinct
+=== TEST 60: for >>= operator
+--- sql
+select * from table where field where iprange >>= '202.165.100.1'
+--- out: select * from "table" where "field" >>= '202.165.100.1' 
+
+
+
+=== TEST 61: for distinct
 --- sql
 select distinct ca, cb from table where ca > 0
 --- out: select distinct "ca", "cb" from "table" where "ca" > 0
