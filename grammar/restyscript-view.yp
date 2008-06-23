@@ -294,6 +294,8 @@ operator: '>'
         | '='
         | 'like'
         | '@@'
+        | '<<'
+        | '<<='
         ;
 
 
@@ -388,7 +390,7 @@ sub _Lexer {
 
     for ($yydata->{input}) {
         s/^\s*('(?:\\.|''|[^'])*')//s
-                and return ('STRING', $1);
+                and return ('STRING', $1)
         s/^\s*[-+]?(\.\d+|\d+\.\d*|\d+)//s
                 and return ('NUM', $1);
         s/^\s*"(\w*)"//s
@@ -400,7 +402,7 @@ sub _Lexer {
             (my $token = $s) =~ s/\s+/ /gs;
             return (lc($token), lc($s));
         }
-        s/^\s*(<=|>=|<>|!=|\|\||::|like\b|\@\@)//s
+        s/^\s*(<=|>=|<>|!=|\|\||::|like\b|\@\@|<<=|<<)//s
                 and return (lc($1), lc($1));
         s/^\s*([A-Za-z][A-Za-z0-9_]*)\b//s
                 and return ('IDENT', $1);
