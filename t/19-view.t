@@ -732,7 +732,41 @@ GET /=/view/Foo/~/~?val=2&col=id
 
 
 
-=== TEST 79: bug
+=== TEST 79: Create a model with cidr type
+--- request
+POST /=/model/T
+{
+    "description": "Type testing",
+    "columns":[
+        { "name": "cidr", "type": "cidr", "label": "cidr" }
+    ]
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 80: Insert lines to cidr table
+--- request
+POST /=/model/T/~/~
+[
+    {"cidr":"202.165.100.143"},
+]
+--- response
+{"last_row":"/=/model/T","rows_affected":1,"success":1}
+
+
+
+=== TEST 81: create a view with operator >>=
+--- request
+POST /=/view/TC
+{ "definition": "select count(*) from T where cidr >>= '202.165.100.243'" }
+--- response
+{"success":1}
+
+
+
+=== TEST 82: bug
 --- request
 POST /=/view/RowCount
 { "definition": "select count(*) from $model" }
