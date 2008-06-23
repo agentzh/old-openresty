@@ -24,7 +24,7 @@ use OpenResty::RestyScript;
 
 #plan tests => 3 * blocks();
 
-plan tests => 117;
+plan tests => 118;
 
 sub quote {
     my $s = shift;
@@ -707,8 +707,8 @@ keyword='Hello'
 
 === TEST 60: for >>= operator
 --- sql
-select * from table where field where iprange >>= '202.165.100.1'
---- out: select * from "table" where "field" >>= '202.165.100.1' 
+select * from table where iprange >>= '202.165.100.1'
+--- out: select * from "table" where "iprange" >>= '202.165.100.1'
 
 
 
