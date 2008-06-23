@@ -67,10 +67,11 @@ opTable = [
                 arithOp "||"
                 ],
             [
+                relOp "@@",
+                relOp "<<=", relOp "<<", relOp ">>=", relOp ">>",
                 relOp ">=", relOp ">",
                 relOp "<=", relOp "<>", relOp "<",
-                relOp "=", relOp "!=", relOp' "like",
-                relOp "@@"
+                relOp "=", relOp "!=", relOp' "like"
                 ],
             [   preOp' "not" Not ],
             [

@@ -50,8 +50,8 @@ select "foo", "bar" from "Bah"
 
 === TEST 2: select only
 --- in
-   
-  select foo ; ;; 
+
+  select foo ; ;;
 --- ast
 Query [Select [Column (Symbol "foo")]]
 --- out
@@ -631,9 +631,9 @@ select * from "table" where "field" @@ "to_tsquery"('chinesecfg', $keyword)
 
 
 
-=== TEST 67: >>= 
+=== TEST 67: >>=
 --- in
-select * from table where field >>= '127.0.0.1' 
+select * from table where field >>= '127.0.0.1'
 --- out
 select * from "table" where "field" >>= '127.0.0.1'
 
