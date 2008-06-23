@@ -631,7 +631,15 @@ select * from "table" where "field" @@ "to_tsquery"('chinesecfg', $keyword)
 
 
 
-=== TEST 67: Test potential ambiguity between variables and verbatim quotes (the wrong way)
+=== TEST 67: >>= 
+--- in
+select * from table where field >>= '127.0.0.1' 
+--- out
+select * from "table" where "field" >>= '127.0.0.1'
+
+
+
+=== TEST 68: Test potential ambiguity between variables and verbatim quotes (the wrong way)
 --- in
 select $foo , $foo$hello$foo from Post
 --- error
@@ -640,7 +648,7 @@ unexpected "$"
 
 
 
-=== TEST 68: Test potential ambiguity between variables and verbatim quotes (the right way)
+=== TEST 69: Test potential ambiguity between variables and verbatim quotes (the right way)
 --- in
 select $foo , $foo$hello$foo$ from Post
 --- out
