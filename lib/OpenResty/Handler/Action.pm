@@ -9,9 +9,6 @@ use Params::Util qw( _HASH _STRING );
 use OpenResty::RestyScript;
 use OpenResty::Limits;
 use Data::Dumper qw(Dumper);
-use CGI::Simple ();
-
-my $Cgi = CGI::Simple->new;
 
 sub POST_action_exec {
     my ($self, $openresty, $bits) = @_;
@@ -142,7 +139,7 @@ sub exec_RunAction {
             local %ENV;
             $ENV{REQUEST_URI} = $url;
             $ENV{REQUEST_METHOD} = $http_meth;
-            my $cgi = new_cgi($url, $content);
+            my $cgi = new_mocked_cgi($url, $content);
             my $call_level = $openresty->call_level;
             $call_level++;
             my $account = $openresty->current_user;
@@ -172,48 +169,6 @@ sub validate_model_names {
             die "Model \"$model\" not found.\n";
         }
     }
-}
-
-# XXX FIXME: code duplication in WWW::OpenResty::Embeded:
-sub new_cgi {
-    my ($uri, $content) = @_;
-    $uri =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
-    my %url_params;
-    if ($uri =~ /\?(.+)/) {
-        my $list = $1;
-        my @params = split /\&/, $list;
-        for my $param (@params) {
-            my ($var, $val) = split /=/, $param, 2;
-            $url_params{$var} = $val;
-        }
-    }
-    my $cgi = Class::Prototyped->new(
-        param => sub {
-            my ($self, $key) = @_;
-            #warn "!!!!!$key!!!!";
-            if ($key =~ /^(?:PUTDATA|POSTDATA)$/) {
-                my $s = $content;
-                if (!defined $s or $s eq '') {
-                    return undef;
-                }
-                return $s;
-            }
-            $url_params{$key};
-        },
-        url_param => sub {
-            my ($self, $name) = @_;
-            #warn ">>>>>>>>>>>>>>> url_param: $name\n";
-            if (defined $name) {
-                return $url_params{$name};
-            } else {
-                return keys %url_params;
-            }
-        },
-        header => sub {
-            my $self = shift;
-            return $Cgi->header(@_);
-        },
-    );
 }
 
 1;

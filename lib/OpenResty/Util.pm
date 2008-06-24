@@ -3,10 +3,15 @@ package OpenResty::Util;
 use strict;
 use warnings;
 
+use CGI::Simple ();
+use Class::Prototyped;
+
 use OpenResty::Limits;
 use base 'Exporter';
 
-our @EXPORT = qw( _IDENT  Q QI check_password slurp );
+our @EXPORT = qw( _IDENT Q QI check_password slurp new_mocked_cgi );
+
+my $Cgi = CGI::Simple->new;
 
 sub _IDENT {
     (defined $_[0] && $_[0] =~ /^[A-Za-z]\w*$/) ? $_[0] : undef;
@@ -47,6 +52,47 @@ sub slurp {
     my $s = do { local $/; <$in> };
     close $in;
     $s;
+}
+
+sub new_mocked_cgi {
+    my ($uri, $content) = @_;
+    $uri =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
+    my %url_params;
+    if ($uri =~ /\?(.+)/) {
+        my $list = $1;
+        my @params = split /\&/, $list;
+        for my $param (@params) {
+            my ($var, $val) = split /=/, $param, 2;
+            $url_params{$var} = $val;
+        }
+    }
+    my $cgi = Class::Prototyped->new(
+        param => sub {
+            my ($self, $key) = @_;
+            #warn "!!!!!$key!!!!";
+            if ($key =~ /^(?:PUTDATA|POSTDATA)$/) {
+                my $s = $content;
+                if (!defined $s or $s eq '') {
+                    return undef;
+                }
+                return $s;
+            }
+            $url_params{$key};
+        },
+        url_param => sub {
+            my ($self, $name) = @_;
+            #warn ">>>>>>>>>>>>>>> url_param: $name\n";
+            if (defined $name) {
+                return $url_params{$name};
+            } else {
+                return keys %url_params;
+            }
+        },
+        header => sub {
+            my $self = shift;
+            return $Cgi->header(@_);
+        },
+    );
 }
 
 1;

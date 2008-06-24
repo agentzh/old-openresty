@@ -311,7 +311,7 @@ GET /=/feed/Post/count/*
 GET /=/feed/Post/count/-1
 --- response
 {"success":0,"error":"No entries found"}
-
+--- LAST
 
 
 === TEST 21: Create another feed

@@ -87,12 +87,12 @@ sub do {
     if ($Recording) {
         my $res;
         eval { $res = $self->{dbh}->do($sql); };
-        OpenResty::Backend::PgMocked->record($sql => $res);
         if ($@) {
             my $err = $@;
             OpenResty::Backend::PgMocked->record($sql => $err => 'die');
             die $err;
         }
+        OpenResty::Backend::PgMocked->record($sql => $res);
         return $res;
     } else {
         return $self->{dbh}->do($sql);

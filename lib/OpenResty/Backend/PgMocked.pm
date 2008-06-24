@@ -3,7 +3,7 @@ package OpenResty::Backend::PgMocked;
 use strict;
 use warnings;
 
-#use Smart::Comments;
+#use Smart::Comments '####';
 use JSON::XS;
 use base 'OpenResty::Backend::Pg';
 use Test::LongString;
@@ -38,6 +38,7 @@ sub DumpFile {
     open my $out, ">$file" or
         die "Can't open $file for writing: $!";
 
+    #### $data
     my $json = $json_xs->encode($data);
     #print $out encode('utf8', $json);
     print $out $json;
@@ -59,6 +60,13 @@ sub start_recording_file {
 sub record {
     my ($class, $query, $res, $type) = @_;
     $type ||= 'data';
+    if (ref $res && ref $res eq 'die') {
+        #use Data::Dumper;
+        #warn "HERE!!!! \n", Dumper($res), "\n";
+        $res = $$res;
+        #warn "RES: $res\n";
+        $type = 'die';
+    }
     push @$TransList, ["$query", $res, $type];
 }
 
@@ -100,15 +108,16 @@ sub play {
     $query =~ s/'3\.1415[89]{4,}\d*'/'3.14159'/;
     $query =~ s/'3\.140{4,}\d*'/'3.14'/;
     my $res = $cur->[1];
-    my $type = $cur->[-1];
-    if ($type eq 'die') {
-        die $res;
-    }
     if ($cur->[0] ne $query) {
         #is_string($cur->[0], $query);
         die "Unexpected query: ", $OpenResty::Dumper->($query) .
             " (Expecting: ", $OpenResty::Dumper->($cur->[0]), ")\n";
     }
+    my $type = $cur->[-1];
+    if ($type eq 'die') {
+        die $res;
+    }
+
     return $res;
 }
 
