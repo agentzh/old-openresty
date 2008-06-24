@@ -100,8 +100,16 @@ sub parse_data {
 }
 
 sub new {
-    my ($class, $cgi) = @_;
-    return bless { _cgi => $cgi, _charset => 'UTF-8' }, $class;
+    my ($class, $cgi, $call_level) = @_;
+    return bless {
+        _cgi => $cgi,
+        _charset => 'UTF-8',
+        _call_level => $call_level,
+    }, $class;
+}
+
+sub call_level {
+    return $_[0]->{_call_level};
 }
 
 sub init {
@@ -286,9 +294,9 @@ sub error {
     if (!$OpenResty::Config{'frontend.debug'} && $lowlevel) {
         $s = 'Operation failed.';
     } else {
-        $s =~ s/(.+) at \S+\/OpenResty\.pm line \d+(?:, <DATA> line \d+)?\.?$/Syntax error found in the JSON input: $1./;
-        $s =~ s{ at \S+ line \d+\.?$}{}g;
-        $s =~ s{ at \S+ line \d+, <\w+> line \d+\.?$}{}g;
+        #$s =~ s/(.+) at \S+\/OpenResty\.pm line \d+(?:, <DATA> line \d+)?\.?$/Syntax error found in the JSON input: $1./;
+        #$s =~ s{ at \S+ line \d+\.?$}{}g;
+        #$s =~ s{ at \S+ line \d+, <\w+> line \d+\.?$}{}g;
     }
     #$s =~ s/^DBD::Pg::db do failed:\s.*?ERROR:\s+//;
     $self->{_error} .= $s . "\n";

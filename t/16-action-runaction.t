@@ -248,12 +248,43 @@ GET /=/model/Carrie/~/~
 
 
 === TEST 25: Insert some more data via actions
-[{"success":1,"rows_affected":2,"last_row":"/=/model/Carrie/id/4"}]
 --- request
 POST /=/action/RunAction/~/~
 "POST '/=/model/Carrie' || '/~/~'
 [{num: 5, url: 'yahoo.cn', title: 'Yahoo'},
 {'num': 6, url: 'google' || '.com', \"title\": 'Google'}]"
 --- response
-{"error":"HTTP commands not implemented yet.","success":0}
+[{"success":1,"rows_affected":2,"last_row":"/=/model/Carrie/id/4"}]
+
+
+
+=== TEST 26: three GET in an action
+[{"success":1,"rows_affected":2,"last_row":"/=/model/Carrie/id/4"}]
+--- request
+POST /=/action/RunAction/~/~
+"GET '/=/model/Carrie' || '/id/4';
+GET '/=/model/Carrie/id/3';
+GET '/=/model/Carrie/id/2';"
+--- response
+[
+    [{"num":"6","url":"google.com","title":"Google","id":"4"}],
+    [{"num":"5","url":"yahoo.cn","title":"Yahoo","id":"3"}],
+    [{"num":"8","url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
+]
+
+
+
+=== TEST 27: three GET in an action
+[{"success":1,"rows_affected":2,"last_row":"/=/model/Carrie/id/4"}]
+--- request
+POST /=/action/RunAction/~/~
+"GET '/=/model/Carrie' || '/id/4';
+GET '/=/model';
+GET '/=/blah/blah'"
+--- response
+[
+    [{"id":"4","num":"6","title":"Google","url":"google.com"}],
+    [{"description":"我的书签","name":"Carrie","src":"/=/model/Carrie"}],
+    {"error":"Unknown URL catagory: blah","success":0}
+]
 
