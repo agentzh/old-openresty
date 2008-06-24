@@ -296,7 +296,7 @@ GET '/=/model';"
 POST /=/action/RunAction/~/~
 "DELETE '/=/model/Carrie' || '/id/4';
 GET ('/=/model/Carrie/~/~') ; delete from Carrie where id = 3
-;GET '/=/' || ('model/' || 'Carrie/~/~');
+;GET '/=/' || ('model/' || 'Carrie/~/~')
 "
 --- response
 [
