@@ -72,9 +72,12 @@ sub init {
 }
 
 sub process_request {
-    my ($class, $cgi, $call_level) = @_;
+    my ($class, $cgi, $call_level, $parent_account) = @_;
 
     $call_level ||= 0;
+    if ($call_level > $ACTION_REC_DEPTH_LIMIT) {
+        die "Action calling chain is too deep. (The limit is $ACTION_REC_DEPTH_LIMIT.)\n";
+    }
 
     my $url  = $ENV{REQUEST_URI};
     ### $url
@@ -88,9 +91,9 @@ sub process_request {
 
     my $openresty;
     if ($call_level == 0) {
-        $openresty = OpenResty->new($cgi);
+        $openresty = OpenResty->new($cgi, $call_level);
     } else {
-        $openresty = OpenResty::Inlined->new($cgi);
+        $openresty = OpenResty::Inlined->new($cgi, $call_level);
     }
 
     #warn "InitFatal2: $InitFatal\n";
@@ -134,7 +137,7 @@ sub process_request {
         return $openresty->fatal("HTTP method not detected.");
     }
     ### $http_meth
-    if ($OpenResty::Config{'frontend.log'}) {
+    if ($call_level == 0 && $OpenResty::Config{'frontend.log'}) {
         require Clone;
         #warn "------------------------------------------------\n";
         warn "$http_meth $ENV{REQUEST_URI} (", join("/", @bits), ")\n";
@@ -215,13 +218,24 @@ sub process_request {
                 }
             }
 
-            # this part is lame?
-            if (!$account) {
-                die "Login required.\n";
-            }
-            if (!$openresty->has_user($account)) {
-                ### Found user: $user
-                die "Account \"$account\" does not exist.\n";
+            if ($call_level == 0) {
+                # this part is lame?
+                if (!$account) {
+                    die "Login required.\n";
+                }
+                if (!$openresty->has_user($account)) {
+                    ### Found user: $user
+                    die "Account \"$account\" does not exist.\n";
+                }
+            } else {
+                if (!$account) {
+                    $account = $parent_account;
+                } else {
+                    if (!$openresty->has_user($account)) {
+                        ### Found user: $user
+                        die "Account \"$account\" does not exist.\n";
+                    }
+                }
             }
             $openresty->set_user($account);
 
