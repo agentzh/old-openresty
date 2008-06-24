@@ -279,12 +279,33 @@ GET '/=/model/Carrie/id/2';"
 --- request
 POST /=/action/RunAction/~/~
 "GET '/=/model/Carrie' || '/id/4';
-GET '/=/model';
-GET '/=/blah/blah'"
+GET '/=/blah/blah';
+GET '/=/model';"
 --- response
 [
     [{"id":"4","num":"6","title":"Google","url":"google.com"}],
-    [{"description":"我的书签","name":"Carrie","src":"/=/model/Carrie"}],
-    {"error":"Unknown URL catagory: blah","success":0}
+    {"error":"Unknown URL catagory: blah","success":0},
+    [{"description":"我的书签","name":"Carrie","src":"/=/model/Carrie"}]
+]
+
+
+
+=== TEST 27: delete mixed in 2 GET
+[{"success":1,"rows_affected":2,"last_row":"/=/model/Carrie/id/4"}]
+--- request
+POST /=/action/RunAction/~/~
+"DELETE '/=/model/Carrie' || '/id/4';
+GET ('/=/model/Carrie/~/~') ; delete from Carrie where id = 3
+;GET '/=/' || ('model/' || 'Carrie/~/~');
+"
+--- response
+[
+    {"rows_affected":1,"success":1},
+    [
+        {"id":"2","num":"8","title":"second","url":"http://zhangxiaojue.cn"},
+        {"id":"3","num":"5","title":"Yahoo","url":"yahoo.cn"}
+    ],
+    {"rows_affected":1,"success":1},
+    [{"id":"2","num":"8","title":"second","url":"http://zhangxiaojue.cn"}]
 ]
 
