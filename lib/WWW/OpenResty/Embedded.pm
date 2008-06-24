@@ -8,17 +8,15 @@ use Carp;
 use Params::Util qw( _HASH0 );
 use OpenResty::Dispatcher;
 use Data::Dumper;
-use Class::Prototyped;
 use HTTP::Request;
 use HTTP::Response;
-use CGI::Simple;
+use OpenResty::Util qw( new_mocked_cgi );
 use CGI::Cookie;
 use Test::Base;
 use Encode qw(encode is_utf8);
 
 our $Buffer;
 our %Cookies;
-my $Cgi = CGI::Simple->new;
 
 *Test::Base::Handle::BINMODE = sub {};
 
@@ -133,7 +131,7 @@ sub _request {
         ### My cookie: $ENV{COOKIE}
     }
 
-    my $cgi = new_cgi($uri, $req);
+    my $cgi = new_mocked_cgi($uri, $req->content);
     $Buffer = undef;
     OpenResty::Dispatcher->process_request($cgi);
     my $code;
@@ -157,47 +155,6 @@ sub _request {
     ## $raw_cookie
     ## $Buffer
     $res;
-}
-
-sub new_cgi {
-    my ($uri, $req) = @_;
-    $uri =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
-    my %url_params;
-    if ($uri =~ /\?(.+)/) {
-        my $list = $1;
-        my @params = split /\&/, $list;
-        for my $param (@params) {
-            my ($var, $val) = split /=/, $param, 2;
-            $url_params{$var} = $val;
-        }
-    }
-    my $cgi = Class::Prototyped->new(
-        param => sub {
-            my ($self, $key) = @_;
-            #warn "!!!!!$key!!!!";
-            if ($key =~ /^(?:PUTDATA|POSTDATA)$/) {
-                my $s = $req->content;
-                if (!defined $s or $s eq '') {
-                    return undef;
-                }
-                return $s;
-            }
-            $url_params{$key};
-        },
-        url_param => sub {
-            my ($self, $name) = @_;
-            #warn ">>>>>>>>>>>>>>> url_param: $name\n";
-            if (defined $name) {
-                return $url_params{$name};
-            } else {
-                return keys %url_params;
-            }
-        },
-        header => sub {
-            my $self = shift;
-            return $Cgi->header(@_);
-        },
-    );
 }
 
 1;
