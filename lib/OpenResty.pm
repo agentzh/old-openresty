@@ -366,7 +366,7 @@ sub response {
     }
     $str =~ s/\n+$//s;
 
-    my $meth = $self->{_http_method};
+    #my $meth = $self->{_http_method};
     my $last_res_id = $cgi->url_param('last_response');
     ### $last_res_id;
     ### $meth;
