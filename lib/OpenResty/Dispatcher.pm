@@ -8,6 +8,7 @@ use Cookie::XS;
 use OpenResty::Limits;
 use OpenResty::Cache;
 use OpenResty;
+use OpenResty::Inlined;
 use OpenResty::Config;
 
 our $InitFatal;
@@ -144,10 +145,9 @@ sub process_request {
     }
 
     # XXX hacks...
+    my ($session, $session_from_cookie);
     if ($call_level == 0) { # only check cookies on the toplevel call
         my $cookies = Cookie::XS->fetch;
-        my $session_from_cookie;
-        my $session;
         if ($cookies) {
             my $cookie = $cookies->{session};
             if ($cookie) {
