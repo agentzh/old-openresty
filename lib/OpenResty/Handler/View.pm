@@ -100,6 +100,16 @@ sub PUT_view {
     if (defined $new_def) {
         _STRING($new_def) or
             die "Bad view definition: ", $OpenResty::Dumper->($new_def), "\n";
+        # XXX check the syntax of the def
+        my $restyscript = OpenResty::RestyScript::View->new;
+        eval {
+            $restyscript->parse(
+                $new_def,
+                { quote => \&Q, quote_ident => \&QI }
+            );
+        };
+        if ($@) { die "minisql: $@\n"; }
+
         $update->set(definition => Q($new_def));
     }
 
