@@ -97,16 +97,16 @@ sub process_request {
     }
 
     #warn "InitFatal2: $InitFatal\n";
-    if ($InitFatal) {
-        return $openresty->fatal($InitFatal);
-    }
-
     eval {
         $openresty->init(\$url);
     };
     if ($@) {
         ### Exception in new: $@
         return $openresty->fatal($@);
+    }
+
+    if ($InitFatal) {
+        return $openresty->fatal($InitFatal);
     }
 
     #$url =~ s/\/+$//g;
