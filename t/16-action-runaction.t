@@ -290,7 +290,7 @@ GET '/=/model';"
 
 
 
-=== TEST 27: delete mixed in 2 GET
+=== TEST 28: delete mixed in 2 GET
 [{"success":1,"rows_affected":2,"last_row":"/=/model/Carrie/id/4"}]
 --- request
 POST /=/action/RunAction/~/~

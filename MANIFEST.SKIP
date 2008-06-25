@@ -54,6 +54,7 @@ bin/.*\.dat
 ^demo/Springbot/staff/staff.csv
 ^demo/Springbot/staff/staff.html
 ^demo/Springbot/staff/staff.txt
+/upload$
 ^a\.json$
 agentzh-live\.json$
 \.swo$

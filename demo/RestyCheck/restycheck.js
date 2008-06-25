@@ -1,5 +1,5 @@
 var openresty = null
-var Server = 'ced02.search.cnb.yahoo.com';
+var Server = 'resty.eeeeworks.org';
 
 $(document).ready(init);
 
