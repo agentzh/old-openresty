@@ -1,4 +1,4 @@
-=TODO items for OpenAPI
+=TODO items for OpenResty
 
 == Bugs
 * remove the unique constraint on _views's definition column.

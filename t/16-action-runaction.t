@@ -275,7 +275,6 @@ GET '/=/model/Carrie/id/2';"
 
 
 === TEST 27: three GET in an action
-[{"success":1,"rows_affected":2,"last_row":"/=/model/Carrie/id/4"}]
 --- request
 POST /=/action/RunAction/~/~
 "GET '/=/model/Carrie' || '/id/4';
@@ -291,7 +290,6 @@ GET '/=/model';"
 
 
 === TEST 28: delete mixed in 2 GET
-[{"success":1,"rows_affected":2,"last_row":"/=/model/Carrie/id/4"}]
 --- request
 POST /=/action/RunAction/~/~
 "DELETE '/=/model/Carrie' || '/id/4';
@@ -307,5 +305,44 @@ GET ('/=/model/Carrie/~/~') ; delete from Carrie where id = 3
     ],
     {"rows_affected":1,"success":1},
     [{"id":"2","num":"8","title":"second","url":"http://zhangxiaojue.cn"}]
+]
+
+
+
+=== TEST 29: access another account
+--- request
+POST /=/action/RunAction/~/~
+"DELETE '/=/model?user=$TestAccount2&password=$TestPass2';
+POST '/=/model/Another' {\"description\":\"a model in another account\"};
+GET '/=/model';
+GET '/=/model?user=$TestAccount2&password=$TestPass2'"
+--- response
+[
+    {"success":1},
+    {"success":1,"warning":"No 'columns' specified for model \"Another\"."},
+    [
+      {"description":"我的书签","name":"Carrie","src":"/=/model/Carrie"},
+      {"description":"a model in another account","name":"Another","src":"/=/model/Another"}
+    ],
+    []
+]
+
+
+
+=== TEST 30: check Test account 2:
+--- request
+GET /=/model?user=$TestAccount2&password=$TestPass2
+--- response
+[]
+
+
+
+=== TEST 31: recheck Test account 1:
+--- request
+GET /=/model?user=$TestAccount&password=$TestPass
+--- response
+[
+    {"src":"/=/model/Carrie","name":"Carrie","description":"我的书签"},
+    {"src":"/=/model/Another","name":"Another","description":"a model in another account"}
 ]
 
