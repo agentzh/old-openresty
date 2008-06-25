@@ -172,17 +172,17 @@ OpenResty.Client.prototype.get = function (url, args) {
 
     //args.password = this.password || '';
     if (url.match(/\?/)) throw "URL should not contain '?'.";
-    args.rand = Math.round( Math.random() * 100000 );
-    //alert(args.rand);
+    args._rand = Math.round( Math.random() * 100000 );
+    //alert(args._rand);
     //if (!isLogin) args.user = this.user;
     //args.password = this.password;
     if (typeof this.callback == 'string') {
         this.callback = eval(this.callback);
     }
-    OpenResty.callbackMap[args.rand] = this.callback;
-    args.callback = "OpenResty.callbackMap[" + args.rand + "]";
+    OpenResty.callbackMap[args._rand] = this.callback;
+    args.callback = "OpenResty.callbackMap[" + args._rand + "]";
     var scriptTag = document.createElement("script");
-    scriptTag.id = "openapiScriptTag" + args.rand;
+    scriptTag.id = "openapiScriptTag" + args._rand;
     scriptTag.className = '_openrestyScriptTag';
     var arg_list = new Array();
     for (var key in args) {
