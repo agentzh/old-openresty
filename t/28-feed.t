@@ -1,6 +1,16 @@
 # vi:filetype=
 
-use t::OpenResty;
+use OpenResty::Config;
+my $reason;
+BEGIN {
+    OpenResty::Config->init;
+    if ($OpenResty::Config{'backend.type'} eq 'PgMocked' ||
+        $OpenResty::Config{'backend.recording'}) {
+        $reason = 'Skipped in PgMocked or recording mode here.';
+    }
+    #undef $reason;
+}
+use t::OpenResty $reason ? (skip_all => $reason) : ();
 
 plan tests => 3 * blocks() - 3;
 
@@ -311,7 +321,6 @@ GET /=/feed/Post/count/*
 GET /=/feed/Post/count/-1
 --- response
 {"success":0,"error":"No entries found"}
---- LAST
 
 
 
