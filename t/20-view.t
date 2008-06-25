@@ -152,7 +152,7 @@ PUT /=/view/Test1
 PUT /=/view/Test123
 { "definition":123456 }
 --- response
-{"success":1}
+{"success":0,"error":"minisql: line 1: error: Unexpected input: \"123456\" ('(' or select expected)."}
 
 
 
