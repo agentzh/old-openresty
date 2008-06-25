@@ -1,0 +1,31 @@
+.error {
+    color: red;
+    font-weight: bold;
+}
+
+.success {
+    color: green;
+    font-weight: bold;
+}
+
+body {
+  font: 1.2em/1.8em consolas, verdana, arial, sans-serif;
+  background-color: #FFF;
+  color: black;
+}
+
+table {
+    table-layout:auto;
+}
+
+td {
+    overflow: auto;
+    /* word-break: break-all; */
+    word-wrap: break-word;
+    white-space: normal;
+    border: 2px solid #ccc;
+    /* width:33%; */
+    vertical-align: top;
+    padding: 0.6em;
+}
+
