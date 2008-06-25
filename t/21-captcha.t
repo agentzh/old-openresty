@@ -1,6 +1,6 @@
 # vi:filetype=
 
-use OpenResty::Config;
+#use OpenResty::Config;
 use t::OpenResty 'no_plan';
 
 run_tests;

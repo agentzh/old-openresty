@@ -1,5 +1,19 @@
 Change Log for OpenResty
 
+0.3.6 Jun 25 2008
+* Now we check the minisql's syntax when the user updates the view's definition.
+* Added a new demo, RestyCheck, which is a quick health-checker for *any* OpenResty server.
+* The built-in action RunAction is now feature-complete.
+* Added support for Pg network addresses' <<, <<=, >>, and >>= operators to minisql.
+* The InitFatal error now respects url params like callback and var
+* Added OpenResty::Inlined to enable recursive calling of the process_dispatcher method of OpenResty::Dispatcher
+* Added support for the ip4r type
+* Purge the (file) cache in startup
+* Removed file paths from the low-level DB error messages which may expose security holes
+* Fixed the restyscript compiler wrapper class OpenResty::RestyScript which has some problem with IPC::Run::run on our production machines ced02.search.cnb and proxy12.search.cnb
+* Removed the whitespaces in solution used in cache key which has problems in memcached
+* haskell/restyscript - added an optimized2 goal to Makefile to use -fvia-c and -optc-O3 and it makes the restyscript compiler about 20% faster :D
+
 0.3.5 Jun 17 2008
 * Now we require 2 OpenResty test accounts to run the test suite.
 * Optimized the server by reducing DB queries via agressive user of caching.

@@ -54,6 +54,9 @@ bin/.*\.dat
 ^demo/Springbot/staff/staff.csv
 ^demo/Springbot/staff/staff.html
 ^demo/Springbot/staff/staff.txt
+demo/Blog/doc/a\.png$
+demo/Blog/doc/foo\.dot$
+demo/Blog/doc/graphviz\.mk\.png$
 /upload$
 ^a\.json$
 agentzh-live\.json$
