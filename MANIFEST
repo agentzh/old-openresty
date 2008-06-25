@@ -14,6 +14,13 @@ clients/js/dojo.openresty.js
 clients/js/JSON.js
 clients/js/openresty.js
 clients/perl/README
+demo/RestyCheck/index.html
+demo/RestyCheck/jquery.js
+demo/RestyCheck/JSON.js
+demo/RestyCheck/Makefile
+demo/RestyCheck/openresty.js
+demo/RestyCheck/restycheck.css
+demo/RestyCheck/restycheck.js
 demo/Admin/template/footer.tt
 demo/Admin/template/header.tt
 demo/Blog2/css/blog.css
@@ -77,6 +84,7 @@ lib/OpenResty/FeedWriter/RSS.pm
 lib/OpenResty/Handler/Feed.pm
 lib/OpenResty/Spec/Captcha_cn.pod
 lib/OpenResty/Tutorial/GettingStarted/Perl.pod
+lib/OpenResty/Inlined.pm
 t/28-feed.t
 t/29-feed-writer-rss.t
 haskell/TODO
