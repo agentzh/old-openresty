@@ -102,7 +102,7 @@ function toURL (link) {
     var firstTime = true;
     var params = link[1];
     for (var key in params) {
-        if (key == 'callback' || key == 'rand') continue;
+        if (key == 'callback' || key == '_rand') continue;
         if (firstTime) {
             firstTime = false;
         } else {
