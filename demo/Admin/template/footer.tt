@@ -6,8 +6,9 @@ This site can be downloaded from <a href="site-binary.tar.gz">here</a> (.tar.gz)
 </p>
 <hr/>
 <center>
+<p>Powered by <a href="http://search.cpan.org/dist/OpenResty">OpenResty</a> and your web browser.</p>
 <div id="copyright" class="cp1">
-    Copyright © 2008 Yahoo! China EEEE Works.
+    <p>Copyright © 2008 Yahoo! China EEEE Works, Alibaba Inc.</p>
 </div>
 </center>
 <!--}}end:copy -->
