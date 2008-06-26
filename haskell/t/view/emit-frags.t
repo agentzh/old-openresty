@@ -439,3 +439,19 @@ select ('2003-03' || '-01' || $foo) :: date
 --- out
 ["select (('2003-03' || '-01') || ",["foo","unknown"],")::\"date\""]
 
+
+
+=== TEST 52: order by a var
+--- in
+select * from Post order by $col
+--- out
+["select * from \"Post\" order by ",["col","symbol"]," asc"]
+
+
+=== TEST 52: order by a var with the dir also being a var
+--- in
+select * from Post order by $col $dir
+--- out
+["select * from \"Post\" order by ",["col","symbol"]," ",["dir","keyword"]]
+
+

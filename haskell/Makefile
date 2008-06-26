@@ -17,6 +17,7 @@ clean:
 optimized: OOPTS = -O2
 optimized: all
 
-optimized2: OOPTS = -O2 -fvia-c -optc-O3 #-fdicts-cheap -fno-method-sharing -fmax-simplifier-iterations10 -fliberate-case-threshold100
+# -fmax-simplifier-iterations10 
+optimized2: OOPTS = -O2 -fvia-c -optc-O2 -optc-march=pentium4 -optc-mtune=pentium4
 optimized2: all
 

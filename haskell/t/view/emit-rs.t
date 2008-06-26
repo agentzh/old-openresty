@@ -145,7 +145,7 @@ select "id" from "Post" where 'a''''' != 'b\\\n\r\ba'
 --- in
 select id order  by  id
 --- ast
-Query [Select [Column (Symbol "id")],OrderBy [OrderPair (Column (Symbol "id")) "asc"]]
+Query [Select [Column (Symbol "id")],OrderBy [OrderPair (Column (Symbol "id")) (Keyword "asc")]]
 --- out
 select "id" order by "id" asc
 
