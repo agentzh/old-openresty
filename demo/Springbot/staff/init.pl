@@ -26,6 +26,7 @@ if (!has_model($resty, 'YahooStaff')) {
             description => 'Yahoo! China Staff',
             columns => [
                 { name => 'name', label => 'Name' },
+                { name => 'name_pinyin', label => 'PinYin for name' },
                 { name => 'employee_id', label => 'Employee Identifier' },
                 { name => 'department', label => 'Department Name' },
                 { name => 'email', label => 'Email address' },

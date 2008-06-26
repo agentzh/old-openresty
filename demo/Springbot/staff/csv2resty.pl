@@ -31,10 +31,10 @@ while (<>) {
     next if $. == 1;
     chomp;
     my @cols = split /,/;
-    my ($name, $id, $department, $email, $office_phone, $cellphone, $im_id)
+    my ($name_pinyin, $name, $id, $department, $email, $office_phone, $cellphone, $im_id)
         = @cols;
     my $row = {};
-    for my $key (qw< name employee_id department email office_phone cellphone yahoo_im_id>) {
+    for my $key (qw< name_pinyin name employee_id department email office_phone cellphone yahoo_im_id>) {
         my $value = shift @cols;
         $row->{$key} = $value;
     }
