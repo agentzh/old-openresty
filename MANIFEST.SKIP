@@ -57,6 +57,8 @@ bin/.*\.dat
 demo/Blog/doc/a\.png$
 demo/Blog/doc/foo\.dot$
 demo/Blog/doc/graphviz\.mk\.png$
+demo/Springbot/staff/PinYin.csv$
+demo/Springbot/staff/import
 /upload$
 ^a\.json$
 agentzh-live\.json$

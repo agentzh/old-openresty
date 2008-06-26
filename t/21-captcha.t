@@ -354,4 +354,3 @@ GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:你好，世界啊�
 {"success":0,"error":"Solution to the captcha is incorrect."}
 --- use_ttf: 1
 
-
