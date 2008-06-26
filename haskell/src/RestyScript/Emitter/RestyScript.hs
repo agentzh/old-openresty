@@ -31,8 +31,8 @@ emit node = case node of
     GroupBy col -> "group by " ~~ emit col
     Limit lim -> "limit " ~~ emit lim
     Offset offset -> "offset " ~~ emit offset
-
-    OrderPair col dir -> emit col ~~ " " ~~ bs dir
+    OrderPair col dir -> emit col ~~ " " ~~ emit dir
+    Keyword s -> bs s
     Model model -> emit model
     Column col -> emit col
     Symbol name -> bs $ quoteIdent name

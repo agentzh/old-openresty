@@ -12,13 +12,18 @@ import Text.Printf (printf)
 import Text.JSON
 import qualified Data.ByteString.Char8 as B
 
-data VarType = VTLiteral | VTSymbol | VTUnknown | VTQuoted
+data VarType = VTLiteral
+             | VTSymbol
+             | VTUnknown
+             | VTQuoted
+             | VTKeyword
 
 instance JSON VarType where
     showJSON VTSymbol = showJSON ("symbol"::String)
     showJSON VTLiteral = showJSON ("literal"::String)
     showJSON VTUnknown = showJSON ("unknown"::String)
     showJSON VTQuoted = showJSON ("quoted"::String)
+    showJSON VTKeyword = showJSON ("keyword"::String)
     readJSON = undefined
 
 data Fragment = FVariable !String !VarType
@@ -78,6 +83,7 @@ emit node =
         Where cond -> str "where " <+> emit cond
         OrderBy pairs -> str "order by " <+> emitForList pairs
         Symbol name -> str $ bs $ quoteIdent name
+        Keyword s -> str $ bs $ s
 
         GroupBy (Variable _ v) -> [FString $ "group by ", FVariable v VTSymbol]
         GroupBy col -> str "group by " <+> emit col
@@ -90,7 +96,8 @@ emit node =
 
         Alias col alias -> emit col <+> str " as " <+> emit alias
         AnyColumn -> str "*"
-        OrderPair col dir -> emit col <+> str (" " ~~ bs dir)
+        OrderPair col (Variable _ v) -> emit col <+> [FString " ", FVariable v VTKeyword]
+        OrderPair col dir -> emit col <+> str " " <+> emit dir
         Integer int -> str $ bs $ show int
         Float float -> str $ bs $ printf "%0f" float
         Or a b -> str "(" <+> emit a <+> str " or " <+> emit b <+> str ")"

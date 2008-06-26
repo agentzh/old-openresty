@@ -14,12 +14,13 @@ data RSVal = SetOp !String !RSVal !RSVal
            | Offset !RSVal
            | TypeCast !RSVal !RSVal
            | OrderBy ![RSVal]
-           | OrderPair !RSVal !String
+           | OrderPair !RSVal !RSVal
            | GroupBy !RSVal
            | Alias !RSVal !RSVal
            | Column !RSVal
            | Model !RSVal
            | Symbol !String
+           | Keyword !String  -- for asc and desc
            | QualifiedColumn !RSVal !RSVal
            | Integer !Int
            | Float !Double
@@ -66,7 +67,7 @@ traverse visit merge node =
         Offset o -> merge cur $ self o
         TypeCast e t -> mergeAll [cur, self e, self t]
         OrderBy o -> mergeAll $ cur : map self o
-        OrderPair col _ -> merge cur (self col)
+        OrderPair col dir -> mergeAll [cur, self col, self dir]
         GroupBy g -> merge cur (self g)
 
         Alias col alias -> mergeAll [cur, self col, self alias]
@@ -102,6 +103,7 @@ traverse visit merge node =
         Float _ -> cur
         Integer _ -> cur
         Symbol _ -> cur
+        Keyword _ -> cur
         RSTrue -> cur
         RSFalse -> cur
         All _ -> cur

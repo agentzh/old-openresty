@@ -66,11 +66,15 @@ parseOrderBy = do try (keyword "order") >> many1 space >>
 
 parseOrderPair :: Parser RSVal
 parseOrderPair = do col <- parseColumn
-                    dir <- keyword "asc"
-                            <|> keyword "desc"
-                            <|> return "asc"
+                    dir <- parseDir
                     spaces
                     return $ OrderPair col dir
+
+parseDir :: Parser RSVal
+parseDir = liftM Keyword (keyword "asc")
+       <|> liftM Keyword (keyword "desc")
+       <|> parseVariable
+       <|> (return $ Keyword "asc")
 
 parseGroupBy :: Parser RSVal
 parseGroupBy = liftM GroupBy (keyword "group" >> many1 space >>
