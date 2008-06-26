@@ -1,3 +1,5 @@
+.PRECIOUS: staff.txt
+
 all: staff.csv
 
 %.csv: %.txt
