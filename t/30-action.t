@@ -146,13 +146,13 @@ GET /=/action/Action
 
 === TEST 14: Invoke the Action action
 --- request
-POST /=/action/Action/~/~
+GET /=/action/Action/~/~
 --- response
-[]
+[[]]
 
 
 
-=== TEST 15: Check a non-existent model
+=== TEST 15: Check a non-existent action
 --- request
 GET /=/action/Dummy
 --- response
@@ -162,7 +162,7 @@ GET /=/action/Dummy
 
 === TEST 16: Invoke the action
 --- request
-POST /=/action/Dummy/~/~
+GET /=/action/Dummy/~/~
 --- response
 {"success":0,"error":"Action \"Dummy\" not found."}
 
@@ -170,9 +170,9 @@ POST /=/action/Dummy/~/~
 
 === TEST 17: Invoke the Action action
 --- request
-POST /=/action/Action/~/~
+GET /=/action/Action/~/~
 --- response
-[]
+[[]]
 
 
 
@@ -191,7 +191,7 @@ POST /=/model/A/~/~
 --- request
 GET /=/action/Action/~/~
 --- response
-[]
+[[]]
 
 
 
@@ -249,7 +249,7 @@ POST /=/action/~
     "name":"Action2",
     "definition":"select title from A order by $col"}
 --- response
-{"success":0,"error":"Parameter \"col\" not defined in the \"parameters\" list."}
+{"success":0,"error":"Parameter \"col\" used in the action definition is not defined in the \"parameters\" list."}
 
 
 
@@ -261,7 +261,7 @@ POST /=/action/~
     "parameters":32,
     "definition":"select title from A order by $col"}
 --- response
-{"success":0,"error":"Invalid \"parameters\" list."}
+{"success":0,"error":"Invalid \"parameters\" list: 32"}
 
 
 
@@ -289,7 +289,7 @@ POST /=/action/~
     ],
     "definition":"select title from A order by $col"}
 --- response
-{"success":0,"error":"Invalid \"type\" for parameter \"col\"."}
+{"success":0,"error":"Invalid \"type\" for parameter \"col\": [32]"}
 
 
 
@@ -432,7 +432,6 @@ PUT /=/action/Action2
 GET /=/action/~
 --- response
 [
-
     {"name":"RunView","description":"View interpreter","src":"/=/action/RunView"},
     {"name":"RunAction","description":"Action interpreter","src":"/=/action/RunAction"},
     {"name":"Action","description":null,"src":"/=/action/Action"},
@@ -651,7 +650,6 @@ GET /=/action/TitleOnly
     "description":null,
     "definition":"select $select_col from A order by $col"
 }
---- LAST
 
 
 
@@ -681,78 +679,64 @@ GET /=/action/TitleOnly/select_col
 
 
 
-=== TEST 65: Invoke the new version of the action
---- request
-GET /=/action/TitleOnly/~/~?select_col=
---- response
-[[
-    {"foo":"123"},
-    {"foo":"123"},
-    {"foo":"123"},
-    {"foo":"123"},
-    {"foo":"123"},
-    {"foo":"123"}
-]]
-
-
-
-=== TEST 66: Check the new TitleOnly action
---- request
-GET /=/action/TitleOnly
---- response
-{"name":"TitleOnly","description":null,"definition":"select $select_col from A order by $order_by"}
-
-
-
-=== TEST 67: Invoke the new TitleOnly action (1st way)
+=== TEST 65: Invoke the new TitleOnly action (1st way)
 --- request
 GET /=/action/TitleOnly/select_col/id?order_by=id
 --- response
-[{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"},{"id":"5"},{"id":"6"}]
+[[{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"},{"id":"5"},{"id":"6"}]]
 
 
 
-=== TEST 68: Invoke the new TitleOnly action (1st way)
+=== TEST 66: Invoke the new TitleOnly action (1st way)
 --- request
 GET /=/action/TitleOnly/select_col/title?order_by=title
 --- response
-[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]
+[[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]]
 
 
 
-=== TEST 69: Invoke the new TitleOnly action (2rd way)
+=== TEST 67: Invoke the new TitleOnly action (2rd way)
 --- request
 GET /=/action/TitleOnly/select_col/id?order_by=id
 --- response
-[{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"},{"id":"5"},{"id":"6"}]
+[[{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"},{"id":"5"},{"id":"6"}]]
 
 
 
-=== TEST 70: Invoke the new TitleOnly action (2rd way)
+=== TEST 68: Invoke the new TitleOnly action (3rd way)
 --- request
 GET /=/action/TitleOnly/select_col/title?order_by=title
 --- response
-[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]
+[[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]]
 
 
 
-=== TEST 71: Invoke the new TitleOnly action (3rd way)
+=== TEST 69: Invoke the new TitleOnly action (4th way)
 --- request
 GET /=/action/TitleOnly/~/~?select_col=id&order_by=id
 --- response
-[{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"},{"id":"5"},{"id":"6"}]
+[[{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"},{"id":"5"},{"id":"6"}]]
 
 
 
-=== TEST 72: Invoke the new TitleOnly action (3rd way)
+=== TEST 70: Invoke the new TitleOnly action (5th way)
 --- request
 GET /=/action/TitleOnly/~/~?select_col=title&order_by=title
 --- response
-[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]
+[[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]]
 
 
 
-=== TEST 73: Invoke the new TitleOnly action (missing one param)
+=== TEST 71: Invoke the new TitleOnly action (6th way)
+--- request
+POST /=/action/TitleOnly/~/~
+{"select_col": "title", "order_by": "title" }
+--- response
+[[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]]
+
+
+
+=== TEST 72: Invoke the new TitleOnly action (missing one param)
 --- request
 GET /=/action/TitleOnly/~/~?select_col=title
 --- response
@@ -760,7 +744,7 @@ GET /=/action/TitleOnly/~/~?select_col=title
 
 
 
-=== TEST 74: Invoke the new TitleOnly action (missing the other param)
+=== TEST 73: Invoke the new TitleOnly action (missing the other param)
 --- request
 GET /=/action/TitleOnly/order_by/id
 --- response
@@ -768,7 +752,7 @@ GET /=/action/TitleOnly/order_by/id
 
 
 
-=== TEST 75: Invoke the new TitleOnly action (missing both params)
+=== TEST 74: Invoke the new TitleOnly action (missing both params)
 --- request
 GET /=/action/TitleOnly/~/~
 --- response
@@ -776,7 +760,7 @@ GET /=/action/TitleOnly/~/~
 
 
 
-=== TEST 76: Invoke the new TitleOnly action (a wrong param given)
+=== TEST 75: Invoke the new TitleOnly action (a wrong param given)
 --- request
 GET /=/action/TitleOnly/blah/dummy
 --- response
@@ -784,7 +768,7 @@ GET /=/action/TitleOnly/blah/dummy
 
 
 
-=== TEST 77: Delete the Action action
+=== TEST 76: Delete the Action action
 --- request
 DELETE /=/action/Action
 --- response
@@ -792,7 +776,7 @@ DELETE /=/action/Action
 
 
 
-=== TEST 78: Recheck the Action action
+=== TEST 77: Recheck the Action action
 --- request
 GET /=/action/Action
 --- response
@@ -800,7 +784,7 @@ GET /=/action/Action
 
 
 
-=== TEST 79: Recheck the action list
+=== TEST 78: Recheck the action list
 --- request
 GET /=/action
 --- response
@@ -812,56 +796,69 @@ GET /=/action
 
 
 
-=== TEST 80: Add a new action with default values
+=== TEST 79: Add a new action with default values
 --- request
 POST /=/action/Foo
-{"definition":"select $col|id from A order by $by|title"}
+{
+    "parameters": [
+        {"name":"col", "type":"symbol", "default":"id"},
+        {"name":"by", "type":"symbol", "default":"title"}
+    ],
+    "definition":"select $col from A order by $by"}
 --- response
 {"success":1}
 
 
 
-=== TEST 81: Check the Foo action
+=== TEST 80: Check the Foo action
 --- request
 GET /=/action/Foo
 --- response
-{"name":"Foo","description":null,"definition":"select $col|id from A order by $by|title"}
+{
+    "name":"Foo",
+    "description":null,
+    "parameters":[
+        {"name":"col","default":"id","type":"symbol"},
+        {"name":"by","type":"symbol","default":"title"}
+    ],
+    "definition":"select $col from A order by $by"
+}
 
 
 
-=== TEST 82: Invoke Foo w/o params
+=== TEST 81: Invoke Foo w/o params
 --- request
 GET /=/action/Foo/~/~
 --- response
-[{"id":"6"},{"id":"3"},{"id":"2"},{"id":"4"},{"id":"5"},{"id":"1"}]
+[[{"id":"6"},{"id":"3"},{"id":"2"},{"id":"4"},{"id":"5"},{"id":"1"}]]
 
 
 
-=== TEST 83: Invoke Foo with 1 param set
+=== TEST 82: Invoke Foo with 1 param set
 --- request
 GET /=/action/Foo/by/id
 --- response
-[{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"},{"id":"5"},{"id":"6"}]
+[[{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"},{"id":"5"},{"id":"6"}]]
 
 
 
-=== TEST 84: Invoke Foo with the other one param set
+=== TEST 83: Invoke Foo with the other one param set
 --- request
 GET /=/action/Foo/col/title
 --- response
-[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]
+[[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]]
 
 
 
-=== TEST 85: Invoke Foo with both params set
+=== TEST 84: Invoke Foo with both params set
 --- request
 GET /=/action/Foo/col/title?by=id
 --- response
-[{"title":"Yahoo"},{"title":"Google"},{"title":"Baidu"},{"title":"Sina"},{"title":"Sohu"},{"title":"163"}]
+[[{"title":"Yahoo"},{"title":"Google"},{"title":"Baidu"},{"title":"Sina"},{"title":"Sohu"},{"title":"163"}]]
 
 
 
-=== TEST 86: Bad action name
+=== TEST 85: Bad action name
 --- request
 GET /=/action/!@
 --- response
@@ -869,7 +866,7 @@ GET /=/action/!@
 
 
 
-=== TEST 87: Get the action list
+=== TEST 86: Get the action list
 --- request
 GET /=/action
 --- response
@@ -882,7 +879,7 @@ GET /=/action
 
 
 
-=== TEST 88: Change the action name and definition simultaneously
+=== TEST 87: Change the action name and definition simultaneously
 --- request
 PUT /=/action/Foo
 { "name": "Bah", "definition": "select * from A" }
@@ -891,7 +888,7 @@ PUT /=/action/Foo
 
 
 
-=== TEST 89: Check the old action
+=== TEST 88: Check the old action
 --- request
 GET /=/action/Foo
 --- response
@@ -899,19 +896,20 @@ GET /=/action/Foo
 
 
 
-=== TEST 90: Check the new action
+=== TEST 89: Check the new action
 --- request
 GET /=/action/Bah
 --- response
 {
     "name":"Bah",
     "description":null,
+    "parameters":[],
     "definition":"select * from A"
 }
 
 
 
-=== TEST 91: Set the description (the wrong way, typo)
+=== TEST 90: Set the description (the wrong way, typo)
 --- request
 PUT /=/action/Bah
 { "descripition": "Blah blah blah..." }
@@ -920,7 +918,7 @@ PUT /=/action/Bah
 
 
 
-=== TEST 92: Set the description
+=== TEST 91: Set the description
 --- request
 PUT /=/action/Bah
 { "description": "Blah blah blah..." }
@@ -929,19 +927,20 @@ PUT /=/action/Bah
 
 
 
-=== TEST 93: Check the desc
+=== TEST 92: Check the desc
 --- request
 GET /=/action/Bah
 --- response
 {
     "name":"Bah",
     "description":"Blah blah blah...",
+    "parameters":[],
     "definition":"select * from A"
 }
 
 
 
-=== TEST 94: give wrong POST data
+=== TEST 93: give wrong POST data
 --- request
 POST /=/action/Foo
 [1,2,3]
@@ -950,16 +949,16 @@ POST /=/action/Foo
 
 
 
-=== TEST 95: Bad hash
+=== TEST 94: Bad hash
 --- request
 POST /=/action/Foo
 {"cat":3}
 --- response
-{"success":0,"error":"No 'definition' specified."}
+{"success":0,"error":"No \"definition\" specified."}
 
 
 
-=== TEST 96: Re-add action Foo (Bad minisql)
+=== TEST 95: Re-add action Foo (Bad minisql)
 --- request
 POST /=/action/Foo
 {"description":"Test vars for vals","name":"Foo",
@@ -969,23 +968,43 @@ POST /=/action/Foo
 
 
 
-=== TEST 97: Re-add action Foo (Bad minisql)
+=== TEST 96: Re-add action Foo (Bad minisql)
 --- request
 POST /=/action/Foo
 {"description":"Test vars for vals","name":"Foo",
     "definition":"update _action set "}
 --- response
-{"success":0,"error":"minisql: line 1: error: Unexpected input: \"update\" ('(' or select expected)."}
+{"success":0,"error":"\"action\" (line 1, column 8):\nunexpected \"_\"\nexpecting space or model"}
 
 
 
-=== TEST 98: Re-add action Foo (Bad minisql)
+=== TEST 97: Re-add action Foo (Bad default value for param)
 --- request
 POST /=/action/Foo
 {"description":"Test vars for vals","name":"Foo",
-    "definition":"select * from $model | 'A' where $col|id > $val"}
+    "parameters":[
+        {"name":"model", "type":"symbol", "default":"'A'"},
+        {"name":"col", "type":"symbol", "default":"id"},
+        {"name":"val","type":"literal"}
+    ],
+    "definition":"select * from $model  where $col > $val"}
 --- response
-{"success":0,"error":"minisql: line 1: error: Unexpected input: \"'A'\" (IDENT expected)."}
+{"success":0,"error":"Bad default value for parameter \"model\": "'A'"}
+
+
+
+=== TEST 98: Re-add action Foo (Bad default value for param)
+--- request
+POST /=/action/Foo
+{"description":"Test vars for vals","name":"Foo",
+    "parameters":[
+        {"name":"model", "type":"symbol", "default":[3]},
+        {"name":"col", "type":"symbol", "default":"id"},
+        {"name":"val","type":"literal"}
+    ],
+    "definition":"select * from $model  where $col > $val"}
+--- response
+{"success":0,"error":"Bad default value for parameter \"model\": [3]}
 
 
 
@@ -993,7 +1012,12 @@ POST /=/action/Foo
 --- request
 POST /=/action/Foo
 {"description":"Test vars for vals","name":"Foo",
-    "definition":"select * from $model | A where $col|id > $val"}
+    "parameters":[
+        {"name":"model", "type":"symbol", "default":"A"},
+        {"name":"col", "type":"symbol", "default":"id"},
+        {"name":"val","type":"literal"}
+    ],
+    "definition":"select * from $model  where $col > $val"}
 --- response
 {"success":1}
 
@@ -1011,12 +1035,12 @@ GET /=/action/Foo/~/~
 --- request
 GET /=/action/Foo/val/2
 --- response
-[
+[[
     {"title":"Baidu","id":"3"},
     {"title":"Sina","id":"4"},
     {"title":"Sohu","id":"5"},
     {"title":"163","id":"6"}
-]
+]]
 
 
 
@@ -1024,7 +1048,7 @@ GET /=/action/Foo/val/2
 --- request
 GET /=/action/Foo/val/林\?col=title
 --- response
-[]
+[[]]
 
 
 
@@ -1040,12 +1064,12 @@ GET /=/action/Foo/!@/2
 --- request
 GET /=/action/Foo/~/~?val=2
 --- response
-[
+[[
     {"title":"Baidu","id":"3"},
     {"title":"Sina","id":"4"},
     {"title":"Sohu","id":"5"},
     {"title":"163","id":"6"}
-]
+]]
 
 
 
@@ -1061,7 +1085,7 @@ GET /=/action/Foo/~/~?!@=2
 --- request
 GET /=/action/Foo/~/~?val=2&col=id"
 --- response
-{"success":0,"error":"minisql: Bad symbol: id\""}
+{"success":0,"error":"Bad symbol for parameter \"col\": id\""}
 
 
 
@@ -1069,12 +1093,12 @@ GET /=/action/Foo/~/~?val=2&col=id"
 --- request
 GET /=/action/Foo/~/~?val=2&col=id
 --- response
-[
+[[
     {"title":"Baidu","id":"3"},
     {"title":"Sina","id":"4"},
     {"title":"Sohu","id":"5"},
     {"title":"163","id":"6"}
-]
+]]
 
 
 
@@ -1106,30 +1130,65 @@ POST /=/model/T/~/~
 === TEST 110: create a action with operator >>=
 --- request
 POST /=/action/TC
-{ "definition": "select count(*) from T where cidr >>= '202.165.100.243'" }
+{ "definition": "select count(*) from T where cidr >>= '202.165.100.143'" }
 --- response
 {"success":1}
 
 
 
-=== TEST 111: bug
+=== TEST 111: Invoke the T action
+--- request
+GET /=/action/TC/~/~
+--- response
+[[{"cidr":"202.165.100.143"}]]
+
+
+
+=== TEST 112: bug
 --- request
 POST /=/action/RowCount
-{ "definition": "select count(*) from $model" }
+{ "parameters":[
+    {"name":"model","type":"blah"}
+   ],
+   "definition": "select count(*) from $model" }
+--- response
+{"success":0,"error":"Bad type for parameter: \"blah\"}
+
+
+=== TEST 113: bug
+--- request
+POST /=/action/RowCount
+{ "parameters":[
+    {"name":"model","type":"literal"}
+   ],
+   "definition": "select count(*) from $model" }
+--- response
+{"success":0,"error":"Invalid \"type\" for parameter \"model\". (It's used as a symbol in the action definition.)"}
+
+
+=== TEST 113: bug
+--- request
+POST /=/action/RowCount
+{ "parameters":[
+    {"name":"model","type":"literal"}
+   ],
+   "definition": "select count(*) from $model" }
 --- response
 {"success":1}
 
 
-
-=== TEST 112: action the TitleOnly action
+=== TEST 113: view the TitleOnly action
 --- request
 GET /=/action/TitleOnly
 --- response
-{"name":"TitleOnly","description":null,"definition":"select $select_col from A order by $order_by"}
+{"name":"TitleOnly","parameters":[
+        {"name":"select_col","type":"symbol","default":null},
+        {"name":"order_by","type":"symbol","default":null}
+    ],"description":null,"definition":"select $select_col from A order by $order_by"}
 
 
 
-=== TEST 113: change the action def
+=== TEST 114: change the action def
 --- request
 PUT /=/action/TitleOnly
 { "definition": "select 32" }
@@ -1138,18 +1197,18 @@ PUT /=/action/TitleOnly
 
 
 
-=== TEST 114: get the action def again:
+=== TEST 115: get the action def again:
 --- request
 GET /=/action/TitleOnly
 --- response
-{"name":"TitleOnly","description":null,"definition":"select 32"}
+{"name":"TitleOnly","description":null,"parameters":[],"definition":"select 32"}
 
 
 
-=== TEST 115: change the action def (syntax error)
+=== TEST 116: change the action def (syntax error)
 --- request
 PUT /=/action/TitleOnly
 { "definition": "abc 32" }
 --- response
-{"error":"minisql: line 1: error: Unexpected input: \"abc\" ('(' or select expected).","success":0}
+{"error":"\"action\" (line 1, column 1):\nunexpected \"a\"\nexpecting white space or action statement","success":0}
 

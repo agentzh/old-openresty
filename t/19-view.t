@@ -255,14 +255,14 @@ GET /=/view/View2
 GET /=/view
 --- response
 [
-{"src":"/=/view/View",
- "name":"View",
- "description":null
-},
-{"src":"/=/view/View2",
- "name":"View2",
- "description":null
-}
+    {"src":"/=/view/View",
+     "name":"View",
+     "description":null
+    },
+    {"src":"/=/view/View2",
+     "name":"View2",
+     "description":null
+     }
 ]
 
 
