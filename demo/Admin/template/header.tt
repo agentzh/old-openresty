@@ -2,6 +2,7 @@
      js_files = [
         'JSON.js',
         'openresty.js',
+        'md5.js',
         'jquery.js',
         'jquery.jeditable.pack.js',
         'jquery.cookie.pack.js',

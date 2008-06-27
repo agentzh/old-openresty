@@ -504,6 +504,8 @@ function createRole () {
     var desc = $("#create-role-desc").val();
     var login_by = $("#create-role-login").val();
     var password = $("#create-role-password").val();
+    if (password != null)
+        password = hex_md5(password);
     setStatus(true, "createRole");
     openresty.callback = afterCreateRole;
     openresty.postByGet(
