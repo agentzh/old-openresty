@@ -806,3 +806,11 @@ PUT /=/view/TitleOnly
 --- response
 {"error":"minisql: line 1: error: Unexpected input: \"abc\" ('(' or select expected).","success":0}
 
+
+
+=== TEST 87: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

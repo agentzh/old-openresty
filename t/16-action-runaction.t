@@ -346,3 +346,11 @@ GET /=/model?user=$TestAccount&password=$TestPass
     {"src":"/=/model/Another","name":"Another","description":"a model in another account"}
 ]
 
+
+
+=== TEST 32: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

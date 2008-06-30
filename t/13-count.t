@@ -202,3 +202,11 @@ GET /=/model/Foo/name/Bob?count=blah
 --- response
 {"success":0,"error":"Invalid value for the \"count\" param: blah"}
 
+
+
+=== TEST 17: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

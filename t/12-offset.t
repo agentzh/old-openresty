@@ -163,3 +163,11 @@ GET /=/model/Foo/name/Bob?offset=blah
 --- response
 {"success":0,"error":"Invalid value for the \"offset\" param: blah"}
 
+
+
+=== TEST 15: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

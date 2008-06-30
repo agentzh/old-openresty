@@ -196,3 +196,10 @@ drop table if exists _cats;"
 {"success":1}
 
 
+
+=== TEST 16: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+
