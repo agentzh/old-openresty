@@ -87,3 +87,11 @@ GET /=/model/Carrie/url/zhangxiaojue?op=contains
 --- response
 [{"url":"http://zhangxiaojue.cn/test.php?p=mp3&t=web","title":"second","id":"2"}]
 
+
+
+=== TEST 10: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

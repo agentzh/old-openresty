@@ -320,3 +320,11 @@ POST /=/model/Foo/~
 {"success":1,"src":"/=/model/Foo/num"}
 --- SKIP
 
+
+
+=== TEST 34: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

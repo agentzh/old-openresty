@@ -172,3 +172,11 @@ POST /=/action/RunView/~/~
 --- response
 {"error":"Restyscript source must be an non-empty literal string: [\"abc\"]","success":0}
 
+
+
+=== TEST 18: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+
