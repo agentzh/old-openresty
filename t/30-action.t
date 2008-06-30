@@ -459,7 +459,7 @@ GET /=/action/TitleOnly
 --- request
 GET /=/action/TitleOnly/~/~
 --- response
-{"success":0,"error":"Parameters required: col"}
+{"success":0,"error":"Arguments required: col"}
 
 
 
@@ -740,7 +740,7 @@ POST /=/action/TitleOnly/~/~
 --- request
 GET /=/action/TitleOnly/~/~?select_col=title
 --- response
-{"success":0,"error":"Parameters required: order_by"}
+{"success":0,"error":"Arguments required: order_by"}
 
 
 
@@ -748,7 +748,7 @@ GET /=/action/TitleOnly/~/~?select_col=title
 --- request
 GET /=/action/TitleOnly/order_by/id
 --- response
-{"success":0,"error":"Parameters required: select_col"}
+{"success":0,"error":"Arguments required: select_col"}
 
 
 
@@ -756,7 +756,7 @@ GET /=/action/TitleOnly/order_by/id
 --- request
 GET /=/action/TitleOnly/~/~
 --- response
-{"success":0,"error":"Parameters required: select_col order_by"}
+{"success":0,"error":"Arguments required: select_col order_by"}
 
 
 
@@ -764,7 +764,7 @@ GET /=/action/TitleOnly/~/~
 --- request
 GET /=/action/TitleOnly/blah/dummy
 --- response
-{"success":0,"error":"Parameters required: select_col order_by"}
+{"success":0,"error":"Arguments required: select_col order_by"}
 
 
 
@@ -1027,7 +1027,7 @@ POST /=/action/Foo
 --- request
 GET /=/action/Foo/~/~
 --- response
-{"success":0,"error":"Parameters required: val"}
+{"success":0,"error":"Arguments required: val"}
 
 
 
@@ -1077,7 +1077,7 @@ GET /=/action/Foo/~/~?val=2
 --- request
 GET /=/action/Foo/~/~?!@=2
 --- response
-{"success":0,"error":"Parameters required: val"}
+{"success":0,"error":"Arguments required: val"}
 
 
 
