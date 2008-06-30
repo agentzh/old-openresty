@@ -118,7 +118,7 @@ PUT /=/action/Query
 { "definition":
 "select * from BlahBlah limit 1 offset 1"}
 --- response
-{"success":0,"error":"Model \"BlahBlah\" not found."}
+[{"success":0,"error":"Model \"BlahBlah\" not found."}]
 
 
 
@@ -277,7 +277,6 @@ GET /=/action/Query/num/7
 
 
 
-
 === TEST 28: check rows again
 --- request
 GET /=/model/Carrie/~/~
@@ -300,6 +299,7 @@ PUT /=/action/Query
 {"success":1}
 
 
+
 === TEST 30: Invoke it
 --- request
 GET /=/action/Query/Yahoo/Yahoo?Google=Google
@@ -309,13 +309,22 @@ GET /=/action/Query/Yahoo/Yahoo?Google=Google
 --- LAST
 
 
-=== TEST 30: three GET in an action
-[{"success":1,"rows_affected":2,"last_row":"/=/model/Carrie/id/4"}]
+
+=== TEST 31: three GET in an action
 --- request
-POST /=/action/RunAction/~/~
-"GET '/=/model/Carrie' || '/id/4';
-GET '/=/model/Carrie/id/3';
-GET '/=/model/Carrie/id/2';"
+PUT /=/action/Query
+{"definition":
+"GET '/=/model/Carrie' || '/' || $col || '/4'; GET '/=/model/Carrie/' || $col || '/3';\n GET '/=/model/Carrie/' || $col || '/2';",
+    "parameters":[{"name":"col","type":"symbol"}]
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 32: Invoke it
+--- request
+GET /=/action/Query/col/id
 --- response
 [
     [{"num":"6","url":"google.com","title":"Google","id":"4"}],
@@ -325,12 +334,20 @@ GET '/=/model/Carrie/id/2';"
 
 
 
-=== TEST 31: three GET in an action
+=== TEST 33: three GET in an action (with exceptions)
 --- request
-POST /=/action/RunAction/~/~
-"GET '/=/model/Carrie' || '/id/4';
-GET '/=/blah/blah';
-GET '/=/model';"
+PUT /=/action/Query
+{"definition":
+"GET '/=/model/Carrie' || '/id/4'; GET '/=/blah/blah'; GET '/=/model';",
+"parameters":[]}
+--- response
+{"success":1}
+
+
+
+=== TEST 34: Invoke it
+--- request
+GET /=/action/Query/~/~
 --- response
 [
     [{"id":"4","num":"6","title":"Google","url":"google.com"}],
@@ -340,13 +357,21 @@ GET '/=/model';"
 
 
 
-=== TEST 32: delete mixed in 2 GET
+=== TEST 35: delete mixed in 2 GET
 --- request
-POST /=/action/RunAction/~/~
-"DELETE '/=/model/Carrie' || '/id/4';
-GET ('/=/model/Carrie/~/~') ; delete from Carrie where id = 3
-;GET '/=/' || ('model/' || 'Carrie/~/~')
-"
+PUT /=/action/Query
+{"definition":
+"DELETE '/=/model/'||$model|| '/id/4';\n GET ('/=/model/'||$model||'/~/~') ; delete from $model where id = 3\n ;GET '/=/' || ('model/' || $model ||'/~/~')",
+"parameters":[{"name":"model","type":"symbol"}]
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 36: Invoke it
+--- request
+GET /=/action/Query/model/Carrie
 --- response
 [
     {"rows_affected":1,"success":1},
@@ -360,13 +385,24 @@ GET ('/=/model/Carrie/~/~') ; delete from Carrie where id = 3
 
 
 
-=== TEST 33: access another account
+=== TEST 37: access another account
 --- request
-POST /=/action/RunAction/~/~
-"DELETE '/=/model?user=$TestAccount2&password=$TestPass2';
-POST '/=/model/Another' {\"description\":\"a model in another account\"};
-GET '/=/model';
-GET '/=/model?user=$TestAccount2&password=$TestPass2'"
+POST /=/action/Query2
+{"definition":
+"DELETE '/=/model?user=$user&password=$pass';\nPOST '/=/model/Another' {\"description\":\"a model in another account\"};\n GET '/=/model';\n GET '/=/model?user=$TestAccount2&password=$TestPass2'",
+"parameters":[
+    {"name":"user","type":"literal"},
+    {"name":"pass","type":"literal"}
+]}
+--- response
+{"success":1}
+
+
+
+=== TEST 38: Invoke it
+--- request
+POST /=/action/Query2/user/$TestAccount2
+{"pass":"$TestPass2"}
 --- response
 [
     {"success":1},
@@ -380,7 +416,7 @@ GET '/=/model?user=$TestAccount2&password=$TestPass2'"
 
 
 
-=== TEST 34: check Test account 2:
+=== TEST 39: check Test account 2:
 --- request
 GET /=/model?user=$TestAccount2&password=$TestPass2
 --- response
@@ -388,7 +424,7 @@ GET /=/model?user=$TestAccount2&password=$TestPass2
 
 
 
-=== TEST 35: recheck Test account 1:
+=== TEST 40: recheck Test account 1:
 --- request
 GET /=/model?user=$TestAccount&password=$TestPass
 --- response
@@ -399,7 +435,7 @@ GET /=/model?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 36: logout
+=== TEST 41: logout
 --- request
 GET /=/logout
 --- response
