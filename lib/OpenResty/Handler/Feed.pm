@@ -88,18 +88,52 @@ sub PUT_feed {
         $update->set( name => Q($new_name) );
     }
 
-    my $new_def = delete $data->{definition};
-    if (defined $new_def) {
-        _STRING($new_def) or
-            die "Bad feed definition: ", $OpenResty::Dumper->($new_def), "\n";
-        $update->set(definition => Q($new_def));
-    }
-
     my $new_desc = delete $data->{description};
     if (defined $new_desc) {
-        _STRING($new_desc) or die "Bad feed description: ", $OpenResty::Dumper->($new_desc), "\n";
-        $update->set(description => Q($new_desc));
+        _STRING($new_desc) or
+            die "Bad feed description: ", $OpenResty::Dumper->($new_desc), "\n";
+        $update->set( description => Q($new_desc) );
     }
+
+    my $new_lang = delete $data->{language};
+    if (defined $new_lang) {
+        _STRING($new_lang) or
+            die "Bad feed language: ", $OpenResty::Dumper->($new_lang), "\n";
+        $update->set( language => Q($new_lang) );
+    }
+
+    my $new_view = delete $data->{view};
+    if (defined $new_view) {
+        _IDENT($new_view) or
+            die "Bad feed view: ", $OpenResty::Dumper->($new_view), "\n";
+        $update->set(view => Q($new_view));
+    }
+
+    my $new_title = delete $data->{title};
+    if (defined $new_title) {
+        _STRING($new_title) or
+            die "Bad feed title: ", $OpenResty::Dumper->($new_title), "\n";
+        $update->set(title => Q($new_title));
+    }
+
+    my $new_link = delete $data->{link};
+    if (defined $new_link) {
+        _STRING($new_link) or die "Bad feed link: ", $OpenResty::Dumper->($new_link), "\n";
+        $update->set(link => Q($new_link));
+    }
+
+    my $new_author = delete $data->{author};
+    if (defined $new_author) {
+        _STRING($new_author) or die "Bad feed author: ", $OpenResty::Dumper->($new_author), "\n";
+        $update->set(author => Q($new_author));
+    }
+
+    my $new_copyright = delete $data->{copyright};
+    if (defined $new_copyright) {
+        _STRING($new_copyright) or die "Bad feed copyright: ", $OpenResty::Dumper->($new_copyright), "\n";
+        $update->set(copyright => Q($new_copyright));
+    }
+
     ### Update SQL: "$update"
     if (%$data) {
         die "Unknown keys in POST data: ", join(' ', keys %$data), "\n";
