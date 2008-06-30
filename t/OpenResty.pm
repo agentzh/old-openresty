@@ -141,9 +141,9 @@ sub smart_is ($$$$) {
             $expected =~ s{<((?:pub|lastBuild)Date)>.*?</\1>}{<$1>XXX</$1>}g;
         }
     }
-    #use Test::LongString;
-    #is_string $got, $expected, $desc;
-    is $got, $expected, $desc;
+    use Test::LongString;
+    is_string $got, $expected, $desc;
+    #is $got, $expected, $desc;
 }
 
 sub run_tests () {

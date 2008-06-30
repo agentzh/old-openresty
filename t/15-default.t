@@ -39,13 +39,12 @@ GET /=/model/Foo
   "columns":
     [
       {"name":"id","label":"ID","type":"serial"},
-      {"name":"title","default":"'No title'","label":"title","type":"text"},
-      {"name":"content","default":"'No content'","label":"content","type":"text"}
+      {"name":"title","default":"No title","label":"title","type":"text"},
+      {"name":"content","default":"No content","label":"content","type":"text"}
     ],
     "name":"Foo",
     "description":"Foo"
 }
-
 
 
 === TEST 4: Insert a row (wrong way)
@@ -87,7 +86,7 @@ POST /=/model/Foo/~
 --- request
 GET /=/model/Foo/created
 --- response
-{"name":"created","default":"now()","label":"创建日期","type":"timestamp"}
+{"name":"created","default":["now()"],"label":"创建日期","type":"timestamp"}
 
 
 
@@ -97,9 +96,9 @@ GET /=/model/Foo/~
 --- response
 [
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"title","default":"'No title'","label":"title","type":"text"},
-    {"name":"content","default":"'No content'","label":"content","type":"text"},
-    {"name":"created","default":"now()","label":"创建日期","type":"timestamp"}]
+    {"name":"title","default":"No title","label":"title","type":"text"},
+    {"name":"content","default":"No content","label":"content","type":"text"},
+    {"name":"created","default":["now()"],"label":"创建日期","type":"timestamp"}]
 
 
 
@@ -209,7 +208,7 @@ GET /=/model/Howdy/~
 [
     {"name":"id","label":"ID","type":"serial"},
     {"name":"title","default":null,"label":"title","type":"text"},
-    {"name":"updated","default":"now() at time zone 'UTC'","label":"updated","type":"text"}
+    {"name":"updated","default":["now() at time zone 'UTC'"],"label":"updated","type":"text"}
 ]
 
 
