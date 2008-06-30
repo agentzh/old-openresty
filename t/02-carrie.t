@@ -325,10 +325,18 @@ POST /=/put/model/Test2/id/2?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 36:read records
+=== TEST 36: read records
 --- request
 GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 --- response
 [{"num":"2","url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
 --- SKIP
+
+
+
+=== TEST 37: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
 

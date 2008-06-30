@@ -273,3 +273,11 @@ GET /=/model/Address/id/10
 --- response
 [{"id":"10","name":"id10","addr":null}]
 
+
+
+=== TEST 29: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

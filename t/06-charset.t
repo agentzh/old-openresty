@@ -237,3 +237,11 @@ GET /=/model/Big5?charset=UTF-8
   "description":"文字編碼測試big5"
 }
 
+
+
+=== TEST 20: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

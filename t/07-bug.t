@@ -32,3 +32,11 @@ GET /blah
 {"success":0,"error":"URLs must be led by '='."}
 --- SKIP
 
+
+
+=== TEST 4: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

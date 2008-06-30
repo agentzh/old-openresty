@@ -392,3 +392,11 @@ PUT /=/model/laser/M
 --- response
 {"success":0,"error":"column spec must be a non-empty HASH."}
 
+
+
+=== TEST 41: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

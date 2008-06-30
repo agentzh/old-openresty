@@ -319,3 +319,11 @@ GET /=/model/Tiger
         "}],
     "name":"Tiger","description":"Hello!"}
 
+
+
+=== TEST 29: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

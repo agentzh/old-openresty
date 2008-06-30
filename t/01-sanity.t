@@ -412,3 +412,11 @@ PUT /=/model/MyFavorites/count
 --- response
 {"success":0,"error":"Operation failed."}
 
+
+
+=== TEST 44: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

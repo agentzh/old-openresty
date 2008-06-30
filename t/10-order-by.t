@@ -252,3 +252,11 @@ GET /=/model/Foo/~/~?order_by=foo--
 --- response
 {"success":0,"error":"Bad model column name: foo--"}
 
+
+
+=== TEST 21: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

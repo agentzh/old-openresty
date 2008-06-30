@@ -1155,6 +1155,7 @@ POST /=/action/RowCount
 {"success":0,"error":"Bad type for parameter: \"blah\"}
 
 
+
 === TEST 113: bug
 --- request
 POST /=/action/RowCount
@@ -1166,7 +1167,8 @@ POST /=/action/RowCount
 {"success":0,"error":"Invalid \"type\" for parameter \"model\". (It's used as a symbol in the action definition.)"}
 
 
-=== TEST 113: bug
+
+=== TEST 114: bug
 --- request
 POST /=/action/RowCount
 { "parameters":[
@@ -1177,7 +1179,8 @@ POST /=/action/RowCount
 {"success":1}
 
 
-=== TEST 113: view the TitleOnly action
+
+=== TEST 115: view the TitleOnly action
 --- request
 GET /=/action/TitleOnly
 --- response
@@ -1188,7 +1191,7 @@ GET /=/action/TitleOnly
 
 
 
-=== TEST 114: change the action def
+=== TEST 116: change the action def
 --- request
 PUT /=/action/TitleOnly
 { "definition": "select 32" }
@@ -1197,7 +1200,7 @@ PUT /=/action/TitleOnly
 
 
 
-=== TEST 115: get the action def again:
+=== TEST 117: get the action def again:
 --- request
 GET /=/action/TitleOnly
 --- response
@@ -1205,7 +1208,7 @@ GET /=/action/TitleOnly
 
 
 
-=== TEST 116: change the action def (syntax error)
+=== TEST 118: change the action def (syntax error)
 --- request
 PUT /=/action/TitleOnly
 { "definition": "abc 32" }
