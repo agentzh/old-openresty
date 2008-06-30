@@ -1,0 +1,54 @@
+<div class="ttl2">
+    <span class="text">
+        New feed
+    </span>
+</div>
+
+<div class="create-model">
+<form id="create-feed-form" onsubmit="return false;">
+
+        <p>
+            <label>Name</label>
+            <input type="text" size="8" id="create-feed-name"></input>
+        </p>
+        <p>
+            <label>Description</label>
+            <input type="text" size="28" id="create-feed-desc"></input>
+        </p>
+
+        <p>
+            <label>View</label>
+            <input type="text" size="8" id="create-feed-view"></input>
+        </p>
+        <p>
+            <label>Title</label>
+            <input type="text" size="8" id="create-feed-title"></input>
+        </p>
+        <p>
+            <label>Copyright</label>
+            <input type="text" size="28" id="create-feed-copyright"></input>
+        </p>
+        <p>
+            <label>Author</label>
+            <input type="text" size="18" id="create-feed-author"></input>
+        </p>
+        <p>
+            <label>Link</label>
+            <input type="text" size="28" id="create-feed-link"></input>
+        </p>
+        <p>
+            <label>Logo image URL</label>
+            <input type="text" size="28" id="create-feed-logo"></input>
+        </p>
+
+        <p>
+            <label>Language</label>
+            <input type="text" size="8" id="create-feed-lang"></input>
+        </p>
+
+        <p>
+            <input type="submit" class="create-button" value="Create" onclick="createFeed()"></input>
+        </p>
+</form>
+</div>
+
