@@ -2,9 +2,9 @@
     menu = [
         'Models',
         'Views',
-        'Roles',
-        'Actions',
         'Feeds',
+        'Actions',
+        'Roles',
     ],
     active_item = 'Views',
     submenu = [
