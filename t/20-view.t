@@ -249,3 +249,11 @@ GET /=/view/Test2/~/~?t=
 [{"id":"1","title":"test1"}]
 --- SKIP
 
+
+
+=== TEST 27: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+
