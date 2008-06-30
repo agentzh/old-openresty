@@ -134,8 +134,8 @@ _EOC_
     [
         '0.003' => '',
     ],
-	[
-		'0.004' => <<"_EOC_",
+    [
+        '0.004' => <<"_EOC_",
 create or replace function _upgrade() returns integer as \$\$
 begin
     alter table _global._general add column captcha_key char(16) not null
@@ -144,7 +144,10 @@ begin
 end;
 \$\$ language plpgsql;
 _EOC_
-	],
+    ],
+    [
+        '0.005' => '',
+    ],
 );
 
 our @LocalVersionDelta = (
@@ -227,6 +230,16 @@ $$ language plpgsql;
 _EOC_
     ],
     [ '0.004' => '' ],
+    [ '0.005' => <<'_EOC_' ],
+create or replace function _upgrade() returns integer as $$
+begin
+    update _columns set "default" = '[' || "default" || ']' where not "default" ~ '^''.*''$';
+    update _columns set "default" = regexp_replace("default", '^''|''$', '"', 'g') where "default" ~ '^''|''$';
+
+    return 0;
+end;
+$$ language plpgsql;
+_EOC_
 );
 
 sub upgrade_all {
@@ -446,35 +459,35 @@ _EOC_
 # generating random 16-bytes captcha secret key
 sub random_secret
 {
-	my @set=('0'..'9','a'..'z','A'..'Z');
-	my $key=join("",map {$set[int(rand(@set))]} (1..16));
-	return $key;
+    my @set=('0'..'9','a'..'z','A'..'Z');
+    my $key=join("",map {$set[int(rand(@set))]} (1..16));
+    return $key;
 }
 
 # check if the given string is a valid captcha secret
 # this sub should be called as a class method!
 sub is_valid_captcha_secret
 {
-	defined($_[1]) && length($_[1])==16 && $_[1]!~/[^0-9a-zA-Z]/;
+    defined($_[1]) && length($_[1])==16 && $_[1]!~/[^0-9a-zA-Z]/;
 }
 
 # update the backend captcha secret
 sub update_captcha_secret
 {
-	my $self=shift||die;
-	my $secret=shift;
+    my $self=shift||die;
+    my $secret=shift;
 
-	return undef unless $self->is_valid_captcha_secret($secret);
+    return undef unless $self->is_valid_captcha_secret($secret);
 
-	# quote string and escape any special characters to prevent SQL injection
-	$secret=$self->quote($secret);
+    # quote string and escape any special characters to prevent SQL injection
+    $secret=$self->quote($secret);
 
-	# update captcha secret in the backend
+    # update captcha secret in the backend
     my $cur_user = $self->{user};
     $self->set_user('_global');
     my $rv=$self->do("update _global._general set captcha_key=$secret");
     $self->set_user($cur_user) if defined($cur_user);
-	return defined($rv)?1:undef;
+    return defined($rv)?1:undef;
 }
 
 1;
