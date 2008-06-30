@@ -234,7 +234,7 @@ POST /=/action/Query/~/~
 POST /=/action/Query/~/~
 {"model":"@#@@$^^#@"}
 --- response
-{"success":0,"error":"Invalid symbol for parameter \"model\": "@#@@$^^#@"}
+{"success":0,"error":"Invalid symbol for parameter \"model\": \"@#@@$^^#@\""}
 
 
 
@@ -258,7 +258,48 @@ GET /=/model/Carrie/~/~
 
 
 
-=== TEST 26: Delete rows
+=== TEST 26: order by a var
+--- request
+PUT /=/action/Query
+{"definition":
+"select id from Carrie order by id $dir",
+"parameters":[{"name":"dir","type":"keyword"}]
+--- response
+{"success":1}
+
+
+
+=== TEST 27: invoke it with dir = asc
+--- request
+GET /=/action/Query/dir/asc
+--- response
+[[
+    {"num":"7","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},
+    {"num":"8","url":"http://zhangxiaojue.cn","title":"second","id":"2"}
+]]
+
+
+
+=== TEST 28: invoke it with dir = desc
+--- request
+GET /=/action/Query/dir/desc
+--- response
+[[
+    {"num":"8","url":"http://zhangxiaojue.cn","title":"second","id":"2"},
+    {"num":"7","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}
+]]
+
+
+
+=== TEST 29: invoke with invalid dir
+--- request
+GET /=/action/Query/dir/blah'
+--- response
+{"success":0,"error":"Invalid keyword for parameter \"dir\": \"blah'\""}
+
+
+
+=== TEST 30: Delete rows
 --- request
 PUT /=/action/Query
 {"definition":"delete from Carrie\n where num = $num;;",
@@ -269,7 +310,7 @@ PUT /=/action/Query
 
 
 
-=== TEST 27: Invoke the action
+=== TEST 31: Invoke the action
 --- request
 GET /=/action/Query/num/7
 --- response
@@ -277,7 +318,7 @@ GET /=/action/Query/num/7
 
 
 
-=== TEST 28: check rows again
+=== TEST 32: check rows again
 --- request
 GET /=/model/Carrie/~/~
 --- response
@@ -285,7 +326,7 @@ GET /=/model/Carrie/~/~
 
 
 
-=== TEST 29: Insert some more data via actions
+=== TEST 33: Insert some more data via actions
 --- request
 PUT /=/action/Query
 {"definition":
@@ -300,7 +341,7 @@ PUT /=/action/Query
 
 
 
-=== TEST 30: Invoke it
+=== TEST 34: Invoke it
 --- request
 GET /=/action/Query/Yahoo/Yahoo?Google=Google
 --- response
@@ -310,7 +351,7 @@ GET /=/action/Query/Yahoo/Yahoo?Google=Google
 
 
 
-=== TEST 31: three GET in an action
+=== TEST 35: three GET in an action
 --- request
 PUT /=/action/Query
 {"definition":
@@ -322,7 +363,7 @@ PUT /=/action/Query
 
 
 
-=== TEST 32: Invoke it
+=== TEST 36: Invoke it
 --- request
 GET /=/action/Query/col/id
 --- response
@@ -334,7 +375,7 @@ GET /=/action/Query/col/id
 
 
 
-=== TEST 33: three GET in an action (with exceptions)
+=== TEST 37: three GET in an action (with exceptions)
 --- request
 PUT /=/action/Query
 {"definition":
@@ -345,7 +386,7 @@ PUT /=/action/Query
 
 
 
-=== TEST 34: Invoke it
+=== TEST 38: Invoke it
 --- request
 GET /=/action/Query/~/~
 --- response
@@ -357,7 +398,7 @@ GET /=/action/Query/~/~
 
 
 
-=== TEST 35: delete mixed in 2 GET
+=== TEST 39: delete mixed in 2 GET
 --- request
 PUT /=/action/Query
 {"definition":
@@ -369,7 +410,7 @@ PUT /=/action/Query
 
 
 
-=== TEST 36: Invoke it
+=== TEST 40: Invoke it
 --- request
 GET /=/action/Query/model/Carrie
 --- response
@@ -385,7 +426,7 @@ GET /=/action/Query/model/Carrie
 
 
 
-=== TEST 37: access another account
+=== TEST 41: access another account
 --- request
 POST /=/action/Query2
 {"definition":
@@ -399,7 +440,7 @@ POST /=/action/Query2
 
 
 
-=== TEST 38: Invoke it
+=== TEST 42: Invoke it
 --- request
 POST /=/action/Query2/user/$TestAccount2
 {"pass":"$TestPass2"}
@@ -416,7 +457,7 @@ POST /=/action/Query2/user/$TestAccount2
 
 
 
-=== TEST 39: check Test account 2:
+=== TEST 43: check Test account 2:
 --- request
 GET /=/model?user=$TestAccount2&password=$TestPass2
 --- response
@@ -424,7 +465,7 @@ GET /=/model?user=$TestAccount2&password=$TestPass2
 
 
 
-=== TEST 40: recheck Test account 1:
+=== TEST 44: recheck Test account 1:
 --- request
 GET /=/model?user=$TestAccount&password=$TestPass
 --- response
@@ -435,7 +476,7 @@ GET /=/model?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 41: logout
+=== TEST 45: logout
 --- request
 GET /=/logout
 --- response
