@@ -255,20 +255,30 @@ GET /=/model/Carrie/~/~
     {"num":"7","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},
     {"num":"8","url":"http://zhangxiaojue.cn","title":"second","id":"2"}
 ]
---- LAST
 
 
 
 === TEST 26: Delete rows
 --- request
-POST /=/action/RunAction/~/~
-"delete from Carrie\n where num = 7;;"
+PUT /=/action/Query
+{"definition":"delete from Carrie\n where num = $num;;",
+    "parameters":[{"name":"num","type":"literal"}]
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 27: Invoke the action
+--- request
+GET /=/action/Query/num/7
 --- response
 [{"success":1,"rows_affected":1}]
 
 
 
-=== TEST 27: check rows again
+
+=== TEST 28: check rows again
 --- request
 GET /=/model/Carrie/~/~
 --- response
@@ -276,18 +286,30 @@ GET /=/model/Carrie/~/~
 
 
 
-=== TEST 28: Insert some more data via actions
+=== TEST 29: Insert some more data via actions
 --- request
-POST /=/action/RunAction/~/~
-"POST '/=/model/Carrie' || '/~/~'
-[{num: 5, url: 'yahoo.cn', title: 'Yahoo'},
-{'num': 6, url: 'google' || '.com', \"title\": 'Google'}]"
+PUT /=/action/Query
+{"definition":
+"POST '/=/model/Carrie' || '/~/~' [{num: 5, url: 'yahoo.cn', title: $Yahoo}, {'num': 6, url: 'google' || '.com', \"title\": $Google}]",
+    "parameters": [
+        {"name":"Yahoo","type":"literal"},
+        {"name":"Google","type":"literal"}
+    ]
+}
+--- response
+{"success":1}
+
+
+=== TEST 30: Invoke it
+--- request
+GET /=/action/Query/Yahoo/Yahoo?Google=Google
 --- response
 [{"success":1,"rows_affected":2,"last_row":"/=/model/Carrie/id/4"}]
 
+--- LAST
 
 
-=== TEST 29: three GET in an action
+=== TEST 30: three GET in an action
 [{"success":1,"rows_affected":2,"last_row":"/=/model/Carrie/id/4"}]
 --- request
 POST /=/action/RunAction/~/~
@@ -303,7 +325,7 @@ GET '/=/model/Carrie/id/2';"
 
 
 
-=== TEST 30: three GET in an action
+=== TEST 31: three GET in an action
 --- request
 POST /=/action/RunAction/~/~
 "GET '/=/model/Carrie' || '/id/4';
@@ -318,7 +340,7 @@ GET '/=/model';"
 
 
 
-=== TEST 31: delete mixed in 2 GET
+=== TEST 32: delete mixed in 2 GET
 --- request
 POST /=/action/RunAction/~/~
 "DELETE '/=/model/Carrie' || '/id/4';
@@ -338,7 +360,7 @@ GET ('/=/model/Carrie/~/~') ; delete from Carrie where id = 3
 
 
 
-=== TEST 32: access another account
+=== TEST 33: access another account
 --- request
 POST /=/action/RunAction/~/~
 "DELETE '/=/model?user=$TestAccount2&password=$TestPass2';
@@ -358,7 +380,7 @@ GET '/=/model?user=$TestAccount2&password=$TestPass2'"
 
 
 
-=== TEST 33: check Test account 2:
+=== TEST 34: check Test account 2:
 --- request
 GET /=/model?user=$TestAccount2&password=$TestPass2
 --- response
@@ -366,7 +388,7 @@ GET /=/model?user=$TestAccount2&password=$TestPass2
 
 
 
-=== TEST 34: recheck Test account 1:
+=== TEST 35: recheck Test account 1:
 --- request
 GET /=/model?user=$TestAccount&password=$TestPass
 --- response
@@ -377,7 +399,7 @@ GET /=/model?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 35: logout
+=== TEST 36: logout
 --- request
 GET /=/logout
 --- response
