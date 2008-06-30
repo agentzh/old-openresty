@@ -233,8 +233,8 @@ _EOC_
     [ '0.005' => <<'_EOC_' ],
 create or replace function _upgrade() returns integer as $$
 begin
-    update _columns set "default" = '[' || "default" || ']' where not "default" ~ '^''.*''$';
-    update _columns set "default" = regexp_replace("default", '^''|''$', '"', 'g') where "default" ~ '^''|''$';
+    update _columns set "default" = '["' || regexp_replace(regexp_replace("default", '"', '\\"', 'g'), '''''', '''', 'g') || '"]' where not "default" ~ '^''.*''$';
+    update _columns set "default" = regexp_replace("default", '^''|''$', '"', 'g') where "default" ~ '^''.*''$';
 
     return 0;
 end;
