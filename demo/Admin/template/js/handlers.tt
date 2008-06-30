@@ -1,6 +1,9 @@
 [% DEFAULT
     cat = 'model'  # category
 -%]
+// !!! DO NOT EDIT !!!
+// This .js file was generated automatically from handlers.tt
+
 function get[% cat | ucfirst %]s (opts) {
     setStatus(true, 'get[% cat | ucfirst %]');
     openresty.callback = render[% cat | ucfirst %]s;
