@@ -103,3 +103,11 @@ POST /=/model/tsqueryTest
 {"success":1}
 --- SKIP
 
+
+
+=== TEST 9: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

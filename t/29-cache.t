@@ -94,3 +94,11 @@ POST /=/view/Foo?user=$TestAccount2&password=$TestPass2
 --- response
 {"success":1}
 
+
+
+=== TEST 11: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

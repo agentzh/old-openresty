@@ -375,3 +375,11 @@ DELETE /=/feed/Comment
 --- response
 {"error":"Feed \"Comment\" not found.","success":0}
 
+
+
+=== TEST 26: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

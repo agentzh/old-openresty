@@ -174,3 +174,11 @@ DELETE /=/model.js?session=$SavedCapture
 --- response
 {"success":0,"error":"Login required."}
 
+
+
+=== TEST 22: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

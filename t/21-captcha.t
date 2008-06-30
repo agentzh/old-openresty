@@ -354,3 +354,11 @@ GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:你好，世界啊�
 {"success":0,"error":"Solution to the captcha is incorrect."}
 --- use_ttf: 1
 
+
+
+=== TEST 41: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+
