@@ -262,3 +262,11 @@ DELETE /=/model/Bookmark.js
 --- response
 {"success":1}
 
+
+
+=== TEST 21: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

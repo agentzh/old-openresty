@@ -231,3 +231,6 @@ is $res_body, '{"success":0,"error":"Value too large for the limit param: '.($MA
 $res = $client->delete('/=/model');
 ok $res->is_success, 'response OK';
 
+$res = $client->get('/=/logout');
+ok $res->is_success, 'logout ok';
+
