@@ -16,7 +16,7 @@
             <input type="text" size="18" id="create-view-desc"></input>
         </p>
         <p>
-            <label>Definition (minisql)</label>
+            <label>Definition (RestyScript)</label>
         </p>
         <p>
             <textarea size="18" id="create-view-def"></textarea>

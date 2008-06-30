@@ -11,6 +11,7 @@
         'model.js',
         'view.js',
         'role.js',
+        'feed.js',
         'dispatcher.js',
         'admin.js',
     ]
