@@ -129,6 +129,13 @@ sub GET_model_column {
     if ($col eq '~') {
         my $list = $openresty->select("$select", { use_hash => 1 });
         if (!$list or !ref $list) { $list = []; }
+
+        for my $row (@$list) {
+            if (my $json_default = $row->{default}) {
+                $row->{default} = $OpenResty::JsonXs->decode($json_default);
+            }
+        }
+
         if (!@$list or $list->[0]->{name} ne 'id') {
             unshift @$list, { name => 'id', type => 'serial', label => 'ID' };
         }
@@ -140,8 +147,12 @@ sub GET_model_column {
         if (!$res or !@$res) {
             die "Column '$col' not found.\n";
         }
+        my $row = $res->[0];
+        if (my $json_default = $row->{default}) {
+            $row->{default} = $OpenResty::JsonXs->decode($json_default);
+        }
 
-        return $res->[0];
+        return $row;
     }
 }
 
@@ -183,8 +194,9 @@ sub POST_model_column {
 
     my $default = delete $data->{default};
     if (defined $default) {
+        my $json_default = $OpenResty::JsonXs->encode($default);
         $default = $self->process_default($openresty, $default);
-        $insert->cols('"default"')->values(Q($default));
+        $insert->cols(QI('default'))->values(Q($json_default));
     }
     $default ||= 'null';
 
@@ -244,9 +256,10 @@ sub PUT_model_column {
 
     my $default = delete $data->{default};
     if (defined $default) {
+        my $json_default = $OpenResty::JsonXs->encode($default);
         $default = $self->process_default($openresty, $default);
 
-        $update_meta->set(QI('default') => Q($default));
+        $update_meta->set(QI('default') => Q($json_default));
         $sql .= "alter table \"$table_name\" alter column \"$new_col\" set default ($default);\n",
     }
 
@@ -428,11 +441,12 @@ sub new_model {
         my $ins = $insert->clone
             ->values(Q($name, $type, $label, $table));
         if (defined $default) {
+            my $json_default = $OpenResty::JsonXs->encode($default);
             $default = $self->process_default($openresty, $default);
             # XXX
             $sql .= " default ($default)";
             $ins->cols(QI('default'))
-                ->values(Q($default));
+                ->values(Q($json_default));
         }
         $sql2 .= $ins;
         $i++;
@@ -567,6 +581,12 @@ sub get_model_cols {
            ->order_by('id');
     $list = $openresty->select("$select", { use_hash => 1 });
     if (!$list or !ref $list) { $list = []; }
+
+    for my $row (@$list) {
+        if (my $json_default = $row->{default}) {
+            $row->{default} = $OpenResty::JsonXs->decode($json_default);
+        }
+    }
 
     #### model handler: $list
     if (!@$list or $list->[0]->{name} ne 'id') {
