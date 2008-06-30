@@ -1215,3 +1215,11 @@ PUT /=/action/TitleOnly
 --- response
 {"error":"\"action\" (line 1, column 1):\nunexpected \"a\"\nexpecting white space or action statement","success":0}
 
+
+
+=== TEST 119: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

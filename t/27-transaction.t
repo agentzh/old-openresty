@@ -54,3 +54,11 @@ GET /=/model/Foo/~/~
 --- response
 []
 
+
+
+=== TEST 6: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

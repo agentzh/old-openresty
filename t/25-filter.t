@@ -46,3 +46,11 @@ POST /=/model/Foo/~/~
 --- response
 {"success":0,"error":"QP filter: Sexist not welcomed."}
 
+
+
+=== TEST 4: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

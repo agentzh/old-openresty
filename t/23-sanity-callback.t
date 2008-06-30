@@ -283,3 +283,11 @@ GET /=/model.js?callback=foo
 --- response
 foo([{"src":"/=/model/MyFavorites","name":"MyFavorites","description":"我的最爱"}]);
 
+
+
+=== TEST 29: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

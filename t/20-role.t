@@ -1458,3 +1458,10 @@ DELETE /=/role/Poster
 {"success":1}
 
 
+
+=== TEST 143: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+
