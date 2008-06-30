@@ -500,14 +500,17 @@ function afterCreateView (res) {
 }
 
 function createFeed () {
-    var name = $("#create-view-name").val();
-    var desc = $("#create-view-desc").val();
-    var copyright = $("#create-view-copyright").val();
-    var author = $("#create-view-author").val();
-    var link = $("#create-view-link").val();
-    var view = $("#create-view-view").val();
-    if (!def) {
-        error("View definition can't be empty.");
+    var name = $("#create-feed-name").val();
+    var desc = $("#create-feed-desc").val();
+    var author = $("#create-feed-author").val();
+    var link = $("#create-feed-link").val();
+    var logo = $("#create-feed-logo").val();
+    var lang = $("#create-feed-lang").val();
+    var copyright = $("#create-feed-copyright").val();
+    var view = $("#create-feed-view").val();
+    var title = $("#create-feed-title").val();
+    if (!view) {
+        error("The driving view cannot be empty.");
         return false;
     }
     setStatus(true, "createFeed");
@@ -516,10 +519,11 @@ function createFeed () {
         '/=/feed/~',
         { name: name,
           description: desc,
-          definition: def,
           author: author,
+          title: title,
           link: link,
-          description: desc,
+          logo: logo,
+          language: lang,
           copyright: copyright,
           view: view
         }
@@ -527,15 +531,14 @@ function createFeed () {
     return false;
 }
 
-function afterCreateView (res) {
-    setStatus(false, "createView");
+function afterCreateFeed (res) {
+    setStatus(false, "createFeed");
     if (!openresty.isSuccess(res)) {
-        error("Failed to create view: " + res.error);
+        error("Failed to create feed: " + res.error);
     } else {
-        gotoNextPage('views');
+        gotoNextPage('feeds');
     }
 }
-
 
 function createRole () {
     var name = $("#create-role-name").val();
