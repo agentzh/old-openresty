@@ -499,6 +499,44 @@ function afterCreateView (res) {
     }
 }
 
+function createFeed () {
+    var name = $("#create-view-name").val();
+    var desc = $("#create-view-desc").val();
+    var copyright = $("#create-view-copyright").val();
+    var author = $("#create-view-author").val();
+    var link = $("#create-view-link").val();
+    var view = $("#create-view-view").val();
+    if (!def) {
+        error("View definition can't be empty.");
+        return false;
+    }
+    setStatus(true, "createFeed");
+    openresty.callback = afterCreateFeed;
+    openresty.postByGet(
+        '/=/feed/~',
+        { name: name,
+          description: desc,
+          definition: def,
+          author: author,
+          link: link,
+          description: desc,
+          copyright: copyright,
+          view: view
+        }
+    );
+    return false;
+}
+
+function afterCreateView (res) {
+    setStatus(false, "createView");
+    if (!openresty.isSuccess(res)) {
+        error("Failed to create view: " + res.error);
+    } else {
+        gotoNextPage('views');
+    }
+}
+
+
 function createRole () {
     var name = $("#create-role-name").val();
     var desc = $("#create-role-desc").val();

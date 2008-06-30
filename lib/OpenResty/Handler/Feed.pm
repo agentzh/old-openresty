@@ -62,7 +62,7 @@ sub GET_feed {
     if (!$openresty->has_feed($feed)) {
         die "Feed \"$feed\" not found.\n";
     }
-    my $select = OpenResty::SQL::Select->new( qw< name description view title link copyright language author > )
+    my $select = OpenResty::SQL::Select->new( qw< name description view title link logo copyright language author > )
         ->from('_feeds')
         ->where(name => Q($feed));
 
@@ -121,6 +121,13 @@ sub PUT_feed {
         _STRING($new_link) or die "Bad feed link: ", $OpenResty::Dumper->($new_link), "\n";
         $update->set(link => Q($new_link));
     }
+
+    my $new_logo = delete $data->{logo};
+    if (defined $new_logo) {
+        _STRING($new_logo) or die "Bad feed logo: ", $OpenResty::Dumper->($new_logo), "\n";
+        $update->set(logo => Q($new_logo));
+    }
+
 
     my $new_author = delete $data->{author};
     if (defined $new_author) {

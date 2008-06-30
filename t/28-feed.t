@@ -198,16 +198,16 @@ GET /=/feed
 GET /=/feed/Post
 --- response
 {
-    "name": "Post",
-    "description": "Feed for blog posts",
-    "author": "agentzh",
-    "link": "http://blog.agentzh.org",
-    "copyright": "Copyright 2008 by Agent Zhang",
-    "language": "en",
-    "title": "Human & Machine - Blog posts",
-    "view": "PostFeed"
+    "name":"Post",
+    "description":"Feed for blog posts",
+    "author":"agentzh",
+    "link":"http://blog.agentzh.org",
+    "copyright":"Copyright 2008 by Agent Zhang",
+    "language":"en",
+    "logo":"http://localhost/Blog/out/me.jpg",
+    "title":"Human & Machine - Blog posts",
+    "view":"PostFeed"
 }
-
 
 
 === TEST 16: Obtain the feed content (XML)
@@ -372,6 +372,7 @@ GET /=/feed/Comment
     "author":null,
     "description":"Feed for blog comments",
     "view":"PostFeed",
+    "logo":null,
     "title":"Comments"
 }
 
@@ -388,7 +389,8 @@ PUT /=/feed/Comment
     "language": "zh-CN",
     "title": "Human & Machine2",
     "view": "PostFeed",
-    "author":"agentzh"
+    "author":"agentzh",
+    "logo":"me.jpg"
 }
 --- response
 {"success":1}
@@ -407,7 +409,8 @@ GET /=/feed/Comment2
     "language": "zh-CN",
     "title": "Human & Machine2",
     "view": "PostFeed",
-    "author":"agentzh"
+    "author":"agentzh",
+    "logo":"me.jpg"
 }
 
 
