@@ -304,6 +304,7 @@ t/pgmock-data/26-types.t.json
 t/pgmock-data/27-transaction.t.json
 t/pgmock-data/28-feed.t.json
 t/pgmock-data/29-cache.t.json
+t/pgmock-data/33-duplicate-def.t.json
 t/pgmock-data/sanity.t.json
 TODO
 
