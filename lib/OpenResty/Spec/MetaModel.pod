@@ -4,8 +4,8 @@ OpenResty::Spec::MetaModel - Metamodel for OpenResty backends
 
 =head1 VERSION
 
-This document describes the 0.004 version of the metamodel used in the
-OpenResty 0.3.5.
+This document describes the 0.005 version of the metamodel used in the
+OpenResty 0.3.7.
 
 =head1 DESCRIPTION
 
@@ -154,7 +154,7 @@ columns.
         table_name text not null,
         label text not null,
         type text not null,
-        default_value text,
+        "default" text,
         indexed text,
         unique(table_name, name)
     );
@@ -165,13 +165,13 @@ column stores the names of the corresponding models.
 The C<lable> column stores the textual label provided by the user who created
 the column and types of the model columns are stored in the C<type> column.
 
-None of the columns above but C<default_value> and C<indexed> can be null
+None of the columns above but C<default> and C<indexed> can be null
 and in addition, the combination of the columns C<table_name> and C<name> should
 be unique.
 
 User columns have default values and the corresponding JSON representation
-is stored in the C<default_value> column. Note that the values for
-C<default_value> are JSON literals, for instance, C<"32">, C<["now()"]>,
+is stored in the C<default> column. Note that the values for
+C<default> are JSON literals, for instance, C<"32">, C<["now()"]>,
 and etc.
 
 The C<indexed> column stores the index method applied to the current user
@@ -185,7 +185,7 @@ The C<_views> table stores the information of the OpenResty View objects.
     create table _views (
         id serial primary key,
         name text unique not null,
-        definition text unique not null,
+        definition text not null,
         description text,
         created timestamp(0) with time zone default now()
     );
