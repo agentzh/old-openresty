@@ -57,6 +57,7 @@ sub init {
     };
     if ($@) { $InitFatal = $@; }
     #warn "InitFatal: $InitFatal\n";
+    $OpenResty::Backend->set_user('_global');
     $OpenResty::Backend->do('set lc_messages to "C";');
 
     if (my $filtered = $OpenResty::Config{'frontend.filtered'}) {
