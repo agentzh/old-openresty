@@ -62,6 +62,17 @@ function render[% cat | ucfirst %] (res, name) {
         //error("[% cat %]-" + name + " not found!");
         get[% cat | ucfirst %]Menu();
     }
+  [%- IF cat == 'model' %]
+    var columns = res.columns;
+    for (var i = 0; i < columns.length; i++) {
+        var col = columns[i];
+        if (!col) next;
+        var default_val = col.default;
+        if (default_val != null) {
+            col.default = JSON.stringify(default_val);
+        }
+    }
+  [%- END %]
     $("#main").html(
         Jemplate.process(
             '[% cat %].tt',
