@@ -1,0 +1,29 @@
+[% BLOCK editable_feed_value -%]
+<span class="editable" [% is_json ? 'resty_json="1"' : "" %] resty_path="feed/[% feed.name %]" resty_key="[% key | html %]" resty_value="[% value | html %]">[% value | html %]</span>
+[% END -%]
+
+<!-- block begin -->
+<div class="ttl">
+    <span class="text">[% feed.name %]</span>
+</div>
+
+<div class="listcon">
+    <ul>
+        <li><b>Name</b>: [% feed.name | html %]</li>
+        <li><b>Description</b>: [% INCLUDE editable_feed_value key="description", value=feed.description %]</li>
+        <li><b>View</b>: [% INCLUDE editable_feed_value key="view", value=feed.view %]</li>
+        <li><b>Title</b>: [% INCLUDE editable_feed_value key="title", value=feed.title %]</li>
+        <li><b>Copyright</b>: [% INCLUDE editable_feed_value key="copyright", value=feed.copyright %]</li>
+        <li><b>Author</b>: [% INCLUDE editable_feed_value key="author", value=feed.author %]</li>
+        <li><b>Link</b>: [% INCLUDE editable_feed_value key="link", value=feed.link %]</li>
+        <li><b>Logo image URL</b>: [% INCLUDE editable_feed_value key="logo", value=feed.logo %]</li>
+        <li><b>Language</b>: [% INCLUDE editable_feed_value key="language", value=feed.language %]</li>
+        <li>
+        <b><a href="javascript:void(0);" onclick="deleteView('[% feed.name %]', 'feeds')">Delete this feed</a></b>
+        </li>
+    </ul>
+
+    <div class="clearit"></div>
+</div>
+<!-- block end -->
+
