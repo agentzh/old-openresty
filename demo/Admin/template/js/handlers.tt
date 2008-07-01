@@ -67,9 +67,9 @@ function render[% cat | ucfirst %] (res, name) {
     for (var i = 0; i < columns.length; i++) {
         var col = columns[i];
         if (!col) next;
-        var default_val = col.default;
+        var default_val = col["default"];
         if (default_val != null) {
-            col.default = JSON.stringify(default_val);
+            col["default"] = JSON.stringify(default_val);
         }
     }
   [%- END %]
