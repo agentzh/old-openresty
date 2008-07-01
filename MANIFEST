@@ -57,6 +57,8 @@ demo/Springbot/staff/Makefile
 demo/Springbot/staff/txt2csv.pl
 bin/prettyjson
 clients/js/md5.js
+demo/Admin/template/elem/create-feed.tt
+demo/Admin/template/elem/feed.tt
 demo/Admin/css/admin.css
 demo/Admin/css/login.css
 demo/Admin/html/login.html
@@ -266,6 +268,7 @@ t/23-sanity-callback.t
 t/24-session.t
 t/26-types.t
 t/27-transaction.t
+t/33-duplicate-def.t
 t/99-pod-coverage.t
 t/99-pod.t
 t/OpenResty.pm

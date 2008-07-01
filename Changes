@@ -1,5 +1,8 @@
 Change Log for OpenResty
 
+0.3.7 Jul 1 2008
+* Fixed
+
 0.3.6 Jun 25 2008
 * Now we check the minisql's syntax when the user updates the view's definition.
 * Added a new demo, RestyCheck, which is a quick health-checker for *any* OpenResty server.
