@@ -235,6 +235,7 @@ create or replace function _upgrade() returns integer as $$
 begin
     update _columns set "default" = '["' || regexp_replace(regexp_replace("default", '"', '\\"', 'g'), '''''', '''', 'g') || '"]' where not "default" ~ '^''.*''$';
     update _columns set "default" = regexp_replace("default", '^''|''$', '"', 'g') where "default" ~ '^''.*''$';
+    alter table _views drop constraint _views_definition_key;
 
     return 0;
 end;
