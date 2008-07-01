@@ -45,7 +45,7 @@ GET /=/model/Foo
     "name":"Foo",
     "description":"Foo"
 }
-
+--- LAST
 
 
 === TEST 4: Insert a row (wrong way)

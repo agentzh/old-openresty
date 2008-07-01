@@ -3,7 +3,8 @@ package OpenResty::Backend::PgMocked;
 use strict;
 use warnings;
 
-#use Smart::Comments '####';
+#use Smart::Comments '#####';
+use Clone qw(clone);
 use JSON::XS;
 use base 'OpenResty::Backend::Pg';
 use Test::LongString;
@@ -67,10 +68,12 @@ sub record {
         #warn "RES: $res\n";
         $type = 'die';
     }
-    push @$TransList, ["$query", $res, $type];
+    ##### $res
+    push @$TransList, ["$query", clone($res), $type];
 }
 
 sub stop_recording_file {
+    ##### Last: $Data->[-1]
     DumpFile($DataFile, $Data);
     undef $Data;
 }
