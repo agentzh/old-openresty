@@ -57,7 +57,7 @@ function plantEditableHook (node, settings) {
         var data = {};
         if (isJSON) {
             var res = JSON.parse(value);
-            if (res == false && value != false) {
+            if (res == false && typeof res == typeof false && value != false) {
                 error("Invalid JSON value: " + value);
                 return html2text(value);
             }
