@@ -10,10 +10,13 @@ define CMDS
     bin/perf
 endef
 
-all: lib/OpenResty/RestyScript/View.pm
+all: lib/OpenResty/RestyScript/View.pm lib/OpenResty/RestyScript/ViewUpgrade.pm
 
 lib/OpenResty/RestyScript/View.pm: grammar/restyscript-view.yp
 	yapp -m OpenResty::RestyScript::View -o $@ $<
+
+lib/OpenResty/RestyScript/ViewUpgrade.pm: grammar/view-upgrade.yp
+	yapp -m OpenResty::RestyScript::ViewUpgrade -o $@ $<
 
 test: all
 	$(CMDS)
