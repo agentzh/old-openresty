@@ -179,6 +179,7 @@ column: qualified_symbol
       ;
 
 qualified_symbol: symbol '.' symbol
+                    { "$_[1].$_[3]" }
                 ;
 
 symbol: IDENT
@@ -241,10 +242,12 @@ comparison: lhs_atom operator rhs_atom
 
 lhs_atom: expr
         | '(' condition ')'
+             { join(' ', @_[1..$#_]) }
         ;
 
 rhs_atom: expr2
         | '(' condition ')'
+             { join(' ', @_[1..$#_]) }
         ;
 
 operator: '>'
@@ -260,7 +263,6 @@ operator: '>'
         | '<<'
         | '>>='
         | '>>'
-
         ;
 
 

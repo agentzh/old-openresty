@@ -2080,7 +2080,10 @@ sub
 		 'column', 1, undef
 	],
 	[#Rule 69
-		 'qualified_symbol', 3, undef
+		 'qualified_symbol', 3,
+sub
+#line 182 "grammar/view-upgrade.yp"
+{ "$_[1].$_[3]" }
 	],
 	[#Rule 70
 		 'symbol', 1, undef
@@ -2088,7 +2091,7 @@ sub
 	[#Rule 71
 		 'symbol', 3,
 sub
-#line 186 "grammar/view-upgrade.yp"
+#line 187 "grammar/view-upgrade.yp"
 {
                 push @Vars, [$_[1], 'symbol', $_[3]];
                 $_[1];
@@ -2097,7 +2100,7 @@ sub
 	[#Rule 72
 		 'symbol', 1,
 sub
-#line 191 "grammar/view-upgrade.yp"
+#line 192 "grammar/view-upgrade.yp"
 {
                 push @Vars, [$_[1], 'symbol'];
                 $_[1];
@@ -2109,7 +2112,7 @@ sub
 	[#Rule 74
 		 'postfix_clause_list', 2,
 sub
-#line 201 "grammar/view-upgrade.yp"
+#line 202 "grammar/view-upgrade.yp"
 { join("\n", @_[1..$#_]) }
 	],
 	[#Rule 75
@@ -2136,19 +2139,19 @@ sub
 	[#Rule 82
 		 'from_clause', 2,
 sub
-#line 214 "grammar/view-upgrade.yp"
+#line 215 "grammar/view-upgrade.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 83
 		 'from_clause', 2,
 sub
-#line 216 "grammar/view-upgrade.yp"
+#line 217 "grammar/view-upgrade.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 84
 		 'where_clause', 2,
 sub
-#line 220 "grammar/view-upgrade.yp"
+#line 221 "grammar/view-upgrade.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 85
@@ -2157,7 +2160,7 @@ sub
 	[#Rule 86
 		 'disjunction', 3,
 sub
-#line 227 "grammar/view-upgrade.yp"
+#line 228 "grammar/view-upgrade.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 87
@@ -2166,7 +2169,7 @@ sub
 	[#Rule 88
 		 'conjunction', 3,
 sub
-#line 232 "grammar/view-upgrade.yp"
+#line 233 "grammar/view-upgrade.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 89
@@ -2175,26 +2178,32 @@ sub
 	[#Rule 90
 		 'comparison', 3,
 sub
-#line 237 "grammar/view-upgrade.yp"
+#line 238 "grammar/view-upgrade.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 91
 		 'comparison', 3,
 sub
-#line 239 "grammar/view-upgrade.yp"
+#line 240 "grammar/view-upgrade.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 92
 		 'lhs_atom', 1, undef
 	],
 	[#Rule 93
-		 'lhs_atom', 3, undef
+		 'lhs_atom', 3,
+sub
+#line 245 "grammar/view-upgrade.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 94
 		 'rhs_atom', 1, undef
 	],
 	[#Rule 95
-		 'rhs_atom', 3, undef
+		 'rhs_atom', 3,
+sub
+#line 250 "grammar/view-upgrade.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 96
 		 'operator', 1, undef
@@ -2250,13 +2259,13 @@ sub
 	[#Rule 113
 		 'group_by_clause', 2,
 sub
-#line 276 "grammar/view-upgrade.yp"
+#line 278 "grammar/view-upgrade.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 114
 		 'column_list', 3,
 sub
-#line 280 "grammar/view-upgrade.yp"
+#line 282 "grammar/view-upgrade.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 115
@@ -2265,13 +2274,13 @@ sub
 	[#Rule 116
 		 'order_by_clause', 2,
 sub
-#line 285 "grammar/view-upgrade.yp"
+#line 287 "grammar/view-upgrade.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 117
 		 'order_by_objects', 3,
 sub
-#line 289 "grammar/view-upgrade.yp"
+#line 291 "grammar/view-upgrade.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 118
@@ -2280,7 +2289,7 @@ sub
 	[#Rule 119
 		 'order_by_object', 2,
 sub
-#line 294 "grammar/view-upgrade.yp"
+#line 296 "grammar/view-upgrade.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 120
@@ -2295,13 +2304,13 @@ sub
 	[#Rule 123
 		 'limit_clause', 2,
 sub
-#line 302 "grammar/view-upgrade.yp"
+#line 304 "grammar/view-upgrade.yp"
 { delete $_[0]->YYData->{limit}; join(' ', @_[1..$#_]) }
 	],
 	[#Rule 124
 		 'offset_clause', 2,
 sub
-#line 306 "grammar/view-upgrade.yp"
+#line 308 "grammar/view-upgrade.yp"
 { delete $_[0]->YYData->{offset}; join(' ', @_[1..$#_]) }
 	]
 ],
@@ -2309,7 +2318,7 @@ sub
     bless($self,$class);
 }
 
-#line 309 "grammar/view-upgrade.yp"
+#line 311 "grammar/view-upgrade.yp"
 
 
 #use Smart::Comments '####';
