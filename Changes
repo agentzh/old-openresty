@@ -5,6 +5,7 @@ Change Log for OpenResty
 * Fixed the long standing bug regarding the model column default values saved in the metamodel.
 * Exposed the Feed API in the Admin site demo.
 * Now we use _rand in openresty.js for defeating web browser caching.
+* Now we allow multiple views with identical definitions.
 
 0.3.6 Jun 25 2008
 * Now we check the minisql's syntax when the user updates the view's definition.
