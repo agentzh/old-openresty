@@ -353,3 +353,47 @@ limit $count
 --- params
 $count literal 20
 
+
+
+=== TEST 17: CommentFeed (agentzh)
+--- old
+    select sender as author, 'Re: ' || Post.title as title,
+           'http://blog.agentzh.org/#post-' || post || ':comment-' || Comment.id
+           as link,
+           body as content, Comment.created as published,
+           'http://blog.agentzh.org/#post-' || Comment.id as comments
+    from Comment, Post
+    where post = Post.id
+    order by Comment.created desc
+    limit $count | 20
+--- newdef
+select sender as author , 'Re: ' || Post.title as title , 'http://blog.agentzh.org/#post-' || post || ':comment-' || Comment.id as link , body as content , Comment.created as published , 'http://blog.agentzh.org/#post-' || Comment.id as comments
+from Comment , Post
+where post = Post.id
+order by Comment.created desc
+limit $count
+--- params
+$count literal 20
+
+
+
+=== TEST 18: 菜名搜索结果视图 (lifecai)
+--- old
+select distinct(name), max(rate) as rate from res4tag where length(name)
+< $l | 9 and to_tsvector('chinesecfg', anchor) @@
+my_ts_rewrite(to_tsquery( 'chinesecfg',
+btrim(regexp_replace($a, '[-(") +*/!|&]+', '|', 'g'), '&|!')), 'select orig, transform from  aliases') and city @@
+to_tsquery('chinesecfg', $c) group by name order by rate desc limit  $t | 10;
+--- newdef
+select distinct ( name ) , max ( rate ) as rate
+from res4tag
+where length ( name ) < $l and to_tsvector ( 'chinesecfg' , anchor ) @@ my_ts_rewrite ( to_tsquery ( 'chinesecfg' , btrim ( regexp_replace ( $a , '[-(") +*/!|&]+' , '|' , 'g' ) , '&|!' ) ) , 'select orig, transform from  aliases' ) and city @@ to_tsquery ( 'chinesecfg' , $c )
+group by name
+order by rate desc
+limit $t
+--- params
+$l literal 9
+$a literal
+$c literal
+$t literal 10
+
