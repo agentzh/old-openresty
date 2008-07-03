@@ -12,6 +12,8 @@ use OpenResty::Limits;
 use Clone 'clone';
 use Encode qw(is_utf8);
 
+%OpenResty::AccountFiltered = %OpenResty::AccountFiltered;
+
 sub check_type {
     my $type = shift;
     if ($type !~ m{^ \s*
@@ -396,9 +398,9 @@ sub new_model {
     }
 
     if (%$data) {
-    my @key = sort(keys %$data);
-        die "Unrecognized keys in model schema 'TTT': ",
-            join(", ", map { JSON::Syck::Dump($_) } @key), "\n";
+        my @key = sort(keys %$data);
+            die "Unrecognized keys in model schema 'TTT': ",
+                join(", ", map { JSON::Syck::Dump($_) } @key), "\n";
     }
     my $i = 1;
     if ($openresty->has_model($model)) {
@@ -432,10 +434,16 @@ sub new_model {
         }
         # type defaults to 'text' if not specified.
         my $type = delete $col->{type} || 'text';
-        my $label = $col->{label} or
+        my $label = delete $col->{label} or
             die "No 'label' specified for column \"$name\" in model \"$model\".\n";
 
         my $default = delete $col->{default};
+        if (%$col) {
+            my @key = sort(keys %$col);
+                die "Unrecognized keys for column \"$name\": ",
+                    join(", ", map { JSON::Syck::Dump($_) } @key), "\n";
+        }
+
         $type = check_type($type);
         $sql .= ",\n\t\"$name\" $type";
         my $ins = $insert->clone
