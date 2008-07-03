@@ -303,7 +303,6 @@ $count literal 40
 
 
 
-
 === TEST 15: PrevNextArchive (agentzh)
 --- old
     (select 'next' as id, date_part('month', created) as month,

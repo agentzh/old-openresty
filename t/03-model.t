@@ -321,7 +321,19 @@ GET /=/model/Tiger
 
 
 
-=== TEST 29: logout
+=== TEST 29: Create a model with unknown column keys
+--- request
+POST /=/model/Post
+{"description":"Post",
+ "columns":[{"name":"name","label":"Name","type":"text","blah":true},
+            {"name":"age","label":"Age","type":"integer"}]
+}
+--- response
+{"success":0,"error":"Unrecognized keys for column \"name\": \"blah\""}
+
+
+
+=== TEST 30: logout
 --- request
 GET /=/logout
 --- response
