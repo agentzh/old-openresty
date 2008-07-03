@@ -269,7 +269,20 @@ sub PUT_model_column {
     $update_meta->where(table_name => Q($table_name))
         ->where(name => Q($col));
 
+    # XXX TODO: add support for updating column's uniqueness
+    my $unique = delete $data->{unique};
+    if (defined $unique) {
+        die "Updating column's uniqueness is not implemented yet.\n";
+    }
+
+    if (%$data) {
+        my @key = sort(keys %$data);
+            die "Unrecognized keys in the content object: ",
+                join(", ", map { JSON::Syck::Dump($_) } @key), "\n";
+    }
+
     $sql .= $update_meta;
+    #warn "SQL:: $sql\n";
 
     my $res = $openresty->do($sql);
 
@@ -456,6 +469,7 @@ sub new_model {
         my $unique = delete $col->{unique};
         if ($unique) {
             #warn "Unique found: $unique\n";
+            # XXX FIXME: use alter table ... add constraint instead here...
             $sql .= " unique";
         }
 
