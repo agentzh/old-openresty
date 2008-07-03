@@ -12,7 +12,8 @@ use OpenResty::Limits;
 use Clone 'clone';
 use Encode qw(is_utf8);
 
-%OpenResty::AccountFiltered = %OpenResty::AccountFiltered;
+#%OpenResty::AccountFiltered = %OpenResty::AccountFiltered;
+#$OpenResty::OpMap = $OpenResty::OpMap;
 
 sub check_type {
     my $type = shift;
@@ -438,16 +439,11 @@ sub new_model {
             die "No 'label' specified for column \"$name\" in model \"$model\".\n";
 
         my $default = delete $col->{default};
-        if (%$col) {
-            my @key = sort(keys %$col);
-                die "Unrecognized keys for column \"$name\": ",
-                    join(", ", map { JSON::Syck::Dump($_) } @key), "\n";
-        }
-
         $type = check_type($type);
         $sql .= ",\n\t\"$name\" $type";
         my $ins = $insert->clone
             ->values(Q($name, $type, $label, $table));
+
         if (defined $default) {
             my $json_default = $OpenResty::JsonXs->encode($default);
             $default = $self->process_default($openresty, $default);
@@ -456,6 +452,19 @@ sub new_model {
             $ins->cols(QI('default'))
                 ->values(Q($json_default));
         }
+
+        my $unique = delete $col->{unique};
+        if ($unique) {
+            #warn "Unique found: $unique\n";
+            $sql .= " unique";
+        }
+
+        if (%$col) {
+            my @key = sort(keys %$col);
+                die "Unrecognized keys for column \"$name\": ",
+                    join(", ", map { JSON::Syck::Dump($_) } @key), "\n";
+        }
+
         $sql2 .= $ins;
         $i++;
     }
