@@ -515,7 +515,7 @@ sub check_default_expr {
 
 sub process_default {
     my ($self, $openresty, $default) = @_;
-    if (_STRING($default or $default eq '0')) {
+    if ($default eq '' or _STRING($default or $default eq '0')) {
         return Q($default);
     } elsif (_ARRAY($default)) {
         my $expr = join ' ', @$default;
