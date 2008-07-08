@@ -45,7 +45,6 @@ GET /=/model/Foo
     "name":"Foo",
     "description":"Foo"
 }
---- LAST
 
 
 
@@ -313,17 +312,33 @@ POST /=/model/Foo/~
 
 
 
-=== TEST 33: Add a column with default 0
+=== TEST 33: Add a column with default ""
 --- request
 POST /=/model/Foo/~
-{ "name": "carrie_stamp", "label": "num", "type": "timestamp", "default": ["timestamp(0)"] }
+{ "name": "empty", "label": "num", "type": "text", "default": "" }
 --- response
-{"success":1,"src":"/=/model/Foo/num"}
---- SKIP
+{"success":1,"src":"/=/model/Foo/empty"}
 
 
 
-=== TEST 34: logout
+=== TEST 34: Insert a line
+--- request
+POST /=/model/Foo/~/~
+{"num":3,"created":"2008-05-06 14:36:27","content":"blah"}
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/Foo/id/6"}
+
+
+
+=== TEST 35: check the "empty" column
+--- request
+GET /=/model/Foo/id/6
+--- response
+[{"content":"blah","created":"2008-05-06 14:36:27","empty":"","id":"6","num":"3","title":"No title"}]
+
+
+
+=== TEST 36: logout
 --- request
 GET /=/logout
 --- response
