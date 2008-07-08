@@ -34,6 +34,7 @@ sub check_type {
                     serial |
                     real |
                     double precision |
+                    ltree |
                     date |
                     (?:timestamp|time) (?: \s* \( \s* \d+ \s* \) )?
                         (?: \s* with(?:out)? \s+ time \s+ zone)? |
