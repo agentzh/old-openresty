@@ -32,8 +32,7 @@
             [%- FOREACH column IN model.columns %]
                 <li>
               [%- FOREACH key IN column.keys %]
-                [%- value = column.$key;
-                    NEXT IF !value AND value != 0 %]
+                [%- value = column.$key; %]
                 [%- is_json = key == 'default' ? 1 : 0 %]
                 <b class="key">[%- key | html %]</b>: [% INCLUDE editable_model_value column=column.name %] &nbsp;&nbsp;
               [%- END %]

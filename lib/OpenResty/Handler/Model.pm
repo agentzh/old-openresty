@@ -258,13 +258,19 @@ sub PUT_model_column {
         $update_meta->set(label => Q($label));
     }
 
-    my $default = delete $data->{default};
-    if (defined $default) {
-        my $json_default = $OpenResty::JsonXs->encode($default);
-        $default = $self->process_default($openresty, $default);
+    if (exists $data->{default}) {
+        my $default = delete $data->{default};
+        if (defined $default) {
+            #warn "DEFAULT: $default\n";
+            my $json_default = $OpenResty::JsonXs->encode($default);
+            $default = $self->process_default($openresty, $default);
 
-        $update_meta->set(QI('default') => Q($json_default));
-        $sql .= "alter table \"$table_name\" alter column \"$new_col\" set default ($default);\n",
+            $update_meta->set(QI('default') => Q($json_default));
+            $sql .= "alter table \"$table_name\" alter column \"$new_col\" set default ($default);\n",
+        } else {
+            $update_meta->set(QI('default') => Q("null"));
+            $sql .= "alter table \"$table_name\" alter column \"$new_col\" set default null;\n",
+        }
     }
 
     $update_meta->where(table_name => Q($table_name))
