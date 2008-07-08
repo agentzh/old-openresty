@@ -108,7 +108,7 @@ sub get_has_model {
 
 sub set_has_model {
     my ($self, $user, $model) = @_;
-    $self->set("hasmodel:$user:$model", 1, 3 * 60, 'trivial');
+    $self->set("hasmodel:$user:$model", 1, 3600, 'trivial');
 }
 
 sub remove_has_model {
@@ -124,12 +124,28 @@ sub get_has_view {
 
 sub set_has_view {
     my ($self, $user, $view) = @_;
-    $self->set("hasview:$user:$view", 1, 3 * 60, 'trivial');
+    $self->set("hasview:$user:$view", 1, 3600, 'trivial');
 }
 
 sub remove_has_view {
     my ($self, $user, $view) = @_;
     $self->remove("hasview:$user:$view");
+}
+
+sub get_has_role {
+    my ($self, $user, $role) = @_;
+    #return undef;
+    $self->get("hasrole:$user:$role")
+}
+
+sub set_has_role {
+    my ($self, $user, $role, $login_meth) = @_;
+    $self->set("hasrole:$user:$role", $login_meth, 3600, 'trivial');
+}
+
+sub remove_has_role {
+    my ($self, $user, $role) = @_;
+    $self->remove("hasrole:$user:$role");
 }
 
 1;
