@@ -65,11 +65,10 @@ sub init {
     };
     if ($@) { warn $@ }
 
-    if (my $stats_file = $OpenResty::Config{'frontend.stats_log'}) {
-        unless (File::Spec->file_name_is_absolute($stats_file)) {
-            $stats_file = File::Spec->catfile($FindBin::Bin, $stats_file);
-        }
-        open $StatsLog, ">>$stats_file" or die "Can't open stats_log file $stats_file for writing: $!\n";
+    $StatsLog = $OpenResty::Config{'frontend.stats_log_dir'};
+    if ($StatsLog && !-d $StatsLog) {
+        mkdir $StatsLog or
+            die "Can't create directory $StatsLog: $!\n";
     }
 
     if (my $filtered = $OpenResty::Config{'frontend.filtered'}) {
