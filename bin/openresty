@@ -56,7 +56,11 @@ if ($cmd eq 'fastcgi') {
             #$year += 1900; $mon += 1;
             my $stats_file = sprintf("$stats_dir/%04d-%02d-%02d.log", $year, $mon, $mday);
             open my $log, ">>$stats_file" or die "Can't open stats_log file $stats_file for writing: $!\n";
-            print $log sprintf("[%04d-%02d-%02d %02d:%02d:%02d] %.03f\n", $year, $mon, $mday, $hour, $min, $sec, $diff);
+            my $client = $ENV{REMOTE_ADDR};
+            my $meth = $ENV{REQUEST_METHOD};
+            my $url = $ENV{REQUEST_URI};
+            ### %ENV
+            print $log sprintf("[%04d-%02d-%02d %02d:%02d:%02d] %.03f %s \"%s %s\"\n", $year, $mon, $mday, $hour, $min, $sec, $diff, $client, $meth, $url);
             close $log;
         }
     }
