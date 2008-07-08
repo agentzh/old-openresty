@@ -20,6 +20,8 @@ sub DELETE_role {
     if (!$openresty->has_role($role)) {
         die "Role \"$role\" not found.\n";
     }
+    my $user = $openresty->current_user;
+    $OpenResty::Cache->remove_has_role($user, $role);
     my $sql = "delete from _access where role = ".Q($role).";\n".
         "delete from _roles where name = ".Q($role);
     return { success => $openresty->do($sql) >= 0 ? 1 : 0 };
@@ -245,6 +247,17 @@ sub GET_role {
 
 sub DELETE_role_list {
     my ($self, $openresty, $bits) = @_;
+
+    my $select = OpenResty::SQL::Select->new(
+        qw< name description >
+    )->from('_roles');
+    my $roles = $openresty->select("$select");
+    my $user = $openresty->current_user;
+    $roles ||= [];
+    for my $role (@$roles) {
+        $OpenResty::Cache->remove_has_role($user, $role);
+    }
+
     my $sql = "delete from _access where role <> 'Admin' and role <> 'Public';\n".
         "delete from _roles where name <> 'Admin' and name <> 'Public'";
     $openresty->warning("Predefined roles skipped.");
@@ -333,6 +346,7 @@ sub new_role {
 
 sub PUT_role {
     my ($self, $openresty, $bits) = @_;
+    my $user = $openresty->current_user;
     my $role = $bits->[1];
     my $data = _HASH($openresty->{_req_data}) or
         die "column spec must be a non-empty HASH.\n";
@@ -346,6 +360,7 @@ sub PUT_role {
     my $new_name = delete $data->{name};
     if (defined $new_name) {
         _IDENT($new_name) or die "Bad role name: ", $OpenResty::Dumper->($new_name);
+        $OpenResty::Cache->remove_has_role($user, $role);
         $update->set( name => Q($new_name) );
         $extra_sql .= 'update _access set role='.Q($new_name).' where role='.Q($role).';';
     }
@@ -357,6 +372,7 @@ sub PUT_role {
         if ($new_login !~ /^(?:password|anonymous|captcha)$/) {
             die "Bad login method: $new_login\n";
         }
+        $OpenResty::Cache->remove_has_role($user, $role);
         $update->set(login => Q($new_login));
     }
 
