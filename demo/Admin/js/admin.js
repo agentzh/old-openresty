@@ -460,7 +460,7 @@ function getColumnSpec (container) {
         if (!key) return;
         if (key == 'default' && val) {
             var res = JSON.parse(val);
-            if (res == false && val != 'false') {
+            if (res == false && typeof res == typeof false && value != false) {
                 throw("Invalid JSON for the column's default value: " + val);
             }
             val = res;
