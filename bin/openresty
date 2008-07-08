@@ -10,6 +10,7 @@ use lib "$FindBin::Bin/../lib";
 use OpenResty::Dispatcher;
 use OpenResty::Limits;
 use Getopt::Std;
+use Time::HiRes;
 use Digest::MD5 'md5';
 
 my $cmd = lc(shift) || $ENV{OPENRESTY_COMMAND};
@@ -31,6 +32,11 @@ warn $@ if $@;
 if ($cmd eq 'fastcgi') {
     require OpenResty::FastCGI;
     while (my $cgi = new OpenResty::FastCGI) {
+        my $begin_time;
+        if (defined $OpenResty::Dispatcher::StatsLog) {
+            $begin_time = Time::HiRes::time;
+        }
+
         eval {
             OpenResty::Dispatcher->process_request($cgi);
         };
@@ -39,6 +45,14 @@ if ($cmd eq 'fastcgi') {
             print "HTTP/1.1 200 OK\n";
             # XXX don't show $@ to the end user...
             print qq[{"success":0,"error":"$@"}\n];
+        }
+        if (defined $OpenResty::Dispatcher::StatsLog) {
+            my $diff = Time::HiRes::time - $begin_time;
+            my $now = localtime;
+            my ($sec, $min, $hour, $mday, $mon, $year) = localtime;
+            $year += 1900; $mon += 1;
+            #my $now = "$year-$mon-$mday $hour:$min:$sec";
+            print $OpenResty::Dispatcher::StatsLog sprintf("[%04d-%02d-%02d %02d:%02d:%02d] %.03f\n", $year, $mon, $mday, $hour, $min, $sec, $diff);
         }
     }
     exit;

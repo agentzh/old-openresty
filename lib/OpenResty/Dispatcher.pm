@@ -10,8 +10,10 @@ use OpenResty::Cache;
 use OpenResty;
 use OpenResty::Inlined;
 use OpenResty::Config;
+use File::Spec;
 
 our $InitFatal;
+our $StatsLog;
 
 # XXX Excpetion not caputred...when database 'test' not created.
 my %Dispatcher = (
@@ -63,6 +65,13 @@ sub init {
     };
     if ($@) { warn $@ }
 
+    if (my $stats_file = $OpenResty::Config{'frontend.stats_log'}) {
+        unless (File::Spec->file_name_is_absolute($stats_file)) {
+            $stats_file = File::Spec->catfile($FindBin::Bin, $stats_file);
+        }
+        open $StatsLog, ">>$stats_file" or die "Can't open stats_log file $stats_file for writing: $!\n";
+    }
+
     if (my $filtered = $OpenResty::Config{'frontend.filtered'}) {
         #warn "HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
         #use lib "$FindBin::Bin/../../../openresty-filter-qp/trunk/lib";
@@ -80,6 +89,7 @@ sub process_request {
     my ($class, $cgi, $call_level, $parent_account) = @_;
 
     $call_level ||= 0;
+
     if ($call_level > $ACTION_REC_DEPTH_LIMIT) {
         die "Action calling chain is too deep. (The limit is $ACTION_REC_DEPTH_LIMIT.)\n";
     }

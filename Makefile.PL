@@ -48,6 +48,7 @@ requires			('Crypt::Rijndael');
 requires                        ('MIME::Base64');
 requires                        ('IPC::Run3');
 requires                        ('IPC::Run');
+requires                        ('Time::HiRes');
 
 recommends          ('Benchmark::Timer');
 recommends          ('HTTP::Server::Simple' => '0.27');
