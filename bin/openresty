@@ -46,13 +46,18 @@ if ($cmd eq 'fastcgi') {
             # XXX don't show $@ to the end user...
             print qq[{"success":0,"error":"$@"}\n];
         }
-        if (defined $OpenResty::Dispatcher::StatsLog) {
+        if (defined (my $stats_dir = $OpenResty::Dispatcher::StatsLog)) {
             my $diff = Time::HiRes::time - $begin_time;
             my $now = localtime;
             my ($sec, $min, $hour, $mday, $mon, $year) = localtime;
             $year += 1900; $mon += 1;
             #my $now = "$year-$mon-$mday $hour:$min:$sec";
-            print $OpenResty::Dispatcher::StatsLog sprintf("[%04d-%02d-%02d %02d:%02d:%02d] %.03f\n", $year, $mon, $mday, $hour, $min, $sec, $diff);
+            #my ($sec, $min, $hour, $mday, $mon, $year) = localtime;
+            #$year += 1900; $mon += 1;
+            my $stats_file = sprintf("$stats_dir/%04d-%02d-%02d.log", $year, $mon, $mday);
+            open my $log, ">>$stats_file" or die "Can't open stats_log file $stats_file for writing: $!\n";
+            print $log sprintf("[%04d-%02d-%02d %02d:%02d:%02d] %.03f\n", $year, $mon, $mday, $hour, $min, $sec, $diff);
+            close $log;
         }
     }
     exit;
