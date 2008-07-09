@@ -657,7 +657,7 @@ sub has_model_col {
 
     return 1 if $col eq 'id';
     my $res;
-    my $select = OpenResty::SQL::Select->new('count(name)')
+    my $select = OpenResty::SQL::Select->new('id')
         ->from('_columns')
         ->where(table_name => Q($table_name))
         ->where(name => Q($col))
@@ -665,7 +665,7 @@ sub has_model_col {
     eval {
         $res = $openresty->select("$select")->[0][0];
     };
-    return $res + 0;
+    return $res;
 }
 
 sub drop_table {
