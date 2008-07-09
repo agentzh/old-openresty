@@ -1,2 +1,5 @@
 ["set search_path to _global","0E0","data"]
+["select count(*) from pg_tables where tablename = '_general' and schemaname = '_global'",[["1"]],"data"]
+["select version from _global._general limit 1",[["0.005"]],"data"]
+["set search_path to _global","0E0","data"]
 ["set lc_messages to \"C\";","0E0","data"]
