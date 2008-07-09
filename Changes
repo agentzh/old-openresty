@@ -1,5 +1,9 @@
 Change Log for OpenResty
 
+0.3.9 Jul 9 2008
+* added the OpenResty::Spec::Upgrading document.
+* now we check if the version of the metamodel is up-to-date during server startup.
+
 0.3.8 Jul 9 2008
 * now we can update a col's default back to null and empty strings.
 * allowed type ltree in model columns.
