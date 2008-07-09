@@ -5,7 +5,7 @@ OpenResty::Spec::MetaModel - Metamodel for OpenResty backends
 =head1 VERSION
 
 This document describes the 0.005 version of the metamodel used in the
-OpenResty 0.3.7.
+OpenResty 0.3.8.
 
 =head1 DESCRIPTION
 
@@ -184,9 +184,9 @@ The C<_views> table stores the information of the OpenResty View objects.
 
     create table _views (
         id serial primary key,
+        description text,
         name text unique not null,
         definition text not null,
-        description text,
         created timestamp(0) with time zone default now()
     );
 

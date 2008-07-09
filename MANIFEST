@@ -87,8 +87,7 @@ lib/OpenResty/Handler/Feed.pm
 lib/OpenResty/Spec/Captcha_cn.pod
 lib/OpenResty/Tutorial/GettingStarted/Perl.pod
 lib/OpenResty/Inlined.pm
-t/28-feed.t
-t/29-feed-writer-rss.t
+lib/OpenResty/RestyScript/ViewUpgrade.pm
 haskell/TODO
 haskell/README
 haskell/Makefile
@@ -174,6 +173,7 @@ demo/YisouComments/style3.css
 dev.mk
 etc/openresty.conf
 grammar/restyscript-view.yp
+grammar/view-upgrade.yp
 inc/Module/AutoInstall.pm
 inc/Module/Install.pm
 inc/Module/Install/AutoInstall.pm
@@ -269,6 +269,10 @@ t/24-session.t
 t/26-types.t
 t/27-transaction.t
 t/33-duplicate-def.t
+t/32-view-upgrade.t
+t/34-unique.t
+t/28-feed.t
+t/29-feed-writer-rss.t
 t/99-pod-coverage.t
 t/99-pod.t
 t/OpenResty.pm
@@ -306,5 +310,8 @@ t/pgmock-data/28-feed.t.json
 t/pgmock-data/29-cache.t.json
 t/pgmock-data/33-duplicate-def.t.json
 t/pgmock-data/sanity.t.json
+t/pgmock-data/30-action.t.json
+t/pgmock-data/31-action.t.json
+t/pgmock-data/34-unique.t.json
 TODO
 
