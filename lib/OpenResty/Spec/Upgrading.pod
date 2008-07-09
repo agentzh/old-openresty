@@ -1,0 +1,10 @@
+=head1 NAME
+
+OpenResty::Spec::Upgrading - Upgrading to new versions of OpenResty server
+
+=head1 DESCRIPTION
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+

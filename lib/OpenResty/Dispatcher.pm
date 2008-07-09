@@ -50,15 +50,30 @@ if ($url_prefix) {
 }
 
 sub init {
-    OpenResty::Config->init;
-    my $backend = $OpenResty::Config{'backend.type'};
     #warn "init: $backend\n";
     eval {
+        OpenResty::Config->init;
+        my $backend = $OpenResty::Config{'backend.type'};
         $OpenResty::Cache = OpenResty::Cache->new;
         OpenResty->connect($backend);
     };
-    if ($@) { $InitFatal = $@; }
+    if ($@) { $InitFatal = $@; return; }
     #warn "InitFatal: $InitFatal\n";
+
+    eval {
+        my $backend = $OpenResty::Backend;
+        $backend->set_user('_global');
+        my $base = $backend->get_upgrading_base;
+        #warn "BASE: $base\n";
+        if ($base >= 0) {
+            die "The server's global MetaModel is out of date. ",
+                "Please run the command \"bin/openresty upgrade\" first.\n";
+        }
+    };
+    if ($@) {
+        $InitFatal = $@;
+    }
+
     eval {
         $OpenResty::Backend->set_user('_global');
         $OpenResty::Backend->do('set lc_messages to "C";');
