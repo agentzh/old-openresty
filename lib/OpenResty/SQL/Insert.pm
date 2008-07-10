@@ -46,4 +46,52 @@ sub generate {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+OpenResty::SQL::Insert - SQL generator for insert statements
+
+=head1 INHERITANCE
+
+    OpenResty::SQL::Insert
+        ISA OpenResty::SQL::Statement
+
+=head1 SYNOPSIS
+
+    use OpenResty::SQL::Insert;
+
+    my $insert = OpenResty::SQL::Insert->new;
+    $insert->insert( 'models' )
+        ->values( 'abc' => '"howdy"' );
+    print "$insert";
+        # produces: insert into models values (abc, "howdy");
+
+    $insert->cols('foo', 'bar');
+    print $insert->generate;
+        # produces: insert into models (foo, bar) values (abc, "howdy");
+
+=head1 DESCRIPTION
+
+This class provides an OO interface for generating SQL insert statements without the pain of concatenating plain SQL strings.
+
+=head1 METHODS
+
+=over
+
+=item C<new($table)>
+
+=item C<values(@values)>
+
+=item C<col(@column_names)>
+
+=back
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+
+=head1 SEE ALSO
+
+L<OpenResty::SQL::Statement>, L<OpenResty::SQL::Select>, L<OpenResty::SQL::Update>, L<OpenResty>.
 

@@ -77,4 +77,64 @@ sub generate {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+OpenResty::SQL::Select - SQL generator for select statements
+
+=head1 INHERITANCE
+
+    OpenResty::SQL::Select
+        ISA OpenResty::SQL::Statement
+
+=head1 SYNOPSIS
+
+    use OpenResty::SQL::Select;
+
+    my $select = OpenResty::SQL::Select->new;
+    $select->select( qw<name type label> )
+        ->from( '_columns' );
+    $select->where("table_name", '=', _Q('blah'));
+    $select->order_by("foo");
+    $select->where("Foo", '>', 'bar')->where('Bar' => '3');
+    print "$select";
+        # produces:
+        #       select name, type, label
+        #       from _columns
+        #       where table_name = 'blah' and Foo > bar and Bar = 3
+        #       order by foo;
+
+=head1 DESCRIPTION
+
+This class provides an OO interface for generating SQL select statements without the pain of concatenating plain SQL strings.
+
+=head1 METHODS
+
+=over
+
+=item C<new(@columns)>
+
+=item C<from(@tables)>
+
+=item C<where($column => $value)>
+
+=item C<order_by($column)>
+=item C<order_by($column => $direction)>
+
+=item C<limit($limit)>
+
+=item C<offset($offset)>
+
+=item C<generate>
+
+=back
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+
+=head1 SEE ALSO
+
+L<OpenResty::SQL::Statement>, L<OpenResty::SQL::Insert>, L<OpenResty::SQL::Update>, L<OpenResty>.
 
