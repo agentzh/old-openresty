@@ -46,7 +46,7 @@ if ($cmd eq 'fastcgi') {
             # XXX don't show $@ to the end user...
             print qq[{"success":0,"error":"$@"}\n];
         }
-        if (defined (my $stats_dir = $OpenResty::Dispatcher::StatsLog)) {
+        if (my $stats_dir = $OpenResty::Dispatcher::StatsLog) {
             my $diff = Time::HiRes::time - $begin_time;
             my $now = localtime;
             my ($sec, $min, $hour, $mday, $mon, $year) = localtime;
