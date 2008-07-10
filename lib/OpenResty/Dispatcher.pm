@@ -61,7 +61,7 @@ sub init {
     if ($@) { $InitFatal = $@; return; }
     #warn "InitFatal: $InitFatal\n";
 
-    if ($context && $context ne 'upgrade') {
+    if (!$context || $context ne 'upgrade') {
         eval {
             my $backend = $OpenResty::Backend;
             $backend->set_user('_global');
