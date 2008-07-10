@@ -589,7 +589,32 @@ Currently this module can serve as a public web interface to a distributive or d
 
 "Another framework?" No, no, no, not all!
 
-OpenResty is I<not> a web application framework like L<Jifty>. Rather, it can serve as a component in many existing web application frameworks.
+OpenResty is I<not> a web application framework like L<Jifty>. Rather, it is
+
+=over
+
+=item *
+
+A REST wrapper for relational databases
+
+=item *
+
+A web runtime for 100% JavaScript web sites and other RIAs.
+
+=item *
+
+A "meta web site" supporting other sites via web services.
+
+=item *
+
+A handy personal or company database which can be accessed from anywhere
+on the web.
+
+=item *
+
+A (sort of) competitor for the Facebook Data Store API.
+
+=back
 
 We're already running an instance of the OpenResty server on our Yahoo! China's production machines:
 
@@ -662,7 +687,6 @@ Please see L<OpenResty::Spec::Installation> for details :)
     lib/ directory contains all the server code, mostly Perl.
 
     lib/OpenResty/OpenResty.pm contain the code stub for OpenResty protocol
-    lib/OpenResty/Limits.pm are those hard limits located, we limit the number of different objects (model, row, view etc.) a user could create by default
     lib/OpenResty/Backend contain all the code to initialize OpenResty meta tables and code to access different database, for now we support Postgres stand alone database and 
     PostgreSQL cluster
     lib/OpenResty/Handler contain all handler methods OpenResty supported, these methods are moved from lib/OpenResty.pm due to code refactor; 
