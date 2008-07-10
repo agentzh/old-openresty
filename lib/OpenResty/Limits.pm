@@ -37,3 +37,42 @@ our $ACTION_CMD_COUNT_LIMIT = 5;
 our $ACTION_REC_DEPTH_LIMIT = 3;
 
 1;
+__END__
+
+=head1 NAME
+
+OpenResty::Limits - OpenResty backend for the PostgreSQL PL/Proxy-based cluster databases
+
+=head1 SYNOPSIS
+
+    use OpenResty::Limits qw(
+        $MODEL_LIMIT
+        $VIEW_LIMIT
+        $FEED_LIMIT
+        $ROLE_LIMIT
+        $COLUMN_LIMIT
+        $RECORD_LIMIT
+        $INSERT_LIMIT
+        $POST_LEN_LIMIT
+        $MAX_SELECT_LIMIT
+        $PASSWORD_MIN_LEN
+        $VIEW_MAX_LEN
+        $ACTION_MAX_LEN
+        $ACTION_CMD_COUNT_LIMIT
+        $ACTION_REC_DEPTH_LIMIT
+    );
+
+=head1 DESCRIPTION
+
+This module defines various constants which limits the resources each OpenResty account could use, like the number of different objects (models, rows, views, and  etc.).
+
+These constants are not truly constants. Some of them could be overriden by some config options specified in F<etc/site_openresty.conf>.
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+
+=head1 SEE ALSO
+
+L<OpenResty>, L<OpenResty::Spec::Overview>.
+
