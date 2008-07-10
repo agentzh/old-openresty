@@ -225,6 +225,7 @@ lib/OpenResty/Spec/Arch_cn.pod
 lib/OpenResty/Spec/REST.pod
 lib/OpenResty/Spec/REST_cn.pod
 lib/OpenResty/Spec/MetaModel.pod
+lib/OpenResty/Spec/AccountAdmin.pod
 lib/OpenResty/SQL/Insert.pm
 lib/OpenResty/SQL/Select.pm
 lib/OpenResty/SQL/Statement.pm
