@@ -1,5 +1,12 @@
 Change Log for OpenResty
 
+0.3.10 Jul 10 2008
+* added (basic) POD docs to most of the .pm files.
+* added the OpenResty::Spec::TestSuite document.
+* added the OpenResty::Spec::Installation document.
+* added the OpenResty::Spec::AccountAdmin document.
+* added the OpenResty::Spec::Upgrading document (for real this time).
+
 0.3.9 Jul 9 2008
 * added the OpenResty::Spec::Upgrading document.
 * now we check if the version of the metamodel is up-to-date during server startup.
