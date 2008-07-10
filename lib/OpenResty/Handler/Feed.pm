@@ -340,4 +340,27 @@ sub time_pg2rss {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+OpenResty::Handler::Feed - The feed handler for OpenResty
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+This OpenResty handler class implements the Feed API.
+
+Currently only RSS 2.0 is supported.
+
+=head1 METHODS
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+
+=head1 SEE ALSO
+
+L<OpenResty::Handler::View>, L<OpenResty::Handler::Role>, L<OpenResty::Handler::Action>, L<OpenResty::Handler::Model>, L<OpenResty::Handler::Version>, L<OpenResty::Handler::Captcha>, L<OpenResty::Handler::Login>, L<OpenResty>.
 

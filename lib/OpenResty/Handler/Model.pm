@@ -999,4 +999,25 @@ sub alter_model {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+OpenResty::Handler::Model - The model handler for OpenResty
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+This OpenResty handler class implements the Model API, i.e., the C</=/model/*> stuff.
+
+=head1 METHODS
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+
+=head1 SEE ALSO
+
+L<OpenResty::Handler::View>, L<OpenResty::Handler::Role>, L<OpenResty::Handler::Action>, L<OpenResty::Handler::Feed>, L<OpenResty::Handler::Version>, L<OpenResty::Handler::Captcha>, L<OpenResty::Handler::Login>, L<OpenResty>.
 
