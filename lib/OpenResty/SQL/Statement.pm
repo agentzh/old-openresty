@@ -22,4 +22,19 @@ sub where {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+OpenResty::SQL::Statement - Base class for the various SQL generator classes
+
+=head1 DESCRIPTION
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+
+=head1 SEE ALSO
+
+L<OpenResty::SQL::Select>, L<OpenResty::SQL::Insert>, L<OpenResty::SQL::Update>, L<OpenResty>.
 
