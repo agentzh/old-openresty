@@ -405,4 +405,35 @@ sub PUT_role {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+OpenResty::Handler::Role - The role handler for OpenResty
+
+=head1 SYNOPSIS
+
+    use OpenResty::Handler::Role;
+
+    $data = OpenResty::Handler::Role->GET_role_list($openresty, \@url_bits);
+
+=head1 DESCRIPTION
+
+This OpenResty handler class implements the Role API, i.e., the C</=/role/*> interface.
+
+=head1 METHODS
+
+=over
+
+=item C< GET_role_list($openresty, \@url_bits) >
+
+=back
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+
+=head1 SEE ALSO
+
+L<OpenResty::Handler::View>, L<OpenResty::Handler::Model>, L<OpenResty::Handler::Action>, L<OpenResty::Handler::Feed>, L<OpenResty::Handler::Version>, L<OpenResty::Handler::Captcha>, L<OpenResty::Handler::Login>, L<OpenResty>.
 
