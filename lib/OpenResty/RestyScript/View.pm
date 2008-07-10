@@ -2493,6 +2493,36 @@ sub _IDENT {
 #my $var = $select->Run;
 
 1;
+__END__
+
+=head1 NAME
+
+OpenResty::RestyScript::View - RestyScript (for Views) compiler in pure Perl
+
+=head1 SYNOPSIS
+
+    use OpenResty::RestyScript::View;
+
+    my $restyscript = OpenResty::RestyScript::View->new;
+    my $res = $restyscript->parse(
+        'select * from Post where $col > $val',
+        {
+            quote => sub { $dbh->quote(@_) },
+            quote_ident => sub { $dbh->quote_identifier(@_) },
+        }
+    );
+
+=head1 DESCRIPTION
+
+This compiler class is generated automatically by L<Parse::Yapp> from the grammar file F<grammar/restyscript-view.yp>.
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh at yahoo dot cn> >>
+
+=head1 SEE ALSO
+
+L<OpenResty::Handler::View>, L<OpenResty>.
 
 
 1;
