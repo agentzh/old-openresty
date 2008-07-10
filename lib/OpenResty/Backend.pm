@@ -35,7 +35,7 @@ OpenResty::Backend - class factory for OpenResty backend classes
 
 This class serves as a class factory for the various OpenResty backend classes like L<OpenResty::Backend::Pg>, L<OpenResty::Backend::PgFarm>, and L<OpenResty::Backend::PgMocked>.
 
-=head METHODS
+=head1 METHODS
 
 =over
 
