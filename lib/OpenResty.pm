@@ -749,7 +749,7 @@ There must be some serious bugs lurking somewhere given the current status of th
 Please report bugs or send wish-list to
 L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=OpenResty>.
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 =over
 

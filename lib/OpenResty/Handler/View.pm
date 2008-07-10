@@ -287,8 +287,9 @@ This OpenResty handler class implements the View API, i.e., the C</=/view/*> stu
 
 =head1 METHODS
 
-=head1 AUTHOR
+=head1 AUTHORS
 
+Laser Henry (laser) C<< <laserhenry at gmail dot com> >>,
 Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
 
 =head1 SEE ALSO
