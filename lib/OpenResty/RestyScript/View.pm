@@ -2524,5 +2524,7 @@ Agent Zhang (agentzh) C<< <agentzh at yahoo dot cn> >>
 
 L<OpenResty::Handler::View>, L<OpenResty>.
 
+=cut
+
 
 1;
