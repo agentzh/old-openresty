@@ -86,6 +86,8 @@ lib/OpenResty/FeedWriter/RSS.pm
 lib/OpenResty/Handler/Feed.pm
 lib/OpenResty/Spec/Captcha_cn.pod
 lib/OpenResty/Tutorial/GettingStarted/Perl.pod
+lib/OpenResty/Spec/Upgrading.pod
+lib/OpenResty/Spec/TestSuite.pod
 lib/OpenResty/Inlined.pm
 lib/OpenResty/RestyScript/ViewUpgrade.pm
 haskell/TODO

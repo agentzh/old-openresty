@@ -2,6 +2,12 @@
 
 OpenResty::Spec::Upgrading - Upgrading to new versions of OpenResty server
 
+=head1 SYNOPSIS
+
+    # upgrade metamodel
+    $ bin/openresty upgrade foo
+    $ bin/openresty upgrade
+
 =head1 DESCRIPTION
 
 New versions of OpenResty server often contain modifications to the metamodel which is the data structure used by the server itself. So in order to run a newer version of OpenResty atop the database used to work with an older one, it's often required to upgrade the metamodel first. Basically it's as easy as
@@ -25,18 +31,6 @@ In case the upgrading failed (it should not happen often), one might have to fix
 =head1 AUTHOR
 
 Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
-
-=head1 License and Copyright
-
-Copyright (c) 2007, 2008 by Yahoo! China EEEE Works, Alibaba Inc.
-
-This module is free software; you can redistribute it and/or
-modify it under the Artistic License 2.0.
-A copy of this license can be obtained from
-
-L<http://opensource.org/licenses/artistic-license-2.0.php>
-
-THE PACKAGE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES. THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT ARE DISCLAIMED TO THE EXTENT PERMITTED BY YOUR LOCAL LAW. UNLESS REQUIRED BY LAW, NO COPYRIGHT HOLDER OR CONTRIBUTOR WILL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THE PACKAGE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =head1 SEE ALSO
 

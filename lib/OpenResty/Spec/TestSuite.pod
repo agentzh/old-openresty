@@ -1,0 +1,46 @@
+=head1 NAME
+
+OpenResty::Spec::TestSuite - Introduction to the OpenResty test suite
+
+=head1 SYNOPSIS
+
+    $ make test -f dev.mk
+    # OR
+    $ prove -Ilib -r t
+
+=head1 DESCRIPTION
+
+OpenResty comes with a relatively big test suite.
+
+Most of the test suite is organized by the L<Test::Base>. The main test
+scaffold is in the F<t/OpenResty.pm> file.
+
+There's various different ways to run the suite.
+
+The C<backend.type> option in the config file (i.e.,
+F<etc/site_openresty.conf>) determines which backend the server is
+using. Possible values are C<Pg>, C<PgFarm>, and C<PgMocked>. The default
+value is C<PgMocked>, which is a mocked-up version of the C<Pg> backend,
+so that users without a proper Pg setup (like CPAN testers) can still
+run the whole test suite. Please see L<OpenResty::Backend::PgMocked>
+for more information.
+
+The C<test_suite.use_http> option in the config file determines whether
+or not the test scaffold should use HTTP to test the server. When it
+is set to 1, the test harness will use C<LWP::UserAgent> to test the
+server specified by the C<test_suite.server> and C<test_suite.server2>
+options. If set to 0, the test suite will run directly in the same
+process of the OpenResty server by using a mocked-up CGI environment
+provided by L<WWW::OpenResty::Embedded>.
+
+Note that when C<test_suite.use_http> is set to 1, it's possible to test
+a I<remote> OpenResty server.
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+
+=head1 SEE ALSO
+
+L<OpenResty>.
+
