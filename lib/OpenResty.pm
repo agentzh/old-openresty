@@ -687,8 +687,6 @@ Please see L<OpenResty::Spec::Installation> for details :)
     lib/ directory contains all the server code, mostly Perl.
 
     lib/OpenResty/OpenResty.pm contain the code stub for OpenResty protocol
-    lib/OpenResty/Backend contain all the code to initialize OpenResty meta tables and code to access different database, for now we support Postgres stand alone database and 
-    PostgreSQL cluster
     lib/OpenResty/Handler contain all handler methods OpenResty supported, these methods are moved from lib/OpenResty.pm due to code refactor; 
                         method name looks like HTTP_METHOD_some_sub_name.
     lib/SQL classes/methods to generate SQL query (in string form), use OO to encapsulate SQL query generation
