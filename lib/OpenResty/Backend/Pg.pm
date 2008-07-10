@@ -216,7 +216,7 @@ __END__
 
 =head1 NAME
 
-OpenResty::Backend::Pg - OpenResty backend for PostgreSQL standalone databases 
+OpenResty::Backend::Pg - OpenResty backend for PostgreSQL standalone databases
 
 =head1 INHERITANCE
 
