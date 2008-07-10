@@ -1,5 +1,8 @@
 Change Log for OpenResty
 
+0.3.11 Jul 11 2008
+* fixed a failure when the config option frontend.stats_log_dir is set to an empty string.
+
 0.3.10 Jul 10 2008
 * added (basic) POD docs to most of the .pm files.
 * added the OpenResty::Spec::TestSuite document.
