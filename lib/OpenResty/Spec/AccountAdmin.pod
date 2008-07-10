@@ -1,0 +1,84 @@
+=head1 NAME
+
+OpenResty::Spec::AccountAdmin - OpenResty Account Admininstration
+
+=head1 SYNOPSIS
+
+    # create a new account named foo
+    $ bin/openresty adduser foo
+
+    # remove an existing account named bar
+    $ bin/openresty deluser bar
+
+    # show the account list
+    $ bin/openresty
+    <snip>
+    Pg>\u
+
+=head1 DESCRIPTION
+
+To manage the OpenResty accounts, one has to use the bin/openresty script on the command-line of the OpenResty server.
+
+To create a new account named, say, C<foo>, issue the command
+
+    $ bin/openresty adduser foo
+
+To remove it, simply type
+
+    $ bin/openresty deluser foo
+
+To view the account list, type
+
+    $ bin/openresty
+
+to enter the OpenResty shell:
+
+    Welcome to openresty 0.3.9, the OpenResty interactive terminal.
+
+    Type:  \copyright for distribution terms
+        \a <account> to set the current account
+        \d to view the table list in the current schema
+        \d <table> to view the definition of the specified table
+        \do <sql> to do sql query using xdo
+        \q to quit
+        <sql> to do sql query using xquery
+
+    Pg>
+
+And then enter C<\u> to view the account list. A typical output might be
+
+    Pg>\u
+
+    ---------------
+    Account Machine
+    ---------------
+    tester  1
+    tester2 1
+    agentzh 1
+    agentz  1
+    ---------------
+
+If a PgFarm backend is used, the output might be
+
+    PgFarm>\u
+
+    ------------------
+    Account   Machine
+    ------------------
+    peee      os902012
+    sc_car    os902010
+    huangjy   os902010
+    wesley    os902013
+    pinong    os902011
+    ...
+
+To upgrade the metamodel for a particular account, see L<OpenResty::Spec::Upgrading> for details.
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+
+=head1 SEE ALSO
+
+L<OpenResty::Spec::Overview>.
+
