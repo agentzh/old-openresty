@@ -156,3 +156,26 @@ sub login {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+OpenResty::Backend::PgFarm - OpenResty backend for the PostgreSQL PL/Proxy-based cluster databases
+
+=head1 INHERITANCE
+
+    OpenResty::Backend::PgFarm
+        ISA OpenResty::Backend::Base
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+
+=head1 SEE ALSO
+
+L<OpenResty::Backend::Base>, L<OpenResty::Backend::Pg>, L<OpenResty::Backend::PgMocked>, L<OpenResty>.
+

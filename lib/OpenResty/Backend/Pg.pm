@@ -212,4 +212,26 @@ _EOC_
 }
 
 1;
+__END__
+
+=head1 NAME
+
+OpenResty::Backend::Pg - OpenResty backend for PostgreSQL standalone databases 
+
+=head1 INHERITANCE
+
+    OpenResty::Backend::Pg
+        ISA OpenResty::Backend::Base
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+
+=head1 SEE ALSO
+
+L<OpenResty::Backend::Base>, L<OpenResty::Backend::PgFarm>, L<OpenResty::Backend::PgMocked>, L<OpenResty>.
 

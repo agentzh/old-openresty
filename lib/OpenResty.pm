@@ -571,6 +571,8 @@ sub set_role {
 1;
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
 OpenResty - General-purpose web service platform for web applications
@@ -623,179 +625,46 @@ You'll find my slides for the D2 conference interesting as well:
 
 L<http://agentzh.org/misc/openresty-d2.pdf>
 
-=head1 INSTALLATION
-
-This is a basic guideline for settting up an OpenResty server on your own machine. Someone has succeeded in setting up one on Windows XP using ActivePerl 5.8.8. The normal development environment is Linux though. If you have any particular question, feel free to ask us by sending an email to the authors.
+There're also a few interesting discussions about OpenResty on my blog site:
 
 =over
 
-=item 1.
+=item "OpenResty versus Google App Engine"
 
-Grab the openresty package and unpack it to some place, let's say it's openresty.
+L<http://blog.agentzh.org/#post-75>
 
-=item 2.
+=item "Google's crawlers captured OpenResty's API!"
 
-Enter the openresty directory, run "perl Makefile.PL" to check missing dependencies:
+L<http://blog.agentzh.org/#post-79>
 
-    $ cd openresty
-    $ perl Makefile.PL
-    $ sudo make  # This will install missing dependencies
-    $ make test  # run the test suite using the PgMocked backend
+=item "Video for my D2 talk about OpenResty and its nifty apps"
 
-For the PostgreSQL database, you need to prepare a PostgreSQL account (e.g.
-"agentzh"); and you need to create an empty database (e.g., "test"),
-and you need to create a stored precedure language named "plpgsql" for that database,
-contact your PostgreSQL DBA for it or read the PostgreSQL manual.
+L<http://blog.agentzh.org/#post-81>
 
-Normally, the following commands are used:
+=item "Client-side web site DIY" (Chinese)
 
-    $ createdb test
-    $ createuser -P agnetzh
-    $ createlang plpgsql test
+L<http://blog.agentzh.org/#post-80>
 
-=item 3.
+=item "OpenResty 平台相关资料" (Chinese)
 
-Edit your F<etc/site_openresty.conf> file, change the configure settings
-under [backend] section according to your previous settings. The default settings look like this:
-
-    [backend]
-    recording=0
-    # You should change the line below to type=Pg or type=PgFarm
-    type=PgMocked
-    host=localhost
-    user=agentzh
-    password=agentzh
-    database=test
-
-Most of the time, you need to change C<type=PgMocked> to C<type=Pg>, as well as the last 3 lines (unless you're using exactly the same user, password, and database name). The default "PgMocked" backend is a mocked PostgreSQL database which is useful only for testing purposes.
-
-=item 4.
-
-For the Pg backend, one needs to create the "anonymous" role in his database (like "test"):
-
-    $ createuser -r anonymous
-
-You shouldn't grant any permissions to it.
-
-=item 5.
-
-Create a "tester" user account for our test suite in OpenResty (drop it if it already exists):
-
-    $ bin/openresty deluser tester
-    $ bin/openresty adduser tester
-
-Give a password (say, "password") to its Admin role. Also create a second
-user account "tester2":
-
-    $ bin/openresty adduser tester2
-
-Update your F<etc/site_openresty.conf> to reflect your these settings:
-
-    [test_suite]
-    use_http=0
-    server=tester:password@localhost
-    server2=tester2:password@localhost
-
-You may have your own passwords here though.
-
-=item 6.
-
-To have OpenResty's built-in actions C<RunView> and C<RunAction> working, you
-need to build the F<restyscript> compiler in the subdirectory F<haskell/>. It
-is written in Haskell and please see the README file in F<haskell/> for
-detailed installation instruction:
-
-L<http://svn.openfoundry.org/openapi/trunk/haskell/README>
-
-If you're really nervous about installing GHC and other Haskell libraries,
-you can fetch a binary version of the F<restyscript> compiler if you're
-on an 32-bit x86 linux:
-
-    $ wget 'http://resty.eeeeworks.org/restyscript' -O haskell/bin/restyscript
-    $ chmod +x haskell/bin/restyscript
-
-A quick test would be
-
-    $ echo 'select 3' | haskell/bin/restyscript view rs
-    select 3
-
-=item 7.
-
-Now you can already run the test suite without a lighttpd server (but with a true Pg backend):
-
-    $ make test
-
-Also, it's already possible to start the OpenResty server using the standalone server provided by L<HTTP::Server::Simple>:
-
-    $ bin/openresty start
-    HTTP::Server::Simple: You can connect to your server at http://localhost:8000/
-
-=item 8.
-
-Sample lighttpd configuration:
-
-    # lighttpd.conf
-
-    server.modules              = (
-                "mod_fastcgi",
-                ...
-    )
-
-    fastcgi.server = (
-        "/=" => (
-            "openresty" => (
-                "socket"       => "/tmp/openresty.socket",
-                "check-local"  => "disable",
-                "bin-path"     => "/PATH/TO/YOUR/bin/openresty",
-                "bin-environment" => (
-                    "OPENRESTY_URL_PREFIX" => "",
-                    "OPENRESTY_COMMAND" => "fastcgi",
-                ),
-                "min-procs"    => 1,
-                "max-procs"    => 5,
-                "max-load-per-proc" => 1,
-                "idle-timeout" => 20,
-            )
-        )
-    )
-
-And also make sure the following line is commented out:
-
-    # url.access-deny            = ( "~", ".inc" )
+L<http://www.eeeeworks.org/#post-6>
 
 =back
 
-=head2 HOW TO TEST ONE SPECIFIC TEST SUITE FILE
+=head1 INSTALLATION
 
-It's also possible to debug a simple .t file, for instance,
-
-    make t/01-sanity.t -f dev.mk
-
-Or use the OPENRESTY_TEST_SERVER environment to test a remote OpenResty server, for example:
-
-    OPENRESTY_TEST_SERVER=teser:password@10.62.136.86 prove -Ilib -r t
-
-where 10.62.136.86 is the IP (or hostname or URL) of your OpenResty server
-being tested.
-
-To test the Pg cluster rather than the desktop Pg, update your F<etc/site_openresty.conf>:
-
-    [backend]
-    type=PgFarm
-
-and also set other items in the same group if necessary.
+Please see L<OpenResty::Spec::Installation> for details :)
 
 =head1 SOURCE TREE STRUCTURE
 
     bin/ directory is the where CGI entry openresty located
-    doc/ directory containing OpenResty spec
-    lib/OpenResty/ directory contain all the code needed to run OpenResty
+    demo/ directory contains a bunch of OpenResty demo apps.
+    lib/ directory contains all the server code, mostly Perl.
+
     lib/OpenResty/OpenResty.pm contain the code stub for OpenResty protocol
     lib/OpenResty/Limits.pm are those hard limits located, we limit the number of different objects (model, row, view etc.) a user could create by default
     lib/OpenResty/Backend contain all the code to initialize OpenResty meta tables and code to access different database, for now we support Postgres stand alone database and 
     PostgreSQL cluster
-    lib/OpenResty/Backend/Pg.pm OpenResty PostgreSQL stand alone database access code
-    lib/OpenResty/Backend/PgFarm.pm OpenResty PostgreSQL cluster database access code
     lib/OpenResty/Handler contain all handler methods OpenResty supported, these methods are moved from lib/OpenResty.pm due to code refactor; 
                         method name looks like HTTP_METHOD_some_sub_name.
     lib/SQL classes/methods to generate SQL query (in string form), use OO to encapsulate SQL query generation
@@ -831,13 +700,15 @@ L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=OpenResty>.
 
 =over
 
-=item Agent Zhang (agentzh) C<< <agentzh at yahoo.cn> >>
+=item Agent Zhang (agentzh) C<< <agentzh at yahoo dot cn> >>
+
+=item chaoslawful (王晓哲) C<< <chaoslawful at gmail dot com> >>
 
 =item Lei Yonghua (leiyh)
 
-=item Laser Henry (laser)
+=item Laser Henry (laser) C<< <laserhenry at gmail dot com> >>
 
-=item Yu Ting (yuting) C<< <yuting at yahoo.cn> >>
+=item Yu Ting (yuting) C<< <yuting at yahoo dot cn> >>
 
 =back
 
