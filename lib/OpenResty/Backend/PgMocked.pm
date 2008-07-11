@@ -182,4 +182,26 @@ sub drop_user {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+OpenResty::Backend::PgMocked - A mocked-up OpenResty backend for the Pg backend
+
+=head1 INHERITANCE
+
+    OpenResty::Backend::PgMocked
+        ISA OpenResty::Backend::Base
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+
+=head1 SEE ALSO
+
+L<OpenResty::Backend::Base>, L<OpenResty::Backend::Pg>, L<OpenResty::Backend::PgFarm>, L<OpenResty>.
 

@@ -252,5 +252,5 @@ L<http://opensource.org/licenses/artistic-license-2.0.php>
 
 =head1 SEE ALSO
 
-L<OpenResty>, L<OpenResty::Spec::AccountAdmin>, L<OpenResty::Spec::Installation>, L<OpenResty::Spec::Overview>.
+L<OpenResty>, L<OpenResty::Spec::AccountAdmin>, L<OpenResty::Spec::Installation>, L<OpenResty::Spec::Overview>, L<OpenResty::Spec::REST_cn>.
 
