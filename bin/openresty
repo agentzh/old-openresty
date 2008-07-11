@@ -173,4 +173,84 @@ if ($cmd eq 'adduser') {
 } else {
     die "Unknown command: $cmd\n";
 }
+__END__
+
+=head1 NAME
+
+openresty - command-line frontend utility for the OpenResty server
+
+=head1 SYNOPSIS
+
+    # run the OpenResty server via the standalone HTTP server
+    #   provided by HTTP::Server::Simple:
+    $ bin/openresty start
+
+    # run the OpenResty server in plain old CGI mode:
+    $ bin/openresty cgi
+
+    # or equivalently:
+    $ OPENRESTY_COMMAND=cgi bin/openresty
+
+    # run the OpenResty server in FastCGI mode:
+    $ bin/openresty fastcgi
+
+    # or equivalently:
+    $ OPENRESTY_COMMAND=fastcgi bin/openresty
+
+    # enter the OpenResty shell:
+    $ bin/openresty
+
+    # add a new OpenResty account named foo
+    $ bin/openresty adduser foo
+
+    # remove an existing OpenResty account named bar
+    $ bin/openresty deluser bar
+
+    # upgrade the metamodel in the DB to the latest version
+    $ bin/openresty upgrade
+
+    # upgrade the metamodel of (only) the OpenResty account (foo) specified:
+    $ bin/openresty upgrade foo
+
+=head1 DESCRIPTION
+
+This is the command-line frontend for the OpenResty server. The C<openresty> script can server as a
+
+=over
+
+=item *
+
+OpenResty account adminstration tool (i.e., creating accounts, removing accounts, listing accounts, and etc.).
+
+=item *
+
+OpenResty server entry point (via CGI, FastCGI, or standalone server).
+
+=item *
+
+A psql-like shell tools for administrating the backend databases (either Pg or PgFarm).
+
+=item *
+
+A metamodel upgrading tool. (See L<OpenResty::Spec::MetaModel> for more details about the metamodel.)
+
+=back
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
+
+=head1 License and Copyright
+
+Copyright (c) 2007, 2008 by Yahoo! China EEEE Works, Alibaba Inc.
+
+This module is free software; you can redistribute it and/or
+modify it under the Artistic License 2.0.
+A copy of this license can be obtained from
+
+L<http://opensource.org/licenses/artistic-license-2.0.php>
+
+=head1 SEE ALSO
+
+L<OpenResty>, L<OpenResty::Spec::AccountAdmin>, L<OpenResty::Spec::Installation>, L<OpenResty::Spec::Overview>.
 

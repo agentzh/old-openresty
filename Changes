@@ -1,5 +1,9 @@
 Change Log for OpenResty
 
+0.3.13 Jul 11 2008
+* now we enclose the stats log generation code with an eval rather than die the whole fastcgi process.
+* added POD to the bin/openresty script.
+
 0.3.12 Jul 10 2008
 * now we no longer check the metamodel version when doing upgrade (it was a cycle.)
 
