@@ -765,10 +765,6 @@ L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=OpenResty>.
 
 For a complete list of the contributors, please see L<http://svn.openfoundry.org/openapi/trunk/AUTHORS>.
 
-=head1 SEE ALSO
-
-L<OpenResty::Spec::Overview>, L<OpenResty::Spec::REST>, L<OpenResty::CheatSheet>, L<WWW::OpenResty>, L<WWW::OpenResty::Simple>.
-
 =head1 License and Copyright
 
 Copyright (c) 2007, 2008 by Yahoo! China EEEE Works, Alibaba Inc.
@@ -780,4 +776,8 @@ A copy of this license can be obtained from
 L<http://opensource.org/licenses/artistic-license-2.0.php>
 
 THE PACKAGE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES. THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT ARE DISCLAIMED TO THE EXTENT PERMITTED BY YOUR LOCAL LAW. UNLESS REQUIRED BY LAW, NO COPYRIGHT HOLDER OR CONTRIBUTOR WILL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THE PACKAGE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+=head1 SEE ALSO
+
+L<OpenResty::Spec::Overview>, L<openresty>, L<OpenResty::Spec::REST_cn>, L<OpenResty::CheatSheet>, L<WWW::OpenResty>, L<WWW::OpenResty::Simple>.
 
