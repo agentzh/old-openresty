@@ -255,5 +255,5 @@ L<http://www.gnu.org/licenses/fdl.html>
 
 =head1 SEE ALSO
 
-L<openresty>, L<OpenResty>, L<OpenResty::Spec::Overview>.
+L<OpenResty::Spec::Upgrading>, L<openresty>, L<OpenResty>, L<OpenResty::Spec::Overview>.
 
