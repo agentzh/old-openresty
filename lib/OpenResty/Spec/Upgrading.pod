@@ -34,5 +34,5 @@ Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
 
 =head1 SEE ALSO
 
-L<OpenResty::Spec::MetaModel>, L<OpenResty>.
+L<openresty>, L<OpenResty::Spec::MetaModel>, L<OpenResty>.
 
