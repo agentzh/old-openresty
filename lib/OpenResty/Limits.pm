@@ -45,21 +45,23 @@ OpenResty::Limits - OpenResty backend for the PostgreSQL PL/Proxy-based cluster 
 
 =head1 SYNOPSIS
 
-    use OpenResty::Limits qw(
-        $MODEL_LIMIT
-        $VIEW_LIMIT
-        $FEED_LIMIT
-        $ROLE_LIMIT
-        $COLUMN_LIMIT
-        $RECORD_LIMIT
-        $INSERT_LIMIT
-        $POST_LEN_LIMIT
-        $MAX_SELECT_LIMIT
-        $PASSWORD_MIN_LEN
-        $VIEW_MAX_LEN
-        $ACTION_MAX_LEN
-        $ACTION_CMD_COUNT_LIMIT
-        $ACTION_REC_DEPTH_LIMIT
+    use OpenResty::Limits;
+
+    print join("\n",
+        $MODEL_LIMIT,
+        $VIEW_LIMIT,
+        $FEED_LIMIT,
+        $ROLE_LIMIT,
+        $COLUMN_LIMIT,
+        $RECORD_LIMIT,
+        $INSERT_LIMIT,
+        $POST_LEN_LIMIT,
+        $MAX_SELECT_LIMIT,
+        $PASSWORD_MIN_LEN,
+        $VIEW_MAX_LEN,
+        $ACTION_MAX_LEN,
+        $ACTION_CMD_COUNT_LIMIT,
+        $ACTION_REC_DEPTH_LIMIT,
     );
 
 =head1 DESCRIPTION
