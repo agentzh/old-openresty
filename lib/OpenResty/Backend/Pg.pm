@@ -6,6 +6,7 @@ use warnings;
 #use Smart::Comments;
 use DBI;
 use OpenResty::SQL::Select;
+use OpenResty::Limits;
 use base 'OpenResty::Backend::Base';
 
 our $Recording;
@@ -77,7 +78,7 @@ sub select {
     } else {
         return $dbh->selectall_arrayref(
             $sql,
-            $opts->{use_hash} ? {Slice=>{}} : ()
+            $opts->{use_hash} ? {MaxRows => $MAX_SELECT_LIMIT, Slice=>{}} : ()
         );
     }
 }

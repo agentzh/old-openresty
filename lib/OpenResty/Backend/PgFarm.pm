@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 #use Smart::Comments;
+use OpenResty::Limits;
 use JSON::XS ();
 use DBI;
 use Encode ();
@@ -48,7 +49,9 @@ sub select {
     #warn $sql_cmd, "\n";
     #warn "------------------> $sql_cmd";
     my $dbh = $self->{dbh};
-    my $res = $dbh->selectall_arrayref($sql_cmd);
+    my $res = $dbh->selectall_arrayref(
+        $sql_cmd, { MaxRows => $MAX_SELECT_LIMIT }
+    );
     ### JSON: $res->[0][0]
     my $json = $res->[0][0];
     eval {

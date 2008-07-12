@@ -88,6 +88,7 @@ if ($cmd eq 'fastcgi') {
     $server->port($port);
     $server->run;
     exit;
+} elsif ($cmd eq 'fastcgi2') { # with PL/Proxy support
 }
 
 my $error = $OpenResty::Dispatcher::InitFatal;
