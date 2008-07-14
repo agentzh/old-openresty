@@ -31,7 +31,7 @@ use OpenResty::Handler::View;
 use OpenResty::Handler::Feed;
 use OpenResty::Handler::Action;
 use OpenResty::Handler::Role;
-use OpenResty::Handler::Admin;
+use OpenResty::Handler::Unsafe;
 use OpenResty::Handler::Login;
 use OpenResty::Handler::Captcha;
 use OpenResty::Handler::Version;

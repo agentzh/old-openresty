@@ -29,8 +29,8 @@ my %Dispatcher = (
     action => [
         qw< action_list action action_param action_exec  >
     ],
-    admin => [
-        qw< admin admin_op >
+    unsafe => [
+        qw< unsafe unsafe_op >
     ],
     role => [
         qw< role_list role access_rule_column access_rule >
