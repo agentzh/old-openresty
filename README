@@ -145,10 +145,6 @@ AUTHORS
     For a complete list of the contributors, please see
     <http://svn.openfoundry.org/openapi/trunk/AUTHORS>.
 
-SEE ALSO
-    OpenResty::Spec::Overview, OpenResty::Spec::REST, OpenResty::CheatSheet,
-    WWW::OpenResty, WWW::OpenResty::Simple.
-
 License and Copyright
     Copyright (c) 2007, 2008 by Yahoo! China EEEE Works, Alibaba Inc.
 
@@ -166,4 +162,8 @@ License and Copyright
     ANY DIRECT, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING IN
     ANY WAY OUT OF THE USE OF THE PACKAGE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
+
+SEE ALSO
+    OpenResty::Spec::Overview, openresty, OpenResty::Spec::REST_cn,
+    OpenResty::CheatSheet, WWW::OpenResty, WWW::OpenResty::Simple.
 
