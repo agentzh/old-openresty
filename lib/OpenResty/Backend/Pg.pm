@@ -96,7 +96,7 @@ sub do {
         OpenResty::Backend::PgMocked->record($sql => $res);
         return $res;
     } else {
-        return $self->{dbh}->do($sql);
+         $self->{dbh}->do($sql);
     }
 
 }

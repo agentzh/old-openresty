@@ -309,15 +309,11 @@ sub upgrade_local_metamodel {
     my ($self, $base) = @_;
 
     if (!defined $base) { die "No upgrading base specified" }
-    if ($base == 0) {
-        if (!$self->has_user('_global')) {
-            my $user = $self->{user};
-            $self->upgrade_global_metamodel(0);
-            $self->set_user($user);
-        }
+    if (!$self->has_user('_global')) {
+        my $user = $self->{user};
+        $self->upgrade_global_metamodel(0);
+        $self->set_user($user);
     }
-    #my @caller = caller;
-    #### upgrade_local_metamodel caller: @caller
     $self->_upgrade_metamodel($base, \@LocalVersionDelta);
 }
 
@@ -335,8 +331,6 @@ sub _upgrade_metamodel {
     }
     my $res;
     my $max = @$delta_table - 1;
-    #my @caller = caller;
-    #### caller: @caller
     #### Upgrading meta model...
     for my $i ($base..$max) {
         my $entry = $delta_table->[$i];

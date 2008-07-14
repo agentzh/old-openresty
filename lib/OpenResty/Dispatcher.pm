@@ -61,7 +61,7 @@ sub init {
     if ($@) { $InitFatal = $@; return; }
     #warn "InitFatal: $InitFatal\n";
 
-    if (!$context || $context ne 'upgrade') {
+    if (!$context || ($context ne 'upgrade' && $context !~ /user/)) {
         eval {
             my $backend = $OpenResty::Backend;
             $backend->set_user('_global');
@@ -81,7 +81,7 @@ sub init {
         $OpenResty::Backend->set_user('_global');
         $OpenResty::Backend->do('set lc_messages to "C";');
     };
-    if ($@) { warn $@ }
+    if ($@ && $context !~ /user/) { warn $@ }
 
     $StatsLog = $OpenResty::Config{'frontend.stats_log_dir'};
     if ($StatsLog && !-d $StatsLog) {
