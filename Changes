@@ -1,5 +1,10 @@
 Change Log for OpenResty
 
+0.3.14 Jul 14 2008
+* now we specify the MaxRows option when calling DBI's selectall_arrayref.
+* added some POD for OpenResty::Cache, OpenResty::Util, OpenResty::Backend::PgMocked, OpenResty::Backend::Base, and OpenResty::Dispatcher.
+* added a new POD document OpenResty::Tutorial::GetttingStarted_cn.
+
 0.3.13 Jul 11 2008
 * now we enclose the stats log generation code with an eval rather than die the whole fastcgi process.
 * added POD to the bin/openresty script.

@@ -492,4 +492,21 @@ sub update_captcha_secret
 }
 
 1;
+__END__
+
+=head1 NAME
+
+OpenResty::Backend::Base - Base class for OpenResty backend classes
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>.
+
+=head1 SEE ALSO
+
+L<OpenResty::Backend::Pg>, L<OpenResty::Backend::PgFarm>, L<OpenResty::Backend::PgMocked>, L<OpenResty>.
 

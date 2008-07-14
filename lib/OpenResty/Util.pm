@@ -96,4 +96,57 @@ sub new_mocked_cgi {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+OpenResty::Util - Utility functions for OpenResty
+
+=head1 DESCRIPTION
+
+This module exports a set of utility functions used for other OpenResty server components.
+
+=head1 FUNCTIONS
+
+This module exports the following functions by default:
+
+=over
+
+=item C<$value = _IDENT($value)>
+
+Validates if C<$value> is an well-formed identifier in OpenResty's sense. Essentially it's specified by the following Perl regex:
+
+    /^[A-Za-z]\w*$/
+
+C<_IDENT> returns the input argument if it's well-formed; undef otherwise.
+
+=item C<$quoted = Q($value)>
+
+Quotes the value as if it's a SQL value literal. Basically, C<foo's bar> will become C<'foo''s bar'>.
+
+=item C<$quoted = QI($value)>
+
+Quotes the value as if it's a SQL identifier literal. Basically, C<foo> will become C<"foo">.
+
+=item C<$bool = check_password($password)>
+
+Checks whether the given password (C<$password>) is well-formed. 1 if true, undef otherwise.
+
+=item C<$content = slurp($filename)>
+
+Returns all the content of the file specified by C<$filename>.
+
+=item C<$cgi = new_mocked_cgi($url, $content)>
+
+Returns a mocked-up CGI object from URL (specified by C<$url>) and the HTTP request content (specified by C<$content>).
+
+=back
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>.
+
+=head1 SEE ALSO
+
+L<OpenResty>.
 
