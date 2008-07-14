@@ -162,6 +162,7 @@ OpenResty::Cache - Cache for OpenResty
     use OpenResty::Config;
     use OpenResty::Cache;
 
+    OpenResty::Config->init;
     my $cache = OpenResty::Cache->new;
     $cache->set('key' => 'value'); # use the cache to store (session) data
     $cache->set('key' => 'value', 'trivial'); # pure caching

@@ -8,6 +8,11 @@ use Params::Util qw( _STRING );
 # XXX TODO we should provide a config option to turn off or on the Unsafe API
 sub POST_unsafe_op {
     my ($self, $openresty, $bits) = @_;
+
+    my $user = $openresty->current_user;
+    unless ($OpenResty::UnsafeAccounts{$user}) {
+        die "Unsafe operations not permitted for the $user account.\n";
+    }
     my $op = $bits->[1];
     if ($op ne 'select' and $op ne 'do') {
         die "Unsafe operation not supported: $op\n";
@@ -15,6 +20,7 @@ sub POST_unsafe_op {
     ### $op
     my $sql = _STRING($openresty->{_req_data}) or
         die "SQL literal must be a string.\n";
+
 
     if ($op eq 'select') {
         return $openresty->select($sql, { use_hash => 1 });
