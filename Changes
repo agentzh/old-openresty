@@ -1,6 +1,7 @@
 Change Log for OpenResty
 
 0.3.14 Jul 14 2008
+* fixed a bug regarding set_user("_global") which breaks creating the first OpenResty account on a fresh Pg.
 * now we specify the MaxRows option when calling DBI's selectall_arrayref.
 * renamed the Admin API to Unsafe API.
 * added some POD for various classes.

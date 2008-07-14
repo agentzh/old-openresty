@@ -208,7 +208,7 @@ lib/OpenResty/Config.pm
 lib/OpenResty/Dispatcher.pm
 lib/OpenResty/FastCGI.pm
 lib/OpenResty/Handler/Action.pm
-lib/OpenResty/Handler/Admin.pm
+lib/OpenResty/Handler/Unsafe.pm
 lib/OpenResty/Handler/Captcha.pm
 lib/OpenResty/Handler/Login.pm
 lib/OpenResty/Handler/Model.pm
@@ -256,7 +256,7 @@ t/10-order-by.t
 t/11-limits.t
 t/12-offset.t
 t/13-count.t
-t/14-admin.t
+t/14-unsafe.t
 t/15-default.t
 t/16-action-runaction.t
 t/16-action-runview.t
@@ -296,7 +296,7 @@ t/pgmock-data/10-order-by.t.json
 t/pgmock-data/11-limits.t.json
 t/pgmock-data/12-offset.t.json
 t/pgmock-data/13-count.t.json
-t/pgmock-data/14-admin.t.json
+t/pgmock-data/14-unsafe.t.json
 t/pgmock-data/15-default.t.json
 t/pgmock-data/16-action-runaction.t.json
 t/pgmock-data/16-action-runview.t.json
