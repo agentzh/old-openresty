@@ -5,6 +5,13 @@
 
 my $ExePath;
 BEGIN {
+    use OpenResty::Config;
+    OpenResty::Config->init;
+    unless ($OpenResty::Config{'test_suite.test_unsafe'}) {
+        $skip = "Config option test_suite.unsafe is set to false.\n";
+        return;
+    }
+
     use FindBin;
     $ExePath = "$FindBin::Bin/../haskell/bin/restyscript";
     if (!-f $ExePath) {

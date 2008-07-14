@@ -92,6 +92,7 @@ sub init {
     if (my $filtered = $OpenResty::Config{'frontend.filtered'}) {
         #warn "HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
         #use lib "$FindBin::Bin/../../../openresty-filter-qp/trunk/lib";
+        $filtered =~ s/^\s+|\s+$//g;
         require OpenResty::Filter::QP;
         my @accounts = split /\s+/, $filtered;
         for my $account (@accounts) {
@@ -99,6 +100,13 @@ sub init {
         }
         #### %OpenResty::AccountFiltered
         ### $filtered
+    }
+    if (my $unsafe_accounts = $OpenResty::Config{'frontend.unsafe'}) {
+        $unsafe_accounts =~ s/^\s+|\s+$//g;
+        my @accounts = split /\s+/, $unsafe_accounts;
+        for my $account (@accounts) {
+            $OpenResty::UnsafeAccounts{$account} = 1;
+        }
     }
 }
 

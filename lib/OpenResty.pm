@@ -41,7 +41,7 @@ use Encode::Guess;
 #$YAML::Syck::ImplicitBinary = 1;
 
 our ($Backend, $BackendName);
-our %AccountFiltered;
+our (%AccountFiltered, %UnsafeAccounts);
 our $Cache;
 our $UUID = Data::UUID->new;
 
