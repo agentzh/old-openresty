@@ -1,16 +1,18 @@
 =encoding utf8
 
-=申请 OpenResty 帐户=
+=head1 NAME
 
-OpenResty 帐户是以应用为单位的。一般来说，每一个应用都应注册一个独立的 OpenResty 帐户。目前注册帐户的方法是写信给我们：
+OpenResty::Tutorial::GettingStarted_cn - 中文版快速入门教程
 
-  yichun.zhang@alibaba-inc.com
+=head1 DESCRIPTION
 
-请在来信中附上你希望的帐户名（全部小写字母加数字）以及 Admin 角色的初始密码。一般来说，我们创建的帐户都位于下面这个服务器：
+=head2 申请 OpenResty 帐户
 
-resty.eeeeworks.org
+OpenResty 帐户是以应用为单位的。一般来说，每一个应用都应注册一个独立的 OpenResty 帐户。目前注册帐户的方法是写信给我们：C<agentzh@yahoo.cn>.
 
-=管理 OpenResty 帐户=
+请在来信中附上你希望的帐户名（全部小写字母加数字）以及 Admin 角色的初始密码。一般来说，我们创建的帐户都位于下面这个服务器：C<resty.eeeeworks.org>.
+
+=head2 管理 OpenResty 帐户
 
 应用开发人员一般使用 Admin 角色来管理她的 OpenResty 帐户。该角色是密码登录方式。
 
@@ -24,7 +26,7 @@ http://agentzh.org/misc/admin-index.png
 
 此时你会看到主菜单中有 Models, Views, Roles, Actions, Feeds 等项目。
 
-==Model选项卡==
+=head3 Model选项卡
 
 Models 选项卡是用来对 OpenResty Model 对象进行管理的。OpenResty Model 在逻辑上类似于数据库中的 table. 通过该 Models 选项卡中的界面，你可以创建新的 Model, 修改、查看或者删除已有的 Model 对象。
 
@@ -62,8 +64,17 @@ Models 选项卡是用来对 OpenResty Model 对象进行管理的。OpenResty M
 
 获取密码明文对应的 MD5 的方法有很多，我们经常用的两种方法是：
 
-# 在 UNIX shell 中输入命令 echo -n 'my_password' | md5sum
-# 在 PostgreSQL 的 psql 终端中输入命令 select md5('my_password');
+=over
+
+=item 1.
+
+在 UNIX shell 中输入命令 echo -n 'my_password' | md5sum
+
+=item 2.
+
+在 PostgreSQL 的 psql 终端中输入命令 select md5('my_password');
+
+=back
 
 这里的 my_password 就是你的密码明文。
 
@@ -71,15 +82,15 @@ Models 选项卡是用来对 OpenResty Model 对象进行管理的。OpenResty M
 
 有关 Model 使用的更多信息请参见
 
-http://10.62.164.49/wiki/index.php?title=REST_cn#Models
+L<http://10.62.164.49/wiki/index.php?title=REST_cn#Models>
 
 以及
 
-http://search.cpan.org/perldoc?OpenResty::Spec::Overview#Models
+L<http://search.cpan.org/perldoc?OpenResty::Spec::Overview#Models>
 
-=head1 Views选项卡
+=head3 Views选项卡
 
-通过Views选项卡，可以创建和管理你帐户中的 View 对象。View 对象的定义本质是一种带参量的“迷你 SQL”查询。假设前面我们创建了一个名叫 Persion 的 Model, 它拥有 name, age, 和 gender 这三个列。那么我们可以为它创建一个拥有以下定义的 View 对象：
+通过Views选项卡，可以创建和管理你帐户中的 View 对象。View 对象的定义本质是一种带参量的“迷你 SQL”查询。假设前面我们创建了一个名叫 C<Persion> 的 Model, 它拥有 C<name>, C<age>, 和 C<gender> 这三个列。那么我们可以为它创建一个拥有以下定义的 View 对象：
 
   select name, age
   from Student
@@ -97,30 +108,39 @@ http://search.cpan.org/perldoc?OpenResty::Spec::Overview#Models
 
 有关 View 使用的更多信息请参见
 
-http://10.62.164.49/wiki/index.php?title=REST_cn#Views
+L<http://10.62.164.49/wiki/index.php?title=REST_cn#Views>
 
 以及
 
-http://search.cpan.org/perldoc?OpenResty::Spec::Overview#Views
+L<http://search.cpan.org/perldoc?OpenResty::Spec::Overview#Views>
 
 =head1 调用OpenResty接口
 
 基于 OpenResty 的应用大致分以下两类：
 
-# 基于 PHP/Java 的服务器端应用
-# 基于纯 JS 的 AJAX 应用
+=over
+
+=item 1.
+
+基于 PHP/Java 的服务器端应用,
+
+=item 2.
+
+基于纯 JS 的 AJAX 应用.
+
+=back
 
 第一类应用的代表是我们全能搜索的菜名搜索功能模块：
 
-  http://ysearchblog.cn/2008/06/post_120.html
+L<http://ysearchblog.cn/2008/06/post_120.html>
 
 使用其语言自身的 HTTP 客户端库和 JSON 库完成对 OpenResty 服务的调用。
 
 第二类应用的代表是我的 blog 网站：
 
-  http://blog.agentzh.org
+L<http://blog.agentzh.org>
 
-一般使用我们的 openresty.js 库
+一般使用我们的 C<openresty.js> 库.
 
 =head1 AUTHOR
 
@@ -128,5 +148,5 @@ Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
 
 =head1 SEE ALSO
 
-L<OpenResty::Spec::REST_cn>, L<OpenResty::Spec::Overview>.
+L<OpenResty::Spec::REST_cn>, L<OpenResty::Spec::Overview>, L<OpenResty>.
 
