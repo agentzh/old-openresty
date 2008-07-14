@@ -4,6 +4,7 @@ Change Log for OpenResty
 * fixed a bug regarding set_user("_global") which breaks creating the first OpenResty account on a fresh Pg.
 * now we specify the MaxRows option when calling DBI's selectall_arrayref.
 * renamed the Admin API to Unsafe API.
+* introduced the frontend.unsafe and test_suite.test_unsafe options and also disabled the Unsafe API by default.
 * added some POD for various classes.
 * added a new POD document OpenResty::Tutorial::GetttingStarted_cn.
 
