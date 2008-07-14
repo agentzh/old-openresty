@@ -1,15 +1,16 @@
-package OpenResty::Handler::Admin;
+package OpenResty::Handler::Unsafe;
 
 use strict;
 use warnings;
 
 use Params::Util qw( _STRING );
 
-sub POST_admin_op {
+# XXX TODO we should provide a config option to turn off or on the Unsafe API
+sub POST_unsafe_op {
     my ($self, $openresty, $bits) = @_;
     my $op = $bits->[1];
     if ($op ne 'select' and $op ne 'do') {
-        die "Admin operation not supported: $op\n";
+        die "Unsafe operation not supported: $op\n";
     }
     ### $op
     my $sql = _STRING($openresty->{_req_data}) or
