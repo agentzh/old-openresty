@@ -172,6 +172,8 @@ OpenResty::Cache - Cache for OpenResty
 
 This class provides an abstract interface for two caching libraries, L<Cache::FileCache> and L<Cache::Memcached::Fast>.
 
+Which underlying cache library to use depends on the C<cache.type> config option in the F<etc/site_openresty.conf> file.
+
 =head1 METHODS
 
 =over

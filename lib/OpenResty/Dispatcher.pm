@@ -330,3 +330,45 @@ sub process_request {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+OpenResty::Dispatcher - The main dispatcher for the OpenResty server
+
+=head1 SYNOPSIS
+
+    use OpenResty::Dispatcher;
+
+    OpenResty::Dispatcher->init($context);
+         # $context is the bin/openresty script's input command,
+         #   like 'fastcgi', 'cgi', or 'upgrade'.
+
+    my $res = OpenResty::Dispatcher->process_request($cgi);
+
+=head1 DESCRIPTION
+
+=head1 METHODS
+
+All the methods below are static. This class has no instances.
+
+=over
+
+=item C<init($context)>
+
+Connects to the database and preserving the global database connection, reads the config options, checks the metamodel version if C<$context> is not "C<upgrade>", and does other initialization jobs.
+
+=item C<$res = process_request($cgi, $call_level, $parent_account)>
+
+Process the incoming OpenResty RESTful request (not necessarily HTTP requests though). The first argument is a CGI object while the latter two only make sense in recursive calls issued by OpenRsety actions.
+
+=back
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>.
+
+=head1 SEE ALSO
+
+L<OpenResty>.
+
