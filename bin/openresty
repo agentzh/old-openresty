@@ -178,7 +178,7 @@ __END__
 
 =head1 NAME
 
-openresty - command-line frontend utility for the OpenResty server
+openresty - Command-line frontend utility for the OpenResty server
 
 =head1 SYNOPSIS
 
