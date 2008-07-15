@@ -55,7 +55,7 @@ if ($revision == 0) {
 } else {
     print "Current version is $revision\n";
 
-    my $rev_file = "$FindBin::Bin/../revision";
+    my $rev_file = "$FindBin::Bin/../share/openresty_revision";
     print "Updating $rev_file...\n";
     open my $out, ">$rev_file" or
         die "Can't open $rev_file for writing: $!\n";
