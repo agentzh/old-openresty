@@ -1,6 +1,6 @@
 package OpenResty;
 
-our $VERSION = '0.003014';
+our $VERSION = '0.003015';
 
 use strict;
 use warnings;
@@ -579,7 +579,7 @@ OpenResty - General-purpose web service platform for web applications
 
 =head1 VERSION
 
-This document describes OpenResty 0.3.14 released on July 14, 2008.
+This document describes OpenResty 0.3.15 released on July 15, 2008.
 
 =head1 DESCRIPTION
 
@@ -589,7 +589,7 @@ Currently this module can serve as a public web interface to a distributive or d
 
 "Another framework?" No, no, no, not all!
 
-OpenResty is I<not> a web application framework like L<Jifty>. Rather, it is
+OpenResty is I<not> a web application framework like L<Jifty> or L<Catalyst>. Rather, it is
 
 =over
 

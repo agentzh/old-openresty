@@ -20,14 +20,23 @@ sub init {
     $Initialized = 1;
     my ($class, $root_path) = @_;
     $root_path ||= "$FindBin::Bin/..";
+
     my $path = "$root_path/etc/openresty.conf";
+    unless (-f $path) {
+        $path = "/etc/openresty.conf";
+    }
     my $config = new Config::Simple($path) or
         die "Cannot open config file $path\n";
     my $default_vars = $config->vars;
+
     $path = "$root_path/etc/site_openresty.conf";
+    unless (-f $path) {
+        $path = "/etc/site_openresty.conf";
+    }
     $config = new Config::Simple($path) or
         die "Cannot open config file $path\n";
     my $site_vars = $config->vars;
+
     my $vars = Hash::Merge::merge($site_vars, $default_vars);
     my $cmd = $ENV{OPENRESTY_COMMAND};
     my $do_echo;
