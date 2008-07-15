@@ -2,7 +2,7 @@ NAME
     OpenResty - General-purpose web service platform for web applications
 
 VERSION
-    This document describes OpenResty 0.3.14 released on July 14, 2008.
+    This document describes OpenResty 0.3.15 released on July 15, 2008.
 
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
@@ -16,7 +16,8 @@ DESCRIPTION
 
     "Another framework?" No, no, no, not all!
 
-    OpenResty is *not* a web application framework like Jifty. Rather, it is
+    OpenResty is *not* a web application framework like Jifty or Catalyst.
+    Rather, it is
 
     *   A REST wrapper for relational databases
 
