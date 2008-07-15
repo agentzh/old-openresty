@@ -23,7 +23,10 @@ sub init {
 
     my $path = "$root_path/etc/openresty.conf";
     unless (-f $path) {
-        $path = "/etc/openresty.conf";
+        $path = "/etc/openresty/openresty.conf";
+    }
+    if (!-f $path) {
+        die "Config file openresty.conf not fouund.\n";
     }
     my $config = new Config::Simple($path) or
         die "Cannot open config file $path\n";
@@ -31,8 +34,12 @@ sub init {
 
     $path = "$root_path/etc/site_openresty.conf";
     unless (-f $path) {
-        $path = "/etc/site_openresty.conf";
+        $path = "/etc/openresty/site_openresty.conf";
     }
+    if (!-f $path) {
+        die "Config file site_openresty.conf not fouund.\n";
+    }
+
     $config = new Config::Simple($path) or
         die "Cannot open config file $path\n";
     my $site_vars = $config->vars;
@@ -101,7 +108,7 @@ The steps of determining the paths searched for these two config files and the m
 
 Look for the config file F<$FindBin::Bin/../etc/openresty.conf>. If
 it does not exist or is not a file, it tries to look for
-F</etc/openresty.conf>.
+F</etc/openresty/openresty.conf>.
 
 =item 2.
 
@@ -112,7 +119,7 @@ hash, say, Hash A.
 
 Look for the config file F<$FindBin::Bin/../etc/site_openresty.conf>. If
 it does not exist or is not a file, it tries to look for
-F</etc/site_openresty.conf>.
+F</etc/openresty/site_openresty.conf>.
 
 =item 4.
 
