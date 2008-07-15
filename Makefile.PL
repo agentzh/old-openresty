@@ -115,5 +115,7 @@ if ($ans && $ans =~ /y/i) {
     system("$^X bin/fetch-font.pl");
 }
 
+install_share;
+
 WriteAll();
 

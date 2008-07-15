@@ -6,6 +6,8 @@ use warnings;
 use FindBin;
 use OpenResty;
 use OpenResty::Util;
+use File::Spec;
+use File::ShareDir qw( module_dir );
 
 our $Revision;
 
@@ -16,12 +18,18 @@ sub trim {
 
 sub GET_version {
     my ($self, $openresty, $bits) = @_;
-    my $s;
-    eval {
-            $s = slurp("$FindBin::Bin/../revision")
-    };
-    if ($@) { $Revision = 'Unknown'; }
-    else { $Revision ||= trim($s) || 'Unknown'; }
+    if (!defined $Revision) {
+        my $path = "$FindBin::Bin/../share/openresty_revision";
+        unless (-f $path) {
+            $path = File::Spec->catfile(module_dir('OpenResty'), 'openresty_revision');
+        }
+        my $s;
+        eval {
+            $s = slurp($path);
+        };
+        if ($@) { $Revision = 'Unknown'; }
+        else { $Revision ||= trim($s) || 'Unknown'; }
+    }
     my $backend = $OpenResty::BackendName;
     if ($backend eq 'PgFarm') {
         my $host = $OpenResty::Backend::PgFarm::Host;

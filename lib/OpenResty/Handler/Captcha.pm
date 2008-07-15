@@ -5,10 +5,17 @@ use warnings;
 
 use utf8;
 
+use File::ShareDir qw(module_dir);
+use File::Spec;
 use Crypt::CBC;
 use MIME::Base64;
 use Digest::MD5 qw/md5/;
 use Encode qw( encode decode is_utf8 );
+
+my $FontPath = "$FindBin::Bin/../share/font/wqy-zenhei.ttf";
+if (!-f $FontPath) {
+    $FontPath = File::Spec->catfile(module_dir('OpenResty'), 'font/wqy-zenhei.ttf');
+}
 
 my $PLAINTEXT_SEP=":";	# separator character in plaintext str
 my $MIN_TIMESPAN=1;			# minimum timespan(sec) for a valid Captcha,
@@ -308,7 +315,7 @@ sub gen_cn_image {
         width   => 100,
         height  => 37,
         lines   => 2 + int rand 2,
-        font    => "$FindBin::Bin/../font/wqy-zenhei.ttf",
+        font    => $FontPath,
         #thickness => 0.5,
         rndmax => 3,
         angle => $angle,

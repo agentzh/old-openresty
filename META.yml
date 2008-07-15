@@ -6,6 +6,7 @@ build_requires:
   CGI: 3.33
   Cache::Cache: 1.05
   Class::Prototyped: 0
+  ExtUtils::MakeMaker: 6.11
   HTTP::Response: 1.53
   LWP::UserAgent: 0
   Test::LongString: 0
@@ -27,6 +28,8 @@ no_index:
     - clients
     - doc
     - t
+    - share
+    - share
     - inc
     - t
     - demo
