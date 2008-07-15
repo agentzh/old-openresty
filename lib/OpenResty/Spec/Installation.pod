@@ -166,10 +166,10 @@ and also set other items in the same group if necessary.
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
-Laser Henry (laser) C<< <laserhenry@gmail.com> >>
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn >>,
+Laser Henry (laser) C<< <laserhenry@gmail.com> >>.
 
 =head1 SEE ALSO
 
-L<OpenResty>.
+L<openresty>, L<OpenResty::Config>, L<OpenResty::Spec::AccountAdmin>, L<OpenResty::Spec::Upgrading>, L<OpenResty::Spec::TestSuite>, L<OpenResty>.
 
