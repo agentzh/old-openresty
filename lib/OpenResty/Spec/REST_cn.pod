@@ -708,7 +708,7 @@ C<$name> 和 C<$parent_id> 都是参数变量。
 
 =back
 
-=head2 Actions
+=head2 Actions(TODO)
 
 "动作(Action)"是一种抽象的功能实体。Action 在概念上与编程语言中的函数相近。
 
@@ -717,6 +717,12 @@ C<$name> 和 C<$parent_id> 都是参数变量。
 
 Action 亦可分为内建 Action (如 C<WebSearch> 和 C<Select> ) 和用户自定义 Action 两大类.
 
+Action 的定义是全功能的 RestyScript 语言（不同于 View 定义中只能使用 RestyScript 中的 SQL select 语句）。
+
+Action 定义中有 SQL 的 select, update 和 delete 语句以及 HTTP 请求（并可带 JSON 作为 HTTP POST 和 PUT 请求的内容体）。
+
+Action 的目的在于使多个操作捆绑成一个整体，而不是所有的操作都能用 sql 来表达（比如创建一个 OpenResty 的 role）， 也不是所有操作都能用 REST API 来表达，比如 delete from ... where ...，在 minisql 中允许 REST 操作的另一个有趣的 feature 是，action 可以调用其他的 action，甚至递归调用自身。
+
 =head3 Create Actions
 
 用户自定义的 Action 在概念上类似于数据库中存储过程，并将通过 OpenResty 自己定义的 minisql 语言中的 C<update> 和 C<delete> 语句来表达其功能.
@@ -724,7 +730,10 @@ Action 亦可分为内建 Action (如 C<WebSearch> 和 C<Select> ) 和用户自�
 示例：
 
     POST /=/action/RemoveBookmarks
-    "delete from Bookmark where url like $pattern description like pattern"
+    { "description": "Action for removing bookmarks",
+      "parameters":[ {"name":"pattern","type":"literal"} ],
+      "definition":
+        "delete from Bookmark where url like $pattern andescription like $pattern" }
 
 =head3 Inspect Actions
 
@@ -738,7 +747,11 @@ Action 亦可分为内建 Action (如 C<WebSearch> 和 C<Select> ) 和用户自�
 
 输出为它的 minisql 定义：
 
-    "delete from Bookmark where url like $pattern description like pattern"
+    {
+        "description": "Action for removing bookmarks",
+        "parameters":[{"name":"pattern","type":"literal"}],
+        "definition": "delete from Bookmark where url like $pattern description like pattern"
+    }
 
 =head3 Call Actions
 
@@ -747,6 +760,9 @@ Action 亦可分为内建 Action (如 C<WebSearch> 和 C<Select> ) 和用户自�
 以指定的参数调用 actions. 示例：
 
     GET /=/action/RemoveBookmarks/pattern/Hello,world
+
+返回结果是
+
     {"success":1}
 
 对于无参数的 Action 调用时使用
@@ -755,50 +771,50 @@ Action 亦可分为内建 Action (如 C<WebSearch> 和 C<Select> ) 和用户自�
 
 的形式。
 
+此外还可以使用 POST 方法来调用一个 Action:
+
+    POST /=/action/RemoveBookmarks/~/~
+    {"pattern":"Hello,world"}
+
 =head3 Remove Actions
 
     DELETE /=/action/<action name>
 
-=head3 Built-in Actions
+=head3 Built-in Actions(已实现)
 
 =over
 
-=item Select
+=item RunView
 
-Select 提供了用 minisql 的 select 语句对 Models 进行高级查询的方式。下面是一个例子：
+RunView 提供了 View 定义一个解释器界面。下面是一个例子：
 
-    POST /=/action/Select/lang/minisql
+    POST /=/action/RunView/~/~
     "select * from Music, Bookmark where Music.url = Bookmark.url"
 
-minisql 与 SQL 的语法非常近似，不同的是它是大小写敏感的。
+View 中使用的 RestyScript 代码与 SQL 的语法非常近似，不同的是它是大小写敏感的。
 所有的关键字都必须为小写。在 minisql 中可以直接引用利用 C</=/model>
 接口定义的 Model 名和列名.
 
-=item WebSearch
+=item RunAction
 
-    GET /=/action/WebSearch
-    [
-        { name: "query", type: "text" }
-    ]
+RunAction 与 RunView 类似，但它是为 Action 定义提供了一个解释器界面。例如：
 
-    GET /=/action/WebSearch/query/Hello,world
-    [
-        { title: "Hello world program - Wikipedia, the free encyclopedia", url: "en.wikipedia.org/wiki/Hello_world_program", summary: "..." },
-        { title: "Helloworld.com", url: "www.helloworld.com/", summary: "..." },
-        { title: "...", url: "...", summary: "..." },
-        ...
-    ]
+    POST /=/action/RunAction/~/~
+    "DELETE '/=/model?user=$TestAccount2&password=$TestPass2';
+    POST '/=/model/Another' {\"description\":\"a model in another account\"};
+    GET '/=/model';
+    GET '/=/model?user=$TestAccount2&password=$TestPass2'"
 
 =back
 
 =head2 Roles
 
 OpenResty 通过角色 (Role) 来实现子用户和权限分配功能。
-一个 OpenResty 注册用户可以拥有多个角色，她可以通过 /=/role 这个 URL
+一个 OpenResty 注册用户可以拥有多个角色，她可以通过 C</=/role> 这个 URL
 对她的角色进行管理，其中包括添加和删除角色，对角色权限进行分配，
 指定角色的登录方式（是通过口令，验证码图片，还是匿名）。
 
-在 OpenResty 中，角色对象是一种特殊的 Model，/=/role 与 /=/model
+在 OpenResty 中，角色对象是一种特殊的 Model，C</=/role> 与 C</=/model>
 在接口上有许多相似之处。
 
 每一个角色实体都被视为一个规则 Model. 所有 Model 的查询，修改，
@@ -812,32 +828,32 @@ OpenResty 通过角色 (Role) 来实现子用户和权限分配功能。
 例如：
 
   [
-    { name: "Admin", description: "管理员", src: "/=/role/Admin" },
-    { name: "User", description: "普通用户", src: "/=/role/User" },
-    { name: "Anonymous", description: "匿名用户", src: "/=/role/Anonymous" },
+    { name: "Admin", description: "Administrator", src: "/=/role/Admin" },
+    { name: "Public", description: "Anonymous", src: "/=/role/Public" }
     { name: "Commenter", description: "评论用户", src: "/=/role/Commenter" }
   ]
 
-其中 Admin, User, 和 Anonymous 这三个角色是 OpenResty 用户在注册时
-自动分配的，而且不能删除。用户直接使用用户名，比如 marry 登录时，
-相当于使用 marry.User 帐户来登录。本文档中表的删除和修改操作都需要以
-Admin 角色的权限。User 默认是没具有这些权限的。
+其中 C<Admin> 和 C<Public> 这两个角色是 OpenResty 用户在注册时
+自动创建的，而且不能删除。用户直接使用帐户名，比如 marry 登录时，
+相当于使用 C<marry.Admin> 这个用户名来登录。
+
+C<Admin> 角色的 ACL 规则列表中拥有所有可能的模式。而 C<Public> 角色的 ACL 列表默认为空。
 
 =head3 获取角色信息
 
     GET /=/role/<role name>
 
-返回一个哈希结构，其中包括角色名，角色描述，父亲角色，登录方式，等等字段。
+返回一个哈希结构，其中包括角色名，角色描述，父亲角色(TODO)，登录方式，等等字段。
 一个典型的例子是：
 
     GET /=/role/Admin
     {
-        name: "Admin",
-        description: "管理员",
-        inherits: "User",
-        columns: [
-            { name: "method", label: "HTTP方法"},
-            { name: "resource", lable: "资源名" }
+        "name":"Admin",
+        "description":"Administrator",
+        "login":"password",
+        "columns":[
+            {"label":"HTTP method","name":"method","type":"text"},
+            {"label":"Resource","name":"url","type":"text"}
         ]
     }
 
@@ -851,22 +867,38 @@ C<< <column> >> 和 C<< <value> >> 的含义与 Model 的 URL 记法中的一致
 
     GET /=/role/Commenter/~/~
     [
-        { method: "POST", resource: "/=/model/Comment/~/~" }
+        { "method": "POST", "url": "/=/model/Comment/~/~" }
     ]
 
 权限规则总是由两个属性构成，一是 C<method>，用于指定允许的 HTTP 方法。
 一是 C<resource>，用于指定允许操纵的资源（或 URI）。
+
+在
 
 =head3 添加权限规则
 
     POST /=/role/<role name>/~/~
     [ rule1, rule2, ... ]
 
-=head2 Administration
+=head3 角色继承(TODO)
 
-    GET/POST/DELETE /=/admin/...
+子角色永远只拥有其创建时刻父角色的 ACL 规则集的一个快照，因此子角色一旦创建之后，其 ACL 规则集便与父角色一致，但从此以后子角色可以自由地修改它自己的 ACL 规则集，并对父角色无任何影响；反之亦然：即使父角色随后发生了任何变化，对其已有的子角色也不会有任何影响？
 
-XXX needs work...
+=head2 Unsafe Operations
+
+    POST /=/unsafe/do
+    "<pg sql>"
+
+    POST /=/unsafe/select
+    "<pg sql>"
+
+Unsafe API 提供了直接通过 Web 执行 Pg/SQL 的接口。由于这种方式危险性极大，故对于非信任帐户，Unsafe API 即使是对 Admin 角色也是关闭的。开启 Unsafe API 的权限，需要在 OpenResty 服务器的配置文件中显式地进行设定，例如：
+
+    [frontend]
+    ...
+    unsafe=carrie people
+
+这里 C<frontend.unsafe> 选项指定了 C<carrie> 和 C<people> 这两个帐户是拥有对 Unsafe API 的访问权的。
 
 =head2 URL Parameters
 
@@ -892,7 +924,7 @@ XXX needs work...
 
 =item count
 
-该选项仅作用于 GET 请求返回列表的情形。它用于指定返回的条目数，缺省为 500。最大值亦为 500。
+该选项仅作用于 GET 请求返回列表的情形。它用于指定返回的条目数，缺省为 OpenResty 服务器规定的返回行数的上限, 500。其最大值亦为 500。
 
 示例：
 
@@ -906,16 +938,16 @@ C<limit> 参数为 C<count> 的一个别名。
 
 指定排序项（可指定多个，以逗号分隔). 例如：
 
-    GET /=/model/Bookmark/title/Yahoo?op=contains&order_by=title:asc,url:desc
+    GET /=/model/Bookmark/title/Yahoo?order_by=title:asc,url:desc
 
 在语义上近似于下面这条 SQL 语句：
 
     select *
     from bookmarks
-    where title like '%Yahoo%'
-    order by title asc , url desc
+    where title = 'Yahoo'
+    order by title asc, url desc
 
-升降序的缺省是 SQL 标准的缺省：ASC。当字段中无冒号分隔的升降序声明的时候，就是升序。
+升降序的缺省是 SQL 标准的缺省：C<asc>。当字段中无冒号分隔的升降序声明的时候，就是升序。
 
 =item var
 
@@ -923,9 +955,13 @@ C<limit> 参数为 C<count> 的一个别名。
 
     GET /=/model.json?var=foo
 
+或
+
+    GET /=/model?var=foo
+
 服务器将返回类似下面的数据：
 
-    var foo=...;
+    foo=...;
 
 这里的 C<...> 是没有指定 C<var> 选项时服务器返回的内容。
 
@@ -940,7 +976,7 @@ C<limit> 参数为 C<count> 的一个别名。
 
     GET /=/post/model?data=<content>
 
-来代替（如果 <content> 含有 URL 特殊字符，需要进行 URL 编码）。
+来代替（如果 C<< <content> >> 含有 URL 特殊字符，需要进行 URL 编码）。
 
 再比如下面这个 PUT 请求
 
@@ -953,7 +989,7 @@ C<limit> 参数为 C<count> 的一个别名。
 
 =item user
 
-该选项指定用户名
+该选项指定用户名，用户名一般由帐户名和角色色两部分组成，比如 C<marry.Admin>.
 
 =item password
 
@@ -963,7 +999,7 @@ C<limit> 参数为 C<count> 的一个别名。
 
     GET /=/model/Bookmark/id.xml?user=foo&password=bar
 
-注：以明文方式传递用户名和密码在安全性较高的场合是不允许使用的。
+这里的 C<bar> 需为密码的 MD5 形式。
 
 =back
 
@@ -974,13 +1010,15 @@ C<limit> 参数为 C<count> 的一个别名。
 支持的格式后缀为 C<.json>, C<.xml>, 和 C<.yaml>. 它们分别对应 JSON 格式，XML/RDF 格式，和 YAML 格式。
 它们的别名为 C<.js>, C<.rdf>, 和 C<.yml>.
 
+B<TODO>: C<.xml> 和 C<.rdf> 暂未实现.
+
 当后缀名未指定时，缺省为 C<.json>。
 
 =head1 Content type
 
-HTTP 响应的头部中的 Content-Type 总是 C<text/plain>.
+HTTP 响应的头部中的 C<Content-Type> 总是 C<text/plain>.
 
-HTTP 请求头部中的 Content-Type 推荐是 C<text/plain>. 如果 PUT 和 POST
+HTTP 请求头部中的 C<Content-Type> 推荐是 C<text/plain>. 如果 PUT 和 POST
 请求的 C<Content-Type> 被设为 C<application/x-www-form-urlencoded>,
 则 content 部分应该写作
 
