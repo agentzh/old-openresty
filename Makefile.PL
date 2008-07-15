@@ -109,9 +109,9 @@ if (!-e $site_conf) {
 
 system("$^X bin/revision.pl");
 
-print STDERR "Download the Chinese font file (14 MB) from agentzh.org to get Chinese captcha support? [n]";
-my $ans = <STDIN>;
-if ($ans =~ /y/i) {
+my $message = "Download the Chinese font file (14 MB) from agentzh.org to get Chinese captcha support? [n]";
+my $ans = prompt($message);
+if ($ans && $ans =~ /y/i) {
     system("$^X bin/fetch-font.pl");
 }
 
