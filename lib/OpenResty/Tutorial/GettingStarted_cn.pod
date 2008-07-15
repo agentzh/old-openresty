@@ -16,13 +16,29 @@ OpenResty 帐户是以应用为单位的。一般来说，每一个应用都应�
 
 应用开发人员一般使用 Admin 角色来管理她的 OpenResty 帐户。该角色是密码登录方式。
 
-OpenResty 本身是 100% 基于 Web Service 的，所以技术上讲完全可以使用包括 curl 和 Firefox 这样的 HTTP 客户端来管理你的帐户。但站长一般都使用一个现成的基于 Web 的管理站点：
+OpenResty 本身是 100% 基于 Web Service 的，所以技术上讲完全可以使用包括 curl 和 Firefox 这样的 HTTP 客户端来管理你的帐户。但站长们一般都选择使用一个现成的基于 Web 的管理站点：
 
-http://resty.eeeeworks.org/admin/
+L<http://resty.eeeeworks.org/admin/>
 
 用你的帐户名和 Admin 密码登录之后，你会看到它的主界面：
 
-http://agentzh.org/misc/admin-index.png
+=begin html
+
+<!-- this h1 part is for search.cpan.org -->
+<h1>
+<a class = 'u'
+   href  = '#___top'
+   title ='click to go to top of document'
+   name  = "PNG IMAGE"
+>PNG IMAGE</a>
+</h1>
+
+<p><img src="http://agentzh.org/misc/admin-index.png" border=2 alt="Admin main UI at agentzh.org"/></p>
+<p>Image hosted by <a href="http://agentzh.org">agentzh.org</a></p>
+
+=end html
+
+L<http://agentzh.org/misc/admin-index.png>
 
 此时你会看到主菜单中有 Models, Views, Roles, Actions, Feeds 等项目。
 
@@ -30,19 +46,19 @@ http://agentzh.org/misc/admin-index.png
 
 Models 选项卡是用来对 OpenResty Model 对象进行管理的。OpenResty Model 在逻辑上类似于数据库中的 table. 通过该 Models 选项卡中的界面，你可以创建新的 Model, 修改、查看或者删除已有的 Model 对象。
 
-每个 Model 对象都有若干属性，比如 name, description 之类的。其中最重要的是 columns 属性。它定义了 Model （或者说数据表）中的列。
+每个 Model 对象都有若干属性，比如 C<name>, C<description> 之类的。其中最重要的是 C<columns> 属性。它定义了 Model （或者说数据表）中的列。
 
 第个列都需要指定一个列名（name），一个标签（label ），一个类型（type），以及一个可选的缺省值。注意包括 Model 名，列名在内的所有 OpenResty 的对象的名字都是大小写敏感的。
 
 绝大多数常见的 Pg 数据类型都可以在 OpenResty 的列类型中使用，比如下面这些例子： C<bigint>, C<cidr>, C<inet>, C<ip4r>, C<macaddr>, C<tsquery>, C<tsvector>, C<bit (5)>, C<boolean>, C<text>, C<varchar (3)>, C<integer>, C<serial>, C<real>, C<double precision>, C<ltree>, C<date>, C<timestamp (0) with time zone>, C<timestamp (2) without time zone>, C<interval>.
 
-在 Model 选项卡中可以修改已有的定义，只需要'''用鼠标单击'''要修改的值就可以了。
+在 Model 选项卡中可以修改已有的定义，只需要用B<鼠标单击>要修改的值就可以了。
 
 创建好的 Model 列表可以直接在浏览器或者 curl 中查看，例如
 
   http://resty.eeeeworks.org/=/model?user=foo.Admin&password=PASSWORD
 
-这里 foo 是你的帐户名，而 PASSWORD 则是你的 Admin 角色的密码的 MD5。得到的结果应该是 model 列表的 JSON 表示。一个典型的输出是：
+这里 C<foo> 是你的帐户名，而 C<PASSWORD> 则是你的 Admin 角色的密码的 MD5。得到的结果应该是 model 列表的 JSON 表示。一个典型的输出是：
 
   [{"src":"/=/model/YahooStaff","name":"YahooStaff","description":"Yahoo! China Staff"},{"src":"/=/model/IrcLog","name":"IrcLog","description":"IRC Log"}]
 
@@ -68,11 +84,15 @@ Models 选项卡是用来对 OpenResty Model 对象进行管理的。OpenResty M
 
 =item 1.
 
-在 UNIX shell 中输入命令 echo -n 'my_password' | md5sum
+在 UNIX shell 中输入命令
+
+    echo -n 'my_password' | md5sum
 
 =item 2.
 
-在 PostgreSQL 的 psql 终端中输入命令 select md5('my_password');
+在 PostgreSQL 的 psql 终端中输入命令
+
+    select md5('my_password');
 
 =back
 
@@ -82,11 +102,11 @@ Models 选项卡是用来对 OpenResty Model 对象进行管理的。OpenResty M
 
 有关 Model 使用的更多信息请参见
 
-L<http://10.62.164.49/wiki/index.php?title=REST_cn#Models>
+L<OpenResty::Spec::REST_cn/Models>
 
 以及
 
-L<http://search.cpan.org/perldoc?OpenResty::Spec::Overview#Models>
+L<OpenResty::Spec::Overview/Models>
 
 =head3 Views选项卡
 
@@ -108,11 +128,11 @@ L<http://search.cpan.org/perldoc?OpenResty::Spec::Overview#Models>
 
 有关 View 使用的更多信息请参见
 
-L<http://10.62.164.49/wiki/index.php?title=REST_cn#Views>
+L<OpenResty::Spec::REST_cn/Views>
 
 以及
 
-L<http://search.cpan.org/perldoc?OpenResty::Spec::Overview#Views>
+L<OpenResty::Spec::Overview/Views>
 
 =head1 调用OpenResty接口
 
