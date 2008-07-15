@@ -164,6 +164,41 @@ To test the Pg cluster rather than the desktop Pg, update your F<etc/site_openre
 
 and also set other items in the same group if necessary.
 
+=head1 SYSTEM-WIDE INSTALLATION
+
+Some times it's desired to do "C<sudo make install>" and install all the OpenResty modules and command line tools to the system-wide perl.
+
+The steps are simple:
+
+=over
+
+=item 1.
+
+Build the C<haskell/bin/restyscript> program
+
+=item 2.
+
+The usual CPAN module installation process:
+
+    perl Makefile.PL
+    make
+    sudo make install
+
+=item 3.
+
+Copy the config files to F</etc/openresty/>. Essentially, it is
+
+    mkdir /etc/openresty
+    cp etc/*.conf /etc/openresty/
+
+=item 4.
+
+Now you can test your installation by starting the standalone server for OPenResty:
+
+    openresty start
+
+=back
+
 =head1 AUTHOR
 
 Agent Zhang (agentzh) C<< <agentzh@yahoo.cn >>,
