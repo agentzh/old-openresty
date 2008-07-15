@@ -150,60 +150,49 @@ DELETE 和 PUT 也较难实现，OpenResty 为 PUT 和 DELETE 提供了相应的
 
 =head2 The leading C</=/>
 
-为使我们的 API 能够在 URL 上复用已有的域名，如 C<www.yahoo.cn>，同时避免污染已有的 URL 名字空间，所有的 URL 都以 /=/
-起始。
+为使我们的 API 能够在 URL 上复用已有的域名，如 C<www.yahoo.cn>，同时避免污染已有的 URL 名字空间，所有的 URL 都以 C</=/> 起始。
 
 如果域名不存在与常规网页 URL 冲突的风险，前导 C</=/> 可省略，或替换为其他形式，比如 C</webservice/> 或者 C</~/> 之类。
 
 在本文中，将总是使用 C</=/> 前导，以强调这些 URL 是特殊的（从某种意义上说），并保持一致性。
 
-=head2 Help
+=head2 Help(TODO)
 
     GET /=/help
 
 [猜想：该命令可以返回一个无结构的纯文本帮助，或者是有结构的帮助目录列表。]
 
+=head2 Version
+
+    GET /=/version
+
+返回当前 OpenResty 的基本配置，版本号以及版权信息。一个典型的输出为：
+
+ "OpenResty 0.3.10 (revision 1695) with the PgFarm (op901000) backend.\n
+  Copyright (c) 2007-2008 by Yahoo! China EEEE Works, Alibaba Inc.\n"
+
 =head2 Login
 
     POST /=/login
 
-登录验证，目前有两种选择：
+使用 MD5 后的口令。
 
-=over
+一种方式是： GET /=/login/<user_name>/<password>
 
-=item 1.
+这里的 C<< <password> >> 为口令 MD5 后的形式。
 
-使用明文传输口令
+典型的输出为
 
-此种方法使用简单，尤其对于 wget, curl 这样的工具友好。缺点是安全性不高。
-
-一种可能的方式是： GET /=/login/<user_name>/<password>
-
-=item 2.
-
-使用加密传输口令
-
-此种方法使用复杂，需要握手过程，以及加密库的支持。
-
-POST 请求的内容需要经过加密处理。比如：
-
-    POST /=/login/<user_name>
-
-I<POST body>
-
-    adsfkwk3223df23245rt3423dfds2d
-
-这里的 C<POST body> 中存放着经过加密的密码.
-
-XXX 具体的加密算法
-
-=back
+    {
+        "success":1,
+        "session":"B9405E32-522E-52DE-A5DF-493F0B05A219",
+        "account":"agentzh",
+        "role":"Admin"
+    }
 
 登录获取的 session ID 将被存储于 cookie 中，供后续请求使用。
 
-[猜想： 在轻量级应用中使用明文，以降低接口使用门槛，适应普通用户。对于数据安全性高的企业级应用，使用加密传输的方法。]
-
-OAuth 支持也应认真考虑：
+未来 OAuth 支持可能也会认真考虑：
 
 L<http://oauth.net/>
 
@@ -211,19 +200,27 @@ L<http://oauth.net/>
 
 OpenResty 支持所谓的“角色”概念。一个 OpenResty 用户在注册时可以定义若干个“角色”,每个“角色”的权限各不相同，而都可以单独登录，并拥有不同的密码。
 
-例如注册用户 marry 可以拥有 C<Admin>, C<Reader>, C<User> 等多种角色，
-每个角色都可以单独登录。当 marry 的 C<Reader> 角色登录时，使用的帐户名为 C<marry.Reader>. 事实上，C<marry> 在作为帐户名使用时，就相当于以 C<marry.User> 角色登录，因为 C<admin> 角色拥有最高的权限。
+例如注册用户 C<marry> 可以拥有 C<Admin>, C<Reader>, C<User> 等多种角色，系统默认初始化两个角色：C<Admin> 和 C<Public>，这两个角色是不能删除的，它们的基本属性也不能修改。
+
+登录的实体是用户名。一般由帐户名和角色名两部分组成。每个角色都可以单独登录。当 C<marry> 帐户的 Reader 角色登录时，使用的用户名为 C<marry.Reader>。
+
+事实上，当 C<marry> 直接作为用户名使用时，就相当于以 C<marry.Admin> 用户名登录，而 C<Admin> 角色拥有最高的权限。
+
+C<Admin> 的 ACL 规则是只读的，而 C<Public> 的 ACL 规则集是可写的.
 
 一个例子是：
 
     GET /=/login/marry.Reader/myPassword
 
+这里的 C<myPassword> 是经过一遍 MD5 之后的形式。
+
 有关角色的更多信息，请参见 L</Roles> 一节。
 
 =head2 Models
 
-模型是一种抽象的数据库表格。它可以映射到数据库的物理表，亦可以映射到虚拟的存储结构，如果电子信箱的 inbox.
-模型按创建者，可以分为内置和用户自定义两种类型。模型拥有自己细化的权限模型，如可写权限分配，以及可读权限分配。
+模型是一种抽象的数据库表格。它一般直接映射到数据库的物理表（未来亦可能映射到虚拟的存储结构，如果电子信箱的 inbox.)
+
+模型按创建者，可以分为内置和用户自定义两种类型。
 
 所有与 Model 相关的接口，其 URL 都满足下列几种形式：
 
@@ -246,19 +243,19 @@ OpenResty 支持所谓的“角色”概念。一个 OpenResty 用户在注册�
 I<POST body>
 
     {
-        name: "Bookmark",
-        description: "我的书签",
-        columns:
+        "name": "Bookmark",
+        "description": "我的书签",
+        "columns":
           [
-            { name: "url",   type: "text", label: "书签网址" },
-            { name: "title", type: "text", label: "书签标题" },
-            { name: "description", type: "text", label: "书签描述" }
+            { "name": "url", "type": "text", "label": "书签网址" },
+            { "name": "title", "type": "text", "label": "书签标题" },
+            { "name": "description", "type": "text", "label": "书签描述" }
           ]
     }
 
 一次 POST 请求只能指定创建单个 Model. Model 的声明包含两部分，一是模型名，即 C<name> 字段，一是列声明，即 C<columns> 字段。
 
-C<columns> 字段可以为一空数组，或者完全省略，此时模型中没有任何可用列。用户可以稍后通过 POST /=/model/<model name>/<column name> 来添加新列。
+C<columns> 字段可以为一空数组，或者完全省略，此时模型中没有任何可用列。用户可以稍后通过 C<< POST /=/model/<model name>/<column name> >> 来添加新列。
 
 当 C<columns> 字段为空时，服务器会返回一条警告信息，例如：
 
@@ -266,7 +263,7 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
 每个模型必须提供一个非空的 C<description> 属性，同时模型各列的定义必须包含 C<label> 这一属性，而且必须为非空。
 
-请求的 POST 内容中可以不指定模型的 C<name> 属性，因为它已经出现在了请求的 URL 中，如这里的 "Bookmark". 如果用户在 JSON 数据中也指定了 C<name>，则
+请求的 POST 内容中可以不指定模型的 C<name> 属性，因为它已经出现在了请求的 URL 中，如这里的 "Bookmark". 如果用户在 JSON 数据中也指定了 C<name>，则会被忽略。
 
 模型名必须以字母开头，后跟若干字母，下划线或数字。推荐模型名总以大写字母开头，比如 C<Bookmark>, C<MyMusic> 等等。
 
@@ -282,11 +279,16 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
 任何情况下，URL 和请求数据中的编码必须一致，比如必须同为 UTF-8，或者同为 GBK.
 
-具体的实现会对一个 Model 所含的字段数目和类型进行约束。
+如果无法确定编码应该是什么，可以使用 C<charset=guessing> 或者 C<charset=guess>，服务器端会根据传入编码进行判断。
+
+实际定义一个 Model 时，服务器会根据预定义的一些约束条件对用户所创建的字段数目和类型进行限制。而对于某些特殊情况，具体的约束也可能会随实现的不同而有所区别。
+
+
+B<TODO:> 定义模型时，可以通过与 column 同级的 unique 参数，来定义此 Model 中需要建立唯一约束的列。也可以在 column 中写在各个列定义里. 当 unique 值为true 时该列数据有唯一约束；否则此列数据没有唯一约束。不做 unique 的各列，默认无唯一约束。
 
 当模型已存在时，服务器返回出错信息，例如：
 
-    { success: 0, error:"Model \"Bookmark\" already exists." }
+    { "success":0, "error":"Model \"Bookmark\" already exists." }
 
 详情请见 L</ERROR HANDLING> 一节。
 
@@ -299,54 +301,54 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 可以通过下面的接口修改已有模型的名字：
 
     PUT /=/model/<old_name>
-    { name: "<new_name" }
+    { "name": "<new_name" }
 
 一个例子是：
 
     PUT /=/model/Bookmark
-    { name: 'MyBookmark' }
+    { "name": "MyBookmark" }
 
 如果新的模型名与已存在的另一个 Model 同名，则服务器会报错，例如：
 
-    { success: 0, error: "Model \"MyBookmark\" already exists." }
+    { "success":0, "error":"Model \"MyBookmark\" already exists." }
 
 =item Change Model Description
 
 可以通过下面的接口修改已有模型的描述：
 
     PUT /=/model/<model_name>
-    { descripton: "<new_description" }
+    { "descripton": "<new_description" }
 
 修改模型的名字和描述可以放在单次 HTTP 请求中，例如下面这个例子：
 
     PUT /=/model/Bookmark
-    { name: "MyBookmark", description: "这可是我的书签哦！" }
+    { "name": "MyBookmark", "description": "这可是我的书签哦！" }
 
 =item Change Model Columns
 
-可以通过下面的接口修改已有模型的某一列的名字，类型，或标签：
+如果想对已有模型中模一列的名字、类型，或标签做修改，可以使用如下接口：
 
     PUT /=/model/Bookmark/title
-    { name: "bookmark_name", type: "varchar(20)", label: "书签名" }
+    { "name": "bookmark_name", "type": "varchar(20)", "label": "书签名" }
 
-一次可以只修改其中的一个或者两个属性。例如：
+可以同时修改 Model 中某列的一个或多个属性。
+
+例如, C<Bookmark> 这个 Model 中有一个名称为 C<title> 的列，想要修改它的 C<name> 和 C<label> 属性，而不修改类型（type）的话。
 
     PUT /=/model/Bookmark/title
-    { name: "bookmark_name", label: "书签名" }
-
-如果我们并不想修改 title 列的类型(type)的话。
+    { "name": "bookmark_"name"", "label": "书签名" }
 
 =item Add Model Columns
 
 可以通过下面的接口添加模型的列：
 
-    POST /=/model/<model_name>/<new_column_name>
-    { type: "<type>", label: "<label>" }
+    POST /=/model/<model_"name">/<new_column_"name">
+    { "type": "<type>", "label": "<label>" }
 
 一个例子是：
 
     POST /=/model/Bookmark/comment
-    { type: "text", label: "书签评论" }
+    { "type": "text", "label": "书签评论" }
 
 =item Delete Model Columns
 
@@ -380,38 +382,42 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
     GET /=/model
 
+典型的返回内容为：
+
     [
-        { description: "My favorite bookmark", name: "Bookmark", src: "/=/model/Bookmark" },
-        { description: "My favorite music", type: "model", name: "Music", src: "/=/model/Music" },
-        { description: "My frequently accessed blog", name: "Blog", src: "/=/model/Blog" },
+        { "description": "My favorite bookmark", "name": "Bookmark", "src": "/=/model/Bookmark" },
+        { "description": "My favorite music", type: "model", "name": "Music", "src": "/=/model/Music" },
+        { "description": "My frequently accessed blog", "name": "Blog", "src": "/=/model/Blog" },
     ]
 
 有关结果格式的讨论，请见 L</DATA FORMAT> 一节.
 
-=item 显示指定模型的 schema
+=item 显示指定模型的定义
 
-值得指出的是，模型的 schema 并不等同于真实的数据库物理表的 schema. 模型是一种抽象的概念。
+值得指出的是，模型的定义并不完全等同于真实的数据库物理表的定义. 模型是一种抽象的概念。
 
-在模型名的命名上，一般取为首字母大写的名词单词，如 Bookmark, Book, Music 等等，
-而不像数据库表格一般取成 bookmarks, books, music 这样的形式。
+在模型名的命名上，一般取为首字母大写的名词单词，如 C<Bookmark>, C<Book>, C<Music> 等等，而不像数据库表格一般取成 C<bookmarks>, C<books>, C<music> 这样的形式。
 
     GET /=/model/<model name>
 
-该 URL 将返回模型名为 <model name> 的 schema 定义。
+该 URL 将返回模型名为 C<< <model name> >> 的定义。
 
 一个 JSON 的例子如下：
 
     GET /=/model/Bookmark
 
+返回为：
+
     {
-      name: "Bookmark",
-      description: "My favorite bookmark",
-      columns:
+      "name": "Bookmark",
+      "description": "My favorite bookmark",
+      "columns":
         [
-          { name: "id", type: "serial", src: "/=/model/Bookmark/id" },
-          { name: "title", type: "text", src: "/=/model/Bookmark/title" },
-          { name: "url", type: "text", src: "/=/model/Bookmark/url" },
-          { name: "description", type: "text", src: "/=/model/Bookmark/description" },
+          { "name": "id", "type": "serial", "default": null },
+          { "name": "title", "type": "text", "default": "No title" },
+          { "name": "url", "type": "text", "default": null },
+          { "name": "description", "type": "text", "default": null },
+          { "name": "created", "type": "timestamp (0) with time zone", "default": ["now()"] }
         ]
     }
 
@@ -425,7 +431,7 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
 返回
 
-    { name: "title", type: "text", src: "/=/model/Bookmark/title" },
+    { "name": "title", "type": "text", "default": "No title" }
 
 =back
 
@@ -437,7 +443,7 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
     DELETE /=/model/<model name>
 
-该命令将删除名为 <model_name> 的模型。
+该命令将删除名为 C<< <model_name> >> 的模型。
 
 在功能上相当于下面这条 SQL 语句：
 
@@ -492,13 +498,15 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 服务器返回的结果类似于：
 
     [
-        { id: 1, title: "Revision 34: /trunk", url: "http://svn.openfoundry.com/xulapp/trunk", description: "" }
+        { "id": 1, "title": "Revision 34: /trunk", "url": "http://svn.openfoundry.com/xulapp/trunk", "description": "" }
     ]
 
 如果 C<column value> 中含有 URL 特殊字符，例如 C<?>, C<%>, C<&> 之类，
-则应该进行转义。例如 C<?> 使用 C<%2E> 代替。
+则应该进行转义。例如 C<?> 用 C<%2E> 代替。
 
 如果不希望用 C<=> 执行精确匹配的话，可以通过指定 C<op> 选项来指定其他运算符，包括 C<contains>, C<gt>, C<ge>, C<lt>, C<le>, C<eq>, 与 C<ne>.
+
+使用 C<op> 参数的时候，只能有一个查询条件，但可以添加约束信息（如 C<order_by> 等）。并且每次查询请求最多只能有一个 C<op> 的查询限制。
 
 下面是一个例子：
 
@@ -517,6 +525,7 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
         { id: 57, title: "Yahoo中国", url: "http://cn.yahoo.com", description: "阿里巴巴中国雅虎首页" }
     ]
 
+值得提醒的是，虽然，C<op=contains> 非常方便，但存在效率上的问题，比如很难高效地使用 DB 索引。因此，对于真实的应用，应该尽量考虑使用 tsearch2 这样的全文索引模块。OpenResty 提供了对 tsearch2 的全面支持.
 
 =item 显示各列中出现某个值的记录
 
@@ -534,12 +543,12 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
     GET /=/model/<model name>/~/~
 
-值得一提的是，查询 C< GET /=/model/<model name>/<column name>/~ > 的效果
+值得一提的是，查询 C<< GET /=/model/<model name>/<column name>/~ >> 的效果
 也是显示所有记录。
 
-=item 扩展查询语法
+=item 扩展查询语法(TODO)
 
-通过指定 extended=1 选项，可以启用扩展查询语法。下面是几个例子：
+通过指定 C<extended=1> 选项，可以启用扩展查询语法。下面是几个例子：
 
     GET /=/model/Bookmark/id/1,3,52..72?extended=1
 
@@ -559,7 +568,7 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
     from Timetable
     where arrival_time between '18:32' and '20:59'
 
-可以使用通配符 C<*> 来表示没有上限或下限，例如：
+可以使用通配符 C<~> 来表示没有上限或下限，例如：
 
     GET /=/model/Person/height/1.86..~?extended=1
 
@@ -575,7 +584,7 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 
 =back
 
-更高级的检索需求 (比如 table join 和 group by) 应由 C</=/action/Select> 来完成.
+更高级的检索需求 (比如 table join 和 group by) 等等应该通过 Views 和 Actions 来完成.
 
 =head3 Manipulate Records
 
@@ -592,14 +601,14 @@ C<columns> 字段可以为一空数组，或者完全省略，此时模型中没
 I<POST body>
 
     [
-        { title: "Yahoo News", url: "http://news.yahoo.com", description: "美国雅虎网站" },
-        { title: "Yahoo中国", url: "http://cn.yahoo.com", description: "阿里巴巴中国雅虎首页" },
-        { title: "Revision: /trunk", url: "http://svn.openfoundry.org/xulapp/trunk", description: "我的 XUL::App 项目" }
+        { "title": "Yahoo News", "url": "http://news.yahoo.com", "description": "美国雅虎网站" },
+        { "title": "Yahoo中国", "url": "http://cn.yahoo.com", "description": "阿里巴巴中国雅虎首页" },
+        { "title": "Revision: /trunk", "url": "http://svn.openfoundry.org/xulapp/trunk", "description": "我的 XUL::App 项目" }
     ]
 
 I<Output>
 
-    { success: 1, rows_affected: 3, last_row: "/=/model/Bookmark/id/3" }
+    { "success": 1, "rows_affected": 3, "last_row": "/=/model/Bookmark/id/3" }
 
 具体的实现会对一次插入的记录数目进行限制。
 
@@ -615,7 +624,7 @@ I<Output>
 
 I<POST body>
 
-    { title: "My Yahoo Home", description: "As title" }
+    { "title": "My Yahoo Home", "description": "As title" }
 
 对应的伪 SQL 为：
 
@@ -623,28 +632,81 @@ I<POST body>
     set title = 'My Yahoo Home', description = 'As title'
     where url like '%yahoo%'
 
-[猜想：PUT 请求亦可专用于上传二进制的多媒体数据。]
-
 =item 删除记录
 
 用于删除指定的记录
 
 一个例子是：
 
-    DELETE /=/model/Bookmark/url/yahoo?op=contains
+    DELETE /=/model/Bookmark/url/yahoo
 
 对应的伪 SQL 为：
 
     delete from bookmarks
-    where url like '%yahoo%'
+    where url = 'yahoo'
 
 =back
 
-=head3 Namespace and Databases
+=head3 Namespace and Databases(TODO)
 
 模型的名字可以写成名字空间修饰的形式，比如 C<Foo.Bar.Baz>. 从逻辑上讲, C<Foo> 相当于一个数据库，或者说是模型的集合。
 
 [猜想: 模型检索时应提供名字空间级别上的搜索。]
+
+=head2 Views
+
+OpenResty 中的视图 (Views) 与数据库中的视图比较近似，但不同的是，它具体应用时可以通过动态传递参数来实现真正的数据库操作。比如：
+
+    POST /=/view/MyQuery
+    {
+      "description": "This is my first view",
+      "definition": "select * from CComment where name = $name and parent_id = $parent_id"
+    }
+
+此时便创建了一个名为 C<MyQuery> 的 OpenResty 视图对象。
+该视图返回的结果是由一个带特殊变量的 RestyScript (minisql) 语句来指定的。
+由 C<$> 起始的变量都是 MyQuery 这个视图的参数。例如上面这个例子中，
+C<$name> 和 C<$parent_id> 都是参数变量。
+
+于是后面可以通过这样的语法调用 C<MyQuery>:
+
+    GET /=/view/MyQuery/name/Foo?parent_id=Blah
+
+或者等价地：
+
+    GET /=/view/MyQuery/parent_id/Blah?name=Foo
+
+视图参量可以带缺省值，例如：
+
+    POST /=/view/MyQuery
+    {
+      description: "This is my second view",
+      definition: "select * from CComment where name = $name|'Foo' and parent_id = $parent_id|'Blah'"
+    }
+
+这样调用 C<MyQuery> 的时候如果不提供参量，也不会报错：
+
+    GET /=/view/MyQuery/~/~
+
+这与前面的两种 MyQuery 调用方式是等效的。
+
+虽然视图对象的功能都可以使用 C<RunView> 这个内建 Action 来完成，但它却拥有以下优点：
+
+=over
+
+=item 1.
+
+服务器可以只在创建视图的时候解析 RestyScript 语句一次，而在随后的视图调用中提高处理速度。
+
+=item 2.
+
+视图调用中会自动对参量进行 quote 处理，而客户无需自己在拼 minisql 串的时候自己去做。
+
+=item 3.
+
+方便通过 C<Role> 的 URL 规则来限制客户端的权限，从而不必直接将 RestyScript 解释器界面（即 C</=/action/RunView/~/~> ) 暴露给客户端。
+
+=back
 
 =head2 Actions
 
@@ -726,62 +788,6 @@ minisql 与 SQL 的语法非常近似，不同的是它是大小写敏感的。
         { title: "...", url: "...", summary: "..." },
         ...
     ]
-
-=back
-
-=head2 Views
-
-OpenResty 中的视图 (Views) 与数据库中的视图比较近似，但不同的是它是可以带参数的。比如：
-
-    POST /=/view/MyQuery
-    {
-      description: "This is my first view",
-      definition: "select * from CComment where name = $name and parent_id = $parent_id"
-    }
-
-此时便创建了一个名为 MyQuery 的 OpenResty 视图对象。
-该视图返回的结果是由一个带特殊变量的 minisql 语句来指定的。
-由 C<$> 起始的变量都是 MyQuery 这个视图的参数。例如上面这个例子中，
-C<$name> 和 C<$parent_id> 都是参数变量。
-
-于是后面可以通过这样的语法调用 MyQuery:
-
-    GET /=/view/MyQuery/name/Foo?parent_id=Blah
-
-或者等价地：
-
-    GET /=/view/MyQuery/parent_id/Blah?name=Foo
-
-视图参量可以带缺省值，例如：
-
-    POST /=/view/MyQuery
-    {
-      description: "This is my second view",
-      definition: "select * from CComment where name = $name|'Foo' and parent_id = $parent_id|'Blah'"
-    }
-
-这样调用 MyQuery 的时候如果不提供参量，也不会报错：
-
-    GET /=/view/MyQuery/~/~
-
-这与前面的两种 MyQuery 调用方式是等效的。
-
-虽然视图对象的功能都可以使用 C<Select> 动作来完成，但它却拥有以下优点：
-
-=over
-
-=item 1.
-
-服务器可以只在创建视图的时候解析 minisql 语句一次，而在随后的视图调用中提高处理速度。
-
-=item 2.
-
-视图调用中会自动对参量进行 quote 处理，而客户无需自己在拼 minisql 串的时候自己去做。
-
-=item 3.
-
-方便通过 C<Role> 的 URL 规则来限制客户端的权限，从而不必直接将 minisql 界面
-（即 C</=/action/Select/lang/minisql> ) 暴露给客户端。
 
 =back
 
