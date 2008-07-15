@@ -7,6 +7,7 @@ OpenResty::Spec::REST_cn - OpenResty REST 协议白皮书（草案）
 =head1 AUTHOR
 
 Agent Zhang (章亦春) <agentzh@yahoo.cn>
+Carrie Zhang (张皛珏)
 
 =head1 VERSION
 
@@ -1044,101 +1045,19 @@ XXX specify what happens when it is "multipart/form-data"
 
     {"success":0,"error":"Error message goes here..."}
 
-=head1 GRAMMAR FOR minisql
+=head1 GRAMMAR FOR RestyScript
 
-minisql 语言是标准 SQL 一个核心子集. 其基本语法如下：
+View 定义中使用的 RestyScript 语言是 Action 定义中的一个子集，即类似 SQL 的 select 语句。
 
-    minisql: statement
+它们公共部分的语法定义请参见用 Haskell Parsec 表达的 parser 实现：
 
-    statement: select_stmt
-             | update_stmt
-             | delete_stmt
+L<http://svn.openfoundry.org/openapi/trunk/haskell/src/RestyScript/Parser.hs>
 
-    select_stmt: "select" pattern_list "from" models postfix_clause_list
-               | "select" pattern_list "from" models
+View 定义特有的部分位于
 
-    pattern_list: pattern "," pattern_list
-                | pattern
+L<http://svn.openfoundry.org/openapi/trunk/haskell/src/RestyScript/Parser/View.hs>
 
-    pattern: aggregate alias
-           | aggregate
-           | column
+而 Action 特有的部分位于
 
-    aggregate: func "(" column ")"
-    func: "max"
-        | "min"
-        | "count"
-        | "sum"
-
-    column: qualified_symbol
-          | symbol
-    qualified_symbol: symbol "." symbol
-    symbol: /[A-Za-z]+/
-
-    alias: symbol
-
-    postfix_clause_list: postfix_clause postfix_clause_list
-                       | postfix_clause
-
-    postfix_clause: where_clause
-                  | group_by_clause
-                  | order_by_clause
-
-    where_clause: "where" condition
-
-    condition: disjunction
-    disjunction: conjunction "or" disjuntion
-               | conjunction
-    conjunction: comparison "and" conjunction
-               | comparison
-    comparison: column operator literal
-              | column operator column
-              | "(" condition ")"
-
-    operator: ">"
-            | ">="
-            | "<"
-            | "<="
-            | "<>"
-            | "="
-            | "like"
-
-    literal: string
-           | integer
-    string: '"' symbol '"'
-          | "'" symbol "'"
-    integer: /\d+/
-
-    group_by_clause: "group by" column_list
-
-    column_list: column "," column_list
-               | column
-
-    order_by_clause: "order by" column_list
-
-    delete_stmt: "delete" "from" symbol where_clause
-    update_stmt: "update" symbol set_clause where_clause
-               | "update" symbol set_clause
-
-    set_clause: "set" symbol "=" literal
-
-=begin comment
-
-=> \&show_item_field;
-on GET    "/=/model/*/*/*"      => \&show_item;
-on GET    "/=/model/*/*"        => \&list_model_items;
-on GET    "/=/model/*"          => \&list_model_columns;
-on GET    "/=/model"            => \&list_models;
-
-on POST   "/=/model/*"          => \&create_item;
-on PUT    "/=/model/*/*/*"      => \&replace_item;
-on DELETE "/=/model/*/*/*"      => \&delete_item;
-
-on GET    "/=/action/*"         => \&list_action_params;
-on GET    "/=/action"           => \&list_actions;
-on POST   "/=/action/*"         => \&run_action;
-
-on GET    "/=/help"             => \&show_help;
-
-=end comment
+L<http://svn.openfoundry.org/openapi/trunk/haskell/src/RestyScript/Parser/Action.hs>
 
