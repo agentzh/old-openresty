@@ -86,6 +86,10 @@ if ($arg eq 'product') {
 #recommends          ('Cache::FastMmap' => '1.24');
 
 install_script('bin/openresty');
+if (-f 'haskell/bin/restyscript') {
+    install_script('haskell/bin/restyscript');
+}
+
 use_test_base();
 no_index( directory => qw< etc tmp demo minisql clients doc t > );
 
