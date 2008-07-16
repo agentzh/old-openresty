@@ -64,11 +64,12 @@ par:
 
 debian:
 	-make veryclean
+	-rm *.deb
 	(echo 'n'; echo 'n') | perl Makefile.PL
-	rm -rf OpenResty-0.*
+	-rm -rf OpenResty-0.*
 	make dist
 	tar -xzf OpenResty-0.*.tar.gz
-	rm OpenResty-0.*.tar.gz
+	-rm OpenResty-0.*.tar.gz
 	(echo 'y'; echo 'y') | dh-make-perl OpenResty-0.*/
 	cp haskell/bin/restyscript OpenResty-0.*/haskell/bin/
 	cp -r share/font OpenResty-0.*/share/

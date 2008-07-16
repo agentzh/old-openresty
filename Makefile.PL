@@ -46,7 +46,6 @@ requires            ('File::ShareDir');
 # modules needed by new captcha mechanism
 requires			('Crypt::CBC');
 requires			('Crypt::Rijndael');
-requires                        ('MIME::Base64');
 requires                        ('IPC::Run3');
 requires                        ('IPC::Run');
 requires                        ('Time::HiRes');
