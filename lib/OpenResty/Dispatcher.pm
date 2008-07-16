@@ -236,6 +236,7 @@ sub process_request {
                 #$OpenResty::Cache->remove($uuid);
                 my $captcha = $cgi->url_param('captcha');
                 ### URL param capture: $captcha
+                require OpenResty::Handler::Login;
                 my $res = OpenResty::Handler::Login->login($openresty, $user, {
                     password => scalar($cgi->url_param('password')),
                     captcha => $captcha,

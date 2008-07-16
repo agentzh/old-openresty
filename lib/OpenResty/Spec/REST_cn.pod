@@ -12,8 +12,8 @@ Carrie Zhang (张皛珏)
 =head1 VERSION
 
     CREATED:            Nov 19, 2007
-    LAST MODIFIED:      Dec 28, 2007
-    VERSION:            0.17
+    LAST MODIFIED:      Jul 16, 2008
+    VERSION:            0.20
 
 =head1 LICENSE
 

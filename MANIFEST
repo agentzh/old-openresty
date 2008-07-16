@@ -188,6 +188,7 @@ inc/Module/Install/Makefile.pm
 inc/Module/Install/Metadata.pm
 inc/Module/Install/TestBase.pm
 inc/Module/Install/Win32.pm
+inc/Module/Install/Share.pm
 inc/Module/Install/WriteAll.pm
 inc/Spiffy.pm
 inc/Test/Base.pm
