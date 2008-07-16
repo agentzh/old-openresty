@@ -1,0 +1,17 @@
+Source: libopenresty-perl
+Section: web
+Priority: optional
+Build-Depends: debhelper (>= 5.0.0)
+Build-Depends-Indep: perl (>= 5.8.8-12)
+Maintainer: Agent Zhang <agentzh@yahoo.cn>
+Standards-Version: 3.7.2
+Homepage: http://search.cpan.org/dist/OpenResty/
+
+Package: libopenresty-perl
+Architecture: all
+Depends: ${perl:Depends}, 
+Description: General-purpose web service platform for web applications
+ General-purpose web service platform for web applications
+ .
+ OpenResty
+
