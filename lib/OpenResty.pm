@@ -26,15 +26,6 @@ use OpenResty::Limits;
 #use encoding "utf8";
 
 use OpenResty::Util;
-use OpenResty::Handler::Model;
-use OpenResty::Handler::View;
-use OpenResty::Handler::Feed;
-use OpenResty::Handler::Action;
-use OpenResty::Handler::Role;
-use OpenResty::Handler::Unsafe;
-use OpenResty::Handler::Login;
-use OpenResty::Handler::Captcha;
-use OpenResty::Handler::Version;
 use Encode::Guess;
 
 #$YAML::Syck::ImplicitUnicode = 1;
