@@ -8,8 +8,8 @@ Standards-Version: 3.7.2
 Homepage: http://search.cpan.org/dist/OpenResty/
 
 Package: libopenresty-perl
-Architecture: all
-Depends: ${perl:Depends}, 
+Architecture: i386
+Depends: ${perl:Depends}, libcookie-xs-perl, libfcgi-perl, libdbi-perl, libdbd-pg-perl, libcgi-simple-perl, libyaml-syck-perl, libclone-perl, libparams-util-perl, libparse-yapp-perl, libdata-uuid-perl, libgd-securityimage-perl, libcache-memcached-fast-perl, libhash-merge-perl, libconfig-simple-perl, liblist-moreutils-perl, libjson-xs-perl, libdata-structure-util-perl, libdatetime-format-strptime-perl, libdatetime-format-pg-perl, libdigest-md5-perl, libfile-sharedir-perl, libcrypt-cbc-perl, libcrypt-rijndael-perl, libipc-run3-perl, libipc-run-perl, libbenchmark-timer-perl, libhttp-server-simple-perl, libtext-diff-perl, libtext-table-perl, libterm-readline-gnu-perl, libterm-readkey-perl, libcgi-perl, libcache-cache-perl, libclass-prototyped-perl, libtest-longstring-perl, libwww-openresty-perl, libwww-perl
 Description: General-purpose web service platform for web applications
  General-purpose web service platform for web applications
  .

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo "!!!!!!! Remember to configure your OpenResty backend in /etc/site_openresty.conf !!!!!!!!"
+
