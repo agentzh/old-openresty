@@ -10,6 +10,8 @@ define CMDS
     bin/perf
 endef
 
+.PHONY: par debian
+
 all: lib/OpenResty/RestyScript/View.pm lib/OpenResty/RestyScript/ViewUpgrade.pm
 
 lib/OpenResty/RestyScript/View.pm: grammar/restyscript-view.yp
@@ -59,4 +61,16 @@ par:
 	rm $(par_file)
 	rm -rf $(par_dir)
 	echo $(par_dir).tar.gz generated.
+
+debian:
+	-make veryclean
+	(echo 'n'; echo 'n') | perl Makefile.PL
+	rm -rf OpenResty-0.*
+	make dist
+	tar -xzf OpenResty-0.*.tar.gz
+	rm OpenResty-0.*.tar.gz
+	(echo 'y'; echo 'y') | dh-make-perl OpenResty-0.*/
+	cp haskell/bin/restyscript OpenResty-0.*/haskell/bin/
+	cp -r share/font OpenResty-0.*/share/
+	cd OpenResty-0.* && debuild -us -uc
 

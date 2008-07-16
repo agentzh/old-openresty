@@ -14,16 +14,16 @@ my $json = JSON::XS->new->utf8;
 my $ExePath = "$FindBin::Bin/../haskell/bin/restyscript";
 my $ExePath2 = "$FindBin::Bin/restyscript";
 
-if (!-f $ExePath && !-f $ExePath2) {
-    croak "Restyscript compiler cannot found at either $ExePath or $ExePath2";
-}
-if (!-f $ExePath) { $ExePath = $ExePath2 }
-if (!-x $ExePath) {
-    croak "Restyscript compiler is not executable: $ExePath";
-}
-
 sub new {
     my ($class, $type, $src) = @_;
+    if (!-f $ExePath && !-f $ExePath2) {
+        croak "Restyscript compiler cannot found at either $ExePath or $ExePath2";
+    }
+    if (!-f $ExePath) { $ExePath = $ExePath2 }
+    if (!-x $ExePath) {
+        croak "Restyscript compiler is not executable: $ExePath";
+    }
+
     return bless {
         _src => $src,
         _type => $type,
