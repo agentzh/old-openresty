@@ -72,5 +72,6 @@ debian:
 	(echo 'y'; echo 'y') | dh-make-perl OpenResty-0.*/
 	cp haskell/bin/restyscript OpenResty-0.*/haskell/bin/
 	cp -r share/font OpenResty-0.*/share/
+	cp -f debian/* OpenResty-0.*/debian/
 	cd OpenResty-0.* && debuild -us -uc
 
