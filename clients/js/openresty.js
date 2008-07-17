@@ -210,20 +210,24 @@ OpenResty.Client.prototype.get = function (url, args) {
     scriptTag.onload = scriptTag.onreadystatechange = function () {
         var done = OpenResty.isDone[reqId];
         if (done) {
-            OpenResty.isDone[reqId] = true;
-            headTag.removeChild(scriptTag);
+            try {
+                headTag.removeChild(scriptTag);
+            } catch (e) {}
+            return;
         }
         if (!this.readyState ||
                 this.readyState == "loaded" ||
                 this.readyState == "complete") {
             setTimeout(function () {
-                var done = OpenResty.isDone[reqId];
-                if (!done) {
+                if (!OpenResty.isDone[reqId]) {
+                    //alert("reqId: " + reqId);
                     onerror();
                     OpenResty.isDone[reqId] = true;
-                    headTag.removeChild(scriptTag);
+                    try {
+                        headTag.removeChild(scriptTag);
+                    } catch (e) {}
                 }
-            }, 50);
+            }, 500);
         }
     };
     headTag.appendChild(scriptTag);
