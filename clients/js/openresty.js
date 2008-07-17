@@ -210,9 +210,12 @@ OpenResty.Client.prototype.get = function (url, args) {
     scriptTag.onload = scriptTag.onreadystatechange = function () {
         var done = OpenResty.isDone[reqId];
         if (done) {
-            try {
-                headTag.removeChild(scriptTag);
-            } catch (e) {}
+            //alert("We're done!");
+            setTimeout(function () {
+                try {
+                    headTag.removeChild(scriptTag);
+                } catch (e) {}
+            }, 0);
             return;
         }
         if (!this.readyState ||
@@ -223,11 +226,13 @@ OpenResty.Client.prototype.get = function (url, args) {
                     //alert("reqId: " + reqId);
                     onerror();
                     OpenResty.isDone[reqId] = true;
-                    try {
-                        headTag.removeChild(scriptTag);
-                    } catch (e) {}
+                    setTimeout(function () {
+                        try {
+                            headTag.removeChild(scriptTag);
+                        } catch (e) {}
+                    }, 0);
                 }
-            }, 500);
+            }, 50);
         }
     };
     headTag.appendChild(scriptTag);
