@@ -3,7 +3,8 @@ if (typeof window.OpenResty == "undefined") {
 window.undefined = window.undefined;
 
 var OpenResty = {
-    callbackMap: {}
+    callbackMap: {},
+    isDone: {}
 };
 
 OpenResty.Client = function (params) {
@@ -172,17 +173,33 @@ OpenResty.Client.prototype.get = function (url, args) {
 
     //args.password = this.password || '';
     if (url.match(/\?/)) throw "URL should not contain '?'.";
-    args._rand = Math.round( Math.random() * 100000 );
+    var reqId = Math.round( Math.random() * 100000 );
+    args._rand = reqId;
+
+    var onerror = this.onerror;
+    if (onerror == null)
+        onerror = function () { alert("Failed to do GET " + url) };
+
     //alert(args._rand);
     //if (!isLogin) args.user = this.user;
     //args.password = this.password;
-    if (typeof this.callback == 'string') {
-        this.callback = eval(this.callback);
+    var callback = this.callback;
+    if (typeof callback == 'string') {
+        callback = eval(callback);
     }
-    OpenResty.callbackMap[args._rand] = this.callback;
-    args.callback = "OpenResty.callbackMap[" + args._rand + "]";
+    OpenResty.isDone[reqId] = false;
+    this.callback = function (res) {
+        OpenResty.isDone[reqId] = true;
+        OpenResty.callbackMap[reqId] = null;
+        callback(res);
+    };
+    OpenResty.callbackMap[reqId] = this.callback;
+    args.callback = "OpenResty.callbackMap[" + reqId + "]";
+
+    var headTag = document.getElementsByTagName('head')[0];
+
     var scriptTag = document.createElement("script");
-    scriptTag.id = "openapiScriptTag" + args._rand;
+    scriptTag.id = "openapiScriptTag" + reqId;
     scriptTag.className = '_openrestyScriptTag';
     var arg_list = new Array();
     for (var key in args) {
@@ -190,7 +207,25 @@ OpenResty.Client.prototype.get = function (url, args) {
     }
     scriptTag.src = this.server + url + "?" + arg_list.join("&");
     scriptTag.type = "text/javascript";
-    var headTag = document.getElementsByTagName('head')[0];
+    scriptTag.onload = scriptTag.onreadystatechange = function () {
+        var done = OpenResty.isDone[reqId];
+        if (done) {
+            OpenResty.isDone[reqId] = true;
+            headTag.removeChild(scriptTag);
+        }
+        if (!this.readyState ||
+                this.readyState == "loaded" ||
+                this.readyState == "complete") {
+            setTimeout(function () {
+                var done = OpenResty.isDone[reqId];
+                if (!done) {
+                    onerror();
+                    OpenResty.isDone[reqId] = true;
+                    headTag.removeChild(scriptTag);
+                }
+            }, 50);
+        }
+    };
     headTag.appendChild(scriptTag);
 };
 
@@ -203,6 +238,7 @@ OpenResty.Client.prototype.del = function (url, args) {
 OpenResty.Client.prototype.purge = function () {
     // document.getElementByClassName('openapiScriptTag').remove();
     OpenResty.callbackMap = {};
+    OpenResty.isDone = {};
     var nodes = document.getElementsByTagName('script');
     for (var i = 0; i < nodes.length; i++) {
         var node = nodes[i];
