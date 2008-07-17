@@ -90,6 +90,7 @@ function afterEditInplace (res, revert) {
 }
 
 function setStatus (isLoading, category) {
+    //debug("set status: " + category + " => " + isLoading);
     if (isLoading) {
         if (++loadingCount == 1) {
             if (jQuery.browser.opera)
@@ -319,7 +320,10 @@ function deleteModelRow (model, id, nextPage) {
     openresty.callback = function (res) {
         afterDeleteModelRow(res, model, id, nextPage);
     };
-    openresty.del("/=/model/" + model + "/id/" + id);
+    // we need a 0 timeout here to workaround an IE bug:
+    setTimeout(function () {
+        openresty.del("/=/model/" + model + "/id/" + id);
+    }, 0);
 }
 
 function afterDeleteModelRow (res, model, id, nextPage) {
@@ -589,7 +593,10 @@ function afterCreateACLRule (res) {
 function getModelRowForm (model) {
     setStatus(true, 'getModelRowForm');
     openresty.callback = renderModelRowForm;
-    openresty.get('/=/model/' + model);
+    // we need a 0 timeout here to workaround an IE bug:
+    setTimeout(function () {
+        openresty.get('/=/model/' + model);
+    }, 0);
 }
 
 function renderModelRowForm (res) {
