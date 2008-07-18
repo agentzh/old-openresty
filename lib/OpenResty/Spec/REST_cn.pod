@@ -12,7 +12,7 @@ Carrie Zhang (张皛珏)
 =head1 VERSION
 
     CREATED:            Nov 19, 2007
-    LAST MODIFIED:      Jul 16, 2008
+    LAST MODIFIED:      Jul 18, 2008
     VERSION:            0.20
 
 =head1 LICENSE
@@ -1060,4 +1060,8 @@ L<http://svn.openfoundry.org/openapi/trunk/haskell/src/RestyScript/Parser/View.h
 而 Action 特有的部分位于
 
 L<http://svn.openfoundry.org/openapi/trunk/haskell/src/RestyScript/Parser/Action.hs>
+
+=head1 SEE ALSO
+
+L<OpenResty::Spec::Overview>, L<OpenResty::Tutorial::GettingStarted_cn>, L<OpenResty>.
 
