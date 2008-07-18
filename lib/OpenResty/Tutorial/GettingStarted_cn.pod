@@ -134,7 +134,7 @@ L<OpenResty::Spec::REST_cn/Views>
 
 L<OpenResty::Spec::Overview/Views>
 
-=head1 调用OpenResty接口
+=head2 调用OpenResty接口
 
 基于 OpenResty 的应用大致分以下两类：
 
