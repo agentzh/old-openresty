@@ -673,3 +673,7 @@ Agent Zhang C<< <agentzh@yahoo.cn> >>
 
     http://www.gnu.org/licenses/fdl.html
 
+=head1 SEE ALSO
+
+L<OpenResty::Spec::REST_cn>, L<OpenResty>, L<OpenResty::CheatSheet>.
+
