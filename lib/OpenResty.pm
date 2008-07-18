@@ -626,7 +626,7 @@ And there're several (pure-client-side) web sites alreadying taking advantage of
 
 =item OpenResty's admin site
 
-L<http://resty.eeeeworks.org/admin/>
+L<http://openresty.org/admin/>
 
 =item agentzh's blog and EEEE Works' blog
 

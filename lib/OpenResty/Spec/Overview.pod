@@ -637,7 +637,7 @@ IMHO ;)
 
 =item OpenResty's admin site
 
-L<http://resty.eeeeworks.org/admin/>
+L<http://openresty.org/admin/>
 
 =item agentzh's blog and EEEE Works' blog
 

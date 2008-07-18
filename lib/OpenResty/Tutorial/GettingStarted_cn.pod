@@ -18,7 +18,7 @@ OpenResty 帐户是以应用为单位的。一般来说，每一个应用都应�
 
 OpenResty 本身是 100% 基于 Web Service 的，所以技术上讲完全可以使用包括 curl 和 Firefox 这样的 HTTP 客户端来管理你的帐户。但站长们一般都选择使用一个现成的基于 Web 的管理站点：
 
-L<http://resty.eeeeworks.org/admin/>
+L<http://openresty.org/admin/>
 
 用你的帐户名和 Admin 密码登录之后，你会看到它的主界面：
 
