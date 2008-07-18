@@ -180,5 +180,5 @@ Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
 
 =head1 SEE ALSO
 
-L<OpenResty::Backend::Base>, L<OpenResty::Backend::Pg>, L<OpenResty::Backend::PgMocked>, L<OpenResty>.
+L<OpenResty::Backend::Base>, L<OpenResty::Backend::Pg>, L<OpenResty::Backend::PLPerl>, L<OpenResty::Backend::PgMocked>, L<OpenResty>.
 
