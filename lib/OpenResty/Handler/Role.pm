@@ -215,7 +215,7 @@ sub GET_role_list {
     my ($self, $openresty, $bits) = @_;
     my $select = OpenResty::SQL::Select->new(
         qw< name description >
-    )->from('_roles');
+    )->from('_roles')->order_by('id');
     my $roles = $openresty->select("$select", { use_hash => 1 });
 
     $roles ||= [];
