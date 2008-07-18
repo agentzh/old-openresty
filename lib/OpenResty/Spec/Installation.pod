@@ -201,7 +201,7 @@ Now you can test your installation by starting the standalone server for OPenRes
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@yahoo.cn >>,
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>,
 Laser Henry (laser) C<< <laserhenry@gmail.com> >>.
 
 =head1 SEE ALSO
