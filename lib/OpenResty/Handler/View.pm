@@ -32,7 +32,7 @@ sub get_views {
     my ($self, $openresty, $params) = @_;
     my $select = OpenResty::SQL::Select->new(
         qw< name description >
-    )->from('_views');
+    )->from('_views')->order_by('id');
     return $openresty->select("$select", { use_hash => 1 });
 }
 
