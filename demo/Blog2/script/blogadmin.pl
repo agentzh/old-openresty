@@ -18,7 +18,7 @@ if ($cmd eq '--help' or $cmd eq '-h') {
     exit;
 }
 if ($cmd eq 'init') {
-    my $server = 'resty.eeeeworks.org';
+    my $server = 'api.openresty.org';
     GetOptions(
         'help'     => \$help,
         'server=s' => \$server,

@@ -1,5 +1,5 @@
 var openresty = null
-var Server = 'resty.eeeeworks.org';
+var Server = 'api.openresty.org';
 
 $(document).ready(init);
 

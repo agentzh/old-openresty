@@ -10,7 +10,7 @@ OpenResty::Tutorial::GettingStarted_cn - 中文版快速入门教程
 
 OpenResty 帐户是以应用为单位的。一般来说，每一个应用都应注册一个独立的 OpenResty 帐户。目前注册帐户的方法是写信给我们：C<agentzh@yahoo.cn>.
 
-请在来信中附上你希望的帐户名（全部小写字母加数字）以及 Admin 角色的初始密码。一般来说，我们创建的帐户都位于下面这个服务器：C<resty.eeeeworks.org>.
+请在来信中附上你希望的帐户名（全部小写字母加数字）以及 Admin 角色的初始密码。一般来说，我们创建的帐户都位于下面这个服务器：C<api.openresty.org>.
 
 =head2 管理 OpenResty 帐户
 
@@ -56,7 +56,7 @@ Models 选项卡是用来对 OpenResty Model 对象进行管理的。OpenResty M
 
 创建好的 Model 列表可以直接在浏览器或者 curl 中查看，例如
 
-  http://resty.eeeeworks.org/=/model?user=foo.Admin&password=PASSWORD
+  http://api.openresty.org/=/model?user=foo.Admin&password=PASSWORD
 
 这里 C<foo> 是你的帐户名，而 C<PASSWORD> 则是你的 Admin 角色的密码的 MD5。得到的结果应该是 model 列表的 JSON 表示。一个典型的输出是：
 

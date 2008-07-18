@@ -618,7 +618,7 @@ A (sort of) competitor for the Facebook Data Store API.
 
 We're already running an instance of the OpenResty server on our Yahoo! China's production machines:
 
-L<http://resty.eeeeworks.org/=/version>
+L<http://api.openresty.org/=/version>
 
 And there're several (pure-client-side) web sites alreadying taking advantage of the services:
 

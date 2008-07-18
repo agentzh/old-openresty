@@ -20,5 +20,5 @@ all:
 	mv site-binary.tar.gz out/
 
 upload: all
-	scp -l 10000 -r `pwd`/out agentz@resty.eeeeworks.org:~/admin
+	scp -l 10000 -r `pwd`/out agentz@openresty.org:~/admin
 

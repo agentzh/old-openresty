@@ -28,7 +28,7 @@ Options:
 _EOC_
 }
 
-my $server = 'resty.eeeeworks.org';
+my $server = 'api.openresty.org';
 my $step = 20;
 GetOptions(
     'help|h'   => \(my $help),

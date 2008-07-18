@@ -17,7 +17,7 @@ my $dir = shift || '/home/agentz/.purple/logs/irc/agentzh@10.62.136.8/#eeee.chat
 my @files = glob "$dir/2008-03-17*.txt";
 
 my $resty = WWW::OpenResty::Simple->new(
-    { server => 'resty.eeeeworks.org' }
+    { server => 'api.openresty.org' }
 );
 $resty->login($user, $password);
 $resty->delete('/=/model/IrcLog/~/~');

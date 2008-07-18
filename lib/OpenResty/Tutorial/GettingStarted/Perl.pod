@@ -30,7 +30,7 @@ C<foo> account.
 
 Throughout this tutorial, we'll assume you own an account named C<foo>
 whose C<Admin> role's password is C<hello1234>. And the account belongs
-to the server C<resty.eeeeworks.org>.
+to the server C<api.openresty.org>.
 
 =item L<WWW::OpenResty::Simple>
 
@@ -64,7 +64,7 @@ we usually use the default L<Admin> role with full priviledges:
     use WWW::OpenResty::Simple;
 
     my $resty = WWW::OpenResty::Simple->new(
-      { server => 'resty.eeeeworks.org' }
+      { server => 'api.openresty.org' }
     );
     $resty->login('foo', 'hello1234');
 
