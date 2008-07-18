@@ -22,7 +22,7 @@ POST /=/model/Foo
 {
     "description":"foo",
     "columns":
-        [ {"name":"name", "label":"姓名"},
+        [ {"name":"name", "type":"text","label":"姓名"},
           {"name":"age", "label": "年龄", "type":"integer"}
         ]
 }

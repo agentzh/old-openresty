@@ -1,10 +1,20 @@
 Change Log for OpenResty
 
-0.3.16 Jul 16 2008
-* added some POD to OpenResty::Config.
+0.3.16 Jul 18 2008
 * checks /etc/openresty/site_openresty.conf and /etc/openresty/openresty.conf when \$FindBin::Bin/etc/*.conf are not found.
 * now "make install" also installs haskell/bin/restyscript in case it exists.
+* added the misc/restylog utility for analysing lighttpd log for the OpenResty server.
+* added hint for editing the config file when the user starts the OpenResty server with the PgMocked backend enabled.
+* updated the docs to reflect the fact that we now use api.openresty.org for our main OpenResty server hosted by Yahoo! China.
+* updated the docs to reflect that we host the admin site now at http://openresty.org/admin/.
+* added an onerror handler to openresty's get method and now it croaks on failed HTTP requests like 404, 503 and bad address :)
+* demo/Admin - fixed an IE issue in admin.js regarding deleting a model row and adding the first model row.
+* demo/Admin - now it displays the loading flag during logging and also croaks on bad request by means of openresty.js's new onerror handler.
+* added the LICENSE file.
+* added debian packaging utilty. now "make -f dev.mk debian" will create a .deb file for OpenResty.
+* added some POD to OpenResty::Config.
 * added a section to OpenResty::Spec::Installation for system-wide installation of OpenResty.
+* skipped t/21-capthca.t in pgmocked and recording mode.
 
 0.3.15 Jul 15 2008
 * used the prompt function rather than <STDIN> in Makefile.PL as per Sanko Robinson's suggestion.

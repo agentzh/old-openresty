@@ -22,8 +22,8 @@ POST /=/model/Foo
 {
   "description":"Foo",
   "columns": [
-    {"name":"title", "label": "title", "default":"No title"},
-    {"name":"content", "label": "content", "default":"No content" }
+    {"name":"title", "type":"text", "label": "title", "default":"No title"},
+    {"name":"content", "type":"text", "label": "content", "default":"No content" }
   ]
 }
 --- response
@@ -194,8 +194,8 @@ GET /=/model/Foo/id/5
 POST /=/model/~
 { "name":"Howdy", "description":"Howdy",
   "columns":[
-    {"name":"title","label":"title"},
-    {"name":"updated","label":"updated","default":["now() at time zone 'UTC'"]}
+    {"name":"title","type":"text","label":"title"},
+    {"name":"updated","type":"text","label":"updated","default":["now() at time zone 'UTC'"]}
   ] }
 --- response
 {"success":1}

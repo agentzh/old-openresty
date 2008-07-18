@@ -71,8 +71,8 @@ POST /=/model/Bookmark.js
     "description": "我的书签",
     "columns": [
         { "name": "id", "type": "serial", "label": "ID" },
-        { "name": "title", "label": "标题" },
-        { "name": "url", "label": "网址" }
+        { "name": "title", "type":"text", "label": "标题" },
+        { "name": "url", "type":"varchar(20)", "label": "网址" }
     ]
 }
 --- response
@@ -97,7 +97,7 @@ GET /=/model/Bookmark.js
    [
     {"name":"id","label":"ID","type":"serial"},
     {"name":"title","default":null,"label":"标题","type":"text"},
-    {"name":"url","default":null,"label":"网址","type":"text"}
+    {"name":"url","default":null,"label":"网址","type":"varchar(20)"}
    ],
   "name":"Bookmark",
   "description":"我的书签"
@@ -332,7 +332,7 @@ GET /=/model/MyFavorites.js
    [
     {"name":"id","label":"ID","type":"serial"},
     {"name":"title","default":null,"label":"标题","type":"text"},
-    {"name":"url","default":null,"label":"网址","type":"text"}
+    {"name":"url","default":null,"label":"网址","type":"varchar(20)"}
    ],
   "name":"MyFavorites",
   "description":"我的最爱"

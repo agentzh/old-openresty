@@ -46,8 +46,8 @@ POST /=/model/Bookmark.js
     "description": "我的书签",
     "columns": [
         { "name": "id", "type": "serial", "label": "ID" },
-        { "name": "title", "label": "标题" },
-        { "name": "url" }
+        { "name": "title", "type":"text", "label": "标题" },
+        { "name": "url", "type":"text" }
     ]
 }
 --- response
@@ -125,8 +125,8 @@ POST /=/model/Bookmark
 {
     "description": "我的书签",
     "columns": [
-        { "name": "title", "label": "标题" },
-        { "name": "url", "label": "网址" }
+        { "name": "title", "type":"varchar  ( 20 )", "label": "标题" },
+        { "name": "url", "label": "网址", "type":"text" }
     ]
 }
 --- response
@@ -148,8 +148,8 @@ POST /=/model/bookmark.js
 {
     "description": "我的书签",
     "columns": [
-        { "name": "title", "label": "标题" },
-        { "name": "url", "label": "网址" }
+        { "name": "title", "type":"text", "label": "标题" },
+        { "name": "url", "label": "网址", "type":"text" }
     ]
 }
 --- response

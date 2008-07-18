@@ -22,8 +22,8 @@ POST /=/model/Carrie.js
 {
     "description": "我的书签",
     "columns": [
-        { "name": "title", "label": "标题" },
-        { "name": "url", "label": "网址" }
+        { "name": "title", "type":"text", "label": "标题" },
+        { "name": "url", "type":"text", "label": "网址" }
     ]
 }
 --- response

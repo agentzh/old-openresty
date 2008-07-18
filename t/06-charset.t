@@ -39,7 +39,7 @@ DELETE /=/model?charset=GBK
 --- charset: GBK
 --- request
 POST /=/model/Foo?charset=GBK
-{ "description": "你好么？", "columns": [{"name":"bar","label":"嘿嘿"}] }
+{ "description": "你好么？", "columns": [{"name":"bar","type":"text","label":"嘿嘿"}] }
 --- response
 {"success":1}
 
@@ -139,7 +139,8 @@ GET /=/model/Foo/~/~?charset=Big5
 --- charset: UTF-8
 --- request
 POST /=/model/Utf8?charset=guessing
-{ "description": "文字编码测试utf8", "columns": [{"name":"bar","label":"我们的open api"}] }
+{ "description": "文字编码测试utf8",
+    "columns": [{"name":"bar","type":"text", "label":"我们的open api"}] }
 --- response
 {"success":1}
 
@@ -165,7 +166,8 @@ GET /=/model/Utf8?charset=UTF-8
 --- charset: GBK
 --- request
 POST /=/model/Gbk?charset=guessing
-{ "description": "文字编码测试GBK 张皛珏 万珣新", "columns": [{"name":"bar","label":"我们的open api"}] }
+{ "description": "文字编码测试GBK 张皛珏 万珣新",
+    "columns": [{"name":"bar","type":"text", "label":"我们的open api"}] }
 --- response
 {"success":1}
 
@@ -191,7 +193,8 @@ GET /=/model/Gbk?charset=UTF-8
 --- charset: GB2312
 --- request
 POST /=/model/Gb2312?charset=guessing
-{ "description": "文字编码测试GB2312", "columns": [{"name":"bar","label":"我们的open api"}] }
+{ "description": "文字编码测试GB2312",
+    "columns": [{"name":"bar","type":"text","label":"我们的open api"}] }
 --- response
 {"success":1}
 
@@ -217,7 +220,8 @@ GET /=/model/Gb2312?charset=UTF-8
 --- charset: Big5
 --- request
 POST /=/model/Big5?charset=guessing
-{ "description": "文字編碼測試big5", "columns": [{"name":"bar","label":"我們的open api"}] }
+{ "description": "文字編碼測試big5", "columns":
+    [{"name":"bar","type":"text","label":"我們的open api"}] }
 --- response
 {"success":1}
 

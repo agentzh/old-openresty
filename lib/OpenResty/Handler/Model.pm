@@ -187,11 +187,11 @@ sub POST_model_column {
     if (defined $fst) {
         die "Column '$col' already exists in model '$model'.\n";
     }
-    # type defaults to 'text' if not specified.
-    my $type = $data->{type} || 'text';
+    my $type = $data->{type} or die
+        die "No 'type' specified for column \"$col\" in model \"$model\".\n";
+    $type = check_type($type);
     my $label = $data->{label} or
         die "No 'label' specified for column \"$col\" in model \"$model\".\n";
-    $type = check_type($type);
     my $insert = OpenResty::SQL::Insert->new('_columns')
         ->cols(qw< name label type table_name >)
         ->values( Q($col, $label, $type, $table_name) );
@@ -228,7 +228,6 @@ sub PUT_model_column {
     if (lc($col) eq 'id') {
         die "Column id is reserved.";
     }
-    # type defaults to 'text' if not specified.
     my $sql;
     my $new_col = delete $data->{name};
     my $update_meta = OpenResty::SQL::Update->new('_columns');
@@ -453,8 +452,8 @@ sub new_model {
             $found_id = 1;
             next;
         }
-        # type defaults to 'text' if not specified.
-        my $type = delete $col->{type} || 'text';
+        my $type = delete $col->{type} or
+            die "No 'type' specified for column \"$name\" in model \"$model\".\n";
         my $label = delete $col->{label} or
             die "No 'label' specified for column \"$name\" in model \"$model\".\n";
 

@@ -32,7 +32,7 @@ POST /=/model/Foo
 {
     "description":"foo",
     "columns":
-        [ {"name":"text", "label":"Text"} ]
+        [ {"name":"text", "type":"text", "label":"Text"} ]
 }
 --- response
 {"success":1}
