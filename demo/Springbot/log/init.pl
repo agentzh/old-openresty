@@ -16,7 +16,7 @@ my $user = $opts{u} or die "No -u specified.\n";
 my $password = $opts{p} or die "No -p specified.\n";
 
 my $resty = WWW::OpenResty::Simple->new(
-    { server => 'resty.eeeeworks.org' }
+    { server => 'api.openresty.org' }
 );
 $resty->login($user, $password);
 if (!$resty->has_model('IrcLog')) {

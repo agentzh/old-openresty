@@ -14,7 +14,7 @@ my $user = $opts{u} or
     die "No OpenResty account name specified via option -u\n";
 my $password = $opts{p} or
     die "No OpenResty account's Admin password specified via option -p\n";
-my $server = $opts{s} || 'http://resty.eeeeworks.org';
+my $server = $opts{s} || 'http://api.openresty.org';
 
 my $resty = WWW::OpenResty::Simple->new( { server => $server } );
 $resty->login($user, $password);

@@ -2,7 +2,7 @@
 
 # Sample:
 # bin/export-model.pl --user carrie --model YisouComments \
-#  --server http://resty.eeeeworks.org \
+#  --server http://api.openresty.org \
 #  > YisouComments.yml
 
 use strict;

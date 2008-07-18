@@ -18,7 +18,7 @@ my $password = $opts{p} or die "No -p specified.\n";
 
 
 my $resty = WWW::OpenResty::Simple->new(
-    { server => 'resty.eeeeworks.org' }
+    { server => 'api.openresty.org' }
 );
 $resty->login($user, $password);
 

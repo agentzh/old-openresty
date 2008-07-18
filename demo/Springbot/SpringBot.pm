@@ -45,7 +45,7 @@ sub new {
     my $password = delete $args{resty_password} or die "No password given";
 
     $Resty = WWW::OpenResty::Simple->new(
-        { server => 'resty.eeeeworks.org' }
+        { server => 'api.openresty.org' }
     );
     $Resty->login($account, $password);
     my $self = $proto->SUPER::new(%args);
@@ -332,7 +332,7 @@ sub find_employee {
     $text =~ s/\n+//sg;
     if ($text) {
         $text = $map{$text} || $text;
-        my $url = 'http://resty.eeeeworks.org/=/model/YahooStaff/~/' . $text;
+        my $url = 'http://api.openresty.org/=/model/YahooStaff/~/' . $text;
         $url = encode('utf8', $url),
         ### OpenResty URL: $url
         my $res;

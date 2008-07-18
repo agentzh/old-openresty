@@ -1,4 +1,4 @@
-//var restyhost = 'http://resty.eeeeworks.org';
+//var restyhost = 'http://api.openresty.org';
 var restyhost = 'http://localhost';
 var account = 'qyliu';
 
