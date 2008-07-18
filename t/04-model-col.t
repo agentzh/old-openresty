@@ -32,7 +32,7 @@ DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
 === TEST 2: create a model
 --- request
 POST /=/model/laser
-{ "description": "test model", "columns": [{ "name":"A","label":"A" }] }
+{ "description": "test model", "columns": [{ "name":"A","type":"text","label":"A" }] }
 --- response
 {"success":1}
 
@@ -394,7 +394,16 @@ PUT /=/model/laser/M
 
 
 
-=== TEST 41: logout
+=== TEST 41: create a column without type
+--- request
+POST /=/model/laser/title
+{"label":"Title"}
+--- response
+{"success":0,"error":"No 'type' specified for column \"title\" in model \"laser\"."}
+
+
+
+=== TEST 42: logout
 --- request
 GET /=/logout
 --- response

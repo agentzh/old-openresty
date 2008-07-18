@@ -25,7 +25,7 @@ for (1..$MODEL_LIMIT + 1) {
     my $model_name = 'Foo'.$_;
     my $url = '/=/model/'.$model_name;
     ### $url
-    my $body = '{"description":"blah","columns":[{"name":"title","label":"title"}]}';
+    my $body = '{"description":"blah","columns":[{"type":"text","name":"title","label":"title"}]}';
     my $res = $client->post($url, $body);
     ok $res->is_success, '1..' . $MODEL_LIMIT . ' OK';
     my $res_body = $res->content;
@@ -45,7 +45,7 @@ ok $res->is_success, 'response OK';
 my @cols;
 my $data = { description => 'blah', columns => \@cols };
 for (1..$COLUMN_LIMIT - 1) {
-    push @cols, { name => "Foo$_", label => 'abc' };
+    push @cols, { type => 'text', name => "Foo$_", label => 'abc' };
 }
 
 ## 1. create a mode first (column number: $COLUMN_LIMIT - 1)
@@ -62,7 +62,7 @@ for ($COLUMN_LIMIT..$COLUMN_LIMIT + 1) {
     my $col_name = 'Foo'.$_;
 
     my $url_local = $url.'/'.$col_name;
-    $body = '{"label":"'.$col_name.'"}';
+    $body = '{"label":"'.$col_name.'","type":"text"}';
 
     $res = $client->post($url_local, $body);
     ok $res->is_success, $COLUMN_LIMIT . ' OK';
@@ -79,7 +79,7 @@ for ($COLUMN_LIMIT..$COLUMN_LIMIT + 1) {
 @cols = @cols_bak;
 for ($COLUMN_LIMIT..$COLUMN_LIMIT + 2) {
     my $col_name = 'Foo'.$_;
-    push @cols, { name => $col_name, label => $col_name };
+    push @cols, { name => $col_name, label => $col_name, type => 'text' };
 
     my $data = { description => 'blah', columns => \@cols };
     my $body = Dump($data);
@@ -107,7 +107,7 @@ for ($COLUMN_LIMIT..$COLUMN_LIMIT + 2) {
 $res = $client->delete($url);
 
 ## 2. create it
-$body = '{"description":"blah","columns":[{"name":"title","label":"title"}]}';
+$body = '{"description":"blah","columns":[{"name":"title","type":"text","label":"title"}]}';
 $res = $client->post($url, $body);
 ### $res
 
@@ -142,7 +142,7 @@ for ($INSERT_LIMIT..$INSERT_LIMIT + 1) {
 
     ## 1. delete the 'foo' model first, then create it
     $res = $client->delete($url);
-    $body = '{"description":"blah","columns":[{"name":"title","label":"title"}]}';
+    $body = '{"description":"blah","columns":[{"name":"title","type":"text","label":"title"}]}';
     $res = $client->post($url, $body);
     ok $res->is_success, 'Create model okay';
 

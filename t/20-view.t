@@ -36,7 +36,7 @@ GET /=/view
 --- request
 POST /=/model/A
 { "description": "A",
-  "columns": { "name": "title", "label": "title" }
+  "columns": { "name": "title", "type":"text", "label": "title" }
   }
 --- response
 {"success":1}
@@ -48,7 +48,7 @@ POST /=/model/A
 POST /=/model/B
 { "description": "B",
   "columns": [
-    {"name":"body","label":"body"},
+    {"name":"body","type":"text", "label":"body"},
     {"name":"a","type":"integer","label":"a"}
   ]
 }

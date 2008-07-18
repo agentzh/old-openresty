@@ -36,7 +36,7 @@ DELETE /=/model.js?user=$TestAccount&password=$TestPass&use_cookie=1
 POST /=/model/Human
 { "description":"人类",
   "columns":
-    [ { "name": "gender", "label": "性别" } ]
+    [ { "name": "gender", "type":"text", "label": "性别" } ]
 }
 --- response
 {"success":1}
@@ -62,7 +62,7 @@ POST /=/model/Foo
   "name": "Blah",
   "description":"人类",
   "columns":
-    [ { "name": "gender", "label": "性别" } ]
+    [ { "name": "gender", "type":"text", "label": "性别" } ]
 }
 --- response
 {"success":1,"warning":"name \"Blah\" in POST content ignored."}
@@ -87,7 +87,7 @@ POST /=/model/Blah
 {
   "description":"人类",
   "columns":
-    [ { "name": "gender" } ]
+    [ { "name": "gender", "type": "text" } ]
 }
 --- response
 {"success":0,"error":"No 'label' specified for column \"gender\" in model \"Blah\"."}
@@ -245,7 +245,7 @@ POST /=/model/Tiger
 --- request
 POST /=/model/Tiger
 { "description": "Tiger", "columns":
-    [ { "name":"ddddddddddddddddddddddddddddddd", "label":"hiya" } ]
+    [ { "name":"ddddddddddddddddddddddddddddddd", "type":"text", "label":"hiya" } ]
 }
 --- response
 {"success":1}

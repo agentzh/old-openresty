@@ -1,3 +1,10 @@
+debian/conffiles
+debian/control
+debian/postinst
+debian/rules
+misc/restylog/import.pl
+misc/restylog/perl.css
+LICENSE
 AUTHORS
 bin/test-sql.pl
 bin/export-model.pl

@@ -49,8 +49,8 @@ POST /=/model/Address
     "description": "通讯录",
     "columns": [
         { "name": "id", "type": "serial", "label": "ID" },
-        { "name": "name", "label": "名称" },
-        { "name": "addr", "label": "地址" }
+        { "name": "name", "type":"text", "label": "名称" },
+        { "name": "addr", "type":"text", "label": "地址" }
     ]
 }
 --- response

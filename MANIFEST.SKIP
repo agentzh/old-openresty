@@ -1,5 +1,7 @@
+\.ttf$
 .par$
 \.swp$
+^libopenresty-perl
 demo/Blog/graphviz\.dot$
 demo/Click4honor/openresty\.js$
 demo/Springbot/staff/staff_files

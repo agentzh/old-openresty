@@ -70,8 +70,8 @@ POST /=/model/Carrie.js
 {
     "description": "我的书签",
     "columns": [
-        { "name": "title", "label": "标题" },
-        { "name": "url", "label": "网址" }
+        { "name": "title", "label": "标题", "type":"text" },
+        { "name": "url", "label": "网址","type":"text" }
     ]
 }
 --- response
@@ -211,14 +211,29 @@ GET /=/model?user=$TestAccount.Admin&password=$TestPass
 
 
 
-=== TEST 24: Create model with user info
+=== TEST 24: Create model with user info without specifying column types
 --- request
 POST /=/model/Test2?user=$TestAccount&password=$TestPass
 {
     "description": "我的书签",
     "columns": [
-        { "name": "title", "label": "标题" },
+        { "name": "title", "label": "标题"},
         { "name": "url", "label": "网址" }
+    ]
+}
+--- response
+{"error":"No 'type' specified for column \"title\" in model \"Test2\".","success":0}
+
+
+
+=== TEST 25: Create model with user info WITH column types
+--- request
+POST /=/model/Test2?user=$TestAccount&password=$TestPass
+{
+    "description": "我的书签",
+    "columns": [
+        { "name": "title", "label": "标题", "type":"text"},
+        { "name": "url", "type":"text", "label": "网址" }
     ]
 }
 --- response
@@ -226,7 +241,7 @@ POST /=/model/Test2?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 25: insert another record
+=== TEST 26: insert another record
 --- request
 POST /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 { "title":"second","url":"http://zhangxiaojue.cn"}
@@ -235,7 +250,7 @@ POST /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 26: delete all records with user info
+=== TEST 27: delete all records with user info
 --- request
 GET /=/delete/model/Test2/~/~?user=$TestAccount&password=$TestPass
 --- response
@@ -243,7 +258,7 @@ GET /=/delete/model/Test2/~/~?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 27: Check that the records have been indeed removed
+=== TEST 28: Check that the records have been indeed removed
 --- request
 GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 --- response
@@ -251,7 +266,7 @@ GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 28: delete all records with user info (the wrong way)
+=== TEST 29: delete all records with user info (the wrong way)
 --- request
 GET /=/delete/Test2/~/~?user=$TestAccount&password=$TestPass
 --- response
@@ -259,7 +274,7 @@ GET /=/delete/Test2/~/~?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 29: insert another record
+=== TEST 30: insert another record
 --- request
 POST /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 { "title":"second","url":"http://zhangxiaojue.cn"}
@@ -268,7 +283,7 @@ POST /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 30: read record using yml
+=== TEST 31: read record using yml
 --- format: YAML
 --- request
 GET /=/model/Test2/~/~.yml?user=$TestAccount&password=$TestPass
@@ -281,7 +296,7 @@ GET /=/model/Test2/~/~.yml?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 31: read record using json
+=== TEST 32: read record using json
 --- request
 GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 --- response
@@ -289,7 +304,7 @@ GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 32: Add column
+=== TEST 33: Add column
 --- request
 POST /=/model/Test2/num?user=$TestAccount&password=$TestPass
 { "type":"integer","label":"num"}
@@ -298,7 +313,7 @@ POST /=/model/Test2/num?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 33: Update records
+=== TEST 34: Update records
 --- request
 POST /=/put/model/Test2/~/~?user=$TestAccount&password=$TestPass
 { "num":1 }
@@ -307,7 +322,7 @@ POST /=/put/model/Test2/~/~?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 34: read records
+=== TEST 35: read records
 --- request
 GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 --- response
@@ -315,7 +330,7 @@ GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 35: Update for adding 1 at the original record
+=== TEST 36: Update for adding 1 at the original record
 --- request
 POST /=/put/model/Test2/id/2?user=$TestAccount&password=$TestPass
 { num:num+1}
@@ -325,7 +340,7 @@ POST /=/put/model/Test2/id/2?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 36: read records
+=== TEST 37: read records
 --- request
 GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 --- response
@@ -334,7 +349,7 @@ GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 37: logout
+=== TEST 38: logout
 --- request
 GET /=/logout
 --- response
