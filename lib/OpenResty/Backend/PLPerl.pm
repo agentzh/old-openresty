@@ -3,6 +3,48 @@ package OpenResty::Backend::PLPerl;
 use strict;
 use warnings;
 
+use base 'OpenResty::Backend::Pg';
+use OpenResty::Limits;
+
+sub new {
+    return bless { user => undef }, $_[0];
+}
+
+sub select {
+    my ($self, $sql, $opts) = @_;
+    my $rv = ::spi_exec_query($sql, $MAX_SELECT_LIMIT) or
+        return [];
+    my $rows = $rv->{rows} || [];
+    unless ($opts->{use_hash}) {
+        map { $_ = [values %$_] } @$rows;
+    }
+    return $rows;
+}
+
+sub do {
+    my ($self, $sql) = @_;
+    my $rv = ::spi_exec_query($sql) or return 0;
+    return $rv->{processed};
+}
+
+sub quote {
+    my $val = pop;
+    return undef unless defined $val;
+    $val =~ s/\\/\\\\/g;
+    $val =~ s/'/''/g;
+    "'$val'";
+}
+
+sub quote_identifier {
+    my $val = pop;
+    return undef unless defined $val;
+    $val =~ s/\\/\\\\/g;
+    $val =~ s/"/""/g;
+    qq{"$val"};
+}
+
+sub ping { 1; }
+
 1;
 __END__
 
