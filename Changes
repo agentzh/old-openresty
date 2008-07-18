@@ -120,7 +120,7 @@ Change Log for OpenResty
 * Renamed MiniSQL to RestyScript since it will no longer be a subset of SQL anyway.
 * Added support for various operations (including +, -, *, /, ^, ||, and %) in the RestyScript compiler.
 * Fixed the "like" operator in the restyscript compiler for views.
-* demo/Admin - the general-purpose OpenResty admin site is now functional and CRUD operations for models, model columns, model rows, views, and roles have been fully implemented. I've also put a compiled version at http://resty.eeeeworks.org/admin/ ).
+* demo/Admin - the general-purpose OpenResty admin site is now functional and CRUD operations for models, model columns, model rows, views, and roles have been fully implemented. I've also put a compiled version at http://openresty.org/admin/ ).
 * Upgraded the metamodel to 0.003
 
 0.1.10 April 4 2008
