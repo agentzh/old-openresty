@@ -71,4 +71,4 @@ requires:
   Time::HiRes: 0
   YAML::Syck: 1.04
   perl: 5.6.1
-version: 0.3.16
+version: 0.3.17
