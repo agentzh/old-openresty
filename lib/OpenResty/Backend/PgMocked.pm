@@ -138,7 +138,7 @@ sub new {
         $t_file = $&;
         $class->start_playing_file($t_file);
     } else {
-        die "The PgMocked backend is for testing only and it can only work when test_suite.use_http is set to 0.\n";
+        die "The PgMocked backend is for testing only and it can only work when test_suite.use_http is set to 0.\n\tPerhaps you forgot to edit /etc/openresty/site_openresty.conf?\n";
     }
     return bless {}, $class;
 }
