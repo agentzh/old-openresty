@@ -38,7 +38,7 @@ a I<remote> OpenResty server.
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+Agent Zhang (agentzh) C<< <agentzh@yahoo.com> >>
 
 =head1 SEE ALSO
 
