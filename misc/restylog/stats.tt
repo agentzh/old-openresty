@@ -1,0 +1,195 @@
+[% DEFAULT
+    year = '2008',
+    month = '07',
+    day = '04'
+-%]
+[% ymd = year _ month _ day -%]
+[% table = 'access_' _ ymd %]
+=encoding utf8
+
+=head1 NAME
+
+stats - OpenResty 前端机 ced02 的日志分析 ([% year %]-[% month %]-[% day %])
+
+=head1 DESCRIPTION
+
+先切换到 restylog 命字空间进行分析：
+
+=SQL set search_path to restylog;
+
+=SQL CREATE AGGREGATE array_accum ( sfunc = array_append, basetype = anyelement, stype = anyarray, initcond = '{}');
+
+=head2 所有应用
+
+=over
+
+=item 总量
+
+=SQL select count(*) from [% table %]
+
+=item 峰值 QPS
+
+=begin SQL
+
+-- select requested, count(*) as count, array_to_string(array_accum(client_addr :: text), ' ') as clients, array_to_string(array_accum(url :: text), ' ')  as urls
+select count(*) as count, requested, array_to_string(array_accum(client_addr :: text), ' ') as clients
+from [% table %]
+group by requested
+order by count desc
+limit 5;
+
+=end SQL
+
+=item 应用总数
+
+=SQL select count(distinct account) from [% table %]
+
+=item 流量最大的前十个应用
+
+=begin SQL
+
+select account, count(*) as req_count
+from [% table %]
+where account is not null
+group by account
+order by req_count desc
+limit 10;
+
+=end SQL
+
+=item 流量最大的十个客户端
+
+=begin SQL
+
+select client_addr, count(*) as req_count
+from [% table %]
+group by client_addr
+order by req_count desc
+limit 10
+
+=end SQL
+
+=back
+
+=head2 lifecai 应用的总访问量
+
+=SQL select count(*) from [% table %] where account = 'lifecai';
+
+=head2 来自全能搜索前端的流量
+
+=over
+
+=item 总量
+
+=SQL select count(*) from [% table %] where client_addr << '202.165/16' and account = 'lifecai';
+
+=item 机器分布
+
+=begin SQL
+
+select client_addr, count(*) as requests
+from [% table %]
+where client_addr << '202.165/16' and account = 'lifecai'
+group by client_addr
+order by requests
+
+=end SQL
+
+=item 峰值 QPS
+
+=begin SQL
+
+-- select requested, count(*) as count, array_to_string(array_accum(client_addr :: text), ' ') as clients, array_to_string(array_accum(url), ' ')  as urls
+select count(*) as count, requested
+from [% table %]
+where client_addr << '202.165/16'
+group by requested
+order by count desc
+limit 5;
+
+=end SQL
+
+=item 平均处理时间（秒）
+
+=Shell awk '{if (substr($4, 1, 7) == '202.165') print $3}' ced02/[% year %]/stats/[% year %]-[% month %]-[% day %].log | grep -v 'password' | perl -e 'while(<>){$s += $_;$c++;} printf "%.03f\n", $s/$c'
+
+其中最慢的 10 个请求是
+
+=Shell awk '{if (substr($4, 1, 7) == '202.165') print $3, $1, $2, $4, $5, $6, $7}' ced02/[% year %]/stats/[% year %]-[% month %]-[% day %].log | grep -v 'password' | sort -gr | head -n10 | perl -ne 's/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;print'
+
+=item 具有非空结果的有效请求
+
+=SQL select count(url) from [% table %] where response_size <> 13 and client_addr << '202.165/16';
+
+=back
+
+=head2 来自口碑前端的流量
+
+=over
+
+=item 总量
+
+=SQL select count(*) from [% table %] where client_addr << '122.224/16';
+
+=item 机器分布
+
+=begin SQL
+
+select client_addr, count(*) as requests
+from [% table %]
+where client_addr << '122.224/16'
+group by client_addr
+order by requests
+
+=end SQL
+
+=item 峰值 QPS
+
+=begin SQL
+
+-- select requested, count(*) as count, array_to_string(array_accum(client_addr :: text), ' ') as clients, array_to_string(array_accum(url), ' ')  as urls
+select count(*) as count, requested
+from [% table %]
+where client_addr << '122.224/16'
+group by requested
+order by count desc
+limit 5;
+
+=end SQL
+
+=item 平均处理时间（秒）
+
+=Shell awk '{if (substr($4, 1, 7) == '122.224') print $3}' ced02/[% year %]/stats/[% year %]-[% month %]-[% day %].log | perl -e 'while(<>){$s += $_;$c++} printf("%.03f\n", $s/$c)'
+
+其中最慢的 10 个请求是
+
+=Shell awk '{if (substr($4, 1, 7) == '122.224') print $3, $1, $2, $4, $5, $6, $7}' ced02/[% year %]/stats/[% year %]-[% month %]-[% day %].log | sort -gr | head -n10 | perl -ne 's/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;print'
+
+=item 具有非空结果的有效请求
+
+=SQL select count(url) from [% table %] where response_size <> 17 and client_addr << '122.224/16';
+
+=item 来自餐饮模块的请求
+
+=SQL select count(url) from [% table %] where url like '%&_app=餐饮%'
+
+=item 来自店铺模块的请求
+
+=SQL select count(url) from [% table %] where url like '%&_app=店铺%'
+
+=back
+
+=head2 人物搜索评论 people 应用
+
+=over
+
+=item 总访问量
+
+=SQL select count(*) from [% table %] where account = 'people'
+
+=item 发表评论者
+
+=SQL select count(*) from [% table %] where account = 'people' and method = 'POST'
+
+=back
+
