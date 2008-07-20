@@ -121,7 +121,7 @@ function dispatchByAnchor () {
     savedAnchor = anchor;
 
     // prevent memory leaks from dynamically created <script> nodes:
-    if (loadingCount <= 0) openresty.purge();
+    //if (loadingCount <= 0) openresty.purge();
     loadingCount = 0;
 
     var match = anchor.match(/^post-(\d+)(:comments|comment-(\d+))?/);
