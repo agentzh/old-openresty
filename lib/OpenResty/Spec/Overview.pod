@@ -191,7 +191,7 @@ will yield an HTTP response from the OpenResty server like this:
 
 And subsequent requests can be made by using the resulting session ID:
 
-  GET /=/model/Post/id/3?session=535F265E-0F99-11DD-B185-1A3EB9E8D9B0
+  GET /=/model/Post/id/3?_session=535F265E-0F99-11DD-B185-1A3EB9E8D9B0
 
 For convenience, the sample HTTP requests given throughout this document
 will not specify the C<_user> nor the C<_session> parameter explicitly.
@@ -451,8 +451,6 @@ views in an action, or even call the action itself (i.e. recursive
 calling). Special constraints would be imposed on the length of the
 action call chain though. There would also be some limit regarding the
 total number of commands grouped in an action.
-
-
 
 =head2 Captchas
 
