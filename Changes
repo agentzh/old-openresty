@@ -2,6 +2,8 @@ Change Log for OpenResty
 
 0.3.18 Jul 21 2008
 * Builtin parameters like user, password, session, use_cookie, limit/count, offset, last_response, var, callback, and charset are not renamed to the form with a leading underscore, as in _user, _password, _session, _use_cookie, _limit/_count, _offset, _last_response and etc. The old form is still supported in the short term but is now deprecated.
+* added missing files for misc/restylog/.
+* initial PL/Perl support.
 
 0.3.17 Jul 18 2008
 * now we always sort the model/role/view/feed list by id asc.
