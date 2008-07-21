@@ -22,7 +22,7 @@ $SIG{CHLD} = "IGNORE";
 
 our @Brain = (
     [0 => qr{https?://[^\(\)（）？。]+} => \&process_url],
-    [0 => qr{(?:哈你个头|[^A-Za-z]TMD[^A-Za-z]|\bTMD\b|\bshit\b|\bf[us]ck(?:ing)?\b|\bdammit\b|\bdamn(?:\s+it)?\b|\bbastard\b|perl.*?邪教)}i => \&punish_him],
+    [0 => qr{(?:哈你个头|[^A-Za-z]TMD[^A-Za-z]|\bTMD\b|\bshit\b|\bf[us\*]ck(?:ing)?\b|\bdammit\b|\bdamn(?:\s+it)?\b|\bbastard\b|perl.*?邪教|\bMD\b)}i => \&punish_him],
     [1 => qr{^\s*baidu\s+}i => \&baidu_stuff],
     [0 => qr{^\s*emp(?:loyee)?\s+} => \&find_employee],
     [1 => qr{.} => \&reply_crap],
@@ -201,6 +201,7 @@ sub process_url {
     my ($self, $pattern, $text, $url, $say, $sender) = @_;
     my $charset = $self->charset;
     #$say->("Found URL: $match");
+    if ($url =~ /\.(?:avi|iso|msi|exe|mp3|rm|rmvb|bak|txt|jpg|jpeg|png|xml|tiff|gif|mov|flw|swf|sql)\b/i) { return; }
     warn "Getting $url...\n";
     my $res = $ua->get($url);
     if (!$res->is_success) {
