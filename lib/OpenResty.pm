@@ -591,7 +591,7 @@ OpenResty - General-purpose web service platform for web applications
 
 =head1 VERSION
 
-This document describes OpenResty 0.3.17 released on July 18, 2008.
+This document describes OpenResty 0.3.18 released on July 21, 2008.
 
 =head1 DESCRIPTION
 

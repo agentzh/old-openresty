@@ -120,7 +120,7 @@ sub import_file {
             $enc = guess_enc($referrer);
             $referrer = decode($enc, $referrer);
             my $account;
-            if ($url =~ m{/=/.*?\?.*?\buser=(\w+)}) {
+            if ($url =~ m{/=/.*?\?.*?\b_?user=(\w+)}) {
                 $account = $1;
                 $account = $dbh->quote($account);
             } else {
