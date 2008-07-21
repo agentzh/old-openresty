@@ -779,7 +779,7 @@ sub insert_record {
 
 sub process_order_by {
     my ($self, $openresty, $select, $model) = @_;
-    my $order_by = $openresty->{_cgi}->url_param('order_by');
+    my $order_by = $openresty->builtin_param('_order_by');
     return unless defined $order_by;
     die "No column found in order_by.\n" if $order_by eq '';
     my @sub_order_by = split ',', $order_by;
@@ -830,7 +830,7 @@ sub select_records {
     #warn "VAL: $val\n";
     #warn "IS UTF8???";
     if (defined $val and $val ne '~') {
-        my $op = $openresty->{_cgi}->url_param('op') || 'eq';
+        my $op = $openresty->builtin_param('_op') || 'eq';
         $op = $OpenResty::OpMap{$op};
         if ($op eq 'like') {
             $val = "%$val%";

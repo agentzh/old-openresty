@@ -23,7 +23,7 @@ __DATA__
 
 === TEST 1: Delete existing models
 --- request
-DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
+DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 {"success":1}
 
@@ -81,7 +81,7 @@ POST /=/model/Carrie/~/~.js
 
 === TEST 7: find out two record assign to var hello
 --- request
-GET /=/model/Carrie/~/~.js?var=hello
+GET /=/model/Carrie/~/~.js?_var=hello
 --- response
 hello=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}];
 
@@ -102,7 +102,7 @@ select * from Carrie where title = 'hello carrie' and num=10;"
 
 === TEST 9: use minisql through GET & RunAction
 --- request
-GET /=/post/action/RunAction/~/~?var=foo&data="select * from Carrie where url = 'http://www.carriezh.cn/' and num=10"
+GET /=/post/action/RunAction/~/~?_var=foo&_data="select * from Carrie where url = 'http://www.carriezh.cn/' and num=10"
 --- response
 foo=[[{"id":"1","num":"10","title":"hello carrie","url":"http://www.carriezh.cn/"}]];
 
@@ -110,7 +110,7 @@ foo=[[{"id":"1","num":"10","title":"hello carrie","url":"http://www.carriezh.cn/
 
 === TEST 10: test for offset & count
 --- request
-GET /=/post/action/RunAction/~/~?var=foo&data="select * from Carrie offset 0 limit 1"
+GET /=/post/action/RunAction/~/~?_var=foo&_data="select * from Carrie offset 0 limit 1"
 --- response
 foo=[[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}]];
 
@@ -118,7 +118,7 @@ foo=[[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1
 
 === TEST 11: OFFSET & limit in minisql
 --- request
-GET /=/post/action/RunAction/~/~?var=foo&data="select * from Carrie limit 1 offset 0"
+GET /=/post/action/RunAction/~/~?_var=foo&_data="select * from Carrie limit 1 offset 0"
 --- response
 foo=[[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}]];
 
@@ -126,7 +126,7 @@ foo=[[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1
 
 === TEST 12: OFFSET & limit in minisql
 --- request
-POST /=/action/RunAction/~/~?var=foo
+POST /=/action/RunAction/~/~?_var=foo
 "select * from Carrie limit 1 offset 1"
 --- response
 foo=[[{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}]];
@@ -135,7 +135,7 @@ foo=[[{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}]];
 
 === TEST 13: Try to reference meta models
 --- request
-POST /=/action/RunAction/~/~?var=foo
+POST /=/action/RunAction/~/~?_var=foo
 "select * from _models limit 1 offset 1"
 --- response
 foo={"error":"\"action\" (line 1, column 15):\nunexpected \"_\"\nexpecting space or model","success":0};
@@ -312,10 +312,10 @@ GET ('/=/model/Carrie/~/~') ; delete from Carrie where id = 3
 === TEST 29: access another account
 --- request
 POST /=/action/RunAction/~/~
-"DELETE '/=/model?user=$TestAccount2&password=$TestPass2';
+"DELETE '/=/model?_user=$TestAccount2&_password=$TestPass2';
 POST '/=/model/Another' {\"description\":\"a model in another account\"};
 GET '/=/model';
-GET '/=/model?user=$TestAccount2&password=$TestPass2'"
+GET '/=/model?_user=$TestAccount2&_password=$TestPass2'"
 --- response
 [
     {"success":1},
@@ -331,7 +331,7 @@ GET '/=/model?user=$TestAccount2&password=$TestPass2'"
 
 === TEST 30: check Test account 2:
 --- request
-GET /=/model?user=$TestAccount2&password=$TestPass2
+GET /=/model?_user=$TestAccount2&_password=$TestPass2
 --- response
 []
 
@@ -339,7 +339,7 @@ GET /=/model?user=$TestAccount2&password=$TestPass2
 
 === TEST 31: recheck Test account 1:
 --- request
-GET /=/model?user=$TestAccount&password=$TestPass
+GET /=/model?_user=$TestAccount&_password=$TestPass
 --- response
 [
     {"src":"/=/model/Carrie","name":"Carrie","description":"我的书签"},

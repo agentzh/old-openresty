@@ -23,7 +23,7 @@ __DATA__
 
 === TEST 1: Delete existing models
 --- request
-DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
+DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 {"success":1}
 
@@ -371,7 +371,7 @@ POST /=/model/laser/~
 
 === TEST 38: Insert a record
 --- request
-GET /=/post/model/laser/~/~?data={"M":3.14}
+GET /=/post/model/laser/~/~?_data={"M":3.14}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/laser/id/2"}
 

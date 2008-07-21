@@ -132,7 +132,7 @@ GET /=/captcha/id?lang=fr
 
 === TEST 14: Login via captcha (invalid format, id only)
 --- request
-GET /=/model?user=$TestAccount.Admin&captcha=$SavedCapture
+GET /=/model?_user=$TestAccount.Admin&_captcha=$SavedCapture
 --- response_like
 {"success":0,"error":"Bad captcha parameter: [0-9a-zA-Z._-]+"}
 
@@ -140,7 +140,7 @@ GET /=/model?user=$TestAccount.Admin&captcha=$SavedCapture
 
 === TEST 15: Login via captcha (invalid format, id only)
 --- request
-GET /=/model?user=$TestAccount.Admin&captcha=$SavedCapture:abc
+GET /=/model?_user=$TestAccount.Admin&_captcha=$SavedCapture:abc
 --- response_like
 {"success":0,"error":"Cannot login as $TestAccount.Admin via captchas."}
 
@@ -148,7 +148,7 @@ GET /=/model?user=$TestAccount.Admin&captcha=$SavedCapture:abc
 
 === TEST 16: Login as Admin
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=1
 --- response_like
 ^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
 
@@ -199,7 +199,7 @@ GET /=/captcha/id
 === TEST 22: Login via captcha (wrong solution)
 --- sleep_before: 1
 --- request
-GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:abc
+GET /=/model?_user=$TestAccount.Poster&_captcha=$SavedCapture:abc
 --- response
 {"success":0,"error":"Solution to the captcha is incorrect."}
 
@@ -207,7 +207,7 @@ GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:abc
 
 === TEST 23: Login via captcha (wrong captcha ID format)
 --- request
-GET /=/model?user=$TestAccount.Poster&captcha=aa$SavedCapture:abc
+GET /=/model?_user=$TestAccount.Poster&_captcha=aa$SavedCapture:abc
 --- response
 {"success":0,"error":"Captcha ID format is incorrect."}
 
@@ -251,7 +251,7 @@ GET /=/captcha/id/$SavedCapture
 === TEST 28: Use captcha to login
 --- sleep_before: 1
 --- request
-GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
+GET /=/model?_user=$TestAccount.Poster&_captcha=$SavedCapture:helloworld
 --- response
 []
 
@@ -259,7 +259,7 @@ GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
 
 === TEST 29: Use captcha to login (use previous succeeded one again)
 --- request
-GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
+GET /=/model?_user=$TestAccount.Poster&_captcha=$SavedCapture:helloworld
 --- response
 {"success":0,"error":"The captcha has been used."}
 
@@ -277,7 +277,7 @@ GET /=/captcha/id/$SavedCapture
 
 === TEST 31: Use captcha to login (use expired succeeded one again)
 --- request
-GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworld
+GET /=/model?_user=$TestAccount.Poster&_captcha=$SavedCapture:helloworld
 --- response
 {"success":0,"error":"Captcha ID has expired."}
 --- SKIP
@@ -304,7 +304,7 @@ GET /=/captcha/id/$SavedCapture?lang=en
 === TEST 34: Use captcha to login (wrong password)
 --- sleep_before: 1
 --- request
-GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:helloworldd
+GET /=/model?_user=$TestAccount.Poster&_captcha=$SavedCapture:helloworldd
 --- response
 {"success":0,"error":"Solution to the captcha is incorrect."}
 
@@ -331,7 +331,7 @@ GET /=/captcha/id/$SavedCapture
 === TEST 37: Use captcha to login
 --- sleep_before: 1
 --- request
-GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:你好，世界！
+GET /=/model?_user=$TestAccount.Poster&_captcha=$SavedCapture:你好，世界！
 --- response
 []
 --- use_ttf: 1
@@ -359,7 +359,7 @@ GET /=/captcha/id/$SavedCapture
 buggy in PgMocked...
 --- sleep_before: 1
 --- request
-GET /=/model?user=$TestAccount.Poster&captcha=$SavedCapture:你好，世界啊！
+GET /=/model?_user=$TestAccount.Poster&_captcha=$SavedCapture:你好，世界啊！
 --- response
 {"success":0,"error":"Solution to the captcha is incorrect."}
 --- use_ttf: 1

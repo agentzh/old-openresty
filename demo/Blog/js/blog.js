@@ -1,6 +1,6 @@
 var account = 'agentzh';
-var host = 'http://api.eeeeworks.org';
-//var host = 'http://10.62.136.86';
+//var host = 'http://api.eeeeworks.org';
+var host = 'http://10.62.136.86';
 
 var openresty = null;
 var savedAnchor = null;
@@ -210,9 +210,9 @@ function getPostList (page) {
     setStatus(true, 'renderPostList');
     openresty.callback = renderPostList;
     openresty.get('/=/model/Post/~/~', {
-        count: itemsPerPage,
-        order_by: 'id:desc',
-        offset: itemsPerPage * (page - 1)
+        _count: itemsPerPage,
+        _order_by: 'id:desc',
+        _offset: itemsPerPage * (page - 1)
     });
 }
 

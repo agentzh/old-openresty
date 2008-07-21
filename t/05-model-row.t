@@ -19,7 +19,7 @@ __DATA__
 
 === TEST 1: Login
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=1
 --- response_like
 ^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
 

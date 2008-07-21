@@ -56,7 +56,7 @@ Models 选项卡是用来对 OpenResty Model 对象进行管理的。OpenResty M
 
 创建好的 Model 列表可以直接在浏览器或者 curl 中查看，例如
 
-  http://api.openresty.org/=/model?user=foo.Admin&password=PASSWORD
+  http://api.openresty.org/=/model?_user=foo.Admin&_password=PASSWORD
 
 这里 C<foo> 是你的帐户名，而 C<PASSWORD> 则是你的 Admin 角色的密码的 MD5。得到的结果应该是 model 列表的 JSON 表示。一个典型的输出是：
 
@@ -64,7 +64,7 @@ Models 选项卡是用来对 OpenResty Model 对象进行管理的。OpenResty M
 
 如果在 URL 主体后面加上 .yml 后缀，则能看到可读性更好的 YAML 表示：
 
-  GET /=/model.yml?user=foo.Admin&password=PASSWORD
+  GET /=/model.yml?_user=foo.Admin&_password=PASSWORD
 
 一次典型的输出是
 
@@ -120,7 +120,7 @@ L<OpenResty::Spec::Overview/Models>
 
 在创建了这个名为 FindStudent 的 View 对象之后，我们可以通过 HTTP 来调用 View 对象，从而执行其对应的参数化的查询:
 
-  GET /=/view/FindStudent/~/~?name=李明&age=35&user=foo.Admin&password=PASSWORD
+  GET /=/view/FindStudent/~/~?name=李明&age=35&_user=foo.Admin&_password=PASSWORD
 
 就将返回 FindStudent 中年龄在 35 岁以上的名叫“李明”的记录列表（JSON格式）。
 

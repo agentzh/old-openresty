@@ -10,7 +10,7 @@ __DATA__
 
 === TEST 1: Delete existing models
 --- request
-DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
+DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 {"success":1}
 
@@ -83,7 +83,7 @@ GET /=/model/Carrie/url/http://zhangxiaojue.cn/test%2Ephp%3Fp%3Dmp3%26t%3Dweb
 
 === TEST 9: READ a record use 'contains'
 --- request
-GET /=/model/Carrie/url/zhangxiaojue?op=contains
+GET /=/model/Carrie/url/zhangxiaojue?_op=contains
 --- response
 [{"url":"http://zhangxiaojue.cn/test.php?p=mp3&t=web","title":"second","id":"2"}]
 

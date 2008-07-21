@@ -26,7 +26,7 @@ DELETE /=/model.js
 
 === TEST 3: Delete existing models (session)
 --- request
-DELETE /=/model.js?session=$SavedCapture
+DELETE /=/model.js?_session=$SavedCapture
 --- response
 {"success":1}
 
@@ -34,7 +34,7 @@ DELETE /=/model.js?session=$SavedCapture
 
 === TEST 4: Login w/o cookie(obvious)
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=0
+GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=0
 --- response_like
 ^{"success":1,"session":"([-\w]+)","account":"$TestAccount","role":"Admin"}$
 
@@ -50,7 +50,7 @@ DELETE /=/model.js
 
 === TEST 6: Delete existing models (session)
 --- request
-DELETE /=/model.js?session=$SavedCapture
+DELETE /=/model.js?_session=$SavedCapture
 --- response
 {"success":1}
 
@@ -58,7 +58,7 @@ DELETE /=/model.js?session=$SavedCapture
 
 === TEST 7: Login with cookie
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=1
 --- response_like
 ^{"success":1,"session":"([-\w]+)","account":"$TestAccount","role":"Admin"}$
 
@@ -74,7 +74,7 @@ DELETE /=/model.js
 
 === TEST 9: Delete existing models (session)
 --- request
-DELETE /=/model.js?session=$SavedCapture
+DELETE /=/model.js?_session=$SavedCapture
 --- response
 {"success":1}
 
@@ -98,7 +98,7 @@ DELETE /=/model.js
 
 === TEST 12: Login with cookie
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=1
 --- response_like
 ^{"success":1,"session":"([-\w]+)","account":"$TestAccount","role":"Admin"}$
 
@@ -106,7 +106,7 @@ GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
 
 === TEST 13: Delete existing models (session)
 --- request
-DELETE /=/model.js?session=$SavedCapture
+DELETE /=/model.js?_session=$SavedCapture
 --- response
 {"success":1}
 
@@ -122,7 +122,7 @@ GET /=/logout
 
 === TEST 15: Delete existing models (session)
 --- request
-DELETE /=/model.js?session=$SavedCapture
+DELETE /=/model.js?_session=$SavedCapture
 --- response
 {"success":0,"error":"Login required."}
 
@@ -130,7 +130,7 @@ DELETE /=/model.js?session=$SavedCapture
 
 === TEST 16: Login w/o cookie(obvious)
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=0
+GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=0
 --- response_like
 ^{"success":1,"session":"([-\w]+)","account":"$TestAccount","role":"Admin"}$
 
@@ -138,7 +138,7 @@ GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=0
 
 === TEST 17: Delete existing models (session)
 --- request
-DELETE /=/model.js?session=$SavedCapture
+DELETE /=/model.js?_session=$SavedCapture
 --- response
 {"success":1}
 
@@ -154,7 +154,7 @@ GET /=/logout
 
 === TEST 19: Delete existing models (session)
 --- request
-DELETE /=/model.js?session=$SavedCapture
+DELETE /=/model.js?_session=$SavedCapture
 --- response
 {"success":1}
 
@@ -162,7 +162,7 @@ DELETE /=/model.js?session=$SavedCapture
 
 === TEST 20: Logout
 --- request
-GET /=/logout?session=$SavedCapture
+GET /=/logout?_session=$SavedCapture
 --- response
 {"success":1}
 
@@ -170,7 +170,7 @@ GET /=/logout?session=$SavedCapture
 
 === TEST 21: Delete existing models (session)
 --- request
-DELETE /=/model.js?session=$SavedCapture
+DELETE /=/model.js?_session=$SavedCapture
 --- response
 {"success":0,"error":"Login required."}
 

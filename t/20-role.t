@@ -18,7 +18,7 @@ GET /=/login/$TestAccount.Admin
 
 === TEST 2: login
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=1
 --- response_like
 ^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 
@@ -254,7 +254,7 @@ GET /=/login/.Public
 
 === TEST 25: Switch to the Public role
 --- request
-GET /=/login/$TestAccount.Public?use_cookie=1
+GET /=/login/$TestAccount.Public?_use_cookie=1
 --- response_like
 ^{"account":"$TestAccount","role":"Public","session":"[-\w]+","success":1}$
 
@@ -468,7 +468,7 @@ POST /=/view/MyView
 
 === TEST 50: Switch back to the Admin role
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=1
 --- response_like
 ^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 
@@ -629,7 +629,7 @@ GET /=/login/$TestAccount.Poster
 
 === TEST 65: Log into the new role
 --- request
-GET /=/login/$TestAccount.Poster/4417935?use_cookie=1
+GET /=/login/$TestAccount.Poster/4417935?_use_cookie=1
 --- response_like
 ^{"account":"$TestAccount","role":"Poster","session":"[-\w]+","success":1}$
 
@@ -682,7 +682,7 @@ DELETE /=/role/Poster
 
 === TEST 71: Switch back to the Amin role
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=1
 --- response_like
 ^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 
@@ -1056,7 +1056,7 @@ GET /=/login/$TestAccount.Newname/123456789
 
 === TEST 105: Switch back to the Amin role
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=1
 --- response_like
 ^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 
@@ -1240,7 +1240,7 @@ GET /=/login/$TestAccount.Poster/123456789
 
 === TEST 121: Switch back to the Amin role
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=1
 --- response_like
 ^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 
@@ -1267,7 +1267,7 @@ GET /=/login/$TestAccount.Poster/789456213
 
 === TEST 124: Switch back to the Amin role
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=1
 --- response_like
 ^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 
@@ -1374,7 +1374,7 @@ GET /=/login/$TestAccount.Poster/shangerdi
 
 === TEST 134: Switch back to the Amin role
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=1
 --- response_like
 ^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 
@@ -1445,7 +1445,7 @@ GET /=/login/$TestAccount.Poster/SHANG1984_shangerdi_1984_shang_er_di_19841984
 
 === TEST 141: Switch back to the Amin role
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=1
 --- response_like
 ^{"account":"$TestAccount","role":"Admin","session":"[-\w]+","success":1}$
 

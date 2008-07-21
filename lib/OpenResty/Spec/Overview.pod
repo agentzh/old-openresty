@@ -161,12 +161,12 @@ Every user accessing an OpenResty server must specify both its account
 name and its role name unless he or she has already logged in and got
 a session ID. For example, a typical HTTP request may look like this:
 
-  GET /=/model/Post/id/3?user=agentzh.Public HTTP/1.0
+  GET /=/model/Post/id/3?_user=agentzh.Public HTTP/1.0
 
-In the above example, the C<user> parameter has the value
+In the above example, the C<_user> parameter has the value
 C<agentzh.Public> where C<agentzh> is the account name and C<Public>
 the role name. In addition, the C<Public> role is an anonymous role,
-or a C<password> or a C<captcha> parameter would be required here as
+or a C<_password> or a C<_captcha> parameter would be required here as
 well. This authentication method is called "per-request login".
 
 Alternatively, the user can login with his user name and MD5'd password
@@ -194,7 +194,7 @@ And subsequent requests can be made by using the resulting session ID:
   GET /=/model/Post/id/3?session=535F265E-0F99-11DD-B185-1A3EB9E8D9B0
 
 For convenience, the sample HTTP requests given throughout this document
-will not specify the C<user> nor the C<session> parameter explicitly.
+will not specify the C<_user> nor the C<_session> parameter explicitly.
 
 It's worth mentioning that the simple MD5 treatment of passwords in the
 current implementation is merely a hack and will be changed in the near
@@ -254,7 +254,7 @@ The model API not only offers interfaces to perform CRUD operations on
 models, columns, and rows, but also gives some simple but still powerful
 query functionalities. Here's an example:
 
-  GET /=/model/Post/author/agentzh?order_by=created:desc&count=10 HTTP/1.0
+  GET /=/model/Post/author/agentzh?_order_by=created:desc&_count=10 HTTP/1.0
 
 which is roughly equivalent to the following standard SQL query:
 
@@ -501,8 +501,8 @@ fetch the catpcha image:
 With the captcha ID along with the captcha solution given by the I<end
 user> the following operation can be tried:
 
-    POST /=/model/Comment/~/~?user=agentzh.CommentPoster\
-        &captcha=B44572D0-1038-11DD-B185-1A3EB9E8D9B0:pretty%20cat \
+    POST /=/model/Comment/~/~?_user=agentzh.CommentPoster\
+        &_captcha=B44572D0-1038-11DD-B185-1A3EB9E8D9B0:pretty%20cat \
         HTTP/1.0
     Content-Type: text/json
     Content-Length: 52
@@ -524,11 +524,11 @@ directly initiated from the I<end> user's web browser.
 For GET requests, it's the common practice to do cross-domain AJAX
 requests via dynamically created C<< <script> >> tags.
 To help the page owner do this trick with an OpenResty server, the
-special C<callback> URL parameter is supported to make the server
+special C<_callback> URL parameter is supported to make the server
 returning JSON data wrapped by C<some_callback_func(> and C<);>.
 For example, the request
 
-  GET /=/view/RecentPosts/~/~?user=agentzh.Public&callback=foo HTTP/1.0
+  GET /=/view/RecentPosts/~/~?_user=agentzh.Public&_callback=foo HTTP/1.0
 
 yields something like this
 
@@ -564,7 +564,7 @@ To overcome the length limit of URLs, cross-site POST interface
 is also supported. Basically the user could use an HTML form in his web
 page like below:
 
-  <form action="/=/model/Comment/~/~?last_response=69bc45ec71ca7dc83cc"
+  <form action="/=/model/Comment/~/~?_last_response=69bc45ec71ca7dc83cc"
         method="POST"
         onclick="onPostComment()"
         target="myHiddenFrame">
@@ -574,7 +574,7 @@ page like below:
 
 and the browser may initiate a POST request when submitting this form:
 
-  POST /=/model/Comment/~/~?last_response=69bc45ec71ca7dc83cc HTTP/1.0
+  POST /=/model/Comment/~/~?_last_response=69bc45ec71ca7dc83cc HTTP/1.0
   Content-Type: application/x-www-form-urlencoded
   Content-Length: 23
 
@@ -590,11 +590,11 @@ which is functionally equivalent to
 
 with the exception that the OpenResty serser would save the response of
 the current POST request and allow the user to retrieve it later (using
-the same C<last_response> key):
+the same C<_last_response> key):
 
   GET /=/last/response/69bc45ec71ca7dc83cc
 
-Note that the C<last_response> key C<69bc45ec71ca7dc83cc> used here
+Note that the C<_last_response> key C<69bc45ec71ca7dc83cc> used here
 should be randomly selected and globally unique enough.
 
 The "last response" stuff is essential for the web page client to

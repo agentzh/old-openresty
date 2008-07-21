@@ -231,14 +231,15 @@ sub process_request {
     if ($key !~ /^(?:login|captcha|version)$/) {
         eval {
             # XXX this part is lame...
-            my $user = $cgi->url_param('user');
+            # XXX param user is now deprecated; use _user instead
+            my $user = $openresty->builtin_param('_user');
             if (defined $user) {
                 #$OpenResty::Cache->remove($uuid);
-                my $captcha = $cgi->url_param('captcha');
+                my $captcha = $openresty->builtin_param('_captcha');
                 ### URL param capture: $captcha
                 require OpenResty::Handler::Login;
                 my $res = OpenResty::Handler::Login->login($openresty, $user, {
-                    password => scalar($cgi->url_param('password')),
+                    password => $openresty->builtin_param('_password'),
                     captcha => $captcha,
                 });
                 $account = $res->{account};

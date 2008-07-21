@@ -9,6 +9,7 @@ all:
 	tpage --define cat=view template/js/handlers.tt > out/view.js
 	tpage --define cat=role template/js/handlers.tt > out/role.js
 	tpage --define cat=feed template/js/handlers.tt > out/feed.js
+	tpage --define cat=action template/js/handlers.tt > out/action.js
 	tpage template/js/dispatcher.tt > out/dispatcher.js
 	cp html/login.html out/
 	cp ../Blog/image/loading.gif out/

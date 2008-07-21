@@ -190,7 +190,7 @@ function getModelRows (name, page) {
     openresty.callback = function (res) { renderModelRows(res, name, page); };
     openresty.get(
         '/=/model/' + name + '/~/~',
-        { offset: itemsPerPage * (page - 1), count: itemsPerPage, order_by: 'id:desc' }
+        { _offset: itemsPerPage * (page - 1), _count: itemsPerPage, _order_by: 'id:desc' }
     );
 }
 
@@ -249,7 +249,7 @@ function renderModelRows (res, model, page) {
 function getRoleRules (name) {
     setStatus(true, 'renderRoleRules');
     openresty.callback = function (res) { renderRoleRules(res, name); };
-    openresty.get('/=/role/' + name + '/~/~', { order_by: 'id:asc' });
+    openresty.get('/=/role/' + name + '/~/~', { _order_by: 'id:asc' });
 }
 
 function renderRoleRules (res, role) {

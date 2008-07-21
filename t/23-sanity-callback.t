@@ -10,7 +10,7 @@ __DATA__
 
 === TEST 1: Login w/o password
 --- request
-GET /=/login/$TestAccount.Admin?callback=foo
+GET /=/login/$TestAccount.Admin?_callback=foo
 --- response
 foo({"success":0,"error":"$TestAccount.Admin is not anonymous."});
 
@@ -18,7 +18,7 @@ foo({"success":0,"error":"$TestAccount.Admin is not anonymous."});
 
 === TEST 2: Delete existing models (w/o login)
 --- request
-DELETE /=/model.js?callback=foo
+DELETE /=/model.js?_callback=foo
 --- response
 foo({"success":0,"error":"Login required."});
 
@@ -26,7 +26,7 @@ foo({"success":0,"error":"Login required."});
 
 === TEST 3: Login with password
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?callback=foo&use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?_callback=foo&_use_cookie=1
 --- response_like
 ^foo\({"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}\);$
 
@@ -34,7 +34,7 @@ GET /=/login/$TestAccount.Admin/$TestPass?callback=foo&use_cookie=1
 
 === TEST 4: Delete existing models
 --- request
-DELETE /=/model.js?callback=foo
+DELETE /=/model.js?_callback=foo
 --- response
 foo({"success":1});
 
@@ -42,7 +42,7 @@ foo({"success":1});
 
 === TEST 5: Get model list
 --- request
-GET /=/model.js?callback=foo
+GET /=/model.js?_callback=foo
 --- response
 foo([]);
 
@@ -50,7 +50,7 @@ foo([]);
 
 === TEST 6: Create a model
 --- request
-POST /=/model/Bookmark.js?callback=foo
+POST /=/model/Bookmark.js?_callback=foo
 {
     "description": "我的书签",
     "columns": [
@@ -66,7 +66,7 @@ foo({"success":1,"warning":"Column \"id\" reserved. Ignored."});
 
 === TEST 7: check the model list again
 --- request
-GET /=/model.js?callback=foo
+GET /=/model.js?_callback=foo
 --- response
 foo([{"src":"/=/model/Bookmark","name":"Bookmark","description":"我的书签"}]);
 
@@ -74,7 +74,7 @@ foo([{"src":"/=/model/Bookmark","name":"Bookmark","description":"我的书签"}]
 
 === TEST 8: check the column
 --- request
-GET /=/model/Bookmark.js?callback=foo
+GET /=/model/Bookmark.js?_callback=foo
 --- response
 foo({
   "columns":
@@ -91,7 +91,7 @@ foo({
 
 === TEST 9: access inexistent models
 --- request
-GET /=/model/Foo.js?callback=foo
+GET /=/model/Foo.js?_callback=foo
 --- response
 foo({"success":0,"error":"Model \"Foo\" not found."});
 
@@ -99,7 +99,7 @@ foo({"success":0,"error":"Model \"Foo\" not found."});
 
 === TEST 10: insert a single record
 --- request
-POST /=/model/Bookmark/~/~?callback=foo
+POST /=/model/Bookmark/~/~?_callback=foo
 { "title": "Yahoo Search", "url": "http://www.yahoo.cn" }
 --- response
 foo({"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/1"});
@@ -108,7 +108,7 @@ foo({"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/1"});
 
 === TEST 11: insert another record
 --- request
-POST /=/model/Bookmark/~/~.js?callback=foo
+POST /=/model/Bookmark/~/~.js?_callback=foo
 { "title": "Yahoo Search", "url": "http://www.yahoo.cn" }
 --- response
 foo({"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/2"});
@@ -117,7 +117,7 @@ foo({"success":1,"rows_affected":1,"last_row":"/=/model/Bookmark/id/2"});
 
 === TEST 12: insert multiple records at a time
 --- request
-POST /=/model/Bookmark/~/~.js?callback=foo
+POST /=/model/Bookmark/~/~.js?_callback=foo
 [
     { "title": "Google搜索", "url": "http://www.google.cn" },
     { "url": "http://www.baidu.com" },
@@ -130,7 +130,7 @@ foo({"success":1,"rows_affected":3,"last_row":"/=/model/Bookmark/id/5"});
 
 === TEST 13: read a record
 --- request
-GET /=/model/Bookmark/id/1.js?callback=foo
+GET /=/model/Bookmark/id/1.js?_callback=foo
 --- response
 foo([{"url":"http://www.yahoo.cn","title":"Yahoo Search","id":"1"}]);
 
@@ -138,7 +138,7 @@ foo([{"url":"http://www.yahoo.cn","title":"Yahoo Search","id":"1"}]);
 
 === TEST 14: read another record
 --- request
-GET /=/model/Bookmark/id/5.js?callback=foo
+GET /=/model/Bookmark/id/5.js?_callback=foo
 --- response
 foo([{"url":"http://www.perl.com","title":"Perl.com","id":"5"}]);
 
@@ -146,7 +146,7 @@ foo([{"url":"http://www.perl.com","title":"Perl.com","id":"5"}]);
 
 === TEST 15: read urls of all the records
 --- request
-GET /=/model/Bookmark/url/~.js?callback=foo
+GET /=/model/Bookmark/url/~.js?_callback=foo
 --- response
 foo([
     {"url":"http://www.yahoo.cn"},
@@ -160,7 +160,7 @@ foo([
 
 === TEST 16: select records
 --- request
-GET /=/model/Bookmark/url/http://www.yahoo.cn.js?callback=foo
+GET /=/model/Bookmark/url/http://www.yahoo.cn.js?_callback=foo
 --- response
 foo([
     {"url":"http://www.yahoo.cn","title":"Yahoo Search","id":"1"},
@@ -171,7 +171,7 @@ foo([
 
 === TEST 17: read all records
 --- request
-GET /=/model/Bookmark/~/~.js?callback=foo
+GET /=/model/Bookmark/~/~.js?_callback=foo
 --- response
 foo([
     {"url":"http://www.yahoo.cn","title":"Yahoo Search","id":"1"},
@@ -185,7 +185,7 @@ foo([
 
 === TEST 18: delete a record
 --- request
-DELETE /=/model/Bookmark/id/2.js?callback=foo
+DELETE /=/model/Bookmark/id/2.js?_callback=foo
 --- response
 foo({"success":1,"rows_affected":1});
 
@@ -193,7 +193,7 @@ foo({"success":1,"rows_affected":1});
 
 === TEST 19: check the record just deleted
 --- request
-GET /=/model/Bookmark/id/2.js?callback=foo
+GET /=/model/Bookmark/id/2.js?_callback=foo
 --- response
 foo([]);
 
@@ -201,7 +201,7 @@ foo([]);
 
 === TEST 20: update a nonexistent record
 --- request
-PUT /=/model/Bookmark/id/2.js?callback=foo
+PUT /=/model/Bookmark/id/2.js?_callback=foo
 { "title": "Blah blah blah" }
 --- response
 foo({"success":0,"rows_affected":0});
@@ -210,7 +210,7 @@ foo({"success":0,"rows_affected":0});
 
 === TEST 21: update an existent record
 --- request
-PUT /=/model/Bookmark/id/3.js?callback=foo
+PUT /=/model/Bookmark/id/3.js?_callback=foo
 { "title": "Blah blah blah" }
 --- response
 foo({"success":1,"rows_affected":1});
@@ -219,7 +219,7 @@ foo({"success":1,"rows_affected":1});
 
 === TEST 22: check if the record is indeed changed
 --- request
-GET /=/model/Bookmark/id/3.js?callback=foo
+GET /=/model/Bookmark/id/3.js?_callback=foo
 --- response
 foo([{"url":"http://www.google.cn","title":"Blah blah blah","id":"3"}]);
 
@@ -227,7 +227,7 @@ foo([{"url":"http://www.google.cn","title":"Blah blah blah","id":"3"}]);
 
 === TEST 23: update an existent record using POST
 --- request
-POST /=/put/model/Bookmark/id/3.js?callback=foo
+POST /=/put/model/Bookmark/id/3.js?_callback=foo
 { "title": "Howdy!" }
 --- response
 foo({"success":1,"rows_affected":1});
@@ -236,7 +236,7 @@ foo({"success":1,"rows_affected":1});
 
 === TEST 24: check if the record is indeed changed
 --- request
-GET /=/model/Bookmark/id/3.js?callback=foo
+GET /=/model/Bookmark/id/3.js?_callback=foo
 --- response
 foo([{"url":"http://www.google.cn","title":"Howdy!","id":"3"}]);
 
@@ -244,7 +244,7 @@ foo([{"url":"http://www.google.cn","title":"Howdy!","id":"3"}]);
 
 === TEST 25: Change the name of the model
 --- request
-PUT /=/model/Bookmark.js?callback=foo
+PUT /=/model/Bookmark.js?_callback=foo
 { "name": "MyFavorites", "description": "我的最爱" }
 --- response
 foo({"success":"1"});
@@ -253,7 +253,7 @@ foo({"success":"1"});
 
 === TEST 26: Check the new model
 --- request
-GET /=/model/MyFavorites.js?callback=foo
+GET /=/model/MyFavorites.js?_callback=foo
 --- response
 foo({
   "columns":
@@ -270,7 +270,7 @@ foo({
 
 === TEST 27: Change the name and type of title
 --- request
-PUT /=/model/MyFavorites/title?callback=foo
+PUT /=/model/MyFavorites/title?_callback=foo
 { "name": "count", "type": "text" }
 --- response
 foo({"success":1});
@@ -279,7 +279,7 @@ foo({"success":1});
 
 === TEST 28: Get model list
 --- request
-GET /=/model.js?callback=foo
+GET /=/model.js?_callback=foo
 --- response
 foo([{"src":"/=/model/MyFavorites","name":"MyFavorites","description":"我的最爱"}]);
 

@@ -20,7 +20,7 @@ __DATA__
 === TEST 1: UTF-8
 --- charset: UTF-8
 --- request
-DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
+DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 {"success":1}
 
@@ -29,7 +29,7 @@ DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
 === TEST 2: GBK
 --- charset: GBK
 --- request
-DELETE /=/model?charset=GBK
+DELETE /=/model?_charset=GBK
 --- response
 {"success":1}
 
@@ -38,7 +38,7 @@ DELETE /=/model?charset=GBK
 === TEST 3: Create a model in GBK
 --- charset: GBK
 --- request
-POST /=/model/Foo?charset=GBK
+POST /=/model/Foo?_charset=GBK
 { "description": "你好么？", "columns": [{"name":"bar","type":"text","label":"嘿嘿"}] }
 --- response
 {"success":1}
@@ -48,7 +48,7 @@ POST /=/model/Foo?charset=GBK
 === TEST 4: Check the data in GB2312
 --- charset: GB2312
 --- request
-GET /=/model/Foo?charset=GB2312
+GET /=/model/Foo?_charset=GB2312
 --- response
 {
   "columns":[
@@ -64,7 +64,7 @@ GET /=/model/Foo?charset=GB2312
 === TEST 5: Check the data in utf8
 --- charset: utf8
 --- request
-GET /=/model/Foo?charset=utf8
+GET /=/model/Foo?_charset=utf8
 --- response
 {"columns":[
     {"name":"id","label":"ID","type":"serial"},
@@ -77,7 +77,7 @@ GET /=/model/Foo?charset=utf8
 === TEST 6: Check the data in big5
 --- charset: big5
 --- request
-GET /=/model/Foo?charset=big5
+GET /=/model/Foo?_charset=big5
 --- response
 {"columns":[
     {"name":"id","label":"ID","type":"serial"},
@@ -90,7 +90,7 @@ GET /=/model/Foo?charset=big5
 === TEST 7: Check the data in latin1
 --- charset: latin-1
 --- request
-GET /=/model/Foo/bar?charset=latin-1
+GET /=/model/Foo/bar?_charset=latin-1
 --- response
 {"name":"bar","default":null,"label":"??","type":"text"}
 
@@ -99,7 +99,7 @@ GET /=/model/Foo/bar?charset=latin-1
 === TEST 8: Insert records in Big5
 --- charset: Big5
 --- request
-POST /=/model/Foo/~/~?charset=Big5
+POST /=/model/Foo/~/~?_charset=Big5
 { "bar": "廣告服務" }
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Foo/id/1"}
@@ -129,7 +129,7 @@ GET /=/model/Foo/~/~.yml
 === TEST 11: Insert records in Big5
 --- charset: Big5
 --- request
-GET /=/model/Foo/~/~?charset=Big5
+GET /=/model/Foo/~/~?_charset=Big5
 --- response
 [{"bar":"廣告服務","id":"1"}]
 
@@ -138,7 +138,7 @@ GET /=/model/Foo/~/~?charset=Big5
 === TEST 12: Create a model in UTF-8
 --- charset: UTF-8
 --- request
-POST /=/model/Utf8?charset=guessing
+POST /=/model/Utf8?_charset=guessing
 { "description": "文字编码测试utf8",
     "columns": [{"name":"bar","type":"text", "label":"我们的open api"}] }
 --- response
@@ -149,7 +149,7 @@ POST /=/model/Utf8?charset=guessing
 === TEST 13: Check the data in UTF-8
 --- charset: UTF-8
 --- request
-GET /=/model/Utf8?charset=UTF-8
+GET /=/model/Utf8?_charset=UTF-8
 --- response
 {
   "columns":[
@@ -165,7 +165,7 @@ GET /=/model/Utf8?charset=UTF-8
 === TEST 14: Create a model in GBK
 --- charset: GBK
 --- request
-POST /=/model/Gbk?charset=guessing
+POST /=/model/Gbk?_charset=guessing
 { "description": "文字编码测试GBK 张皛珏 万珣新",
     "columns": [{"name":"bar","type":"text", "label":"我们的open api"}] }
 --- response
@@ -176,7 +176,7 @@ POST /=/model/Gbk?charset=guessing
 === TEST 15: Check the data in UTF-8
 --- charset: UTF-8
 --- request
-GET /=/model/Gbk?charset=UTF-8
+GET /=/model/Gbk?_charset=UTF-8
 --- response
 {
   "columns":[
@@ -192,7 +192,7 @@ GET /=/model/Gbk?charset=UTF-8
 === TEST 16: Create a model in GB2312
 --- charset: GB2312
 --- request
-POST /=/model/Gb2312?charset=guessing
+POST /=/model/Gb2312?_charset=guessing
 { "description": "文字编码测试GB2312",
     "columns": [{"name":"bar","type":"text","label":"我们的open api"}] }
 --- response
@@ -203,7 +203,7 @@ POST /=/model/Gb2312?charset=guessing
 === TEST 17: Check the data in UTF-8
 --- charset: UTF-8
 --- request
-GET /=/model/Gb2312?charset=UTF-8
+GET /=/model/Gb2312?_charset=UTF-8
 --- response
 {
   "columns":[
@@ -219,7 +219,7 @@ GET /=/model/Gb2312?charset=UTF-8
 === TEST 18: Create a model in big5
 --- charset: Big5
 --- request
-POST /=/model/Big5?charset=guessing
+POST /=/model/Big5?_charset=guessing
 { "description": "文字編碼測試big5", "columns":
     [{"name":"bar","type":"text","label":"我們的open api"}] }
 --- response
@@ -230,7 +230,7 @@ POST /=/model/Big5?charset=guessing
 === TEST 19: Check the data in UTF-8
 --- charset: UTF-8
 --- request
-GET /=/model/Big5?charset=UTF-8
+GET /=/model/Big5?_charset=UTF-8
 --- response
 {
   "columns":[

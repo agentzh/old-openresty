@@ -74,6 +74,7 @@
 * Tests for 'select * from a,b,c,d,e....' [shangerdi]
 * Tests for 'select * from ... where ???????' [shangerdi]
 * Tests for count('select * from ...... where ......') [shangerdi]
+* More tests for _op=lt/ge/gt/eq/contains
 
 * Work out the empty test cases in t/03-model.t [done]
 * More tests for t/10-limits.t.

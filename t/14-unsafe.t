@@ -33,7 +33,7 @@ __DATA__
 
 === TEST 1: Delete existing models
 --- request
-DELETE /=/model.js?user=$TestAccount&password=$TestPass&use_cookie=1
+DELETE /=/model.js?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 {"success":1}
 
@@ -158,7 +158,7 @@ GRANT SELECT ON TABLE _books to anonymous;"
 
 === TEST 12: select proc
 --- request
-GET /=/post/action/RunView/~/~?data="select hello_world0(1,0)"
+GET /=/post/action/RunView/~/~?_data="select hello_world0(1,0)"
 --- response
 [{"hello_world0":"(1,\"Larry Wall\",2)"}]
 
@@ -187,7 +187,7 @@ GRANT SELECT ON TABLE _books2 to anonymous;"
 
 === TEST 14: select * from proc() as ....
 --- request
-GET /=/post/action/RunView/~/~?var=sss&data="select * from hello_world4(1,0)"
+GET /=/post/action/RunView/~/~?_var=sss&_data="select * from hello_world4(1,0)"
 --- response
 sss=[];
 
