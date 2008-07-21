@@ -3,7 +3,7 @@ all:
 	-cp ../../clients/js/JSON.js .
 	-cp ../Blog/js/thirdparty/jquery.js .
 
-upload: force
+upload: all force
 	./upload
 
 force:
