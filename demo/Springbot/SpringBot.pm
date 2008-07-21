@@ -22,7 +22,7 @@ $SIG{CHLD} = "IGNORE";
 
 our @Brain = (
     [0 => qr{https?://[^\(\)（）？。]+} => \&process_url],
-    [0 => qr{(?:哈你个头|[^A-Za-z]TMD[^A-Za-z]|\bTMD\b|\bshit\b|\bf[us\*]ck(?:ing)?\b|\bdammit\b|\bdamn(?:\s+it)?\b|\bbastard\b|perl.*?邪教|\bMD\b)}i => \&punish_him],
+    [0 => qr{(?:哈你个头|ｆｕｃｋ|f\s*u\s*c\s*k|[^A-Za-z]TMD[^A-Za-z]|\bTMD\b|\bshit\b|\bf[us\*]ck(?:ing)?\b|\bdammit\b|\bdamn(?:\s+it)?\b|\bbastard\b|perl.*?邪教|\bMD\b)}i => \&punish_him],
     [1 => qr{^\s*baidu\s+}i => \&baidu_stuff],
     [0 => qr{^\s*emp(?:loyee)?\s+} => \&find_employee],
     [1 => qr{.} => \&reply_crap],
