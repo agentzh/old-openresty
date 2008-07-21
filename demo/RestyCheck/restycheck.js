@@ -4,12 +4,12 @@ var Server = 'api.openresty.org';
 $(document).ready(init);
 
 var Links = [
-    ['/=/view/t/a/水煮鱼', {c:'北京',user:"lifecai.s",t:50}],
-    ['/=/view/Honorlist/limit/500', {user:'qyliu.Public'}],
-    ['/=/model/Post/~/~', {offset:0, count: 10, user:'agentzh.Public'}],
-    ['/=/view/FetchTitles/~/~', {container:'review', parentid:0, offset:0, count:11, child_offset:0, child_count:5, dsc:'desc', orderby:'updated', user: 'carrie.Public'}],
-    ['/=/view/FetchResults/~/~', {offset:0, user:'people.Public', parentid:0, url:'http://www.yahoo.cn/person/bbs/index.html?id=%E5%88%98%E5%BE%B7%E5%8D%8E', offset:0, count:11, child_offset:0, child_count:5, dsc:'desc', orderby: 'support+deny,id'}],
-    ['/=/view/ipbase/~/~', {q:'124.1.34.1', user:'ipbase.Public'}]
+    ['/=/view/t/a/水煮鱼', {c:'北京',_user:"lifecai.s",t:50}],
+    ['/=/view/Honorlist/limit/500', {_user:'qyliu.Public'}],
+    ['/=/model/Post/~/~', {_offset:0, _count: 10, _user:'agentzh.Public'}],
+    ['/=/view/FetchTitles/~/~', {container:'review', parentid:0, offset:0, count:11, child_offset:0, child_count:5, dsc:'desc', orderby:'updated', _user: 'carrie.Public'}],
+    ['/=/view/FetchResults/~/~', {offset:0, _user:'people.Public', parentid:0, url:'http://www.yahoo.cn/person/bbs/index.html?id=%E5%88%98%E5%BE%B7%E5%8D%8E', offset:0, count:11, child_offset:0, child_count:5, dsc:'desc', orderby: 'support+deny,id'}],
+    ['/=/view/ipbase/~/~', {q:'124.1.34.1', _user:'ipbase.Public'}]
 ]
 
 function init () {
@@ -50,7 +50,7 @@ function genCallback (link) {
 function renderRes (link, elapsed, res) {
     //alert("HERE!");
     var row;
-    var account = link[1].user.replace(/\.\w+/, '');
+    var account = link[1]._user.replace(/\.\w+/, '');
     if (!openresty.isSuccess(res)) {
         //alert("Failed!");
         row = [
