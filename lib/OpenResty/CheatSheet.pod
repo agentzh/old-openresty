@@ -85,7 +85,7 @@ SSL in the real thing.
     GET /=/model/MyModel/~/~?_order_by=col1              order by col1
     GET /=/model/MyModel/~/~?_order_by=col1,col2         order by col1, col2
     GET /=/model/MyModel/~/~?_order_by=col1:asc,col2:desc
-                                                        order by col1 asc, col2 desc
+                                                order by col1 asc, col2 desc
     GET /=/model/MyModel/~/~?_offset=10&_count=20         offset 10 limit 20
 
 =back
@@ -162,13 +162,13 @@ B<Note:> Actions have not yet been implemented.
 
 =head1 GENERAL PARAMETERS
 
-    GET /=/view/PostsByMonth/~/~?callback=foo        Returns "foo(<JSON>);"
+    GET /=/view/PostsByMonth/~/~?_callback=foo        Returns "foo(<JSON>);"
                                                      instead of "<JSON>"
-    GET /=/view/PostsByMonth/~/~?var=foo             Returns "foo=<JSON>;"
+    GET /=/view/PostsByMonth/~/~?_var=foo             Returns "foo=<JSON>;"
                                                      instead of "<JSON>"
 
     GET /=/view/Blah?_user=agentzh.Public             Per-request-login
-    GET /=/view/Blah?session=23EC98F2-F1A...         Specify the session
+    GET /=/view/Blah?_session=23EC98F2-F1A...         Specify the session
 
 =head1 Path Suffixes
 
