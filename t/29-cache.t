@@ -10,7 +10,7 @@ __DATA__
 
 === TEST 1: clean env via user A
 --- request
-DELETE /=/model?user=$TestAccount&password=$TestPass
+DELETE /=/model?_user=$TestAccount&_password=$TestPass
 --- response
 {"success":1}
 
@@ -18,7 +18,7 @@ DELETE /=/model?user=$TestAccount&password=$TestPass
 
 === TEST 2: clean env via user A
 --- request
-DELETE /=/view?user=$TestAccount&password=$TestPass
+DELETE /=/view?_user=$TestAccount&_password=$TestPass
 --- response_like
 {"success":1}
 
@@ -26,7 +26,7 @@ DELETE /=/view?user=$TestAccount&password=$TestPass
 
 === TEST 3: clean env via user B
 --- request
-DELETE /=/model?user=$TestAccount2&password=$TestPass2
+DELETE /=/model?_user=$TestAccount2&_password=$TestPass2
 --- response
 {"success":1}
 
@@ -34,7 +34,7 @@ DELETE /=/model?user=$TestAccount2&password=$TestPass2
 
 === TEST 4: clean env via user B
 --- request
-DELETE /=/view?user=$TestAccount2&password=$TestPass2
+DELETE /=/view?_user=$TestAccount2&_password=$TestPass2
 --- response
 {"success":1}
 
@@ -42,7 +42,7 @@ DELETE /=/view?user=$TestAccount2&password=$TestPass2
 
 === TEST 5: Create a new model in A
 --- request
-POST /=/model/Foo?user=$TestAccount&password=$TestPass
+POST /=/model/Foo?_user=$TestAccount&_password=$TestPass
 { "description": "Foo" }
 --- response
 {"success":1,"warning":"No 'columns' specified for model \"Foo\"."}
@@ -51,7 +51,7 @@ POST /=/model/Foo?user=$TestAccount&password=$TestPass
 
 === TEST 6: Get model Foo in A
 --- request
-GET /=/model/Foo?user=$TestAccount&password=$TestPass
+GET /=/model/Foo?_user=$TestAccount&_password=$TestPass
 --- response
 {"columns":
     [
@@ -63,7 +63,7 @@ GET /=/model/Foo?user=$TestAccount&password=$TestPass
 
 === TEST 7: Create a new model in B
 --- request
-POST /=/model/Foo?user=$TestAccount2&password=$TestPass2
+POST /=/model/Foo?_user=$TestAccount2&_password=$TestPass2
 { "description": "Foo" }
 --- response
 {"success":1,"warning":"No 'columns' specified for model \"Foo\"."}
@@ -72,7 +72,7 @@ POST /=/model/Foo?user=$TestAccount2&password=$TestPass2
 
 === TEST 8: Create a new view in A
 --- request
-POST /=/view/Foo?user=$TestAccount&password=$TestPass
+POST /=/view/Foo?_user=$TestAccount&_password=$TestPass
 { "definition": "select 3" }
 --- response
 {"success":1}
@@ -81,7 +81,7 @@ POST /=/view/Foo?user=$TestAccount&password=$TestPass
 
 === TEST 9: Get the view in A
 --- request
-GET /=/view/Foo?user=$TestAccount&password=$TestPass
+GET /=/view/Foo?_user=$TestAccount&_password=$TestPass
 --- response
 {"name":"Foo","description":null,"definition":"select 3"}
 
@@ -89,7 +89,7 @@ GET /=/view/Foo?user=$TestAccount&password=$TestPass
 
 === TEST 10: Create a new view in B
 --- request
-POST /=/view/Foo?user=$TestAccount2&password=$TestPass2
+POST /=/view/Foo?_user=$TestAccount2&_password=$TestPass2
 { "definition": "select 3" }
 --- response
 {"success":1}

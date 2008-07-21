@@ -61,7 +61,7 @@ OpenResty.Client.prototype.postByGet = function (url) {
     content = JSON.stringify(content);
     //alert("type of content: " + typeof(content));
     //alert("content: " + content);
-    args.data = content;
+    args._data = content;
     this.get(url, args);
 };
 
@@ -80,11 +80,11 @@ OpenResty.Client.prototype.post = function (url) {
     var formId = this.formId;
     if (!formId) throw "No form specified.";
 
-    if (this.session) args.session = this.session;
-    if (!this.session && !args.user)
-        args.user = this.user;
+    if (this.session) args._session = this.session;
+    if (!this.session && !args._user)
+        args._user = this.user;
 
-    args.last_response = Math.round( Math.random() * 1000000 );
+    args._last_response = Math.round( Math.random() * 1000000 );
     content = JSON.stringify(content);
     //alert("type of content: " + typeof(content));
     //alert("content: " + content);
@@ -112,7 +112,7 @@ OpenResty.Client.prototype.post = function (url) {
         handleAs: 'html',
         handle: function () {
             //alert("Getting last response!");
-            self.get('/=/last/response/' + args.last_response);
+            self.get('/=/last/response/' + args._last_response);
         }
     });
 
@@ -141,7 +141,7 @@ OpenResty.Client.prototype.putByGet = function (url) {
     content = JSON.stringify(content);
     //alert("type of content: " + typeof(content));
     //alert("content: " + content);
-    args.data = content;
+    args._data = content;
     this.get(url, args);
 };
 
@@ -167,14 +167,14 @@ OpenResty.Client.prototype.get = function (url, args) {
     if (!this.server) throw "No server specified for OpenResty.";
     //if (!this.user) throw "No user specified for OpenResty.";
 
-    if (this.session) args.session = this.session;
-    if (!this.session && !args.user)
-        args.user = this.user;
+    if (this.session) args._session = this.session;
+    if (!this.session && !args._user)
+        args._user = this.user;
 
     //args.password = this.password || '';
     if (url.match(/\?/)) throw "URL should not contain '?'.";
     var reqId = Math.round( Math.random() * 100000 );
-    args._rand = reqId;
+    //args._rand = reqId;
 
     var onerror = this.onerror;
     if (onerror == null)
@@ -194,7 +194,7 @@ OpenResty.Client.prototype.get = function (url, args) {
         callback(res);
     };
     OpenResty.callbackMap[reqId] = this.callback;
-    args.callback = "OpenResty.callbackMap[" + reqId + "]";
+    args._callback = "OpenResty.callbackMap[" + reqId + "]";
 
     var headTag = document.getElementsByTagName('head')[0];
 

@@ -42,7 +42,7 @@ DELETE /=/model.js
 
 === TEST 5: Login with password and cookie
 --- request
-GET /=/login/$TestAccount.Admin/$TestPass?use_cookie=1
+GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=1
 --- response_like
 ^{"success":1,"session":"[-\w]+","account":"$TestAccount","role":"Admin"}$
 
@@ -243,7 +243,7 @@ GET /=/model/Bookmark/id/3.js
 
 === TEST 25: update an existent record using POST
 --- request
-POST /=/put/model/Bookmark/id/3.js?last_response=1234
+POST /=/put/model/Bookmark/id/3.js?_last_response=1234
 { "title": "Howdy!" }
 --- response
 {"success":1,"rows_affected":1}
@@ -274,9 +274,9 @@ GET /=/last/response
 
 
 
-=== TEST 29: Check the last response (with callback)
+=== TEST 29: Check the last response (with _callback)
 --- request
-GET /=/last/response/1234?callback=foo
+GET /=/last/response/1234?_callback=foo
 --- response
 foo({"success":1,"rows_affected":1});
 
@@ -292,7 +292,7 @@ GET /=/last/response/1234
 
 === TEST 31: check if the record is indeed changed
 --- request
-GET /=/model/Bookmark/id/3.js?last_response=1234
+GET /=/model/Bookmark/id/3.js?_last_response=1234
 --- response
 [{"url":"http://www.google.cn","title":"Howdy!","id":"3"}]
 
@@ -308,7 +308,7 @@ GET /=/last/response/1234
 
 === TEST 33: Change the name of the model
 --- request
-PUT /=/model/Bookmark.js?last_response=hello,world
+PUT /=/model/Bookmark.js?_last_response=hello,world
 { "name": "MyFavorites", "description": "我的最爱" }
 --- response
 {"success":"1"}

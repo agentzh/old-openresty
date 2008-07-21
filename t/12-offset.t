@@ -17,7 +17,7 @@ __DATA__
 
 === TEST 1: Clear the environment
 --- request
-DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
+DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 {"success":1}
 
@@ -57,7 +57,7 @@ POST /=/model/Foo/~/~
 
 === TEST 4: offset = 0
 --- request
-GET /=/model/Foo/~/~?offset=0
+GET /=/model/Foo/~/~?_offset=0
 --- response
 [
     {"name":"Marry","id":"1","age":"21"},
@@ -73,7 +73,7 @@ GET /=/model/Foo/~/~?offset=0
 
 === TEST 5: offset = 1
 --- request
-GET /=/model/Foo/~/~?offset=1
+GET /=/model/Foo/~/~?_offset=1
 --- response
 [
     {"name":"Bob","id":"2","age":"32"},
@@ -88,7 +88,7 @@ GET /=/model/Foo/~/~?offset=1
 
 === TEST 6: offset = count - 1
 --- request
-GET /=/model/Foo/~/~?offset=6
+GET /=/model/Foo/~/~?_offset=6
 --- response
 [
     {"name":"Audrey","id":"7","age":"17"}
@@ -98,7 +98,7 @@ GET /=/model/Foo/~/~?offset=6
 
 === TEST 7: offset = count
 --- request
-GET /=/model/Foo/~/~?offset=7
+GET /=/model/Foo/~/~?_offset=7
 --- response
 []
 
@@ -106,7 +106,7 @@ GET /=/model/Foo/~/~?offset=7
 
 === TEST 8: offset > count
 --- request
-GET /=/model/Foo/~/~?offset=8
+GET /=/model/Foo/~/~?_offset=8
 --- response
 []
 
@@ -114,7 +114,7 @@ GET /=/model/Foo/~/~?offset=8
 
 === TEST 9: offset = 0 for normal select
 --- request
-GET /=/model/Foo/name/Bob?offset=0
+GET /=/model/Foo/name/Bob?_offset=0
 --- response
 [
     {"name":"Bob","id":"2","age":"32"},
@@ -125,7 +125,7 @@ GET /=/model/Foo/name/Bob?offset=0
 
 === TEST 10: offset = count - 1 for normal select
 --- request
-GET /=/model/Foo/name/Bob?offset=1
+GET /=/model/Foo/name/Bob?_offset=1
 --- response
 [
     {"name":"Bob","id":"3","age":"15"}
@@ -135,7 +135,7 @@ GET /=/model/Foo/name/Bob?offset=1
 
 === TEST 11: offset = count for normal select
 --- request
-GET /=/model/Foo/name/Bob?offset=2
+GET /=/model/Foo/name/Bob?_offset=2
 --- response
 []
 
@@ -143,7 +143,7 @@ GET /=/model/Foo/name/Bob?offset=2
 
 === TEST 12: negative offset
 --- request
-GET /=/model/Foo/name/Bob?offset=-2
+GET /=/model/Foo/name/Bob?_offset=-2
 --- response
 {"success":0,"error":"Invalid value for the \"offset\" param: -2"}
 
@@ -151,7 +151,7 @@ GET /=/model/Foo/name/Bob?offset=-2
 
 === TEST 13: empty offset value
 --- request
-GET /=/model/Foo/name/Bob?offset=
+GET /=/model/Foo/name/Bob?_offset=
 --- response
 [{"name":"Bob","id":"2","age":"32"},{"name":"Bob","id":"3","age":"15"}]
 
@@ -159,7 +159,7 @@ GET /=/model/Foo/name/Bob?offset=
 
 === TEST 14: weird value
 --- request
-GET /=/model/Foo/name/Bob?offset=blah
+GET /=/model/Foo/name/Bob?_offset=blah
 --- response
 {"success":0,"error":"Invalid value for the \"offset\" param: blah"}
 

@@ -18,7 +18,7 @@ if ($reason) { return; }
 
 my $host = $t::OpenResty::host;
 my $client = $t::OpenResty::client;
-my $res = $client->delete("/=/model?user=$t::OpenResty::user\&password=$t::OpenResty::password\&use_cookie=1");
+my $res = $client->delete("/=/model?_user=$t::OpenResty::user\&_password=$t::OpenResty::password\&_use_cookie=1");
 ok $res->is_success, 'response OK';
 
 for (1..$MODEL_LIMIT + 1) {
@@ -222,11 +222,11 @@ $res_body = $res->content;
 ### $res_body
 
 ## request MAX_SELECT_LIMIT + 1 records
-$res = $client->get($url.'/~/~?count='.($MAX_SELECT_LIMIT + 1));
+$res = $client->get($url.'/~/~?_count='.($MAX_SELECT_LIMIT + 1));
 ok $res->is_success, 'select OK';
 $res_body = $res->content;
 ### $res_body
-is $res_body, '{"success":0,"error":"Value too large for the limit param: '.($MAX_SELECT_LIMIT + 1).'"}'."\n", "Model select limit test ".$MAX_SELECT_LIMIT;
+is $res_body, '{"success":0,"error":"Value too large for the _limit param: '.($MAX_SELECT_LIMIT + 1).'"}'."\n", "Model select limit test ".$MAX_SELECT_LIMIT;
 
 $res = $client->delete('/=/model');
 ok $res->is_success, 'response OK';

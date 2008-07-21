@@ -20,7 +20,7 @@ SSL in the real thing.
     GET /=/login/agentzh.Admin/password   Login as account "agentzh" and
                                           role "Admin" using encrypted
                                           password "password"
-    DELETE /=/view/Blah?user=agentzh.Admin&password=password
+    DELETE /=/view/Blah?_user=agentzh.Admin&_password=password
 
 =head1 MODEL API
 
@@ -82,11 +82,11 @@ SSL in the real thing.
 
 =item Parameters
 
-    GET /=/model/MyModel/~/~?order_by=col1              order by col1
-    GET /=/model/MyModel/~/~?order_by=col1,col2         order by col1, col2
-    GET /=/model/MyModel/~/~?order_by=col1:asc,col2:desc
+    GET /=/model/MyModel/~/~?_order_by=col1              order by col1
+    GET /=/model/MyModel/~/~?_order_by=col1,col2         order by col1, col2
+    GET /=/model/MyModel/~/~?_order_by=col1:asc,col2:desc
                                                         order by col1 asc, col2 desc
-    GET /=/model/MyModel/~/~?offset=10&count=20         offset 10 limit 20
+    GET /=/model/MyModel/~/~?_offset=10&_count=20         offset 10 limit 20
 
 =back
 
@@ -167,7 +167,7 @@ B<Note:> Actions have not yet been implemented.
     GET /=/view/PostsByMonth/~/~?var=foo             Returns "foo=<JSON>;"
                                                      instead of "<JSON>"
 
-    GET /=/view/Blah?user=agentzh.Public             Per-request-login
+    GET /=/view/Blah?_user=agentzh.Public             Per-request-login
     GET /=/view/Blah?session=23EC98F2-F1A...         Specify the session
 
 =head1 Path Suffixes
@@ -256,7 +256,7 @@ B<Note:> Actions have not yet been implemented.
     GET /=/captcha/id                   Get a captcha ID
     GET /=/captcha/id/<ID>              Get the captcha image
 
-    POST /=/model/Comment/~/~?user=account.Commenter&captcha=<ID>:<solution>
+    POST /=/model/Comment/~/~?_user=account.Commenter&_captcha=<ID>:<solution>
                                         Use the captcha ID and solution
                                         to do the permitted action
 

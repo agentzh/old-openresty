@@ -25,7 +25,7 @@ __DATA__
 
 === TEST 1: Delete existing models
 --- request
-DELETE /=/model.js?user=$TestAccount&password=$TestPass&use_cookie=1
+DELETE /=/model.js?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 {"success":1}
 

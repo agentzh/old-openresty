@@ -23,7 +23,7 @@ __DATA__
 
 === TEST 1: Delete existing models
 --- request
-DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
+DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 {"success":1}
 
@@ -81,7 +81,7 @@ POST /=/model/Carrie/~/~.js
 
 === TEST 7: find out two record assign to var hello
 --- request
-GET /=/model/Carrie/~/~.js?var=hello
+GET /=/model/Carrie/~/~.js?_var=hello
 --- response
 hello=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}];
 
@@ -107,7 +107,7 @@ POST /=/action/RunView/~/~
 
 === TEST 10: use minisql through GET & .Select
 --- request
-GET /=/post/action/RunView/~/~?var=foo&data="select * from Carrie where url = 'http://www.carriezh.cn/' and num=10"
+GET /=/post/action/RunView/~/~?_var=foo&_data="select * from Carrie where url = 'http://www.carriezh.cn/' and num=10"
 --- response
 foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
 
@@ -115,7 +115,7 @@ foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"
 
 === TEST 11: test for offset & count
 --- request
-GET /=/post/action/RunView/~/~?var=foo&data="select * from Carrie offset 0 limit 1"
+GET /=/post/action/RunView/~/~?_var=foo&_data="select * from Carrie offset 0 limit 1"
 --- response
 foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
 
@@ -123,7 +123,7 @@ foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"
 
 === TEST 12: OFFSET & limit in minisql
 --- request
-GET /=/post/action/RunView/~/~?var=foo&data="select * from Carrie limit 1 offset 0"
+GET /=/post/action/RunView/~/~?_var=foo&_data="select * from Carrie limit 1 offset 0"
 --- response
 foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}];
 
@@ -131,7 +131,7 @@ foo=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"
 
 === TEST 13: OFFSET & limit in minisql
 --- request
-POST /=/action/RunView/~/~?var=foo
+POST /=/action/RunView/~/~?_var=foo
 "select * from Carrie limit 1 offset 1"
 --- response
 foo=[{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}];
@@ -140,7 +140,7 @@ foo=[{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}];
 
 === TEST 14: Try to reference meta models
 --- request
-POST /=/action/RunView/~/~?var=foo
+POST /=/action/RunView/~/~?_var=foo
 "select * from _models limit 1 offset 1"
 --- response
 foo={"error":"\"view\" (line 1, column 15):\nunexpected \"_\"\nexpecting space or model","success":0};

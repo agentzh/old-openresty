@@ -905,41 +905,41 @@ Unsafe API 提供了直接通过 Web 执行 Pg/SQL 的接口。由于这种方�
 
 =over
 
-=item charset
+=item _charset
 
 指定输入／输出数据和 URL 本身所使用的字符集。
 
 示例：
 
-    GET /=/model/Bookmark/title/Yahoo?charset=GBK
+    GET /=/model/Bookmark/title/Yahoo?_charset=GBK
 
-=item offset
+=item _offset
 
 该选项仅作用于 GET 请求返回列表的情形。它用于指定在返回的列表中跳过起始的记录的数目。例如
 
-    GET /=/model/Foo/~/~?offset=10
+    GET /=/model/Foo/~/~?_offset=10
 
-将返回第十一条及其以后的记录列表。C<offset> 多与 C<count> 选项一起使用，以实现分页功能。
+将返回第十一条及其以后的记录列表。C<_offset> 多与 C<_count> 选项一起使用，以实现分页功能。
 
-=item limit
+=item _limit
 
-=item count
+=item _count
 
 该选项仅作用于 GET 请求返回列表的情形。它用于指定返回的条目数，缺省为 OpenResty 服务器规定的返回行数的上限, 500。其最大值亦为 500。
 
 示例：
 
-   GET /=/model/Postbook/body/People?count=20
+   GET /=/model/Postbook/body/People?_count=20
 
-count 的取值须为小于上限的正整数，否则服务器将报错。
+C<_count> 的取值须为小于上限的正整数，否则服务器将报错。
 
-C<limit> 参数为 C<count> 的一个别名。
+C<_limit> 参数为 C<_count> 的一个别名。
 
-=item order_by
+=item _order_by
 
 指定排序项（可指定多个，以逗号分隔). 例如：
 
-    GET /=/model/Bookmark/title/Yahoo?order_by=title:asc,url:desc
+    GET /=/model/Bookmark/title/Yahoo?_order_by=title:asc,url:desc
 
 在语义上近似于下面这条 SQL 语句：
 
@@ -950,23 +950,23 @@ C<limit> 参数为 C<count> 的一个别名。
 
 升降序的缺省是 SQL 标准的缺省：C<asc>。当字段中无冒号分隔的升降序声明的时候，就是升序。
 
-=item var
+=item _var
 
 该选项仅适用于 JSON 格式，用于生成一个 JS 变量赋值语句。例如：
 
-    GET /=/model.json?var=foo
+    GET /=/model.json?_var=foo
 
 或
 
-    GET /=/model?var=foo
+    GET /=/model?_var=foo
 
 服务器将返回类似下面的数据：
 
     foo=...;
 
-这里的 C<...> 是没有指定 C<var> 选项时服务器返回的内容。
+这里的 C<...> 是没有指定 C<_var> 选项时服务器返回的内容。
 
-=item data
+=item _data
 
 该选项用于 POST 和 PUT 方法的 GET 变形接口，例如
 
@@ -975,7 +975,7 @@ C<limit> 参数为 C<count> 的一个别名。
 
 可以使用
 
-    GET /=/post/model?data=<content>
+    GET /=/post/model?_data=<content>
 
 来代替（如果 C<< <content> >> 含有 URL 特殊字符，需要进行 URL 编码）。
 
@@ -986,19 +986,19 @@ C<limit> 参数为 C<count> 的一个别名。
 
 改用 GET 就是
 
-    GET /=/put/model/Foo?data=<content>
+    GET /=/put/model/Foo?_data=<content>
 
-=item user
+=item _user
 
 该选项指定用户名，用户名一般由帐户名和角色色两部分组成，比如 C<marry.Admin>.
 
-=item password
+=item _password
 
 该选项指定密码
 
 示例
 
-    GET /=/model/Bookmark/id.xml?user=foo&password=bar
+    GET /=/model/Bookmark/id.xml?_user=foo&_password=bar
 
 这里的 C<bar> 需为密码的 MD5 形式。
 

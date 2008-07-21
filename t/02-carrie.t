@@ -10,7 +10,7 @@ __DATA__
 
 === TEST 1: Delete existing models (bad account name)
 --- request
-DELETE /=/model?user=.Admin
+DELETE /=/model?_user=.Admin
 --- response
 {"success":0,"error":"Bad user name: \".Admin\""}
 
@@ -18,7 +18,7 @@ DELETE /=/model?user=.Admin
 
 === TEST 2: Delete existing models (using default Admin role)
 --- request
-DELETE /=/model?user=$TestAccount
+DELETE /=/model?_user=$TestAccount
 --- response
 {"success":0,"error":"$TestAccount.Admin is not anonymous."}
 
@@ -26,7 +26,7 @@ DELETE /=/model?user=$TestAccount
 
 === TEST 3: Delete existing models (using default Admin role)
 --- request
-DELETE /=/model?user=$TestAccount&password=4423038
+DELETE /=/model?_user=$TestAccount&_password=4423038
 --- response
 {"success":0,"error":"Password for $TestAccount.Admin is incorrect."}
 
@@ -34,7 +34,7 @@ DELETE /=/model?user=$TestAccount&password=4423038
 
 === TEST 4: Delete existing models (using default Admin role) but w/o cookie
 --- request
-DELETE /=/model?user=$TestAccount&password=$TestPass
+DELETE /=/model?_user=$TestAccount&_password=$TestPass
 --- response
 {"success":1}
 
@@ -50,7 +50,7 @@ DELETE /=/model
 
 === TEST 6: Delete existing models (using default Admin role) but with cookie
 --- request
-DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
+DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 {"success":1}
 
@@ -115,7 +115,7 @@ POST /=/model/Carrie/~/~.js
 
 === TEST 13: find out two record assign to var hello
 --- request
-GET /=/model/Carrie/~/~.js?var=hello
+GET /=/model/Carrie/~/~.js?_var=hello
 --- response
 hello=[{"url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},{"url":"http://zhangxiaojue.cn","title":"second","id":"2"}];
 
@@ -197,7 +197,7 @@ GET /=/delete/model/Carrie
 
 === TEST 22: Delete model with user info
 --- request
-DELETE /=/model?user=$TestAccount&password=$TestPass
+DELETE /=/model?_user=$TestAccount&_password=$TestPass
 --- response
 {"success":1}
 
@@ -205,7 +205,7 @@ DELETE /=/model?user=$TestAccount&password=$TestPass
 
 === TEST 23: Check the model list
 --- request
-GET /=/model?user=$TestAccount.Admin&password=$TestPass
+GET /=/model?_user=$TestAccount.Admin&_password=$TestPass
 --- response
 []
 
@@ -213,7 +213,7 @@ GET /=/model?user=$TestAccount.Admin&password=$TestPass
 
 === TEST 24: Create model with user info without specifying column types
 --- request
-POST /=/model/Test2?user=$TestAccount&password=$TestPass
+POST /=/model/Test2?_user=$TestAccount&_password=$TestPass
 {
     "description": "我的书签",
     "columns": [
@@ -228,7 +228,7 @@ POST /=/model/Test2?user=$TestAccount&password=$TestPass
 
 === TEST 25: Create model with user info WITH column types
 --- request
-POST /=/model/Test2?user=$TestAccount&password=$TestPass
+POST /=/model/Test2?_user=$TestAccount&_password=$TestPass
 {
     "description": "我的书签",
     "columns": [
@@ -243,7 +243,7 @@ POST /=/model/Test2?user=$TestAccount&password=$TestPass
 
 === TEST 26: insert another record
 --- request
-POST /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
+POST /=/model/Test2/~/~?_user=$TestAccount&_password=$TestPass
 { "title":"second","url":"http://zhangxiaojue.cn"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Test2/id/1"}
@@ -252,7 +252,7 @@ POST /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 
 === TEST 27: delete all records with user info
 --- request
-GET /=/delete/model/Test2/~/~?user=$TestAccount&password=$TestPass
+GET /=/delete/model/Test2/~/~?_user=$TestAccount&_password=$TestPass
 --- response
 {"success":1,"rows_affected":1}
 
@@ -260,7 +260,7 @@ GET /=/delete/model/Test2/~/~?user=$TestAccount&password=$TestPass
 
 === TEST 28: Check that the records have been indeed removed
 --- request
-GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
+GET /=/model/Test2/~/~?_user=$TestAccount&_password=$TestPass
 --- response
 []
 
@@ -268,7 +268,7 @@ GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 
 === TEST 29: delete all records with user info (the wrong way)
 --- request
-GET /=/delete/Test2/~/~?user=$TestAccount&password=$TestPass
+GET /=/delete/Test2/~/~?_user=$TestAccount&_password=$TestPass
 --- response
 {"error":"Unknown URL catagory: Test2","success":0}
 
@@ -276,7 +276,7 @@ GET /=/delete/Test2/~/~?user=$TestAccount&password=$TestPass
 
 === TEST 30: insert another record
 --- request
-POST /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
+POST /=/model/Test2/~/~?_user=$TestAccount&_password=$TestPass
 { "title":"second","url":"http://zhangxiaojue.cn"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Test2/id/2"}
@@ -286,7 +286,7 @@ POST /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 === TEST 31: read record using yml
 --- format: YAML
 --- request
-GET /=/model/Test2/~/~.yml?user=$TestAccount&password=$TestPass
+GET /=/model/Test2/~/~.yml?_user=$TestAccount&_password=$TestPass
 --- response
 --- 
 - 
@@ -298,7 +298,7 @@ GET /=/model/Test2/~/~.yml?user=$TestAccount&password=$TestPass
 
 === TEST 32: read record using json
 --- request
-GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
+GET /=/model/Test2/~/~?_user=$TestAccount&_password=$TestPass
 --- response
 [{"url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
 
@@ -306,7 +306,7 @@ GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 
 === TEST 33: Add column
 --- request
-POST /=/model/Test2/num?user=$TestAccount&password=$TestPass
+POST /=/model/Test2/num?_user=$TestAccount&_password=$TestPass
 { "type":"integer","label":"num"}
 --- response
 {"success":1,"src":"/=/model/Test2/num"}
@@ -315,7 +315,7 @@ POST /=/model/Test2/num?user=$TestAccount&password=$TestPass
 
 === TEST 34: Update records
 --- request
-POST /=/put/model/Test2/~/~?user=$TestAccount&password=$TestPass
+POST /=/put/model/Test2/~/~?_user=$TestAccount&_password=$TestPass
 { "num":1 }
 --- response
 {"success":1,"rows_affected":1}
@@ -324,7 +324,7 @@ POST /=/put/model/Test2/~/~?user=$TestAccount&password=$TestPass
 
 === TEST 35: read records
 --- request
-GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
+GET /=/model/Test2/~/~?_user=$TestAccount&_password=$TestPass
 --- response
 [{"num":"1","url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
 
@@ -332,7 +332,7 @@ GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
 
 === TEST 36: Update for adding 1 at the original record
 --- request
-POST /=/put/model/Test2/id/2?user=$TestAccount&password=$TestPass
+POST /=/put/model/Test2/id/2?_user=$TestAccount&_password=$TestPass
 { num:num+1}
 --- response
 {"success":1,"rows_affected":1}
@@ -342,7 +342,7 @@ POST /=/put/model/Test2/id/2?user=$TestAccount&password=$TestPass
 
 === TEST 37: read records
 --- request
-GET /=/model/Test2/~/~?user=$TestAccount&password=$TestPass
+GET /=/model/Test2/~/~?_user=$TestAccount&_password=$TestPass
 --- response
 [{"num":"2","url":"http://zhangxiaojue.cn","title":"second","id":"2"}]
 --- SKIP

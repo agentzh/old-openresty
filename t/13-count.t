@@ -17,7 +17,7 @@ __DATA__
 
 === TEST 1: Clear the environment
 --- request
-DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
+DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 {"success":1}
 
@@ -70,17 +70,17 @@ POST /=/model/Foo/~/~
 
 
 
-=== TEST 5: count = 0
+=== TEST 5: _count = 0
 --- request
-GET /=/model/Foo/~/~?count=0
+GET /=/model/Foo/~/~?_count=0
 --- response
 []
 
 
 
-=== TEST 6: count > total record num
+=== TEST 6: _count > total record num
 --- request
-GET /=/model/Foo/~/~?count=100
+GET /=/model/Foo/~/~?_count=100
 --- response
 [
     {"name":"Marry","id":"1","age":"21"},
@@ -94,9 +94,9 @@ GET /=/model/Foo/~/~?count=100
 
 
 
-=== TEST 7: count = total record num
+=== TEST 7: _count = total record num
 --- request
-GET /=/model/Foo/~/~?count=7
+GET /=/model/Foo/~/~?_count=7
 --- response
 [
     {"name":"Marry","id":"1","age":"21"},
@@ -110,9 +110,9 @@ GET /=/model/Foo/~/~?count=7
 
 
 
-=== TEST 8: count = total record num - 1
+=== TEST 8: _count = total record num - 1
 --- request
-GET /=/model/Foo/~/~?count=6
+GET /=/model/Foo/~/~?_count=6
 --- response
 [
     {"name":"Marry","id":"1","age":"21"},
@@ -125,9 +125,9 @@ GET /=/model/Foo/~/~?count=6
 
 
 
-=== TEST 9: count = 1
+=== TEST 9: _count = 1
 --- request
-GET /=/model/Foo/~/~?count=1
+GET /=/model/Foo/~/~?_count=1
 --- response
 [
     {"name":"Marry","id":"1","age":"21"}
@@ -135,9 +135,9 @@ GET /=/model/Foo/~/~?count=1
 
 
 
-=== TEST 10: count for normal select
+=== TEST 10: _count for normal select
 --- request
-GET /=/model/Foo/name/Bob?count=2
+GET /=/model/Foo/name/Bob?_count=2
 --- response
 [
     {"name":"Bob","id":"2","age":"32"},
@@ -146,9 +146,9 @@ GET /=/model/Foo/name/Bob?count=2
 
 
 
-=== TEST 11: count for normal select (1)
+=== TEST 11: _count for normal select (1)
 --- request
-GET /=/model/Foo/name/Bob?count=1
+GET /=/model/Foo/name/Bob?_count=1
 --- response
 [
     {"name":"Bob","id":"2","age":"32"}
@@ -156,9 +156,9 @@ GET /=/model/Foo/name/Bob?count=1
 
 
 
-=== TEST 12: count and offset
+=== TEST 12: _count and offset
 --- request
-GET /=/model/Foo/~/~?count=3&offset=2
+GET /=/model/Foo/~/~?_count=3&_offset=2
 --- response
 [
     {"name":"Bob","id":"3","age":"15"},
@@ -168,9 +168,9 @@ GET /=/model/Foo/~/~?count=3&offset=2
 
 
 
-=== TEST 13: limit and offset
+=== TEST 13: _limit and offset
 --- request
-GET /=/model/Foo/~/~?limit=3&offset=2
+GET /=/model/Foo/~/~?_limit=3&_offset=2
 --- response
 [
     {"name":"Bob","id":"3","age":"15"},
@@ -180,17 +180,17 @@ GET /=/model/Foo/~/~?limit=3&offset=2
 
 
 
-=== TEST 14: negative count
+=== TEST 14: negative _count
 --- request
-GET /=/model/Foo/name/Bob?count=-2
+GET /=/model/Foo/name/Bob?_count=-2
 --- response
-{"success":0,"error":"Invalid value for the \"count\" param: -2"}
+{"success":0,"error":"Invalid value for the \"_count\" param: -2"}
 
 
 
-=== TEST 15: empty count value
+=== TEST 15: empty _count value
 --- request
-GET /=/model/Foo/name/Bob?count=
+GET /=/model/Foo/name/Bob?_count=
 --- response
 []
 
@@ -198,9 +198,9 @@ GET /=/model/Foo/name/Bob?count=
 
 === TEST 16: weird value
 --- request
-GET /=/model/Foo/name/Bob?count=blah
+GET /=/model/Foo/name/Bob?_count=blah
 --- response
-{"success":0,"error":"Invalid value for the \"count\" param: blah"}
+{"success":0,"error":"Invalid value for the \"_count\" param: blah"}
 
 
 
