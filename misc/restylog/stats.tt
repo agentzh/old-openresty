@@ -102,7 +102,7 @@ order by requests
 -- select requested, count(*) as count, array_to_string(array_accum(client_addr :: text), ' ') as clients, array_to_string(array_accum(url), ' ')  as urls
 select count(*) as count, requested
 from [% table %]
-where client_addr << '202.165/16'
+where client_addr << '202.165/16' and account = 'lifecai'
 group by requested
 order by count desc
 limit 5;
@@ -119,7 +119,13 @@ limit 5;
 
 =item 具有非空结果的有效请求
 
-=SQL select count(url) from [% table %] where response_size <> 13 and client_addr << '202.165/16';
+=begin SQL
+
+select count(url)
+from [% table %]
+where response_size <> 13 and client_addr << '202.165/16' and account = 'lifecai'
+
+=end SQL
 
 =back
 
@@ -129,7 +135,7 @@ limit 5;
 
 =item 总量
 
-=SQL select count(*) from [% table %] where client_addr << '122.224/16';
+=SQL select count(*) from [% table %] where client_addr << '122.224/16' and account = 'lifecai';
 
 =item 机器分布
 
@@ -137,7 +143,7 @@ limit 5;
 
 select client_addr, count(*) as requests
 from [% table %]
-where client_addr << '122.224/16'
+where client_addr << '122.224/16' and account = 'lifecai'
 group by client_addr
 order by requests
 
@@ -150,7 +156,7 @@ order by requests
 -- select requested, count(*) as count, array_to_string(array_accum(client_addr :: text), ' ') as clients, array_to_string(array_accum(url), ' ')  as urls
 select count(*) as count, requested
 from [% table %]
-where client_addr << '122.224/16'
+where client_addr << '122.224/16' and account = 'lifecai'
 group by requested
 order by count desc
 limit 5;
@@ -167,7 +173,7 @@ limit 5;
 
 =item 具有非空结果的有效请求
 
-=SQL select count(url) from [% table %] where response_size <> 17 and client_addr << '122.224/16';
+=SQL select count(url) from [% table %] where response_size <> 17 and client_addr << '122.224/16' and account = 'lifecai';
 
 =item 来自餐饮模块的请求
 
