@@ -2,6 +2,9 @@ debian/conffiles
 debian/control
 debian/postinst
 debian/rules
+misc/plperl.sql
+misc/restylog/Makefile
+misc/restylog/stats.tt
 misc/restylog/import.pl
 misc/restylog/perl.css
 LICENSE
@@ -210,6 +213,7 @@ lib/OpenResty/Backend/Pg.pm
 lib/OpenResty/Backend/PLPerl.pm
 lib/OpenResty/Backend/PgFarm.pm
 lib/OpenResty/Backend/PgMocked.pm
+lib/OpenResty/PLPerl.pm
 lib/OpenResty/Script/Upgrade.pm
 lib/OpenResty/Cache.pm
 lib/OpenResty/CheatSheet.pod

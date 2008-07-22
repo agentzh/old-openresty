@@ -1,6 +1,6 @@
 package OpenResty;
 
-our $VERSION = '0.003017';
+our $VERSION = '0.003018';
 
 use strict;
 use warnings;
@@ -591,7 +591,7 @@ OpenResty - General-purpose web service platform for web applications
 
 =head1 VERSION
 
-This document describes OpenResty 0.3.18 released on July 21, 2008.
+This document describes OpenResty 0.3.18 released on July 22, 2008.
 
 =head1 DESCRIPTION
 
@@ -652,7 +652,7 @@ L<http://www.yisou.com/opi/post.html>
 
 =back
 
-This library is still in B<pre-alpha> stage and the API is still in flux. We're just following the "release early, releaes often" guideline. So please check back often ;)
+This library is still in B<beta> stage and the API is still in flux. We're just following the "release early, releaes often" guideline. So please check back often ;)
 
 See L<OpenResty::Spec::Overview> for more detailed information.
 
