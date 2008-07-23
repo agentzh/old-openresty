@@ -211,7 +211,9 @@ function renderPager (res, page, prefix) {
         error("Failed to get the pager: " + res.error);
         return;
     }
-    var pageCount = Math.ceil(parseInt(res[0].count) / itemsPerPage);
+    var count = res[0].count;
+    $(".total-rows").html('For total <b>' + res[0].count + '</b> rows.');
+    var pageCount = Math.ceil(parseInt(count) / itemsPerPage);
     //.processalert(pageCount);
     if (pageCount < 2) return;
     var html = Jemplate.process(
