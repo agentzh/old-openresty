@@ -1,3 +1,9 @@
+span.total-rows {
+    padding-right: 0;
+    font-style: normal;
+    font-weight: normal;
+}
+
 pre.view-def {
     margin-left: 4em;
 }

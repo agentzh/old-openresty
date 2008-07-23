@@ -15,6 +15,7 @@
     <span class="text">
         <a href="#model-[% model %]">[% model %]</a>
     </span>
+    <span class="total-rows"></span>
 </div>
 
 <div class="pager"></div>
