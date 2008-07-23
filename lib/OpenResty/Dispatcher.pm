@@ -237,7 +237,7 @@ sub process_request {
                 #$OpenResty::Cache->remove($uuid);
                 my $captcha = $openresty->builtin_param('_captcha');
                 ### URL param capture: $captcha
-                require OpenResty::Handler::Login;
+                #require OpenResty::Handler::Login;
                 my $res = OpenResty::Handler::Login->login($openresty, $user, {
                     password => $openresty->builtin_param('_password'),
                     captcha => $captcha,
@@ -311,7 +311,7 @@ sub process_request {
             return $openresty->fatal("Unknown URL level: $url");
         }
         my $package = 'OpenResty::Handler::' . ucfirst($key);
-        eval "use $package";
+        #eval "use $package";
         if ($@) {
             return $openresty->fatal("Failed to load $package");
         }

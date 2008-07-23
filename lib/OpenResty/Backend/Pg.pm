@@ -135,7 +135,7 @@ sub has_user {
 
 sub set_user {
     my ($self, $user) = @_;
-    $self->do("set search_path to $user");
+    $self->do("set search_path to $user,public");
     $self->{user} = $user;
 }
 
