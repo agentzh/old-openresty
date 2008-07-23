@@ -25,11 +25,15 @@ Options:
     --step <num>       Size of the bulk insertion group
     --retries <num>    Number of automatic retries when failures occur
     --no-id            Skipped the id field in the records being imported
+    --skip N           Skipped the first N rows in the input file (default 0)
+    --add-id N          Add ID started from N (default 1)
 _EOC_
 }
 
 my $server = 'api.openresty.org';
 my $step = 20;
+my $skip = 0;
+my $add_id = 1;
 GetOptions(
     'help|h'   => \(my $help),
     'user|u=s' => \(my $user),
@@ -40,6 +44,9 @@ GetOptions(
     'reset' => \(my $reset),
     'retries=i' => \(my $retries),
     'no-id' => \(my $no_id),
+    'skip=i' => \$skip,
+    'add-id=i' => \$add_id,
+    'ignore-dup-error' => \(my $ignore_dup_error),
 ) or die usage();
 
 if ($help) { print usage() }
@@ -50,7 +57,7 @@ $model or die "No --model given.\n";
 my $json_xs = JSON::XS->new->utf8;
 
 my $openresty = WWW::OpenResty::Simple->new(
-    { server => $server, retries => $retries }
+    { server => $server, retries => $retries, ignore_dup_error => $ignore_dup_error }
 );
 $openresty->login($user, $password);
 if ($reset) { $openresty->delete("/=/model/$model/~/~"); }
@@ -61,8 +68,13 @@ local $| = 1;
 while (<>) {
     #select(undef, undef, undef, 0.1);
     #warn "count: ", scalar(@elems), "\n";
+    next if $. <= $skip;
     my $row = $json_xs->decode($_);
 
+    if (!defined $row->{id}) {
+        warn "ADDing id...\n";
+        $row->{id} = $add_id++;
+    }
     if ($no_id) {
         delete $row->{id};
     }
@@ -70,7 +82,7 @@ while (<>) {
     if (@rows % $step == 0) {
         $inserted += insert_rows(\@rows);
         @rows = ();
-        print STDERR "\rInserted rows: $inserted";
+        print STDERR "\rInserted rows: $inserted (row $.)";
     }
 }
 
@@ -81,14 +93,18 @@ print STDERR "\n$inserted row(s) inserted.\n";
 
 sub insert_rows {
     my $rows = shift;
-    my $res = $openresty->post(
-        "/=/model/$model/~/~",
-        $rows
-    );
+    my $res;
+    eval {
+        $res = $openresty->post(
+            "/=/model/$model/~/~",
+            $rows
+        );
+    };
     if (!_HASH($res)) {
         die Dumper($res);
         return 0;
     }
+    #warn Dumper($res);
     return $res->{rows_affected} || 0;
 }
 
