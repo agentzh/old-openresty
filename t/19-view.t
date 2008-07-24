@@ -236,7 +236,7 @@ GET /=/view/View/~/~
 === TEST 24: Create a second view
 --- request
 POST /=/view/~
-{"name":"View2","definition":"select title from A order by $col"}
+{"name":"View2","definition":"select title from A as blah order by $col"}
 --- response
 {"success":1}
 
@@ -246,7 +246,7 @@ POST /=/view/~
 --- request
 GET /=/view/View2
 --- response
-{"name":"View2","description":null,"definition":"select title from A order by $col"}
+{"name":"View2","description":null,"definition":"select title from A as blah order by $col"}
 
 
 
@@ -324,7 +324,7 @@ GET /=/view/~
 --- request
 GET /=/view/TitleOnly
 --- response
-{"name":"TitleOnly","description":null,"definition":"select title from A order by $col"}
+{"name":"TitleOnly","description":null,"definition":"select title from A as blah order by $col"}
 
 
 

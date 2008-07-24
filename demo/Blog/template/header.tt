@@ -7,8 +7,7 @@
         'JSON.js',
         'openresty.js',
         'jquery.js',
-        'Jemplate.js',
-        'jemplates.js',
+        'blog-jemplate.js',
         'blog.js',
       ];
    ELSE;
