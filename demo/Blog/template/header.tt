@@ -4,14 +4,13 @@
 %]
 [% IF NOT pack_js;
       js_files = [
-        'JSON.js',
-        'openresty.js',
         'jquery.js',
         'blog-jemplate.js',
+        'openresty.js',
         'blog.js',
       ];
    ELSE;
-      js_files = ['jquery.js', 'packed_all.js'];
+      js_files = ['jquery.js', 'blog_min.js'];
    END;
 %]
 <head>
