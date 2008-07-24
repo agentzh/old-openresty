@@ -358,7 +358,7 @@ Currently only RSS 2.0 is supported.
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
 
 =head1 SEE ALSO
 

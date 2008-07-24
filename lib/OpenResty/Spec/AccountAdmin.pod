@@ -76,7 +76,7 @@ To upgrade the metamodel for a particular account, see L<OpenResty::Spec::Upgrad
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
 
 =head1 SEE ALSO
 
