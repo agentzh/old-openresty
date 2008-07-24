@@ -1,3 +1,5 @@
+.PHONY: all pack upload upload2
+
 blog_name=Human & Machine
 blog_desc=The mad house for a Perl guy, agentzh
 blog_owner=agentzh
@@ -8,6 +10,9 @@ all:
 	-rm -rf out
 	-mkdir out
 	-cp ../../clients/js/*.js out/
+	-rm out/JSON.js
+	-rm out/md5.js
+	-rm out/*dojo*.js
 	-rm template/elem/*.tt~
 	jemplate --runtime > out/blog-jemplate.js
 	jemplate --compile template/elem/ >> out/blog-jemplate.js
@@ -15,7 +20,7 @@ all:
 	    --define 'blog_desc=$(blog_desc)' \
 	    --define 'blog_owner=$(blog_owner)' \
 	    --define 'resty_server=$(resty_server)' \
-	    --define 'js_pack=0' \
+	    --define 'pack_js=0' \
 	    --include_path=template template/index.tt > out/index.html
 	cp js/*.js out/
 	cp js/*/*.js out/
@@ -27,25 +32,28 @@ all:
 	mv site-binary.tar.gz out/
 
 pack: all
+	-rm -rf pack_out
+	mkdir pack_out
 	tpage --define 'blog_name=$(blog_name)' \
 	    --define 'blog_desc=$(blog_desc)' \
 	    --define 'blog_owner=$(blog_owner)' \
 	    --define 'resty_server=$(resty_server)' \
 	    --define 'pack_js=1' \
 	    --include_path=template template/index.tt > out/index.html
-	-rm out/packed_all.js
-	mv out/jquery.js .
-	cat out/*.js | jsmin > packed_all.js
-	rm out/*.js
-	mv packed_all.js out/
-	mv jquery.js out/
+	cp -r out/* pack_out/
+	for file in `find out -name '*.js' | grep -v 'jquery.js'`; do echo "packing $$file..."; cat $$file | jsmin > pack_out/`basename $$file`; done
+	cat pack_out/blog-jemplate.js pack_out/openresty.js pack_out/blog.js > pack_out/blog_min.js
+	rm pack_out/blog-jemplate.js pack_out/openresty.js pack_out/blog.js
+	rm -rf out
+	mv pack_out out
 
 upload: resty_server=api.eeeeworks.org
 upload: all
-	script/upload
+	script/upload out
 
-upload2:
-	scp -l 10000 -r `pwd`/out agentzh@perlcabal.org:~/public_html
+upload2: resty_server=api.eeeeworks.org
+upload2: pack
+	script/upload out
 
 doc: doc/blog_site.png
 
