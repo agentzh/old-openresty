@@ -270,7 +270,10 @@ sub upgrade_all {
 
 sub get_all_accounts {
     my ($self) = @_;
+    my $user = $self->{user};
+    $self->set_user('_global') if $user ne '_global';
     my $res = $self->select("select name from _global._accounts order by name") || [];
+    if ($user && $user ne '_global') { $self->set_user($user); }
     return map { @$_ } @$res;
 }
 
