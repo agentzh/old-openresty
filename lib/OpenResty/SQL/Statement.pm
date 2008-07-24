@@ -32,7 +32,7 @@ OpenResty::SQL::Statement - Base class for the various SQL generator classes
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
 
 =head1 SEE ALSO
 

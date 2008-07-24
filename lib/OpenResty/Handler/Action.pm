@@ -189,7 +189,7 @@ This OpenResty handler class implements the Action API, i.e., the C</=/action/*>
 =head1 AUTHORS
 
 chaoslawful (王晓哲) C<< <chaoslawful at gmail dot com> >>,
-Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
 
 =head1 SEE ALSO
 

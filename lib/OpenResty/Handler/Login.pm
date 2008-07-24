@@ -208,7 +208,7 @@ This OpenResty handler class implements the Login API, i.e., the C</=/login/*> s
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
 
 =head1 SEE ALSO
 

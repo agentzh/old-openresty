@@ -72,7 +72,7 @@ These constants are not truly constants. Some of them could be overriden by some
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@gmail.com >>
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
 
 =head1 SEE ALSO
 
