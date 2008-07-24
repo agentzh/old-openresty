@@ -270,7 +270,7 @@ sub upgrade_all {
 
 sub get_all_accounts {
     my ($self) = @_;
-    my $res = $self->select("select name from _global._accounts") || [];
+    my $res = $self->select("select name from _global._accounts order by name") || [];
     return map { @$_ } @$res;
 }
 
