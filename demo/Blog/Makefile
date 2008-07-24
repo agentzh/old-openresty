@@ -8,8 +8,9 @@ all:
 	-rm -rf out
 	-mkdir out
 	-cp ../../clients/js/*.js out/
-	jemplate --compile template/elem/ > out/jemplates.js
-	jemplate --runtime > out/Jemplate.js
+	-rm template/elem/*.tt~
+	jemplate --runtime > out/blog-jemplate.js
+	jemplate --compile template/elem/ >> out/blog-jemplate.js
 	tpage --define 'blog_name=$(blog_name)' \
 	    --define 'blog_desc=$(blog_desc)' \
 	    --define 'blog_owner=$(blog_owner)' \

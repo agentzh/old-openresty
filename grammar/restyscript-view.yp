@@ -47,10 +47,15 @@ select_stmt: 'select' 'distinct' pattern_list postfix_clause_list
              { join(' ', @_[1..$#_]) }
            ;
 
-models: model ',' models
+models: model_as ',' models
              { join(' ', @_[1..$#_]) }
-      | model
+      | model_as
       ;
+
+model_as: model 'as' symbol
+             { join(' ', @_[1..$#_]) }
+        | model
+        ;
 
 model: symbol { push @Models, $_[1]; $QuoteIdent->($_[1]) }
      ;
