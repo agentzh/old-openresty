@@ -91,7 +91,7 @@ if (-f 'haskell/bin/restyscript') {
 }
 
 use_test_base();
-no_index( directory => qw< etc tmp demo minisql clients doc t > );
+no_index( directory => qw< etc misc tmp demo minisql clients doc t > );
 
 auto_install();
 
