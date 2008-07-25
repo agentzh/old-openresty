@@ -1,0 +1,72 @@
+[%- IF ! pack_js;
+        js_files = [
+            'openresty.js',
+            'md5.js',
+            'jquery.js',
+            'jquery.cookie.pack.js',
+            'login.js',
+        ];
+    ELSE;
+        js_files = [
+            'jquery-min.js',
+            'login-min.js'
+        ];
+    END;
+%]
+<html>
+    <head>
+        <title>Login OpenResty Admin</title>
+        <link rel="stylesheet" href="admin.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="login.css" type="text/css" media="screen" />
+
+    [%- FOR file IN js_files %]
+    <script type="text/javascript" src="[% file %]"></script>
+    [%- END -%]
+
+    </head>
+    <body>
+        <div id="wait-message">
+            <img src="loading.gif"/>
+            &nbsp; <b>Loading...</b>&nbsp;
+        </div>
+
+        <center id="main">
+            <div id="hd">
+            <div><a href="http://www.yahoo.cn"><img src="http://cn.yimg.com/i/os/v004/ylg.gif" alt="中国雅虎"></a></div>
+            </div>
+            </div>
+            <br/>
+            <br/>
+
+            <table>
+                <form id="login-form">
+                <tr>
+                    <td>User</td><td><input id="login-user" type="text"></input></td>
+                </tr>
+                <tr>
+                    <td>Password</td><td><input id="login-password" type="password"></input></td>
+                </tr>
+                <tr>
+                    <td>Server</td><td><input id="login-server" type="text" value="api.openresty.org"></input></td>
+                </tr>
+
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        <input type="submit" id="login-button" value="Login"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        <a id="register-link" href="javascript:void(0);">
+                            Register an account
+                        </a>
+                    <td>
+                </tr>
+                </form>
+            </table>
+        </center>
+    </body>
+</html>
+

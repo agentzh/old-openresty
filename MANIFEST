@@ -71,9 +71,9 @@ bin/prettyjson
 clients/js/md5.js
 demo/Admin/template/elem/create-feed.tt
 demo/Admin/template/elem/feed.tt
+demo/Admin/template/login.tt
 demo/Admin/css/admin.css
 demo/Admin/css/login.css
-demo/Admin/html/login.html
 demo/Admin/js/admin.js
 demo/Admin/js/login.js
 demo/Admin/js/thirdparty/jquery.cookie.pack.js

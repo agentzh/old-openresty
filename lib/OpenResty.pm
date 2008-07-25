@@ -608,6 +608,8 @@ This document describes OpenResty 0.3.19 released on July 25, 2008.
 
 =head1 DESCRIPTION
 
+This library is still in the B<beta> phase and the API is still in flux. We're just following the "release early, releaes often" guideline. So please check back often ;)
+
 This module implements the server-side OpenResty web service protocol. It provides scriptable and extensible web services for both server-side and client-side (pure AJAX) web applications.
 
 Currently this module can serve as a public web interface to a distributive or desktop PostgreSQL database system. In particular, it provides roles, models, views, actions, captchas, the minisql language, and many more to the web users.
@@ -664,8 +666,6 @@ L<http://eeeeworks.org>
 L<http://www.yisou.com/opi/post.html>
 
 =back
-
-This library is still in B<beta> stage and the API is still in flux. We're just following the "release early, releaes often" guideline. So please check back often ;)
 
 See L<OpenResty::Spec::Overview> for more detailed information.
 
