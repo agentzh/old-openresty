@@ -47,14 +47,20 @@ select_stmt: 'select' 'distinct' pattern_list postfix_clause_list
              { join(' ', @_[1..$#_]) }
            ;
 
-models: model_as ',' models
-             { join(' ', @_[1..$#_]) }
-      | model_as
-      ;
+joined_obj_list: joined_obj ',' joined_obj_list
+                    { join(' ', @_[1..$#_]) }
+               | joined_obj
+               ;
 
-model_as: model 'as' symbol
+joined_obj: model 'as' symbol
              { join(' ', @_[1..$#_]) }
-        | model
+          | model
+          | subquery 'as' symbol
+             { join(' ', @_[1..$#_]) }
+          ;
+
+subquery: '(' select_stmt ')'
+             { join(' ', @_[1..$#_]) }
         ;
 
 model: symbol { push @Models, $_[1]; $QuoteIdent->($_[1]) }
@@ -253,7 +259,7 @@ postfix_clause: where_clause
               | from_clause
               ;
 
-from_clause: 'from' models
+from_clause: 'from' joined_obj_list
                 { join(' ', @_[1..$#_]) }
            | 'from' proc_call
                 { join(' ', @_[1..$#_]) }
@@ -284,10 +290,13 @@ comparison: lhs_atom operator rhs_atom
 
 lhs_atom: expr
         | '(' condition ')'
+             { join(' ', @_[1..$#_]) }
         ;
 
 rhs_atom: expr2
         | '(' condition ')'
+             { join(' ', @_[1..$#_]) }
+        | subquery
         ;
 
 operator: '>'
@@ -303,7 +312,7 @@ operator: '>'
         | '<<'
         | '>>='
         | '>>'
-
+        | 'in'
         ;
 
 
@@ -410,7 +419,7 @@ sub _Lexer {
             (my $token = $s) =~ s/\s+/ /gs;
             return (lc($token), lc($s));
         }
-        s/^\s*(<<=|<<|>>=|>>|<=|>=|<>|!=|\|\||::|like\b|\@\@)//s
+        s/^\s*(<<=|<<|>>=|>>|<=|>=|<>|!=|\|\||::|\blike\b|\bin\b|\@\@)//s
                 and return (lc($1), lc($1));
         s/^\s*([A-Za-z][A-Za-z0-9_]*)\b//s
                 and return ('IDENT', $1);
