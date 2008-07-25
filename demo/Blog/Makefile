@@ -49,11 +49,11 @@ pack: all
 
 upload: resty_server=api.eeeeworks.org
 upload: all
-	script/upload out
+	script/upload
 
 upload2: resty_server=api.eeeeworks.org
 upload2: pack
-	script/upload out
+	script/upload
 
 doc: doc/blog_site.png
 
