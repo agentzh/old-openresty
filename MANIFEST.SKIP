@@ -5,6 +5,7 @@
 demo/Blog/graphviz\.dot$
 demo/Click4honor/openresty\.js$
 demo/Springbot/staff/staff_files
+^OpenResty-\d+\.\d+\.\d+
 \.hi$
 \.ho$
 \.o$
