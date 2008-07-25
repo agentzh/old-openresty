@@ -43,6 +43,7 @@ requires            ('DateTime::Format::Pg');
 requires            ('DateTime::Format::Strptime');
 requires            ('Digest::MD5');
 requires            ('File::ShareDir');
+requires            ('Compress::Zlib');
 # modules needed by new captcha mechanism
 requires			('Crypt::CBC');
 requires			('Crypt::Rijndael');

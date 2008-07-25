@@ -9,6 +9,7 @@ use warnings;
 use Data::UUID;
 use YAML::Syck ();
 use JSON::XS ();
+use Compress::Zlib;
 
 use List::Util qw(first);
 use Params::Util qw(_HASH _STRING _ARRAY0 _ARRAY _SCALAR);
@@ -326,6 +327,10 @@ sub response {
         }
     }
 
+    my $use_gzip = $OpenResty::Config{'frontend.use_gzip'} &&
+        index($ENV{HTTP_ACCEPT_ENCODING} || '', 'gzip') >= 0;
+    #warn "use gzip: $use_gzip\n";
+
     print "HTTP/1.1 200 OK\n";
     my $type = $self->{_type} || 'text/plain';
     #warn $s;
@@ -384,12 +389,20 @@ sub response {
         $Cache->set_last_res($last_res_id, $str);
     }
     #warn ">>>>>>>>>>>>Cookies<<<<<<<<<<<<<<: @cookies\n";
+    if (length($str) < 1000 && $use_gzip) {
+        undef $use_gzip;
+    }
     print $cgi->header(
         -type => "$type" . ($type =~ /text/ ? "; charset=$charset" : ""),
+        $use_gzip ? ('-content-encoding' => 'gzip', '-accept-encoding' => 'Vary') : (),
         @cookies ? (-cookie => \@cookies) : ()
     );
-
-    print $str, "\n";
+    if ($use_gzip) {
+        # compress the content part
+        print Compress::Zlib::memGzip($str);
+    } else {
+        print $str, "\n";
+    }
 }
 
 sub set_formatter {
