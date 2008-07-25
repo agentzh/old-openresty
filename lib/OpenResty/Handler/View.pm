@@ -101,6 +101,7 @@ sub PUT_view {
         _STRING($new_def) or
             die "Bad view definition: ", $OpenResty::Dumper->($new_def), "\n";
         # XXX check the syntax of the def
+        $OpenResty::Cache->remove_view_def($user, $view);
         my $restyscript = OpenResty::RestyScript::View->new;
         eval {
             $restyscript->parse(
@@ -129,10 +130,15 @@ sub PUT_view {
 
 sub exec_view {
     my ($self, $openresty, $view, $bits, $cgi) = @_;
+    my $user = $openresty->current_user;
     my $select = OpenResty::RestyScript::View->new;
-    my $sql = "select definition from _views where name = " . Q($view);
-    ### laser exec_view: "$sql"
-    my $view_def = $openresty->select($sql)->[0][0];
+    my $view_def = $OpenResty::Cache->get_view_def($user, $view);
+    if (!$view_def) {
+        my $sql = "select definition from _views where name = " . Q($view);
+        ### laser exec_view: "$sql"
+        $view_def = $openresty->select($sql)->[0][0];
+        $OpenResty::Cache->set_view_def($user, $view, $view_def);
+    }
     my $fix_var = $bits->[2];
     _IDENT($fix_var) or $fix_var eq '~' or die "Bad parameter name: ", $OpenResty::Dumper->($fix_var), "\n";
     my $fix_var_value = $bits->[3];
@@ -255,6 +261,7 @@ sub DELETE_view {
         die "View \"$view\" not found.\n";
     }
     $OpenResty::Cache->remove_has_view($user, $view);
+    $OpenResty::Cache->remove_view_def($user, $view);
     my $sql = "delete from _views where name = " . Q($view);
     return { success => $openresty->do($sql) >= 0 ? 1 : 0 };
 }
@@ -267,6 +274,7 @@ sub DELETE_view_list {
     for my $view (@$views) {
         #warn "View $view...\n";
         $OpenResty::Cache->remove_has_view($user, $view);
+        $OpenResty::Cache->remove_view_def($user, $view);
     }
     my $sql = "truncate _views;";
     return { success => $openresty->do($sql) >= 0 ? 1 : 0 };

@@ -134,6 +134,22 @@ sub remove_has_view {
     $self->remove("hasview:$user:$view");
 }
 
+sub get_view_def {
+    my ($self, $user, $view) = @_;
+    #return undef;
+    $self->get("viewdef:$user:$view", 'trivial')
+}
+
+sub set_view_def {
+    my ($self, $user, $view, $def) = @_;
+    $self->set("viewdef:$user:$view", $def, 3600, 'trivial');
+}
+
+sub remove_view_def {
+    my ($self, $user, $view) = @_;
+    $self->remove("viewdef:$user:$view");
+}
+
 sub get_has_role {
     my ($self, $user, $role) = @_;
     #return undef;
