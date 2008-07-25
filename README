@@ -2,7 +2,7 @@ NAME
     OpenResty - General-purpose web service platform for web applications
 
 VERSION
-    This document describes OpenResty 0.3.18 released on July 22, 2008.
+    This document describes OpenResty 0.3.19 released on July 25, 2008.
 
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
@@ -49,9 +49,9 @@ DESCRIPTION
     Yisou BBS
         <http://www.yisou.com/opi/post.html>
 
-    This library is still in pre-alpha stage and the API is still in flux.
-    We're just following the "release early, releaes often" guideline. So
-    please check back often ;)
+    This library is still in beta stage and the API is still in flux. We're
+    just following the "release early, releaes often" guideline. So please
+    check back often ;)
 
     See OpenResty::Spec::Overview for more detailed information.
 

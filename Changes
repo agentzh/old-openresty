@@ -1,5 +1,20 @@
 Change Log for OpenResty
 
+0.3.19 Jul 25 2008
+* perl minisql compiler: implemented subquery in from clause and where clause.
+* now we cache the view definition during view invokation as well.
+* added the frontend.use_gzip option to the config file and added builtin gzip support to the OpenResty server.
+* added the script bin/test-account-admin.sh.
+* now the old minisql parser supports "from foo as bar".
+* added jsmin support to demo/Admin and demo/Blog as well.
+* demo/Admin - added total row count to the model row page.
+* get_all_accounts now sets the current user to _global before querying _global._accounts, which fixed the "\u" crash after "\u foo".
+* fixed the email address in POD.
+* added the misc dir to Makefile.PL's no_index.
+* now we sort the account list while doing \u in the OpenResty Shell.
+* added --ignore-dup-error and --add-id options to the bin/import-model.pl script.
+* set_user now include the "public" schema in the search_path as well.
+
 0.3.18 Jul 22 2008
 * Builtin parameters like user, password, session, use_cookie, limit/count, offset, last_response, var, callback, and charset are not renamed to the form with a leading underscore, as in _user, _password, _session, _use_cookie, _limit/_count, _offset, _last_response and etc. The old form is still supported in the short term but is now deprecated.
 * added missing files for misc/restylog/.
