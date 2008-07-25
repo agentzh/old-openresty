@@ -389,7 +389,7 @@ sub response {
         $Cache->set_last_res($last_res_id, $str);
     }
     #warn ">>>>>>>>>>>>Cookies<<<<<<<<<<<<<<: @cookies\n";
-    if (length($str) < 1000 && $use_gzip) {
+    if (length($str) < 500 && $use_gzip) {
         undef $use_gzip;
     }
     print $cgi->header(
