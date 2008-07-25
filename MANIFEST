@@ -1,3 +1,5 @@
+demo/Admin/template/login.tt
+demo/Blog/blog_min.js
 debian/conffiles
 debian/control
 debian/postinst
@@ -286,12 +288,13 @@ t/23-sanity-callback.t
 t/24-session.t
 t/26-types.t
 t/27-transaction.t
+t/28-feed.t
+t/29-feed-writer-rss.t
 t/33-duplicate-def.t
 t/32-view-upgrade.t
 t/34-unique.t
 t/35-model-order-by.t
-t/28-feed.t
-t/29-feed-writer-rss.t
+t/36-subquery.t
 t/99-pod-coverage.t
 t/99-pod.t
 t/OpenResty.pm
@@ -333,4 +336,6 @@ t/pgmock-data/30-action.t.json
 t/pgmock-data/31-action.t.json
 t/pgmock-data/34-unique.t.json
 t/pgmock-data/35-model-order-by.t.json
+t/pgmock-data/36-subquery.t.json
+t/29-feed-writer-rss.t
 TODO
