@@ -1,29 +1,33 @@
-[%- DEFAULT
-     js_files = [
-        'JSON.js',
-        'openresty.js',
-        'md5.js',
-        'jquery.js',
-        'jquery.jeditable.pack.js',
-        'jquery.cookie.pack.js',
-        'Jemplate.js',
-        'jemplates.js',
-        'model.js',
-        'view.js',
-        'role.js',
-        'feed.js',
-        'action.js',
-        'dispatcher.js',
-        'admin.js',
-    ]
+[%- IF ! pack_js;
+        js_files = [
+            'openresty.js',
+            'md5.js',
+            'jquery.js',
+            'jquery.jeditable.pack.js',
+            'jquery.cookie.pack.js',
+            'admin-jemplate.js',
+            'model.js',
+            'view.js',
+            'role.js',
+            'feed.js',
+            'action.js',
+            'dispatcher.js',
+            'admin.js',
+        ];
+    ELSE;
+        js_files = [
+            'jquery-min.js',
+            'admin-min.js'
+        ];
+    END;
 %]
 <title>OpenResty Admin</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="admin.css" type="text/css" media="screen" />
 
-[% FOR file IN js_files %]
+[%- FOR file IN js_files %]
 <script type="text/javascript" src="[% file %]"></script>
-[% END -%]
+[%- END -%]
 
 </head>
 
