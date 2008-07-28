@@ -1,6 +1,6 @@
 var account = 'agentzh';
-//var host = 'http://api.eeeeworks.org';
-var host = 'http://10.62.136.86';
+var host = 'http://api.eeeeworks.org';
+//var host = 'http://10.62.136.86';
 
 var openresty = null;
 var savedAnchor = null;
@@ -213,6 +213,16 @@ function getPostList (page) {
         _count: itemsPerPage,
         _order_by: 'id:desc',
         _offset: itemsPerPage * (page - 1)
+    });
+}
+
+function getSearchResults (page) {
+    setStatus(true, 'renderSearchResults');
+    openresty.callback = renderSearchResults;
+    openresty.get('/=/view/PostSearch/~/~', {
+        offset: itemsPerPage * (page - 1),
+        count: itemsPerPage,
+        order_dir: 'desc'
     });
 }
 
@@ -488,7 +498,7 @@ function renderComments (res) {
     setStatus(false, 'renderComments');
     //alert("Comments: " + res.error);
     if (!openresty.isSuccess(res)) {
-        error("Failed to render post list: " + res.error);
+        error("Failed to get post list: " + res.error);
     } else {
         $(".comments-content").html(
             Jemplate.process('comments.tt', { comments: res })
@@ -500,7 +510,7 @@ function renderComments (res) {
 function renderPostList (res) {
     setStatus(false, 'renderPostList');
     if (!openresty.isSuccess(res)) {
-        error("Failed to render post list: " + res.error);
+        error("Failed to get post list: " + res.error);
     } else {
         //alert(JSON.stringify(data));
         $("#beta-inner.pkg").html(
@@ -508,6 +518,18 @@ function renderPostList (res) {
         ).postprocess();
     }
     resetAnchor();
+}
+
+function renderSearchResults (res) {
+    setStatus(false, 'renderSearchResults');
+    if (!openresty.isSuccess(res)) {
+        error("Failed to get search results: " + res.error);
+    } else {
+        var html = Jemplate.process('post-list.tt', { post_list: res })
+        $("#beta-inner.pkg").html(
+            Jemplate.process('post-list.tt', { post_list: res })
+        ).postprocess();
+    }
 }
 
 function renderPager (res, page) {

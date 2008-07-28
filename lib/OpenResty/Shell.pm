@@ -6,6 +6,9 @@ use warnings;
 use Encode ();
 use OpenResty::Shell::History;
 
+$SIG{INT} = "OpenResty::Shell::noop";
+sub noop {}
+
 eval "use Term::ReadLine;";
 if ($@) { die "No Term::ReadLine::Gnu found.\n" };
 
