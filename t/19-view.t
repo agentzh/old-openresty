@@ -807,11 +807,19 @@ PUT /=/view/TitleOnly
 {"error":"minisql: line 1: error: Unexpected input: \"abc\" ('(' or select expected).","success":0}
 
 
+=== TEST 87: from proc() as q
+--- request
+PUT /=/view/TitleOnly
+{ "definition": "select ts_rank(ts_vector(content), q)" }
+--- response
+{"success":1}
+
+
 
 === TEST 87: from proc() as q
 --- request
 PUT /=/view/TitleOnly
-{ "definition": "select * from Post, to_tsquery('chinesecfg', $query) as q where 1=1" }
+{ "definition": "select * from Post, to_tsquery('chinesecfg', $query) as q where 1=1 order by ts_rank(ts_vector(content), q)" }
 --- response
 {"success":1}
 
