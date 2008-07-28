@@ -1009,7 +1009,7 @@ sub new {
 		ACTIONS => {
 			"as" => 162
 		},
-		DEFAULT => -17
+		DEFAULT => -18
 	},
 	{#State 116
 		ACTIONS => {
@@ -1698,7 +1698,7 @@ sub new {
 		DEFAULT => -19
 	},
 	{#State 192
-		DEFAULT => -18
+		DEFAULT => -17
 	},
 	{#State 193
 		DEFAULT => -20
@@ -1924,10 +1924,10 @@ sub
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 17
-		 'joined_obj', 1, undef
+		 'joined_obj', 3, undef
 	],
 	[#Rule 18
-		 'joined_obj', 3, undef
+		 'joined_obj', 1, undef
 	],
 	[#Rule 19
 		 'joined_obj', 3,
