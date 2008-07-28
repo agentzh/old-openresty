@@ -344,10 +344,14 @@ order_by_objects: order_by_object ',' order_by_objects
                 | order_by_object
                 ;
 
-order_by_object: column order_by_modifier
+order_by_object: order_by_atom order_by_modifier
                     { join(' ', @_[1..$#_]) }
-               | column
+               | order_by_atom
                ;
+
+order_by_atom: column
+             | proc_call2
+             ;
 
 order_by_modifier: 'asc' | 'desc'
                  ;
