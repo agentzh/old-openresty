@@ -811,7 +811,7 @@ PUT /=/view/TitleOnly
 === TEST 87: from proc() as q
 --- request
 PUT /=/view/TitleOnly
-{ "definition": "select * from to_tsquery('chinesecfg', $query) as q" }
+{ "definition": "select * from Post, to_tsquery('chinesecfg', $query) as q where 1=1" }
 --- response
 {"success":1}
 

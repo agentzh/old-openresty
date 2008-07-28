@@ -1924,7 +1924,10 @@ sub
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 17
-		 'joined_obj', 3, undef
+		 'joined_obj', 3,
+sub
+#line 58 "grammar/restyscript-view.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 18
 		 'joined_obj', 1, undef
@@ -1932,25 +1935,25 @@ sub
 	[#Rule 19
 		 'joined_obj', 3,
 sub
-#line 60 "grammar/restyscript-view.yp"
+#line 61 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 20
 		 'subquery', 3,
 sub
-#line 64 "grammar/restyscript-view.yp"
+#line 65 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 21
 		 'model', 1,
 sub
-#line 67 "grammar/restyscript-view.yp"
+#line 68 "grammar/restyscript-view.yp"
 { push @Models, $_[1]; $QuoteIdent->($_[1]) }
 	],
 	[#Rule 22
 		 'pattern_list', 3,
 sub
-#line 71 "grammar/restyscript-view.yp"
+#line 72 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 23
@@ -1959,7 +1962,7 @@ sub
 	[#Rule 24
 		 'pattern', 3,
 sub
-#line 76 "grammar/restyscript-view.yp"
+#line 77 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 25
@@ -1971,55 +1974,55 @@ sub
 	[#Rule 27
 		 'expr', 3,
 sub
-#line 82 "grammar/restyscript-view.yp"
+#line 83 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 28
 		 'expr', 3,
 sub
-#line 84 "grammar/restyscript-view.yp"
+#line 85 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 29
 		 'expr', 3,
 sub
-#line 86 "grammar/restyscript-view.yp"
+#line 87 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 30
 		 'expr', 3,
 sub
-#line 88 "grammar/restyscript-view.yp"
+#line 89 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 31
 		 'expr', 3,
 sub
-#line 90 "grammar/restyscript-view.yp"
+#line 91 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 32
 		 'expr', 3,
 sub
-#line 92 "grammar/restyscript-view.yp"
+#line 93 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 33
 		 'expr', 3,
 sub
-#line 94 "grammar/restyscript-view.yp"
+#line 95 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 34
 		 'expr', 3,
 sub
-#line 96 "grammar/restyscript-view.yp"
+#line 97 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 35
 		 'expr', 3,
 sub
-#line 98 "grammar/restyscript-view.yp"
+#line 99 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 36
@@ -2043,19 +2046,19 @@ sub
 	[#Rule 42
 		 'proc_call', 4,
 sub
-#line 112 "grammar/restyscript-view.yp"
+#line 113 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 43
 		 'proc_call', 4,
 sub
-#line 114 "grammar/restyscript-view.yp"
+#line 115 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 44
 		 'parameter_list', 3,
 sub
-#line 118 "grammar/restyscript-view.yp"
+#line 119 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 45
@@ -2067,55 +2070,55 @@ sub
 	[#Rule 47
 		 'expr2', 3,
 sub
-#line 126 "grammar/restyscript-view.yp"
+#line 127 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 48
 		 'expr2', 3,
 sub
-#line 128 "grammar/restyscript-view.yp"
+#line 129 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 49
 		 'expr2', 3,
 sub
-#line 130 "grammar/restyscript-view.yp"
+#line 131 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 50
 		 'expr2', 3,
 sub
-#line 132 "grammar/restyscript-view.yp"
+#line 133 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 51
 		 'expr2', 3,
 sub
-#line 134 "grammar/restyscript-view.yp"
+#line 135 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 52
 		 'expr2', 3,
 sub
-#line 136 "grammar/restyscript-view.yp"
+#line 137 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 53
 		 'expr2', 3,
 sub
-#line 138 "grammar/restyscript-view.yp"
+#line 139 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 54
 		 'expr2', 3,
 sub
-#line 140 "grammar/restyscript-view.yp"
+#line 141 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 55
 		 'expr2', 3,
 sub
-#line 142 "grammar/restyscript-view.yp"
+#line 143 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 56
@@ -2136,19 +2139,19 @@ sub
 	[#Rule 61
 		 'proc_call2', 4,
 sub
-#line 153 "grammar/restyscript-view.yp"
+#line 154 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 62
 		 'proc_call2', 4,
 sub
-#line 155 "grammar/restyscript-view.yp"
+#line 156 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 63
 		 'parameter_list2', 3,
 sub
-#line 159 "grammar/restyscript-view.yp"
+#line 160 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 64
@@ -2160,7 +2163,7 @@ sub
 	[#Rule 66
 		 'variable', 1,
 sub
-#line 168 "grammar/restyscript-view.yp"
+#line 169 "grammar/restyscript-view.yp"
 {
                 push @OutVars, $_[1];
                 my $val = $InVals->{$_[1]};
@@ -2180,7 +2183,7 @@ sub
 	[#Rule 69
 		 'number', 3,
 sub
-#line 184 "grammar/restyscript-view.yp"
+#line 185 "grammar/restyscript-view.yp"
 {
                 push @OutVars, $_[1];
                 my $val = $InVals->{$_[1]};
@@ -2195,13 +2198,13 @@ sub
 	[#Rule 70
 		 'string', 1,
 sub
-#line 196 "grammar/restyscript-view.yp"
+#line 197 "grammar/restyscript-view.yp"
 { $Quote->(parse_string($_[1])) }
 	],
 	[#Rule 71
 		 'string', 3,
 sub
-#line 198 "grammar/restyscript-view.yp"
+#line 199 "grammar/restyscript-view.yp"
 { push @OutVars, $_[1];
             my $val = $InVals->{$_[1]};
             if (!defined $val) {
@@ -2218,13 +2221,13 @@ sub
 	[#Rule 73
 		 'column', 1,
 sub
-#line 210 "grammar/restyscript-view.yp"
+#line 211 "grammar/restyscript-view.yp"
 { push @Columns, $_[1]; $QuoteIdent->($_[1]) }
 	],
 	[#Rule 74
 		 'qualified_symbol', 3,
 sub
-#line 214 "grammar/restyscript-view.yp"
+#line 215 "grammar/restyscript-view.yp"
 {
                       push @Models, $_[1];
                       push @Columns, $_[3];
@@ -2237,7 +2240,7 @@ sub
 	[#Rule 76
 		 'symbol', 3,
 sub
-#line 223 "grammar/restyscript-view.yp"
+#line 224 "grammar/restyscript-view.yp"
 { push @OutVars, $_[1];
             my $val = $InVals->{$_[1]};
             if (!defined $val) {
@@ -2253,7 +2256,7 @@ sub
 	[#Rule 77
 		 'symbol', 1,
 sub
-#line 235 "grammar/restyscript-view.yp"
+#line 236 "grammar/restyscript-view.yp"
 { push @OutVars, $_[1];
             my $val = $InVals->{$_[1]};
             if (!defined $val) {
@@ -2271,7 +2274,7 @@ sub
 	[#Rule 79
 		 'postfix_clause_list', 2,
 sub
-#line 251 "grammar/restyscript-view.yp"
+#line 252 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 80
@@ -2298,19 +2301,19 @@ sub
 	[#Rule 87
 		 'from_clause', 2,
 sub
-#line 264 "grammar/restyscript-view.yp"
+#line 265 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 88
 		 'from_clause', 2,
 sub
-#line 266 "grammar/restyscript-view.yp"
+#line 267 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 89
 		 'where_clause', 2,
 sub
-#line 270 "grammar/restyscript-view.yp"
+#line 271 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 90
@@ -2319,7 +2322,7 @@ sub
 	[#Rule 91
 		 'disjunction', 3,
 sub
-#line 277 "grammar/restyscript-view.yp"
+#line 278 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 92
@@ -2328,7 +2331,7 @@ sub
 	[#Rule 93
 		 'conjunction', 3,
 sub
-#line 282 "grammar/restyscript-view.yp"
+#line 283 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 94
@@ -2337,13 +2340,13 @@ sub
 	[#Rule 95
 		 'comparison', 3,
 sub
-#line 287 "grammar/restyscript-view.yp"
+#line 288 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 96
 		 'comparison', 3,
 sub
-#line 289 "grammar/restyscript-view.yp"
+#line 290 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 97
@@ -2352,7 +2355,7 @@ sub
 	[#Rule 98
 		 'lhs_atom', 3,
 sub
-#line 294 "grammar/restyscript-view.yp"
+#line 295 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 99
@@ -2361,7 +2364,7 @@ sub
 	[#Rule 100
 		 'rhs_atom', 3,
 sub
-#line 299 "grammar/restyscript-view.yp"
+#line 300 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 101
@@ -2424,13 +2427,13 @@ sub
 	[#Rule 120
 		 'group_by_clause', 2,
 sub
-#line 329 "grammar/restyscript-view.yp"
+#line 330 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 121
 		 'column_list', 3,
 sub
-#line 333 "grammar/restyscript-view.yp"
+#line 334 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 122
@@ -2439,13 +2442,13 @@ sub
 	[#Rule 123
 		 'order_by_clause', 2,
 sub
-#line 338 "grammar/restyscript-view.yp"
+#line 339 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 124
 		 'order_by_objects', 3,
 sub
-#line 342 "grammar/restyscript-view.yp"
+#line 343 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 125
@@ -2454,7 +2457,7 @@ sub
 	[#Rule 126
 		 'order_by_object', 2,
 sub
-#line 347 "grammar/restyscript-view.yp"
+#line 348 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 127
@@ -2469,13 +2472,13 @@ sub
 	[#Rule 130
 		 'limit_clause', 2,
 sub
-#line 355 "grammar/restyscript-view.yp"
+#line 356 "grammar/restyscript-view.yp"
 { delete $_[0]->YYData->{limit}; join(' ', @_[1..$#_]) }
 	],
 	[#Rule 131
 		 'offset_clause', 2,
 sub
-#line 359 "grammar/restyscript-view.yp"
+#line 360 "grammar/restyscript-view.yp"
 { delete $_[0]->YYData->{offset}; join(' ', @_[1..$#_]) }
 	]
 ],
@@ -2483,7 +2486,7 @@ sub
     bless($self,$class);
 }
 
-#line 362 "grammar/restyscript-view.yp"
+#line 363 "grammar/restyscript-view.yp"
 
 
 #use Smart::Comments '####';
