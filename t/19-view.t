@@ -808,7 +808,16 @@ PUT /=/view/TitleOnly
 
 
 
-=== TEST 87: logout
+=== TEST 87: from proc() as q
+--- request
+PUT /=/view/TitleOnly
+{ "definition": "select * from to_tsquery('chinesecfg', $query) as q" }
+--- response
+{"success":1}
+
+
+
+=== TEST 88: logout
 --- request
 GET /=/logout
 --- response
