@@ -55,6 +55,7 @@ joined_obj_list: joined_obj ',' joined_obj_list
 joined_obj: model 'as' symbol
              { join(' ', @_[1..$#_]) }
           | proc_call 'as' symbol
+             { join(' ', @_[1..$#_]) }
           | model
           | subquery 'as' symbol
              { join(' ', @_[1..$#_]) }
