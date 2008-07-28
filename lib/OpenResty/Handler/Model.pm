@@ -35,6 +35,10 @@ sub check_type {
                     real |
                     double precision |
                     ltree |
+                    line |
+                    point |
+                    lseg |
+                    path |
                     date |
                     (?:timestamp|time) (?: \s* \( \s* \d+ \s* \) )?
                         (?: \s* with(?:out)? \s+ time \s+ zone)? |

@@ -3,6 +3,17 @@
 </div>
 
 <div class="module-archives module">
+    <h2 class="module-header">Site search</h2>
+    <div id="search-posts" class="module-content">
+        <form id="form-search" onsubmit="getSearchResults(1)">
+            <input type="text" size="20" maxlength="125" id="searchbox"></input><br/>
+            <input type="submit" value="Posts"></input>
+            <!-- <input type="button" value="Comments"></input> -->
+        </form>
+    </div>
+</div>
+
+<div class="module-archives module">
     <h2 class="module-header">Recent Posts</h2>
     <div id="recent-posts" class="module-content">
     </div>
