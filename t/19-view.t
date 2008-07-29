@@ -822,17 +822,17 @@ PUT /=/view/TitleOnly
 { "definition": "select * from Post, to_tsquery('chinesecfg', $query) as q where 1=1 order by ts_rank(ts_vector(content), q)" }
 --- response
 {"success":1}
-
+--- SKIP
 
 === TEST 88: don't recognize aliased proc as model
 --- request
-PUT /=/view/TitleOnly
+POST /=/view/TitleOnly2
 { "definition": "select * from (select * from Post) as a where a.title = 'a' " }
 --- response
 {"success":1}
 
 
-=== TEST 89: logout
+=== TEST 90: logout
 --- request
 GET /=/logout
 --- response
