@@ -824,7 +824,7 @@ PUT /=/view/TitleOnly
 {"success":1}
 
 
-=== TEST 88: from proc() as q
+=== TEST 88: don't recognize aliased proc as model
 --- request
 PUT /=/view/TitleOnly
 { "definition": "select * from (select * from Post) as a where a.title = 'a' " }

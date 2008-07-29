@@ -132,6 +132,18 @@ function dispatchByAnchor () {
         return;
     }
 
+    match = anchor.match(/^search\/(\d+)\/(.*)/);
+    if (match) {
+        var page = parseInt(match[1]);
+        var query = match[2];
+        $('.pager').html('');
+
+        $('#searchbox').val(query);
+        getSearchResults(query, page);
+        getPagerForSearch(query, page);
+        return;
+    }
+
     match = anchor.match(/^archive-(\d+)-(\d+)$/);
     if (match) {
         var year = match[1];
@@ -216,14 +228,40 @@ function getPostList (page) {
     });
 }
 
-function getSearchResults (page) {
+function getSearchResults (query, page) {
     setStatus(true, 'renderSearchResults');
     openresty.callback = renderSearchResults;
+    var q = query2tsquery(query);
+    //alert("Query: " + q);
     openresty.get('/=/view/PostSearch/~/~', {
         offset: itemsPerPage * (page - 1),
         count: itemsPerPage,
+        query: q,
         order_dir: 'desc'
     });
+}
+
+function doPostSearch () {
+    var query = $('#searchbox').val();
+    savedAndhor = null;
+    var anchor = '#search/1/' + query;
+    location.hash = anchor;
+    //alert(location.hash);
+    if (savedAnchor == anchor.replace(/^\#/, '')) savedAnchor = null;
+    dispatchByAnchor();
+}
+
+function query2tsquery (query) {
+    return query.replace(/[\s(){},.|&$]+/g, ' ')
+                 .replace(/^\s+|\s+$/g, '')
+                 .replace(/ +/g, '|');
+}
+
+function getPagerForSearch (query, page) {
+    setStatus(true, 'renderPagerForSearch');
+    openresty.callback = function (res) { renderPager(res, page, 'search/', '/' + query); };
+    var q = query2tsquery(query);
+    openresty.get('/=/view/RowCountForSearch/~/~', {query: q});
 }
 
 function getPager (page) {
@@ -532,7 +570,7 @@ function renderSearchResults (res) {
     }
 }
 
-function renderPager (res, page) {
+function renderPager (res, page, prefix, suffix) {
     setStatus(false, 'renderPager');
     if (!openresty.isSuccess(res)) {
         error("Failed to render pager: " + res.error);
@@ -543,7 +581,7 @@ function renderPager (res, page) {
         //debug("before redering pager (2)...");
         var html = Jemplate.process(
             'pager.tt',
-            { page: page, page_count: pageCount, title: 'Pages' }
+            { page: page, page_count: pageCount, title: 'Pages', prefix: prefix, suffix: suffix }
         );
         //debug("after html generation...");
 
