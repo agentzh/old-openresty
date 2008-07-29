@@ -115,8 +115,8 @@ function dispatchByAnchor () {
     if (savedAnchor == anchor)
         return;
     if (anchor == "") {
-        anchor = 'main';
-        location.hash = 'main';
+        anchor = 'posts/1';
+        location.hash = 'posts/1';
     }
     savedAnchor = anchor;
 
@@ -144,20 +144,20 @@ function dispatchByAnchor () {
         return;
     }
 
-    match = anchor.match(/^archive-(\d+)-(\d+)$/);
+    match = anchor.match(/^archive\/(\d+)\/(\d+)$/);
     if (match) {
         var year = match[1];
         var month = match[2];
         getArchive(year, month);
         return;
     }
-    match = anchor.match(/^(?:post-list|post-list-(\d+))$/);
+    match = anchor.match(/^(?:posts|posts\/(\d+))$/);
     var page = 1;
     //alert(anchor + " " + location.hash);
     if (match)
         page = parseInt(match[1]) || 1;
-    else if (anchor != 'main')
-        top.location.hash = 'main';
+    else if (anchor != 'posts/1')
+        top.location.hash = 'posts/1';
 
     //debug("before getPostList...");
     getPostList(page);
@@ -165,7 +165,7 @@ function dispatchByAnchor () {
     getPager(page);
     //debug("after getPager...");
 
-    $(".blog-top").attr('id', 'post-list-' + page);
+    $(".blog-top").attr('id', 'posts/' + page);
 }
 
 function getArchive (year, month) {
@@ -188,7 +188,7 @@ function getArchive (year, month) {
         '/=/view/FullPostsByMonth/~/~',
         { count: 40, year: year, month: month }
     );
-    $(".blog-top").attr('id', 'archive-' + year + '-' + month);
+    $(".blog-top").attr('id', 'archive/' + year + '/' + month);
 }
 
 function renderArchiveNav (res) {
@@ -266,7 +266,7 @@ function getPagerForSearch (query, page) {
 
 function getPager (page) {
     setStatus(true, 'renderPager');
-    openresty.callback = function (res) { renderPager(res, page); };
+    openresty.callback = function (res) { renderPager(res, page, 'posts/', ''); };
     openresty.get('/=/view/RowCount/model/Post');
 }
 

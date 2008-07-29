@@ -2,7 +2,7 @@
 [% FOREACH archive IN archives -%]
     <li class="module-list-item">
         [%- index = archive.month %]
-        <a href="#archive-[% archive.year %]-[% archive.month %]">[% months.$index %] [% archive.year %] ([% archive.count %])</a>
+        <a href="#archive/[% archive.year %]/[% archive.month %]">[% months.$index %] [% archive.year %] ([% archive.count %])</a>
     </li>
 [% END -%]
 </ul>
