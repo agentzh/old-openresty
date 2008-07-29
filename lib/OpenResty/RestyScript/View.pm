@@ -2441,7 +2441,10 @@ sub
 		 'operator', 1, undef
 	],
 	[#Rule 117
-		 'operator', 2, undef
+		 'operator', 2,
+sub
+#line 320 "grammar/restyscript-view.yp"
+{ join(' ', @_[1..$#_]) }
 	],
 	[#Rule 118
 		 'operator', 1, undef
@@ -2461,13 +2464,13 @@ sub
 	[#Rule 123
 		 'group_by_clause', 2,
 sub
-#line 333 "grammar/restyscript-view.yp"
+#line 334 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 124
 		 'column_list', 3,
 sub
-#line 337 "grammar/restyscript-view.yp"
+#line 338 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 125
@@ -2476,13 +2479,13 @@ sub
 	[#Rule 126
 		 'order_by_clause', 2,
 sub
-#line 342 "grammar/restyscript-view.yp"
+#line 343 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 127
 		 'order_by_objects', 3,
 sub
-#line 346 "grammar/restyscript-view.yp"
+#line 347 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 128
@@ -2491,7 +2494,7 @@ sub
 	[#Rule 129
 		 'order_by_object', 2,
 sub
-#line 351 "grammar/restyscript-view.yp"
+#line 352 "grammar/restyscript-view.yp"
 { join(' ', @_[1..$#_]) }
 	],
 	[#Rule 130
@@ -2512,13 +2515,13 @@ sub
 	[#Rule 135
 		 'limit_clause', 2,
 sub
-#line 363 "grammar/restyscript-view.yp"
+#line 364 "grammar/restyscript-view.yp"
 { delete $_[0]->YYData->{limit}; join(' ', @_[1..$#_]) }
 	],
 	[#Rule 136
 		 'offset_clause', 2,
 sub
-#line 367 "grammar/restyscript-view.yp"
+#line 368 "grammar/restyscript-view.yp"
 { delete $_[0]->YYData->{offset}; join(' ', @_[1..$#_]) }
 	]
 ],
@@ -2526,7 +2529,7 @@ sub
     bless($self,$class);
 }
 
-#line 370 "grammar/restyscript-view.yp"
+#line 371 "grammar/restyscript-view.yp"
 
 
 #use Smart::Comments '####';
