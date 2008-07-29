@@ -295,7 +295,8 @@ lhs_atom: expr
              { join(' ', @_[1..$#_]) }
         ;
 
-rhs_atom: expr2
+rhs_atom: 'null'
+        | expr2
         | '(' condition ')'
              { join(' ', @_[1..$#_]) }
         | subquery
@@ -315,6 +316,8 @@ operator: '>'
         | '>>='
         | '>>'
         | 'in'
+        | 'is' 'not'
+        | 'is'
         ;
 
 
@@ -420,7 +423,7 @@ sub _Lexer {
                 and return ('IDENT', $1);
         s/^\s*(\$(\w*)\$.*?\$\2\$)//s
                 and return ('STRING', $1);
-        if (s/^\s*(\*|as|select|distinct|and|or|from|where|delete|update|set|order\s+by|asc|desc|group\s+by|limit|offset|union\s+all|union|intersect|except)\b//is) {
+        if (s/^\s*(\*|as|is|not|null|select|distinct|and|or|from|where|delete|update|set|order\s+by|asc|desc|group\s+by|limit|offset|union\s+all|union|intersect|except)\b//is) {
             my $s = $1;
             (my $token = $s) =~ s/\s+/ /gs;
             return (lc($token), lc($s));

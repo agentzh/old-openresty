@@ -845,6 +845,15 @@ POST /=/view/TitleOnly2
 {"success":1}
 
 
+=== TEST 91: is not null
+--- request
+POST /=/view/TitleOnly3
+{"definition":"select * from Post where title is not null"}
+--- response
+{"success":1}
+
+
+
 
 === TEST 91: logout
 --- request
