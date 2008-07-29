@@ -1,5 +1,0 @@
-#!/bin/sh
-
-sed -i 's/\b10\.62\.136\.86\b/api.eeeeworks.org/g' out/blog.js
-scp -l 10000 -P 18888 -r `pwd`/out agentzh@eeeeworks.org:~/4eblog
-
