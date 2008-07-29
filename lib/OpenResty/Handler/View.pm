@@ -103,13 +103,21 @@ sub PUT_view {
         # XXX check the syntax of the def
         $OpenResty::Cache->remove_view_def($user, $view);
         my $restyscript = OpenResty::RestyScript::View->new;
+        my $res;
         eval {
-            $restyscript->parse(
+            $res = $restyscript->parse(
                 $new_def,
                 { quote => \&Q, quote_ident => \&QI }
             );
         };
         if ($@) { die "minisql: $@\n"; }
+        my @models = @{ $res->{models} };
+        foreach my $model (@models){
+            next if $model =~ /^\s*$/;
+            if (!$openresty->has_model($model)) {
+                die "Model \"$model\" not found.\n";
+            }
+        }
 
         $update->set(definition => Q($new_def));
     }
