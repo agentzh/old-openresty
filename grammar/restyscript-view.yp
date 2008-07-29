@@ -213,7 +213,7 @@ column: qualified_symbol
 
 qualified_symbol: symbol '.' symbol
                     {
-                      push @Models, $_[1];
+                      #push @Models, $_[1];
                       push @Columns, $_[3];
                       $QuoteIdent->($_[1]).'.'.$QuoteIdent->($_[3]);
                     }

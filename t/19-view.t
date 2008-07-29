@@ -68,7 +68,17 @@ POST /=/model/A
 
 
 
-=== TEST 8: Create a view referencing non-existent model B
+=== TEST 8: Create model Post
+--- request
+POST /=/model/Post
+{"description":"post", "columns":[{"name":"title","label":"Title","type":"text"},
+    {"name":"content","label":"Content","type":"text"}]}
+--- response
+{"success":1}
+
+
+
+=== TEST 9: Create a view referencing non-existent model B
 --- request
 POST /=/view/View
 { "definition": "select * from A, B where A.id = B.a order by A.title" }
@@ -77,7 +87,7 @@ POST /=/view/View
 
 
 
-=== TEST 9: Create model B
+=== TEST 10: Create model B
 --- request
 POST /=/model/B
 { "description": "B",
@@ -91,7 +101,7 @@ POST /=/model/B
 
 
 
-=== TEST 10: Create the view when the models are ready
+=== TEST 11: Create the view when the models are ready
 --- request
 POST /=/view/View
 { "definition": "select * from A, B where A.id = B.a order by A.title" }
@@ -100,7 +110,7 @@ POST /=/view/View
 
 
 
-=== TEST 11: Try to create it twice
+=== TEST 12: Try to create it twice
 --- request
 POST /=/view/View
 { "definition": "select * from A, B where A.id = B.a order by A.title" }
@@ -109,7 +119,7 @@ POST /=/view/View
 
 
 
-=== TEST 12: Check the view list
+=== TEST 13: Check the view list
 --- request
 GET /=/view
 --- response
@@ -123,7 +133,7 @@ GET /=/view
 
 
 
-=== TEST 13: Check the View view
+=== TEST 14: Check the View view
 --- request
 GET /=/view/View
 --- response
@@ -135,7 +145,7 @@ GET /=/view/View
 
 
 
-=== TEST 14: Invoke the View view
+=== TEST 15: Invoke the View view
 --- request
 GET /=/view/View/~/~
 --- response
@@ -143,7 +153,7 @@ GET /=/view/View/~/~
 
 
 
-=== TEST 15: Check a non-existent model
+=== TEST 16: Check a non-existent model
 --- request
 GET /=/view/Dummy
 --- response
@@ -151,7 +161,7 @@ GET /=/view/Dummy
 
 
 
-=== TEST 16: Invoke the view
+=== TEST 17: Invoke the view
 --- request
 GET /=/view/Dummy/~/~
 --- response
@@ -159,7 +169,7 @@ GET /=/view/Dummy/~/~
 
 
 
-=== TEST 17: Invoke the View view
+=== TEST 18: Invoke the View view
 --- request
 GET /=/view/View/~/~
 --- response
@@ -167,7 +177,7 @@ GET /=/view/View/~/~
 
 
 
-=== TEST 18: Insert some data into model A
+=== TEST 19: Insert some data into model A
 --- request
 POST /=/model/A/~/~
 [
@@ -178,7 +188,7 @@ POST /=/model/A/~/~
 
 
 
-=== TEST 19: Invoke the View view
+=== TEST 20: Invoke the View view
 --- request
 GET /=/view/View/~/~
 --- response
@@ -186,7 +196,7 @@ GET /=/view/View/~/~
 
 
 
-=== TEST 20: Insert some data into model B
+=== TEST 21: Insert some data into model B
 --- request
 POST /=/model/B/~/~
 [{"body":"baidu.com","a":3},{"body":"google.com","a":2},
@@ -197,7 +207,7 @@ POST /=/model/B/~/~
 
 
 
-=== TEST 21: Invoke the view again
+=== TEST 22: Invoke the view again
 --- request
 GET /=/view/View/~/~
 --- response
@@ -210,7 +220,7 @@ GET /=/view/View/~/~
 
 
 
-=== TEST 22: Insert another record to model A
+=== TEST 23: Insert another record to model A
 --- request
 POST /=/model/A/~/~
 {"title":"163"}
@@ -219,7 +229,7 @@ POST /=/model/A/~/~
 
 
 
-=== TEST 23: recheck the view
+=== TEST 24: recheck the view
 --- request
 GET /=/view/View/~/~
 --- response
@@ -233,7 +243,7 @@ GET /=/view/View/~/~
 
 
 
-=== TEST 24: Create a second view
+=== TEST 25: Create a second view
 --- request
 POST /=/view/~
 {"name":"View2","definition":"select title from A as blah order by $col"}
@@ -242,7 +252,7 @@ POST /=/view/~
 
 
 
-=== TEST 25: Check the view
+=== TEST 26: Check the view
 --- request
 GET /=/view/View2
 --- response
@@ -250,7 +260,7 @@ GET /=/view/View2
 
 
 
-=== TEST 26: Check the view list
+=== TEST 27: Check the view list
 --- request
 GET /=/view
 --- response
@@ -267,7 +277,7 @@ GET /=/view
 
 
 
-=== TEST 27: Invoke View2
+=== TEST 28: Invoke View2
 --- request
 GET /=/view/View2/~/~?col=title
 --- response
@@ -275,7 +285,7 @@ GET /=/view/View2/~/~?col=title
 
 
 
-=== TEST 28: another way to feed the param
+=== TEST 29: another way to feed the param
 --- request
 GET /=/view/View2/col/title
 --- response
@@ -283,7 +293,7 @@ GET /=/view/View2/col/title
 
 
 
-=== TEST 29: Change the param value
+=== TEST 30: Change the param value
 --- request
 GET /=/view/View2/col/id
 --- response
@@ -291,7 +301,7 @@ GET /=/view/View2/col/id
 
 
 
-=== TEST 30: Rename View2 to TitleOnly
+=== TEST 31: Rename View2 to TitleOnly
 --- request
 PUT /=/view/View2
 {"name":"TitleOnly"}
@@ -300,7 +310,7 @@ PUT /=/view/View2
 
 
 
-=== TEST 31: Rename View2 again (this should fail)
+=== TEST 32: Rename View2 again (this should fail)
 --- request
 PUT /=/view/View2
 {"name":"TitleOnly"}
@@ -309,7 +319,7 @@ PUT /=/view/View2
 
 
 
-=== TEST 32: Check the view list
+=== TEST 33: Check the view list
 --- request
 GET /=/view/~
 --- response
@@ -320,7 +330,7 @@ GET /=/view/~
 
 
 
-=== TEST 33: Check the TitleOnly view
+=== TEST 34: Check the TitleOnly view
 --- request
 GET /=/view/TitleOnly
 --- response
@@ -328,7 +338,7 @@ GET /=/view/TitleOnly
 
 
 
-=== TEST 34: Invoke TitleOnly w/o params
+=== TEST 35: Invoke TitleOnly w/o params
 --- request
 GET /=/view/TitleOnly/~/~
 --- response
@@ -336,7 +346,7 @@ GET /=/view/TitleOnly/~/~
 
 
 
-=== TEST 35: Invoke TitleOnly with a param
+=== TEST 36: Invoke TitleOnly with a param
 --- request
 GET /=/view/TitleOnly/col/title
 --- response
@@ -344,7 +354,7 @@ GET /=/view/TitleOnly/col/title
 
 
 
-=== TEST 36: Change the body of TitleOnly
+=== TEST 37: Change the body of TitleOnly
 --- request
 PUT /=/view/TitleOnly
 { "definition":"select $select_col from A order by $order_by" }
@@ -353,7 +363,7 @@ PUT /=/view/TitleOnly
 
 
 
-=== TEST 37: Check the new TitleOnly view
+=== TEST 38: Check the new TitleOnly view
 --- request
 GET /=/view/TitleOnly
 --- response
@@ -361,7 +371,7 @@ GET /=/view/TitleOnly
 
 
 
-=== TEST 38: Invoke the new TitleOnly view (1st way)
+=== TEST 39: Invoke the new TitleOnly view (1st way)
 --- request
 GET /=/view/TitleOnly/select_col/id?order_by=id
 --- response
@@ -369,31 +379,31 @@ GET /=/view/TitleOnly/select_col/id?order_by=id
 
 
 
-=== TEST 39: Invoke the new TitleOnly view (1st way)
+=== TEST 40: Invoke the new TitleOnly view (1st way)
 --- request
 GET /=/view/TitleOnly/select_col/title?order_by=title
 --- response
 [{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]
-
-
-
-=== TEST 40: Invoke the new TitleOnly view (2rd way)
---- request
-GET /=/view/TitleOnly/select_col/id?order_by=id
---- response
-[{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"},{"id":"5"},{"id":"6"}]
 
 
 
 === TEST 41: Invoke the new TitleOnly view (2rd way)
 --- request
+GET /=/view/TitleOnly/select_col/id?order_by=id
+--- response
+[{"id":"1"},{"id":"2"},{"id":"3"},{"id":"4"},{"id":"5"},{"id":"6"}]
+
+
+
+=== TEST 42: Invoke the new TitleOnly view (2rd way)
+--- request
 GET /=/view/TitleOnly/select_col/title?order_by=title
 --- response
 [{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]
 
 
 
-=== TEST 42: Invoke the new TitleOnly view (3rd way)
+=== TEST 43: Invoke the new TitleOnly view (3rd way)
 --- request
 GET /=/view/TitleOnly/~/~?select_col=id&order_by=id
 --- response
@@ -401,7 +411,7 @@ GET /=/view/TitleOnly/~/~?select_col=id&order_by=id
 
 
 
-=== TEST 43: Invoke the new TitleOnly view (3rd way)
+=== TEST 44: Invoke the new TitleOnly view (3rd way)
 --- request
 GET /=/view/TitleOnly/~/~?select_col=title&order_by=title
 --- response
@@ -409,7 +419,7 @@ GET /=/view/TitleOnly/~/~?select_col=title&order_by=title
 
 
 
-=== TEST 44: Invoke the new TitleOnly view (missing one param)
+=== TEST 45: Invoke the new TitleOnly view (missing one param)
 --- request
 GET /=/view/TitleOnly/~/~?select_col=title
 --- response
@@ -417,7 +427,7 @@ GET /=/view/TitleOnly/~/~?select_col=title
 
 
 
-=== TEST 45: Invoke the new TitleOnly view (missing the other param)
+=== TEST 46: Invoke the new TitleOnly view (missing the other param)
 --- request
 GET /=/view/TitleOnly/order_by/id
 --- response
@@ -425,7 +435,7 @@ GET /=/view/TitleOnly/order_by/id
 
 
 
-=== TEST 46: Invoke the new TitleOnly view (missing both params)
+=== TEST 47: Invoke the new TitleOnly view (missing both params)
 --- request
 GET /=/view/TitleOnly/~/~
 --- response
@@ -433,7 +443,7 @@ GET /=/view/TitleOnly/~/~
 
 
 
-=== TEST 47: Invoke the new TitleOnly view (a wrong param given)
+=== TEST 48: Invoke the new TitleOnly view (a wrong param given)
 --- request
 GET /=/view/TitleOnly/blah/dummy
 --- response
@@ -441,7 +451,7 @@ GET /=/view/TitleOnly/blah/dummy
 
 
 
-=== TEST 48: Delete the View view
+=== TEST 49: Delete the View view
 --- request
 DELETE /=/view/View
 --- response
@@ -449,7 +459,7 @@ DELETE /=/view/View
 
 
 
-=== TEST 49: Recheck the View view
+=== TEST 50: Recheck the View view
 --- request
 GET /=/view/View
 --- response
@@ -457,7 +467,7 @@ GET /=/view/View
 
 
 
-=== TEST 50: Recheck the view list
+=== TEST 51: Recheck the view list
 --- request
 GET /=/view
 --- response
@@ -467,7 +477,7 @@ GET /=/view
 
 
 
-=== TEST 51: Add a new view with default values
+=== TEST 52: Add a new view with default values
 --- request
 POST /=/view/Foo
 {"definition":"select $col|id from A order by $by|title"}
@@ -476,7 +486,7 @@ POST /=/view/Foo
 
 
 
-=== TEST 52: Check the Foo view
+=== TEST 53: Check the Foo view
 --- request
 GET /=/view/Foo
 --- response
@@ -484,7 +494,7 @@ GET /=/view/Foo
 
 
 
-=== TEST 53: Invoke Foo w/o params
+=== TEST 54: Invoke Foo w/o params
 --- request
 GET /=/view/Foo/~/~
 --- response
@@ -492,7 +502,7 @@ GET /=/view/Foo/~/~
 
 
 
-=== TEST 54: Invoke Foo with 1 param set
+=== TEST 55: Invoke Foo with 1 param set
 --- request
 GET /=/view/Foo/by/id
 --- response
@@ -500,7 +510,7 @@ GET /=/view/Foo/by/id
 
 
 
-=== TEST 55: Invoke Foo with the other one param set
+=== TEST 56: Invoke Foo with the other one param set
 --- request
 GET /=/view/Foo/col/title
 --- response
@@ -508,7 +518,7 @@ GET /=/view/Foo/col/title
 
 
 
-=== TEST 56: Invoke Foo with both params set
+=== TEST 57: Invoke Foo with both params set
 --- request
 GET /=/view/Foo/col/title?by=id
 --- response
@@ -516,7 +526,7 @@ GET /=/view/Foo/col/title?by=id
 
 
 
-=== TEST 57: Bad view name
+=== TEST 58: Bad view name
 --- request
 GET /=/view/!@
 --- response
@@ -524,7 +534,7 @@ GET /=/view/!@
 
 
 
-=== TEST 58: Get the view list
+=== TEST 59: Get the view list
 --- request
 GET /=/view
 --- response
@@ -535,7 +545,7 @@ GET /=/view
 
 
 
-=== TEST 59: Change the view name and definition simultaneously
+=== TEST 60: Change the view name and definition simultaneously
 --- request
 PUT /=/view/Foo
 { "name": "Bah", "definition": "select * from A" }
@@ -544,7 +554,7 @@ PUT /=/view/Foo
 
 
 
-=== TEST 60: Check the old view
+=== TEST 61: Check the old view
 --- request
 GET /=/view/Foo
 --- response
@@ -552,7 +562,7 @@ GET /=/view/Foo
 
 
 
-=== TEST 61: Check the new view
+=== TEST 62: Check the new view
 --- request
 GET /=/view/Bah
 --- response
@@ -564,7 +574,7 @@ GET /=/view/Bah
 
 
 
-=== TEST 62: Set the description (the wrong way, typo)
+=== TEST 63: Set the description (the wrong way, typo)
 --- request
 PUT /=/view/Bah
 { "descripition": "Blah blah blah..." }
@@ -573,7 +583,7 @@ PUT /=/view/Bah
 
 
 
-=== TEST 63: Set the description
+=== TEST 64: Set the description
 --- request
 PUT /=/view/Bah
 { "description": "Blah blah blah..." }
@@ -582,7 +592,7 @@ PUT /=/view/Bah
 
 
 
-=== TEST 64: Check the desc
+=== TEST 65: Check the desc
 --- request
 GET /=/view/Bah
 --- response
@@ -594,7 +604,7 @@ GET /=/view/Bah
 
 
 
-=== TEST 65: give wrong POST data
+=== TEST 66: give wrong POST data
 --- request
 POST /=/view/Foo
 [1,2,3]
@@ -603,7 +613,7 @@ POST /=/view/Foo
 
 
 
-=== TEST 66: Bad hash
+=== TEST 67: Bad hash
 --- request
 POST /=/view/Foo
 {"cat":3}
@@ -612,7 +622,7 @@ POST /=/view/Foo
 
 
 
-=== TEST 67: Re-add view Foo (Bad minisql)
+=== TEST 68: Re-add view Foo (Bad minisql)
 --- request
 POST /=/view/Foo
 {"description":"Test vars for vals","name":"Foo",
@@ -622,7 +632,7 @@ POST /=/view/Foo
 
 
 
-=== TEST 68: Re-add view Foo (Bad minisql)
+=== TEST 69: Re-add view Foo (Bad minisql)
 --- request
 POST /=/view/Foo
 {"description":"Test vars for vals","name":"Foo",
@@ -632,7 +642,7 @@ POST /=/view/Foo
 
 
 
-=== TEST 69: Re-add view Foo (Bad minisql)
+=== TEST 70: Re-add view Foo (Bad minisql)
 --- request
 POST /=/view/Foo
 {"description":"Test vars for vals","name":"Foo",
@@ -642,7 +652,7 @@ POST /=/view/Foo
 
 
 
-=== TEST 70: Re-add view Foo
+=== TEST 71: Re-add view Foo
 --- request
 POST /=/view/Foo
 {"description":"Test vars for vals","name":"Foo",
@@ -652,7 +662,7 @@ POST /=/view/Foo
 
 
 
-=== TEST 71: Invoke the view (required vars missing)
+=== TEST 72: Invoke the view (required vars missing)
 --- request
 GET /=/view/Foo/~/~
 --- response
@@ -660,7 +670,7 @@ GET /=/view/Foo/~/~
 
 
 
-=== TEST 72: Invoke the view
+=== TEST 73: Invoke the view
 --- request
 GET /=/view/Foo/val/2
 --- response
@@ -673,7 +683,7 @@ GET /=/view/Foo/val/2
 
 
 
-=== TEST 73: Escaped char
+=== TEST 74: Escaped char
 --- request
 GET /=/view/Foo/val/林\?col=title
 --- response
@@ -681,7 +691,7 @@ GET /=/view/Foo/val/林\?col=title
 
 
 
-=== TEST 74: Invoke the view (bad fixed var name)
+=== TEST 75: Invoke the view (bad fixed var name)
 --- request
 GET /=/view/Foo/!@/2
 --- response
@@ -689,7 +699,7 @@ GET /=/view/Foo/!@/2
 
 
 
-=== TEST 75: Invoke the view (another way)
+=== TEST 76: Invoke the view (another way)
 --- request
 GET /=/view/Foo/~/~?val=2
 --- response
@@ -702,7 +712,7 @@ GET /=/view/Foo/~/~?val=2
 
 
 
-=== TEST 76: Invoke the view (bad free var name)
+=== TEST 77: Invoke the view (bad free var name)
 --- request
 GET /=/view/Foo/~/~?!@=2
 --- response
@@ -710,7 +720,7 @@ GET /=/view/Foo/~/~?!@=2
 
 
 
-=== TEST 77: Invoke the view (bad symbol)
+=== TEST 78: Invoke the view (bad symbol)
 --- request
 GET /=/view/Foo/~/~?val=2&col=id"
 --- response
@@ -718,7 +728,7 @@ GET /=/view/Foo/~/~?val=2&col=id"
 
 
 
-=== TEST 78: Invoke the view (overriding vars)
+=== TEST 79: Invoke the view (overriding vars)
 --- request
 GET /=/view/Foo/~/~?val=2&col=id
 --- response
@@ -731,7 +741,7 @@ GET /=/view/Foo/~/~?val=2&col=id
 
 
 
-=== TEST 79: Create a model with cidr type
+=== TEST 80: Create a model with cidr type
 --- request
 POST /=/model/T
 {
@@ -745,7 +755,7 @@ POST /=/model/T
 
 
 
-=== TEST 80: Insert lines to cidr table
+=== TEST 81: Insert lines to cidr table
 --- request
 POST /=/model/T/~/~
 [
@@ -756,7 +766,7 @@ POST /=/model/T/~/~
 
 
 
-=== TEST 81: create a view with operator >>=
+=== TEST 82: create a view with operator >>=
 --- request
 POST /=/view/TC
 { "definition": "select count(*) from T where cidr >>= '202.165.100.243'" }
@@ -765,7 +775,7 @@ POST /=/view/TC
 
 
 
-=== TEST 82: bug
+=== TEST 83: bug
 --- request
 POST /=/view/RowCount
 { "definition": "select count(*) from $model" }
@@ -774,7 +784,7 @@ POST /=/view/RowCount
 
 
 
-=== TEST 83: view the TitleOnly view
+=== TEST 84: view the TitleOnly view
 --- request
 GET /=/view/TitleOnly
 --- response
@@ -782,7 +792,7 @@ GET /=/view/TitleOnly
 
 
 
-=== TEST 84: change the view def
+=== TEST 85: change the view def
 --- request
 PUT /=/view/TitleOnly
 { "definition": "select 32" }
@@ -791,7 +801,7 @@ PUT /=/view/TitleOnly
 
 
 
-=== TEST 85: get the view def again:
+=== TEST 86: get the view def again:
 --- request
 GET /=/view/TitleOnly
 --- response
@@ -799,7 +809,7 @@ GET /=/view/TitleOnly
 
 
 
-=== TEST 86: change the view def (syntax error)
+=== TEST 87: change the view def (syntax error)
 --- request
 PUT /=/view/TitleOnly
 { "definition": "abc 32" }
@@ -807,7 +817,8 @@ PUT /=/view/TitleOnly
 {"error":"minisql: line 1: error: Unexpected input: \"abc\" ('(' or select expected).","success":0}
 
 
-=== TEST 87: from proc() as q
+
+=== TEST 88: from proc() as q
 --- request
 PUT /=/view/TitleOnly
 { "definition": "select ts_rank(ts_vector(content), q)" }
@@ -816,7 +827,7 @@ PUT /=/view/TitleOnly
 
 
 
-=== TEST 87: from proc() as q
+=== TEST 89: from proc() as q
 --- request
 PUT /=/view/TitleOnly
 { "definition": "select * from Post, to_tsquery('chinesecfg', $query) as q where 1=1 order by ts_rank(ts_vector(content), q)" }
@@ -824,7 +835,9 @@ PUT /=/view/TitleOnly
 {"success":1}
 --- SKIP
 
-=== TEST 88: don't recognize aliased proc as model
+
+
+=== TEST 90: don't recognize aliased proc as model
 --- request
 POST /=/view/TitleOnly2
 { "definition": "select * from (select * from Post) as a where a.title = 'a' " }
@@ -832,8 +845,10 @@ POST /=/view/TitleOnly2
 {"success":1}
 
 
-=== TEST 90: logout
+
+=== TEST 91: logout
 --- request
 GET /=/logout
 --- response
 {"success":1}
+

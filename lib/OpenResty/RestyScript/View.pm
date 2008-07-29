@@ -2239,7 +2239,7 @@ sub
 sub
 #line 215 "grammar/restyscript-view.yp"
 {
-                      push @Models, $_[1];
+                      #push @Models, $_[1];
                       push @Columns, $_[3];
                       $QuoteIdent->($_[1]).'.'.$QuoteIdent->($_[3]);
                     }
