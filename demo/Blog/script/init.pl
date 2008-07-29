@@ -234,6 +234,36 @@ _EOC_
     }
 );
 
+=begin html
+$resty->post(
+    '/=/view/PostSearch',
+    {
+        description => 'Post search',
+        definition => <<'_EOC_',
+   select id, ts_headline('chinesecfg', title, q) as title, ts_headline('chinesecfg',  regexp_replace(regexp_replace(regexp_replace(content, '</?\\w+[^>]*>|&nbsp;', '', 'g'), '&gt;', '>', 'g'), '&lt;', '<', 'g') , q, 'MinWords=50,MaxWords=300') as content, comments, author
+   from (select title, content, comments, author, id, q
+         from "Post", to_tsquery('chinesecfg', $query) as q
+         where to_fti(title, content) @@ q order by ts_rank(to_fti(title, content), q) desc
+         limit $count
+         offset $offset) as foo;
+_EOC_
+    }
+);
+
+$resty->post(
+    '/=/view/RowCountForSearch',
+    {
+        description => 'Row count for Post search',
+        definition => <<'_EOC_',
+select count(*)
+from Post
+where to_fti(title, content) @@ to_tsquery('chinesecfg', $query)
+_EOC_
+    }
+);
+=end html
+=cut
+
 $resty->post(
     '/=/feed/Post',
     {
