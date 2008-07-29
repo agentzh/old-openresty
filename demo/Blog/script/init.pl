@@ -234,7 +234,6 @@ _EOC_
     }
 );
 
-=begin html
 $resty->post(
     '/=/view/PostSearch',
     {
@@ -261,8 +260,6 @@ where to_fti(title, content) @@ to_tsquery('chinesecfg', $query)
 _EOC_
     }
 );
-=end html
-=cut
 
 $resty->post(
     '/=/feed/Post',
@@ -305,6 +302,9 @@ $resty->post(
         { method => "GET", url => '/=/view/PostCountByMonths/~/~' },
         { method => "GET", url => '/=/view/FullPostsByMonth/~/~' },
         { method => "GET", url => '/=/view/PrevNextArchive/~/~' },
+
+        { method => "GET", url => '/=/view/PostSearch/~/~' },
+        { method => "GET", url => '/=/view/RowCountForSearch/~/~' },
 
         { method => "GET", url => '/=/feed/Post/~/~' },
         { method => "GET", url => '/=/feed/Comment/~/~' },
