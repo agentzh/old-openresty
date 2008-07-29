@@ -230,7 +230,7 @@ function getPostList (page) {
 
 function getSearchResults (query, page) {
     setStatus(true, 'renderSearchResults');
-    openresty.callback = renderSearchResults;
+    openresty.callback = function (res) { renderSearchResults(res, query); };
     var q = query2tsquery(query);
     //alert("Query: " + q);
     openresty.get('/=/view/PostSearch/~/~', {
@@ -558,15 +558,17 @@ function renderPostList (res) {
     resetAnchor();
 }
 
-function renderSearchResults (res) {
+function renderSearchResults (res, query) {
     setStatus(false, 'renderSearchResults');
     if (!openresty.isSuccess(res)) {
         error("Failed to get search results: " + res.error);
     } else {
-        var html = Jemplate.process('post-list.tt', { post_list: res })
-        $("#beta-inner.pkg").html(
-            Jemplate.process('post-list.tt', { post_list: res })
-        ).postprocess();
+        if (res.length) {
+            var html = Jemplate.process('post-list.tt', { post_list: res })
+            $("#beta-inner.pkg").html(html).postprocess();
+        } else {
+            $("#beta-inner.pkg").html("<p>Sorry, no search results found for query <b>\"" + query + "\"</b>.</p>");
+        }
     }
 }
 
