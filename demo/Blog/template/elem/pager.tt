@@ -2,7 +2,7 @@
     page = 1,
     page_count = undef,
     title = 'Pages',
-    prefix = 'post-list-',
+    prefix = 'post-list/',
     suffix = ''
 -%]
 

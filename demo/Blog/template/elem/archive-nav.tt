@@ -1,15 +1,15 @@
 [% IF next %]
     [%- index = next.month %]
-<a href="#archive-[% next.year %]-[% next.month %]">
+<a href="#archive/[% next.year %]/[% next.month %]">
     « [% months.$index %] [% next.year %]
 </a>
 [% END %]
  |
-<a href="#post-list"> Main </a>
+<a href="#posts/1"> Main </a>
  |
 [% IF prev %]
     [%- index = prev.month %]
-<a href="#archive-[% prev.year %]-[% prev.month %]">
+<a href="#archive/[% prev.year %]/[% prev.month %]">
     [% months.$index %] [% prev.year %] »
 </a>
 [% END %]
