@@ -824,10 +824,16 @@ PUT /=/view/TitleOnly
 {"success":1}
 
 
+=== TEST 88: from proc() as q
+--- request
+PUT /=/view/TitleOnly
+{ "definition": "select * from (select * from Post) as a where a.title = 'a' " }
+--- response
+{"success":1}
 
-=== TEST 88: logout
+
+=== TEST 89: logout
 --- request
 GET /=/logout
 --- response
 {"success":1}
-
