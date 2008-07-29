@@ -1,3 +1,20 @@
+.entry-header b {
+    color: #cc0022;
+}
+
+#beta-inner.pkg b {
+    color: #cc0022;
+    font-weight: normal;
+}
+
+input#searchbox {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    color:#369;
+    background:#fff;
+    width: 180px;
+}
+
 div#wait-message {
     color: red !important;
     background: white !important;

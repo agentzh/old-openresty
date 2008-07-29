@@ -1,3 +1,12 @@
+.entry-header b {
+    color: #cc0022;
+}
+
+#beta-inner.pkg b {
+    color: #cc0022;
+    font-weight: normal;
+}
+
 input#searchbox {
     margin-top: 5px;
     margin-bottom: 5px;
