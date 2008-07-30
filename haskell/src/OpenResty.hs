@@ -15,8 +15,7 @@ import Control.Monad.Trans
 import qualified Data.ByteString.Char8 as B
 
 main :: IO ()
-main = do
-        catchDyn initServer processInitError
+main = catchDyn initServer processInitError
 
 initServer :: IO ()
 initServer = do
@@ -24,16 +23,17 @@ initServer = do
     runServer cnn
 
 runServer :: Connection -> IO ()
-runServer cnn = trace "runServer" (runFastCGI $ processRequest cnn)
+runServer = runFastCGI . processRequest
 
 processRequest :: Connection -> CGI CGIResult
-processRequest cnn = catchCGI (parseCGIEnv >>= output . show) handler
+processRequest cnn = do
+    catchCGI (parseCGIEnv >>= output . (++"\n") . encode) handler
         where handler :: Exception -> CGI CGIResult
-              handler (DynException dyn) = output $ "Hello: " ++ (show $ e)
+              handler (DynException dyn) = output $ "Hello: " ++ (show $ e) ++ "\n"
                     where e = case fromDynamic dyn of
                             Just v -> v
                             Nothing -> UnknownError ""
-              handler v = output $ show v
+              handler v = output $ show v ++ "\n"
     --processRequest cnn = output $ trace "Showing hi" (show "hi")
 
 processInitError :: RestyError -> IO ()

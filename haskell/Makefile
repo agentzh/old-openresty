@@ -29,9 +29,17 @@ all: restyscript openhesty
 test-openhesty: openhesty
 	sudo /etc/init.d/lighttpd restart
 	@echo "===================="
+	curl 'http://localhost/==/foo/bar'
+	@echo "===================="
 	curl 'http://localhost/=/你好.gif?foo=bar&bar=foo'
 	@echo "===================="
 	echo 'data=hello' | lwp-request -m POST 'http://localhost/=/你好.gif?foo=bar&data=hello&bar=foo'
 	@echo "===================="
 	echo 'hello' | lwp-request -m POST -c 'text/plain' 'http://localhost/=/你好.gif?foo=bar&bar=foo'
+	@echo "===================="
+	time echo '章亦春' | lwp-request -m POST -c 'text/plain' 'http://localhost/=/model/Foo/~/~.gif?foo=bar&bar=foo'
+	@echo "===================="
+	time curl 'http://localhost/=/model/Foo/col/你好.yaml?foo=小明&bar=小红'
+	@echo "===================="
+	time curl 'http://localhost/=/你好.yml?foo=小明&bar=小红'
 
