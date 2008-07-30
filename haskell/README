@@ -82,6 +82,17 @@ To build bin/openhesty, try
 
     $ make openhesty
 
+Note that the following extra Haskell libraries from HackageDB are required
+to install first:
+
+    cgi
+    fastcgi
+    bytestring
+    pcre-light
+    safe
+    hsql
+    hsql-postgresql
+
 You need to configure fastcgi in lighttpd or apache, as below
 
     fastcgi.server = (
