@@ -73,3 +73,36 @@ The test cases in the test suite (e.g. t/emit-frags.t and
 t/action/emit-frags.t) tell you what these two compilers are currently
 able to do.
 
+== ABOUT OpenHesty
+
+This directory also contains a naive Haskell implementaton for the whole
+OpenResty server, but it's still under work.
+
+To build bin/openhesty, try
+
+    $ make openhesty
+
+You need to configure fastcgi in lighttpd or apache, as below
+
+    fastcgi.server = (
+        "/=" => (
+            "localhost" => (
+                "socket"       => "/tmp/openresty.socket",
+                "check-local"  => "disable",
+                "bin-path" => "/path/to/haskell/bin/openhesty",
+                "bin-environment" => (
+                    "OPENRESTY_URL_PREFIX" => "",
+                    "OPENRESTY_COMMAND" => "fastcgi",
+                ),
+                "min-procs"    => 1,
+                "max-procs"    => 5,
+                "max-load-per-proc" => 1,
+                "idle-timeout" => 20,
+            )
+        )
+    )
+
+To run the little tests, try the following command:
+
+    $ make test-openhesty
+
