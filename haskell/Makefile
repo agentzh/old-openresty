@@ -1,7 +1,8 @@
+.PHONY: restyscript openhesty test-openhesty
 #POPTS = -prof -auto-all -fhpc
 OPTS= $(OOPTS) $(POPTS) -funbox-strict-fields -fwarn-incomplete-patterns
 
-all:
+restyscript:
 	ghc -i $(OPTS) -isrc --make Main -o bin/restyscript
 
 %.o: %.hs
@@ -15,8 +16,22 @@ clean:
 	-rm `find -name '*.o'` `find -name '*.hi'` `find -name '*.ho'`
 
 optimized: OOPTS = -O2
-optimized: all
+optimized: restyscript
 
 optimized2: OOPTS = -O2 -fvia-c -optc-O2 #-fdicts-cheap -fno-method-sharing -fmax-simplifier-iterations10 -fliberate-case-threshold100 -optc-mtune=pentinum4
-optimized2: all
+optimized2: restyscript
+
+openhesty:
+	ghc -i $(OPTS) -isrc --make src/OpenResty.hs -o bin/openhesty
+
+all: restyscript openhesty
+
+test-openhesty: openhesty
+	sudo /etc/init.d/lighttpd restart
+	@echo "===================="
+	curl 'http://localhost/=/你好.gif?foo=bar&bar=foo'
+	@echo "===================="
+	echo 'data=hello' | lwp-request -m POST 'http://localhost/=/你好.gif?foo=bar&data=hello&bar=foo'
+	@echo "===================="
+	echo 'hello' | lwp-request -m POST -c 'text/plain' 'http://localhost/=/你好.gif?foo=bar&bar=foo'
 
