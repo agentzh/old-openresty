@@ -106,17 +106,19 @@ splitPath p = case B.span (/='/') p of
     _             -> fmap (prepend "") $ splitBarePath p
     where prepend d (a, b, c) = (d, a, b, c)
 
+splitBarePath :: B.ByteString -> CGI (B.ByteString, [B.ByteString], B.ByteString)
+splitBarePath p = if null bits
+        then return ("version", [], "json")
+        else return (head bits, (init bits) ++ [mid], fmt)
+    where bits = B.split '/' p
+          (mid, fmt) = processSuffix (last bits)
+
 processSuffix :: B.ByteString -> (B.ByteString, B.ByteString)
 processSuffix str =
     let regex = compile "(.*?)\\.(json|js|yaml|yml)$" [] in
         case match regex str [] of
             Just res -> (res !! 1, res !! 2)
             Nothing  -> (str, "json")
-
-splitBarePath :: B.ByteString -> CGI (B.ByteString, [B.ByteString], B.ByteString)
-splitBarePath p = return (head bits, (init bits) ++ [mid], fmt)
-    where bits = B.split '/' p
-          (mid, fmt) = processSuffix (last bits)
 
 --dropUtil :: (Char -> Bool) -> B.ByteString
 --dropUtil = B.tail . B.dropWhile
