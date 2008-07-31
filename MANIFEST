@@ -1,5 +1,4 @@
 demo/Admin/template/login.tt
-demo/Blog/blog_min.js
 debian/conffiles
 debian/control
 debian/postinst
@@ -108,6 +107,9 @@ haskell/src/RestyScript/Parser.hs
 haskell/src/RestyScript/Parser/Action.hs
 haskell/src/RestyScript/Parser/View.hs
 haskell/src/RestyScript/Util.hs
+haskell/src/OpenResty.hs
+haskell/src/OpenResty/Request.hs
+haskell/src/OpenResty/Response.hs
 haskell/t/action/emit-frags.t
 haskell/t/action/emit-rs.t
 haskell/t/action/emit-stats.t

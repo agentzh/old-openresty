@@ -19,6 +19,7 @@ demo/Springbot/staff/staff_files
 ^haskell/.*\.prof$
 ^haskell/.*\.tix$
 ^haskell/bin/restyscript$
+^haskell/bin/openhesty$
 ^Makefile$
 ^t/slow\.pl$
 ^bin/\.
