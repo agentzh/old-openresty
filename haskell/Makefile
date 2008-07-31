@@ -44,4 +44,6 @@ test-openhesty: openhesty
 	time curl 'http://localhost/=/你好.yml?foo=小明&bar=小红'
 	@echo "===================="
 	time curl 'http://localhost/=/'
+	@echo "===================="
+	time curl 'http://localhost/=/put/'
 
