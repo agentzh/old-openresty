@@ -1,5 +1,15 @@
 Change Log for OpenResty
 
+0.3.20 Jul 31 2008
+* started an initial (naive) implementaion of OpenHesty, a pure Haskell rewrite of the Perl OpenResty server.
+* demo/Blog - renamed the anchor in favor of the style #foo/bar/baz.
+* demo/Blog - added full-text-search interface via Pg's tsearch2 support.
+* no longer checks model existence in aliased subquery.
+* now we do check model existence in PUT view.
+* perl minisql compiler: added support for "order by proc(...)".
+* perl minisql compiler: allowed "is not null".
+* Model API - added some geometric data types to the Model handler, i.e. point, line, lseg, and path.
+
 0.3.19 Jul 25 2008
 * perl minisql compiler: implemented subquery in from clause and where clause.
 * now we cache the view definition during view invokation as well.

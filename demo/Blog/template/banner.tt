@@ -9,7 +9,7 @@
     </div>
     <div id="banner-inner" class="pkg">
             <h1 id="banner-header">
-                <a href="#" onclick="init()" accesskey="1">[% blog_name %]</a>
+                <a href="#posts/1" onclick="init()" accesskey="1">[% blog_name %]</a>
             </h1>
             <h2 id="banner-description">[% blog_desc %]</h2>
     </div>
