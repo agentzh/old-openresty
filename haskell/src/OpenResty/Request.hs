@@ -102,6 +102,7 @@ splitPath p = case B.span (/='/') p of
     ("put", s)    -> fmap (prepend "PUT") $ splitBarePath $ B.tail s
     ("post", s)   -> fmap (prepend "POST") $ splitBarePath $ B.tail s
     ("delete", s) -> fmap (prepend "DELETE") $ splitBarePath $ B.tail s
+    ("", "")      -> return ("version", "", [], "json")
     _             -> fmap (prepend "") $ splitBarePath p
     where prepend d (a, b, c) = (d, a, b, c)
 
