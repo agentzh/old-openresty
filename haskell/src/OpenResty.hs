@@ -8,14 +8,16 @@ import System.IO
 import Database.HSQL
 import Database.HSQL.PostgreSQL (connect)
 import Text.JSON
-import OpenResty.Request
+import qualified OpenResty.Request as Req
+import qualified OpenResty.Response as Res
 import Debug.Trace (trace)
 import Data.Dynamic
 import Control.Monad.Trans
 import qualified Data.ByteString.Char8 as B
 
 main :: IO ()
-main = catchDyn initServer processInitError
+main = do
+    catchDyn initServer processInitError
 
 initServer :: IO ()
 initServer = do
@@ -27,17 +29,15 @@ runServer = runFastCGI . handleErrors . processRequest
 
 processRequest :: Connection -> CGI CGIResult
 processRequest cnn = do
-    catchCGI (parseCGIEnv >>= output . (++"\n") . encode) handler
+    catchCGI (Req.parseCGIEnv >>= output . (++"\n") . encode) handler
         where handler :: Exception -> CGI CGIResult
-              handler (DynException dyn) = output $ "Hello: " ++ (show $ e) ++ "\n"
+              handler error@(DynException dyn) = Res.emitError (trace ("Exception: " ++ e) e)
                     where e = case fromDynamic dyn of
-                            Just v -> v
-                            Nothing -> UnknownError ""
+                            Just v -> show (v :: Req.RestyError)
+                            Nothing -> show error
               handler v = output $ show v ++ "\n"
     --processRequest cnn = output $ trace "Showing hi" (show "hi")
 
-processInitError :: RestyError -> IO ()
-processInitError e = runFastCGI . output $
-    "{\"success\":false,\"error\":" ++
-    (encode $ show e) ++ "}\n"
+processInitError :: SqlError -> IO ()
+processInitError = runFastCGI . Res.emitError . show
 

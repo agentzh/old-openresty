@@ -23,8 +23,8 @@ data RestyError = URIError B.ByteString
   deriving (Typeable)
 
 instance Show RestyError where
-    show (URIError s) = show s
-    show (MiscError s) = show s
+    show (URIError s) = B.unpack s
+    show (MiscError s) = B.unpack s
     show _ = "Unknown error"
 
 data DataFormat = DFJson | DFYaml
@@ -68,7 +68,7 @@ instance JSON DataFormat where
 parseCGIEnv :: CGI Request
 parseCGIEnv = do
     uri <- requestURI
-    inputs <- trace "getInputsFPS" getInputsFPS
+    inputs <- getInputsFPS
     (prefix, cat, pbits, fmt) <- parsePath $ B.pack $ uriPath uri
     meth <- if prefix /= ""
         then (return prefix) else (fmap B.pack $ requestMethod)
