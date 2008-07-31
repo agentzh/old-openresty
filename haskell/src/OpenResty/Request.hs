@@ -81,7 +81,7 @@ parseCGIEnv = do
                     then maybe "" id dataParam
                     else body,
         format = maybe DFJson id $ lookup (lc fmt) toDataFormat,
-        pathBits = map unescape pbits,
+        pathBits = map unescape $ filter (/="") pbits,
         -- pathBits = map (B.pack . unEscapeString . B.unpack) $ B.split '/' pbits,
         params = inputs
     }

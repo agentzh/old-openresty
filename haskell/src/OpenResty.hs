@@ -23,7 +23,7 @@ initServer = do
     runServer cnn
 
 runServer :: Connection -> IO ()
-runServer = runFastCGI . processRequest
+runServer = runFastCGI . handleErrors . processRequest
 
 processRequest :: Connection -> CGI CGIResult
 processRequest cnn = do
