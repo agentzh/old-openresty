@@ -39,11 +39,13 @@ test-openhesty: openhesty
 	@echo "===================="
 	time echo '章亦春' | lwp-request -m POST -c 'text/plain' 'http://localhost/=/model/Foo/~/~.gif?foo=bar&bar=foo'
 	@echo "===================="
-	time curl 'http://localhost/=/model/Foo/col/你好.yaml?foo=小明&bar=小红'
+	curl 'http://localhost/=/model/Foo/col/你好.yaml?foo=小明&bar=小红'
 	@echo "===================="
-	time curl 'http://localhost/=/你好.yml?foo=小明&bar=小红'
+	curl 'http://localhost/=/你好.yml?foo=小明&bar=小红'
 	@echo "===================="
-	time curl 'http://localhost/=/'
+	curl 'http://localhost/=/'
 	@echo "===================="
-	time curl 'http://localhost/=/put/'
+	curl 'http://localhost/=/put/'
+	@echo "===================="
+	curl 'http://localhost/=/put//'
 
