@@ -148,6 +148,9 @@ _EOC_
     [
         '0.005' => '',
     ],
+	[
+		'0.006' => '', 	# placeholder for Action branch
+	],
 );
 
 our @LocalVersionDelta = (
@@ -241,6 +244,7 @@ begin
 end;
 $$ language plpgsql;
 _EOC_
+	[ '0.006' => '' ], 	# placeholder for Action branch
 );
 
 sub upgrade_all {
