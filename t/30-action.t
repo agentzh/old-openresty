@@ -405,7 +405,6 @@ GET /=/action/Action2/col/id
     {"title":"Sohu"},
     {"title":"163"}
 ]]
---- LAST
 
 
 
@@ -415,6 +414,7 @@ PUT /=/action/Action2
 {"name":"TitleOnly"}
 --- response
 {"success":1}
+--- LAST
 
 
 === TEST 38: Rename Action2 again (this should fail)
