@@ -94,7 +94,7 @@ Role count limit in an account, default 100.
 
 =item C<$COLUMN_LIMIT>
 
-Column count limit in a modle, default 40.
+Column count limit in a model, default 40.
 
 Controlled by config file option C<frontend.column_limit>.
 
