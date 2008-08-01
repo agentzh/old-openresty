@@ -265,7 +265,9 @@ begin
 		action_id integer references _actions(id)
 	);
 	return 0;
+end
 $$ language plpgsql;
+_EOC_
 );
 
 sub upgrade_all {
