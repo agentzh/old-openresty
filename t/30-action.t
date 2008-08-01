@@ -69,7 +69,7 @@ POST /=/action/Action
 --- request
 POST /=/model/A
 { "description": "A",
-  "columns": { "name": "title", "label": "title" }
+  "columns": { "name": "title", "label": "title", "type": "text" }
   }
 --- response
 {"success":1}
@@ -91,8 +91,8 @@ POST /=/action/Action
 POST /=/model/B
 { "description": "B",
   "columns": [
-    {"name":"body","label":"body"},
-    {"name":"a","type":"integer","label":"a"}
+    {"name":"body","label":"body","type":"text"},
+    {"name":"a","type":"integer","label":"a","type":"text"}
   ]
 }
 --- response
@@ -225,6 +225,7 @@ POST /=/model/A/~/~
 {"title":"163"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/A/id/6"}
+--- LAST
 
 
 
