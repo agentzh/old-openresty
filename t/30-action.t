@@ -225,7 +225,6 @@ POST /=/model/A/~/~
 {"title":"163"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/A/id/6"}
---- LAST
 
 
 
@@ -378,7 +377,6 @@ GET /=/action/Action2/col/title
 [[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]]
 
 
-
 === TEST 35: yet another way to feed the param
 --- request
 POST /=/action/Action2/~/~
@@ -407,6 +405,7 @@ GET /=/action/Action2/col/id
     {"title":"Sohu"},
     {"title":"163"}
 ]]
+--- LAST
 
 
 
@@ -416,7 +415,6 @@ PUT /=/action/Action2
 {"name":"TitleOnly"}
 --- response
 {"success":1}
-
 
 
 === TEST 38: Rename Action2 again (this should fail)
