@@ -64,15 +64,15 @@ sub init {
         $OpenResty::Config{'cache.type'} = 'mmap';
     }
     $OpenResty::Limits::RECORD_LIMIT = to_num
-    $OpenResty::Config{'frontend.row_limit'};
+        $OpenResty::Config{'frontend.row_limit'};
     $OpenResty::Limits::INSERT_LIMIT = to_num
-    $OpenResty::Config{'frontend.bulk_insert_limit'};
+        $OpenResty::Config{'frontend.bulk_insert_limit'};
     $OpenResty::Limits::COLUMN_LIMIT = to_num
-    $OpenResty::Config{'frontend.column_limit'};
+        $OpenResty::Config{'frontend.column_limit'};
     $OpenResty::Limits::MODEL_LIMIT = to_num
-    $OpenResty::Config{'frontend.model_limit'};
+        $OpenResty::Config{'frontend.model_limit'};
     $OpenResty::Limits::POST_LEN_LIMIT = to_num
-    $OpenResty::Config{'frontend.post_len_limit'};
+        $OpenResty::Config{'frontend.post_len_limit'};
 
     $CGI::Simple::POST_MAX = to_num $OpenResty::Limits::POST_LEN_LIMIT;
     # max 100 K posts

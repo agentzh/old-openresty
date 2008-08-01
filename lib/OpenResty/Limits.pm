@@ -78,6 +78,8 @@ These constants are not truly constants. Some of them could be overridden by som
 
 Model count limit in an account, default 40.
 
+Controlled by config file option C<frontend.model_limit>.
+
 =item C<$VIEW_LIMIT>
 
 View count limit in an account, default 100.
@@ -94,17 +96,25 @@ Role count limit in an account, default 100.
 
 Column count limit in a modle, default 40.
 
+Controlled by config file option C<frontend.column_limit>.
+
 =item C<$RECORD_LIMIT>
 
 Row count limit in a model, default 200.
+
+Controlled by config file option C<frontend.row_limit>.
 
 =item C<$INSERT_LIMIT>
 
 Maximal number of rows inserted in a single POST request, default 20.
 
+Controlled by config file option C<frontend.bulk_insert_limit>.
+
 =item C<$POST_LEN_LIMIT>
 
 Content length limit for a POST/PUT request, default 1_000_000 (1 MB).
+
+Controlled by config file option C<frontend.post_len_limit>.
 
 =item C<$MAX_SELECT_LIMIT>
 
