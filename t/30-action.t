@@ -92,7 +92,7 @@ POST /=/model/B
 { "description": "B",
   "columns": [
     {"name":"body","label":"body","type":"text"},
-    {"name":"a","type":"integer","label":"a","type":"text"}
+    {"name":"a","type":"integer","label":"a"}
   ]
 }
 --- response
