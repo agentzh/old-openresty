@@ -148,10 +148,16 @@ sub GET_action_exec
 	$res=$openresty->select("$select",{use_hash=>1});
 
 	# TODO: 增加变量代换
+	return $self->execute_cmds($openresty,$act_comp,{});
 
+}
+
+sub execute_cmds
+{
+	my ($self,$openresty,$cmds,$var_hash)=@_;
     my @outputs;
     my $i = 0;
-    for my $cmd (@$act_comp) {
+    for my $cmd (@$cmds) {
         $i++;
         if (ref $cmd) { # being an HTTP method
             my ($http_meth, $url, $content) = @$cmd;
