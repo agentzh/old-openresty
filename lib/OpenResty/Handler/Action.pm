@@ -16,16 +16,60 @@ my $json=JSON::XS->new->utf8;
 sub POST_action_exec {
     my ($self, $openresty, $bits) = @_;
     my $action = $bits->[1];
-    my $params = {
-        $bits->[2] => $bits->[3]
-    };
 
+	# Process builtin actions
     my $meth = "exec_$action";
     if ($self->can($meth)) {
         return $self->$meth($openresty);
     }
 
-    die "Action not found: $action\n";
+	# Process user-defined actions
+	if($action eq '~') {
+		die "Action name must be specified before executing.";
+	}
+
+	my $select=OpenResty::SQL::Select->new(qw/id compiled/)
+					->from('_actions')
+					->where(name=>Q($action));
+	my $res=$openresty->select("$select",{use_hash=>1});
+	if(!$res || @$res==0) {
+		die "Action \"$action\" not found.";
+	}
+
+	my $act_id=$res->[0]{id};
+	my $act_comp=$res->[0]{compiled};
+	eval {
+		$act_comp=$json->decode($act_comp);
+	};
+	if($@) {
+		die "Failed to load compiled fragments for action \"$action\"";
+	}
+
+	# Get parameters from POST body content
+    my $act_param = $openresty->{_req_data};
+	die "Invalid POST body content, must be a JSON object"
+		unless(ref($act_param) eq 'HASH');
+	
+	$select=OpenResty::SQL::Select->new(qw/name type default_value/)
+					->from('_action_params')
+					->where(action_id=>Q($act_id))
+					->where(used=>"true");
+	$res=$openresty->select("$select",{use_hash=>1});
+	
+	# Complement parameter values from URL
+	my %var_map=();
+	for my $row (@$res) {
+		my $val=$act_param->{$row->{name}}
+				|| $self->get_param($openresty,$bits,$row->{name});
+		unless(defined($val) || defined($row->{default_value})) {
+			# Some parameter were not given
+			die "Parameter \"$row->{name}\" were not given, and no default value was set";
+		}
+		$var_map{$row->{name}}=$val||$row->{default_value};
+	}
+
+	# Execute action
+	return $self->execute_cmds($openresty,$act_comp,\%var_map);
 }
 
 # Remove all existing actions for current user (not including builtin actions)
@@ -80,7 +124,8 @@ sub GET_action
 
 	# If the given action name is wildcard ('~'), then forward the request to GET_action_list
 	if($act_name eq '~') {
-		return $self->GET_action_list($openresty,$bits);
+		my $act_lst=$self->GET_action_list($openresty,$bits);
+		return $act_lst;
 	}
 
 	# Retrieve the corresponding action information
@@ -119,7 +164,7 @@ sub get_param
 	my %var_map=();
 	my $param1=$bits->[2];
 	my $value1=$bits->[3];
-	unless(defined($param1) && $param1 ne '~' && $param1 eq $param_name) {
+	if(defined($param1) && $param1 ne '~' && $param1 eq $param_name) {
 		return $value1;
 	}
 	return $openresty->{_cgi}->url_param($param_name);
@@ -130,8 +175,6 @@ sub GET_action_exec
 {
 	my ($self,$openresty,$bits)=@_;
 	my $act_name=$bits->[1];
-	#my $act_param1=$bits->[2];
-	#my $act_value1=$bits->[3];
 
 	if($act_name eq '~') {
 		die "Action name must be specified before executing.";
@@ -197,12 +240,16 @@ sub join_with_params
 				die "Required parameter \"$name\" not assigned"
 					unless(exists($var_map->{$name}));
 
-				if(lc($type) eq 'quoted') {
+				$type=lc($type);
+				if($type eq 'quoted') {
 					# Param should be interpolated as a quoted string
 					$result.=Q($var_map->{$name});
-				} elsif(lc($type) eq 'literal') {
+				} elsif($type eq 'literal' || $type eq 'keyword') {
 					# Param should be interpolated as a literal
 					$result.=$var_map->{$name};
+				} elsif($type eq 'symbol') {
+					# Param should be treated like a symbol
+					$result.=QI($var_map->{$name});
 				} else {
 					# Unrecognized param type, coerced to interpolate as a quoted string
 					$result.=Q($var_map->{$name});
@@ -303,7 +350,21 @@ sub DELETE_action
 sub POST_action
 {
 	my ($self,$openresty,$bits)=@_;
-	my $act_name=$bits->[1];
+
+    my $body = $openresty->{_req_data};
+	die "Invalid body content, must be a JSON object"
+		unless(ref($body) eq 'HASH');
+	die "Action definition must be given"
+		unless(exists($body->{definition}));
+
+	my $act_name=($bits->[1] eq '~')?$body->{name}:$bits->[1];
+	my $act_def=$body->{definition}; 		# action definition, no default value
+	my $act_desc=$body->{description}; 	# action description, default to ''
+	my $act_params=$body->{parameters}||[]; # action parameter list, default to []
+
+	# Make sure action name was given
+	die "Action name should be specified in URL or body content."
+		unless($act_name);
 
 	# Check if the action has been defined to prevent overwriting
 	my $select=OpenResty::SQL::Select->new(qw/name/)
@@ -312,16 +373,6 @@ sub POST_action
 	my $act_list=$openresty->select("$select",{use_hash=>1});
 	die "Action \"$act_name\" already exists."
 		if(@$act_list);
-
-    my $body = $openresty->{_req_data};
-	die "Invalid body content, must be a JSON object"
-		unless(ref($body) eq 'HASH');
-	die "Action definition must be given"
-		unless(exists($body->{definition}));
-
-	my $act_def=$body->{definition}; 		# action definition, no default value
-	my $act_desc=$body->{description}||''; 	# action description, default to ''
-	my $act_params=$body->{parameters}||[]; # action parameter list, default to []
 
 	# Only array reference type allowed for parameter list
 	die "Invalid \"parameters\" list: $act_params"
@@ -385,14 +436,13 @@ sub POST_action
 	my $ins_param=OpenResty::SQL::Insert->new('_action_params')
 				->cols(qw/name type label default_value used action_id/);
 	for my $param_name (keys(%$act_param_hash)) {
-		# TODO: insert action params
 		my $st=$ins_param->values(
 			Q(
 				$param_name,
 				$act_param_hash->{$param_name}{type},
 				$act_param_hash->{$param_name}{label},
 				$act_param_hash->{$param_name}{default},
-				$act_param_hash->{$param_name}{used},
+				$act_param_hash->{$param_name}{used}?"true":"false",
 				$act_id,
 			)
 		);
@@ -418,7 +468,7 @@ sub validate_action_parameters
 				|| $cmd_var_hash->{$var_name} eq $param_var_hash->{$var_name}{type}
 			);
 		# TODO: perform type checks
-		$param_var_hash->{$var_name}{used}="true";
+		$param_var_hash->{$var_name}{used}=1;
 	}
 }
 
@@ -638,6 +688,39 @@ sub validate_model_names {
             die "Model \"$model\" not found.\n";
         }
     }
+}
+
+# Modify a existing action property (rise error when the dest action didn't exist)
+sub PUT_action
+{
+	my ($self,$openresty,$bits)=@_;
+	my $act_name=$bits->[1];
+	if($act_name eq '~') {
+		die "Action name must be specified before executing.";
+	}
+
+	# Make sure the given action already existed
+	my $select=OpenResty::SQL::Select->new(qw/id compiled/)
+					->from('_actions')
+					->where(name=>Q($act_name));
+	my $res=$openresty->select("$select",{use_hash=>1});
+	if(!$res || @$res==0) {
+		die "Action \"$act_name\" not found.";
+	}
+
+    my $body = $openresty->{_req_data};
+	die "Invalid PUT body content, must be a JSON object"
+		unless(ref($body) eq 'HASH');
+
+	# TODO: PUT更改action的定义时需要注意：
+	# 1. 更改action的name时需要检测是否存在已经与目标name同名的action，若有则失败;
+	# 2. 更改action的description时可以直接更改，没有需要检测的地方;
+	# 3. 更改action的definition时需要检测其是否能通过编译、编译后片段所需的参数
+	# 是否已经存在、参数类型是否相符，当所需参数之前尚不存在或类型不同时则失败，
+	# 否则就更新definition和compiled字段，并根据变量使用情况对应更改参数的used字段;
+	# 4. 更改action的parameters时，需要检测新参数列表是否包含了原action definition所需
+	# 的变量，若没有完全包含则失败，否则就更新参数变量并根据使用情况修改变量的used
+	# 字段。
 }
 
 1;
