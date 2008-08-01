@@ -31,7 +31,7 @@ GET /=/action
 --- response
 [
     {"name":"RunView","description":"View interpreter","src":"/=/action/RunView"},
-    {"name":"RunAction","description":"Action interpreter","src":"/=/action/RunAction"},
+    {"name":"RunAction","description":"Action interpreter","src":"/=/action/RunAction"}
 ]
 
 

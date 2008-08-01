@@ -29,12 +29,51 @@ sub POST_action_exec {
 sub DELETE_action_list
 {
 	my ($self,$openresty,$bits)=@_;
+	my $rv;
+
+	# try to remove all action parameters
+	$rv=$openresty->do("delete from _action_params");
+	unless(defined($rv)) {
+		return  {
+			success=>0,
+			error=>'Failed to remove all action parameters.',
+		};
+	}
+
+	# try to remove all actions
+	$rv=$openresty->do("delete from _actions");
+	unless(defined($rv)) {
+		return {
+			success=>0,
+			error=>'Failed to remove all actions.',
+		};
+	}
+
+	# all actions except builtin ones were removed successfully
+	return {
+		success=>1,
+		warning=>'Builtin actions are skipped.',
+	};
 }
 
 # list all existing actions for current user (including builtin actions)
 sub GET_action_list
 {
 	my ($self,$openresty,$bits)=@_;
+	my $select=OpenResty::SQL::Select->new(qw/name description/)->from('_actions');
+	my $act_lst=$openresty->select("$select",{use_hash=>1});
+
+	# prepending builtin actions
+	unshift(
+		@$act_lst,
+		{name=>'RunView',description=>'View interpreter'},
+		{name=>'RunAction',description=>'Action interpreter'},
+	);
+
+	# adding src property for each action entry
+	map {$_->{src}="/=/action/$_->{name}"} @$act_lst;
+
+	$act_lst;
 }
 
 sub exec_RunView {
