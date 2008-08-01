@@ -101,7 +101,6 @@ sub PUT_view {
         _STRING($new_def) or
             die "Bad view definition: ", $OpenResty::Dumper->($new_def), "\n";
         # XXX check the syntax of the def
-        $OpenResty::Cache->remove_view_def($user, $view);
         my $restyscript = OpenResty::RestyScript::View->new;
         my $res;
         eval {
@@ -118,6 +117,7 @@ sub PUT_view {
                 die "Model \"$model\" not found.\n";
             }
         }
+        $OpenResty::Cache->remove_view_def($user, $view);
 
         $update->set(definition => Q($new_def));
     }
