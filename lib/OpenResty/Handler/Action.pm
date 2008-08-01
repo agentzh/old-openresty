@@ -721,6 +721,7 @@ sub PUT_action
 	# 4. 更改action的parameters时，需要检测新参数列表是否包含了原action definition所需
 	# 的变量，若没有完全包含则失败，否则就更新参数变量并根据使用情况修改变量的used
 	# 字段。
+	die "Not completed yet.";
 }
 
 1;
