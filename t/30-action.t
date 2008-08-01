@@ -221,7 +221,7 @@ GET /=/action/Action/~/~
 
 === TEST 22: Insert another record to model A
 --- request
-GET /=/model/A/~/~
+POST /=/model/A/~/~
 {"title":"163"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/A/id/6"}
