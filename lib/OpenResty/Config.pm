@@ -153,5 +153,5 @@ Agent Zhang (agentzh) C<< <agentzh@yahoo.cn >>.
 
 =head1 SEE ALSO
 
-L<OpenResty>.
+L<OpenResty::Limits>, L<OpenResty>.
 
