@@ -343,7 +343,7 @@ GET /=/action/Action2
 {
     "name":"Action2",
     "description":null,
-    "parameters":[{"name":"col","type":"symbol","default":null}],
+    "parameters":[{"name":"col","type":"symbol","label":null,"default":null}],
     "definition":"select title from A order by $col"
 }
 
@@ -356,7 +356,7 @@ GET /=/action
 [
     {"name":"RunView","description":"View interpreter","src":"/=/action/RunView"},
     {"name":"RunAction","description":"Action interpreter","src":"/=/action/RunAction"},
-    {"src":"/=/action/Action","name":"Action","description":null},
+    {"src":"/=/action/Action","name":"Action","description":"My first action"},
     {"src":"/=/action/Action2","name":"Action2","description":null}
 ]
 
