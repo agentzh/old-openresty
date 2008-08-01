@@ -25,6 +25,18 @@ sub POST_action_exec {
     die "Action not found: $action\n";
 }
 
+# remove all existing actions for current user (not including builtin actions)
+sub DELETE_action_list
+{
+	my ($self,$openresty,$bits)=@_;
+}
+
+# list all existing actions for current user (including builtin actions)
+sub GET_action_list
+{
+	my ($self,$openresty,$bits)=@_;
+}
+
 sub exec_RunView {
     my ($self, $openresty) = @_;
 

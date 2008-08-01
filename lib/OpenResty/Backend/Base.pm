@@ -244,7 +244,28 @@ begin
 end;
 $$ language plpgsql;
 _EOC_
-	[ '0.006' => '' ], 	# placeholder for Action branch
+	[ '0.006' => <<'_EOC_' ],
+create or replace function _upgrade() returns integer as $$
+begin
+	create table _actions (
+		id serial primary key,
+		name text unique not null,
+		definition text not null,
+		description text,
+		compiled text,
+		created timestamp(0) with time zone default now()
+	);
+	create table _action_params (
+		id serial primary key,
+		name text unique not null,
+		type text not null,
+		label text,
+		default_value text,
+		used bool not null,
+		action_id integer references _actions(id)
+	);
+	return 0;
+$$ language plpgsql;
 );
 
 sub upgrade_all {
