@@ -171,7 +171,7 @@ sub POST_model_column {
     my $data = $openresty->{_req_data};
     my $table_name = $model;
 
-    my $num = $self->column_count($openresty);
+    my $num = $self->column_count($openresty, $model);
 
     if ($num >= $COLUMN_LIMIT) {
         die "Exceeded model column count limit: $COLUMN_LIMIT.\n";
@@ -590,8 +590,8 @@ sub model_count {
 }
 
 sub column_count {
-    my ($self, $openresty) = @_;
-    return $openresty->select("select count(*) from _columns")->[0][0];
+    my ($self, $openresty, $model) = @_;
+    return $openresty->select("select count(*) from _columns where table_name='$model'")->[0][0];
 }
 
 sub row_count {

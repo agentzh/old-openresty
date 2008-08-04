@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 #use Smart::Comments '####';
-use Cookie::XS;
+use CGI::Cookie::XS;
 use OpenResty::Limits;
 use OpenResty::Cache;
 use OpenResty;
@@ -190,7 +190,7 @@ sub process_request {
     # XXX hacks...
     my ($session, $session_from_cookie);
     if ($call_level == 0) { # only check cookies on the toplevel call
-        my $cookies = Cookie::XS->fetch;
+        my $cookies = CGI::Cookie::XS->fetch;
         if ($cookies) {
             my $cookie = $cookies->{session};
             if ($cookie) {
