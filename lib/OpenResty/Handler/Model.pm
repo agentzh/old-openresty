@@ -31,6 +31,7 @@ sub check_type {
                     boolean |
                     text |
                     varchar \s* \( \s* \d+ \s* \) |
+                    char \s* \( \s* \d+ \s* \) |
                     integer |
                     serial |
                     real |
