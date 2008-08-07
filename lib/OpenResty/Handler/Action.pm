@@ -10,6 +10,7 @@ use OpenResty::RestyScript;
 use OpenResty::Limits;
 use JSON::XS;
 use Data::Dumper qw(Dumper);
+use OpenResty::QuasiQuote::SQL;
 
 my $json = JSON::XS->new->utf8;
 
@@ -28,10 +29,11 @@ sub POST_action_exec {
         die "Action name must be specified before executing.";
     }
 
-    my $select
-        = OpenResty::SQL::Select->new(qw/id compiled/)->from('_actions')
-        ->where( name => Q($action) );
-    my $res = $openresty->select( "$select", { use_hash => 1 } );
+    my $sql = [:sql|
+        select id, compiled
+        from _actions
+        where name = $action |];
+    my $res = $openresty->select( $sql, { use_hash => 1 } );
     if ( !$res || @$res == 0 ) {
         die "Action \"$action\" not found.";
     }
@@ -48,11 +50,11 @@ sub POST_action_exec {
     die "Invalid POST body content, must be a JSON object"
         unless ( ref($act_param) eq 'HASH' );
 
-    $select
-        = OpenResty::SQL::Select->new(qw/name type default_value/)
-        ->from('_action_params')->where( action_id => Q($act_id) )
-        ->where( used => "true" );
-    $res = $openresty->select( "$select", { use_hash => 1 } );
+    $sql = [:sql|
+        select name, type, default_value
+        from _action_params
+        where action_id = $act_id and used = true |];
+    $res = $openresty->select( $sql, { use_hash => 1 } );
 
     # Complement parameter values from URL
     my %var_map = ();
@@ -97,9 +99,10 @@ sub DELETE_action_list {
 # List all existing actions for current user (including builtin actions)
 sub GET_action_list {
     my ( $self, $openresty, $bits ) = @_;
-    my $select
-        = OpenResty::SQL::Select->new(qw/name description/)->from('_actions');
-    my $act_lst = $openresty->select( "$select", { use_hash => 1 } );
+    my $sql = [:sql|
+        select name, description
+        from _actions |];
+    my $act_lst = $openresty->select( $sql, { use_hash => 1 } );
 
     # Prepend builtin actions
     unshift( @$act_lst,
@@ -126,21 +129,24 @@ sub GET_action {
     }
 
     # Retrieve the corresponding action information
-    my ( $select, $res );
-    $select = OpenResty::SQL::Select->new(qw/id name description definition/)
-        ->from('_actions')->where( name => Q($act_name) );
-    $res = $openresty->select( "$select", { use_hash => 1 } );
+    my ( $sql, $res );
+    $sql = [:sql|
+        select id, name, description, definition
+        from _actions
+        where name = $act_name |];
+    $res = $openresty->select( $sql, { use_hash => 1 } );
     if ( !$res || @$res == 0 ) {
         die "Action \"$act_name\" not found.";
     }
 
     # Retrieve the action parameter information
     my $act_info = $res->[0];
-    $select
-        = OpenResty::SQL::Select->new(qw/name type label default_value/)
-        ->from('_action_params')->where( action_id => Q( $act_info->{id} ) )
-        ->where( used => "true" );
-    $res = $openresty->select( "$select", { use_hash => 1 } );
+    my $id = $act_info->{id};
+    $sql = [:sql|
+        select name, type, label, default_value
+        from _action_params
+        where action_id = $id and used = true |];
+    $res = $openresty->select( $sql, { use_hash => 1 } );
 
     # Rename the field "default_value" to "default" and remove field "id"
     map {
@@ -174,10 +180,11 @@ sub GET_action_exec {
         die "Action name must be specified before executing.";
     }
 
-    my $select
-        = OpenResty::SQL::Select->new(qw/id compiled/)->from('_actions')
-        ->where( name => Q($act_name) );
-    my $res = $openresty->select( "$select", { use_hash => 1 } );
+    my $sql = [:sql|
+        select id, compiled
+        from _actions
+        where name = $act_name |];
+    my $res = $openresty->select( $sql, { use_hash => 1 } );
     if ( !$res || @$res == 0 ) {
         die "Action \"$act_name\" not found.";
     }
@@ -189,11 +196,11 @@ sub GET_action_exec {
         die "Failed to load compiled fragments for action \"$act_name\"";
     }
 
-    $select
-        = OpenResty::SQL::Select->new(qw/name type default_value/)
-        ->from('_action_params')->where( action_id => Q($act_id) )
-        ->where( used => "true" );
-    $res = $openresty->select( "$select", { use_hash => 1 } );
+    $sql = [:sql|
+        select name, type, default_value
+        from _action_params
+        where action_id = $act_id and used = true |];
+    $res = $openresty->select( $sql, { use_hash => 1 } );
 
     my %var_map = ();
     for my $row (@$res) {
@@ -330,10 +337,12 @@ sub DELETE_action {
         return $self->DELETE_action_list( $openresty, $bits );
     }
 
-    my ( $select, $res );
-    $select = OpenResty::SQL::Select->new(qw/id/)->from('_actions')
-        ->where( name => Q($act_name) );
-    $res = $openresty->select( "$select", { use_hash => 1 } );
+    my ( $sql, $res );
+    $sql = [:sql|
+        select id
+        from _actions
+        where name = $act_name |];
+    $res = $openresty->select( $sql, { use_hash => 1 } );
 
     # Delete parameters used by the action
     $openresty->do(
@@ -370,9 +379,11 @@ sub POST_action {
         unless ($act_name);
 
     # Check if the action has been defined to prevent overwriting
-    my $select = OpenResty::SQL::Select->new(qw/name/)->from('_actions')
-        ->where( name => Q($act_name) );
-    my $act_list = $openresty->select( "$select", { use_hash => 1 } );
+    my $sql = [:sql|
+        select name
+        from _actions
+        where name = $act_name |];
+    my $act_list = $openresty->select( $sql, { use_hash => 1 } );
     die "Action \"$act_name\" already exists."
         if (@$act_list);
 
@@ -428,29 +439,25 @@ sub POST_action {
 
     # Insert action definition into backend
     my $act_comp = $json->encode($canon_cmds);
-    my $insert
-        = OpenResty::SQL::Insert->new('_actions')
-        ->cols(qw/name definition description compiled/)
-        ->values( Q( $act_name, $act_def, $act_desc, $act_comp ) );
-    my $rv = $openresty->do("$insert");
+    $sql = [:sql|
+        insert into _actions (name, definition, description, compiled)
+        values($act_name, $act_def, $act_desc, $act_comp) |];
+    my $rv = $openresty->do($sql);
     die "Failed to insert action into backend DB"
         unless ( defined($rv) );
     my $act_id = $openresty->last_insert_id('_actions');
 
     # Insert action parameters into backend
-    my $ins_param = OpenResty::SQL::Insert->new('_action_params')
-        ->cols(qw/name type label default_value used action_id/);
     for my $param_name ( keys(%$act_param_hash) ) {
-        my $st = $ins_param->values(
-            Q(  $param_name,
-                $act_param_hash->{$param_name}{type},
-                $act_param_hash->{$param_name}{label},
-                $act_param_hash->{$param_name}{default},
-                $act_param_hash->{$param_name}{used} ? "true" : "false",
-                $act_id,
-            )
-        );
-        $rv = $openresty->do("$st");
+        my $param = $act_param_hash->{$param_name};
+        my $type = $param->{type};
+        my $label = $param->{label};
+        my $default = $param->{default};
+        my $used = $param->{used} ? 'true' : 'false';
+        my $sql = [:sql|
+            insert into _action_params (name, type, label, default_value, used, action_id)
+            values ($param_name, $type, $label, $default, $used, $act_id) |];
+        $rv = $openresty->do($sql);
         die
             "Failed to insert action parameter \"$param_name\" into backend DB"
             unless ( defined($rv) );
@@ -722,10 +729,11 @@ sub PUT_action {
     }
 
     # Make sure the given action already existed
-    my $select
-        = OpenResty::SQL::Select->new(qw/id compiled/)->from('_actions')
-        ->where( name => Q($act_name) );
-    my $res = $openresty->select( "$select", { use_hash => 1 } );
+    my $sql = [:sql|
+        select id, compiled
+        from _actions
+        where name = $act_name |];
+    my $res = $openresty->select( $sql, { use_hash => 1 } );
     if ( !$res || @$res == 0 ) {
         die "Action \"$act_name\" not found.";
     }
