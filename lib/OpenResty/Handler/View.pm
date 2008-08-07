@@ -8,6 +8,7 @@ use OpenResty::Util;
 use Params::Util qw( _HASH _STRING );
 use OpenResty::Limits;
 use OpenResty::RestyScript::View;
+use OpenResty::QuasiQuote::SQL;
 
 sub POST_view {
     my ($self, $openresty, $bits) = @_;
@@ -30,18 +31,19 @@ sub POST_view {
 
 sub get_views {
     my ($self, $openresty, $params) = @_;
-    my $select = OpenResty::SQL::Select->new(
-        qw< name description >
-    )->from('_views')->order_by('id');
-    return $openresty->select("$select", { use_hash => 1 });
+    my $sql = [:sql|
+        select name, description
+        from _views
+        order by id |];
+    return $openresty->select($sql, { use_hash => 1 });
 }
 
 sub get_view_names {
     my ($self, $openresty) = @_;
-    my $select = OpenResty::SQL::Select->new(
-        qw< name >
-    )->from('_views');
-    my $res = $openresty->select("$select");
+    my $sql = [:sql|
+        select name
+        from _views |];
+    my $res = $openresty->select($sql);
     ### $res
     if ($res && ref $res && ref $res->[0]) {
         @$res = map { @$_ } @$res;
@@ -68,11 +70,12 @@ sub GET_view {
     if (!$openresty->has_view($view)) {
         die "View \"$view\" not found.\n";
     }
-    my $select = OpenResty::SQL::Select->new( qw< name definition description > )
-        ->from('_views')
-        ->where(name => Q($view));
+    my $sql = [:sql|
+        select name, definition, description
+        from _views
+        where name = $view |];
 
-    return $openresty->select("$select", {use_hash => 1})->[0];
+    return $openresty->select($sql, {use_hash => 1})->[0];
 }
 
 sub PUT_view {
@@ -247,12 +250,11 @@ sub new_view {
         }
     }
 
-    my $insert = OpenResty::SQL::Insert
-        ->new('_views')
-        ->cols( qw<name definition description> )
-        ->values( Q($name, $minisql, $desc) );
+    my $sql = [:sql|
+        insert into _views (name, definition, description)
+        values($name, $minisql, $desc) |];
 
-    return { success => $openresty->do("$insert") ? 1 : 0 };
+    return { success => $openresty->do($sql) ? 1 : 0 };
 
 }
 
