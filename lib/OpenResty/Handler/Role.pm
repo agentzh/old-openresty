@@ -7,6 +7,7 @@ use warnings;
 use Params::Util qw( _HASH _STRING _ARRAY );
 use OpenResty::Util;
 use OpenResty::Limits;
+use OpenResty::QuasiQuote::SQL;
 
 sub DELETE_role {
     my ($self, $openresty, $bits) = @_;
@@ -205,18 +206,19 @@ sub insert_rule {
             join(" ", keys %$data),
             "\n";
     }
-    my $insert = OpenResty::SQL::Insert->new("_access")
-        ->cols( qw< role method url > )
-        ->values( Q( $role, $method, $url ) );
-    return $openresty->do("$insert");
+    my $sql = [:sql|
+        insert into _access (role, method, url)
+        values($role, $method, $url) |];
+    return $openresty->do($sql);
 }
 
 sub GET_role_list {
     my ($self, $openresty, $bits) = @_;
-    my $select = OpenResty::SQL::Select->new(
-        qw< name description >
-    )->from('_roles')->order_by('id');
-    my $roles = $openresty->select("$select", { use_hash => 1 });
+    my $sql = [:sql|
+        select name, description
+        from _roles
+        order by id |];
+    my $roles = $openresty->select($sql, { use_hash => 1 });
 
     $roles ||= [];
     map { $_->{src} = "/=/role/$_->{name}" } @$roles;
@@ -233,11 +235,12 @@ sub GET_role {
     if (!$role_id) {
         die "Role \"$role\" not found.\n";
     }
-    my $select = OpenResty::SQL::Select->new( qw< name description login > )
-        ->from('_roles')
-        ->where(name => Q($role));
+    my $sql = [:sql|
+        select name, description, login
+        from _roles
+        where name = $role |];
 
-    my $res = $openresty->select("$select", {use_hash => 1})->[0];
+    my $res = $openresty->select($sql, {use_hash => 1})->[0];
     $res->{columns} = [
         { name => "method", type => "text", label => "HTTP method" },
         { name => "url", type => "text", label => "Resource"}
@@ -248,18 +251,19 @@ sub GET_role {
 sub DELETE_role_list {
     my ($self, $openresty, $bits) = @_;
 
-    my $select = OpenResty::SQL::Select->new(
-        qw< name description >
-    )->from('_roles');
-    my $roles = $openresty->select("$select");
+    my $sql = [:sql|
+        select name, description
+        from _roles |];
+    my $roles = $openresty->select($sql);
     my $user = $openresty->current_user;
     $roles ||= [];
     for my $role (@$roles) {
         $OpenResty::Cache->remove_has_role($user, $role);
     }
 
-    my $sql = "delete from _access where role <> 'Admin' and role <> 'Public';\n".
-        "delete from _roles where name <> 'Admin' and name <> 'Public'";
+    $sql = [:sql|
+        delete from _access where role <> 'Admin' and role <> 'Public';
+        delete from _roles where name <> 'Admin' and name <> 'Public' |];
     $openresty->warning("Predefined roles skipped.");
     return { success => $openresty->do($sql) >= 0 ? 1 : 0 };
 }
@@ -336,10 +340,9 @@ sub new_role {
         die "Unknown keys: ", join(" ", keys %$data), "\n";
     }
 
-    my $insert = OpenResty::SQL::Insert
-        ->new('_roles')
-        ->cols( qw<name description login password> )
-        ->values( Q($name, $desc, $login, $password) );
+    my $insert = [:sql|
+        insert into _roles(name, description, login, password)
+        values($name, $desc, $login, $password) |];
 
     return { success => $openresty->do("$insert") ? 1 : 0 };
 }
