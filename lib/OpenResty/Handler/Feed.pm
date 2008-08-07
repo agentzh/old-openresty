@@ -12,6 +12,7 @@ use DateTime::Format::Pg;
 use DateTime::Format::Strptime;
 use OpenResty::FeedWriter::RSS;
 use POSIX qw( strftime );
+use OpenResty::QuasiQuote::SQL;
 
 my $FormatterPattern = '%a, %d %b %Y %H:%M:%S GMT';
 my $Formatter = DateTime::Format::Strptime->new(pattern => $FormatterPattern);
@@ -37,10 +38,11 @@ sub POST_feed {
 
 sub get_feeds {
     my ($self, $openresty, $params) = @_;
-    my $select = OpenResty::SQL::Select->new(
-        qw< name description >
-    )->from('_feeds')->order_by('id');
-    return $openresty->select("$select", { use_hash => 1 });
+    my $sql = [:sql|
+        select name, description
+        from _feeds
+        order by id |];
+    return $openresty->select($sql, { use_hash => 1 });
 }
 
 sub GET_feed_list {
@@ -62,11 +64,12 @@ sub GET_feed {
     if (!$openresty->has_feed($feed)) {
         die "Feed \"$feed\" not found.\n";
     }
-    my $select = OpenResty::SQL::Select->new( qw< name description view title link logo copyright language author > )
-        ->from('_feeds')
-        ->where(name => Q($feed));
+    my $sql = [:sql|
+        select name, description, view, title, link, logo, copyright, language, author
+        from _feeds
+        where name = $feed |];
 
-    return $openresty->select("$select", {use_hash => 1})->[0];
+    return $openresty->select($sql, {use_hash => 1})->[0];
 }
 
 sub PUT_feed {
@@ -298,12 +301,11 @@ sub new_feed {
         die "Unknown keys: ", join(" ", keys %$data), "\n";
     }
 
-    my $insert = OpenResty::SQL::Insert
-        ->new('_feeds')
-        ->cols( qw<name view title link description copyright language author logo > )
-        ->values( Q($name, $view, $title, $link, $desc, $copyright, $language, $author, $logo) );
+    my $sql = [:sql|
+        insert into _feeds (name, view, title, link, description, copyright, language, author, logo)
+        values($name, $view, $title, $link, $desc, $copyright, $language, $author, $logo) |];
 
-    return { success => $openresty->do("$insert") ? 1 : 0 };
+    return { success => $openresty->do($sql) ? 1 : 0 };
 
 }
 
