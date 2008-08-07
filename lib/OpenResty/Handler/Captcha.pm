@@ -14,18 +14,20 @@ use Encode qw( encode decode is_utf8 );
 
 my $FontPath = "$FindBin::Bin/../share/font/wqy-zenhei.ttf";
 eval {
-if (!-f $FontPath) {
-    $FontPath = File::Spec->catfile(module_dir('OpenResty'), 'font/wqy-zenhei.ttf');
-}
+    if ( !-f $FontPath )
+    {
+        $FontPath = File::Spec->catfile( module_dir('OpenResty'),
+            'font/wqy-zenhei.ttf' );
+    }
 };
 
-my $PLAINTEXT_SEP=":";	# separator character in plaintext str
-my $MIN_TIMESPAN=1;			# minimum timespan(sec) for a valid Captcha,
-							# verification will fail before this timespan.
-							# default to 3s.
-my $MAX_TIMESPAN=3600;		# maximum timespan(sec) for a valid Captcha,
-							# Captcha will be invalid after this timespan.
-							# default to 15m.
+my $PLAINTEXT_SEP = ":";     # separator character in plaintext str
+my $MIN_TIMESPAN  = 1;       # minimum timespan(sec) for a valid Captcha,
+                             # verification will fail before this timespan.
+                             # default to 3s.
+my $MAX_TIMESPAN  = 3600;    # maximum timespan(sec) for a valid Captcha,
+                             # Captcha will be invalid after this timespan.
+                             # default to 15m.
 
 my $Error;
 eval "use GD::SecurityImage;";
@@ -190,34 +192,40 @@ my @WordList = qw(
 
 # Create a normal Captcha ID
 sub GET_captcha_column {
-    my ($self, $openresty, $bits) = @_;
+    my ( $self, $openresty, $bits ) = @_;
     my $col = $bits->[1];
-    if ($col eq 'id') {
-		# Get captcha language param
-        my $lang = lc($openresty->{_cgi}->url_param('lang')) || 'en';
+    if ( $col eq 'id' ) {
+
+        # Get captcha language param
+        my $lang = lc( $openresty->{_cgi}->url_param('lang') ) || 'en';
 
         # Generate captcha solution in the language
-		my $solution;
-		if ($lang eq 'cn') {
-			$solution = $self->gen_cn_solution($openresty);
-		} elsif ($lang eq 'en') {
-			$solution = $self->gen_en_solution($openresty);
-		} else {
-			die "Unsupported lang (only cn and en allowed): $lang\n";
-		}
+        my $solution;
+        if ( $lang eq 'cn' ) {
+            $solution = $self->gen_cn_solution($openresty);
+        } elsif ( $lang eq 'en' ) {
+            $solution = $self->gen_en_solution($openresty);
+        } else {
+            die "Unsupported lang (only cn and en allowed): $lang\n";
+        }
 
-                my $user = $openresty->{_user};
-		if ($OpenResty::Config{"frontend.test_mode"} && $user && $user eq 'tester') {
-			# We are in the testing mode
-			$MIN_TIMESPAN=1;	# change min valid timespan to 1s
-			$MAX_TIMESPAN=3;	# change max valid timespan to 3s
-		}
+        my $user = $openresty->{_user};
+        if (   $OpenResty::Config{"frontend.test_mode"}
+            && $user
+            && $user eq 'tester' )
+        {
 
-		# Generate min and max valid timestamp
-		my $min_valid=time()+$MIN_TIMESPAN;
-		my $max_valid=time()+$MAX_TIMESPAN;
+            # We are in the testing mode
+            $MIN_TIMESPAN = 1;    # change min valid timespan to 1s
+            $MAX_TIMESPAN = 3;    # change max valid timespan to 3s
+        }
 
-        my $id = encrypt_captcha_id($openresty,$lang,$solution,$min_valid,$max_valid);
+        # Generate min and max valid timestamp
+        my $min_valid = time() + $MIN_TIMESPAN;
+        my $max_valid = time() + $MAX_TIMESPAN;
+
+        my $id = encrypt_captcha_id( $openresty, $lang, $solution, $min_valid,
+            $max_valid );
 
         return $id;
     } else {
@@ -226,8 +234,8 @@ sub GET_captcha_column {
 }
 
 sub GET_captcha_value {
-    my ($self, $openresty, $bits) = @_;
-    my $col = $bits->[1];
+    my ( $self, $openresty, $bits ) = @_;
+    my $col   = $bits->[1];
     my $value = $bits->[2];
 
     if ($Error) {
@@ -235,48 +243,49 @@ sub GET_captcha_value {
     }
 
     my $ext = 'gif';
-    if ($value =~ s/\.(gif|jpg|png|jpeg)$//g) {
+    if ( $value =~ s/\.(gif|jpg|png|jpeg)$//g ) {
         $ext = $1;
-        if ($ext eq 'jpg') { $ext = 'jpeg' }
+        if ( $ext eq 'jpg' ) { $ext = 'jpeg' }
     }
 
-    if ($col eq 'id') {
+    if ( $col eq 'id' ) {
         my $id = $value;
 
-		# Decrypt captcha id to get info about the captcha
-		my ($rand1,$lang,$solution,$min_valid,$max_valid,$rand2)=decrypt_captcha_id($openresty,$id);
+        # Decrypt captcha id to get info about the captcha
+        my ( $rand1, $lang, $solution, $min_valid, $max_valid, $rand2 )
+            = decrypt_captcha_id( $openresty, $id );
 
-		# Exit if the captcha id is in wrong format
+        # Exit if the captcha id is in wrong format
         die "Invalid captcha ID: $id\n" unless defined($solution);
 
-		# Exit if the max valid time of the captcha has expired
-		die "Captcha ID has expired: $id\n" if $max_valid <time();
+        # Exit if the max valid time of the captcha has expired
+        die "Captcha ID has expired: $id\n" if $max_valid < time();
 
-		# Generate image according to captcha info
-		if ($lang eq 'cn') {
-			$self->gen_cn_image($openresty, $solution);
-		} elsif ($lang eq 'en') {
-			$self->gen_en_image($openresty, $solution);
-		} else {
-			die "Unsupported lang (only cn and en allowed): $lang\n";
-		}
+        # Generate image according to captcha info
+        if ( $lang eq 'cn' ) {
+            $self->gen_cn_image( $openresty, $solution );
+        } elsif ( $lang eq 'en' ) {
+            $self->gen_en_image( $openresty, $solution );
+        } else {
+            die "Unsupported lang (only cn and en allowed): $lang\n";
+        }
     } else {
         die "Unknown captcha column: $col\n";
     }
 }
 
 sub gen_en_solution {
-    my ($self, $openresty) = @_;
-    my $str = '';
+    my ( $self, $openresty ) = @_;
+    my $str  = '';
     my $list = \@WordList;
-    my ($i, $j) = (0, 0);
-    while ($i < 2) {
+    my ( $i, $j ) = ( 0, 0 );
+    while ( $i < 2 ) {
         last if $j > 100;
-        my $rand = int rand scalar(@$list);
+        my $rand      = int rand scalar(@$list);
         my $saved_str = $str;
         $str .= $list->[$rand] . " ";
         my $len = length($str);
-        if ($len >= 15) {
+        if ( $len >= 15 ) {
             $str = $saved_str;
             $j++;
             next;
@@ -284,22 +293,23 @@ sub gen_en_solution {
         $i++;
     }
     $str;
+
     # XXX debug only
 }
 
 sub gen_cn_solution {
-    my ($self, $openresty) = @_;
-    my $str = '';
+    my ( $self, $openresty ) = @_;
+    my $str  = '';
     my $list = \@CnWordList;
-    my ($i, $j) = (0, 0);
-    while ($i < 2) {
+    my ( $i, $j ) = ( 0, 0 );
+    while ( $i < 2 ) {
         last if $j > 100;
-        my $rand = int rand scalar(@$list);
+        my $rand      = int rand scalar(@$list);
         my $saved_str = $str;
         $str .= $list->[$rand];
         my $len = length($str);
         last if $len == 3;
-        if ($len >= 5) {
+        if ( $len >= 5 ) {
             $str = $saved_str;
             $j++;
             next;
@@ -307,47 +317,52 @@ sub gen_cn_solution {
         $i++;
     }
     $str;
+
     # XXX debug only
 }
 
 sub gen_cn_image {
-    my ($self, $openresty, $str) = @_;
-    my $angle = int rand 4;
+    my ( $self, $openresty, $str ) = @_;
+    my $angle   = int rand 4;
     my $captcha = GD::SecurityImage->new(
-        width   => 100,
-        height  => 37,
-        lines   => 2 + int rand 2,
-        font    => $FontPath,
+        width  => 100,
+        height => 37,
+        lines  => 2 + int rand 2,
+        font   => $FontPath,
+
         #thickness => 0.5,
         rndmax => 3,
-        angle => $angle,
+        angle  => $angle,
         ptsize => 15,
+
         #send_ctobg => 1,
         #scramble => 1,
     );
 
     #warn $str;
     $captcha->random($str);
-    $captcha->create(ttf => 'default');
+    $captcha->create( ttf => 'default' );
     die "Failed to load ttf font for GD: $@\n" if $captcha->gdbox_empty;
-    $captcha->particle(300); # : 1732);
-    my ($image_data, $mime_type) = $captcha->out(compress => 1);
+    $captcha->particle(300);    # : 1732);
+    my ( $image_data, $mime_type ) = $captcha->out( compress => 1 );
     $openresty->{_bin_data} = $image_data;
-    $openresty->{_type} = "image/$mime_type";
+    $openresty->{_type}     = "image/$mime_type";
     ### $mime_type
 }
 
 sub gen_en_image {
-    my ($self, $openresty, $str) = @_;
-    my $angle = 2 + int rand 4;
+    my ( $self, $openresty, $str ) = @_;
+    my $angle   = 2 + int rand 4;
     my $captcha = GD::SecurityImage->new(
         width   => 120,
         height  => 30,
         lines   => 1,
         gd_font => 'giant',
+
         #thickness => 0.5,
         rndmax => 3,
-        angle => $angle,
+        angle  => $angle,
+
         #ptsize => 80,
         #send_ctobg => 1,
         #scramble => 1,
@@ -355,172 +370,186 @@ sub gen_en_image {
 
     #warn $str;
     $captcha->random($str);
-    $captcha->create(normal => 'rect');
-    $captcha->particle(100); # : 1732);
-    my ($image_data, $mime_type) = $captcha->out(compress => 1);
+    $captcha->create( normal => 'rect' );
+    $captcha->particle(100);    # : 1732);
+    my ( $image_data, $mime_type ) = $captcha->out( compress => 1 );
     $openresty->{_bin_data} = $image_data;
-    $openresty->{_type} = "image/$mime_type";
+    $openresty->{_type}     = "image/$mime_type";
     ### $mime_type
 }
 
 sub trim_sol {
     my $s = $_[0];
-    unless (is_utf8($s)) {
-        $s = decode('UTF-8', $s);
+    unless ( is_utf8($s) ) {
+        $s = decode( 'UTF-8', $s );
     }
     $s =~ s/\W+//g;
     $s;
 }
 
-sub validate_captcha
-{
-	my ($openresty,$id,$word)=@_;
-	my ($rand1,$lang,$solution,$min_valid,$max_valid,$rand2)=decrypt_captcha_id($openresty,$id);
+sub validate_captcha {
+    my ( $openresty, $id, $word ) = @_;
+    my ( $rand1, $lang, $solution, $min_valid, $max_valid, $rand2 )
+        = decrypt_captcha_id( $openresty, $id );
 
-	# validate failed if the captcha id is in wrong format
-	return (0,"Captcha ID format is incorrect.") unless defined($solution);	# wrong format
+    # validate failed if the captcha id is in wrong format
+    return ( 0, "Captcha ID format is incorrect." )
+        unless defined($solution);    # wrong format
 
-	# change true solution for testing purpose
-	if($OpenResty::Config{"frontend.test_mode"} && $openresty->{_user} eq 'tester') {
-		if ($lang eq 'en') {
-			$solution = 'hello world ';
-		} else {
-			$solution = '你好世界';
-		}
-	}
+    # change true solution for testing purpose
+    if (   $OpenResty::Config{"frontend.test_mode"}
+        && $openresty->{_user} eq 'tester' )
+    {
+        if ( $lang eq 'en' ) {
+            $solution = 'hello world ';
+        } else {
+            $solution = '你好世界';
+        }
+    }
 
-	# validate failed if the captcha id has expired or not allowed to validate yet
-	my $now=time();
-	return (0,"Answered too quickly.") if $min_valid>$now;	# ans too early
-        return (0,"Captcha ID has expired.")  if $max_valid<$now;	# ans too late
+# validate failed if the captcha id has expired or not allowed to validate yet
+    my $now = time();
+    return ( 0, "Answered too quickly." )
+        if $min_valid > $now;    # ans too early
+    return ( 0, "Captcha ID has expired." )
+        if $max_valid < $now;    # ans too late
 
-	# Construct cache key for captcha id. We cannot use captcha id directly, for the id itself
-	# could be appending any characters without affecting its decryption.
-	# Prepending "captcha" to prevent cache key confliction...
-	# NOTE: the solution used here should not contains whitespaces, because it will be used as
-	# part of the cache key!
-	my $cache_key=join($PLAINTEXT_SEP,"captcha",$rand1,$lang,trim_sol($solution),$min_valid,$max_valid,$rand2);
-	utf8::encode($cache_key);
+# Construct cache key for captcha id. We cannot use captcha id directly, for the id itself
+# could be appending any characters without affecting its decryption.
+# Prepending "captcha" to prevent cache key confliction...
+# NOTE: the solution used here should not contains whitespaces, because it will be used as
+# part of the cache key!
+    my $cache_key = join( $PLAINTEXT_SEP,
+        "captcha", $rand1, $lang, trim_sol($solution), $min_valid, $max_valid,
+        $rand2 );
+    utf8::encode($cache_key);
 
-	# validate failed if the captcha id has been used
-	my $used = $OpenResty::Cache->get($cache_key);
-	return (0,"The captcha has been used.") if $used;	# ans used
+    # validate failed if the captcha id has been used
+    my $used = $OpenResty::Cache->get($cache_key);
+    return ( 0, "The captcha has been used." ) if $used;    # ans used
 
-	# validate failed if user input doesn't match the solution in captcha id
-        #warn "Expected solution: $word\n";
-        #warn "Real solution: $solution\n";
-	return (0,"Solution to the captcha is incorrect.") if trim_sol($word) ne trim_sol($solution);	# wrong ans
+    # validate failed if user input doesn't match the solution in captcha id
+    #warn "Expected solution: $word\n";
+    #warn "Real solution: $solution\n";
+    return ( 0, "Solution to the captcha is incorrect." )
+        if trim_sol($word) ne trim_sol($solution);          # wrong ans
 
-	# validate succeed, remember which captcha id has been used
-        #warn $cache_key, "\n";
-	$OpenResty::Cache->set($cache_key => 1, $MAX_TIMESPAN);
+    # validate succeed, remember which captcha id has been used
+    #warn $cache_key, "\n";
+    $OpenResty::Cache->set( $cache_key => 1, $MAX_TIMESPAN );
 
-	return (1,"Verification succeeded.");
+    return ( 1, "Verification succeeded." );
 }
 
-sub decrypt_captcha_id
-{
-	my ($openresty,$id)=@_;
-	return () if !defined($id);
-	$id=decode_base64_urlsafe($id);
-	my ($digest,$cipher)=unpack("a16a*",$id);
+sub decrypt_captcha_id {
+    my ( $openresty, $id ) = @_;
+    return () if !defined($id);
+    $id = decode_base64_urlsafe($id);
+    my ( $digest, $cipher ) = unpack( "a16a*", $id );
 
-	my $secret=get_captcha_secretkey($openresty);
-	my $algo=Crypt::CBC->new(
-		-key=>$secret,
-		-header=>'none',
-		-iv=>$secret,
-		-cipher=>'Rijndael',
-	);
+    my $secret = get_captcha_secretkey($openresty);
+    my $algo   = Crypt::CBC->new(
+        -key    => $secret,
+        -header => 'none',
+        -iv     => $secret,
+        -cipher => 'Rijndael',
+    );
 
-	my $plain=$algo->decrypt($cipher);
-	return () unless $digest eq md5($plain);
+    my $plain = $algo->decrypt($cipher);
+    return () unless $digest eq md5($plain);
 
-	my ($rand1,$lang,$solution,$min_valid,$max_valid,$rand2)=split($PLAINTEXT_SEP,$plain);
+    my ( $rand1, $lang, $solution, $min_valid, $max_valid, $rand2 )
+        = split( $PLAINTEXT_SEP, $plain );
 
-	return () unless defined($lang) && defined($solution) && defined($min_valid) && defined($max_valid);
-	return () unless $min_valid>0 && $max_valid>0;
-	return () unless defined($rand1) && $rand1>=0 && $rand1<10000;
-	return () unless $rand1==$rand2;
+    return ()
+        unless defined($lang)
+            && defined($solution)
+            && defined($min_valid)
+            && defined($max_valid);
+    return () unless $min_valid > 0 && $max_valid > 0;
+    return () unless defined($rand1) && $rand1 >= 0 && $rand1 < 10000;
+    return () unless $rand1 == $rand2;
 
-	return ($rand1,$lang,$solution,$min_valid,$max_valid,$rand2);
+    return ( $rand1, $lang, $solution, $min_valid, $max_valid, $rand2 );
 }
 
-sub encrypt_captcha_id
-{
-	my ($openresty,$lang,$solution,$min_valid,$max_valid)=@_;
-	my $rand=int(rand(10000));
-	# Add random number before and after captcha parameters
-	# in order to maximum obfuscate the cipher
-	my $plain=join($PLAINTEXT_SEP,$rand,$lang,$solution,$min_valid,$max_valid,$rand);
+sub encrypt_captcha_id {
+    my ( $openresty, $lang, $solution, $min_valid, $max_valid ) = @_;
+    my $rand = int( rand(10000) );
 
-	my $secret=get_captcha_secretkey($openresty);
-	my $algo=Crypt::CBC->new(
-		-key=>$secret,
-		-header=>'none',
-		-iv=>$secret,
-		-cipher=>'Rijndael',
-	);
+    # Add random number before and after captcha parameters
+    # in order to maximum obfuscate the cipher
+    my $plain = join( $PLAINTEXT_SEP,
+        $rand, $lang, $solution, $min_valid, $max_valid, $rand );
 
-	my $cipher=$algo->encrypt($plain);
+    my $secret = get_captcha_secretkey($openresty);
+    my $algo   = Crypt::CBC->new(
+        -key    => $secret,
+        -header => 'none',
+        -iv     => $secret,
+        -cipher => 'Rijndael',
+    );
 
-	# Generate a 16-byte MD5 signature for plaintext, to further protect cipher
-	utf8::encode($plain);	# XXX: eliminating md5() i/o error
-	my $digest=md5($plain);
-	return encode_base64_urlsafe($digest.$cipher);
+    my $cipher = $algo->encrypt($plain);
+
+   # Generate a 16-byte MD5 signature for plaintext, to further protect cipher
+    utf8::encode($plain);    # XXX: eliminating md5() i/o error
+    my $digest = md5($plain);
+    return encode_base64_urlsafe( $digest . $cipher );
 }
 
-sub get_captcha_secretkey
-{
-	my $openresty=shift;
+sub get_captcha_secretkey {
+    my $openresty = shift;
 
-	# 128 bits secret key for encryption/decryption
-	# Prepending "captcha:" to prevent cache key conflication...
-	my $key = $OpenResty::Cache->get("captcha:key");
-	return $key if defined($key) && length($key)==16;
+    # 128 bits secret key for encryption/decryption
+    # Prepending "captcha:" to prevent cache key conflication...
+    my $key = $OpenResty::Cache->get("captcha:key");
+    return $key if defined($key) && length($key) == 16;
 
-	# Protect current user for restoring later, we don't want to break the outter context...
-	my $cur_user=$openresty->current_user;
-	$openresty->set_user("_global");
-	my $res=$openresty->select("select captcha_key from _global._general",{use_hash=>1});
-	die "Unable to retrieve captcha secret key"
-		unless defined($res) && @$res>0 && exists $res->[0]{captcha_key};
-	$openresty->set_user($cur_user) if defined($cur_user);
+# Protect current user for restoring later, we don't want to break the outter context...
+    my $cur_user = $openresty->current_user;
+    $openresty->set_user("_global");
+    my $res = $openresty->select( "select captcha_key from _global._general",
+        { use_hash => 1 } );
+    die "Unable to retrieve captcha secret key"
+        unless defined($res) && @$res > 0 && exists $res->[0]{captcha_key};
+    $openresty->set_user($cur_user) if defined($cur_user);
 
-	$key=$res->[0]{captcha_key};
-	die "Captcha secret key length invalid, should be exactly 16 bytes"
-		unless length($key)==16;
+    $key = $res->[0]{captcha_key};
+    die "Captcha secret key length invalid, should be exactly 16 bytes"
+        unless length($key) == 16;
 
-	# Cache the captcha secret key for 1 day
-	# Prepending "captcha:" to prevent cache key conflication...
-	$OpenResty::Cache->set("captcha:key"=>$key, 3600*24, 'trivial');
+    # Cache the captcha secret key for 1 day
+    # Prepending "captcha:" to prevent cache key conflication...
+    $OpenResty::Cache->set( "captcha:key" => $key, 3600 * 24, 'trivial' );
 
-	return $key;
+    return $key;
 }
 
-sub encode_base64_urlsafe
-{
-	# base64 encode the given value and substitute URL-unsafe characters to URL-safe ones
-	(my $base64=encode_base64(shift,""))=~y!+/!._!;
+sub encode_base64_urlsafe {
 
-	# remove the extra newline appended by encode_base64()
-	chomp($base64);
+# base64 encode the given value and substitute URL-unsafe characters to URL-safe ones
+    ( my $base64 = encode_base64( shift, "" ) ) =~ y!+/!._!;
 
-	$base64=~s/=//g;
-	return $base64;
+    # remove the extra newline appended by encode_base64()
+    chomp($base64);
+
+    $base64 =~ s/=//g;
+    return $base64;
 }
 
-sub decode_base64_urlsafe
-{
-	# substitute URL-safe characters to original ones
-	(my $base64=shift)=~y!._!+/!;
-	my $result;
-	{
-		# suppress decode_base64() warnings (premature end of data, etc.)
-		local $^W=0;
-		$result=decode_base64($base64);
-	}
-	return $result;
+sub decode_base64_urlsafe {
+
+    # substitute URL-safe characters to original ones
+    ( my $base64 = shift ) =~ y!._!+/!;
+    my $result;
+    {
+
+        # suppress decode_base64() warnings (premature end of data, etc.)
+        local $^W = 0;
+        $result = decode_base64($base64);
+    }
+    return $result;
 }
 
 1;
