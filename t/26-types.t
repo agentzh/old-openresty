@@ -104,6 +104,16 @@ POST /=/model/tsqueryTest
 --- SKIP
 
 
+=== TEST 9: Declare a char type
+--- request
+POST /=/model/Test
+{
+    "description":"test char(xxx)",
+    "columns":[{"name":"foo","label":"Foo","type":"char(1)"}]
+}
+--- response
+{"success":1}
+
 
 === TEST 9: logout
 --- request
