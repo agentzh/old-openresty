@@ -50,6 +50,7 @@ requires			('Crypt::Rijndael');
 requires                        ('IPC::Run3');
 requires                        ('IPC::Run');
 requires                        ('Time::HiRes');
+requires                        ('Filter::QuasiQuote' => '0.04');
 
 recommends          ('Benchmark::Timer');
 recommends          ('HTTP::Server::Simple' => '0.27');

@@ -11,6 +11,7 @@ use JSON::Syck ();
 use OpenResty::Limits;
 use Clone 'clone';
 use Encode qw(is_utf8);
+use OpenResty::QuasiQuote::SQL;
 
 #%OpenResty::AccountFiltered = %OpenResty::AccountFiltered;
 #$OpenResty::OpMap = $OpenResty::OpMap;
@@ -130,12 +131,13 @@ sub GET_model_column {
 
     my $table_name = $model;
 
-    my $select = OpenResty::SQL::Select->new(qw< name type label >, '"default"')
-            ->from('_columns')
-            ->where(table_name => Q($table_name))
-            ->order_by('id');
     if ($col eq '~') {
-        my $list = $openresty->select("$select", { use_hash => 1 });
+        my $sql = [:sql|
+            select name, type, label, "default"
+            from _columns
+            where table_name = $table_name
+            order by id |];
+        my $list = $openresty->select($sql, { use_hash => 1 });
         if (!$list or !ref $list) { $list = []; }
 
         for my $row (@$list) {
@@ -150,8 +152,12 @@ sub GET_model_column {
 
         return $list;
     } else {
-        $select->where( name => Q($col) );
-        my $res = $openresty->select("$select", { use_hash => 1 });
+        my $sql = [:sql|
+            select name, type, label, "default"
+            from _columns
+            where table_name = $table_name and name = $col
+            order by id |];
+        my $res = $openresty->select($sql, { use_hash => 1 });
         if (!$res or !@$res) {
             die "Column '$col' not found.\n";
         }
@@ -196,20 +202,19 @@ sub POST_model_column {
     $type = check_type($type);
     my $label = $data->{label} or
         die "No 'label' specified for column \"$col\" in model \"$model\".\n";
-    my $insert = OpenResty::SQL::Insert->new('_columns')
-        ->cols(qw< name label type table_name >)
-        ->values( Q($col, $label, $type, $table_name) );
-
+    my $json_default;
     my $default = delete $data->{default};
     if (defined $default) {
-        my $json_default = $OpenResty::JsonXs->encode($default);
+        $json_default = $OpenResty::JsonXs->encode($default);
         $default = $self->process_default($openresty, $default);
-        $insert->cols(QI('default'))->values(Q($json_default));
     }
     $default ||= 'null';
 
-    my $sql = "alter table \"$table_name\" add column \"$col\" $type default ($default);\n";
-    $sql .= "$insert";
+    my $sql = [:sql|
+        insert into _columns (name, label, type, table_name, "default")
+            values( $col, $label, $type, $table_name, $json_default);
+        alter table $sym:table_name
+            add column $sym:col $kw:type default ($kw:default); |];
 
     my $res = $openresty->do($sql);
 
@@ -430,15 +435,12 @@ sub new_model {
     if ($openresty->has_model($model)) {
         die "Model \"$model\" already exists.\n";
     }
-    my $insert = OpenResty::SQL::Insert->new('_models')
-        ->cols(qw< name table_name description >)
-        ->values( Q($model, $table, $description) );
+    my $sql = [:sql|
+        insert into _models (name, table_name, description)
+        values ($model, $table, $description); |];
 
-    my $sql = "$insert";
-    $insert->reset('_columns')
-        ->cols(QI( qw<name type label table_name> ));
     $sql .=
-        "create table \"$table\" (\n\t\"id\" serial primary key";
+        [:sql| create table $sym:table (id serial primary key |];
     my $sql2 = '';
     my $found_id = undef;
     for my $col (@$columns) {
@@ -463,18 +465,20 @@ sub new_model {
 
         my $default = delete $col->{default};
         $type = check_type($type);
-        $sql .= ",\n\t\"$name\" $type";
-        my $ins = $insert->clone
-            ->values(Q($name, $type, $label, $table));
+        $sql .= [:sql| , $sym:name $kw:type |];
 
+        my $json_default;
         if (defined $default) {
-            my $json_default = $OpenResty::JsonXs->encode($default);
+            $json_default = $OpenResty::JsonXs->encode($default);
             $default = $self->process_default($openresty, $default);
             # XXX
             $sql .= " default ($default)";
-            $ins->cols(QI('default'))
-                ->values(Q($json_default));
         }
+
+        my $col_sql = [:sql|
+            insert into _columns (name, type, label, table_name, "default")
+            values ($name, $type, $label, $table, $json_default); |];
+        #warn Q($json_default);
 
         my $unique = delete $col->{unique};
         if ($unique) {
@@ -489,7 +493,7 @@ sub new_model {
                     join(", ", map { JSON::Syck::Dump($_) } @key), "\n";
         }
 
-        $sql2 .= $ins;
+        $sql2 .= $col_sql;
         $i++;
     }
     $sql .= "\n);\ngrant select on table \"$table\" to anonymous;\n";
@@ -580,29 +584,35 @@ sub global_model_check {
 sub get_tables {
     #my ($self, $openresty, $user) = @_;
     my ($self, $openresty) = @_;
-    my $select = OpenResty::SQL::Select->new('name')->from('_models');
-    return $openresty->select("$select");
+    my $sql = [:sql| select name from _models |];
+    return $openresty->select("$sql");
 }
 
 sub model_count {
     my ($self, $openresty) = @_;
-    return $openresty->select("select count(*) from _models")->[0][0];
+    return $openresty->select(
+        [:sql| select count(*) from _models |]
+    )->[0][0];
 }
 
 sub column_count {
     my ($self, $openresty, $model) = @_;
-    return $openresty->select("select count(*) from _columns where table_name='$model'")->[0][0];
+    return $openresty->select(
+        [:sql| select count(*) from _columns where table_name = $model |]
+    )->[0][0];
 }
 
 sub row_count {
     my ($self, $openresty, $table) = @_;
-    return $openresty->select("select count(*) from \"$table\"")->[0][0];
+    return $openresty->select(
+        [:sql| select count(*) from $sym:table |]
+    )->[0][0];
 }
 
 sub get_models {
     my ($self, $openresty) = @_;
-    my $select = OpenResty::SQL::Select->new('name','description')->from('_models')->order_by('id');
-    return $openresty->select("$select", { use_hash => 1 });
+    my $sql = [:sql| select name, description from _models order by id |];
+    return $openresty->select($sql, { use_hash => 1 });
 }
 
 sub get_model_cols {
@@ -611,16 +621,18 @@ sub get_model_cols {
         die "Model \"$model\" not found.\n";
     }
     my $table = $model;
-    my $select = OpenResty::SQL::Select->new('description')
-        ->from('_models')
-        ->where(name => Q($model));
-    my $list = $openresty->select("$select");
+    my $sql = [:sql|
+        select description
+        from _models
+        where name = $model |];
+    my $list = $openresty->select($sql);
     my $desc = $list->[0][0];
-    $select->reset( QI(qw< name type label default >) )
-           ->from('_columns')
-           ->where(table_name => Q($table))
-           ->order_by('id');
-    $list = $openresty->select("$select", { use_hash => 1 });
+    $sql = [:sql|
+        select name, type, label, "default"
+        from _columns
+        where table_name = $table
+        order by id |];
+    $list = $openresty->select($sql, { use_hash => 1 });
     if (!$list or !ref $list) { $list = []; }
 
     for my $row (@$list) {
@@ -643,11 +655,12 @@ sub get_model_col_names {
         die "Model \"$model\" not found.\n";
     }
     my $table = $model;
-    my $select = OpenResty::SQL::Select->new('name')
-        ->from('_columns')
-        ->where(table_name => Q($table));
+    my $sql = [:sql|
+        select name
+        from _columns
+        where table_name = $table |];
 
-    my $list = $openresty->select("$select");
+    my $list = $openresty->select($sql);
     if (!$list or !ref $list) { return []; }
     return [map { @$_ } @$list];
 }
@@ -660,11 +673,11 @@ sub has_model_col {
 
     return 1 if $col eq 'id';
     my $res;
-    my $select = OpenResty::SQL::Select->new('id')
-        ->from('_columns')
-        ->where(table_name => Q($table_name))
-        ->where(name => Q($col))
-        ->limit(1);
+    my $select = [:sql|
+        select id
+        from _columns
+        where table_name = $table_name and name = $col
+        limit 1 |];
     eval {
         $res = $openresty->select("$select")->[0][0];
     };
@@ -675,11 +688,11 @@ sub drop_table {
     my ($self, $openresty, $table) = @_;
     my $user = $openresty->current_user;
     $OpenResty::Cache->remove_has_model($user, $table);
-    return (<<_EOC_);
-drop table if exists "$table";
-delete from _models where table_name='$table';
-delete from _columns where table_name='$table';
-_EOC_
+    return [:sql|
+        drop table if exists $sym:table;
+        delete from _models where table_name = $table;
+        delete from _columns where table_name = $table;
+    |];
 }
 
 sub insert_records {
