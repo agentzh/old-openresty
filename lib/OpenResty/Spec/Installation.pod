@@ -1,6 +1,6 @@
 =head1 NAME
 
-OpenResty::Spec::Installlation - Installation instructions for OpenResty servers
+OpenResty::Spec::Installation - Installation instructions for OpenResty servers
 
 =head1 DESCRIPTION
 

@@ -9,6 +9,8 @@ sub handle_request {
     OpenResty::Dispatcher->process_request($cgi);
 }
 
+sub net_server { "Net::Server::PreFork" }
+
 1;
 __END__
 
