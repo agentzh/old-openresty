@@ -1,5 +1,8 @@
 Change Log for OpenResty
 
+0.4.0 XXX
+* now we use Net::Server::PreFork for our standalone HTTP server.
+
 0.3.20 Jul 31 2008
 * started an initial (naive) implementaion of OpenHesty, a pure Haskell rewrite of the Perl OpenResty server.
 * demo/Blog - renamed the anchor in favor of the style #foo/bar/baz.
