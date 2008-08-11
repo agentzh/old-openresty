@@ -1,0 +1,67 @@
+=encoding utf8
+
+=head1 NAME
+
+OpenResty::Spec::Installation::Binary - Install binary distributions of OpenResty
+
+=head1 DESCRIPTION
+
+本文档介绍了如何使用 OpenResty 二进制安装包在 32 位或者 64 位生产环境中进行布署。
+
+=head1 获取二进制OpenResty包
+
+首先从下面的位置下载 F<restyscript.zip> 和 F<openresty32.zip> （或者对于 64 位机器使用 F<openresty64.zip>）
+
+L<http://agentzh.org/misc/openresty/>
+
+解压后，分别得到两个可执行文件 F<restyscript> 和 F<openresty32> （或者 F<openresty64>）。前者是 RestyScript 编译器，后者是 OpenResty 服务器/Shell，对应 CPAN 上的 OpenResty 的 L<openresty> 脚本：
+
+将 F<restyscript> 和 F<openresty32> 放到一个目录中（这很重要！），比如 F</usr/local/bin/> 下。
+
+=head1 安装OpenResty配置文件
+
+从这里下载 OpenResty 配置文件模板：
+
+L<http://svn.openfoundry.org/openapi/trunk/etc/openresty.conf>
+
+下载完毕后使用下列命令安装之（需要 sudo）：
+
+  mkdir /etc/openresty
+  cp openresty.conf /etc/openresty/
+  cp openresty.conf /etc/openresty/site_openresty.conf
+
+根据本机的 Pg 配置情况修改配置文件 F</etc/openresty/site_openresty.conf> （修改另一个文件 F<openresty.conf> 有可能会被 F<site_openresty.conf> 覆盖的，只能作为 fall-back 使用）。具体细节请参考文档 L<OpenResty::Spec::Installation>.
+
+=head1 启动 OpenResty 服务器
+
+使用 OpenResty 自己的 standalone HTTP server 时可以这样启动服务器：
+
+  ./openresty32 start -p 8000
+
+或者
+
+  ./openresty64 start -p 8000
+
+C<-p> 选项指定服务器绑定到的机器端口，默认是 8000.
+
+Standalone 服务器使用 L<Net::Server::PreFork> 模块，启动方便，适合测试安装是否完整。
+
+但是测试表明，standalone 服务器在流量稍大时容易超时。对于生产应用，应使用 lighttpd + FastCGI 模式来运行。lighttpd 的具体配置请参见文档 L<OpenResty::Spec::Installation>.
+
+那里的 C</PATH/TO/YOUR/bin/openresty> 应被替换为你前面准备好的 F<openresty32> （或者 F<openresty64>）的绝对路径。
+
+=head1 AUTHOR
+
+Agent Zhang (章亦春) <agentzh@yahoo.cn>
+
+=head1 LICENSE
+
+  Copyright (c)  2007  Yahoo! China (中国雅虎公司).
+  Permission is granted to copy, distribute and/or modify this document
+  under the terms of the GNU Free Documentation License, Version 1.2
+  or any later version published by the Free Software Foundation;
+  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+  Texts. A copy of the license can be found at
+
+    http://www.gnu.org/licenses/fdl.html
+
