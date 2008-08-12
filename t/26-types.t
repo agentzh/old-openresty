@@ -104,6 +104,7 @@ POST /=/model/tsqueryTest
 --- SKIP
 
 
+
 === TEST 9: Declare a char type
 --- request
 POST /=/model/Test
@@ -115,7 +116,8 @@ POST /=/model/Test
 {"success":1}
 
 
-=== TEST 9: logout
+
+=== TEST 10: logout
 --- request
 GET /=/logout
 --- response

@@ -377,6 +377,7 @@ GET /=/action/Action2/col/title
 [[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]]
 
 
+
 === TEST 35: yet another way to feed the param
 --- request
 POST /=/action/Action2/~/~
@@ -415,6 +416,7 @@ PUT /=/action/Action2
 {"name":"TitleOnly"}
 --- response
 {"success":1}
+
 
 
 === TEST 38: Rename Action2 again (this should fail)
