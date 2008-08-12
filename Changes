@@ -241,7 +241,7 @@ Change Log for OpenResty
 0.0.4 Dec 28 2007
 * Finished first draf of view support [laser]
 * Added Backend directory to put database access layer code. [laser]
-* Added Changes files,
-* Updated README
-* lib/OpenResty.pm: change $Backend->select to $self->select to reduce confision
+* Added Changes files.
+* Updated README.
+* lib/OpenResty.pm: change $Backend->select to $self->select to reduce confusion.
 
