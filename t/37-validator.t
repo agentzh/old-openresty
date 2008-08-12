@@ -9,6 +9,8 @@ require OpenResty::QuasiQuote::Validator;
 
 my $val = bless {}, 'OpenResty::QuasiQuote::Validator';
 
+no_diff;
+
 run {
     my $block = shift;
     my $name = $block->name;
@@ -22,13 +24,10 @@ __DATA__
 ---  spec
 { foo: STRING }
 --- perl
-ref $_ && ref $_ eq 'HASH' or die "Invalid value",
-    ($_topic ? " for \"$_topic\"" : ""), ": Hash expected.\n";
+ref $_ && ref $_ eq 'HASH' or die "Invalid value: Hash expected.\n";
 {
 local $_ = "foo";
-my $_topic = "foo";
-_STRING($_) or die "Bad value",
-    ($_topic ? " for \"$_topic\"" : ""), ": String expected.\n";
+defined $_ and !ref $_ and length($_) or die "Bad value for foo: String expected.\n";
 }
 
 
@@ -37,12 +36,33 @@ _STRING($_) or die "Bad value",
 ---  spec
 { "foo": STRING }
 --- perl
-ref $_ && ref $_ eq 'HASH' or die "Invalid value",
-    ($_topic ? " for \"$_topic\"" : ""), ": Hash expected.\n";
+ref $_ && ref $_ eq 'HASH' or die "Invalid value: Hash expected.\n";
 {
-local $_ = "foo";
-my $_topic = "foo";
-_STRING($_) or die "Bad value",
-    ($_topic ? " for \"$_topic\"" : ""), ": String expected.\n";
+local $_ = "\"foo\"";
+defined $_ and !ref $_ and length($_) or die "Bad value for "foo": String expected.\n";
 }
+
+
+
+=== TEST 3: strings
+---  spec
+STRING
+--- perl
+defined $_ and !ref $_ and length($_) or die "Bad value: String expected.\n";
+
+
+
+=== TEST 4: numbers
+---  spec
+INT
+--- perl
+defined $_ and /^[-+]?\d+$/ or die "Bad value: Integer expected.\n";
+
+
+
+=== TEST 5: identifiers
+---  spec
+IDENT
+--- perl
+defined $_ and /^\w+$/ or die "Bad value: Identifier expected.\n";
 
