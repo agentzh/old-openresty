@@ -7,7 +7,6 @@ require Filter::QuasiQuote;
 our @ISA = qw( Filter::QuasiQuote );
 
 use Parse::RecDescent;
-use Text::Balanced;
 
 my $grammar = <<'_END_GRAMMAR_';
 
