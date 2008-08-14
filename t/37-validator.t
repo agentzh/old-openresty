@@ -66,3 +66,10 @@ IDENT
 --- perl
 defined $_ and /^\w+$/ or die "Bad value: Identifier expected.\n";
 
+
+
+=== TEST 6: arrays
+--- spec
+[STRING, STRING]
+--- perl
+
