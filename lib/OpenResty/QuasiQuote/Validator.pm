@@ -26,7 +26,7 @@ hash: '{' <commit> pair(s? /,/) '}' attr(s?)
         my $topic = $arg{topic};
         ### $attrs
         my $for_topic = $topic ? " for $topic" : "";
-        my $code;
+        my ($code, $code2);
         my $required;
         if (delete $attrs->{required}) {
             $code .= <<"_EOC_";
@@ -34,14 +34,14 @@ defined or die qq{Value$for_topic required.\\n};
 _EOC_
             $required = 1;
         }
-        $code .= <<"_EOC_";
-defined and ref and ref eq 'HASH' or die qq{Invalid value$for_topic: Hash expected.\\n};
+        $code2 .= <<"_EOC_";
+ref and ref eq 'HASH' or die qq{Invalid value$for_topic: Hash expected.\\n};
 _EOC_
         if ($required) {
-            $code .= join('', @$pairs);
+            $code .= $code2 . join('', @$pairs);
         } else {
-            my $c = join('', @$pairs);
-            $code .= "if (defined) {\n$c}\n";
+            $code2 .= join('', @$pairs);
+            $code .= "if (defined) {\n$code2}\n";
         }
         $code;
     }
@@ -75,7 +75,12 @@ defined or die qq{Value$for_topic required.\\n};
 _EOC_
             $required = 1;
         }
-        $code . $code2;
+        if ($required) {
+            $code .= $code2;
+        } else {
+            $code .= "if (defined) {\n$code2}\n";
+        }
+        #$code . $code2;
     }
 
 array: '[' <commit> array_elem(s? /,/) ']' attr(s?)
@@ -84,7 +89,7 @@ array: '[' <commit> array_elem(s? /,/) ']' attr(s?)
         my $topic = $arg{topic};
         my $for_topic = $topic ? " for $topic" : "";
         my $required;
-        my $code;
+        my ($code, $code2);
         if ($required = delete $attrs->{required}) {
             $code .= <<"_EOC_";
 defined or die qq{Value$for_topic required.\\n};
@@ -92,11 +97,8 @@ _EOC_
             #$required = 1;
         }
 
-        $code .= <<"_EOC_";
-defined and ref and ref eq 'ARRAY' or die qq{Invalid value$for_topic: Array expected.\\n};
-_EOC_
-
-        my $code2 .= <<"_EOC_" . ($item[3][0] || '') . "}\n";
+        $code2 .= <<"_EOC_" . ($item[3][0] || '') . "}\n";
+ref and ref eq 'ARRAY' or die qq{Invalid value$for_topic: Array expected.\\n};
 for (\@\$_) \{
 _EOC_
 
@@ -121,7 +123,7 @@ type: 'STRING'
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
             <<"_EOC_";
-defined and !ref and length or die qq{Bad value$for_topic: String expected.\\n};
+!ref and length or die qq{Bad value$for_topic: String expected.\\n};
 _EOC_
         }
     | 'INT'
@@ -129,7 +131,7 @@ _EOC_
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
             <<"_EOC_";
-defined and /^[-+]?\\d+\$/ or die qq{Bad value$for_topic: Integer expected.\\n};
+/^[-+]?\\d+\$/ or die qq{Bad value$for_topic: Integer expected.\\n};
 _EOC_
         }
     | 'IDENT'
@@ -137,7 +139,7 @@ _EOC_
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
             <<"_EOC_";
-defined and /^\\w+\$/ or die qq{Bad value$for_topic: Identifier expected.\\n};
+/^\\w+\$/ or die qq{Bad value$for_topic: Identifier expected.\\n};
 _EOC_
         }
     | <error>
