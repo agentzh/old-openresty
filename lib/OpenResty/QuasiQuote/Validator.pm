@@ -30,18 +30,18 @@ hash: '{' <commit> pair(s? /,/) '}' attr(s?)
         my $required;
         if (delete $attrs->{required}) {
             $code .= <<"_EOC_";
-defined \$_ or die qq{Value$for_topic required.\\n};
+defined or die qq{Value$for_topic required.\\n};
 _EOC_
             $required = 1;
         }
         $code .= <<"_EOC_";
-defined \$_ and ref \$_ and ref \$_ eq 'HASH' or die qq{Invalid value$for_topic: Hash expected.\\n};
+defined and ref and ref eq 'HASH' or die qq{Invalid value$for_topic: Hash expected.\\n};
 _EOC_
         if ($required) {
             $code .= join('', @$pairs);
         } else {
             my $c = join('', @$pairs);
-            $code .= "if (defined \$_) {\n$c}\n";
+            $code .= "if (defined) {\n$c}\n";
         }
         $code;
     }
@@ -62,7 +62,21 @@ key: { extract_delimited($text, '"') } { eval $item[1] }
 ident: /^[A-Za-z]\w*/
 
 scalar: type <commit> attr(s?)
-    { $item[1] . join('', @{ $item[3] }); }
+    {
+        my $attrs = { map { @$_ } @{ $item[3] } };
+        my $topic = $arg{topic};
+        my $for_topic = $topic ? " for $topic" : "";
+        my $code;
+        my $code2 = $item[1];
+        my $required;
+        if (delete $attrs->{required}) {
+            $code .= <<"_EOC_";
+defined or die qq{Value$for_topic required.\\n};
+_EOC_
+            $required = 1;
+        }
+        $code . $code2;
+    }
 
 array: '[' <commit> array_elem(s? /,/) ']' attr(s?)
     {
@@ -73,13 +87,13 @@ array: '[' <commit> array_elem(s? /,/) ']' attr(s?)
         my $code;
         if ($required = delete $attrs->{required}) {
             $code .= <<"_EOC_";
-defined \$_ or die qq{Value$for_topic required.\\n};
+defined or die qq{Value$for_topic required.\\n};
 _EOC_
             #$required = 1;
         }
 
         $code .= <<"_EOC_";
-defined \$_ and ref \$_ and ref \$_ eq 'ARRAY' or die qq{Invalid value$for_topic: Array expected.\\n};
+defined and ref and ref eq 'ARRAY' or die qq{Invalid value$for_topic: Array expected.\\n};
 _EOC_
 
         my $code2 .= <<"_EOC_" . ($item[3][0] || '') . "}\n";
@@ -89,7 +103,7 @@ _EOC_
         if ($required) {
             $code .= $code2;
         } else {
-            $code .= "if (defined \$_) {\n$code2}\n";
+            $code .= "if (defined) {\n$code2}\n";
         }
         $code;
     }
@@ -107,7 +121,7 @@ type: 'STRING'
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
             <<"_EOC_";
-defined \$_ and !ref \$_ and length(\$_) or die qq{Bad value$for_topic: String expected.\\n};
+defined and !ref and length or die qq{Bad value$for_topic: String expected.\\n};
 _EOC_
         }
     | 'INT'
@@ -115,7 +129,7 @@ _EOC_
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
             <<"_EOC_";
-defined \$_ and /^[-+]?\\d+\$/ or die qq{Bad value$for_topic: Integer expected.\\n};
+defined and /^[-+]?\\d+\$/ or die qq{Bad value$for_topic: Integer expected.\\n};
 _EOC_
         }
     | 'IDENT'
@@ -123,7 +137,7 @@ _EOC_
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
             <<"_EOC_";
-defined \$_ and /^\\w+\$/ or die qq{Bad value$for_topic: Identifier expected.\\n};
+defined and /^\\w+\$/ or die qq{Bad value$for_topic: Identifier expected.\\n};
 _EOC_
         }
     | <error>

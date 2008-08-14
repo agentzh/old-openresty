@@ -26,11 +26,11 @@ __DATA__
 ---  spec
 { foo: STRING }
 --- perl
-defined $_ and ref $_ and ref $_ eq 'HASH' or die qq{Invalid value: Hash expected.\n};
-if (defined $_) {
+defined and ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+if (defined) {
     {
         local $_ = $_->{"foo"};
-        defined $_ and !ref $_ and length($_) or die qq{Bad value for "foo": String expected.\n};
+        defined and !ref and length or die qq{Bad value for "foo": String expected.\n};
     }
 }
 
@@ -40,11 +40,11 @@ if (defined $_) {
 ---  spec
 { "foo": STRING }
 --- perl
-defined $_ and ref $_ and ref $_ eq 'HASH' or die qq{Invalid value: Hash expected.\n};
-if (defined $_) {
+defined and ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+if (defined) {
     {
         local $_ = $_->{"foo"};
-        defined $_ and !ref $_ and length($_) or die qq{Bad value for "foo": String expected.\n};
+        defined and !ref and length or die qq{Bad value for "foo": String expected.\n};
     }
 }
 
@@ -54,7 +54,7 @@ if (defined $_) {
 ---  spec
 STRING
 --- perl
-defined $_ and !ref $_ and length($_) or die qq{Bad value: String expected.\n};
+defined and !ref and length or die qq{Bad value: String expected.\n};
 
 
 
@@ -62,7 +62,7 @@ defined $_ and !ref $_ and length($_) or die qq{Bad value: String expected.\n};
 ---  spec
 INT
 --- perl
-defined $_ and /^[-+]?\d+$/ or die qq{Bad value: Integer expected.\n};
+defined and /^[-+]?\d+$/ or die qq{Bad value: Integer expected.\n};
 
 
 
@@ -70,7 +70,7 @@ defined $_ and /^[-+]?\d+$/ or die qq{Bad value: Integer expected.\n};
 ---  spec
 IDENT
 --- perl
-defined $_ and /^\w+$/ or die qq{Bad value: Identifier expected.\n};
+defined and /^\w+$/ or die qq{Bad value: Identifier expected.\n};
 
 
 
@@ -78,10 +78,10 @@ defined $_ and /^\w+$/ or die qq{Bad value: Identifier expected.\n};
 --- spec
 [STRING, STRING]
 --- perl
-defined $_ and ref $_ and ref $_ eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
-if (defined $_) {
+defined and ref and ref eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
+if (defined) {
     for (@$_) {
-        defined $_ and !ref $_ and length($_) or die qq{Bad value for array element: String expected.\n};
+        defined and !ref and length or die qq{Bad value for array element: String expected.\n};
     }
 }
 
@@ -91,22 +91,22 @@ if (defined $_) {
 --- spec
 { columns: [ { name: STRING, type: STRING } ] }
 --- perl
-defined $_ and ref $_ and ref $_ eq 'HASH' or die qq{Invalid value: Hash expected.\n};
-if (defined $_) {
+defined and ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+if (defined) {
     {
         local $_ = $_->{"columns"};
-        defined $_ and ref $_ and ref $_ eq 'ARRAY' or die qq{Invalid value for "columns": Array expected.\n};
-        if (defined $_) {
+        defined and ref and ref eq 'ARRAY' or die qq{Invalid value for "columns": Array expected.\n};
+        if (defined) {
             for (@$_) {
-                defined $_ and ref $_ and ref $_ eq 'HASH' or die qq{Invalid value for "columns" array element: Hash expected.\n};
-                if (defined $_) {
+                defined and ref and ref eq 'HASH' or die qq{Invalid value for "columns" array element: Hash expected.\n};
+                if (defined) {
                     {
                         local $_ = $_->{"name"};
-                        defined $_ and !ref $_ and length($_) or die qq{Bad value for "name": String expected.\n};
+                        defined and !ref and length or die qq{Bad value for "name": String expected.\n};
                     }
                     {
                         local $_ = $_->{"type"};
-                        defined $_ and !ref $_ and length($_) or die qq{Bad value for "type": String expected.\n};
+                        defined and !ref and length or die qq{Bad value for "type": String expected.\n};
                     }
                 }
             }
@@ -116,26 +116,44 @@ if (defined $_) {
 
 
 
-=== TEST 8: simple hash
+=== TEST 8: simple hash required
 ---  spec
 { "foo": STRING } :required
 --- perl
-defined $_ or die qq{Value required.\n};
-defined $_ and ref $_ and ref $_ eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+defined or die qq{Value required.\n};
+defined and ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 {
     local $_ = $_->{"foo"};
-    defined $_ and !ref $_ and length($_) or die qq{Bad value for "foo": String expected.\n};
+    defined and !ref and length or die qq{Bad value for "foo": String expected.\n};
 }
 
 
 
-=== TEST 9: array
+=== TEST 9: array required
 --- spec
 [INT] :required(1)
 --- perl
-defined $_ or die qq{Value required.\n};
-defined $_ and ref $_ and ref $_ eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
+defined or die qq{Value required.\n};
+defined and ref and ref eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
 for (@$_) {
-    defined $_ and /^[-+]?\d+$/ or die qq{Bad value for array element: Integer expected.\n};
+    defined and /^[-+]?\d+$/ or die qq{Bad value for array element: Integer expected.\n};
 }
+
+
+
+=== TEST 10: scalar required
+--- spec
+IDENT :required
+--- perl
+defined or die qq{Value required.\n};
+defined and /^\w+$/ or die qq{Bad value: Identifier expected.\n};
+
+
+
+=== TEST 11: scalar required
+--- spec
+STRING :required
+--- perl
+defined or die qq{Value required.\n};
+defined and !ref and length or die qq{Bad value: String expected.\n};
 
