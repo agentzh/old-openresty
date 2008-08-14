@@ -15,7 +15,9 @@ run {
     my $block = shift;
     my $name = $block->name;
     my $perl = $val->validator($block->spec);
-    is $perl, $block->perl, "$name - perl code match";
+    my $expected = $block->perl;
+    $expected =~ s/^\s+//gm;
+    is $perl, $expected, "$name - perl code match";
 };
 
 __DATA__
@@ -24,10 +26,11 @@ __DATA__
 ---  spec
 { foo: STRING }
 --- perl
-ref $_ && ref $_ eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+defined $_ and ref $_ and ref $_ eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+if (defined $_)
 {
-local $_ = $_->{"foo"};
-defined $_ and !ref $_ and length($_) or die qq{Bad value for "foo": String expected.\n};
+    local $_ = $_->{"foo"};
+    defined $_ and !ref $_ and length($_) or die qq{Bad value for "foo": String expected.\n};
 }
 
 
@@ -36,10 +39,11 @@ defined $_ and !ref $_ and length($_) or die qq{Bad value for "foo": String expe
 ---  spec
 { "foo": STRING }
 --- perl
-ref $_ && ref $_ eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+defined $_ and ref $_ and ref $_ eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+if (defined $_)
 {
-local $_ = $_->{"foo"};
-defined $_ and !ref $_ and length($_) or die qq{Bad value for "foo": String expected.\n};
+    local $_ = $_->{"foo"};
+    defined $_ and !ref $_ and length($_) or die qq{Bad value for "foo": String expected.\n};
 }
 
 
@@ -74,6 +78,30 @@ defined $_ and /^\w+$/ or die qq{Bad value: Identifier expected.\n};
 --- perl
 defined $_ and ref $_ and ref $_ eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
 for (@$_) {
-defined $_ and !ref $_ and length($_) or die qq{Bad value: String expected.\n};
+    defined $_ and !ref $_ and length($_) or die qq{Bad value for array element: String expected.\n};
+}
+
+
+=== TEST 7: hashes of arrays
+--- spec
+{ columns: [ { name: STRING, type: STRING } ] }
+--- perl
+defined $_ and ref $_ and ref $_ eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+if (defined $_)
+{
+    local $_ = $_->{"columns"};
+    defined $_ and ref $_ and ref $_ eq 'ARRAY' or die qq{Invalid value for "columns": Array expected.\n};
+    for (@$_) {
+        defined $_ and ref $_ and ref $_ eq 'HASH' or die qq{Invalid value for """columns"" array element": Hash expected.\n};
+        if (defined $_)
+        {
+            local $_ = $_->{"name"};
+            defined $_ and !ref $_ and length($_) or die qq{Bad value for "name": String expected.\n};
+        }
+        {
+            local $_ = $_->{"type"};
+            defined $_ and !ref $_ and length($_) or die qq{Bad value for "type": String expected.\n};
+        }
+    }
 }
 
