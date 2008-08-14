@@ -72,7 +72,7 @@ defined $_ and /^\w+$/ or die qq{Bad value: Identifier expected.\n};
 --- spec
 [STRING, STRING]
 --- perl
-ref $_ and ref $_ eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
+defined $_ and ref $_ and ref $_ eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
 for (@$_) {
 defined $_ and !ref $_ and length($_) or die qq{Bad value: String expected.\n};
 }

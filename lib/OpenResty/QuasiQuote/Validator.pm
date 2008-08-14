@@ -52,7 +52,7 @@ array: '[' <commit> array_elem(s? /,/) ']'
         my $topic = $arg{topic};
         my $for_topic = $topic ? " for \"$topic\"" : "";
         <<"_EOC_" . $code . "\}\n";
-ref \$_ and ref \$_ eq 'ARRAY' or die qq{Invalid value$for_topic: Array expected.\\n};
+defined \$_ and ref \$_ and ref \$_ eq 'ARRAY' or die qq{Invalid value$for_topic: Array expected.\\n};
 for (\@\$_) \{
 _EOC_
     }
