@@ -9,7 +9,7 @@ require OpenResty::QuasiQuote::Validator;
 
 my $val = bless {}, 'OpenResty::QuasiQuote::Validator';
 
-no_diff;
+#no_diff;
 
 run {
     my $block = shift;
@@ -24,10 +24,10 @@ __DATA__
 ---  spec
 { foo: STRING }
 --- perl
-ref $_ && ref $_ eq 'HASH' or die "Invalid value: Hash expected.\n";
+ref $_ && ref $_ eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 {
-local $_ = "foo";
-defined $_ and !ref $_ and length($_) or die "Bad value for foo: String expected.\n";
+local $_ = $_->{"foo"};
+defined $_ and !ref $_ and length($_) or die qq{Bad value for "foo": String expected.\n};
 }
 
 
@@ -36,10 +36,10 @@ defined $_ and !ref $_ and length($_) or die "Bad value for foo: String expected
 ---  spec
 { "foo": STRING }
 --- perl
-ref $_ && ref $_ eq 'HASH' or die "Invalid value: Hash expected.\n";
+ref $_ && ref $_ eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 {
-local $_ = "\"foo\"";
-defined $_ and !ref $_ and length($_) or die "Bad value for "foo": String expected.\n";
+local $_ = $_->{"foo"};
+defined $_ and !ref $_ and length($_) or die qq{Bad value for "foo": String expected.\n};
 }
 
 
@@ -48,7 +48,7 @@ defined $_ and !ref $_ and length($_) or die "Bad value for "foo": String expect
 ---  spec
 STRING
 --- perl
-defined $_ and !ref $_ and length($_) or die "Bad value: String expected.\n";
+defined $_ and !ref $_ and length($_) or die qq{Bad value: String expected.\n};
 
 
 
@@ -56,7 +56,7 @@ defined $_ and !ref $_ and length($_) or die "Bad value: String expected.\n";
 ---  spec
 INT
 --- perl
-defined $_ and /^[-+]?\d+$/ or die "Bad value: Integer expected.\n";
+defined $_ and /^[-+]?\d+$/ or die qq{Bad value: Integer expected.\n};
 
 
 
@@ -64,7 +64,7 @@ defined $_ and /^[-+]?\d+$/ or die "Bad value: Integer expected.\n";
 ---  spec
 IDENT
 --- perl
-defined $_ and /^\w+$/ or die "Bad value: Identifier expected.\n";
+defined $_ and /^\w+$/ or die qq{Bad value: Identifier expected.\n};
 
 
 
@@ -72,4 +72,8 @@ defined $_ and /^\w+$/ or die "Bad value: Identifier expected.\n";
 --- spec
 [STRING, STRING]
 --- perl
+ref $_ and ref $_ eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
+for (@$_) {
+defined $_ and !ref $_ and length($_) or die qq{Bad value: String expected.\n};
+}
 
