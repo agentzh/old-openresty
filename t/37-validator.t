@@ -98,7 +98,7 @@ if (defined $_) {
         defined $_ and ref $_ and ref $_ eq 'ARRAY' or die qq{Invalid value for "columns": Array expected.\n};
         if (defined $_) {
             for (@$_) {
-                defined $_ and ref $_ and ref $_ eq 'HASH' or die qq{Invalid value for """columns"" array element": Hash expected.\n};
+                defined $_ and ref $_ and ref $_ eq 'HASH' or die qq{Invalid value for "columns" array element: Hash expected.\n};
                 if (defined $_) {
                     {
                         local $_ = $_->{"name"};

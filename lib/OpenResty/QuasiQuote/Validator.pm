@@ -3,7 +3,7 @@ package OpenResty::QuasiQuote::Validator;
 use strict;
 use warnings;
 
-use Smart::Comments;
+#use Smart::Comments;
 require Filter::QuasiQuote;
 our @ISA = qw( Filter::QuasiQuote );
 
@@ -25,7 +25,7 @@ hash: '{' <commit> pair(s? /,/) '}' attr(s?)
         my $pairs = $item[3];
         my $topic = $arg{topic};
         ### $attrs
-        my $for_topic = $topic ? " for \"$topic\"" : "";
+        my $for_topic = $topic ? " for $topic" : "";
         my $code;
         my $required;
         if (delete $attrs->{required}) {
@@ -96,7 +96,7 @@ _EOC_
 
 array_elem: {
                 if ($arg{topic}) {
-                    qq{"$arg{topic}" }
+                    $arg{topic} . " "
                 } else {
                     ""
                 }
