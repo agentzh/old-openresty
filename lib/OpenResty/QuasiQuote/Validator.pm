@@ -11,8 +11,8 @@ use Parse::RecDescent;
 
 my $grammar = <<'_END_GRAMMAR_';
 
-validator: value <commit> eofile
-    { return $item[1] }
+validator: value <commit> eofile { return $item[1] }
+         | <error>
 
 value: hash
      | array
@@ -21,7 +21,7 @@ value: hash
 
 hash: '{' <commit> pair(s? /,/) '}' attr(s?)
     {
-        my $attrs = { @{ $item[5] } };
+        my $attrs = { map { @$_ } @{ $item[5] } };
         my $pairs = $item[3];
         my $topic = $arg{topic};
         ### $attrs
@@ -30,7 +30,7 @@ hash: '{' <commit> pair(s? /,/) '}' attr(s?)
         my $required;
         if (delete $attrs->{required}) {
             $code .= <<"_EOC_";
-defined $_ or die qq{Value$for_topic required.\\n};
+defined \$_ or die qq{Value$for_topic required.\\n};
 _EOC_
             $required = 1;
         }
@@ -41,11 +41,7 @@ _EOC_
             $code .= join('', @$pairs);
         } else {
             my $c = join('', @$pairs);
-            if ($c =~ /^\{.*?\}$/s) {
-                $code .= "if (defined \$_)\n" . $c;
-            } else {
-                $code .= "if (defined \$_) {\n$c}\n";
-            }
+            $code .= "if (defined \$_) {\n$c}\n";
         }
         $code;
     }
@@ -58,6 +54,7 @@ pair: key <commit> ':' value[ topic => qq{"$item[1]"} ]
 local \$_ = \$_->{"$quoted_key"};
 _EOC_
         }
+    | <error?> <reject>
 
 key: { extract_delimited($text, '"') } { eval $item[1] }
    | ident
@@ -67,15 +64,34 @@ ident: /^[A-Za-z]\w*/
 scalar: type <commit> attr(s?)
     { $item[1] . join('', @{ $item[3] }); }
 
-array: '[' <commit> array_elem(s? /,/) ']'
+array: '[' <commit> array_elem(s? /,/) ']' attr(s?)
     {
-        my $code = $item[3][0] || '';
+        my $attrs = { map { @$_ } @{ $item[5] } };
         my $topic = $arg{topic};
         my $for_topic = $topic ? " for $topic" : "";
-        <<"_EOC_" . $code . "\}\n";
+        my $required;
+        my $code;
+        if ($required = delete $attrs->{required}) {
+            $code .= <<"_EOC_";
+defined \$_ or die qq{Value$for_topic required.\\n};
+_EOC_
+            #$required = 1;
+        }
+
+        $code .= <<"_EOC_";
 defined \$_ and ref \$_ and ref \$_ eq 'ARRAY' or die qq{Invalid value$for_topic: Array expected.\\n};
+_EOC_
+
+        my $code2 .= <<"_EOC_" . ($item[3][0] || '') . "}\n";
 for (\@\$_) \{
 _EOC_
+
+        if ($required) {
+            $code .= $code2;
+        } else {
+            $code .= "if (defined \$_) {\n$code2}\n";
+        }
+        $code;
     }
 
 array_elem: {
@@ -110,10 +126,13 @@ _EOC_
 defined \$_ and /^\\w+\$/ or die qq{Bad value$for_topic: Identifier expected.\\n};
 _EOC_
         }
+    | <error>
 
-attr: ':' <commit> ident arguments(?)
-
-arguments: '(' <commit> argument(s? /^\s*,\s*/)  ')'
+attr: ':' ident '(' <commit> argument ')'
+        { [ $item[2] => $item[5] ] }
+    | ':' <commit> ident
+        { [ $item[3] => 1 ] }
+    | <error?> <reject>
 
 argument: /^\w+/
 
