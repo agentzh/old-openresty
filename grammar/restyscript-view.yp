@@ -54,12 +54,23 @@ joined_obj_list: joined_obj ',' joined_obj_list
 
 joined_obj: model 'as' symbol
              { join(' ', @_[1..$#_]) }
+          | proc_call 'as' '(' col_decl_list ')'
+             { join(' ', @_[1..$#_]) }
           | proc_call 'as' symbol
              { join(' ', @_[1..$#_]) }
           | model
           | subquery 'as' symbol
              { join(' ', @_[1..$#_]) }
           ;
+
+col_decl_list: col_decl ',' col_decl_list
+                { join(' ', @_[1..$#_]) }
+             | col_decl
+             ;
+
+col_decl: IDENT IDENT
+            { join(' ', @_[1..$#_]) }
+        ;
 
 subquery: '(' select_stmt ')'
              { join(' ', @_[1..$#_]) }

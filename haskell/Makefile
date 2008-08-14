@@ -15,7 +15,7 @@ clean:
 	-rm bin/restyscript
 	-rm `find -name '*.o'` `find -name '*.hi'` `find -name '*.ho'`
 
-optimized: OOPTS = -O2
+optimized: OOPTS = -O2 -optl-static -optl-pthread
 optimized: restyscript
 
 optimized2: OOPTS = -O2 -fvia-c -optc-O2 #-fdicts-cheap -fno-method-sharing -fmax-simplifier-iterations10 -fliberate-case-threshold100 -optc-mtune=pentinum4
