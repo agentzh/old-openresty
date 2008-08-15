@@ -1,6 +1,3 @@
-use strict;
-use warnings;
-
 use Test::Base;
 use JSON::XS;
 
