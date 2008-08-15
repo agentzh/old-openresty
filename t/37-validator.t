@@ -4,7 +4,7 @@ use warnings;
 use Test::Base;
 use JSON::XS;
 
-plan tests => 2* blocks() + 6;
+plan tests => 2* blocks() + 38;
 
 require OpenResty::QuasiQuote::Validator;
 
@@ -90,6 +90,7 @@ if (defined) {
 {"foo":"dog"}
 {"foo":32}
 null
+{}
 
 --- invalid
 {"foo2":32}
@@ -125,6 +126,17 @@ STRING
 if (defined) {
     !ref and length or die qq{Bad value: String expected.\n};
 }
+--- valid
+"hello"
+32
+3.14
+null
+0
+--- invalid
+{"cat":32}
+Bad value: String expected.
+[1,2,3]
+Bad value: String expected.
 
 
 
@@ -135,6 +147,20 @@ INT
 if (defined) {
     /^[-+]?\d+$/ or die qq{Bad value: Integer expected.\n};
 }
+--- valid
+32
+0
+null
+-56
+--- invalid
+3.14
+Bad value: Integer expected.
+"hello"
+Bad value: Integer expected.
+[0]
+Bad value: Integer expected.
+{}
+Bad value: Integer expected.
 
 
 
@@ -143,8 +169,25 @@ if (defined) {
 IDENT
 --- perl
 if (defined) {
-    /^\w+$/ or die qq{Bad value: Identifier expected.\n};
+    /^[A-Za-z]\w*$/ or die qq{Bad value: Identifier expected.\n};
 }
+--- valid
+"foo"
+"hello_world"
+"HiBoy"
+--- invalid
+"_foo"
+Bad value: Identifier expected.
+"0a"
+Bad value: Identifier expected.
+32
+Bad value: Identifier expected.
+[]
+Bad value: Identifier expected.
+{"cat":3}
+Bad value: Identifier expected.
+
+
 
 
 
@@ -160,6 +203,22 @@ if (defined) {
         }
     }
 }
+--- valid
+[1,2]
+["hello"]
+null
+[]
+
+--- invalid
+[[1]]
+Bad value for array element: String expected.
+32
+Invalid value: Array expected.
+"hello"
+Invalid value: Array expected.
+{}
+Invalid value: Array expected.
+
 
 
 
@@ -233,7 +292,7 @@ for (@$_) {
 IDENT :required
 --- perl
 defined or die qq{Value required.\n};
-/^\w+$/ or die qq{Bad value: Identifier expected.\n};
+/^[A-Za-z]\w*$/ or die qq{Bad value: Identifier expected.\n};
 
 
 
