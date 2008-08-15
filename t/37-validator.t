@@ -88,7 +88,7 @@ if (defined) {
 
 === TEST 6: arrays
 --- spec
-[STRING, STRING]
+[STRING]
 --- perl
 if (defined) {
     ref and ref eq 'ARRAY' or die qq{Invalid value: Array expected.\n};

@@ -85,7 +85,7 @@ _EOC_
         #$code . $code2;
     }
 
-array: '[' <commit> array_elem(s? /,/) ']' attr(s?)
+array: '[' <commit> array_elem ']' attr(s?)
     {
         my $attrs = { map { @$_ } @{ $item[5] } };
         my $topic = $arg{topic};
@@ -99,7 +99,7 @@ _EOC_
             #$required = 1;
         }
 
-        $code2 .= <<"_EOC_" . ($item[3][0] || '') . "}\n";
+        $code2 .= <<"_EOC_" . "$item[3]}\n";
 ref and ref eq 'ARRAY' or die qq{Invalid value$for_topic: Array expected.\\n};
 for (\@\$_) \{
 _EOC_
