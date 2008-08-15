@@ -4,7 +4,7 @@ use warnings;
 use Test::Base;
 use JSON::XS;
 
-plan tests => 2* blocks() + 38;
+plan tests => 2* blocks() + 67;
 
 require OpenResty::QuasiQuote::Validator;
 
@@ -19,15 +19,19 @@ sub validate { 1; }
 run {
     my $block = shift;
     my $name = $block->name;
-    my $perl = $val->validator($block->spec);
+    my $perl;
+    eval {
+        $perl = $val->validator($block->spec);
+    };
+    if ($@) {
+        die "$name - $@";
+    }
     my $expected = $block->perl;
     $expected =~ s/^\s+//gm;
     is $perl, $expected, "$name - perl code match";
     my $code = "*validate = sub { local \$_ = shift; $perl }";
-    {
-        no warnings 'redefine';
-        eval $code;
-    }
+    no warnings 'redefine';
+    eval $code;
     if ($@) {
         fail "$name - Bad perl code emitted - $@";
         *validate = sub { 1 };
@@ -189,8 +193,6 @@ Bad value: Identifier expected.
 
 
 
-
-
 === TEST 6: arrays
 --- spec
 [STRING]
@@ -218,7 +220,6 @@ Invalid value: Array expected.
 Invalid value: Array expected.
 {}
 Invalid value: Array expected.
-
 
 
 
@@ -254,6 +255,20 @@ if (defined) {
     }
     die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
 }
+--- valid
+{"columns":[]}
+{"columns":[{"name":"Carrie"}]}
+{}
+null
+--- invalid
+{"bar":[]}
+Unrecognized keys in hash: bar
+{"columns":[{"default":32,"blah":[]}]}
+Unrecognized keys in hash for "columns" array element: blah default
+{"columns":[32]}
+Invalid value for "columns" array element: Hash expected.
+32
+Invalid value: Hash expected.
 
 
 
@@ -270,6 +285,20 @@ ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
     }
 }
 die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
+--- valid
+{"foo":"hello"}
+{}
+{"foo":null}
+
+--- invalid
+null
+Value required.
+{"blah":"hi"}
+Unrecognized keys in hash: blah
+[]
+Invalid value: Hash expected.
+32
+Invalid value: Hash expected.
 
 
 
@@ -284,10 +313,67 @@ for (@$_) {
         /^[-+]?\d+$/ or die qq{Bad value for array element: Integer expected.\n};
     }
 }
+--- valid
+[1,2]
+[0]
+--- invalid
+["hello"]
+Bad value for array element: Integer expected.
+[1,2,"hello"]
+Bad value for array element: Integer expected.
+[1.32]
+Bad value for array element: Integer expected.
+null
+Value required.
 
 
 
-=== TEST 10: scalar required
+=== TEST 10: array elem required
+--- spec
+[INT :required]
+--- perl
+if (defined) {
+    ref and ref eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
+    for (@$_) {
+        defined or die qq{Value for array element required.\n};
+        /^[-+]?\d+$/ or die qq{Bad value for array element: Integer expected.\n};
+    }
+}
+
+--- valid
+[32]
+null
+[]
+--- invalid
+[null]
+Value for array element required.
+
+
+
+=== TEST 11: nonempty array
+--- spec
+[INT] :nonempty
+--- perl
+if (defined) {
+    ref and ref eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
+    @$_ or die qq{Array cannot be empty.\n};
+    for (@$_) {
+        if (defined) {
+            /^[-+]?\d+$/ or die qq{Bad value for array element: Integer expected.\n};
+        }
+    }
+}
+--- valid
+[32]
+[1,2]
+null
+--- invalid
+[]
+Array cannot be empty.
+
+
+
+=== TEST 12: scalar required
 --- spec
 IDENT :required
 --- perl
@@ -296,7 +382,7 @@ defined or die qq{Value required.\n};
 
 
 
-=== TEST 11: scalar required
+=== TEST 13: scalar required
 --- spec
 STRING :required
 --- perl
@@ -305,7 +391,7 @@ defined or die qq{Value required.\n};
 
 
 
-=== TEST 12: scalar required in a hash
+=== TEST 14: scalar required in a hash
 --- spec
 { name: STRING :required, type: STRING :required }
 --- perl
@@ -326,7 +412,7 @@ if (defined) {
 
 
 
-=== TEST 13: scalar required in a hash required also
+=== TEST 15: scalar required in a hash required also
 --- spec
 { name: STRING :required, type: STRING :required } :required
 --- perl
