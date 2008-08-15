@@ -492,7 +492,7 @@ if (defined) {
     !ref and length or die qq{Bad value: String expected.\n};
 }
 else {
-    $_ = "hello";
+    $_ = 'hello';
 }
 
 
@@ -508,7 +508,7 @@ if (defined) {
             !ref and length or die qq{Bad value for array element: String expected.\n};
         }
         else {
-            $_ = "32";
+            $_ = 32;
         }
     }
 }
@@ -532,7 +532,7 @@ if (defined) {
             !ref and length or die qq{Bad value for array element: String expected.\n};
         }
         else {
-            $_ = "32";
+            $_ = 32;
         }
         $bar = $_;
     }

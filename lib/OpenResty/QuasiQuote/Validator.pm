@@ -107,10 +107,9 @@ _EOC_
             if ($required) {
                 die "validator: Required scalar cannot take default value at the same time.\n";
             }
-            my $quoted_default = quotemeta($default);
             $code .= <<"_EOC_";
 else {
-\$_ = "$quoted_default";
+\$_ = $default;
 }
 _EOC_
         }
@@ -225,7 +224,7 @@ attr: ':' ident '(' <commit> argument ')'
 argument: /^\d+/
         | '[]'
         | /\$[A-Za-z]\w*/
-        | { extract_quotelike($text) } { eval $item[1] }
+        | { extract_quotelike($text) } { $item[1] }
         | { extract_codeblock($text) } { "do $item[1]" }
         | <error>
 
