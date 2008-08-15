@@ -2,14 +2,19 @@ use strict;
 use warnings;
 
 use Test::Base;
+use JSON::XS;
 
-plan tests => 1 * blocks();
+plan tests => 2* blocks() + 6;
 
 require OpenResty::QuasiQuote::Validator;
+
+my $json_xs = JSON::XS->new->utf8->allow_nonref;
 
 my $val = bless {}, 'OpenResty::QuasiQuote::Validator';
 
 #no_diff;
+
+sub validate { 1; }
 
 run {
     my $block = shift;
@@ -18,6 +23,50 @@ run {
     my $expected = $block->perl;
     $expected =~ s/^\s+//gm;
     is $perl, $expected, "$name - perl code match";
+    my $code = "*validate = sub { local \$_ = shift; $perl }";
+    {
+        no warnings 'redefine';
+        eval $code;
+    }
+    if ($@) {
+        fail "$name - Bad perl code emitted - $@";
+        *validate = sub { 1 };
+    } else {
+        pass "$name - perl code emitted is well formed";
+    }
+    my $spec = $block->valid;
+    if ($spec) {
+        my @ln = split /\n/, $spec;
+        for my $ln (@ln) {
+            my $data = $json_xs->decode($ln);
+            eval {
+                validate($data);
+            };
+            if ($@) {
+                fail "$name - Valid data <<$ln>> is valid - $@";
+            } else {
+                pass "$name - Valid data <<$ln>> is valid";
+            }
+        }
+    }
+    $spec = $block->invalid;
+    if ($spec) {
+        my @ln = split /\n/, $spec;
+        while (@ln) {
+            my $ln = shift @ln;
+            my $excep = shift @ln;
+            my $data = $json_xs->decode($ln);
+            eval {
+                validate($data);
+            };
+            unless ($@) {
+                fail "$name - Invalid data <<$ln>> is invalid - $@";
+            } else {
+                is $@, "$excep\n", "$name - Invalid data <<$ln>> is invalid";
+            }
+        }
+    }
+
 };
 
 __DATA__
@@ -36,6 +85,19 @@ if (defined) {
     }
     die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
 }
+
+--- valid
+{"foo":"dog"}
+{"foo":32}
+null
+
+--- invalid
+{"foo2":32}
+Unrecognized keys in hash: foo2
+32
+Invalid value: Hash expected.
+[]
+Invalid value: Hash expected.
 
 
 
