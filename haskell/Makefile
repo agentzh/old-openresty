@@ -8,7 +8,7 @@ restyscript:
 %.o: %.hs
 	cd src && ghc $(OPTS) -c ../$<
 
-test: all
+test: restyscript
 	prove -r t
 
 clean:
