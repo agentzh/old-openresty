@@ -141,7 +141,7 @@ _EOC_
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
             <<"_EOC_";
-/^\\w+\$/ or die qq{Bad value$for_topic: Identifier expected.\\n};
+/^[A-Za-z]\\w*\$/ or die qq{Bad value$for_topic: Identifier expected.\\n};
 _EOC_
         }
     | <error>
