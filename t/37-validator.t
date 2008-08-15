@@ -4,7 +4,7 @@ use warnings;
 use Test::Base;
 use JSON::XS;
 
-plan tests => 2* blocks() + 79;
+plan tests => 2* blocks() + 80;
 
 require OpenResty::QuasiQuote::Validator;
 
@@ -86,23 +86,23 @@ __DATA__
 if (defined) {
     ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
     {
-        local $_ = delete $_->{"foo"};
+        local $_ = $_->{"foo"};
         if (defined) {
             !ref and length or die qq{Bad value for "foo": String expected.\n};
         }
     }
-    die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
+    for (keys %$_) {
+        $_ eq "foo" or die qq{Unrecognized key in hash: $_\n};
+    }
 }
-
 --- valid
 {"foo":"dog"}
 {"foo":32}
 null
 {}
-
 --- invalid
 {"foo2":32}
-Unrecognized keys in hash: foo2
+Unrecognized key in hash: foo2
 32
 Invalid value: Hash expected.
 []
@@ -110,24 +110,7 @@ Invalid value: Hash expected.
 
 
 
-=== TEST 2: simple hash
----  spec
-{ "foo": STRING }
---- perl
-if (defined) {
-    ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
-    {
-        local $_ = delete $_->{"foo"};
-        if (defined) {
-            !ref and length or die qq{Bad value for "foo": String expected.\n};
-        }
-    }
-    die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
-}
-
-
-
-=== TEST 3: strings
+=== TEST 2: strings
 ---  spec
 STRING
 --- perl
@@ -148,7 +131,7 @@ Bad value: String expected.
 
 
 
-=== TEST 4: numbers
+=== TEST 3: numbers
 ---  spec
 INT
 --- perl
@@ -172,7 +155,7 @@ Bad value: Integer expected.
 
 
 
-=== TEST 5: identifiers
+=== TEST 4: identifiers
 ---  spec
 IDENT
 --- perl
@@ -197,7 +180,7 @@ Bad value: Identifier expected.
 
 
 
-=== TEST 6: arrays
+=== TEST 5: arrays
 --- spec
 [STRING]
 --- perl
@@ -227,37 +210,41 @@ Invalid value: Array expected.
 
 
 
-=== TEST 7: hashes of arrays
+=== TEST 6: hashes of arrays
 --- spec
 { columns: [ { name: STRING, type: STRING } ] }
 --- perl
 if (defined) {
     ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
     {
-        local $_ = delete $_->{"columns"};
+        local $_ = $_->{"columns"};
         if (defined) {
             ref and ref eq 'ARRAY' or die qq{Invalid value for "columns": Array expected.\n};
             for (@$_) {
                 if (defined) {
                     ref and ref eq 'HASH' or die qq{Invalid value for "columns" array element: Hash expected.\n};
                     {
-                        local $_ = delete $_->{"name"};
+                        local $_ = $_->{"name"};
                         if (defined) {
                             !ref and length or die qq{Bad value for "name": String expected.\n};
                         }
                     }
                     {
-                        local $_ = delete $_->{"type"};
+                        local $_ = $_->{"type"};
                         if (defined) {
                             !ref and length or die qq{Bad value for "type": String expected.\n};
                         }
                     }
-                    die qq{Unrecognized keys in hash for "columns" array element: }, join(' ', keys %$_), "\n" if %$_;
+                    for (keys %$_) {
+                        $_ eq "name" or $_ eq "type" or die qq{Unrecognized key in hash for "columns" array element: $_\n};
+                    }
                 }
             }
         }
     }
-    die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
+    for (keys %$_) {
+        $_ eq "columns" or die qq{Unrecognized key in hash: $_\n};
+    }
 }
 --- valid
 {"columns":[]}
@@ -266,9 +253,9 @@ if (defined) {
 null
 --- invalid
 {"bar":[]}
-Unrecognized keys in hash: bar
+Unrecognized key in hash: bar
 {"columns":[{"default":32,"blah":[]}]}
-Unrecognized keys in hash for "columns" array element: blah default
+Unrecognized key in hash for "columns" array element: blah
 {"columns":[32]}
 Invalid value for "columns" array element: Hash expected.
 32
@@ -276,19 +263,21 @@ Invalid value: Hash expected.
 
 
 
-=== TEST 8: simple hash required
+=== TEST 7: simple hash required
 ---  spec
 { "foo": STRING } :required
 --- perl
 defined or die qq{Value required.\n};
 ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 {
-    local $_ = delete $_->{"foo"};
+    local $_ = $_->{"foo"};
     if (defined) {
         !ref and length or die qq{Bad value for "foo": String expected.\n};
     }
 }
-die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
+for (keys %$_) {
+    $_ eq "foo" or die qq{Unrecognized key in hash: $_\n};
+}
 --- valid
 {"foo":"hello"}
 {}
@@ -298,7 +287,7 @@ die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
 null
 Value required.
 {"blah":"hi"}
-Unrecognized keys in hash: blah
+Unrecognized key in hash: blah
 []
 Invalid value: Hash expected.
 32
@@ -306,7 +295,7 @@ Invalid value: Hash expected.
 
 
 
-=== TEST 9: array required
+=== TEST 8: array required
 --- spec
 [INT] :required(1)
 --- perl
@@ -332,7 +321,7 @@ Value required.
 
 
 
-=== TEST 10: array elem required
+=== TEST 9: array elem required
 --- spec
 [INT :required]
 --- perl
@@ -354,7 +343,7 @@ Value for array element required.
 
 
 
-=== TEST 11: nonempty array
+=== TEST 10: nonempty array
 --- spec
 [INT] :nonempty
 --- perl
@@ -377,7 +366,7 @@ Array cannot be empty.
 
 
 
-=== TEST 12: nonempty required array
+=== TEST 11: nonempty required array
 --- spec
 [INT] :nonempty :required
 --- perl
@@ -402,7 +391,7 @@ Bad value for array element: Integer expected.
 
 
 
-=== TEST 13: nonempty hash
+=== TEST 12: nonempty hash
 --- spec
 {"cat":STRING}:nonempty
 --- perl
@@ -410,14 +399,15 @@ if (defined) {
     ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
     %$_ or die qq{Hash cannot be empty.\n};
     {
-        local $_ = delete $_->{"cat"};
+        local $_ = $_->{"cat"};
         if (defined) {
             !ref and length or die qq{Bad value for "cat": String expected.\n};
         }
     }
-    die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
+    for (keys %$_) {
+        $_ eq "cat" or die qq{Unrecognized key in hash: $_\n};
+    }
 }
-
 --- valid
 {"cat":32}
 null
@@ -429,7 +419,7 @@ Hash cannot be empty.
 
 
 
-=== TEST 14: scalar required
+=== TEST 13: scalar required
 --- spec
 IDENT :required
 --- perl
@@ -438,7 +428,7 @@ defined or die qq{Value required.\n};
 
 
 
-=== TEST 15: scalar required
+=== TEST 14: scalar required
 --- spec
 STRING :required
 --- perl
@@ -447,48 +437,57 @@ defined or die qq{Value required.\n};
 
 
 
-=== TEST 16: scalar required in a hash
+=== TEST 15: scalar required in a hash
 --- spec
 { name: STRING :required, type: STRING :required }
 --- perl
 if (defined) {
     ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
     {
-        local $_ = delete $_->{"name"};
+        local $_ = $_->{"name"};
         defined or die qq{Value for "name" required.\n};
         !ref and length or die qq{Bad value for "name": String expected.\n};
     }
     {
-        local $_ = delete $_->{"type"};
+        local $_ = $_->{"type"};
         defined or die qq{Value for "type" required.\n};
         !ref and length or die qq{Bad value for "type": String expected.\n};
     }
-    die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
+    for (keys %$_) {
+        $_ eq "name" or $_ eq "type" or die qq{Unrecognized key in hash: $_\n};
+    }
 }
+--- invalid
+{"name":"hi","type":"text","default":"Howdy"}
+Unrecognized key in hash: default
 
 
 
-=== TEST 17: scalar required in a hash which is required also
+
+=== TEST 16: scalar required in a hash which is required also
 --- spec
 { name: STRING :required, type: STRING :required } :required
 --- perl
 defined or die qq{Value required.\n};
 ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 {
-    local $_ = delete $_->{"name"};
+    local $_ = $_->{"name"};
     defined or die qq{Value for "name" required.\n};
     !ref and length or die qq{Bad value for "name": String expected.\n};
 }
 {
-    local $_ = delete $_->{"type"};
+    local $_ = $_->{"type"};
     defined or die qq{Value for "type" required.\n};
     !ref and length or die qq{Bad value for "type": String expected.\n};
 }
-die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
+for (keys %$_) {
+    $_ eq "name" or $_ eq "type" or die qq{Unrecognized key in hash: $_\n};
+}
 
 
 
-=== TEST 18: default string
+
+=== TEST 17: default string
 --- spec
 STRING :default('hello')
 --- perl
@@ -501,7 +500,7 @@ else {
 
 
 
-=== TEST 19: default array
+=== TEST 18: default array
 --- spec
 [STRING :default(32)] : default([])
 --- perl
@@ -525,7 +524,7 @@ null
 
 
 
-=== TEST 20: assign for array and scalar
+=== TEST 19: assign for array and scalar
 --- spec
 [STRING :default(32) :to($bar) ] :to($foo) :default([])
 --- perl
@@ -548,20 +547,20 @@ $foo = $_;
 
 
 
-=== TEST 21: assign for hash
+=== TEST 20: assign for hash
 --- spec
 {"name": STRING :to($name) :required, "type": STRING :to($type) :default("text")} :to($column)
 --- perl
 if (defined) {
     ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
     {
-        local $_ = delete $_->{"name"};
+        local $_ = $_->{"name"};
         defined or die qq{Value for "name" required.\n};
         !ref and length or die qq{Bad value for "name": String expected.\n};
         $name = $_;
     }
     {
-        local $_ = delete $_->{"type"};
+        local $_ = $_->{"type"};
         if (defined) {
             !ref and length or die qq{Bad value for "type": String expected.\n};
         }
@@ -570,7 +569,9 @@ if (defined) {
         }
         $type = $_;
     }
-    die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
+    for (keys %$_) {
+        $_ eq "name" or $_ eq "type" or die qq{Unrecognized key in hash: $_\n};
+    }
 }
 $column = $_;
 --- valid
