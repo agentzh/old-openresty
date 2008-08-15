@@ -41,11 +41,15 @@ _EOC_
 _EOC_
         }
 
-        $code2 .= <<"_EOC_" . $code3 . join('', @$pairs);
+        $code2 .= <<"_EOC_" . $code3 . join('', map { $_->[1] } @$pairs);
 ref and ref eq 'HASH' or die qq{Invalid value$for_topic: Hash expected.\\n};
 _EOC_
+        my @keys = map { $_->[0] } @$pairs;
+        my $cond = join ' or ', map { '$_ eq "' . quotemeta($_) . '"' } @keys;
         $code2 .= <<"_EOC_";
-die qq{Unrecognized keys in hash$for_topic: }, join(' ', keys \%\$_), "\\n" if \%\$_;
+for (keys \%\$_) {
+$cond or die qq{Unrecognized key in hash$for_topic: \$_\\n};
+}
 _EOC_
         if ($required) {
             $code .= $code2
@@ -67,9 +71,9 @@ _EOC_
 pair: key <commit> ':' value[ topic => qq{"$item[1]"} ]
         {
             my $quoted_key = quotemeta($item[1]);
-            $return = <<"_EOC_" . $item[4] . "}\n";
+            [$item[1], <<"_EOC_" . $item[4] . "}\n"]
 {
-local \$_ = delete \$_->{"$quoted_key"};
+local \$_ = \$_->{"$quoted_key"};
 _EOC_
         }
     | <error?> <reject>
