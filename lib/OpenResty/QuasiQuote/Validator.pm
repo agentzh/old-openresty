@@ -41,9 +41,6 @@ _EOC_
 _EOC_
         }
 
-        if (%$attrs) {
-            die "Bad attribute for hash: ", join(" ", keys %$attrs), "\n";
-        }
         $code2 .= <<"_EOC_" . $code3 . join('', @$pairs);
 ref and ref eq 'HASH' or die qq{Invalid value$for_topic: Hash expected.\\n};
 _EOC_
@@ -55,6 +52,15 @@ _EOC_
         } else {
             $code .= "if (defined) {\n$code2}\n";
         }
+
+        if (my $var = delete $attrs->{to}) {
+            $code .= "$var = \$_;\n";
+        }
+
+        if (%$attrs) {
+            die "Bad attribute for hash: ", join(" ", keys %$attrs), "\n";
+        }
+
         $code;
     }
 
@@ -87,16 +93,34 @@ defined or die qq{Value$for_topic required.\\n};
 _EOC_
             $required = 1;
         }
-        if (%$attrs) {
-            die "Bad attribute for scalar: ", join(" ", keys %$attrs), "\n";
-        }
 
         if ($required) {
             $code .= $code2;
         } else {
             $code .= "if (defined) {\n$code2}\n";
         }
+        if (my $default = delete $attrs->{default}) {
+            if ($required) {
+                die "validator: Required scalar cannot take default value at the same time.\n";
+            }
+            my $quoted_default = quotemeta($default);
+            $code .= <<"_EOC_";
+else {
+\$_ = "$quoted_default";
+}
+_EOC_
+        }
+        if (my $var = delete $attrs->{to}) {
+            $code .= "$var = \$_;\n";
+        }
+
+        if (%$attrs) {
+            die "validator: Bad attribute for scalar: ", join(" ", keys %$attrs), "\n";
+        }
+
+
         #$code . $code2;
+        $code;
     }
 
 array: '[' <commit> array_elem ']' attr(s?)
@@ -131,12 +155,28 @@ _EOC_
             $code .= "if (defined) {\n$code2}\n";
         }
 
+        if (my $default = delete $attrs->{default}) {
+            if ($required) {
+                die "validator: Required array cannot take default value at the same time.\n";
+            }
+            $code .= <<"_EOC_";
+else {
+\$_ = $default;
+}
+_EOC_
+        }
+
+        if (my $var = delete $attrs->{to}) {
+            $code .= "$var = \$_;\n";
+        }
+
         if (%$attrs) {
             die "Bad attribute for array: ", join(" ", keys %$attrs), "\n";
         }
 
         $code;
     }
+    | <error?> <reject>
 
 array_elem: {
                 if ($arg{topic}) {
@@ -178,7 +218,12 @@ attr: ':' ident '(' <commit> argument ')'
         { [ $item[3] => 1 ] }
     | <error?> <reject>
 
-argument: /^\w+/
+argument: /^\d+/
+        | '[]'
+        | /\$[A-Za-z]\w*/
+        | { extract_quotelike($text) } { eval $item[1] }
+        | { extract_codeblock($text) } { "do $item[1]" }
+        | <error>
 
 eofile: /^\Z/
 
