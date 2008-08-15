@@ -4,7 +4,7 @@ use warnings;
 use Test::Base;
 use JSON::XS;
 
-plan tests => 2* blocks() + 67;
+plan tests => 2* blocks() + 76;
 
 require OpenResty::QuasiQuote::Validator;
 
@@ -372,6 +372,56 @@ null
 Array cannot be empty.
 
 
+=== TEST 11: nonempty required array
+--- spec
+[INT] :nonempty :required
+--- perl
+defined or die qq{Value required.\n};
+ref and ref eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
+@$_ or die qq{Array cannot be empty.\n};
+for (@$_) {
+    if (defined) {
+        /^[-+]?\d+$/ or die qq{Bad value for array element: Integer expected.\n};
+    }
+}
+--- valid
+[32]
+[1,2]
+--- invalid
+[]
+Array cannot be empty.
+null
+Value required.
+["hello"]
+Bad value for array element: Integer expected.
+
+
+
+=== TEST 12: nonempty hash
+--- spec
+{"cat":STRING}:nonempty
+--- perl
+if (defined) {
+    ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+    %$_ or die qq{Hash cannot be empty.\n};
+    {
+        local $_ = delete $_->{"cat"};
+        if (defined) {
+            !ref and length or die qq{Bad value for "cat": String expected.\n};
+        }
+    }
+    die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
+}
+
+--- valid
+{"cat":32}
+null
+--- invalid
+32
+Invalid value: Hash expected.
+{}
+Hash cannot be empty.
+
 
 === TEST 12: scalar required
 --- spec
@@ -412,7 +462,7 @@ if (defined) {
 
 
 
-=== TEST 15: scalar required in a hash required also
+=== TEST 15: scalar required in a hash which is required also
 --- spec
 { name: STRING :required, type: STRING :required } :required
 --- perl
