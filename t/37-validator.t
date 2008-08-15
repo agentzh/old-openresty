@@ -29,11 +29,12 @@ __DATA__
 if (defined) {
     ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
     {
-        local $_ = $_->{"foo"};
+        local $_ = delete $_->{"foo"};
         if (defined) {
             !ref and length or die qq{Bad value for "foo": String expected.\n};
         }
     }
+    die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
 }
 
 
@@ -45,11 +46,12 @@ if (defined) {
 if (defined) {
     ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
     {
-        local $_ = $_->{"foo"};
+        local $_ = delete $_->{"foo"};
         if (defined) {
             !ref and length or die qq{Bad value for "foo": String expected.\n};
         }
     }
+    die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
 }
 
 
@@ -106,28 +108,30 @@ if (defined) {
 if (defined) {
     ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
     {
-        local $_ = $_->{"columns"};
+        local $_ = delete $_->{"columns"};
         if (defined) {
             ref and ref eq 'ARRAY' or die qq{Invalid value for "columns": Array expected.\n};
             for (@$_) {
                 if (defined) {
                     ref and ref eq 'HASH' or die qq{Invalid value for "columns" array element: Hash expected.\n};
                     {
-                        local $_ = $_->{"name"};
+                        local $_ = delete $_->{"name"};
                         if (defined) {
                             !ref and length or die qq{Bad value for "name": String expected.\n};
                         }
                     }
                     {
-                        local $_ = $_->{"type"};
+                        local $_ = delete $_->{"type"};
                         if (defined) {
                             !ref and length or die qq{Bad value for "type": String expected.\n};
                         }
                     }
+                    die qq{Unrecognized keys in hash for "columns" array element: }, join(' ', keys %$_), "\n" if %$_;
                 }
             }
         }
     }
+    die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
 }
 
 
@@ -139,11 +143,12 @@ if (defined) {
 defined or die qq{Value required.\n};
 ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 {
-    local $_ = $_->{"foo"};
+    local $_ = delete $_->{"foo"};
     if (defined) {
         !ref and length or die qq{Bad value for "foo": String expected.\n};
     }
 }
+die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
 
 
 
@@ -186,15 +191,16 @@ defined or die qq{Value required.\n};
 if (defined) {
     ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
     {
-        local $_ = $_->{"name"};
+        local $_ = delete $_->{"name"};
         defined or die qq{Value for "name" required.\n};
         !ref and length or die qq{Bad value for "name": String expected.\n};
     }
     {
-        local $_ = $_->{"type"};
+        local $_ = delete $_->{"type"};
         defined or die qq{Value for "type" required.\n};
         !ref and length or die qq{Bad value for "type": String expected.\n};
     }
+    die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
 }
 
 
@@ -206,13 +212,14 @@ if (defined) {
 defined or die qq{Value required.\n};
 ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 {
-    local $_ = $_->{"name"};
+    local $_ = delete $_->{"name"};
     defined or die qq{Value for "name" required.\n};
     !ref and length or die qq{Bad value for "name": String expected.\n};
 }
 {
-    local $_ = $_->{"type"};
+    local $_ = delete $_->{"type"};
     defined or die qq{Value for "type" required.\n};
     !ref and length or die qq{Bad value for "type": String expected.\n};
 }
+die qq{Unrecognized keys in hash: }, join(' ', keys %$_), "\n" if %$_;
 
