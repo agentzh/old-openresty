@@ -34,10 +34,17 @@ defined or die qq{Value$for_topic required.\\n};
 _EOC_
             $required = 1;
         }
+        my $code3 = '';
+        if (delete $attrs->{nonempty}) {
+            $code3 .= <<"_EOC_";
+\%\$_ or die qq{Hash cannot be empty$for_topic.\\n};
+_EOC_
+        }
+
         if (%$attrs) {
             die "Bad attribute for hash: ", join(" ", keys %$attrs), "\n";
         }
-        $code2 .= <<"_EOC_" . join('', @$pairs);
+        $code2 .= <<"_EOC_" . $code3 . join('', @$pairs);
 ref and ref eq 'HASH' or die qq{Invalid value$for_topic: Hash expected.\\n};
 _EOC_
         $code2 .= <<"_EOC_";
