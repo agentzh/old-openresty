@@ -34,13 +34,15 @@ defined or die qq{Value$for_topic required.\\n};
 _EOC_
             $required = 1;
         }
-        $code2 .= <<"_EOC_";
+        $code2 .= <<"_EOC_" . join('', @$pairs);
 ref and ref eq 'HASH' or die qq{Invalid value$for_topic: Hash expected.\\n};
 _EOC_
+        $code2 .= <<"_EOC_";
+die qq{Unrecognized keys in hash$for_topic: }, join(' ', keys \%\$_), "\\n" if \%\$_;
+_EOC_
         if ($required) {
-            $code .= $code2 . join('', @$pairs);
+            $code .= $code2
         } else {
-            $code2 .= join('', @$pairs);
             $code .= "if (defined) {\n$code2}\n";
         }
         $code;
@@ -51,7 +53,7 @@ pair: key <commit> ':' value[ topic => qq{"$item[1]"} ]
             my $quoted_key = quotemeta($item[1]);
             $return = <<"_EOC_" . $item[4] . "}\n";
 {
-local \$_ = \$_->{"$quoted_key"};
+local \$_ = delete \$_->{"$quoted_key"};
 _EOC_
         }
     | <error?> <reject>
