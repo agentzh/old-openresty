@@ -34,6 +34,9 @@ defined or die qq{Value$for_topic required.\\n};
 _EOC_
             $required = 1;
         }
+        if (%$attrs) {
+            die "Bad attribute for hash: ", join(" ", keys %$attrs), "\n";
+        }
         $code2 .= <<"_EOC_" . join('', @$pairs);
 ref and ref eq 'HASH' or die qq{Invalid value$for_topic: Hash expected.\\n};
 _EOC_
@@ -77,6 +80,10 @@ defined or die qq{Value$for_topic required.\\n};
 _EOC_
             $required = 1;
         }
+        if (%$attrs) {
+            die "Bad attribute for scalar: ", join(" ", keys %$attrs), "\n";
+        }
+
         if ($required) {
             $code .= $code2;
         } else {
@@ -98,10 +105,17 @@ defined or die qq{Value$for_topic required.\\n};
 _EOC_
             #$required = 1;
         }
+        my $code3 = '';
+        if (delete $attrs->{nonempty}) {
+            $code3 .= <<"_EOC_";
+\@\$_ or die qq{Array cannot be empty$for_topic.\\n};
+_EOC_
+        }
 
-        $code2 .= <<"_EOC_" . "$item[3]}\n";
+        $code2 .= <<"_EOC_";
 ref and ref eq 'ARRAY' or die qq{Invalid value$for_topic: Array expected.\\n};
-for (\@\$_) \{
+${code3}for (\@\$_) \{
+$item[3]}
 _EOC_
 
         if ($required) {
@@ -109,6 +123,11 @@ _EOC_
         } else {
             $code .= "if (defined) {\n$code2}\n";
         }
+
+        if (%$attrs) {
+            die "Bad attribute for array: ", join(" ", keys %$attrs), "\n";
+        }
+
         $code;
     }
 
