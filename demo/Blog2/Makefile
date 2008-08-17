@@ -30,9 +30,12 @@ all:
 	cp css/*.css out/
 	cp -r css/themes out/
 	-cp -r image/*.* out/
+	cp out/blog.js blog.js
+	sed -i 's/\b10\.62\.136\.86\b/api.eeeeworks.org/g' out/blog.js
 	tar cvf site-binary.tar out
 	gzip --best site-binary.tar
 	mv site-binary.tar.gz out/
+	mv blog.js out/
 
 pack: all
 	-rm -rf pack_out
