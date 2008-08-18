@@ -263,7 +263,7 @@ GET /=/login/$TestAccount.Public?_use_cookie=1
 === TEST 26: Create model A
 --- request
 POST /=/model/~
-{"columns":{"name":"title","type":"text", "label":"name"},"description":"A","name":"A"}
+{"columns":[{"name":"title","type":"text", "label":"name"}],"description":"A","name":"A"}
 --- response
 {"success":1}
 

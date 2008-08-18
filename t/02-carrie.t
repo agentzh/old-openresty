@@ -222,7 +222,7 @@ POST /=/model/Test2?_user=$TestAccount&_password=$TestPass
     ]
 }
 --- response
-{"error":"No 'type' specified for column \"title\" in model \"Test2\".","success":0}
+{"error":"Value for \"type\" for \"columns\" array element required.","success":0}
 
 
 
