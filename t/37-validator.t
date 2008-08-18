@@ -462,7 +462,6 @@ Unrecognized key in hash: default
 
 
 
-
 === TEST 16: scalar required in a hash which is required also
 --- spec
 { name: STRING :required, type: STRING :required } :required
@@ -482,7 +481,6 @@ ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 for (keys %$_) {
     $_ eq "name" or $_ eq "type" or die qq{Unrecognized key in hash: $_\n};
 }
-
 
 
 
@@ -578,7 +576,7 @@ $column = $_;
 
 
 
-=== TEST 21: ~~
+=== TEST 21: $foo ~~
 --- spec
 $data ~~ { "name": STRING }
 --- perl
@@ -600,9 +598,34 @@ $data ~~ { "name": STRING }
 
 
 
-=== TEST 22: match(/.../, '...')
+=== TEST 22: $foo->{bar} ~~
 --- spec
-foo
+$foo->{bar} ~~ { "name": STRING }
 --- perl
---- SKIP
+{
+    local *_ = \( $foo->{bar} );
+    if (defined) {
+        ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+        {
+            local *_ = \( $_->{"name"} );
+            if (defined) {
+            !ref and length or die qq{Bad value for "name": String expected.\n};
+            }
+        }
+        for (keys %$_) {
+            $_ eq "name" or die qq{Unrecognized key in hash: $_\n};
+        }
+    }
+}
+
+
+
+=== TEST 23: match(/.../, '...')
+--- spec
+STRING :match(/^\d{4}-\d{2}-\d{2}$/, 'Date')
+--- perl
+if (defined) {
+    !ref and length or die qq{Bad value: String expected.\n};
+    /^\d{4}-\d{2}-\d{2}$/ or die qq{Invalid value: Date expected.\n};
+}
 

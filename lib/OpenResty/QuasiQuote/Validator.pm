@@ -67,7 +67,8 @@ _EOC_
             $code .= "if (defined) {\n$code2}\n";
         }
 
-        if (my $var = delete $attrs->{to}) {
+        if (my $args = delete $attrs->{to}) {
+            my $var = $args->[0];
             $code .= "$var = \$_;\n";
         }
 
@@ -108,29 +109,37 @@ _EOC_
             $required = 1;
         }
 
+        if (my $args = delete $attrs->{match}) {
+            my ($pat, $desc) = @$args;
+            $desc = eval $desc;
+            $code2 .= "$pat or die qq{Invalid value$for_topic: $desc expected.\\n};\n";
+        }
+
         if ($required) {
             $code .= $code2;
         } else {
             $code .= "if (defined) {\n$code2}\n";
         }
-        if (my $default = delete $attrs->{default}) {
+        if (my $args = delete $attrs->{default}) {
             if ($required) {
                 die "validator: Required scalar cannot take default value at the same time.\n";
             }
+            my $default = $args->[0] or die "validator: :default attribute takes one argument.\n";
             $code .= <<"_EOC_";
 else {
 \$_ = $default;
 }
 _EOC_
         }
-        if (my $var = delete $attrs->{to}) {
+
+        if (my $args = delete $attrs->{to}) {
+            my $var = $args->[0];
             $code .= "$var = \$_;\n";
         }
 
         if (%$attrs) {
             die "validator: Bad attribute for scalar: ", join(" ", keys %$attrs), "\n";
         }
-
 
         #$code . $code2;
         $code;
@@ -150,7 +159,7 @@ _EOC_
             #$required = 1;
         }
         my $code3 = '';
-        if (delete $attrs->{nonempty}) {
+        if (my $args = delete $attrs->{nonempty}) {
             $code3 .= <<"_EOC_";
 \@\$_ or die qq{Array cannot be empty$for_topic.\\n};
 _EOC_
@@ -168,10 +177,11 @@ _EOC_
             $code .= "if (defined) {\n$code2}\n";
         }
 
-        if (my $default = delete $attrs->{default}) {
+        if (my $args = delete $attrs->{default}) {
             if ($required) {
                 die "validator: Required array cannot take default value at the same time.\n";
             }
+            my $default = $args->[0] or die "validator: :default attribute takes one argument.\n";
             $code .= <<"_EOC_";
 else {
 \$_ = $default;
@@ -179,7 +189,8 @@ else {
 _EOC_
         }
 
-        if (my $var = delete $attrs->{to}) {
+        if (my $args = delete $attrs->{to}) {
+            my $var = $args->[0];
             $code .= "$var = \$_;\n";
         }
 
@@ -225,8 +236,8 @@ _EOC_
         }
     | <error>
 
-attr: ':' ident '(' <commit> argument ')'
-        { [ $item[2] => $item[5] ] }
+attr: ':' ident '(' <commit> argument(s /,/) ')'
+        { [ $item[2] => [ @{ $item[5] } ] ] }
     | ':' <commit> ident
         { [ $item[3] => 1 ] }
     | <error?> <reject>
