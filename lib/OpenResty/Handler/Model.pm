@@ -199,7 +199,7 @@ sub POST_model_column {
             label: STRING :nonempty :required :to($label),
             type: STRING :nonempty :required :to($type),
             default: ANY :to($default),
-            unique: BOOL :to($unique)
+            unique: BOOL :to($unique),
         } :required :nonempty
     |]
 
@@ -250,7 +250,7 @@ sub PUT_model_column {
             label: STRING :nonempty :to($label),
             type: STRING :nonempty :to($type),
             default: ANY,
-            unique: BOOL :to($unique)
+            unique: BOOL :to($unique),
         } :required :nonempty
     |]
 
@@ -409,7 +409,7 @@ sub new_model {
     [:validator|
         $data ~~
         {
-            name: IDENT :to($model) :default({ }),
+            name: IDENT :to($model),
             description: STRING :nonempty :required :to($desc),
             columns: [
                 {
@@ -417,10 +417,10 @@ sub new_model {
                     label: STRING :nonempty :required,
                     type: STRING :nonempty :required,
                     default: ANY,
-                    unique: BOOL
+                    unique: BOOL,
                 }
             ] :to($columns)
-        }
+        } :required :nonempty
     |]
 
     # XXX Should we allow 0 column table here?
@@ -960,17 +960,24 @@ sub alter_model {
     my $self = shift;
     my $openresty = $_[0];
     my $model = _IDENT($_[1]) or die "Invalid model name \"$_[1]\".\n";
-    my $data = _HASH($_[2]) or die "HASH expected in the PUT content.\n";
+    my $data = $_[2];
     my $user = $openresty->current_user;
     if (!$openresty->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
 
+    my ($new_model, $desc);
+
+    [:validator|
+        $data ~~
+        {
+            name: IDENT :to($new_model),
+            description: STRING :nonempty :required :to($desc),
+        } :required :nonempty
+    |]
+
     my $sql;
-    my $new_model = $model;
-    if ($new_model = delete $data->{name}) {
-        _IDENT($new_model) or
-            die "Bad model name: ", $OpenResty::Dumper->($new_model), "\n";
+    if ($new_model) {
         if ($openresty->has_model($new_model)) {
             die "Model \"$new_model\" already exists.\n";
         }
@@ -978,17 +985,17 @@ sub alter_model {
         $sql .= [:sql|
             update _models set table_name=$new_model, name=$new_model where name=$model;
             update _columns set table_name=$new_model where table_name=$model;
-            alter table $sym:model rename to $sym:new_model; |]
+            alter table $sym:model rename to $sym:new_model;
+        |];
     }
     $new_model ||= $model;
-    if (my $desc = delete $data->{description}) {
-        _STRING($desc) or die "Model descriptons must be strings.\n";
-        $sql .= "update _models set description=".Q($desc)." where name='$new_model';\n"
+    if ($desc) {
+        $sql .= [:sql|
+            update _models
+            set description = $desc
+            where name = $new_model;
+        |];
     }
-    if (%$data) {
-        die "Unknown fields ", join(", ", keys %$data), "\n";
-    }
-
     #warn "SQL: $sql";
     my $retval = $openresty->do($sql);
 
