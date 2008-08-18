@@ -113,7 +113,6 @@ sub POST_model {
 sub DELETE_model {
     my ($self, $openresty, $bits) = @_;
     my $model = $bits->[1];
-    my $table = $model;
     if ($model eq '~') {
         return $self->DELETE_model_list($openresty);
     }
@@ -121,7 +120,7 @@ sub DELETE_model {
         die "Model \"$model\" not found.\n";
     }
     #$tables = $tables->[0];
-    my $sql = $self->drop_table($openresty, $table);
+    my $sql = $self->drop_table($openresty, $model);
     $openresty->do($sql);
     return { success => 1 };
 }
@@ -131,13 +130,11 @@ sub GET_model_column {
     my $model = $bits->[1];
     my $col = $bits->[2];
 
-    my $table_name = $model;
-
     if ($col eq '~') {
         my $sql = [:sql|
             select name, type, label, "default"
             from _columns
-            where table_name = $table_name
+            where table_name = $model
             order by id |];
         my $list = $openresty->select($sql, { use_hash => 1 });
         if (!$list or !ref $list) { $list = []; }
@@ -157,7 +154,7 @@ sub GET_model_column {
         my $sql = [:sql|
             select name, type, label, "default"
             from _columns
-            where table_name = $table_name and name = $col
+            where table_name = $model and name = $col
             order by id |];
         my $res = $openresty->select($sql, { use_hash => 1 });
         if (!$res or !@$res) {
@@ -177,7 +174,6 @@ sub POST_model_column {
     my $model = $bits->[1];
     my $col = $bits->[2];
     my $data = $openresty->{_req_data};
-    my $table_name = $model;
 
     my $num = $self->column_count($openresty, $model);
 
@@ -214,8 +210,8 @@ sub POST_model_column {
 
     my $sql = [:sql|
         insert into _columns (name, label, type, table_name, "default")
-            values( $col, $label, $type, $table_name, $json_default);
-        alter table $sym:table_name
+            values( $col, $label, $type, $model, $json_default);
+        alter table $sym:model
             add column $sym:col $kw:type default ($kw:default); |];
 
     my $res = $openresty->do($sql);
@@ -233,7 +229,6 @@ sub PUT_model_column {
     my $col = $bits->[2];
     my $data = _HASH($openresty->{_req_data}) or
         die "column spec must be a non-empty HASH.\n";
-    my $table_name = $model;
 
     # discard 'id' column
     if (lc($col) eq 'id') {
@@ -248,7 +243,7 @@ sub PUT_model_column {
 
         #$new_col = $new_col);
         $update_meta->set(name => Q($new_col));
-        $sql .= "alter table \"$table_name\" rename column \"$col\" to \"$new_col\";\n";
+        $sql .= "alter table \"$model\" rename column \"$col\" to \"$new_col\";\n";
         #$col = $new_col;
     } else {
         $new_col = $col;
@@ -258,7 +253,7 @@ sub PUT_model_column {
         #die "Changing column type is not supported.\n";
         $type = check_type($type);
         $update_meta->set(type => Q($type));
-        $sql .= "alter table \"$table_name\" alter column \"$new_col\" type $type;\n",
+        $sql .= "alter table \"$model\" alter column \"$new_col\" type $type;\n",
     }
 
     my $label = delete $data->{label};
@@ -276,14 +271,14 @@ sub PUT_model_column {
             $default = $self->process_default($openresty, $default);
 
             $update_meta->set(QI('default') => Q($json_default));
-            $sql .= "alter table \"$table_name\" alter column \"$new_col\" set default ($default);\n",
+            $sql .= "alter table \"$model\" alter column \"$new_col\" set default ($default);\n",
         } else {
             $update_meta->set(QI('default') => Q("null"));
-            $sql .= "alter table \"$table_name\" alter column \"$new_col\" set default null;\n",
+            $sql .= "alter table \"$model\" alter column \"$new_col\" set default null;\n",
         }
     }
 
-    $update_meta->where(table_name => Q($table_name))
+    $update_meta->where(table_name => Q($model))
         ->where(name => Q($col));
 
     # XXX TODO: add support for updating column's uniqueness
@@ -310,7 +305,6 @@ sub DELETE_model_column {
     my ($self, $openresty, $bits) = @_;
     my $model = $bits->[1];
     my $col = $bits->[2];
-    my $table_name = $model;
 
     # discard 'id' column
     if (lc($col) eq 'id') {
@@ -322,17 +316,17 @@ sub DELETE_model_column {
          $openresty->warning("Column \"id\" is reserved.");
      my $columns = $self->get_model_col_names($openresty, $model);
      for my $c (@$columns) {
-              $sql .= "delete from _columns where table_name = '$table_name' and name='$c';" .
-                      "alter table \"$table_name\" drop column \"$c\" restrict;";
+        $sql .= "delete from _columns where table_name = '$model' and name='$c';" .
+                      "alter table \"$model\" drop column \"$c\" restrict;";
          }
     } else {
-        $sql = "delete from _columns where table_name='$table_name' and name='$col'; alter table \"$table_name\" drop column \"$col\" restrict;";
+        $sql = "delete from _columns where table_name='$model' and name='$col'; alter table \"$model\" drop column \"$col\" restrict;";
     }
     my $res = $openresty->do($sql);
     return { success => $res > -1? 1:0 };
 }
 
-# alter table $table_name rename column $col TO city;
+# alter table $model rename column $col TO city;
 sub POST_model_row {
     my ($self, $openresty, $bits) = @_;
     my $data = $openresty->{_req_data};
@@ -588,9 +582,9 @@ sub column_count {
 }
 
 sub row_count {
-    my ($self, $openresty, $table) = @_;
+    my ($self, $openresty, $model) = @_;
     return $openresty->select(
-        [:sql| select count(*) from $sym:table |]
+        [:sql| select count(*) from $sym:model |]
     )->[0][0];
 }
 
@@ -605,7 +599,6 @@ sub get_model_cols {
     if (!$openresty->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
-    my $table = $model;
     my $sql = [:sql|
         select description
         from _models
@@ -615,7 +608,7 @@ sub get_model_cols {
     $sql = [:sql|
         select name, type, label, "default"
         from _columns
-        where table_name = $table
+        where table_name = $model
         order by id |];
     $list = $openresty->select($sql, { use_hash => 1 });
     if (!$list or !ref $list) { $list = []; }
@@ -639,11 +632,10 @@ sub get_model_col_names {
     if (!$openresty->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
-    my $table = $model;
     my $sql = [:sql|
         select name
         from _columns
-        where table_name = $table |];
+        where table_name = $model |];
 
     my $list = $openresty->select($sql);
     if (!$list or !ref $list) { return []; }
@@ -654,14 +646,13 @@ sub has_model_col {
     my ($self, $openresty, $model, $col) = @_;
     _IDENT($model) or die "Bad model name: $model\n";
     _IDENT($col) or die "Bad model column name: $col\n";
-    my $table_name = $model;
 
     return 1 if $col eq 'id';
     my $res;
     my $select = [:sql|
         select id
         from _columns
-        where table_name = $table_name and name = $col
+        where table_name = $model and name = $col
         limit 1 |];
     eval {
         $res = $openresty->select("$select")->[0][0];
@@ -670,13 +661,13 @@ sub has_model_col {
 }
 
 sub drop_table {
-    my ($self, $openresty, $table) = @_;
+    my ($self, $openresty, $model) = @_;
     my $user = $openresty->current_user;
-    $OpenResty::Cache->remove_has_model($user, $table);
+    $OpenResty::Cache->remove_has_model($user, $model);
     return [:sql|
-        drop table if exists $sym:table;
-        delete from _models where table_name = $table;
-        delete from _columns where table_name = $table;
+        drop table if exists $sym:model;
+        delete from _models where table_name = $model;
+        delete from _columns where table_name = $model;
     |];
 }
 
@@ -686,15 +677,14 @@ sub insert_records {
         die "Malformed data: Hash or Array expected\n";
     }
     ### Data: $data
-    my $table = $model;
-    if ($self->row_count($openresty, $table) >= $RECORD_LIMIT) {
+    if ($self->row_count($openresty, $model) >= $RECORD_LIMIT) {
         die "Exceeded model row count limit: $RECORD_LIMIT.\n";
     }
     ### HERE 2...
 
     my $cols = $self->get_model_col_names($openresty, $model);
     my $sql;
-    my $insert = OpenResty::SQL::Insert->new(QI($table));
+    my $insert = OpenResty::SQL::Insert->new(QI($model));
 
     ### HERE 3...
 
@@ -712,12 +702,14 @@ sub insert_records {
         my $with_explicit_id = 0;
         my $sql = $self->insert_record($openresty, $insert, $data, $cols, 1, \$with_explicit_id);
         if ($with_explicit_id) {
-            my $table = QI($model);
-            $sql .= "select setval(pg_get_serial_sequence('$table', 'id'), temp.max_id) from (select max(id) as max_id from $table) temp";
+            $sql .= [:sql|
+                select setval(pg_get_serial_sequence('$sym:model', 'id'), temp.max_id)
+                from (select max(id) as max_id from $sym:model) temp;
+            |];
         }
         # XXX This is a hack...
         my $num = $openresty->do($sql);
-        my $last_id = $openresty->last_insert_id($table);
+        my $last_id = $openresty->last_insert_id($model);
 
         return { rows_affected => $num, last_row => "/=/model/$model/id/$last_id", success => $num?1:0 };
     } elsif (ref $data eq 'ARRAY') {
@@ -736,8 +728,10 @@ sub insert_records {
         }
         ### HERE HANG...
         if ($with_explicit_id) {
-            my $table = QI($model);
-            $sql .= "select setval(pg_get_serial_sequence('$table', 'id'), temp.max_id) from (select max(id) as max_id from $table) temp";
+            $sql .= [:sql|
+                select setval(pg_get_serial_sequence('$sym:model', 'id'), temp.max_id)
+                from (select max(id) as max_id from $sym:model) temp;
+            |];
         }
 
         my $success = $openresty->do($sql);
@@ -746,7 +740,7 @@ sub insert_records {
             $rows_affected = @$data;
         }
         # This is a hack...
-        my $last_id = $openresty->last_insert_id($table);
+        my $last_id = $openresty->last_insert_id($model);
         return { rows_affected => $rows_affected, last_row => "/=/model/$model/id/$last_id", success => $rows_affected?1:0 };
     } else {
         die "Malformed data: Hash or Array expected.\n";
@@ -817,7 +811,6 @@ sub process_limit {
 
 sub select_records {
     my ($self, $openresty, $model, $user_col, $val) = @_;
-    my $table = $model;
     my $cols = $self->get_model_col_names($openresty, $model);
 
     if (lc($user_col) ne 'id' and $user_col ne '~') {
@@ -828,7 +821,7 @@ sub select_records {
         if (!$found) { die "Column $user_col not available.\n"; }
     }
     my $select = OpenResty::SQL::Select->new;
-    $select->from(QI($table));
+    $select->from(QI($model));
     #warn "VAL: $val\n";
     #warn "IS UTF8???";
     if (defined $val and $val ne '~') {
@@ -870,8 +863,7 @@ sub select_all_records {
         die "Model \"$model\" not found.\n";
     }
 
-    my $table = $model;
-    my $select = OpenResty::SQL::Select->new('*')->from(QI($table));
+    my $select = OpenResty::SQL::Select->new('*')->from(QI($model));
 
     $self->process_order_by($openresty, $select, $model);
     $self->process_offset($openresty, $select);
@@ -887,8 +879,7 @@ sub delete_all_records {
     if (!$openresty->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
-    my $table = $model;
-    my $retval = $openresty->do("delete from \"$table\"");
+    my $retval = $openresty->do("delete from \"$model\"");
     return {success => 1,rows_affected => $retval+0};
 }
 
@@ -897,7 +888,6 @@ sub delete_records {
     if (!$openresty->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
-    my $table = $model;
     my $cols = $self->get_model_col_names($openresty, $model);
     if (lc($user_col) ne 'id') {
         my $found = 0;
@@ -909,9 +899,9 @@ sub delete_records {
     #my $flds = join(",", @$cols);
     my $sql;
     if (defined $val) {
-        $sql = "delete from \"$table\" where \"$user_col\"=" . Q($val);
+        $sql = "delete from \"$model\" where \"$user_col\"=" . Q($val);
     } else {
-        $sql = "delete from \"$table\"";
+        $sql = "delete from \"$model\"";
     }
 
     my $retval = $openresty->do($sql);
@@ -920,7 +910,6 @@ sub delete_records {
 
 sub update_records {
     my ($self, $openresty, $model, $user_col, $val, $data) = @_;
-    my $table = $model;
     my $cols = $self->get_model_col_names($openresty, $model);
     if ($user_col ne 'id' && $user_col ne '~') {
         my $found = 0;
@@ -933,7 +922,7 @@ sub update_records {
     if (!ref $data || ref $data ne 'HASH') {
         die "HASH data expected in the content body.\n";
     }
-    my $update = OpenResty::SQL::Update->new(QI($table));
+    my $update = OpenResty::SQL::Update->new(QI($model));
     while (my ($key, $val) = each %$data) {
         my $col = $key;
         if (lc($col) eq 'id') {
@@ -951,7 +940,6 @@ sub update_records {
     #warn "VAL:  $val";
     #warn "is_utf8:", is_utf8($val), "\n";
     #warn "is_utf8:", is_utf8($user_col), "\n";
-    #warn "is_utf8:", is_utf8($table), "\n";
     ### SQL: "$update"
     #warn "X<<<<>>>> $update";
     my $retval = $openresty->do("$update") + 0;
@@ -964,7 +952,6 @@ sub alter_model {
     my $model = _IDENT($_[1]) or die "Invalid model name \"$_[1]\".\n";
     my $data = _HASH($_[2]) or die "HASH expected in the PUT content.\n";
     my $user = $openresty->current_user;
-    my $table = $model;
     if (!$openresty->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
@@ -978,11 +965,10 @@ sub alter_model {
             die "Model \"$new_model\" already exists.\n";
         }
         $OpenResty::Cache->remove_has_model($user, $model);
-        my $new_table = $new_model;
-        $sql .=
-            "update _models set table_name='$new_table', name='$new_model' where name='$model';\n" .
-            "update _columns set table_name='$new_table' where table_name='$table';\n" .
-            "alter table \"$table\" rename to \"$new_table\";\n";
+        $sql .= [:sql|
+            update _models set table_name=$new_model, name=$new_model where name=$model;
+            update _columns set table_name=$new_model where table_name=$model;
+            alter table $sym:model rename to $sym:new_model; |]
     }
     $new_model ||= $model;
     if (my $desc = delete $data->{description}) {
