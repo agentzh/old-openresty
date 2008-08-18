@@ -1,7 +1,7 @@
 use Test::Base;
 use JSON::XS;
 
-plan tests => 2* blocks() + 80;
+plan tests => 2* blocks() + 82;
 
 require OpenResty::QuasiQuote::Validator;
 
@@ -83,7 +83,7 @@ __DATA__
 if (defined) {
     ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
     {
-        local $_ = $_->{"foo"};
+        local *_ = \( $_->{"foo"} );
         if (defined) {
             !ref and length or die qq{Bad value for "foo": String expected.\n};
         }
@@ -398,7 +398,7 @@ if (defined) {
     ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
     %$_ or die qq{Hash cannot be empty.\n};
     {
-        local $_ = $_->{"cat"};
+        local *_ = \( $_->{"cat"} );
         if (defined) {
             !ref and length or die qq{Bad value for "cat": String expected.\n};
         }
@@ -443,12 +443,12 @@ defined or die qq{Value required.\n};
 if (defined) {
     ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
     {
-        local $_ = $_->{"name"};
+        local *_ = \( $_->{"name"} );
         defined or die qq{Value for "name" required.\n};
         !ref and length or die qq{Bad value for "name": String expected.\n};
     }
     {
-        local $_ = $_->{"type"};
+        local *_ = \( $_->{"type"} );
         defined or die qq{Value for "type" required.\n};
         !ref and length or die qq{Bad value for "type": String expected.\n};
     }
@@ -470,12 +470,12 @@ Unrecognized key in hash: default
 defined or die qq{Value required.\n};
 ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 {
-    local $_ = $_->{"name"};
+    local *_ = \( $_->{"name"} );
     defined or die qq{Value for "name" required.\n};
     !ref and length or die qq{Bad value for "name": String expected.\n};
 }
 {
-    local $_ = $_->{"type"};
+    local *_ = \( $_->{"type"} );
     defined or die qq{Value for "type" required.\n};
     !ref and length or die qq{Bad value for "type": String expected.\n};
 }
@@ -553,13 +553,13 @@ $foo = $_;
 if (defined) {
     ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
     {
-        local $_ = $_->{"name"};
+        local *_ = \( $_->{"name"} );
         defined or die qq{Value for "name" required.\n};
         !ref and length or die qq{Bad value for "name": String expected.\n};
         $name = $_;
     }
     {
-        local $_ = $_->{"type"};
+        local *_ = \( $_->{"type"} );
         if (defined) {
             !ref and length or die qq{Bad value for "type": String expected.\n};
         }
@@ -583,11 +583,11 @@ $column = $_;
 $data ~~ { "name": STRING }
 --- perl
 {
-    local $_ = $data;
+    local *_ = \$data;
     if (defined) {
         ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
         {
-            local $_ = $_->{"name"};
+            local *_ = \( $_->{"name"} );
             if (defined) {
             !ref and length or die qq{Bad value for "name": String expected.\n};
             }
