@@ -20,7 +20,7 @@ validator: lhs(?) value <commit> eofile
     }
          | <error>
 
-lhs: variable '~~' { "{\nlocal \$_ = $item[1];\n" }
+lhs: variable '~~' { "{\nlocal *_ = \\$item[1];\n" }
 
 variable: /\$[A-Za-z]\w*/
 
