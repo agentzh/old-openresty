@@ -12,7 +12,11 @@ endef
 
 .PHONY: par debian
 
-all: lib/OpenResty/RestyScript/View.pm lib/OpenResty/RestyScript/ViewUpgrade.pm
+all: lib/OpenResty/RestyScript/View.pm lib/OpenResty/RestyScript/ViewUpgrade.pm lib/OpenResty/QuasiQuote/Validator/Compiler.pm
+
+lib/OpenResty/QuasiQuote/Validator/Compiler.pm: grammar/validator.grammar
+	perl -MParse::RecDescent - $< OpenResty::QuasiQuote::Validator::Compiler
+	mv Compiler.pm $@
 
 lib/OpenResty/RestyScript/View.pm: grammar/restyscript-view.yp
 	yapp -m OpenResty::RestyScript::View -o $@ $<

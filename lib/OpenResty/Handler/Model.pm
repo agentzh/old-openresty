@@ -12,6 +12,7 @@ use OpenResty::Limits;
 use Clone 'clone';
 use Encode qw(is_utf8);
 use OpenResty::QuasiQuote::SQL;
+use OpenResty::QuasiQuote::Validator;
 
 #%OpenResty::AccountFiltered = %OpenResty::AccountFiltered;
 #$OpenResty::OpMap = $OpenResty::OpMap;
@@ -399,25 +400,28 @@ sub new_model {
         #warn "===================================> $num\n";
         die "Exceeded model count limit $MODEL_LIMIT.\n";
     }
-    my $model = delete $data->{name} or
-        die "No 'name' field found for the new model\n";
-    my $table = $model;
 
-    my $description = delete $data->{description} or
-        die "No 'description' specified for model \"$model\".\n";
-    die "Bad 'description' value: ", $OpenResty::Dumper->($description), "\n"
-        unless _STRING($description);
+    my ($model, $desc, $columns);
+    [:validator|
+        $data ~~
+        {
+            name: IDENT :to($model) :default({ }),
+            description: STRING :nonempty :required :to($desc),
+            columns: [
+                {
+                    name: IDENT :required,
+                    label: STRING :nonempty :required,
+                    type: STRING :nonempty :required,
+                    default: ANY,
+                    unique: BOOL
+                }
+            ] :to($columns)
+        }
+    |]
 
     # XXX Should we allow 0 column table here?
-    if (!ref $data) {
-        die "Malformed data. Hash or Array expected.\n";
-    }
 
-    my $columns = delete $data->{columns};
-    if (_HASH($columns)) { $columns = [$columns] }
-    if ($columns && !_ARRAY0($columns)) {
-        die "Invalid 'columns' value: ", $OpenResty::Dumper->($columns), "\n";
-    } elsif (!$columns) {
+    if (!$columns) {
         $openresty->warning("No 'columns' specified for model \"$model\".");
         $columns = [];
     } elsif (!@$columns) {
@@ -427,29 +431,21 @@ sub new_model {
         die "Exceeded model column count limit: $COLUMN_LIMIT.\n";
     }
 
-    if (%$data) {
-        my @key = sort(keys %$data);
-            die "Unrecognized keys in model schema 'TTT': ",
-                join(", ", map { JSON::Syck::Dump($_) } @key), "\n";
-    }
-    my $i = 1;
     if ($openresty->has_model($model)) {
         die "Model \"$model\" already exists.\n";
     }
     my $sql = [:sql|
         insert into _models (name, table_name, description)
-        values ($model, $table, $description); |];
+        values ($model, $model, $desc); |];
 
     $sql .=
-        [:sql| create table $sym:table (id serial primary key |];
+        [:sql| create table $sym:model (id serial primary key |];
     my $sql2 = '';
     my $found_id = undef;
     for my $col (@$columns) {
-        _HASH($col) or die "Column definition must be a hash: ", $OpenResty::Dumper->($col), "\n";
-        my $name = delete $col->{name} or
-            die "No 'name' specified for the column $i.\n";
-        _STRING($name) or die "Bad column name: ", $OpenResty::Dumper->($name), "\n";
-        _IDENT($name) or die "Bad column name: $name\n";
+        my $name = $col->{name};
+        my $label = $col->{label};
+        my $type = $col->{type};
         if (length($name) >= 32) {
             die "Column name too long: $name\n";
         }
@@ -459,12 +455,8 @@ sub new_model {
             $found_id = 1;
             next;
         }
-        my $type = delete $col->{type} or
-            die "No 'type' specified for column \"$name\" in model \"$model\".\n";
-        my $label = delete $col->{label} or
-            die "No 'label' specified for column \"$name\" in model \"$model\".\n";
 
-        my $default = delete $col->{default};
+        my $default = $col->{default};
         $type = check_type($type);
         $sql .= [:sql| , $sym:name $kw:type |];
 
@@ -478,7 +470,7 @@ sub new_model {
 
         my $col_sql = [:sql|
             insert into _columns (name, type, label, table_name, "default")
-            values ($name, $type, $label, $table, $json_default); |];
+            values ($name, $type, $label, $model, $json_default); |];
         #warn Q($json_default);
 
         my $unique = delete $col->{unique};
@@ -488,19 +480,11 @@ sub new_model {
             $sql .= " unique";
         }
 
-        if (%$col) {
-            my @key = sort(keys %$col);
-                die "Unrecognized keys for column \"$name\": ",
-                    join(", ", map { JSON::Syck::Dump($_) } @key), "\n";
-        }
-
         $sql2 .= $col_sql;
-        $i++;
     }
-    $sql .= "\n);\ngrant select on table \"$table\" to anonymous;\n";
+    $sql .= "\n);\ngrant select on table \"$model\" to anonymous;\n";
    #warn $sql, "\n";
 
-    #register_table($table);
     #register_columns
     eval {
         $openresty->do($sql2 . $sql);

@@ -1,13 +1,13 @@
 use Test::Base;
 use JSON::XS;
 
-plan tests => 2* blocks() + 96;
+plan tests => 2* blocks() + 106;
 
-require OpenResty::QuasiQuote::Validator;
+require OpenResty::QuasiQuote::Validator::Compiler;
 
 my $json_xs = JSON::XS->new->utf8->allow_nonref;
 
-my $val = bless {}, 'OpenResty::QuasiQuote::Validator';
+my $val = OpenResty::QuasiQuote::Validator::Compiler->new;
 
 #no_diff;
 
@@ -223,13 +223,13 @@ if (defined) {
                     {
                         local *_ = \( $_->{"name"} );
                         if (defined) {
-                            !ref or die qq{Bad value for "name": String expected.\n};
+                            !ref or die qq{Bad value for "name" for "columns" array element: String expected.\n};
                         }
                     }
                     {
                         local *_ = \( $_->{"type"} );
                         if (defined) {
-                            !ref or die qq{Bad value for "type": String expected.\n};
+                            !ref or die qq{Bad value for "type" for "columns" array element: String expected.\n};
                         }
                     }
                     for (keys %$_) {
@@ -701,7 +701,34 @@ if (defined) {
 --- valid
 null
 "hello"
+0
+1
 --- invalid
 ""
 Invalid value: Nonempty scalar expected.
+true
+Bad value: String expected.
+false
+Bad value: String expected.
+
+
+
+=== TEST 27: BOOL
+--- spec
+BOOL
+--- perl
+if (defined) {
+    JSON::XS::is_bool($_) or die qq{Bad value: Boolean expected.\n};
+}
+--- valid
+true
+false
+null
+--- invalid
+"hello"
+Bad value: Boolean expected.
+0
+Bad value: Boolean expected.
+1
+Bad value: Boolean expected.
 

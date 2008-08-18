@@ -69,7 +69,7 @@ POST /=/action/Action
 --- request
 POST /=/model/A
 { "description": "A",
-  "columns": { "name": "title", "label": "title", "type": "text" }
+  "columns": [{ "name": "title", "label": "title", "type": "text" }]
   }
 --- response
 {"success":1}

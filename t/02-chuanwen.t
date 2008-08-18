@@ -35,7 +35,7 @@ POST /=/model/Bookmark.js
     ]
 }
 --- response
-{"success":0,"error":"No 'description' specified for model \"Bookmark\"."}
+{"error":"Value for \"description\" required.","success":0}
 
 
 
@@ -51,7 +51,7 @@ POST /=/model/Bookmark.js
     ]
 }
 --- response
-{"success":0,"error":"No 'label' specified for column \"url\" in model \"Bookmark\"."}
+{"error":"Value for \"label\" for \"columns\" array element required.","success":0}
 
 
 
@@ -175,7 +175,7 @@ POST /=/model/Bookmark.js
     ]
 }
 --- response
-{"success":0,"error":"Bad column name: _id"}
+{"error":"Bad value for \"name\" for \"columns\" array element: Identifier expected.","success":0}
 
 
 
@@ -189,7 +189,7 @@ POST /=/model/Bookmark.js
     ]
 }
 --- response
-{"success":0,"error":"Bad column name: id.chen"}
+{"error":"Bad value for \"name\" for \"columns\" array element: Identifier expected.","success":0}
 
 
 
@@ -203,7 +203,7 @@ POST /=/model/bookmark.js
     ]
 }
 --- response
-{"success":0,"error":"Bad column name: 1_id"}
+{"error":"Bad value for \"name\" for \"columns\" array element: Identifier expected.","success":0}
 
 
 
@@ -217,7 +217,7 @@ POST /=/model/bookmark.js
     ]
 }
 --- response
-{"success":0,"error":"Bad column name: id-chen"}
+{"error":"Bad value for \"name\" for \"columns\" array element: Identifier expected.","success":0}
 
 
 
@@ -248,11 +248,10 @@ DELETE /=/model/bookmark
 POST /=/model/Bookmark.js
 {
     "description": "我的书签",
-    "columns": { "name": "id_chen", "type": "serial", "label": "ID" }
+    "columns": [{ "name": "id_chen", "type": "serial", "label": "ID" }]
 }
 --- response
 {"success":1}
- 
 
 
 

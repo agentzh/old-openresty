@@ -51,7 +51,7 @@ POST /=/model/Human
     [ { "name": "gender", "label": "性别" } ]
 }
 --- response
-{"success":0,"error":"Model \"Human\" already exists."}
+{"error":"Value for \"type\" for \"columns\" array element required.","success":0}
 
 
 
@@ -77,7 +77,7 @@ POST /=/model/Blah
     [ { "name": "gender", "label": "性别" } ]
 }
 --- response
-{"success":0,"error":"No 'description' specified for model \"Blah\"."}
+{"error":"Value for \"description\" required.","success":0}
 
 
 
@@ -90,7 +90,7 @@ POST /=/model/Blah
     [ { "name": "gender", "type": "text" } ]
 }
 --- response
-{"success":0,"error":"No 'label' specified for column \"gender\" in model \"Blah\"."}
+{"error":"Value for \"label\" for \"columns\" array element required.","success":0}
 
 
 
@@ -206,7 +206,7 @@ POST /=/model/laser
 POST /=/model/Tiger
 { "description": "Tiger", "columns": 32 }
 --- response
-{"success":0,"error":"Invalid 'columns' value: 32"}
+{"error":"Invalid value for \"columns\": Array expected.","success":0}
 
 
 
@@ -215,7 +215,7 @@ POST /=/model/Tiger
 POST /=/model/Tiger
 { "description": ["hello"] }
 --- response
-{"success":0,"error":"Bad 'description' value: [\"hello\"]"}
+{"error":"Bad value for \"description\": String expected.","success":0}
 
 
 
@@ -226,7 +226,7 @@ POST /=/model/Tiger
     [ { "name":[32], "label":"bad col" } ]
 }
 --- response
-{"success":0,"error":"Bad column name: [32]"}
+{"error":"Bad value for \"name\" for \"columns\" array element: Identifier expected.","success":0}
 
 
 
@@ -234,7 +234,7 @@ POST /=/model/Tiger
 --- request
 POST /=/model/Tiger
 { "description": "Tiger", "columns":
-    [ { "name":"dddddddddddddddddddddddddddddddd", "label":"hiya" } ]
+    [ { "name":"dddddddddddddddddddddddddddddddd", "label":"hiya", "type":"char(3)" } ]
 }
 --- response
 {"success":0,"error":"Column name too long: dddddddddddddddddddddddddddddddd"}
@@ -275,7 +275,7 @@ POST /=/model/ABCDEFGHIJKLMNOPQRSTUVWXYZ12345
 POST /=/model/TTT
 { "\uFFFE": "key named \uFFFE", "description": "bad" }
 --- response_like
-{"success":0,"error":"Unrecognized keys in model schema 'TTT': .+?"}
+{"success":0,"error":"Unrecognized key in hash: .+?"}
 
 
 
@@ -284,7 +284,7 @@ POST /=/model/TTT
 POST /=/model/TTT
 { "\uFFFE": "key named \uFFFE", "\uFFFF": "key named \uFFFF", "description": "bad" }
 --- response_like
-{"success":0,"error":"Unrecognized keys in model schema 'TTT': .+?, .+?"}
+{"success":0,"error":"Unrecognized key in hash: .+?"}
 
 
 
@@ -295,7 +295,7 @@ POST /=/model/Foo2
   "columns": [ [1,2] ]
 }
 --- response
-{"success":0,"error":"Column definition must be a hash: [1,2]"}
+{"error":"Invalid value for \"columns\" array element: Hash expected.","success":0}
 
 
 
@@ -329,7 +329,7 @@ POST /=/model/Post
             {"name":"age","label":"Age","type":"integer"}]
 }
 --- response
-{"success":0,"error":"Unrecognized keys for column \"name\": \"blah\""}
+{"error":"Unrecognized key in hash for \"columns\" array element: blah","success":0}
 
 
 
