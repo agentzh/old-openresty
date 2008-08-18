@@ -52,7 +52,7 @@
                 &nbsp; &nbsp; &nbsp;
 
                 [%- IF category == 'model' %]
-                <b><a href="#modelrows-[% object.name %]">View model rows</a></b>
+                <b><a href="#modelrows/[% object.name %]/1">View model rows</a></b>
                 &nbsp; &nbsp; &nbsp;
                 [%- ELSIF category == 'role' %]
                 <b><a href="#rolerules-[% object.name %]">View ACL rules</a></b>

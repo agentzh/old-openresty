@@ -4,7 +4,8 @@
         { name => "Carrie", age => 24 },
         { name => "agentzh", age => 25 },
         { name => "laser", age => 35 },
-    ];
+    ],
+    pat = 'hello'
 %]
 
 [% BLOCK editable_row_value -%]
@@ -17,6 +18,13 @@
     </span>
     <span class="total-rows"></span>
 </div>
+
+<span class="search-box">
+    <form onsubmit="searchRows();return false;">
+        <label>Search rows</label>&nbsp; &nbsp;
+        <input id="search-box-input" type="text" size="15" value="[% pat == '~' ? '' : pat | html %]"></input>
+    </form>
+</span>
 
 <div class="pager"></div>
 

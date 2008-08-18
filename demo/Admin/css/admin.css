@@ -4,6 +4,13 @@ span.total-rows {
     font-weight: normal;
 }
 
+span.search-box {
+    padding: 1em;
+    padding-right: 0;
+    font-style: normal;
+    font-weight: normal;
+}
+
 pre.view-def {
     margin-left: 4em;
 }
@@ -82,6 +89,10 @@ table.rules {
     white-space: nowrap;
     padding-left: 4em;
     padding-top: 1em;
+}
+
+table.paging td {
+    padding: 4px;
 }
 
 table.rules td {
