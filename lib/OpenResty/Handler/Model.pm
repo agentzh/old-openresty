@@ -181,27 +181,35 @@ sub POST_model_column {
         die "Exceeded model column count limit: $COLUMN_LIMIT.\n";
     }
 
-    $data = _HASH($data) or die "column spec must be a HASH.\n";
     if ($col eq 'id') {
         die "Column id is reserved.";
     }
-    if ($col eq '~') {
-         $col = $data->{name} || die "you must provide the new the column with a name!";
+
+    my $alias;
+    if ($col ne '~') {
+        $alias = $data->{name};
+         $data->{name} = $col || die "you must provide the new column with a name!";
     }
 
-    my $alias = $data->{name};
+    my ($label, $type, $default, $unique);
+
+    [:validator|
+        $data ~~ {
+            name: IDENT :required :to($col),
+            label: STRING :nonempty :required :to($label),
+            type: STRING :nonempty :required :to($type),
+            default: ANY :to($default),
+            unique: BOOL :to($unique)
+        } :required :nonempty
+    |]
+
     my $cols = $self->get_model_col_names($openresty, $model);
     my $fst = first { $col eq $_ } @$cols;
     if (defined $fst) {
         die "Column '$col' already exists in model '$model'.\n";
     }
-    my $type = $data->{type} or die
-        die "No 'type' specified for column \"$col\" in model \"$model\".\n";
     $type = check_type($type);
-    my $label = $data->{label} or
-        die "No 'label' specified for column \"$col\" in model \"$model\".\n";
     my $json_default;
-    my $default = delete $data->{default};
     if (defined $default) {
         $json_default = $OpenResty::JsonXs->encode($default);
         $default = $self->process_default($openresty, $default);
@@ -227,36 +235,45 @@ sub PUT_model_column {
     my ($self, $openresty, $bits) = @_;
     my $model = $bits->[1];
     my $col = $bits->[2];
-    my $data = _HASH($openresty->{_req_data}) or
-        die "column spec must be a non-empty HASH.\n";
+    my $data = $openresty->{_req_data};
 
     # discard 'id' column
     if (lc($col) eq 'id') {
         die "Column id is reserved.";
     }
+
+    my ($new_col, $type, $label, $unique);
+
+    [:validator|
+        $data ~~ {
+            name: IDENT :to($new_col),
+            label: STRING :nonempty :to($label),
+            type: STRING :nonempty :to($type),
+            default: ANY,
+            unique: BOOL :to($unique)
+        } :required :nonempty
+    |]
+
     my $sql;
-    my $new_col = delete $data->{name};
     my $update_meta = OpenResty::SQL::Update->new('_columns');
     if ($new_col) {
-        _IDENT($new_col) or die "Bad column name: ",
-                $OpenResty::Dumper->($new_col), "\n";
-
         #$new_col = $new_col);
         $update_meta->set(name => Q($new_col));
-        $sql .= "alter table \"$model\" rename column \"$col\" to \"$new_col\";\n";
-        #$col = $new_col;
+        $sql .= [:sql|
+            alter table $sym:model rename column $sym:col to $sym:new_col;
+        |];
     } else {
         $new_col = $col;
     }
-    my $type = delete $data->{type};
     if ($type) {
         #die "Changing column type is not supported.\n";
         $type = check_type($type);
         $update_meta->set(type => Q($type));
-        $sql .= "alter table \"$model\" alter column \"$new_col\" type $type;\n",
+        $sql .= [:sql|
+            alter table $sym:model alter column $sym:new_col type $kw:type;
+        |];
     }
 
-    my $label = delete $data->{label};
     if (defined $label) {
         _STRING($label) or die "Lable must be a non-empty string: ",
             $OpenResty::Dumper->($label);
@@ -264,7 +281,7 @@ sub PUT_model_column {
     }
 
     if (exists $data->{default}) {
-        my $default = delete $data->{default};
+        my $default = $data->{default};
         if (defined $default) {
             #warn "DEFAULT: $default\n";
             my $json_default = $OpenResty::JsonXs->encode($default);
@@ -282,15 +299,8 @@ sub PUT_model_column {
         ->where(name => Q($col));
 
     # XXX TODO: add support for updating column's uniqueness
-    my $unique = delete $data->{unique};
     if (defined $unique) {
         die "Updating column's uniqueness is not implemented yet.\n";
-    }
-
-    if (%$data) {
-        my @key = sort(keys %$data);
-            die "Unrecognized keys in the content object: ",
-                join(", ", map { JSON::Syck::Dump($_) } @key), "\n";
     }
 
     $sql .= $update_meta;

@@ -92,7 +92,7 @@ POST /=/model/laser/B
 === TEST 8: Add one column twice
 --- request
 POST /=/model/laser/B
-{"type":"integer","labeh":"b"}
+{"type":"integer","label":"b"}
 --- response
 {"success":0,"error":"Column 'B' already exists in model 'laser'."}
 
@@ -390,7 +390,7 @@ GET /=/model/laser/id/2
 PUT /=/model/laser/M
 {}
 --- response
-{"success":0,"error":"column spec must be a non-empty HASH."}
+{"error":"Hash cannot be empty.","success":0}
 
 
 
@@ -399,8 +399,7 @@ PUT /=/model/laser/M
 POST /=/model/laser/title
 {"label":"Title"}
 --- response
-{"success":0,"error":"No 'type' specified for column \"title\" in model \"laser\"."}
-
+{"error":"Value for \"type\" required.","success":0}
 
 
 === TEST 42: logout
