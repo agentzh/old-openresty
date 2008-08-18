@@ -1,7 +1,7 @@
 use Test::Base;
 use JSON::XS;
 
-plan tests => 2* blocks() + 82;
+plan tests => 2* blocks() + 96;
 
 require OpenResty::QuasiQuote::Validator;
 
@@ -85,7 +85,7 @@ if (defined) {
     {
         local *_ = \( $_->{"foo"} );
         if (defined) {
-            !ref and length or die qq{Bad value for "foo": String expected.\n};
+            !ref or die qq{Bad value for "foo": String expected.\n};
         }
     }
     for (keys %$_) {
@@ -112,7 +112,7 @@ Invalid value: Hash expected.
 STRING
 --- perl
 if (defined) {
-    !ref and length or die qq{Bad value: String expected.\n};
+    !ref or die qq{Bad value: String expected.\n};
 }
 --- valid
 "hello"
@@ -185,7 +185,7 @@ if (defined) {
     ref and ref eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
     for (@$_) {
         if (defined) {
-            !ref and length or die qq{Bad value for array element: String expected.\n};
+            !ref or die qq{Bad value for array element: String expected.\n};
         }
     }
 }
@@ -223,13 +223,13 @@ if (defined) {
                     {
                         local *_ = \( $_->{"name"} );
                         if (defined) {
-                            !ref and length or die qq{Bad value for "name": String expected.\n};
+                            !ref or die qq{Bad value for "name": String expected.\n};
                         }
                     }
                     {
                         local *_ = \( $_->{"type"} );
                         if (defined) {
-                            !ref and length or die qq{Bad value for "type": String expected.\n};
+                            !ref or die qq{Bad value for "type": String expected.\n};
                         }
                     }
                     for (keys %$_) {
@@ -271,7 +271,7 @@ ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 {
     local *_ = \( $_->{"foo"} );
     if (defined) {
-        !ref and length or die qq{Bad value for "foo": String expected.\n};
+        !ref or die qq{Bad value for "foo": String expected.\n};
     }
 }
 for (keys %$_) {
@@ -400,7 +400,7 @@ if (defined) {
     {
         local *_ = \( $_->{"cat"} );
         if (defined) {
-            !ref and length or die qq{Bad value for "cat": String expected.\n};
+            !ref or die qq{Bad value for "cat": String expected.\n};
         }
     }
     for (keys %$_) {
@@ -432,7 +432,7 @@ defined or die qq{Value required.\n};
 STRING :required
 --- perl
 defined or die qq{Value required.\n};
-!ref and length or die qq{Bad value: String expected.\n};
+!ref or die qq{Bad value: String expected.\n};
 
 
 
@@ -445,12 +445,12 @@ if (defined) {
     {
         local *_ = \( $_->{"name"} );
         defined or die qq{Value for "name" required.\n};
-        !ref and length or die qq{Bad value for "name": String expected.\n};
+        !ref or die qq{Bad value for "name": String expected.\n};
     }
     {
         local *_ = \( $_->{"type"} );
         defined or die qq{Value for "type" required.\n};
-        !ref and length or die qq{Bad value for "type": String expected.\n};
+        !ref or die qq{Bad value for "type": String expected.\n};
     }
     for (keys %$_) {
         $_ eq "name" or $_ eq "type" or die qq{Unrecognized key in hash: $_\n};
@@ -471,12 +471,12 @@ ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 {
     local *_ = \( $_->{"name"} );
     defined or die qq{Value for "name" required.\n};
-    !ref and length or die qq{Bad value for "name": String expected.\n};
+    !ref or die qq{Bad value for "name": String expected.\n};
 }
 {
     local *_ = \( $_->{"type"} );
     defined or die qq{Value for "type" required.\n};
-    !ref and length or die qq{Bad value for "type": String expected.\n};
+    !ref or die qq{Bad value for "type": String expected.\n};
 }
 for (keys %$_) {
     $_ eq "name" or $_ eq "type" or die qq{Unrecognized key in hash: $_\n};
@@ -489,7 +489,7 @@ for (keys %$_) {
 STRING :default('hello')
 --- perl
 if (defined) {
-    !ref and length or die qq{Bad value: String expected.\n};
+    !ref or die qq{Bad value: String expected.\n};
 }
 else {
     $_ = 'hello';
@@ -505,7 +505,7 @@ if (defined) {
     ref and ref eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
     for (@$_) {
         if (defined) {
-            !ref and length or die qq{Bad value for array element: String expected.\n};
+            !ref or die qq{Bad value for array element: String expected.\n};
         }
         else {
             $_ = 32;
@@ -529,7 +529,7 @@ if (defined) {
     ref and ref eq 'ARRAY' or die qq{Invalid value: Array expected.\n};
     for (@$_) {
         if (defined) {
-            !ref and length or die qq{Bad value for array element: String expected.\n};
+            !ref or die qq{Bad value for array element: String expected.\n};
         }
         else {
             $_ = 32;
@@ -553,13 +553,13 @@ if (defined) {
     {
         local *_ = \( $_->{"name"} );
         defined or die qq{Value for "name" required.\n};
-        !ref and length or die qq{Bad value for "name": String expected.\n};
+        !ref or die qq{Bad value for "name": String expected.\n};
         $name = $_;
     }
     {
         local *_ = \( $_->{"type"} );
         if (defined) {
-            !ref and length or die qq{Bad value for "type": String expected.\n};
+            !ref or die qq{Bad value for "type": String expected.\n};
         }
         else {
             $_ = "text";
@@ -587,7 +587,7 @@ $data ~~ { "name": STRING }
         {
             local *_ = \( $_->{"name"} );
             if (defined) {
-            !ref and length or die qq{Bad value for "name": String expected.\n};
+            !ref or die qq{Bad value for "name": String expected.\n};
             }
         }
         for (keys %$_) {
@@ -609,7 +609,7 @@ $foo->{bar} ~~ { "name": STRING }
         {
             local *_ = \( $_->{"name"} );
             if (defined) {
-            !ref and length or die qq{Bad value for "name": String expected.\n};
+            !ref or die qq{Bad value for "name": String expected.\n};
             }
         }
         for (keys %$_) {
@@ -625,7 +625,7 @@ $foo->{bar} ~~ { "name": STRING }
 STRING :match(/^\d{4}-\d{2}-\d{2}$/, 'Date')
 --- perl
 if (defined) {
-    !ref and length or die qq{Bad value: String expected.\n};
+    !ref or die qq{Bad value: String expected.\n};
     /^\d{4}-\d{2}-\d{2}$/ or die qq{Invalid value: Date expected.\n};
 }
 
@@ -636,7 +636,72 @@ if (defined) {
 STRING :allowed('password', 'login', 'anonymous')
 --- perl
 if (defined) {
-    !ref and length or die qq{Bad value: String expected.\n};
+    !ref or die qq{Bad value: String expected.\n};
     $_ eq 'password' or $_ eq 'login' or $_ eq 'anonymous' or die qq{Invalid value: Allowed values are 'password', 'login', 'anonymous'.\n};
 }
+--- valid
+"password"
+"login"
+"anonymous"
+null
+--- invalid
+""
+Invalid value: Allowed values are 'password', 'login', 'anonymous'.
+
+
+
+=== TEST 25: :allowed and :match in hashes
+--- spec
+{
+    cat: STRING :match(/mimi|papa/, 'Cat name') :required,
+    dog: STRING :allowed('John', 'Mike')
+}
+--- perl
+if (defined) {
+    ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+    {
+        local *_ = \( $_->{"cat"} );
+        defined or die qq{Value for "cat" required.\n};
+        !ref or die qq{Bad value for "cat": String expected.\n};
+        /mimi|papa/ or die qq{Invalid value for "cat": Cat name expected.\n};
+    }
+    {
+        local *_ = \( $_->{"dog"} );
+        if (defined) {
+            !ref or die qq{Bad value for "dog": String expected.\n};
+            $_ eq 'John' or $_ eq 'Mike' or die qq{Invalid value for "dog": Allowed values are 'John', 'Mike'.\n};
+        }
+    }
+    for (keys %$_) {
+        $_ eq "cat" or $_ eq "dog" or die qq{Unrecognized key in hash: $_\n};
+    }
+}
+--- valid
+null
+{"cat":"mimi"}
+{"cat":"mimi","dog":"John"}
+{"cat":"papa","dog":"Mike"}
+--- invalid
+{"cat":"mini"}
+Invalid value for "cat": Cat name expected.
+{"cat":"papa","dog":"John Zhang"}
+Invalid value for "dog": Allowed values are 'John', 'Mike'.
+
+
+
+=== TEST 26: nonempty values
+--- spec
+STRING :nonempty
+--- perl
+if (defined) {
+    !ref or die qq{Bad value: String expected.\n};
+    length or die qq{Invalid value: Nonempty scalar expected.\n};
+}
+
+--- valid
+null
+"hello"
+--- invalid
+""
+Invalid value: Nonempty scalar expected.
 

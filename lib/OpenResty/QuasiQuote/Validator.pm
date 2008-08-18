@@ -115,6 +115,10 @@ _EOC_
             $code2 .= "$pat or die qq{Invalid value$for_topic: $desc expected.\\n};\n";
         }
 
+        if (delete $attrs->{nonempty}) {
+            $code2 .= "length or die qq{Invalid value$for_topic: Nonempty scalar expected.\\n};\n";
+        }
+
         if (my $args = delete $attrs->{allowed}) {
             my $values = join ', ', @$args;
             my $expr = join ' or ', map { "\$_ eq $_" } @$args;
@@ -221,7 +225,7 @@ type: 'STRING'
             my $topic = $arg{topic};
             my $for_topic = $topic ? " for $topic" : "";
             <<"_EOC_";
-!ref and length or die qq{Bad value$for_topic: String expected.\\n};
+!ref or die qq{Bad value$for_topic: String expected.\\n};
 _EOC_
         }
     | 'INT'
