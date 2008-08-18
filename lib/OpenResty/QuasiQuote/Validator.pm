@@ -115,6 +115,12 @@ _EOC_
             $code2 .= "$pat or die qq{Invalid value$for_topic: $desc expected.\\n};\n";
         }
 
+        if (my $args = delete $attrs->{allowed}) {
+            my $values = join ', ', @$args;
+            my $expr = join ' or ', map { "\$_ eq $_" } @$args;
+            $code2 .= "$expr or die qq{Invalid value$for_topic: Allowed values are $values.\\n};\n";
+        }
+
         if ($required) {
             $code .= $code2;
         } else {
