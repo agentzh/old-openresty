@@ -184,20 +184,23 @@ function init () {
     getVersionInfo();
 }
 
-function getModelRows (name, page) {
+function getModelRows (name, page, pat) {
     setStatus(true, 'renderModelRows');
     if (!page) page = 1;
-    openresty.callback = function (res) { renderModelRows(res, name, page); };
+    openresty.callback = function (res) { renderModelRows(res, name, page, pat); };
+    if (/\%[A-Za-z0-9]{2}/.test(pat)) {
+        pat = decodeURIComponent(pat);
+    }
     openresty.get(
-        '/=/model/' + name + '/~/~',
-        { _offset: itemsPerPage * (page - 1), _count: itemsPerPage, _order_by: 'id:desc' }
+        '/=/model/' + name + '/~/' + pat,
+        { _offset: itemsPerPage * (page - 1), _count: itemsPerPage, _order_by: 'id:desc', _op: 'contains' }
     );
 }
 
-function getPager (name, page, prefix) {
+function getPager (name, page, prefix, suffix) {
     setStatus(true, 'getPager');
     openresty.callback = function (res) {
-        renderPager(res, page, prefix);
+        renderPager(res, page, prefix, suffix);
     };
     openresty.postByGet(
         '/=/action/RunView/~/~',
@@ -205,7 +208,7 @@ function getPager (name, page, prefix) {
     );
 }
 
-function renderPager (res, page, prefix) {
+function renderPager (res, page, prefix, suffix) {
     setStatus(false, 'getPager');
     if (!openresty.isSuccess(res)) {
         error("Failed to get the pager: " + res.error);
@@ -218,7 +221,7 @@ function renderPager (res, page, prefix) {
     if (pageCount < 2) return;
     var html = Jemplate.process(
         'pager.tt',
-        { page: page, page_count: pageCount, prefix: prefix }
+        { page: page, page_count: pageCount, prefix: prefix, suffix: suffix }
     );
     //alert("HTML: " + html);
     // we use the .each hack here to work aound a JS runtime error in IE 6:
@@ -230,7 +233,7 @@ function renderPager (res, page, prefix) {
 //////////////////////////////////////////////////////////////////////
 // static handlers (others can be found in template/js/handlers.tt)
 
-function renderModelRows (res, model, page) {
+function renderModelRows (res, model, page, pat) {
     setStatus(false, 'renderModelRows');
     if (!openresty.isSuccess(res)) {
         error("Failed to get model rows: " + res.error);
@@ -242,10 +245,10 @@ function renderModelRows (res, model, page) {
     $("#main").html(
         Jemplate.process(
             'model-rows.tt',
-            { model: model, rows: res }
+            { model: model, rows: res, pat: pat }
         )
     ).postprocess();
-    getPager(model, page, 'modelrows-' + model);
+    getPager(model, page, 'modelrows/' + model + '/', '/' + pat);
 }
 
 function getRoleRules (name) {
@@ -357,6 +360,24 @@ function afterDeleteRoleRule (res, role, id, nextPage) {
         return;
     }
     gotoNextPage(nextPage);
+}
+
+function searchRows () {
+    var pat = $("#search-box-input").val();
+    if (!pat) pat = '~';
+    var anchor = savedAnchor;
+    var matches = anchor.match(/^modelrows\/(\w+)\/\d+\/(.*)$/);
+    if (matches) {
+        var model = matches[1];
+        anchor = 'modelrows/' + model + '/1/' + pat;
+    } else {
+        matches = anchor.match(/^modelrows\/\w+\/\d+$/);
+        if (matches)
+            anchor += '/' + pat;
+        else
+            return;
+    }
+    gotoNextPage(anchor);
 }
 
 function gotoNextPage (nextPage) {

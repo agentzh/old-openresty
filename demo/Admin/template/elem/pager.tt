@@ -2,7 +2,8 @@
     page = 1,
     page_count = undef,
     title = 'Pages',
-    prefix = 'modelrows-Foo';
+    prefix = 'post-list/',
+    suffix = ''
 -%]
 
 [% IF page_count <= 10;
@@ -14,7 +15,7 @@
    END -%]
 
 <center>
-  <table class="pager">
+  <table class="paging">
     <tr>
       <td>
         [% title %]:&nbsp; &nbsp;
@@ -22,7 +23,7 @@
       <td>
       [%- IF page > 1 %]
         <span class="prev-page">
-            <a href="#[% prefix %]-[% page - 1 %]">Previous</a>
+            <a href="#[% prefix _ (page - 1) _ suffix %]">Previous</a>
         </span>
       [%- END %]
       </td>
@@ -32,7 +33,7 @@
       [%- IF i == page %]
         <td class="highlight">[% i %]</td>
       [%- ELSE %]
-        <td><a href="#[% prefix %]-[% i %]">[% i %]</a></td>
+        <td><a href="#[% prefix _ i _ suffix %]">[% i %]</a></td>
       [%- END %]
       [%- i = i + 1 %]
     [%- END %]
@@ -40,7 +41,7 @@
       <td>
       [%- IF page < page_count %]
         <span class="next-page">
-            <a href="#[% prefix %]-[% page + 1 %]">Next</a>
+            <a href="#[% prefix _ (page + 1) _ suffix %]">Next</a>
         </span>
       [%- END %]
       </td>
@@ -48,4 +49,3 @@
   </table>
 </center>
 <br/>
-
