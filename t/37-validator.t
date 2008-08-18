@@ -629,3 +629,14 @@ if (defined) {
     /^\d{4}-\d{2}-\d{2}$/ or die qq{Invalid value: Date expected.\n};
 }
 
+
+
+=== TEST 24: :allowed
+--- spec
+STRING :allowed('password', 'login', 'anonymous')
+--- perl
+if (defined) {
+    !ref and length or die qq{Bad value: String expected.\n};
+    $_ eq 'password' or $_ eq 'login' or $_ eq 'anonymous' or die qq{Invalid value: Allowed values are 'password', 'login', 'anonymous'.\n};
+}
+
