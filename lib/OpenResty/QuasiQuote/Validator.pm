@@ -11,8 +11,18 @@ use Parse::RecDescent;
 
 my $grammar = <<'_END_GRAMMAR_';
 
-validator: value <commit> eofile { return $item[1] }
+validator: lhs(?) value <commit> eofile
+    { if (@{$item[1]}) {
+        $item[1][0] . $item[2] . "}\n";
+      } else {
+        $item[2]
+      }
+    }
          | <error>
+
+lhs: variable '~~' { "{\nlocal \$_ = $item[1];\n" }
+
+variable: /\$[A-Za-z]\w*/
 
 value: hash
      | array
@@ -73,7 +83,7 @@ pair: key <commit> ':' value[ topic => qq{"$item[1]"} ]
             my $quoted_key = quotemeta($item[1]);
             [$item[1], <<"_EOC_" . $item[4] . "}\n"]
 {
-local \$_ = \$_->{"$quoted_key"};
+local *_ = \\( \$_->{"$quoted_key"} );
 _EOC_
         }
     | <error?> <reject>
@@ -223,7 +233,7 @@ attr: ':' ident '(' <commit> argument ')'
 
 argument: /^\d+/
         | '[]'
-        | /\$[A-Za-z]\w*/
+        | variable
         | { extract_quotelike($text) } { $item[1] }
         | { extract_codeblock($text) } { "do $item[1]" }
         | <error>

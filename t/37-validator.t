@@ -214,20 +214,20 @@ Invalid value: Array expected.
 if (defined) {
     ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
     {
-        local $_ = $_->{"columns"};
+        local *_ = \( $_->{"columns"} );
         if (defined) {
             ref and ref eq 'ARRAY' or die qq{Invalid value for "columns": Array expected.\n};
             for (@$_) {
                 if (defined) {
                     ref and ref eq 'HASH' or die qq{Invalid value for "columns" array element: Hash expected.\n};
                     {
-                        local $_ = $_->{"name"};
+                        local *_ = \( $_->{"name"} );
                         if (defined) {
                             !ref and length or die qq{Bad value for "name": String expected.\n};
                         }
                     }
                     {
-                        local $_ = $_->{"type"};
+                        local *_ = \( $_->{"type"} );
                         if (defined) {
                             !ref and length or die qq{Bad value for "type": String expected.\n};
                         }
@@ -246,6 +246,8 @@ if (defined) {
 --- valid
 {"columns":[]}
 {"columns":[{"name":"Carrie"}]}
+{"columns":null}
+{"columns":[{"name":null,"type":null}]}
 {}
 null
 --- invalid
@@ -267,7 +269,7 @@ Invalid value: Hash expected.
 defined or die qq{Value required.\n};
 ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
 {
-    local $_ = $_->{"foo"};
+    local *_ = \( $_->{"foo"} );
     if (defined) {
         !ref and length or die qq{Bad value for "foo": String expected.\n};
     }
@@ -573,4 +575,26 @@ if (defined) {
 $column = $_;
 --- valid
 {"name":"Hello","type":"text"}
+
+
+
+=== TEST 21: ~~
+--- spec
+$data ~~ { "name": STRING }
+--- perl
+{
+    local $_ = $data;
+    if (defined) {
+        ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
+        {
+            local $_ = $_->{"name"};
+            if (defined) {
+            !ref and length or die qq{Bad value for "name": String expected.\n};
+            }
+        }
+        for (keys %$_) {
+            $_ eq "name" or die qq{Unrecognized key in hash: $_\n};
+        }
+    }
+}
 
