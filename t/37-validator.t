@@ -583,7 +583,7 @@ $column = $_;
 $data ~~ { "name": STRING }
 --- perl
 {
-    local *_ = \$data;
+    local *_ = \( $data );
     if (defined) {
         ref and ref eq 'HASH' or die qq{Invalid value: Hash expected.\n};
         {
@@ -597,4 +597,12 @@ $data ~~ { "name": STRING }
         }
     }
 }
+
+
+
+=== TEST 22: match(/.../, '...')
+--- spec
+foo
+--- perl
+--- SKIP
 
