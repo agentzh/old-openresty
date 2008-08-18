@@ -3016,7 +3016,7 @@ sub Parse::RecDescent::OpenResty::QuasiQuote::Validator::Compiler::hash
 	while (!$_matched && !$commit)
 	{
 		
-		Parse::RecDescent::_trace(q{Trying production: ['\{' <commit> <leftop: pair /,/ pair> '\}' attr]},
+		Parse::RecDescent::_trace(q{Trying production: ['\{' <commit> <leftop: pair /,/ pair> /,?/ '\}' attr]},
 					  Parse::RecDescent::_tracefirst($_[1]),
 					  q{hash},
 					  $tracelevel)
@@ -3225,6 +3225,31 @@ sub Parse::RecDescent::OpenResty::QuasiQuote::Validator::Compiler::hash
 		push @item, $item{'pair(s?)'}=$_tok||[];
 
 
+		Parse::RecDescent::_trace(q{Trying terminal: [/,?/]}, Parse::RecDescent::_tracefirst($text),
+					  q{hash},
+					  $tracelevel)
+						if defined $::RD_TRACE;
+		$lastsep = "";
+		$expectation->is(q{/,?/})->at($text);
+		
+
+		unless ($text =~ s/\A($skip)/$lastsep=$1 and ""/e and   $text =~ s/\A(?:,?)//)
+		{
+			
+			$expectation->failed();
+			Parse::RecDescent::_trace(q{<<Didn't match terminal>>},
+						  Parse::RecDescent::_tracefirst($text))
+					if defined $::RD_TRACE;
+
+			last;
+		}
+		Parse::RecDescent::_trace(q{>>Matched terminal<< (return value: [}
+						. $& . q{])},
+						  Parse::RecDescent::_tracefirst($text))
+					if defined $::RD_TRACE;
+		push @item, $item{__PATTERN2__}=$&;
+		
+
 		Parse::RecDescent::_trace(q{Trying terminal: ['\}']},
 					  Parse::RecDescent::_tracefirst($text),
 					  q{hash},
@@ -3286,7 +3311,7 @@ sub Parse::RecDescent::OpenResty::QuasiQuote::Validator::Compiler::hash
 		
 
 		$_tok = ($_noactions) ? 0 : do {
-        my $attrs = { map { @$_ } @{ $item[5] } };
+        my $attrs = { map { @$_ } @{ $item[6] } };
         my $pairs = $item[3];
         my $topic = $arg{topic};
         ### $attrs
@@ -3348,7 +3373,7 @@ _EOC_
 		
 
 
-		Parse::RecDescent::_trace(q{>>Matched production: ['\{' <commit> <leftop: pair /,/ pair> '\}' attr]<<},
+		Parse::RecDescent::_trace(q{>>Matched production: ['\{' <commit> <leftop: pair /,/ pair> /,?/ '\}' attr]<<},
 					  Parse::RecDescent::_tracefirst($text),
 					  q{hash},
 					  $tracelevel)
@@ -5488,7 +5513,7 @@ _EOC_
                                                                        'dircount' => 2,
                                                                        'uncommit' => undef,
                                                                        'error' => undef,
-                                                                       'patcount' => 1,
+                                                                       'patcount' => 2,
                                                                        'actcount' => 1,
                                                                        'op' => [],
                                                                        'items' => [
@@ -5541,6 +5566,16 @@ _EOC_
                                                                                                             }, 'Parse::RecDescent::Token' )
                                                                                            }, 'Parse::RecDescent::Operator' ),
                                                                                     bless( {
+                                                                                             'pattern' => ',?',
+                                                                                             'hashname' => '__PATTERN2__',
+                                                                                             'description' => '/,?/',
+                                                                                             'lookahead' => 0,
+                                                                                             'rdelim' => '/',
+                                                                                             'line' => 19,
+                                                                                             'mod' => '',
+                                                                                             'ldelim' => '/'
+                                                                                           }, 'Parse::RecDescent::Token' ),
+                                                                                    bless( {
                                                                                              'pattern' => '}',
                                                                                              'hashname' => '__STRING2__',
                                                                                              'description' => '\'\\}\'',
@@ -5563,7 +5598,7 @@ _EOC_
                                                                                              'lookahead' => 0,
                                                                                              'line' => 20,
                                                                                              'code' => '{
-        my $attrs = { map { @$_ } @{ $item[5] } };
+        my $attrs = { map { @$_ } @{ $item[6] } };
         my $pairs = $item[3];
         my $topic = $arg{topic};
         ### $attrs

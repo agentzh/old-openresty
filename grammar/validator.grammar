@@ -16,9 +16,9 @@ value: hash
      | scalar
      | <error>
 
-hash: '{' <commit> pair(s? /,/) '}' attr(s?)
+hash: '{' <commit> pair(s? /,/) /,?/ '}' attr(s?)
     {
-        my $attrs = { map { @$_ } @{ $item[5] } };
+        my $attrs = { map { @$_ } @{ $item[6] } };
         my $pairs = $item[3];
         my $topic = $arg{topic};
         ### $attrs

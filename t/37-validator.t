@@ -654,7 +654,7 @@ Invalid value: Allowed values are 'password', 'login', 'anonymous'.
 --- spec
 {
     cat: STRING :match(/mimi|papa/, 'Cat name') :required,
-    dog: STRING :allowed('John', 'Mike')
+    dog: STRING :allowed('John', 'Mike'),
 }
 --- perl
 if (defined) {
