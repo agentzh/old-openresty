@@ -33,6 +33,7 @@ if ($user eq 'agentzh') {
     $blog_name = 'EEEE Works Blog';
     $blog_home = 'eeeeworks.org';
 } else {
+    $blog_home = 'eeeeworks.org';
 }
 
 my $resty = WWW::OpenResty::Simple->new( { server => $server } );

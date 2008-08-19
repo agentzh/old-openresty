@@ -38,6 +38,7 @@ bin/.*\.dat
 ^demo/Admin/JSON\.js$
 ^demo/Blog/out
 ^demo/Blog/script/upload
+^demo/Blog/script/import-local
 ^demo/Blog2/out
 ^demo/Blog/backup
 ^demo/Blog2/js
@@ -91,4 +92,4 @@ agentzh-live\.json$
 ^YisouComments.*\.yml
 ^t/25-filter\.t$
 ^ChangeLogs$
-
+^bin/test-account.sh
