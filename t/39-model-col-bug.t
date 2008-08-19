@@ -42,3 +42,11 @@ POST /=/model/Post/~
 --- response
 {"success":0,"error":"Bad value for \"name\": Identifier expected."}
 
+
+
+=== TEST 5: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+

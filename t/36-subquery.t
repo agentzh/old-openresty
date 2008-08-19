@@ -98,3 +98,11 @@ GET /=/view/Children/city/北京
 --- response
 [{"name":"北京市"}]
 
+
+
+=== TEST 11: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+
