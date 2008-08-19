@@ -16,6 +16,7 @@ use Params::Util qw(_HASH _STRING _ARRAY0 _ARRAY _SCALAR);
 use Encode qw(from_to encode decode);
 use Data::Structure::Util qw( _utf8_off );
 use DBI;
+use OpenResty::QuasiQuote::SQL;
 
 use OpenResty::SQL::Select;
 use OpenResty::SQL::Update;
@@ -441,9 +442,11 @@ sub current_user_can {
         }
     } continue { $max_i-- }
     map { $_ = '/=/' . join '/', @$_ } @urls;
-    my $or_clause = join ' or ', map { "url = ".Q($_) } @urls;
-    my $sql = "select count(*) from _access where role = ".
-        Q($role) . " and method = " . Q($meth) . " and ($or_clause);";
+    my $or_clause = join ' or ', map { [:sql| url = $_ |] } @urls;
+    my $sql = [:sql|
+        select count(*)
+        from _access
+        where role = $role and method = $meth and ( |] . "$or_clause);";
     ### $sql
     my $res = $self->select($sql);
     return do { $res->[0][0] };
@@ -454,12 +457,14 @@ sub has_feed {
 
     _IDENT($feed) or die "Bad feed name: $feed\n";
 
-    my $select = OpenResty::SQL::Select->new('id')
-        ->from('_feeds')
-        ->where(name => Q($feed))
-        ->limit(1);
+    my $sql = [:sql|
+        select id
+        from _feeds
+        where name = $feed
+        limit 1;
+    |];
     my $ret;
-    eval { $ret = $self->select("$select")->[0][0]; };
+    eval { $ret = $self->select($sql)->[0][0]; };
     return $ret;
 }
 
@@ -475,12 +480,14 @@ sub has_role {
         return $login_meth;
     }
 
-    my $select = OpenResty::SQL::Select->new('login')
-        ->from('_roles')
-        ->where(name => Q($role))
-        ->limit(1);
+    my $sql = [:sql|
+        select login
+        from _roles
+        where name = $role
+        limit 1;
+    |];
     my $ret;
-    eval { $ret = $self->select("$select")->[0][0]; };
+    eval { $ret = $self->select($sql)->[0][0]; };
     if ($ret) { $Cache->set_has_role($user, $role, $ret) }
     return $ret;
 }
@@ -496,12 +503,14 @@ sub has_view {
         return 1;
     }
     #warn "HERE!!! has_view: $view";
-    my $select = OpenResty::SQL::Select->new('id')
-        ->from('_views')
-        ->where(name => Q($view))
-        ->limit(1);
+    my $sql = [:sql|
+        select id
+        from _views
+        where name = $view
+        limit 1;
+    |];
     my $ret;
-    eval { $ret = $self->select("$select")->[0][0]; };
+    eval { $ret = $self->select($sql)->[0][0]; };
     if ($ret) { $Cache->set_has_view($user, $view) }
     return $ret;
 }
@@ -514,12 +523,14 @@ sub has_model {
         #warn "has model cache HIT\n";
         return 1;
     }
-    my $select = OpenResty::SQL::Select->new('id')
-        ->from('_models')
-        ->where(name => Q($model))
-        ->limit(1);
+    my $sql = [:sql|
+        select id
+        from _models
+        where name = $model
+        limit 1;
+    |];
     my $ret;
-    eval { $ret = $self->select("$select")->[0][0]; };
+    eval { $ret = $self->select($sql)->[0][0]; };
     if ($ret) { $Cache->set_has_model($user, $model) }
     return $ret;
 }
