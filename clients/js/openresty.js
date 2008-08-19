@@ -4,7 +4,8 @@ window.undefined = window.undefined;
 
 var OpenResty = {
     callbackMap: {},
-    isDone: {}
+    isDone: {},
+    counter: 0
 };
 
 OpenResty.Client = function (params) {
@@ -65,6 +66,11 @@ OpenResty.Client.prototype.postByGet = function (url) {
     this.get(url, args);
 };
 
+OpenResty.Client.prototype.genId = function () {
+    return ( Math.random() * 1000000 );
+    //return this.counter++;
+}
+
 OpenResty.Client.prototype.post = function (url) {
     var args, content;
     if (arguments.length == 3) {
@@ -84,7 +90,7 @@ OpenResty.Client.prototype.post = function (url) {
     if (!this.session && !args._user)
         args._user = this.user;
 
-    args._last_response = Math.round( Math.random() * 1000000 );
+    args._last_response = this.genId();
     content = JSON.stringify(content);
     //alert("type of content: " + typeof(content));
     //alert("content: " + content);
@@ -173,7 +179,7 @@ OpenResty.Client.prototype.get = function (url, args) {
 
     //args.password = this.password || '';
     if (url.match(/\?/)) throw "URL should not contain '?'.";
-    var reqId = Math.round( Math.random() * 100000 );
+    var reqId = this.genId();
     //args._rand = reqId;
 
     var onerror = this.onerror;
