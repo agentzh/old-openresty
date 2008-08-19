@@ -2,7 +2,7 @@
 
 use t::OpenResty;
 
-plan tests => 3 * blocks() - 3 * 2;
+plan tests => 3 * blocks();
 
 run_tests;
 
@@ -15,6 +15,7 @@ DELETE /=/model.js?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 {"success":1}
 
 
+
 === TEST 2: Create a new model
 --- request
 POST /=/model/Post
@@ -23,12 +24,14 @@ POST /=/model/Post
 {"success":1,"warning":"No 'columns' specified for model \"Post\"."}
 
 
+
 === TEST 3: Add a serial column
 --- request
 POST /=/model/Post/~
 {"name":"id2","type":"serial","label":"id2"}
 --- response
 {"src":"/=/model/Post/id2","success":1}
+--- LAST
 
 
 
