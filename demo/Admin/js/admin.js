@@ -209,6 +209,7 @@ function getPager (name, page, prefix, suffix) {
 }
 
 function renderPager (res, page, prefix, suffix) {
+    //alert("Render pager: " + JSON.stringify(res));
     setStatus(false, 'getPager');
     if (!openresty.isSuccess(res)) {
         error("Failed to get the pager: " + res.error);
@@ -611,6 +612,68 @@ function afterCreateACLRule (res) {
     } else {
         gotoNextPage();
     }
+}
+
+function deleteAllModelRows (model) {
+    //alert("No implemented yet!");
+    if (confirm("Are you sure to remove all the rows in model \""
+                + model + "\"?")) {
+        openresty.callback = afterDeleteAllModelRows;
+        openresty.del("/=/model/" + model + "/~/~");
+    }
+}
+
+function afterDeleteAllModelRows (res) {
+    alert(JSON.stringify(res));
+    gotoNextPage();
+}
+
+function getModelBulkRowForm (model) {
+    $("#new-row").html(
+        Jemplate.process(
+            'create-bulk-row.tt',
+            { model: model }
+        )
+    );
+}
+
+function createModelBulkRow (model) {
+    var data = $("form#create-row-bulk-form>textarea").val();
+    //alert(data);
+    if (!data) { alert("No lines found!"); return; }
+    var lines = data.split(/\n/);
+    var resLines = [];
+    for (var i = 0; i < lines.length; i++) {
+        value = lines[i];
+        if (/^\s*$/.test(value)) continue;
+        var res = JSON.parse(value);
+        if (res == false && typeof res == typeof false && value != false) {
+            error("Invalid JSON value for line " + (i+1) + ": " + value);
+            return false;
+        }
+        resLines.push(value);
+    }
+    var json = "[" + resLines.join(",") + "]";
+    //alert(json);
+    setStatus(true, 'createModelBulkRow');
+    openresty.formId = 'dummy-form';
+    openresty.callback = afterCreateModelBulkRow;
+    openresty.post("/=/model/" + model + "/~/~", JSON.parse(json));
+    //alert("HERE! ;)");
+    return false;
+}
+
+function afterCreateModelBulkRow (res) {
+    //alert("HERE!");
+    setStatus(false, 'createModelBulkRow');
+    if (openresty.isSuccess(res)) {
+        $("form#create-row-bulk-form>textarea").val('');
+        gotoNextPage();
+    } else {
+        alert("Failed to import: " + res.error);
+    }
+    //$("#import-results").html(JSON.stringify(res));
+    //alert(JSON.stringify(res));
 }
 
 function getModelRowForm (model) {
