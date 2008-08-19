@@ -210,17 +210,25 @@ sub POST_model_column {
     }
     $type = check_type($type);
     my $json_default;
-    if (defined $default) {
-        $json_default = $OpenResty::JsonXs->encode($default);
-        $default = $self->process_default($openresty, $default);
+    if (exists $data->{default}) {
+        my $default = $data->{default};
+        if (defined $default) {
+            $json_default = $OpenResty::JsonXs->encode($default);
+            $default = $self->process_default($openresty, $default);
+        } else {
+            $default = 'null';
+        }
     }
-    $default ||= 'null';
 
     my $sql = [:sql|
         insert into _columns (name, label, type, table_name, "default")
             values( $col, $label, $type, $model, $json_default);
-        alter table $sym:model
+    |];
+    if (defined $default) {
+        $sql .= [:sql|
+            alter table $sym:model
             add column $sym:col $kw:type default ($kw:default); |];
+    }
 
     my $res = $openresty->do($sql);
 
