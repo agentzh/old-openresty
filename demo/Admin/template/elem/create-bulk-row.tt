@@ -1,0 +1,26 @@
+[%# DEFAULT
+    model = "Foo"
+%]
+<div class="ttl2">
+    <span class="text">
+        New model rows
+    </span>
+</div>
+<div class="create-model">
+<span id="import-results"></span>
+<form id="dummy-form" style="display: none"></form>
+<form id="create-row-bulk-form" onsubmit="return false;">
+    <label>[% col.name %]</label>
+    <p>Example:</p>
+    <pre>
+        {"title":"This time I won!","author":"agentzh"}
+        {"title":"Yahoo! wows","author":"laser"}
+        {"title":"Perl is here","author":"chromatic"}
+    </pre>
+    <textarea class="row-input" resty_key="[% col.name %]" rows="20" cols="100"></textarea>
+    <p>
+        <input type="submit" class="create-button" value="Create" onclick="createModelBulkRow('[% model %]')"></input>
+    </p>
+</form>
+</div>
+

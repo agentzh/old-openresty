@@ -1,6 +1,7 @@
 [%- IF ! pack_js;
         js_files = [
             'openresty.js',
+            'dojo.openresty.js',
             'md5.js',
             'jquery.js',
             'jquery.jeditable.pack.js',
@@ -16,6 +17,7 @@
         ];
     ELSE;
         js_files = [
+            'dojo.openresty.js',
             'jquery-min.js',
             'admin-min.js'
         ];
