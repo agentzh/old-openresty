@@ -55,6 +55,7 @@ requires                        ('Parse::RecDescent');
 
 recommends          ('Benchmark::Timer');
 recommends          ('HTTP::Server::Simple' => '0.27');
+recommends          ('Net::Server::PreFork');
 recommends          ('Text::Diff');
 recommends          ('Text::Table');
 recommends          ('Term::ReadLine::Perl');
