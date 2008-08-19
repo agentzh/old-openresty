@@ -201,8 +201,9 @@ sub process_url {
     my ($self, $pattern, $text, $url, $say, $sender) = @_;
     my $charset = $self->charset;
     #$say->("Found URL: $match");
-    if ($url =~ /\.(?:avi|iso|msi|exe|mp3|rm|rmvb|bak|txt|jpg|jpeg|png|xml|tiff|gif|mov|flw|swf|sql)\b/i) { return; }
+    if ($url =~ /\.(?:avi|iso|msi|tar|gz|bz2|rpm|deb|dll|so|exe|mp3|rm|rmvb|bak|txt|jpg|jpeg|png|xml|tiff|gif|mov|flw|swf|sql)\b/i) { return; }
     warn "Getting $url...\n";
+    $ua->max_size( 1024 * 3 );
     my $res = $ua->get($url);
     if (!$res->is_success) {
         warn $res->status_line;
