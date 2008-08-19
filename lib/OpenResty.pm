@@ -434,7 +434,7 @@ sub current_user_can {
     my @urls = $bits;
     my $role = $self->{_role};
     my $max_i = @$bits - 1;
-    while ($max_i >= 1) {
+    while ($max_i >= 0) {
         my @last_bits = @{ $urls[-1] };
         if ($last_bits[$max_i] ne '~') {
             $last_bits[$max_i] = '~';

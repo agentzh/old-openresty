@@ -79,3 +79,11 @@ GET /=/model?order_by=id:desc
 ]
 --- SKIP
 
+
+
+=== TEST 8: logout
+--- request
+GET /=/logout
+--- response
+{"success":1}
+
