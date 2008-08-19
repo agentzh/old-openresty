@@ -10,7 +10,7 @@ sub sql {
     my ($self, $s, $file, $line, $col) = @_;
     my $package = ref $self;
     #warn "SQL: $file: $line: $s\n";
-    $s =~ s/^\s+|\s+$//gs;
+    $s =~ s/^\s+|\s+$/ /gs;
     $s =~ s/\\/\\\\/g;
     $s =~ s/\s+/ /gs;
     #$s =~ s/\t/\\t/gs;

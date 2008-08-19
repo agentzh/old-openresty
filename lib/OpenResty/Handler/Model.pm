@@ -3,7 +3,7 @@ package OpenResty::Handler::Model;
 use strict;
 use warnings;
 
-#use Smart::Comments '###';
+#use Smart::Comments '####';
 use OpenResty::Util;
 use List::Util qw( first );
 use Params::Util qw( _STRING _ARRAY0 _ARRAY _HASH );
@@ -181,27 +181,29 @@ sub POST_model_column {
         die "Exceeded model column count limit: $COLUMN_LIMIT.\n";
     }
 
-    if ($col eq 'id') {
-        die "Column id is reserved.";
-    }
-
     my $alias;
     if ($col ne '~') {
         $alias = $data->{name};
-         $data->{name} = $col || die "you must provide the new column with a name!";
+        $data->{name} = $col || die "you must provide the new column with a name!";
     }
 
-    my ($label, $type, $default, $unique);
+    my ($label, $default, $type, $unique);
+
+    my $has_default = exists $data->{default};
 
     [:validator|
         $data ~~ {
             name: IDENT :required :to($col),
             label: STRING :nonempty :required :to($label),
             type: STRING :nonempty :required :to($type),
-            default: ANY :to($default),
+            default: ANY,
             unique: BOOL :to($unique),
         } :required :nonempty
     |]
+
+    if ($col eq 'id') {
+        die "Column id is reserved.";
+    }
 
     my $cols = $self->get_model_col_names($openresty, $model);
     my $fst = first { $col eq $_ } @$cols;
@@ -210,25 +212,29 @@ sub POST_model_column {
     }
     $type = check_type($type);
     my $json_default;
-    if (exists $data->{default}) {
-        my $default = $data->{default};
+    if ($has_default) {
+        #### default exists!
+        $default = $data->{default};
         if (defined $default) {
             $json_default = $OpenResty::JsonXs->encode($default);
             $default = $self->process_default($openresty, $default);
         } else {
             $default = 'null';
         }
+    } else {
+        undef $default;
     }
 
     my $sql = [:sql|
         insert into _columns (name, label, type, table_name, "default")
             values( $col, $label, $type, $model, $json_default);
     |];
-    if (defined $default) {
-        $sql .= [:sql|
-            alter table $sym:model
-            add column $sym:col $kw:type default ($kw:default); |];
-    }
+    #### $default
+
+    $sql .= [:sql|
+        alter table $sym:model
+        add column $sym:col $kw:type |] .
+        (defined $default ? [:sql| default ($kw:default); |] : ';');
 
     my $res = $openresty->do($sql);
 
@@ -249,6 +255,8 @@ sub PUT_model_column {
     if (lc($col) eq 'id') {
         die "Column id is reserved.";
     }
+
+    my $has_default = exists $data->{default};
 
     my ($new_col, $type, $label, $unique);
 
@@ -288,7 +296,7 @@ sub PUT_model_column {
         $update_meta->set(label => Q($label));
     }
 
-    if (exists $data->{default}) {
+    if ($has_default) {
         my $default = $data->{default};
         if (defined $default) {
             #warn "DEFAULT: $default\n";

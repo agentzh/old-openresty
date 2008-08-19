@@ -2,7 +2,7 @@
 
 use t::OpenResty;
 
-plan tests => 3 * blocks() - 3 * 2;
+plan tests => 3 * blocks();
 
 run_tests;
 
