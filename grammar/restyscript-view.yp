@@ -322,6 +322,7 @@ operator: '>'
         | '='
         | 'like'
         | '@@'
+        | '@>'
         | '<<='
         | '<<'
         | '>>='
@@ -440,7 +441,7 @@ sub _Lexer {
             (my $token = $s) =~ s/\s+/ /gs;
             return (lc($token), lc($s));
         }
-        s/^\s*(<<=|<<|>>=|>>|<=|>=|<>|!=|\|\||::|\blike\b|\bin\b|\@\@)//s
+        s/^\s*(<<=|<<|>>=|>>|<=|>=|<>|!=|\|\||::|\blike\b|\bin\b|\@[>\@])//s
                 and return (lc($1), lc($1));
         s/^\s*([A-Za-z][A-Za-z0-9_]*)\b//s
                 and return ('IDENT', $1);

@@ -45,7 +45,8 @@ sub check_type {
                     date |
                     (?:timestamp|time) (?: \s* \( \s* \d+ \s* \) )?
                         (?: \s* with(?:out)? \s+ time \s+ zone)? |
-                    interval (?: \s* \( \s* \d+ \s* \) )?
+                    interval (?: \s* \( \s* \d+ \s* \) )? |
+                    prefix_range
                 ) \s* $
             }x) {
         die "Bad column type: $type\n";
