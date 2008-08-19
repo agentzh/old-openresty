@@ -845,7 +845,7 @@ sub select_records {
             # XXX
             $select->op('or');
             for my $col (@$cols) {
-                $select->where($col => $op => Q($val));
+                $select->where(qq{"$col"::text} => $op => Q($val));
             }
         } else {
             $select->where(QI($user_col) => $op => Q($val));
