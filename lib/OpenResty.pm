@@ -720,7 +720,7 @@ This library is still in the B<beta> phase and the API is still in flux. We're j
 
 =head1 INSTALLATION
 
-Please see L<OpenResty::Spec::Installation> for details :)
+Please see L<OpenResty::Spec::Install> for details :)
 
 =head1 SOURCE TREE STRUCTURE
 
