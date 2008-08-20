@@ -92,7 +92,7 @@ hello=[{"num":"10","url":"http://www.carriezh.cn/","title":"hello carrie","id":"
 POST /=/action/.Select/lang/minisql
 "select * from Carrie where title = 'hello carrie' and num=10;"
 --- response
-{"error":"Action \".Select\" not found.","success":0}
+{"error":"Action not found: .Select","success":0}
 
 
 

@@ -3,11 +3,13 @@ package OpenResty::Backend::PgMocked;
 use strict;
 use warnings;
 
+#use utf8;
 #use Smart::Comments '#####';
 use Clone qw(clone);
 use JSON::XS;
 use base 'OpenResty::Backend::Pg';
-use Test::LongString;
+#use Test::LongString;
+use Data::Structure::Util qw( _utf8_off _utf8_on );
 #use Encode qw(is_utf8 encode decode);
 
 our ($DataFile, $Data, $TransList);
@@ -30,7 +32,12 @@ sub LoadFile {
     my @res;
     while (<$in>) {
         chomp;
-        push @res, $json_xs->decode($_);
+        ##### read line: $_
+        #die "Found null!!!" if /, \)/;
+        my $data = $json_xs->decode($_);
+        _utf8_off($data);
+        ##### DATA: $data
+        push @res, $data;
     }
     close $in;
     return \@res;
@@ -45,8 +52,12 @@ sub DumpFile {
 
     #### $data
     for my $elem (@$data) {
+        _utf8_on($elem);
         my $json = $json_xs->encode($elem);
-    #print $out encode('utf8', $json);
+        _utf8_off($json);
+        #$json = Encode::encode('utf8', $json);
+        #warn "is utf8: ", utf8::is_utf8($json);
+        #warn "JSON: $json";
         print $out $json, "\n";
     }
     close $out;
@@ -116,6 +127,7 @@ sub play {
     #$query =~ s/'3\.14'/'3.14000000000000012'/;
     $query =~ s/'3\.1415[89]{4,}\d*'/'3.14159'/;
     $query =~ s/'3\.140{4,}\d*'/'3.14'/;
+    #$query =~ s/, \)/, NULL)/g;
     my $res = $cur->[1];
     if ($cur->[0] ne $query) {
         #is_string($cur->[0], $query);
@@ -159,7 +171,7 @@ sub state {
 
 sub quote {
     my ($self, $val) = @_;
-    if (!defined $val) { return undef }
+    if (!defined $val) { return 'NULL' }
     $val =~ s/'/''/g;
     $val =~ s{\\}{\\\\}g;
     "'$val'";
@@ -167,7 +179,7 @@ sub quote {
 
 sub quote_identifier {
     my ($self, $val) = @_;
-    if (!defined $val) { return undef }
+    if (!defined $val) { return '""' }
     $val =~ s/"/""/g;
     $val =~ s{\\}{\\\\}g;
     qq{"$val"};

@@ -11,6 +11,7 @@ sub sql {
     my $package = ref $self;
     #warn "SQL: $file: $line: $s\n";
     $s =~ s/^\s+|\s+$/ /gs;
+    #$s =~ s/\n/ /gs;
     $s =~ s/\\/\\\\/g;
     $s =~ s/\s+/ /gs;
     #$s =~ s/\t/\\t/gs;

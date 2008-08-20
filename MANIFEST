@@ -353,4 +353,7 @@ t/pgmock-data/34-unique.t.json
 t/pgmock-data/35-model-order-by.t.json
 t/pgmock-data/36-subquery.t.json
 t/29-feed-writer-rss.t
+t/pgmock-data/38-global-search.t.json
+t/pgmock-data/39-model-col-bug.t.json
+t/pgmock-data/40-role-acl-bug.t.json
 TODO

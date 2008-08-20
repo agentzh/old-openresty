@@ -48,6 +48,8 @@ L<http://svn.openfoundry.org/openapi/trunk>
 
 运行 OpenResty 测试集需要两个 OpenResty 测试帐户。因为有一些测试是针对跨帐户操作的。
 
+=back
+
 =head1 运行测试集
 
 =over

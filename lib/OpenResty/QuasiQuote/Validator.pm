@@ -15,7 +15,7 @@ our $Comp = OpenResty::QuasiQuote::Validator::Compiler->new;
 sub validator {
     my ($self, $s, $fname, $ln, $col) = @_;
     my $r = $Comp->validator($s, $ln) or die "Execution aborted due to syntax errors in validator quasiquotations.\n";
-    $r =~ s/\n/ /g;
+    $r =~ s/\n/ /sg;
     $r;
 }
 
