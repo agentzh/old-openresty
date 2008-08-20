@@ -1,0 +1,41 @@
+/*global.css v_1.1.1 :: 09/01/2007
+- added 10px "top margin" to #zB #mapZone to keep the zone 2 bounding box from touching the Map when the RTE opens
+*/
+html{min-height:100.02%}
+body{font-size:100.01%;background-color:#fff}
+body,div,dl,dt,dd,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,th,td{margin:0;padding:0}
+fieldset,img{border:0}
+h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}
+table{border-collapse:collapse;border-spacing:0}
+#body{position:relative}
+#zWrap ul,#zWrap ol{padding:0;margin:0 0 10px 40px}
+#formAlertFailure ul{margin-left:15px}
+#pageName,#zWrap div,#zWrap dl,#zWrap dd,#zWrap h1,#zWrap h2,#zWrap h3,#zWrap h4,#zWrap h5,#zWrap h6,#zWrap blockquote,#zWrap form,#zWrap input,#zWrap textarea,#zWrap p{margin-bottom:10px}
+#mapZone div{margin-bottom:0}
+#body .mceEditorContainer .editorWrap{margin-bottom:0}
+#hMisc,#fMisc{min-height:3.3em;_height:3.3em;position:relative}
+#navigation{word-wrap:break-word} 
+#navigation ul{list-style:none;margin:0;padding:0}
+#navigation ul a{text-decoration:none}
+ul#mainNav li.active a:hover{cursor:default}
+#hMisc div,#fMisc div{margin:0}
+#body,#pageName,#zA,#zB,#zC,#ft{zoom:1}
+#zB #mapZone{position:relative;margin:10px auto 2em auto;_margin-bottom:0}
+#zB #drivingDirectionsLnk{position:absolute;left:0}
+#zB #mapContainer{_margin-bottom:2em}
+#zC form#contactForm .defFormText{height:120px}
+#zC #formButtonContainer,#zC form#contactForm{margin:10px auto 0 auto}
+#zC form#contactForm .defFormText,#zC form#contactForm .defFormInput{margin:0 0 7px 0;width:100%}
+#ft{clear:both;position:relative}
+#zA,#zB,#zC,#ft{overflow:hidden;_overflow:visible;_overflow-x:hidden;padding-bottom:1px}
+#zWrap ul.module_bd_container,#zWrap dl.module_bd_container{margin:30px 0 0 0}
+#zWrap ul.module_bd_container li{list-style-type:none;margin:0 0 30px 0}
+#zWrap ul.module_bd_container li ul li{list-style-type:disc;margin:0}
+#zWrap ul.module_bd_container li ol li{list-style-type:decimal;margin:0}
+#zWrap dl.module_bd_container dd{margin:5px 0 30px 20px}
+#zWrap dl.module_bd_container dl dd{margin:0 0 20px 20px}
+#zWrap ul.module_bd_container h3{margin:0;padding:0;border:none;background:none}
+#zWrap ul.module_bd_container blockquote{margin-left:0;padding:0}
+#zWrap ul.module_bd_container blockquote blockquote{margin-left:40px}
+#zWrap ul.module_bd_container p{margin-top:-5px;text-align:right}
+#zWrap ul.module_bd_container div p,#zWrap ul.module_bd_container dd p{margin-top:0;text-align:left}
