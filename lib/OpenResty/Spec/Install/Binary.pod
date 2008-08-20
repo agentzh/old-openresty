@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-OpenResty::Spec::Installation::Binary - Install binary distributions of OpenResty
+OpenResty::Spec::Install::Binary - Install binary distributions of OpenResty
 
 =head1 DESCRIPTION
 
@@ -30,7 +30,7 @@ L<http://svn.openfoundry.org/openapi/trunk/etc/openresty.conf>
   cp openresty.conf /etc/openresty/
   cp openresty.conf /etc/openresty/site_openresty.conf
 
-根据本机的 Pg 配置情况修改配置文件 F</etc/openresty/site_openresty.conf> （修改另一个文件 F<openresty.conf> 有可能会被 F<site_openresty.conf> 覆盖的，只能作为 fall-back 使用）。具体细节请参考文档 L<OpenResty::Spec::Installation>.
+根据本机的 Pg 配置情况修改配置文件 F</etc/openresty/site_openresty.conf> （修改另一个文件 F<openresty.conf> 有可能会被 F<site_openresty.conf> 覆盖的，只能作为 fall-back 使用）。具体细节请参考文档 L<OpenResty::Spec::Install>.
 
 =head1 启动 OpenResty 服务器
 
@@ -46,7 +46,7 @@ C<-p> 选项指定服务器绑定到的机器端口，默认是 8000.
 
 Standalone 服务器使用 L<Net::Server::PreFork> 模块，启动方便，适合测试安装是否完整。
 
-但是测试表明，standalone 服务器在流量稍大时容易超时。对于生产应用，应使用 lighttpd + FastCGI 模式来运行。lighttpd 的具体配置请参见文档 L<OpenResty::Spec::Installation>.
+但是测试表明，standalone 服务器在流量稍大时容易超时。对于生产应用，应使用 lighttpd + FastCGI 模式来运行。lighttpd 的具体配置请参见文档 L<OpenResty::Spec::Install>.
 
 那里的 C</PATH/TO/YOUR/bin/openresty> 应被替换为你前面准备好的 F<openresty32> （或者 F<openresty64>）的绝对路径。
 
