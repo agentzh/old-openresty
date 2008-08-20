@@ -1,0 +1,137 @@
+=encoding utf8
+
+=head1 NAME
+
+OpenResty::Spec::RunTestsOnWin32_cn - Running the OpenResty test suite on Win32
+
+=head1 DESCRIPTION
+
+本文档介绍了如何在 Win32 上建立一个 OpenResty 测试集的运行环境，测试本地的或者远方的 OpenResty 服务器。
+
+=head1 安装perl
+
+从下面的位置下载 AgentPerl 安装程序（推荐使用 FlashGet 这样的多线程下载器）：
+
+L<http://agentzh.org/misc/win32/AgentPerl.exe>
+
+下载完毕后，双击即开始安装过程。应注意安装过程中不要轻易修改默认的设置，除非您知道自己在做什么 ;)
+
+使用 ActiveState 的 ActivePerl 亦可，只不过需要手动安装一些 CPAN 模块，比如 
+L<Class::Prototyped>, L<Test::LongString>, L<Text::Diff>, L<LWP::UserAgent>, L<HTTP::Response>, L<Cache::Cache>, 以及 L<WWW::OpenResty>.
+
+=head1 Checkout OpenResty 源码
+
+首先安装 TortoiseSVN. TortoiseSVN 安装程序可以从 TortoiseSVN 官方网站取得。
+
+取得 OpenResty SVN head
+
+在 TortoiseSVN 中 checkout 下面的地址：
+
+L<http://svn.openfoundry.org/openapi/trunk>
+
+比如 checkout 到的地址目录是 F<C:\openresty>
+
+=head1 编辑配置文件
+
+=over
+
+=item 1.
+
+将 FL<C:\openresty\etc\openresty.conf> 复制成同一目录下的 L<site_openresty.conf> 文件.
+
+=item 2.
+
+编辑 F<site_openresty.conf> 文件中的 C<[test_suite]> 下的配置项，将 C<use_http> 置为 1 （默认为 0)，将 C<server> 和 C<server2> 选项更改为您自己的测试帐户，密码，以及主机名，一个例子是：
+
+  server=tester:password@api.openresty.org
+  server2=tester2:password2@api.openresty.org
+
+运行 OpenResty 测试集需要两个 OpenResty 测试帐户。因为有一些测试是针对跨帐户操作的。
+
+=head1 运行测试集
+
+=over
+
+=item 1.
+
+首先在 [开始] -> [运行] 对话框输入 cmd 启动 Win32 的命令行终端.
+
+=item 2.
+
+然后用下面的命令把当前工作目录切换到您先前 checkout 出来的本地目录，比如 F<C:\openresty>:
+
+     cd /d C:\openresty
+
+=item 3.
+
+运行整个测试集的方法是
+
+     C:\openresty> prove -Ilib -r t
+
+=back
+
+=head1 运行测试的其他方式
+
+=over
+
+=item *
+
+有选择地运行单个测试脚本的方法是：
+
+     prove -Ilib t/01-sanity.t
+
+=item *
+
+运行任意一组测试亦是可能的，例如：
+
+    prove -Ilib t/01-sanity.t t/02-chunwen.t
+
+或者使用通配符：
+
+    prove -Ilib t/0*.t
+
+=item *
+
+如果想运行某个测试文件中的单个用例，可以在该用例最后添加一行
+
+  --- ONLY
+
+=item *
+
+如果想运行到某个测试用例就结束（即跳过后面的所有用例），可以在那个用例的末尾添加一行
+
+  --- LAST
+
+=item *
+
+对于调试测试本身时添加的 C<--- ONLY>, C<--- LAST> 等标签应当在调试结束后去除，不应提交到 SVN 仓库中去。
+
+=item *
+
+如果想暂时跳过某个测试用例，可以使用 C<--- SKIP> 标签。
+
+=back
+
+=head1 提交新的测试用例
+
+原则上不应随便修改现有的测试用例，推荐新添加的测试可以放到专门的 F<.t> 文件中（按序号和功用正确命名）。
+
+=head1 AUTHOR
+
+Agent Zhang (章亦春) C<< <agentzh@yahoo.cn> >>
+
+=head1 LICENSE
+
+  Copyright (c)  2007  Yahoo! China (中国雅虎公司).
+  Permission is granted to copy, distribute and/or modify this document
+  under the terms of the GNU Free Documentation License, Version 1.2
+  or any later version published by the Free Software Foundation;
+  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+  Texts. A copy of the license can be found at
+
+    http://www.gnu.org/licenses/fdl.html
+
+=head1 SEE ALSO
+
+L<OpenResty::Spec::TestSuite>, L<OpenResty>.
+

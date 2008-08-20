@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-OpenResty::Spec::Install::Binary - Install binary distributions of OpenResty
+OpenResty::Spec::Install::Binary_cn - Install binary distributions of OpenResty
 
 =head1 DESCRIPTION
 
@@ -52,7 +52,7 @@ Standalone 服务器使用 L<Net::Server::PreFork> 模块，启动方便，适�
 
 =head1 AUTHOR
 
-Agent Zhang (章亦春) <agentzh@yahoo.cn>
+Agent Zhang (章亦春) C<< <agentzh@yahoo.cn> >>
 
 =head1 LICENSE
 
@@ -64,4 +64,8 @@ Agent Zhang (章亦春) <agentzh@yahoo.cn>
   Texts. A copy of the license can be found at
 
     http://www.gnu.org/licenses/fdl.html
+
+=head1 SEE ALSO
+
+L<OpenResty::Spec::Install>, L<OpenResty>.
 
