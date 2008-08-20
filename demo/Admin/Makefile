@@ -36,10 +36,10 @@ pack: all
 	echo >> pack_out/jquery-min.js
 	cat pack_out/jquery.cookie.pack.js >> pack_out/jquery-min.js
 	rm pack_out/jquery.js pack_out/jquery.*.js
-	cat pack_out/admin-jemplate.js pack_out/md5.js pack_out/openresty.js pack_out/model.js pack_out/view.js pack_out/role.js pack_out/feed.js pack_out/action.js pack_out/dispatcher.js pack_out/admin.js > pack_out/admin-min.js
+	cat pack_out/admin-jemplate.js pack_out/md5.js pack_out/dojo.openresty.js pack_out/openresty.js pack_out/model.js pack_out/view.js pack_out/role.js pack_out/feed.js pack_out/action.js pack_out/dispatcher.js pack_out/admin.js > pack_out/admin-min.js
 	cat pack_out/md5.js pack_out/openresty.js pack_out/login.js > pack_out/login-min.js
 	-rm pack_out/login.js
-	-rm pack_out/admin-jemplate.js pack_out/md5.js pack_out/openresty.js pack_out/model.js pack_out/view.js pack_out/role.js pack_out/feed.js pack_out/action.js pack_out/dispatcher.js pack_out/admin.js
+	-rm pack_out/admin-jemplate.js pack_out/md5.js pack_out/openresty.js pack_out/model.js pack_out/view.js pack_out/role.js pack_out/feed.js pack_out/action.js pack_out/dispatcher.js pack_out/admin.js pack_out/dojo.openresty.js
 	rm -rf out
 	mv pack_out out
 
