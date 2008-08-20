@@ -42,13 +42,13 @@ recommends:
   Text::Diff: 0
   Text::Table: 0
 requires:
+  CGI::Cookie::XS: 0.11
   CGI::Simple: 1.103
   CGI::Simple::Cookie: 0
   Cache::Memcached::Fast: 0.06
   Clone: 0.22
   Compress::Zlib: 0
   Config::Simple: 0
-  Cookie::XS: 0.09
   Crypt::CBC: 0
   Crypt::Rijndael: 0
   DBD::Pg: 1.49
@@ -61,6 +61,7 @@ requires:
   Encode::Guess: 0
   FCGI: 0
   File::ShareDir: 0
+  Filter::QuasiQuote: 0.06
   GD::SecurityImage: 1.64
   Hash::Merge: 0
   IPC::Run: 0
@@ -69,8 +70,9 @@ requires:
   List::MoreUtils: 0
   List::Util: 0
   Params::Util: 0.22
+  Parse::RecDescent: 0
   Parse::Yapp: 0
   Time::HiRes: 0
   YAML::Syck: 1.04
   perl: 5.6.1
-version: 0.3.20
+version: 0.3.21
