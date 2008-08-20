@@ -1,7 +1,28 @@
 Change Log for OpenResty
 
-0.4.0 XXX
-* now we use Net::Server::PreFork for our standalone HTTP server.
+0.3.21 Aug 20 2008
+* fixed the ACL mechanism; now we allow ACL rules like GET /=/~/~/~/~.
+* fixed the "space-in-column-name" bug for POST model column API reported by carrie++
+* fixed the default value issue for creating model column of the serial type, reported by zhu jingjing++, our QA girl ;)
+* fixed a bug in GET /=/model/Foo/~/query and also added t/38-global-search.t to test it.
+
+* perl minisql compiler - added support for as (col type, col2, type2, ...).
+* perl minisql compiler - added support for the prefix_range column type as well as the @> operator.
+
+* added support for char(xxx) colmun type in the Model handler.
+* applied the validator quasiquote to the Model handler.
+* applied the sql quasiquote to all the handlers.
+
+* added more POD to OpenResty::Limits as per cnhackTNT++'s suggestion.
+* added a new document OpenResty::Tutorial::RunTestsOnWin32_cn
+* renamed OpenResty::Spec::Installation to OpenResty::Spec::Install.
+* renamed OpenResty::Spec::Installation::Binary to OpenResty::Spec::Install::Binary_cn.
+
+* demo/Admin - implemented the bulk row import and table row truncating interfaces.
+* demo/Admin - added (all-column) search box to model row panel.
+* removed bin/test-account-admin.sh.
+* demo/Springbot - added timeout to springbot.
+* demo/Springbot - added more ext to the filter.
 
 0.3.20 Jul 31 2008
 * started an initial (naive) implementaion of OpenHesty, a pure Haskell rewrite of the Perl OpenResty server.

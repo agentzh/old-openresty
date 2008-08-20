@@ -41,7 +41,7 @@ __END__
 
 =head1 NAME
 
-OpenResty::Limits - OpenResty backend for the PostgreSQL PL/Proxy-based cluster databases
+OpenResty::Limits - Various contraints used in the OpenResty server
 
 =head1 SYNOPSIS
 
