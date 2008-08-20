@@ -59,6 +59,9 @@ bin/.*\.dat
 ^demo/Springbot/staff/staff.csv
 ^demo/Springbot/staff/staff.html
 ^demo/Springbot/staff/staff.txt
+^haskell/bin/x$
+^haskell/bin/x\.c$
+RD_TRACE
 ^t/30-action\.t$
 ^t/31-action\.t$
 demo/Blog/doc/a\.png$

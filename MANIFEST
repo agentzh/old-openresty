@@ -1,4 +1,4 @@
-demo/Admin/template/login.tt
+grammar/validator.grammar
 debian/conffiles
 debian/control
 debian/postinst
@@ -34,6 +34,8 @@ demo/RestyCheck/restycheck.css
 demo/RestyCheck/restycheck.js
 demo/Admin/template/footer.tt
 demo/Admin/template/header.tt
+demo/Admin/template/login.tt
+demo/Admin/template/elem/create-bulk-row.tt
 demo/Blog2/css/blog.css
 demo/Blog2/css/styles.css
 demo/Blog2/css/themes/common/base-weblog.css
@@ -204,11 +206,17 @@ inc/Test/More.pm
 lib/OpenResty.pm
 lib/OpenResty/FeedWriter/RSS.pm
 lib/OpenResty/Handler/Feed.pm
+lib/OpenResty/QuasiQuote/SQL.pm
+lib/OpenResty/QuasiQuote/Validator.pm
+lib/OpenResty/QuasiQuote/Validator/Compiler.pm
 lib/OpenResty/Spec/Captcha_cn.pod
 lib/OpenResty/Tutorial/GettingStarted/Perl.pod
 lib/OpenResty/Tutorial/GettingStarted_cn.pod
 lib/OpenResty/Spec/Upgrading.pod
 lib/OpenResty/Spec/TestSuite.pod
+lib/OpenResty/Spec/Install.pod
+lib/OpenResty/Spec/Install/Binary_cn.pod
+lib/OpenResty/Tutorial/RunTestsOnWin32_cn.pod
 lib/OpenResty/Inlined.pm
 lib/OpenResty/RestyScript/ViewUpgrade.pm
 lib/OpenResty/Backend.pm
@@ -244,8 +252,8 @@ lib/OpenResty/Spec/REST.pod
 lib/OpenResty/Spec/REST_cn.pod
 lib/OpenResty/Spec/MetaModel.pod
 lib/OpenResty/Spec/AccountAdmin.pod
-lib/OpenResty/Spec/Installation.pod
-lib/OpenResty/Spec/Installation/Binary.pod
+lib/OpenResty/Spec/Install.pod
+lib/OpenResty/Spec/Install/Binary_cn.pod
 lib/OpenResty/SQL/Insert.pm
 lib/OpenResty/SQL/Select.pm
 lib/OpenResty/SQL/Statement.pm
@@ -298,6 +306,10 @@ t/32-view-upgrade.t
 t/34-unique.t
 t/35-model-order-by.t
 t/36-subquery.t
+t/37-validator.t
+t/38-global-search.t
+t/39-model-col-bug.t
+t/40-role-acl-bug.t
 t/99-pod-coverage.t
 t/99-pod.t
 t/OpenResty.pm
