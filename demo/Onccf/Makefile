@@ -5,23 +5,25 @@ resty_server=localhost
 all:
 	-rm -rf out
 	-mkdir out
-	-cp ../../clients/js/*.js out/
+	mkdir out/js
+	cp ../../clients/js/*.js out/js/
+	cp ../Blog/js/thirdparty/jquery.js out/js/
+	cp ../Blog/image/loading.gif out/
 	-rm out/JSON.js
 	-rm out/md5.js
 	-rm out/*dojo*.js
-	-rm template/elem/*.tt~
-	mkdir out/js
+	-rm template/ajax/*.tt~
 	jemplate --runtime > out/js/onccf-jemplate.js
-	jemplate --compile template/elem/ >> out/onccf-jemplate.js
+	jemplate --compile template/ajax/ >> out/js/onccf-jemplate.js
 	tpage --define 'resty_server=$(resty_server)' \
 	    --define 'pack_js=0' \
 	    --include_path=template template/index.tt > out/index.html
 	cp js/*.js out/js/
-	cp js/*/*.js out/js/
+	#cp js/*/*.js out/js/
 	mkdir out/css
 	cp css/*.css out/css/
-	cp -r css/themes out/
-	cp -r image/*.* out/
+	#cp -r css/themes out/
+	#cp -r image/*.* out/
 	tar cvf site-binary.tar out
 	gzip --best site-binary.tar
 	mv site-binary.tar.gz out/

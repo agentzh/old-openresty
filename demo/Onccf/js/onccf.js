@@ -1,5 +1,10 @@
 var account = 'onccf';
-var host = 'http://api.openresty.org';
+//var host = 'http://api.openresty.org';
+var host = '10.62.136.86';
+var loadingCount = 0;
+var waitMessage = null;
+var timer = null;
+var savedAnchor = null;
 
 $.fn.postprocess = function (className, options) {
     return this.find("a[@href^='#']").each( function () {
@@ -26,5 +31,111 @@ function error (msg) {
 
 function debug (msg) {
     $("#ft").append(msg + "<br/>");
+}
+
+function setStatus (isLoading, category) {
+    if (isLoading) {
+        if (++loadingCount == 1) {
+            if (jQuery.browser.opera)
+                $(waitMessage).css('top', '2px');
+            else
+                $(waitMessage).show();
+        }
+    } else {
+        loadingCount--;
+        if (loadingCount < 0) loadingCount = 0;
+        if (loadingCount == 0) {
+            // the reason we use this hack is to work around
+            // a rendering bug in Win32 build of Opera
+            // (at least 9.25 and 9.26)
+            if (jQuery.browser.opera)
+                $(waitMessage).css('top', '-200px');
+            else
+                $(waitMessage).hide();
+
+        }
+    }
+    //count++;
+    //debug("[" + count + "] setStatus: " + category + ": " + loadingCount + "(" + isLoading + ")");
+}
+
+function init () {
+    loadingCount = 0;
+    var now = new Date();
+    waitMessage = document.getElementById('wait-message');
+    openresty = new OpenResty.Client(
+        { server: host, user: account + '.Public' }
+    );
+    //openresty.formId = 'new_model';
+    if (timer) {
+        clearInterval(timer);
+    }
+    dispatchByAnchor();
+    timer = setInterval(dispatchByAnchor, 600);
+    //debug("before getSidebar...");
+    //getSidebar();
+    getMenuList();
+}
+
+function resetAnchor () {
+    var anchor = location.hash;
+    location.hash = anchor.replace(/^\#/, '');
+}
+
+function dispatchByAnchor () {
+    //debug(location.hash);
+    var anchor = location.hash;
+    anchor = anchor.replace(/^\#/, '');
+    if (savedAnchor == anchor)
+        return;
+    if (anchor == "") {
+        anchor = 'main';
+        location.hash = 'main';
+    }
+    savedAnchor = anchor;
+
+    // prevent memory leaks from dynamically created <script> nodes:
+    //if (loadingCount <= 0) openresty.purge();
+    loadingCount = 0;
+
+    var match = anchor.match(/^menu\/([^/]+)$/);
+    if (match) {
+        var menu = match[1];
+        //alert("Post ID: " + postId);
+        getContent(menu);
+        return;
+    }
+
+    getContent('home');
+    //debug("before getPager...");
+    //$(".blog-top").attr('id', 'post-list-' + page);
+}
+
+function getMenuList () {
+    setStatus(true, 'getMenuList');
+    openresty.callback = renderMenuList;
+    openresty.get('/=/view/MenuList/order_by/id');
+}
+
+function renderMenuList (res) {
+    setStatus(false, 'getMenuList');
+    //alert(JSON.stringify(res));
+    if (!openresty.isSuccess(res)) {
+        error("Failed to get menu list: " + res.error);
+        return;
+    }
+    $("#mainNav").html(
+        Jemplate.process(
+            'menu.tt',
+            { menu_list: res }
+        )
+    );
+}
+
+function getContent (menu) {
+
+}
+
+function renderContent (res) {
 }
 

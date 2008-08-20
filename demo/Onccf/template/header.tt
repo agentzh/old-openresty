@@ -1,0 +1,47 @@
+[% IF NOT pack_js;
+      js_files = [
+        'jquery.js',
+        'onccf-jemplate.js',
+        'openresty.js',
+        'onccf.js',
+      ];
+   ELSE;
+      js_files = ['jquery.js', 'onccf_min.js'];
+   END;
+-%]
+
+<head xmlns="">
+  <meta name="generator" content=
+  "HTML Tidy for Linux/x86 (vers 6 November 2007), see www.w3.org" />
+  <meta http-equiv="Content-Type" content=
+  "text/html; charset=us-ascii" />
+  <meta http-equiv="X-UA-Compatible" content="IE=7" />
+  <meta name="Generator" content=
+  "Yahoo! Site Solution - centipede" />
+  <meta name="DESCRIPTION" id="mDescription" content=
+  "Mr Laurie Kan &#226;&#8364;&#8220; Founder &amp; General PartnerChina / Hong Kong / 48Mr Kan has worked for more than 15 years for some of the world&#226;&#8364;&#8482;s most successful technology companies, e.g. as Regional Manager for Apple Computers, as Regional Manager for Compaq Computers, as" />
+  <meta name="KEYWORDS" id="mKeywords" content=
+  "Private Equity, Our Team, F22 Silver Base Center, Gloucester Road, Central, Hong Kong" />
+  <link rel="stylesheet" type="text/css" media="screen" id=
+  "globalCSS" href="css/global.css" />
+  <link rel="stylesheet" type="text/css" media="screen" id=
+  "themeCSS" href="css/theme.css" />
+  <link rel="stylesheet" type="text/css" media="screen" id=
+  "layoutCSS" href="css/layout.css" />
+  <link rel="stylesheet" type="text/css" media="screen" id=
+  "listCSS" href="" />
+  <link rel="stylesheet" type="text/css" media="screen" id=
+  <link rel="stylesheet" type="text/css" media="screen" id=
+  "extensionsCSS" href="css/onccf.css" />
+
+  <title>Private Equity - Our Team</title>
+  <style type="text/css">
+  blockquote {margin-right:0;padding-right:0}
+  </style>
+
+    [%- FOREACH js_file IN js_files %]
+        <script type="text/javascript" src="js/[% js_file %]"></script>
+    [%- END %]
+
+</head>
+

@@ -1,38 +1,11 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:php=
-"http://php.net/xsl" lang="en">
-<head xmlns="">
-  <meta name="generator" content=
-  "HTML Tidy for Linux/x86 (vers 6 November 2007), see www.w3.org" />
-  <meta http-equiv="Content-Type" content=
-  "text/html; charset=us-ascii" />
-  <meta http-equiv="X-UA-Compatible" content="IE=7" />
-  <meta name="Generator" content=
-  "Yahoo! Site Solution - centipede" />
-  <meta name="DESCRIPTION" id="mDescription" content=
-  "Mr Laurie Kan &#226;&#8364;&#8220; Founder &amp; General PartnerChina / Hong Kong / 48Mr Kan has worked for more than 15 years for some of the world&#226;&#8364;&#8482;s most successful technology companies, e.g. as Regional Manager for Apple Computers, as Regional Manager for Compaq Computers, as" />
-  <meta name="KEYWORDS" id="mKeywords" content=
-  "Private Equity, Our Team, F22 Silver Base Center, Gloucester Road, Central, Hong Kong" />
-  <link rel="stylesheet" type="text/css" media="screen" id=
-  "globalCSS" href="css/global.css" />
-  <link rel="stylesheet" type="text/css" media="screen" id=
-  "themeCSS" href="css/theme.css" />
-  <link rel="stylesheet" type="text/css" media="screen" id=
-  "layoutCSS" href="css/layout.css" />
-  <link rel="stylesheet" type="text/css" media="screen" id=
-  "listCSS" href="" />
-  <link rel="stylesheet" type="text/css" media="screen" id=
-  "extensionsCSS" href="css/slideshow.css" />
-
-  <title>Private Equity - Our Team</title>
-  <style type="text/css">
-/*<![CDATA[*/
-  blockquote {margin-right:0;padding-right:0} 
-  /*]]>*/
-  </style>
-  <script type="text/javascript" src="js/onccf.js"></script>
-</head>
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+[%- PROCESS "header.tt" %]
 <body>
+    <div id="wait-message">
+        <img src="loading.gif"/>
+        &nbsp; <b>Loading...</b>&nbsp;
+    </div>
+
   <div id="body">
     <div id="doc">
       <div xmlns="" id="hd">
@@ -64,20 +37,8 @@
 
       <div xmlns="" id="navigation">
         <ul id="mainNav">
-          <li><a href="/home">Home</a></li>
-
-          <li><a href="/portfolio">Portfolio</a></li>
-
-          <li class="active"><a href="/our_team">Our Team</a></li>
-
-          <li><a href="/contact_us">Contact Us</a></li>
         </ul>
-      </div><script xmlns="" type="text/javascript">
-//<![CDATA[
-            var _newCollItemsByXSL = {};
-      //]]>
-      </script>
-
+      </div>
       <div xmlns="" id="bd">
         <div id="pageName">
           <div id="pageNameContent" class="editorWrap">
