@@ -1,0 +1,38 @@
+/**************************************************************
+Theme: Portland - Derived From: Portland  
+Layout: Layout 2 with Title - Derived from: Layout 2 with Title
+**************************************************************/
+/* START -> DO NOT EDIT THIS SECTION */
+#pageName{display:block;width:393px;_width:395px;margin:0 0 30px 25px}
+#zA,#zB{float:left;width:395px;clear:left;margin-left:25px;display:inline}
+#zB,#zC{_height:1px;padding-top:20px}
+#zC{margin-left:40px}
+/* Make sure to leave the "," in the following rule; it is there for IE 6 and 7 */
+#zC,{float:right;width:175px;margin-left:0}
+/* FIXES ------------ */
+/* this is a fix for the RTE in Firefox so it shows its right border when active */
+.modWrap{padding-right:2px;_padding-right:0}
+#zC{margin-right:-2px;_margin-right:0}
+/* END -> DO NOT EDIT THIS SECTION */			
+
+	
+/* START -> CUSTOMIZATION SECTION */
+
+	/* zones B and C */
+
+	#zB, 
+	#zC {
+		background-image:  url(http://us.i1.yimg.com/us.yimg.com/lib/smb/assets/hosting/yss/themes/portland/clio/images/en-us/zbzc_1.1.4.1.gif);
+		background-repeat: repeat-x;
+	}
+	
+	/* H3 Paragraph Title */
+	
+	#body h3 {
+		font-family: Verdana, sans-serif;
+		font-size: 14px;
+		font-weight: bold;
+		color: #666666;
+	}
+
+/* END -> CUSTOMIZATION SECTION */	

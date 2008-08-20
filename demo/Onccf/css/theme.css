@@ -1,0 +1,186 @@
+#ft:after{content: ".";display:block;height:0;clear:both;overflow:hidden;visibility:hidden}
+/***************************************
+Theme: Portland - Derived From: Portland  
+***************************************/
+/* START -> DO NOT EDIT THIS SECTION */
+/* MIN-HEIGHT FOR THEME ELEMENTS (555px before #ft) */
+#bd{min-height:36em;_height:36em}
+/* STRUCTURE -------- */
+#bd{float:left;width:625px;position:relative;left:50%;margin-left:-215px;margin-top:-10px}
+/* to keep the background image properly aligned in IE 7 and to make sure elements do not overlap */
+#hd{padding:30px 0;overflow:hidden;width:100%;position:relative}
+#hContent{float:left;width:395px;position:relative;left:50%;margin:40px 0 0 -190px;display:inline;padding-bottom:25px}
+#hMisc{float:left;width:170px;position:relative;left:50%;margin-left:40px;display:inline}
+#navigation{clear:left;float:left;width:180px;position:relative;left:50%;margin-left:-393px;margin-top:-10px;display:inline}
+ul#mainNav li a{_zoom:1;display:block;padding:3px 3px 3px 20px}
+/* to reveal the border on the first list item */
+ul#mainNav li.active{_zoom:1}
+#body h4{margin-bottom:0}
+#zB	#mapZone{border:5px solid #e0eadf;_border:0;width:384px;height:205px}
+#zB #mapContainer{_border:5px solid #e0eadf}
+#zB	#drivingDirectionsLnk{top:220px}
+#zC form#contactForm{width:163px}
+#ft{padding:35px 0 15px 0}
+#fContent{float:left;width:450px;position:relative;left:50%;margin-left:-40px;display:inline}
+#fMisc{float:left;width:300px;margin-left:-785px;left:50%;display:inline}
+/* FIXES ------------ */
+/* to keep things going to the left of the viewport (and the ribbon in IE)  */
+#body{min-width:770px;zoom:1;width:expression(documentElement.clientWidth < 770 ? "770px" : "auto" )}
+/* Firefox would misplace #fMisc when #fContent is empty */
+#fContent:after{content:".";visibility:hidden}
+ul#mainNav li.active{background:none}
+/* END -> DO NOT EDIT THIS SECTION */			
+
+
+/* START -> CUSTOMIZATION SECTION */
+	
+/* TYPOGRAPHY --------- */
+	
+		/* User-Editable Body */
+		
+		#body {
+			color: #6c6a56;
+			font-size: 11px;
+			line-height: 1.2;
+			font-family: Verdana, Arial;
+		}
+
+		/* p Normal */
+		
+		p {
+		}		
+
+		/* hr Horizontal Rule */
+		
+		hr {
+		}		
+		
+		/* H1 Site Title */
+		
+		#body h1 {
+			font-size: 26px;
+			font-weight: bold;
+			font-family: Georgia, Verdana, sans-serif;
+		}
+
+		/* H2 Page Title */
+		
+		#body h2 {
+			font-family: Georgia, Verdana, sans-serif;
+			font-size: 25px;
+			color: #8ab58f;
+		}
+
+		/* H3 Paragraph Title */
+		/* see layout_1.css and layout_1_wt.css */		
+		
+		#body h3 {
+		}
+
+		/* H4 Paragraph Subtitle */
+		
+		#body h4 {
+			color: #6c6a56;
+			font-weight: bold;
+		}
+
+		/* Header */
+		
+		#hd {
+		}
+		
+		/* Footer */
+		
+		#ft {
+			color: #ffffff;
+		}
+
+		/* Contact Info */
+		
+		#hMisc,#fMisc {
+
+		}
+
+		/* Footer Content */
+		
+		#fContent {
+			text-align: right;
+		}
+
+/* LINKS ------------ */
+
+		#body a:link,
+		#body a:visited {
+			color: #cbaa25;
+		}
+		
+		#body a:hover,
+		#body a:focus,
+		#body a:active {
+			text-decoration: none;
+		}
+
+		/* Nav Menu */
+		
+		ul#mainNav li a:link,
+		ul#mainNav li a:visited {
+			text-transform: lowercase;
+			font-family: Helvetica, Arial, sans-serif;
+			color: #bdbba6;
+			font-size: 24px;
+		}
+
+		ul#mainNav li a:hover,
+		ul#mainNav li a:active,
+		ul#mainNav li a:focus,
+		ul#mainNav li.active a:link,
+		ul#mainNav li.active a:visited {
+			color: #8ab58f;
+		}
+
+/* BACKGROUNDS -------- */
+
+		body  {
+			background-color: #f8fff8;
+		}
+
+		#hd {
+			background-color: #f8fff8;
+			background-image: url(http://us.i1.yimg.com/us.yimg.com/lib/smb/assets/hosting/yss/themes/portland/clio/images/en-us/hd_1.1.4.1.gif);
+			background-repeat: no-repeat;			
+			background-position: 50% 100%;
+		}
+		
+		#doc {
+			background-image: url(http://us.i1.yimg.com/us.yimg.com/lib/smb/assets/hosting/yss/themes/portland/clio/images/en-us/doc_1.1.4.1.gif);
+			background-repeat: repeat-y;
+			background-position: 50% 0;
+		}
+
+		/* the image in this rule does not match the selector string because it is the same image as the one used in ul#mainNav li.active a {} */
+		ul#mainNav li.active {
+			background-image: url(http://us.i1.yimg.com/us.yimg.com/lib/smb/assets/hosting/yss/themes/portland/clio/images/en-us/mainnavliactivea_1.1.4.1.gif);
+			background-repeat: no-repeat;
+		}
+
+		ul#mainNav li.active a {		
+			background-image: url(http://us.i1.yimg.com/us.yimg.com/lib/smb/assets/hosting/yss/themes/portland/clio/images/en-us/mainnavliactivea_1.1.4.1.gif);
+			background-repeat: no-repeat;
+			background-position: 0 100%;
+		}
+
+		#zWrap {
+
+		}
+		
+		#ft {
+			background-color: #6F6D59;
+			background-image: url(http://us.i1.yimg.com/us.yimg.com/lib/smb/assets/hosting/yss/themes/portland/clio/images/en-us/ft_1.1.4.1.gif);
+			background-position: 50% 0;
+			background-repeat: repeat-x;
+		}
+
+/* BORDERS --------------- */
+
+/* END -> CUSTOMIZATION SECTION */
+
