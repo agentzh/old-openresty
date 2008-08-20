@@ -31,7 +31,6 @@ POST /=/model/Post/~
 {"name":"id2","type":"serial","label":"id2"}
 --- response
 {"src":"/=/model/Post/id2","success":1}
---- LAST
 
 
 
