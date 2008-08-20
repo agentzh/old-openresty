@@ -29,7 +29,7 @@ sub new {
         "dbi:Pg:dbname=$Database;host=$Host".
             ($Port ? ";port=$Port" : ""),
         $User, $Password,
-        {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, %$opts, PrintError => 0}
+        {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 0, %$opts, PrintError => 0}
     );
 
     $Recording = $OpenResty::Config{'backend.recording'} && ! $OpenResty::Config{'test_suite.use_http'};

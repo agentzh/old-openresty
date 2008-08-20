@@ -14,7 +14,7 @@ use Compress::Zlib;
 use List::Util qw(first);
 use Params::Util qw(_HASH _STRING _ARRAY0 _ARRAY _SCALAR);
 use Encode qw(from_to encode decode);
-use Data::Structure::Util qw( _utf8_off );
+use Data::Structure::Util qw( _utf8_on _utf8_off );
 use DBI;
 use OpenResty::QuasiQuote::SQL;
 
@@ -62,8 +62,8 @@ our %OpMap = (
 our %ext2dumper = (
     '.yml' => \&YAML::Syck::Dump,
     '.yaml' => \&YAML::Syck::Dump,
-    '.js' => sub { $JsonXs->encode($_[0]) },
-    '.json' => sub { $JsonXs->encode($_[0]) },
+    '.js' => sub { _utf8_on($_[0]); $JsonXs->encode($_[0]) },
+    '.json' => sub { _utf8_on($_[0]); $JsonXs->encode($_[0]) },
 );
 
 our %EncodingMap = (
@@ -456,7 +456,6 @@ sub has_feed {
     my ($self, $feed) = @_;
 
     _IDENT($feed) or die "Bad feed name: $feed\n";
-
     my $sql = [:sql|
         select id
         from _feeds
@@ -489,6 +488,7 @@ sub has_role {
     my $ret;
     eval { $ret = $self->select($sql)->[0][0]; };
     if ($ret) { $Cache->set_has_role($user, $role, $ret) }
+    #warn "HERE!";
     return $ret;
 }
 
@@ -518,7 +518,8 @@ sub has_view {
 sub has_model {
     my ($self, $model) = @_;
     my $user = $self->current_user;
-    _IDENT($model) or die "Bad model name: $model\n";
+
+   _IDENT($model) or die "Bad model name: $model\n";
     if ($Cache->get_has_model($user, $model)) {
         #warn "has model cache HIT\n";
         return 1;
