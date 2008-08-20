@@ -133,9 +133,19 @@ function renderMenuList (res) {
 }
 
 function getContent (menu) {
-
+    setStatus(true, 'getContent');
+    openresty.callback = renderContent;
+    openresty.get('/=/model/Menu/name/' + encodeURIComponent(menu));
 }
 
 function renderContent (res) {
+    setStatus(false, 'getContent');
+    if (!openresty.isSuccess(res)) {
+        error("Failed to get content: " + res.error);
+        return;
+    }
+    var menu = res[0];
+    $("#page-title").text(menu.label);
+    $("#page-content").html(menu.content);
 }
 

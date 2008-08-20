@@ -42,60 +42,15 @@
       <div xmlns="" id="bd">
         <div id="pageName">
           <div id="pageNameContent" class="editorWrap">
-            <div id="pageNameZoneContent" class=
-            "editable rte flexContent" rel=
-            "itemGuid.pgName.pageGuid.about.001">
-              <h2>Our Team<br /></h2>
+            <div id="pageNameZoneContent">
+              <h2 id="page-title"></h2>
             </div>
           </div>
         </div>
 
         <div id="zWrap">
           <div id="zA">
-            <div class="modWrap">
-              Mr Laurie Kan &#226;&#8364;&#8220; Founder &amp;
-              General Partner<br />
-              China / Hong Kong / 48<br />
-              <br />
-              Mr Kan has worked for more than 15 years for some of
-              the world&#226;&#8364;&#8482;s most successful
-              technology companies, e.g. as Regional Manager for
-              Apple Computers, as Regional Manager for Compaq
-              Computers, as Supervisory Board Director for Packard
-              Bell and as Managing Director for Microsoft in Hong
-              Kong and Southern China. These experiences have
-              endowed him with ample expertise and sharp view as a
-              VC investor around China growth opportunities, esp.
-              in TMT and greentech<br />
-              <br />
-              For the next 4 years, Mr Kan began to create, invest
-              in and run technology companies. In 1997, he became
-              founder and lead investor in PointCast Asia and
-              meanwhile was COO of China Internet Corporation (now
-              China.com). In 1998, he was responsible for the
-              turnaround of Timeless Software, which later became
-              the 1st company listed on the GEM in HK. In 1999, he
-              established sina.com in HK&#194;&nbsp;<br />
-              <br />
-              Since 1999, Mr Kan has been working in the VC/PE
-              industry.&#194;&nbsp; Initially, in partnership with
-              H&amp;Q Asia Pacific and JH Whitney, he established
-              i100 Corporation, which was listed on the HK Stock
-              Exchange. i100 has invested in a number of wireless
-              and telecom related value added services and software
-              utilities in Hong Kong and China<br />
-              <br />
-              In 2004, Mr Kan launched ON Capital China Fund and
-              has returned 4.0 times realized + unrealized value
-              for the fund in 3 years, multiplying initial
-              investment principal for all investors<br />
-              <br />
-              Mr Kan graduated in business from the HK Baptist
-              College and from the Stanford Graduate School of
-              Business Executive Program for Smaller Companies. He
-              is an active participant in the advancement of the IT
-              industry in HK and the PRC, and proactively served on
-              a number of influential committees
+            <div id="page-content" class="modWrap">
             </div>
           </div>
 
