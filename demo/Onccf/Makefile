@@ -44,11 +44,11 @@ pack: all
 	rm -rf out
 	mv pack_out out
 
-upload: resty_server=api.eeeeworks.org
+upload: resty_server=api.openresty.org
 upload: all
 	script/upload
 
-upload2: resty_server=api.eeeeworks.org
+upload2: resty_server=api.openresty.org
 upload2: pack
 	script/upload
 
