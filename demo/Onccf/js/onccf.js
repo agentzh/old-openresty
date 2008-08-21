@@ -146,6 +146,7 @@ function renderContent (res) {
     }
     var menu = res[0];
     $("#page-title").text(menu.label);
-    $("#page-content").html( pod2html(menu.content) );
+    var html = pod2html(menu.content);
+    $("#page-content").html( html );
 }
 

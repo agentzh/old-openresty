@@ -46,195 +46,182 @@ $resty->post(
     '/=/model/Menu/~/~',
     [
         { name => "home", label => "Home", content => <<"_EOC_" },
-<img src="http://us.i1.yimg.com/us.yimg.com/lib/smb/assets/hosting/yss/themes/portland/clio/images/en-us/za_1.1.4.1.jpg"><br><br>
+=image gate.jpg
 
-Private equity managers today see opportunities in vast sectors of the PRC economy that have no dominant industry leader, and in research labs that are percolating with innovations. China is one of the hottest for private equity investment.<br><br>
+Private equity managers today see opportunities in vast sectors of the PRC economy that have no dominant industry leader, and in research labs that are percolating with innovations. China is one of the hottest for private equity investment.
 
-We are proud that we are in China, we are with Chinese during this China age. It's honorable to contribute in China's private equity industry development and help Chinese enterprises in each steps of their growths. We are looking forward to meet entrepreneurs, professionals,and bankers through this website. <br><br>
+We are proud that we are in China, we are with Chinese during this China age. It's honorable to contribute in China's private equity industry development and help Chinese enterprises in each steps of their growths. We are looking forward to meet entrepreneurs, professionals,and bankers through this website. 
+Private equity managers today see opportunities in vast sectors of the PRC economy that have no dominant industry leader, and in research labs that are percolating with innovations. China is one of the hottest for private equity investment.
 
-<h3>What We Do</h3>
-ON Capital is a China focused opportunity fund, dedicated in minority
-investments in high growth Chinese companies seeking expansion/development
-capital.<br>
+=head3 What We Do
 
-<br>Since inception in year 2004, ON Capital has invested
- in various industries with 3 IPOs in Hong Kong, Australia and United States, and achieve 4times of return to all investors.<br>
+ON Capital is a China focused opportunity fund, dedicated in minority investments in high growth Chinese companies seeking expansion/development capital.
 
-<br>ON Capital is aiming to create values to investors, and is focusing in opportunity investment in China Mainland.&nbsp; ON Capital believes&nbsp; that China offers an attractive environment for investing in unlisted companies for, inter alia, because of China's macro economy growth and government institutional reforms. We regards the consolidation and restructuring of enterprises in both the private and state owned sectors is providing new investment opportunities. And current China’s tightened monetary policy is generally favorable for Private Equity activities with increasing investment opportunities
+Since inception in year 2004, ON Capital has invested in various industries with 3 IPOs in Hong Kong, Australia and United States, and achieve 4times of return to all investors.
+
+ON Capital is aiming to create values to investors, and is focusing in opportunity investment in China Mainland.  ON Capital believes  that China offers an attractive environment for investing in unlisted companies for, inter alia, because of China's macro economy growth and government institutional reforms. We regards the consolidation and restructuring of enterprises in both the private and state owned sectors is providing new investment opportunities. And current China’s tightened monetary policy is generally favorable for Private Equity activities with increasing investment opportunities
 _EOC_
         { name => "portfolio", label => "Portfolio", content => <<"_EOC_" },
-  <div id="zWrap">
-    <div id="zA">
-      <div class="modWrap">
-        <p>We have</p>
+=head3 We have
 
-        <ul>
-          <li>8 investments since 2004</li>
+=over
 
-          <li>106.6% Gross IRR</li>
+=item *
 
-          <li>4.0x multiple to cost and all shareholder have
-          received investment principal distribution in
-          multiple</li>
+8 investments since 2004
 
-          <li>Investments crystallized via IPOs (HKSE, ASX, NYSE)
-          generating a realized IRR of 129.1%</li>
-        </ul>
+=item *
 
-        <div class=
-        "module_container module_container_zA_service_container"
-        id="mcontainer_zA.1">
-          <div id="header_zA.1"></div>
+106.6% Gross IRR
 
-          <ul class="module_bd_container" id="mbdcontainer_zA.1">
-            <li class="module service" id=
-            "module_itemRecordGuid.48606a7abce670.98890291">
-              <h3 id="mf_itemGuid.48606a7abce5e1.46966248" class=
-              "modfield title editable flexContent rte_limited_a"
-              rel="itemGuid.48606a7abce5e1.46966248">Turbo Speed
-              (HKSE:0818.HK)</h3>
+=item *
 
-              <div id="mf_itemGuid.48606a7abce5e1.46966249" class=
-              "modfield description editable flexContent rte" rel=
-              "itemGuid.48606a7abce5e1.46966249">
-                <ul>
-                  <li>Awarded by China Mobile to be the sole
-                  provider of its nationwide Interactive Voice
-                  Response “IVR” platform to all service and
-                  content providers seeking to be connected to
-                  China Mobile</li>
+4.0x multiple to cost and all shareholder have received investment principal distribution in multiple
 
-                  <li>Now a subsidiary of Hi Sun Group Limited
-                  (HKSE: 0818.HK), which is listed on the Hong Kong
-                  Stock Exchange</li>
+=item *
 
-                  <li>Hi Sun has been operating the platform since
-                  late 2003 profitably and receives 15% of all
-                  revenue generated by users of all services on it
-                  (payment made by China Mobile directly)</li>
+Investments crystallized via IPOs (HKSE, ASX, NYSE) generating a realized IRR of 129.1%
 
-                  <li>While Hi Sun covers the whole nation, all
-                  competitors operate at only regional level, on a
-                  province by province basis</li>
+=back
 
-                  <li>As IVR continue to grow in China, Hi Sun has
-                  huge operating leverage to expand into the rest
-                  of the mobile value-added service industry, based
-                  on comparison with the Korea and Japan
-                  markets</li>
+=head3 Turbo Speed (HKSE:0818.HK)
 
-                  <li>ON Capital led first round funding for 16%
-                  equity of Hi Sun and has disposed all of the
-                  stake at 7.3X multiple return</li>
-                </ul>
-              </div>
-            </li>
+=over
 
-            <li class="module service" id=
-            "module_itemRecordGuid.48606a7abce670.98890293">
-              <h3 id="mf_itemGuid.48606a7abce5e1.46966252" class=
-              "modfield title editable flexContent rte_limited_a"
-              rel="itemGuid.48606a7abce5e1.46966252">Arasor
-              (ASX:ARR)</h3>
+=item *
 
-              <div id="mf_itemGuid.48606a7abce5e1.46966253" class=
-              "modfield description editable flexContent rte" rel=
-              "itemGuid.48606a7abce5e1.46966253">
-                <ul>
-                  <li>Founded and managed by Dr Simon Cao, a
-                  scientist in opto-electronics and labeled by
-                  Forbes as 'Godfather of WDM’</li>
+Awarded by China Mobile to be the sole provider of its nationwide Interactive Voice Response “IVR” platform to all service and content providers seeking to be connected to China Mobile
 
-                  <li>Mr Cao has personally funded Arasor with
-                  USD10mil+; and was previously the founder and key
-                  executive of Avanex and Oplink</li>
+=item *
 
-                  <li>Solid order book from 1st tier global telecom
-                  carriers and equipment vendors, with
-                  exceptionally strong growth in India and
-                  China</li>
+Now a subsidiary of Hi Sun Group Limited (HKSE: 0818.HK), which is listed on the Hong Kong Stock Exchange
 
-                  <li>Proprietary technology platform which leads
-                  to significant cost and performance
-                  advantages</li>
+=item *
 
-                  <li>Arasor is currently the only company in the
-                  industry which has productized an optical chip
-                  set for Laser TV. As a new class of high-end
-                  consumer product, Laser TV has been well endorsed
-                  and signed up by a number of global consumer
-                  electronic giants such as Mitsubishi and
-                  Samsung</li>
+Hi Sun has been operating the platform since late 2003 profitably and receives 15% of all revenue generated by users of all services on it (payment made by China Mobile directly)
 
-                  <li>ON Capital led in early 2006 and gained 8.8%
-                  equity of Arasor</li>
+=item *
 
-                  <li>IPO in Oct 2006 at ASX at around 2X of ON
-                  Capital entry cost (with 2 years lock-up)</li>
-                </ul>
-              </div>
-            </li>
+While Hi Sun covers the whole nation, all competitors operate at only regional level, on a province by province basis
 
-            <li class="module service" id=
-            "module_itemRecordGuid.48606a7abce670.98890294">
-              <h3 id="mf_itemGuid.48606a7abce5e1.46966254" class=
-              "modfield title editable flexContent rte_limited_a"
-              rel="itemGuid.48606a7abce5e1.46966254">Gushan
-              (NYSE:GU)<br></h3>
+=item *
 
-              <div id="mf_itemGuid.48606a7abce5e1.46966255" class=
-              "modfield description editable flexContent rte" rel=
-              "itemGuid.48606a7abce5e1.46966255">
-                <ul>
-                  <li>Known largest producer of Biodiesel in China
-                  having influence on government’s effort in
-                  promoting alternative or green fuel and in
-                  setting up a national standards and
-                  specifications of BioDiesel</li>
+As IVR continue to grow in China, Hi Sun has huge operating leverage to expand into the rest of the mobile value-added service industry, based on comparison with the Korea and Japan markets
 
-                  <li>Low competition with early mover advantage
-                  (Founded in 2001)</li>
+=item *
 
-                  <li>Currently an aggregate annual production
-                  capacity of 240,000 tons of biodiesel; strong
-                  revenue growth</li>
+ON Capital led first round funding for 16% equity of Hi Sun and has disposed all of the stake at 7.3X multiple return
 
-                  <li>In-house R&amp;D team with proprietary
-                  technologies &amp; IP rights</li>
+=back
 
-                  <li>China being a big energy user, huge demand on
-                  diesel. With the ever-growing concern over crude
-                  oil price and supply, alternative fuel will
-                  continue to attract more attention</li>
+=head3 Arasor (ASX:ARR)
 
-                  <li>Gushan went IPO in December 2007 in NYSE
-                  (GU), ON Capital realized an IRR of 215% against
-                  our investment cost</li>
-                </ul>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
+=over
+
+=item *
+
+Founded and managed by Dr Simon Cao, a scientist in opto-electronics and labeled by Forbes as 'Godfather of WDM’
+
+=item *
+
+Mr Cao has personally funded Arasor with USD10mil+; and was previously the founder and key executive of Avanex and Oplink
+
+=item *
+
+Solid order book from 1st tier global telecom carriers and equipment vendors, with exceptionally strong growth in India and China
+
+=item *
+
+Proprietary technology platform which leads to significant cost and performance advantages
+
+=item *
+
+Arasor is currently the only company in the industry which has productized an optical chip set for Laser TV. As a new class of high-end consumer product, Laser TV has been well endorsed and signed up by a number of global consumer electronic giants such as Mitsubishi and Samsung
+
+=item *
+
+ON Capital led in early 2006 and gained 8.8% equity of Arasor
+
+=item *
+
+IPO in Oct 2006 at ASX at around 2X of ON Capital entry cost (with 2 years lock-up)
+
+=back
+
+=head3 Gushan (NYSE:GU)
+
+=over
+
+=item *
+
+Known largest producer of Biodiesel in China having influence on government’s effort in promoting alternative or green fuel and in setting up a national standards and specifications of BioDiesel
+
+=item *
+
+Low competition with early mover advantage (Founded in 2001)
+
+=item *
+
+Currently an aggregate annual production capacity of 240,000 tons of biodiesel; strong revenue growth
+
+=item *
+
+In-house R&D team with proprietary technologies & IP rights
+
+=item *
+
+China being a big energy user, huge demand on diesel. With the ever-growing concern over crude oil price and supply, alternative fuel will continue to attract more attention
+
+=item *
+
+Gushan went IPO in December 2007 in NYSE (GU), ON Capital realized an IRR of 215% against our investment cost
+
+=back
 _EOC_
         { name => 'team', label => 'Our team', content => <<"_EOC_" },
-Mr Laurie Kan – Founder & General Partner<br>
-China / Hong Kong / 48<br>
+=head3 Mr Laurie Kan – Founder & General Partner
 
-Mr Kan has worked for more than 15 years for some of the world’s most successful technology companies, e.g. as Regional Manager for Apple Computers, as Regional Manager for Compaq Computers, as Supervisory Board Director for Packard Bell and as Managing Director for Microsoft in Hong Kong and Southern China. These experiences have endowed him with ample expertise and sharp view as a VC investor around China growth opportunities, esp. in TMT and greentech<br><br><br>
+    China / Hong Kong / 48
 
-For the next 4 years, Mr Kan began to create, invest in and run technology companies. In 1997, he became founder and lead investor in PointCast Asia and meanwhile was COO of China Internet Corporation (now China.com). In 1998, he was responsible for the turnaround of Timeless Software, which later became the 1st company listed on the GEM in HK. In 1999, he established sina.com in HK <br><br>
+Mr Kan has worked for more than 15 years for some of the world’s most successful technology companies, e.g. as Regional Manager for Apple Computers, as Regional Manager for Compaq Computers, as Supervisory Board Director for Packard Bell and as Managing Director for Microsoft in Hong Kong and Southern China. These experiences have endowed him with ample expertise and sharp view as a VC investor around China growth opportunities, esp. in TMT and greentech
 
-Since 1999, Mr Kan has been working in the VC/PE industry.  Initially, in partnership with H&Q Asia Pacific and JH Whitney, he established i100 Corporation, which was listed on the HK Stock Exchange. i100 has invested in a number of wireless and telecom related value added services and software utilities in Hong Kong and China<br><br>
+For the next 4 years, Mr Kan began to create, invest in and run technology companies. In 1997, he became founder and lead investor in PointCast Asia and meanwhile was COO of China Internet Corporation (now China.com). In 1998, he was responsible for the turnaround of Timeless Software, which later became the 1st company listed on the GEM in HK. In 1999, he established sina.com in HK
 
-In 2004, Mr Kan launched ON Capital China Fund and has returned 4.0 times realized + unrealized value for the fund in 3 years, multiplying initial investment principal for all investors<br><br>
+Since 1999, Mr Kan has been working in the VC/PE industry.  Initially, in partnership with H&Q Asia Pacific and JH Whitney, he established i100 Corporation, which was listed on the HK Stock Exchange. i100 has invested in a number of wireless and telecom related value added services and software utilities in Hong Kong and China
 
-Mr Kan graduated in business from the HK Baptist College and from the Stanford Graduate School of Business Executive Program for Smaller Companies. He is an active participant in the advancement of the IT industry in HK and the PRC, and proactively served on a number of influential committees<br><br>
+In 2004, Mr Kan launched ON Capital China Fund and has returned 4.0 times realized + unrealized value for the fund in 3 years, multiplying initial investment principal for all investors
+
+Mr Kan graduated in business from the HK Baptist College and from the Stanford Graduate School of Business Executive Program for Smaller Companies. He is an active participant in the advancement of the IT industry in HK and the PRC, and proactively served on a number of influential committees
 _EOC_
         { name => 'contact', label => 'Contact us', content => <<"_EOC_" },
-<p>Hong Kong office:</p><p>F22 Silver Base Center</p><p>Gloucester Road, Central</p><p>Hong Kong</p><p>ph: +852 6880 0198</p><p>&nbsp;</p><p>Beijing office:</p><p>1419 South Tower</p><p>Kerry Centre 1 Guanghua Road</p><p>Chaoyang District Beijing</p><p>ph: +86 138 1103 9806</p><p>&nbsp;</p><p>Shanghai office</p><p>ph: +86 159 2168 1167</p><p>&nbsp;</p><p>Shenzhen office</p><p>Xin Hua Insurance Tower<br>Min Tian Rd, Fu Tian District, </p><p>Shen Zhen <br>ph: +86 755 8826 4407
+=over
+
+=item Hong Kong office
+
+    F22 Silver Base Center
+    Gloucester Road, Central
+    Hong Kong
+    ph: +852 6880 0198
+
+=item Beijing office
+
+    1419 South Tower
+    Kerry Centre 1 Guanghua Road
+    Chaoyang District Beijing
+    ph: +86 138 1103 9806
+
+=item Shanghai office
+
+    ph: +86 159 2168 1167
+    Shenzhen office
+    Xin Hua Insurance Tower
+    Min Tian Rd, Fu Tian District,
+
+=item Shen Zhen office
+
+    ph: +86 755 8826 4407
+
+=back
 _EOC_
     ]
 );

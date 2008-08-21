@@ -11,9 +11,9 @@ is(pod2html('=image gate.jpg\n\n'), '<p><img src="gate.jpg"/></p>', 'image');
 is(pod2html('=pod\n\n=cut\n\n=encoding utf8\n\nhi'), '<p>hi</p>', 'directives ignored');
 is(pod2html('L<http://agentzh.org/#elem/home/1>'),
     '<p><a href="http://agentzh.org/#elem/home/1">http://agentzh.org/#elem/home/1</a></p>', 'L<url> works');
-is(pod2html(' hello\n  world'), '<pre> hello\n  world</pre>', 'pre');
+is(pod2html(' hello\n  world'), '<pre> hello\n  world</pre><br/>', 'pre');
 is_string(pod2html('=head1 A B C\n\n hello\n  world'),
-    '<h1>A B C</h1>\n<pre> hello\n  world</pre>', 'head1 & pre');
+    '<h1>A B C</h1>\n<pre> hello\n  world</pre><br/>', 'head1 & pre');
 is_string(pod2html('=head3  hi\n\nhello, world\nAhah!\n\ndog is here.'),
     '<h3>hi</h3>\n<p>hello, world\nAhah!</p>\n<p>dog is here.</p>',
     'head3 & paragrahs');
@@ -121,7 +121,7 @@ is_string(
         "<li>hi</li>\n" +
         "</ul>\n" +
         "<pre>  3 &gt; 4\n" +
-        "  532aa</pre>\n" +
+        "  532aa</pre><br/>\n" +
         '<p><a href="http://blog.agentzh">agentzh</a></p>',
     'long POD works'
 );
@@ -147,7 +147,7 @@ is_string(
     'and he is always here.</li>\n' +
     '<p>really?</p>\n' +
     '<li>  hello, world</li>\n' +
-    '<pre>  haha</pre>\n' +
+    '<pre>  haha</pre><br/>\n' +
     '</ol>',
     'another long case'
 );
