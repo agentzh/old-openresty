@@ -3,10 +3,11 @@ use t::TestJS;
 
 // JS code starts from here...
 
-plan(18);
+plan(19);
 
 include('js/pod2html.js');
 
+is(pod2html('=image gate.jpg\n\n'), '<p><img src="gate.jpg"/></p>', 'image');
 is(pod2html('=pod\n\n=cut\n\n=encoding utf8\n\nhi'), '<p>hi</p>', 'directives ignored');
 is(pod2html('L<http://agentzh.org/#elem/home/1>'),
     '<p><a href="http://agentzh.org/#elem/home/1">http://agentzh.org/#elem/home/1</a></p>', 'L<url> works');

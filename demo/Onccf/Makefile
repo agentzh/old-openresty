@@ -9,6 +9,7 @@ all:
 	cp ../../clients/js/*.js out/js/
 	cp ../Blog/js/thirdparty/jquery.js out/js/
 	cp ../Blog/image/loading.gif out/
+	cp image/*.* out/
 	-rm out/JSON.js
 	-rm out/md5.js
 	-rm out/*dojo*.js

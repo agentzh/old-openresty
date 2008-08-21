@@ -90,6 +90,13 @@ function pod2html (pod) {
             htmlBits.push('<dt>' + title + '</dt><dd>');
             continue;
         }
+        var match = p.match(/^=image (\S+)/);
+        if (match) {
+            var url = match[1];
+            url = pod2html_escape(url);
+            htmlBits.push('<p><img src="' + url + '"/></p>');
+            continue;
+        }
         if (/^=(?:cut|pod|encoding|begin|end)\b/.test(p)) continue;
         htmlBits.push('<p>' + pod2html_escape_in_p(p) + '</p>');
     }
