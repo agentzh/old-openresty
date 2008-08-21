@@ -43,6 +43,9 @@ sub _add_test_methods {
     $context->function_set( 'is'      => sub { is($_[0], $_[1], $_[2]) } );
     $context->function_set( 'is_string'      => sub { is_string($_[0], $_[1], $_[2]) } );
     $context->function_set( 'diag'    => sub { diag(@_) });
+    $context->function_set( 'alert'    => sub { diag(@_) });
+    $context->function_set( 'dump'    => sub { diag(Dumper(@_)) });
+    $context->function_set( 'exit'    => sub { exit });
     $context->function_set( 'include'  =>
         sub {
             my $file = shift;
