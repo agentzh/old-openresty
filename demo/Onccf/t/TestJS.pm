@@ -9,6 +9,7 @@ use JavaScript::SpiderMonkey;
 use File::Slurp qw(read_file);
 
 use Test::More;
+use Test::LongString;
 
 sub _new {
     my $pkg = shift;
@@ -40,6 +41,7 @@ sub _add_test_methods {
     $context->function_set( 'plan'    => sub { plan( tests => $_[0] ) } );
     $context->function_set( 'ok'      => sub { ok($_[0], $_[1]) } );
     $context->function_set( 'is'      => sub { is($_[0], $_[1], $_[2]) } );
+    $context->function_set( 'is_string'      => sub { is_string($_[0], $_[1], $_[2]) } );
     $context->function_set( 'diag'    => sub { diag(@_) });
     $context->function_set( 'include'  =>
         sub {

@@ -1,5 +1,5 @@
 function pod2html (pod) {
-    var html = pod
+    return pod
         .replace(/C<<(.*?)>>/g, '__start_resty_code__$1__end_resty_code__')
         .replace(/C<(.*?)>/g, '__start_resty_code__$1__end_resty_code__')
         .replace(/I<(.*?)>/g, '__start_resty_i__$1__end_resty_i__')
@@ -19,10 +19,10 @@ function pod2html (pod) {
         .replace(/\n+=item\s+(\S+)\s*/g, '</li><li>$1')
         .replace(/\n+=back([^\n]*)/g, '</li></ul>')
         .replace(/<ul><\/li>/g, '<ul>')
-        .replace(/\n+[ \t]+([^\n]+)/g, '<code>&nbsp; &nbsp; $1</code>')
+        .replace(/\n[ \t]+([^\n]+)/g, '\n<code>&nbsp; &nbsp; $1</code><br/>')
         .replace(/[ \t][ \t]/g, '&nbsp; ')
+        .replace(/\n\n+/g, '<br/><br/>')
         .replace(/__start_resty2_a__([^|]+?)\|([^|]*?)__end_resty2_a__/g, '<a href="$1">$2</a>')
         .replace(/__start_resty2_a__(\S+?)__end_resty2_a__/g, '<a href="$1">$1</a>')
-    return html;
 }
 
