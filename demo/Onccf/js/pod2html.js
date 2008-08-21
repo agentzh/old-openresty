@@ -37,7 +37,7 @@ function pod2html (pod) {
         var match = p.match(/^[ \t]+/);
         if (match) {
             //diag("matched");
-            htmlBits.push('<pre>' + pod2html_escape(p) + '</pre>');
+            htmlBits.push('<pre>' + pod2html_escape(p) + '</pre><br/>');
             continue;
         }
         match = p.match(/^=head(\d+) +(.*)/);

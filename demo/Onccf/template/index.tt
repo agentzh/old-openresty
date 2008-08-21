@@ -1,13 +1,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 [%- PROCESS "header.tt" %]
 <body>
-    <div id="wait-message">
-        <img src="loading.gif"/>
-        &nbsp; <b>Loading...</b>&nbsp;
-    </div>
-
   <div id="body">
     <div id="doc">
+
       <div xmlns="" id="hd">
         <div id="hContent">
           <div id="headerContent" class="editorWrap">
@@ -50,6 +46,12 @@
 
         <div id="zWrap">
           <div id="zA">
+
+    <div id="wait-message">
+        <img src="loading.gif"/>
+        &nbsp; <b>Loading...</b>&nbsp;
+    </div>
+
             <div id="page-content" class="modWrap">
             </div>
           </div>
