@@ -2,6 +2,7 @@
       js_files = [
         'jquery.js',
         'onccf-jemplate.js',
+        'pod2html.js',
         'openresty.js',
         'onccf.js',
       ];

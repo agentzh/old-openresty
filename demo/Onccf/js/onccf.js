@@ -89,8 +89,8 @@ function dispatchByAnchor () {
     if (savedAnchor == anchor)
         return;
     if (anchor == "") {
-        anchor = 'main';
-        location.hash = 'main';
+        anchor = 'menu/home';
+        location.hash = 'menu/home';
     }
     savedAnchor = anchor;
 

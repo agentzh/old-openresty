@@ -219,6 +219,23 @@ _EOC_
     </div>
   </div>
 _EOC_
+        { name => 'team', label => 'Our team', content => <<"_EOC_" },
+Mr Laurie Kan – Founder & General Partner<br>
+China / Hong Kong / 48<br>
+
+Mr Kan has worked for more than 15 years for some of the world’s most successful technology companies, e.g. as Regional Manager for Apple Computers, as Regional Manager for Compaq Computers, as Supervisory Board Director for Packard Bell and as Managing Director for Microsoft in Hong Kong and Southern China. These experiences have endowed him with ample expertise and sharp view as a VC investor around China growth opportunities, esp. in TMT and greentech<br><br><br>
+
+For the next 4 years, Mr Kan began to create, invest in and run technology companies. In 1997, he became founder and lead investor in PointCast Asia and meanwhile was COO of China Internet Corporation (now China.com). In 1998, he was responsible for the turnaround of Timeless Software, which later became the 1st company listed on the GEM in HK. In 1999, he established sina.com in HK <br><br>
+
+Since 1999, Mr Kan has been working in the VC/PE industry.  Initially, in partnership with H&Q Asia Pacific and JH Whitney, he established i100 Corporation, which was listed on the HK Stock Exchange. i100 has invested in a number of wireless and telecom related value added services and software utilities in Hong Kong and China<br><br>
+
+In 2004, Mr Kan launched ON Capital China Fund and has returned 4.0 times realized + unrealized value for the fund in 3 years, multiplying initial investment principal for all investors<br><br>
+
+Mr Kan graduated in business from the HK Baptist College and from the Stanford Graduate School of Business Executive Program for Smaller Companies. He is an active participant in the advancement of the IT industry in HK and the PRC, and proactively served on a number of influential committees<br><br>
+_EOC_
+        { name => 'contact', label => 'Contact us', content => <<"_EOC_" },
+<p>Hong Kong office:</p><p>F22 Silver Base Center</p><p>Gloucester Road, Central</p><p>Hong Kong</p><p>ph: +852 6880 0198</p><p>&nbsp;</p><p>Beijing office:</p><p>1419 South Tower</p><p>Kerry Centre 1 Guanghua Road</p><p>Chaoyang District Beijing</p><p>ph: +86 138 1103 9806</p><p>&nbsp;</p><p>Shanghai office</p><p>ph: +86 159 2168 1167</p><p>&nbsp;</p><p>Shenzhen office</p><p>Xin Hua Insurance Tower<br>Min Tian Rd, Fu Tian District, </p><p>Shen Zhen <br>ph: +86 755 8826 4407
+_EOC_
     ]
 );
 
