@@ -90,6 +90,7 @@ function pod2html (pod) {
             htmlBits.push('<dt>' + title + '</dt><dd>');
             continue;
         }
+        if (/^=(?:cut|pod|encoding|begin|end)\b/.test(p)) continue;
         htmlBits.push('<p>' + pod2html_escape_in_p(p) + '</p>');
     }
     //dump(htmlBits);
