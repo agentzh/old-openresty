@@ -3,10 +3,12 @@ use t::TestJS;
 
 // JS code starts from here...
 
-plan(16);
+plan(17);
 
 include('js/pod2html.js');
 
+is(pod2html('L<http://agentzh.org/#elem/home/1>'),
+    '<p><a href="http://agentzh.org/#elem/home/1">http://agentzh.org/#elem/home/1</a></p>', 'L<url> works');
 is(pod2html(' hello\n  world'), '<pre> hello\n  world</pre>', 'pre');
 is_string(pod2html('=head1 A B C\n\n hello\n  world'),
     '<h1>A B C</h1>\n<pre> hello\n  world</pre>', 'head1 & pre');
