@@ -3,7 +3,7 @@ use t::TestJS;
 
 // JS code starts from here...
 
-plan(5);
+plan(7);
 
 include('js/pod2html.js');
 
@@ -34,5 +34,17 @@ is_string(
         "<code>&nbsp; &nbsp; 532aa</code><br/>\n" +
         '<a href="http://blog.agentzh">agentzh</a>',
     'long POD works'
+);
+
+is(
+    pod2html('=head4 你好么 ABC\n\n'),
+    '<h4>你好么 ABC</h4><br/><br/>',
+    '=head4 works'
+);
+
+is(
+    pod2html('=head4 你好么 ABC\n\n'),
+    '<h4>你好么 ABC</h4><br/><br/>',
+    '=head4 works'
 );
 
