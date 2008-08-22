@@ -27,6 +27,8 @@ function pod2html (pod) {
     var paras = pod.split(/\n\n+/);
     var htmlBits = [];
     var curListType = [];
+    var isFirst;
+    var expectTitle = false;
     for (var i = 0; i < paras.length; i++) {
         var p = paras[i];
         var isLast = i == paras.length - 1;
@@ -37,7 +39,8 @@ function pod2html (pod) {
         var match = p.match(/^[ \t]+/);
         if (match) {
             //diag("matched");
-            htmlBits.push('<pre>' + pod2html_escape(p) + '</pre><br/>');
+            htmlBits.push('<pre>' + pod2html_escape(p) + '</pre>');
+            expectTitle = false;
             continue;
         }
         match = p.match(/^=head(\d+) +(.*)/);
@@ -46,6 +49,7 @@ function pod2html (pod) {
             var title = match[2];
             htmlBits.push('<h' + level + '>' +
                     title + '</h' + level + '>');
+            expectTitle = false;
             continue;
         }
         match = p.match(/^=over(?:\s+\d+)?\s*$/);
@@ -62,24 +66,37 @@ function pod2html (pod) {
                 curListType.push('dl');
                 html = '<dl>';
             }
+            isFirst = true;
             htmlBits.push(html);
+            expectTitle = false;
             continue;
         }
         if (/^=back\s*$/.test(p)) {
             var type = curListType.pop();
             if (type) {
                 var html = '';
+                if (type == 'ul' || type == 'ol')
+                    html += '</li>';
+                else
+                    html += '</dd>';
                 html += '</' + type + '>';
                 htmlBits.push(html);
+                expectTitle = false;
                 continue;
             }
         }
         var match = p.match(/^=item +(?:\*|\d+\.)\s*$/);
-        if (match && !isLast) {
+        if (match) {
             //var type = curListType.pop();
-            var next = paras[i+1];
-            paras[i+1] = null;
-            htmlBits.push('<li>' + next + '</li>');
+            //var next = paras[i+1];
+            //paras[i+1] = null;
+            var html = '';
+            if (isFirst)
+                isFirst = false;
+            else
+                html += '</li>';
+            htmlBits.push(html + '<li>');
+            expectTitle = true;
             continue;
         }
 
@@ -87,7 +104,13 @@ function pod2html (pod) {
         if (match) {
             var title = match[1];
             //var type = curListType.pop();
-            htmlBits.push('<dt>' + title + '</dt><dd>');
+            var html = '';
+            if (isFirst)
+                isFirst = false;
+            else
+                html += '</dd>';
+            htmlBits.push(html + '<dt>' + title + '</dt><dd>');
+            expectTitle = false;
             continue;
         }
         var match = p.match(/^=image (\S+)/);
@@ -95,10 +118,16 @@ function pod2html (pod) {
             var url = match[1];
             url = pod2html_escape(url);
             htmlBits.push('<p><img src="' + url + '"/></p>');
+            expectTitle = false;
             continue;
         }
         if (/^=(?:cut|pod|encoding|begin|end)\b/.test(p)) continue;
-        htmlBits.push('<p>' + pod2html_escape_in_p(p) + '</p>');
+        if (expectTitle) {
+            htmlBits.push(pod2html_escape_in_p(p));
+            expectTitle = false;
+        } else {
+            htmlBits.push('<p>' + pod2html_escape_in_p(p) + '</p>');
+        }
     }
     //dump(htmlBits);
     return htmlBits.join("\n");

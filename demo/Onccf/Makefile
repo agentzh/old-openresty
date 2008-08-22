@@ -61,3 +61,6 @@ doc/blog_site.png: doc/graphviz.mk
 	neato -Tpng a.dot > $@
 
 
+test:
+	prove -r t
+

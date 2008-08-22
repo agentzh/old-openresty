@@ -1,8 +1,9 @@
 # vi:filetype=
 use Test::Base;
+
 use JavaScript::SpiderMonkey;
 use JSON::XS;
-use Test::LongString;
+#use Test::LongString;
 #use Data::Structure;
 use utf8;
 use Encode;
@@ -35,7 +36,7 @@ run {
     $monkey->eval("get(pod2html($json))") or
         die "Error occured when calling the pod2html function: $@";
     $res = Encode::decode('utf8', $res);
-    is_string "$res\n", $block->html, "$name - HTML output okay";
+    is "$res\n", $block->html, "$name - HTML output okay";
 };
 
 $monkey->destroy();
@@ -78,7 +79,7 @@ L<http://agentzh.org/#elem/home/1>
    world
 --- html
 <pre> hello
-   world</pre><br/>
+   world</pre>
 
 
 
@@ -91,7 +92,7 @@ L<http://agentzh.org/#elem/home/1>
 --- html
 <h1>A B C</h1>
 <pre> hello
-  world</pre><br/>
+  world</pre>
 
 
 
@@ -156,9 +157,30 @@ Hello, world
 =back
 --- html
 <ul>
-<li>Hello, world</li>
+<li>
+Hello, world
 <p>*grin*</p>
-</ul>
+</li></ul>
+
+
+
+=== TEST 12: pre as item title
+--- pod
+=over
+
+=item *
+
+ abc
+
+hello
+
+=back
+--- html
+<ul>
+<li>
+<pre> abc</pre>
+<p>hello</p>
+</li></ul>
 
 
 
@@ -177,10 +199,11 @@ ABC
 =back
 --- html
 <ul>
-<li>ABC</li>
-<li>*grin*</li>
-</ul>
-
+<li>
+ABC
+</li><li>
+*grin*
+</li></ul>
 
 
 === TEST 13: nested <ul>
@@ -209,11 +232,13 @@ QQQ
 =back
 --- html
 <ul>
-<li>ABC</li>
+<li>
+ABC
 <ul>
-<li>QQQ</li>
-</ul>
-</ul>
+<li>
+QQQ
+</li></ul>
+</li></ul>
 
 
 
@@ -240,10 +265,12 @@ hello
 =back
 --- html
 <ol>
-<li>ABC</li>
-<li>QQQ</li>
+<li>
+ABC
+</li><li>
+QQQ
 <p>hello</p>
-</ol>
+</li></ol>
 
 
 
@@ -274,11 +301,13 @@ QQQ
 =back
 --- html
 <ul>
-<li>ABC</li>
+<li>
+ABC
 <ol>
-<li>QQQ</li>
-</ol>
-</ul>
+<li>
+QQQ
+</li></ol>
+</li></ul>
 
 
 
@@ -305,8 +334,8 @@ Oh oh!
 <dt>ABC</dt><dd>
 <p>English words</p>
 <p>Oh oh!</p>
-<dt>hello, world</dt><dd>
-</dl>
+</dd><dt>hello, world</dt><dd>
+</dd></dl>
 
 
 
@@ -343,10 +372,11 @@ L<http://blog.agentzh|agentzh>
 --- html
 <h1>Hello</h1>
 <ul>
-<li>hi</li>
-</ul>
+<li>
+hi
+</li></ul>
 <pre>  3 &gt; 4
-  532aa</pre><br/>
+  532aa</pre>
 <p><a href="http://blog.agentzh">agentzh</a></p>
 
 
@@ -383,10 +413,12 @@ really?
 =back
 --- html
 <ol>
-<li>cat is not a dog.
-and he is always here.</li>
+<li>
+cat is not a dog.
+and he is always here.
 <p>really?</p>
-<li>  hello, world
-  haha</li>
-</ol>
+</li><li>
+<pre>  hello, world
+  haha</pre>
+</li></ol>
 
