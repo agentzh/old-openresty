@@ -1,154 +1,392 @@
-# vi:filetype=javascript
-use t::TestJS;
+# vi:filetype=
+use Test::Base;
+use JavaScript::SpiderMonkey;
+use JSON::XS;
+use Test::LongString;
+#use Data::Structure;
+use utf8;
+use Encode;
 
-// JS code starts from here...
+my $json_xs = JSON::XS->new->allow_nonref;
 
-plan(19);
+plan tests => blocks() * 1;
 
-include('js/pod2html.js');
+my $jsfile = 'js/pod2html.js';
 
-is(pod2html('=image gate.jpg\n\n'), '<p><img src="gate.jpg"/></p>', 'image');
-is(pod2html('=pod\n\n=cut\n\n=encoding utf8\n\nhi'), '<p>hi</p>', 'directives ignored');
-is(pod2html('L<http://agentzh.org/#elem/home/1>'),
-    '<p><a href="http://agentzh.org/#elem/home/1">http://agentzh.org/#elem/home/1</a></p>', 'L<url> works');
-is(pod2html(' hello\n  world'), '<pre> hello\n  world</pre><br/>', 'pre');
-is_string(pod2html('=head1 A B C\n\n hello\n  world'),
-    '<h1>A B C</h1>\n<pre> hello\n  world</pre><br/>', 'head1 & pre');
-is_string(pod2html('=head3  hi\n\nhello, world\nAhah!\n\ndog is here.'),
-    '<h3>hi</h3>\n<p>hello, world\nAhah!</p>\n<p>dog is here.</p>',
-    'head3 & paragrahs');
-is(pod2html('C<hello>, world'), '<p><code>hello</code>, world</p>', "C<...> works");
-is(pod2html('F</usr/bin/perl>'), '<p><em>/usr/bin/perl</em></p>', "F<...> works");
-is(pod2html('She loves I<me>!'), '<p>She loves <i>me</i>!</p>', "I<...> works");
-is(pod2html('She loves B<me>!'), '<p>She loves <b>me</b>!</p>', "B<...> works");
-is_string(pod2html('=over 4\n\n=item *\n\nHello, world\n\n*grin*\n\n=back'),
-    '<ul>\n' +
-        '<li>Hello, world</li>\n' +
-        '<p>*grin*</p>\n' +
-    '</ul>',
-    'over & =item *'
-);
-is_string(pod2html('=over\n\n=item *\n\nABC\n\n=item *\n\n*grin*\n\n=back'),
-    '<ul>\n' +
-        '<li>ABC</li>\n' +
-        '<li>*grin*</li>\n' +
-    '</ul>',
-    'over & 2 =item *'
-);
+my $monkey = new JavaScript::SpiderMonkey;
+$monkey->init();
 
-is(pod2html('=over\n\n' +
-    '=item *\n\n' +
-    'ABC\n\n' +
-    '=over\n\n' +
-    '=item *\n\n' +
-    'QQQ\n\n' +
-    '=back\n\n' +
-    '=back'),
+open my $in, $jsfile or
+    die "Failed to open JS file $jsfile: $!\n";
+my $js = do { local $/; <$in> };
+close $in;
 
-    '<ul>\n' +
-    '<li>ABC</li>\n' +
-    '<ul>\n' +
-    '<li>QQQ</li>\n' +
-    '</ul>\n' +
-    '</ul>',
-    'nested <ul>');
+$monkey->eval($js) or
+    die "Failed to load $jsfile: $@";
 
-is(pod2html('=over\n\n' +
-    '=item 1.\n\n' +
-    'ABC\n\n' +
-    '=item 2.\n\n' +
-    'QQQ\n\n' +
-    'hello\n\n' +
-    '=back'),
+my $res;
+$monkey->function_set('get', sub { $res = shift });
 
-    '<ol>\n' +
-    '<li>ABC</li>\n' +
-    '<li>QQQ</li>\n' +
-    '<p>hello</p>\n' +
-    '</ol>',
-    'ol');
+run {
+    my $block = shift;
+    my $name = $block->name;
+    my $pod = $block->pod or die "No -- pod specified for $name";
+    my $json = $json_xs->encode($pod);
+    $monkey->eval("get(pod2html($json))") or
+        die "Error occured when calling the pod2html function: $@";
+    $res = Encode::decode('utf8', $res);
+    is_string "$res\n", $block->html, "$name - HTML output okay";
+};
 
-is(pod2html('=over\n\n' +
-    '=item *\n\n' +
-    'ABC\n\n' +
-    '=over\n\n' +
-    '=item 1.\n\n' +
-    'QQQ\n\n' +
-    '=back\n\n' +
-    '=back'),
+$monkey->destroy();
 
-    '<ul>\n' +
-    '<li>ABC</li>\n' +
-    '<ol>\n' +
-    '<li>QQQ</li>\n' +
-    '</ol>\n' +
-    '</ul>',
-    'nested <ul> and <ol>');
+__DATA__
 
-is_string(pod2html('=over\n\n' +
-    '=item ABC\n\n' +
-    'English words\n\n' +
-    'Oh oh!\n\n' +
-    '=item hello, world\n\n' +
-    '=back'),
+=== TEST 1: =image
+--- pod
+=image gate.jpg
+--- html
+<p><img src="gate.jpg"/></p>
 
-    '<dl>\n' +
-    '<dt>ABC</dt><dd>\n' +
-    '<p>English words</p>\n' +
-    '<p>Oh oh!</p>\n' +
-    '<dt>hello, world</dt><dd>\n' +
-    '</dl>',
-    'dl test');
 
-//exit();
 
-var pod =
-    "C<< 2>3 >> F<F> I<I> B<B>\n\n" +
-        "=head1 Hello\n\n" +
-        "=over\n\n" +
-        "=item *\n\n" +
-        "hi\n\n" +
-        "=back\n\n" +
-        "  3 > 4\n" +
-        "  532aa\n\n" +
-        "L<http://blog.agentzh|agentzh>";
+=== TEST 2: ignore =pod, =cut, =encoding
+--- pod
+=pod
 
-is_string(
-    pod2html(pod),
-    "<p><code> 2&gt;3 </code> <em>F</em> <i>I</i> <b>B</b></p>\n" +
-        "<h1>Hello</h1>\n" +
-        "<ul>\n" +
-        "<li>hi</li>\n" +
-        "</ul>\n" +
-        "<pre>  3 &gt; 4\n" +
-        "  532aa</pre><br/>\n" +
-        '<p><a href="http://blog.agentzh">agentzh</a></p>',
-    'long POD works'
-);
+=cut
 
-is(
-    pod2html('=head4 你好么 ABC\n\n'),
-    '<h4>你好么 ABC</h4>',
-    '=head4 works'
-);
+=encoding utf8
 
-is_string(
-    pod2html('\n=over\n\n' +
-        '=item 1.\n\n' +
-        'cat is not a dog.\n' +
-        'and he is always here.\n\n' +
-        'really?\n\n' +
-        '=item 2.\n\n' +
-        '  hello, world\n\n' +
-        '  haha\n\n' +
-        '=back'),
-    '<ol>\n' +
-    '<li>cat is not a dog.\n' +
-    'and he is always here.</li>\n' +
-    '<p>really?</p>\n' +
-    '<li>  hello, world</li>\n' +
-    '<pre>  haha</pre><br/>\n' +
-    '</ol>',
-    'another long case'
-);
+hi
+--- html
+<p>hi</p>
+
+
+
+=== TEST 3: L<url> works
+--- pod
+L<http://agentzh.org/#elem/home/1>
+--- html
+<p><a href="http://agentzh.org/#elem/home/1">http://agentzh.org/#elem/home/1</a></p>
+
+
+
+=== TEST 4: indented paragraphs work
+--- pod
+ hello
+   world
+--- html
+<pre> hello
+   world</pre><br/>
+
+
+
+=== TEST 5: head1 & indented text
+--- pod
+=head1 A B C
+
+ hello
+  world
+--- html
+<h1>A B C</h1>
+<pre> hello
+  world</pre><br/>
+
+
+
+=== TEST 6: head3 & normal paragraphs
+--- pod
+=head3  hi
+
+hello, world
+Ahah!
+
+dog is here.
+--- html
+<h3>hi</h3>
+<p>hello, world
+Ahah!</p>
+<p>dog is here.</p>
+
+
+
+=== TEST 7: C<...> works
+--- pod
+C<hello>, world
+--- html
+<p><code>hello</code>, world</p>
+
+
+
+=== TEST 8: F<...> works
+--- pod
+F</usr/bin/perl>
+--- html
+<p><em>/usr/bin/perl</em></p>
+
+
+
+=== TEST 9: I<...> works
+--- pod
+She loves I<me>!
+--- html
+<p>She loves <i>me</i>!</p>
+
+
+
+=== TEST 10: B<...> works
+--- pod
+She loves B<me>!
+--- html
+<p>She loves <b>me</b>!</p>
+
+
+
+=== TEST 11: over & =item *
+--- pod
+=over 4
+
+=item *
+
+Hello, world
+
+*grin*
+
+=back
+--- html
+<ul>
+<li>Hello, world</li>
+<p>*grin*</p>
+</ul>
+
+
+
+=== TEST 12: over & 2 =item *
+--- pod
+=over
+
+=item *
+
+ABC
+
+=item *
+
+*grin*
+
+=back
+--- html
+<ul>
+<li>ABC</li>
+<li>*grin*</li>
+</ul>
+
+
+
+=== TEST 13: nested <ul>
+--- pod
+=over
+
+
+=item *
+
+
+ABC
+
+
+=over
+
+
+=item *
+
+
+QQQ
+
+
+=back
+
+
+=back
+--- html
+<ul>
+<li>ABC</li>
+<ul>
+<li>QQQ</li>
+</ul>
+</ul>
+
+
+
+=== TEST 14: item 1. item 2. ...
+--- pod
+=over
+
+
+=item 1.
+
+
+ABC
+
+
+=item 2.
+
+
+QQQ
+
+
+hello
+
+
+=back
+--- html
+<ol>
+<li>ABC</li>
+<li>QQQ</li>
+<p>hello</p>
+</ol>
+
+
+
+=== TEST 15: nested <ul> and <ol>
+--- pod
+
+=over
+
+
+=item *
+
+
+ABC
+
+
+=over
+
+
+=item 1.
+
+
+QQQ
+
+
+=back
+
+
+=back
+--- html
+<ul>
+<li>ABC</li>
+<ol>
+<li>QQQ</li>
+</ol>
+</ul>
+
+
+
+=== TEST 16: =item XXX
+--- pod
+=over
+
+
+=item ABC
+
+
+English words
+
+
+Oh oh!
+
+
+=item hello, world
+
+
+=back
+--- html
+<dl>
+<dt>ABC</dt><dd>
+<p>English words</p>
+<p>Oh oh!</p>
+<dt>hello, world</dt><dd>
+</dl>
+
+
+
+=== TEST 17: quotes
+--- pod
+C<< 2>3 >> F<F> I<I> B<B>
+--- html
+<p><code> 2&gt;3 </code> <em>F</em> <i>I</i> <b>B</b></p>
+
+
+
+=== TEST 18: misc
+--- pod
+=head1 Hello
+
+
+=over
+
+
+=item *
+
+
+hi
+
+
+=back
+
+
+  3 > 4
+  532aa
+
+
+L<http://blog.agentzh|agentzh>
+--- html
+<h1>Hello</h1>
+<ul>
+<li>hi</li>
+</ul>
+<pre>  3 &gt; 4
+  532aa</pre><br/>
+<p><a href="http://blog.agentzh">agentzh</a></p>
+
+
+
+=== TEST 19: head4 works
+--- pod
+=head4 你好么 ABC
+--- html
+<h4>你好么 ABC</h4>
+
+
+
+=== TEST 20: misc2
+--- pod
+=over
+
+
+=item 1.
+
+
+cat is not a dog.
+and he is always here.
+
+really?
+
+
+=item 2.
+
+
+  hello, world
+  haha
+
+
+=back
+--- html
+<ol>
+<li>cat is not a dog.
+and he is always here.</li>
+<p>really?</p>
+<li>  hello, world
+  haha</li>
+</ol>
 
