@@ -5,6 +5,7 @@ var loadingCount = 0;
 var waitMessage = null;
 var timer = null;
 var savedAnchor = null;
+var pendingTask = null;
 
 $.fn.postprocess = function (className, options) {
     return this.find("a[@href^='#']").each( function () {
@@ -109,6 +110,33 @@ function dispatchByAnchor () {
         getContent(menu);
         return;
     }
+    match = anchor.match(/^menu\/([^/]+)\/([^/]+)$/);
+    if (match) {
+        var menu = match[1];
+        var submenu = match[2];
+        //alert("Post ID: " + postId);
+        getContent(menu + '.' + submenu);
+        //alert("HERE!");
+        if ($("#menu-" + menu).length) {
+            var submenu_obj = $("#menu-" + menu + "-" + submenu);
+            if ( ! submenu_obj.length) {
+                //alert("HERE in init to submenu!");
+                getSubmenu(menu);
+                $("#menu-" + menu).show();
+                //submenu_obj.attr('class', 'active');
+            }
+        } else {
+            //var submenu_obj = $("#menu-" + menu + "-" + submenu);
+            pendingTask = function () {
+                //alert("HERE in pending task");
+                getSubmenu(menu);
+                $("#menu-" + menu).show();
+                //submenu_obj.attr('class', 'active');
+            };
+        }
+        //$("#menu-" + menu).show();
+        return;
+    }
 
     getContent('home');
     //debug("before getPager...");
@@ -134,6 +162,10 @@ function renderMenuList (res) {
             { menu_list: res }
         )
     ).postprocess();
+    if (pendingTask) {
+        pendingTask();
+        pendingTask = null;
+    }
 }
 
 function getContent (menu) {

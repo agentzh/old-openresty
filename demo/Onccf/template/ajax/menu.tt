@@ -1,7 +1,10 @@
 [% FOREACH menu = menu_list %]
-    <li [%- first_time ? ' class="active"' : "" %]><a href="#menu/[% menu.name %]" onclick="savedAnchor = null;">[% menu.label %]</a>
+<li>
+    <a href="#menu/[% menu.name %]" onclick="savedAnchor = null;">
+    <span>[% menu.label %]</span>
+    </a>
     <ul id="menu-[% menu.name %]" class="submenu" loaded="">
     </ul>
-    </li>
+</li>
 [% END %]
 
