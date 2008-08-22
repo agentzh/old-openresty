@@ -1,4 +1,4 @@
-div#wait-message {
+div.wait-message {
     color: red !important;
     background: white !important;
     font-size: 18px !important;
@@ -10,7 +10,7 @@ div#wait-message {
     border-width: 2px;
     border-style: outset;
     border-color: white;
-    display: block;
+    display: none;
 }
 
 dt {

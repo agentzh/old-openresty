@@ -62,7 +62,10 @@ function setStatus (isLoading, category) {
 function init () {
     loadingCount = 0;
     var now = new Date();
-    waitMessage = document.getElementById('wait-message');
+    if (jQuery.browser.msie)
+        waitMessage = document.getElementById('ie-wait-message');
+    else
+        waitMessage = document.getElementById('wait-message');
     openresty = new OpenResty.Client(
         { server: host, user: account + '.Public' }
     );
