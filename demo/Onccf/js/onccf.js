@@ -105,6 +105,7 @@ function dispatchByAnchor () {
     if (match) {
         var menu = match[1];
         //alert("Post ID: " + postId);
+        getSubmenu(menu);
         getContent(menu);
         return;
     }
@@ -151,5 +152,45 @@ function renderContent (res) {
     $("#page-title").text(menu.label);
     var html = pod2html(menu.content);
     $("#page-content").html( html ).postprocess();
+}
+
+function getSubmenu (menu) {
+    setStatus(true, 'getSubmenu');
+    openresty.callback = function (res) {
+        renderSubmenu(res, menu);
+    }
+    openresty.get('/=/view/SubMenuList/parent/' + encodeURIComponent(menu));
+}
+
+function renderSubmenu (res, menu) {
+    setStatus(false, 'getSubmenu');
+    if (!openresty.isSuccess(res)) {
+        error("Failed to get submenu for menu " + menu + ": " + res.error);
+        return;
+    }
+    //alert(JSON.stringify(res));
+    //$(".submenu").html('');
+    //alert("HERE 1");
+    var list = $("#menu-" + menu);
+    //list.html('');
+    if ( ! list.attr('loaded')) {
+        //alert("HERE 2");
+        for (var i = 0; i < res.length; i++) {
+            var submenu = res[i];
+            //alert("submenu: " + foo);
+            list.append(
+                Jemplate.process(
+                    'submenu.tt',
+                    { menu: menu, submenu: submenu }
+                )
+            ).postprocess();
+        }
+        list.attr('loaded', 1);
+        //alert("HERE???");
+        //list.show();
+        //alert("HERE!!!");
+    } else {
+        list.toggle();
+    }
 }
 

@@ -35,7 +35,7 @@ $resty->post(
     {
         description => "Site menus",
         columns => [
-            { name => 'name', type => 'text', label => 'Menu name (anchor)' },
+            { name => 'name', type => 'ltree', label => 'Menu name (anchor)' },
             { name => 'label', type => 'text', label => 'Menu label' },
             { name => 'content', type => 'text', label => 'Menu content' },
         ],
@@ -45,6 +45,15 @@ $resty->post(
 $resty->post(
     '/=/model/Menu/~/~',
     [
+
+        { name => 'home.howdy', label => 'Howdy!', content => <<'_EOC_' },
+I<Howdy>, nina!
+
+My blog is here:
+
+L<http://blog.agentzh.org>
+
+_EOC_
         { name => "home", label => "Home", content => <<"_EOC_" },
 =image gate.jpg
 
@@ -178,6 +187,51 @@ Gushan went IPO in December 2007 in NYSE (GU), ON Capital realized an IRR of 215
 
 =back
 _EOC_
+        { name => 'team.red', label => 'Red team', content => <<'_EOC_' },
+Well, I have no idea B<what> you're C<talking about>...hoho...
+_EOC_
+
+        { name => 'team.cache', label => 'OpenResty::Cache', content => <<'_EOC_' },
+=head1 NAME
+
+OpenResty::Cache - Cache for OpenResty
+
+=head1 SYNOPSIS
+
+    use OpenResty::Config;
+    use OpenResty::Cache;
+
+    OpenResty::Config->init;
+    my $cache = OpenResty::Cache->new;
+    $cache->set('key' => 'value'); # use the cache to store (session) data
+    $cache->set('key' => 'value', 'trivial'); # pure caching
+    print $cache->get('key');  # read the value for the key
+    $cache->remove('key');
+
+=head1 DESCRIPTION
+
+This class provides an abstract interface for two caching libraries, L<Cache::FileCache> and L<Cache::Memcached::Fast>.
+
+Which underlying cache library to use depends on the C<cache.type> config option in the F<etc/site_openresty.conf> file.
+
+Note that C<filecache> could eat up your hard disk very quickly. (you'll observe the bloating directory F</tmp/FileCache>.) C<filecache> is only suitable for development; for production use, please use C<memcached> instead (by specifying the C<cache.type> and C<cache.servers> options in F<etc/site_openresty.conf>).
+
+=head1 METHODS
+
+=over
+
+=back
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>.
+
+=head1 SEE ALSO
+
+L<OpenResty>, L<Cache::FileCache>, L<Cache::Memcached::Fast>.
+
+_EOC_
+
         { name => 'team', label => 'Our team', content => <<"_EOC_" },
 =head3 Mr Laurie Kan – Founder & General Partner
 
@@ -192,6 +246,34 @@ Since 1999, Mr Kan has been working in the VC/PE industry.  Initially, in partne
 In 2004, Mr Kan launched ON Capital China Fund and has returned 4.0 times realized + unrealized value for the fund in 3 years, multiplying initial investment principal for all investors
 
 Mr Kan graduated in business from the HK Baptist College and from the Stanford Graduate School of Business Executive Program for Smaller Companies. He is an active participant in the advancement of the IT industry in HK and the PRC, and proactively served on a number of influential committees
+_EOC_
+        { name => 'contact.seller', label => 'Sellers', content => <<"_EOC_" },
+=over
+
+=item 1.
+
+I'm B<not> a seller
+
+=item 2.
+
+I'm a very I<good> seller.
+
+=over
+
+=item ABC
+
+=item BCD
+
+=back
+
+=back
+
+_EOC_
+
+        { name => 'contact.dev', label => 'Developers', content => <<"_EOC_" },
+This site was powered by L<http://search.cpan.org/dist/OpenResty|OpenResty> and was developed by agentzh.
+
+If you have any questions regarding the implementation, please send mail to L<mailto:agentzh\@yahoo.cn|my email box>.
 _EOC_
         { name => 'contact', label => 'Contact us', content => <<"_EOC_" },
 =over
@@ -228,7 +310,22 @@ _EOC_
 
 $resty->post(
     '/=/view/MenuList',
-    { definition => 'select name, label from Menu order by $order_by | id asc' }
+    { description => 'Menu list', definition => <<'_EOC_' }
+select name, label
+from Menu
+where name ~ '*{1}'
+order by $order_by | id asc
+_EOC_
+);
+
+$resty->post(
+    '/=/view/SubMenuList',
+    { description => 'Sub Menu list', definition => <<'_EOC_' }
+select name, label
+from Menu
+where name ~ ($parent || '.*{1}') :: lquery
+order by $order_by | id asc
+_EOC_
 );
 
 $resty->post(
@@ -236,6 +333,7 @@ $resty->post(
     [
         {url => '/=/model/Menu/~/~'},
         {url => '/=/view/MenuList/~/~'},
+        {url => '/=/view/SubMenuList/~/~'},
     ]
 );
 
