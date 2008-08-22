@@ -129,7 +129,7 @@ function renderMenuList (res) {
             'menu.tt',
             { menu_list: res }
         )
-    );
+    ).postprocess();
 }
 
 function getContent (menu) {
@@ -147,6 +147,6 @@ function renderContent (res) {
     var menu = res[0];
     $("#page-title").text(menu.label);
     var html = pod2html(menu.content);
-    $("#page-content").html( html );
+    $("#page-content").html( html ).postprocess();
 }
 
