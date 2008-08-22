@@ -1,6 +1,7 @@
-[% first_time = 1 %]
 [% FOREACH menu = menu_list %]
-    [%- IF first_time; first_time = 0; END %]
-    <li [%- first_time ? ' class="active"' : "" %]><a href="#menu/[% menu.name %]">[% menu.label %]</a></li>
+    <li [%- first_time ? ' class="active"' : "" %]><a href="#menu/[% menu.name %]" onclick="savedAnchor = null;">[% menu.label %]</a>
+    <ul id="menu-[% menu.name %]" class="submenu" loaded="">
+    </ul>
+    </li>
 [% END %]
 
