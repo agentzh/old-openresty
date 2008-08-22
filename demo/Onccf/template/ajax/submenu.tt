@@ -1,0 +1,2 @@
+<li><a href="#menu/[% menu %]/[% submenu.name.replace('^[^.]+\.', '') %]"><span class="submenu-text">[% submenu.label %]</span></a></li>
+
