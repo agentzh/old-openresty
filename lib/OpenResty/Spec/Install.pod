@@ -52,7 +52,7 @@ Most of the time, you need to change C<type=PgMocked> to C<type=Pg>, as well as 
 
 For the Pg backend, one needs to create the "anonymous" role in his database (like "test"):
 
-    $ createuser -r anonymous
+    $ createuser -RSDL anonymous
 
 You shouldn't grant any permissions to it.
 
