@@ -8,6 +8,7 @@
 
         [%- PROCESS 'banner.tt' %]
 
+        <form id="dummy-form" style="display: none"></form>
         <div id="bd">
             <div id="menu">
             </div>
