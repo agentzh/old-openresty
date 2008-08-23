@@ -731,7 +731,8 @@ function createModelRow (model) {
     }
     setStatus(true, 'createModelRow');
     openresty.callback = afterCreateModelRow;
-    openresty.postByGet(
+    openresty.formId = 'dummy-form';
+    openresty.post(
         '/=/model/' + model + '/~/~',
         data
     );

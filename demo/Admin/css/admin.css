@@ -212,7 +212,7 @@ legend{display:none;}
 .schbox { float:left; margin-left:1.5em;zoom:1;width:486px;}
 .schbox fieldset { _display:inline;}
 .schbox fieldset { _display:inline;position:relative;}
-.ttabcon li {float:left; font-size:14px; margin-right:16px;}
+.ttabcon li { font-size:14px; margin-right:16px;}
 .ttabcon li a:link,.ttabcon li a:active,.ttabcon li a:visited,.ttabcon li a:hover {color:#0353CE;}
 .ttabcon li.on { font-weight:bold}
 .ttabcon li.on a:link,.ttabcon li.on a:active,.ttabcon li.on a:visited,.ttabcon li.on a:hover {text-decoration:none;cursor:default;color:#000;}
@@ -258,7 +258,7 @@ legend{display:none;}
 .ttl2 .text a{color:#000;}
 .ttl2 .tp{float:right;font-size:12px;padding-right:10px;}
 
-.listcon{width:1224px;margin:5px;}
+.listcon{width:920px;margin:15px;}
 .listcon li{float:none;line-height:27px;text-align:left;padding-left:20px;font-size:14px;}
 
 #YahooCity{color:#666666;position:relative;z-index:100;}
