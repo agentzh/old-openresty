@@ -70,7 +70,7 @@
                 <p>We have offices over Hong Kong, Beijing, Shanghai
                 and Shenzhen, you can contact us where most
                 convenient for you.</p>Go to <a type="2" href=
-                "/contact_us" class="internallink">Contact Us</a>
+                "#menu/contact" class="internallink" onclick="savedAnchor = null">Contact Us</a>
                 page
                 </p>
               </div>
