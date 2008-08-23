@@ -69,7 +69,8 @@ function plantEditableHook (node, settings) {
         //debug("PUT /=/" + path + " " + JSON.stringify(data));
         setStatus(true, 'editInplace');
         openresty.callback = afterEditInplace;
-        openresty.putByGet('/=/' + path, data);
+        openresty.formId = 'dummy-form';
+        openresty.put('/=/' + path, data);
         return '<span class="loading-field"><img src="loading.gif/>&nbsp;Loading...</span>';
     }, {
         type: settings.type || 'text',

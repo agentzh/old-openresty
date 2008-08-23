@@ -8,7 +8,6 @@
 </div>
 <div class="create-model">
 <span id="import-results"></span>
-<form id="dummy-form" style="display: none"></form>
 <form id="create-row-bulk-form" onsubmit="return false;">
     <label>[% col.name %]</label>
     <p>Example:</p>
