@@ -1,6 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 [%- PROCESS "header.tt" %]
 <body>
+  <center>
   <div id="body">
     <div id="doc">
 
@@ -63,12 +64,7 @@
             </div>
           </div>
 
-          <div id="zB">
-            <div class="modWrap"></div>
-          </div>
-
-          <div id="zC" style="padding-left: 3em;">
-            <div class="modWrap">
+          <div id="zC">
               <div id="contact-us">
                 <h3>Contact Us</h3>
                 <p>We have offices over Hong Kong, Beijing, Shanghai
@@ -78,7 +74,6 @@
                 page
                 </p>
               </div>
-            </div>
           </div>
         </div>
       </div>
@@ -109,6 +104,7 @@
       </div>
     </div>
   </div>
+  </center>
 </body>
 </html>
 
