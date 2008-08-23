@@ -163,7 +163,7 @@ OpenResty.Client.prototype.put = function (url) {
     url = url.replace(/^\/=\//, '/=/put/');
     //alert("type of content: " + typeof(content));
     //alert("content: " + content);
-    this.post(content, url, args);
+    this.post(url, args, content);
 };
 
 
