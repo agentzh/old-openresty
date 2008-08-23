@@ -38,6 +38,8 @@ $.fn.postprocess = function (className, options) {
                     //debug("found textarea!");
                     settings.width = 600;
                     settings.height = 200;
+                } else {
+                    settings.width = '15em';
                 }
                 settings.data = data;
                 settings.type = type;

@@ -16,7 +16,11 @@
     [%- FOREACH col = model.columns %]
         [%- NEXT IF col.name == 'id' %]
         <label>[% col.name %]</label>
-        <input type="text" size="10" class="row-input" resty_key="[% col.name %]"></input>
+        [%- IF col.type == "text" %]
+        <textarea rows="3" cols="15" class="row-input" resty_key="[% col.name %]"></textarea>
+        [%- ELSE %]
+        <input type="text" size="15" class="row-input" resty_key="[% col.name %]"></input>
+        [%- END %]
     [%- END %]
     <p>
         <input type="submit" class="create-button" value="Create" onclick="createModelRow('[% model.name %]')"></input>
