@@ -3,8 +3,8 @@ Theme: Portland - Derived From: Portland
 Layout: Layout 2 with Title - Derived from: Layout 2 with Title
 **************************************************************/
 /* START -> DO NOT EDIT THIS SECTION */
-#pageName{display:block;width:393px;_width:395px;margin:0 0 30px 25px}
-#zA,#zB{float:left;width:395px;clear:left;margin-left:25px;display:inline}
+#pageName{display:block;width:420px;_width:395px;margin:0 0 30px 25px}
+#zA,#zB{float:left;width:415px;clear:left;margin-left:25px;display:inline}
 #zB,#zC{_height:1px;padding-top:20px}
 #zC{margin-left:40px}
 /* Make sure to leave the "," in the following rule; it is there for IE 6 and 7 */

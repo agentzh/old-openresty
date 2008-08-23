@@ -34,3 +34,42 @@ span.submenu-text {
     padding-left: 1.5em;
 }
 
+div#doc {
+    text-align: left;
+}
+
+#zC {
+    /* padding-left: 1em; */
+    /* margin-left: 10em; */
+    margin-right: 0px !important;
+    floating: right;
+    margin-left: 3px !important;
+    /* padding-left: 10em; */
+
+    width:175px;
+}
+
+#contact-us {
+    padding-left: 1em;
+}
+
+#zWrap {
+    padding-right: 0;
+    margin-right: 0;
+}
+
+#page-content {
+    padding-right: 1em;
+}
+
+#bd {
+    width: 625px;
+}
+
+/*
+#zC,{float:right;width:175px;margin-left:50px}
+#zC{margin-left:50px}
+#zC{margin-right:-2px;_margin-right:0}
+*/
+
+
