@@ -15,9 +15,9 @@
 %]
 <html>
     <head>
-        <title>Login OpenResty Admin</title>
-        <link rel="stylesheet" href="admin.css" type="text/css" media="screen" />
+        <title>Sign into OpenResty Admin</title>
         <link rel="stylesheet" href="login.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="fonts.css" type="text/css" media="screen" />
 
     [%- FOR file IN js_files %]
     <script type="text/javascript" src="[% file %]"></script>
@@ -30,43 +30,105 @@
             &nbsp; <b>Loading...</b>&nbsp;
         </div>
 
-        <center id="main">
-            <div id="hd">
-            <div><a href="http://www.yahoo.cn"><img src="http://cn.yimg.com/i/os/v004/ylg.gif" alt="中国雅虎"></a></div>
-            </div>
-            </div>
-            <br/>
-            <br/>
-
+<div id="yregwp">
             <table>
+                <tr>
+                <td>
+            <div><a href="http://www.yahoo.cn"><img src="http://cn.yimg.com/i/os/v004/ylg.gif" alt="中国雅虎"></a></div>
+                </td>
+                <td>
+                    <span class="page-title">OpenResty Admin site</span>
+                </td>
+                </tr>
+            </table>
+            <br/>
+            <br/>
+
+<div id="yregct" class="yregclb">
+    <div id="yreglg">
+    <!-- login box goes here -->
+            <div class="top yregbx">
+
+    <div class=" badge">
+    <div class="yregbxi">
+        <h1>Sign in to OpenResty Admin</h1>
+        <fieldset>
+                <legend>Login Form</legend>
+
+        <div id="yregct" class="yregclb">
+            <div id="yreglg">
                 <form id="login-form">
+                <table id="yreglgtb" summary="form: login information" cellspacing="0" cellpadding="0">
+                <tr><th><label for="login-user">User</label></th></tr>
+                <tr><td><input id="login-user" type="text"></input>
+                <script language="JavaScript" type="text/javascript">if(document.getElementById) document.getElementById('login-user').focus();</script>
+
+                <div class="dbidTip">(e.g. foo.Admin)</div>
+                </td></tr>
+                <tr><th><label for="login-password">Password</label></th></tr>
+                <tr><td><input id="login-password" type="password"></input></td></tr>
+                <tr><th><label for="login-server">OpenResty Server</label></th></tr>
                 <tr>
-                    <td>User</td><td><input id="login-user" type="text"></input></td>
-                </tr>
-                <tr>
-                    <td>Password</td><td><input id="login-password" type="password"></input></td>
-                </tr>
-                <tr>
-                    <td>Server</td><td><input id="login-server" type="text" value="api.openresty.org"></input></td>
+                    <td><input id="login-server" type="text" value="api.openresty.org"></input>
+                    <div class="dbidTip">(e.g. foo.bar.com:8080)</div>
+                    </td>
                 </tr>
 
                 <tr>
-                    <td>&nbsp;</td>
                     <td>
+                        <p class="yreglgsb">
                         <input type="submit" id="login-button" value="Login"></input>
+                        </p>
                     </td>
                 </tr>
                 <tr>
-                    <td>&nbsp;</td>
                     <td>
-                        <a id="register-link" href="javascript:void(0);">
+                        <p class="yreglgsu">
+                            <a id="register-link" href="javascript:void(0);">
                             Register an account
-                        </a>
+                            </a>
+                        </p>
                     <td>
                 </tr>
-                </form>
-            </table>
-        </center>
+                </table>
+            </form>
+            </fieldset>
+
+            </div>
+        </div>
+
+
+        </div>
+
+
+        </div>
+    <div id="yregtxt">
+
+<!-- begin left side content -->
+<div id="yregptxt">
+<h2>Enjoy all the benefits of OpenResty.</h2>
+    <ul class="list">
+        <li><strong>Create applications</strong> using relational models, views, actions, and feeds.</li>
+        <li><strong>Manage user access</strong> with roles and ACL rules.</li>
+        <li><strong>Read and write your database</strong> from anywhere on the Internet and any programming languages supporting HTTP access.</li>
+        <li><strong>Access your own instance</strong> of OpenResty server setup on your own machines (even a single PC).</li>
+    </ul>
+</div>
+<div id="yregpmtxt">
+    <h3>OpenResty is a</h3>
+    <div id="yregptxt">
+    <ul class="list">
+        <li>REST wrapper for relational databases</li>
+        <li>web runtime for 100% JavaScript web sites and other RIAs.</li>
+        <li>"meta web site" supporting other sites via web services.</li>
+        <li>handy personal or company database which can be accessed from anywhere on the web.</li>
+    </ul>
+    </div>
+    <p>OpenResty is <a href="http://search.cpan.org/dist/OpenResty">opensourced on CPAN</a> under a permissive <a href="http://opensource.org/licenses/artistic-license-2.0.php">Artistic 2 License</a>.</p>
+
+</div>
+</div>
+    [% PROCESS footer.tt %]
     </body>
 </html>
 
