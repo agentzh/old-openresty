@@ -262,7 +262,7 @@ In 2004, Mr Kan launched ON Capital China Fund and has returned 4.0 times realiz
 
 Mr Kan graduated in business from the HK Baptist College and from the Stanford Graduate School of Business Executive Program for Smaller Companies. He is an active participant in the advancement of the IT industry in HK and the PRC, and proactively served on a number of influential committees
 _EOC_
-        { order => 2, name => 'contact.seller', label => 'Sellers', content => <<"_EOC_" },
+        { display_order => 2, name => 'contact.seller', label => 'Sellers', content => <<"_EOC_" },
 =over
 
 =item 1.
@@ -286,14 +286,16 @@ I'm a very I<good> seller.
 Order 2
 _EOC_
 
-        { order => 1, name => 'contact.dev', label => 'Developers', content => <<"_EOC_" },
+        { display_order => 1, name => 'contact.dev', label => 'Developers', content => <<"_EOC_" },
 This site was powered by L<http://search.cpan.org/dist/OpenResty|OpenResty> and was developed by agentzh.
 
 If you have any questions regarding the implementation, please send mail to L<mailto:agentzh\@yahoo.cn|my email box>.
 
 Order 1
 _EOC_
-        { order => 3, name => 'contact.dev', label => 'Developers', content => <<"_EOC_" },
+        { display_order => 3, name => 'contact.dummy', label => 'Dummy', content => <<"_EOC_" },
+
+Nothing really...
 
 Order 3
 _EOC_
