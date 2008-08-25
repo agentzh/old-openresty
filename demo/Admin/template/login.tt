@@ -12,21 +12,23 @@
             'login-min.js'
         ];
     END;
-%]
+-%]
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
     <head>
         <title>Sign into OpenResty Admin</title>
-        <link rel="stylesheet" href="login.css" type="text/css" media="screen" />
-        <link rel="stylesheet" href="fonts.css" type="text/css" media="screen" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" href="login.css" type="text/css" media="screen">
+        <link rel="stylesheet" href="fonts.css" type="text/css" media="screen">
 
     [%- FOR file IN js_files %]
-    <script type="text/javascript" src="[% file %]"></script>
+        <script type="text/javascript" src="[% file %]"></script>
     [%- END -%]
 
     </head>
     <body>
         <div id="wait-message">
-            <img src="loading.gif"/>
+            <img src="loading.gif" alt="loading">
             &nbsp; <b>Loading...</b>&nbsp;
         </div>
 
@@ -41,8 +43,6 @@
                 </td>
                 </tr>
             </table>
-            <br/>
-            <br/>
 
 <div id="yregct" class="yregclb">
     <div id="yreglg">
@@ -55,46 +55,40 @@
         <fieldset>
                 <legend>Login Form</legend>
 
-        <div id="yregct" class="yregclb">
-            <div id="yreglg">
-                <form id="login-form">
+                <form action="" id="login-form">
                 <table id="yreglgtb" summary="form: login information" cellspacing="0" cellpadding="0">
                 <tr><th><label for="login-user">User</label></th></tr>
-                <tr><td><input id="login-user" type="text"></input>
+                <tr><td><input id="login-user" type="text">
                 <script language="JavaScript" type="text/javascript">if(document.getElementById) document.getElementById('login-user').focus();</script>
 
                 <div class="dbidTip">(e.g. foo.Admin)</div>
                 </td></tr>
                 <tr><th><label for="login-password">Password</label></th></tr>
-                <tr><td><input id="login-password" type="password"></input></td></tr>
+                <tr><td><input id="login-password" type="password"></td></tr>
                 <tr><th><label for="login-server">OpenResty Server</label></th></tr>
                 <tr>
-                    <td><input id="login-server" type="text" value="api.openresty.org"></input>
+                    <td><input id="login-server" type="text" value="api.openresty.org">
                     <div class="dbidTip">(e.g. foo.bar.com:8080)</div>
                     </td>
                 </tr>
+            </table>
 
-                <tr>
-                    <td>
-                        <p class="yreglgsb">
-                        <input type="submit" id="login-button" value="Login"></input>
-                        </p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p class="yreglgsu">
-                            <a id="register-link" href="javascript:void(0);">
-                            Register an account
-                            </a>
-                        </p>
-                    <td>
-                </tr>
-                </table>
+            <p class="yreglgsb">
+                <input type="submit" id="login-button" value="Login">
+            </p>
+
+            <div class="clear"> &nbsp; &nbsp;</div>
+            <div class="yreglgsu">
+                <a id="register-link" href="javascript:void(0);">
+                Register an account
+                </a>
+            </div>
+
             </form>
             </fieldset>
 
             </div>
+            <span class="cb"><span class="cl"></span></span>
         </div>
 
 
@@ -116,7 +110,7 @@
 </div>
 <div id="yregpmtxt">
     <h3>OpenResty is a</h3>
-    <div id="yregptxt">
+    <div>
     <ul class="list">
         <li>REST wrapper for relational databases</li>
         <li>web runtime for 100% JavaScript web sites and other RIAs.</li>
@@ -125,10 +119,13 @@
     </ul>
     </div>
     <p>OpenResty is <a href="http://search.cpan.org/dist/OpenResty">opensourced on CPAN</a> under a permissive <a href="http://opensource.org/licenses/artistic-license-2.0.php">Artistic 2 License</a>.</p>
+    </div>
 
 </div>
 </div>
     [% PROCESS footer.tt %]
+</div>
+
     </body>
 </html>
 
