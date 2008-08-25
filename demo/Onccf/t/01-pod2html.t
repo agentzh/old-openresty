@@ -184,7 +184,7 @@ hello
 
 
 
-=== TEST 12: over & 2 =item *
+=== TEST 13: over & 2 =item *
 --- pod
 =over
 
@@ -206,7 +206,8 @@ ABC
 </li></ul>
 
 
-=== TEST 13: nested <ul>
+
+=== TEST 14: nested <ul>
 --- pod
 =over
 
@@ -242,7 +243,7 @@ QQQ
 
 
 
-=== TEST 14: item 1. item 2. ...
+=== TEST 15: item 1. item 2. ...
 --- pod
 =over
 
@@ -274,7 +275,7 @@ QQQ
 
 
 
-=== TEST 15: nested <ul> and <ol>
+=== TEST 16: nested <ul> and <ol>
 --- pod
 
 =over
@@ -311,7 +312,7 @@ QQQ
 
 
 
-=== TEST 16: =item XXX
+=== TEST 17: =item XXX
 --- pod
 =over
 
@@ -339,7 +340,7 @@ Oh oh!
 
 
 
-=== TEST 17: quotes
+=== TEST 18: quotes
 --- pod
 C<< 2>3 >> F<F> I<I> B<B>
 --- html
@@ -347,7 +348,7 @@ C<< 2>3 >> F<F> I<I> B<B>
 
 
 
-=== TEST 18: misc
+=== TEST 19: misc
 --- pod
 =head1 Hello
 
@@ -381,7 +382,7 @@ hi
 
 
 
-=== TEST 19: head4 works
+=== TEST 20: head4 works
 --- pod
 =head4 你好么 ABC
 --- html
@@ -389,7 +390,7 @@ hi
 
 
 
-=== TEST 20: misc2
+=== TEST 21: misc2
 --- pod
 =over
 
@@ -421,4 +422,75 @@ and he is always here.
 <pre>  hello, world
   haha</pre>
 </li></ol>
+
+
+
+=== TEST 22: =begin html & =end html
+--- pod
+=head1 header
+
+=begin html
+
+<a href="#hi">Hello, world</a>
+<div>
+    Nothing!
+</div>
+
+=end html
+
+Heh, that's cool!
+--- html
+<h1>header</h1>
+<a href="#hi">Hello, world</a>
+<div>
+    Nothing!
+</div>
+<p>Heh, that's cool!</p>
+
+
+
+=== TEST 23: =begin HTML & =end HTML
+--- pod
+=begin HTML
+
+<a href="#hi">Hello, world</a>
+<div>
+    Nothing!
+</div>
+
+=end HTML
+
+Heh, that's cool!
+
+--- html
+<a href="#hi">Hello, world</a>
+<div>
+    Nothing!
+</div>
+<p>Heh, that's cool!</p>
+
+
+
+=== TEST 24: =begin HTML & =end html
+--- pod
+=head1 header
+
+=begin HTML
+
+<a href="#hi">Hello, world</a>
+<div>
+    Nothing!
+</div>
+
+=end html
+
+Heh, that's cool!
+
+--- html
+<h1>header</h1>
+<a href="#hi">Hello, world</a>
+<div>
+    Nothing!
+</div>
+<p>Heh, that's cool!</p>
 

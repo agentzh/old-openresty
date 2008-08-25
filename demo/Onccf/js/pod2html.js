@@ -121,6 +121,27 @@ function pod2html (pod) {
             expectTitle = false;
             continue;
         }
+        var match = p.match(/^=begin +(\w+)\s*$/);
+        if (match) {
+            var lang = match[1].toLowerCase();
+            var j = i + 1;
+            var html = '';
+            var re = new RegExp('=end +' + lang, "i");
+            while (j < paras.length) {
+                var p = paras[j];
+                paras[j] = null;
+                if (re.test(p)) {
+                    break;
+                } else {
+                    if (lang == 'html')
+                        html += p;
+                }
+                j++;
+            }
+            if (html)
+                htmlBits.push(html);
+            continue;
+        }
         if (/^=(?:cut|pod|encoding|begin|end)\b/.test(p)) continue;
         if (expectTitle) {
             htmlBits.push(pod2html_escape_in_p(p));

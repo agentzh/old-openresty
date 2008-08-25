@@ -15,6 +15,7 @@
             </div>
           </div>
         </div>
+        <a class="location-anchor" name=""></a>
 
         <div id="hMisc">
             <div id="ie-wait-message" class="wait-message">

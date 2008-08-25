@@ -8,14 +8,16 @@ var savedAnchor = null;
 var pendingTask = null;
 
 $.fn.postprocess = function (className, options) {
-    return this.find("a[@href^='#']").each( function () {
+    return this.find("a[@href*='#']").each( function () {
         var href = $(this).attr('href');
         // We need the following hack because IE expands href to
         // absolute URL:
         var anchor = href.replace(/^.*?\#/, '');
-        //debug("Anchor: " + anchor);
+        //alert("Anchor: " + anchor);
         $(this).click( function () {
-            //debug(location.hash);
+            //alert(location.hash);
+            $('.location-anchor')[0].id = anchor;
+            //$("#location-anchor").attr('name', anchor);
             location.hash = anchor;
             //alert(location.hash);
             if (savedAnchor == anchor) savedAnchor = null;
@@ -61,6 +63,7 @@ function setStatus (isLoading, category) {
 }
 
 function init () {
+    //alert("HERE!");
     loadingCount = 0;
     var now = new Date();
     if (jQuery.browser.msie)
