@@ -159,3 +159,15 @@ img.picture {border:2px solid}
     font-size:107%;
 }
 
+div#wait-message {
+    color: red !important;
+    background: white !important;
+    font-size: 18px !important;
+    float: right;
+    position: fixed;
+    top: 2px;
+    right: 200px;
+    padding: 4px;
+    display: block;
+}
+
