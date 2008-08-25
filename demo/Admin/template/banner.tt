@@ -11,6 +11,10 @@
                     <a href="http://www.yahoo.cn"><img src="http://cn.yimg.com/i/os/v004/ylg.gif" alt="中国雅虎" title="中国雅虎"></a>
                 </div>
             </td>
+            <td>
+                <span class="page-title">OpenResty Admin site</span>
+            </td>
+
             <td id="greeting">
             </td>
         </tr>

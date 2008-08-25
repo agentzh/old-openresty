@@ -1,3 +1,11 @@
+.page-title {
+    text-align: left;
+    font-size: 14pt;
+    color: #444;
+    padding-left: 12px;
+    font-weight: bold;
+}
+
 span.total-rows {
     padding-right: 0;
     font-style: normal;
@@ -74,7 +82,7 @@ input.column-create-button {
 
 #greeting {
     padding-top: 1em;
-    width: 50em;
+    width: 40em;
     /* float: right; */
     text-align: center;
 }
