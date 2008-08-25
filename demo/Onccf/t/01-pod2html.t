@@ -495,7 +495,8 @@ Heh, that's cool!
 <p>Heh, that's cool!</p>
 
 
-=== TEST 24: =begin comment & =end comment
+
+=== TEST 25: =begin comment & =end comment
 --- pod
 =head1 header
 
