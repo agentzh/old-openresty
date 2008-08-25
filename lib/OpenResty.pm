@@ -625,7 +625,7 @@ This document describes OpenResty 0.3.21 released on August 20, 2008.
 
 This module implements the server-side OpenResty web service protocol. It provides scriptable and extensible web services for both server-side and client-side (pure AJAX) web applications.
 
-Currently this module can serve as a public web interface to a distributive or desktop PostgreSQL database system. In particular, it provides roles, models, views, actions, captchas, the minisql language, and many more to the web users.
+Currently this module can serve as a public web interface to a distributed or desktop PostgreSQL database system. In particular, it provides roles, models, views, actions, captchas, the minisql language, and many more to the web users.
 
 "Another framework?" No, no, no, not all!
 
