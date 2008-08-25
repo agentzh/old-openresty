@@ -8,7 +8,7 @@ use utf8;
 use JSON::XS;
 use YAML 'Dump';
 use WWW::OpenResty::Simple;
-use Date::Manip;
+#use Date::Manip;
 use Getopt::Std;
 
 #$JSON::Syck::ImplicitUnicode = 1;

@@ -18,7 +18,7 @@ my $sth;
 
 my $dbh = DBI->connect(
     "dbi:Pg:dbname=test;host=localhost",
-    'agentzh', 'agentzh',
+    'agentz','',
     {AutoCommit => 1, RaiseError => 1, pg_enable_utf8 => 1, PrintError => 0, PrintWarn => 0}
 );
 

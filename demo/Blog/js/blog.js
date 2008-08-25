@@ -39,7 +39,7 @@ function debug (msg) {
 }
 
 $.fn.postprocess = function (className, options) {
-    return this.find("a[@href^='#']").each( function () {
+    return this.find("a[@href*='#']").each( function () {
         var href = $(this).attr('href');
         // We need the following hack because IE expands href to
         // absolute URL:
@@ -47,6 +47,7 @@ $.fn.postprocess = function (className, options) {
         //debug("Anchor: " + anchor);
         $(this).click( function () {
             //debug(location.hash);
+            $(".anchor-location")[0].id = anchor;
             location.hash = anchor;
             //alert(location.hash);
             if (savedAnchor == anchor) savedAnchor = null;

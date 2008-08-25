@@ -1,12 +1,13 @@
 package OpenResty::Handler::Login;
 
-#use Smart::Comments;
+#use Smart::Comments '####';
 use strict;
 use warnings;
 
 use CGI::Simple::Cookie;
 use OpenResty::Util;
 use Params::Util qw( _STRING );
+use OpenResty::QuasiQuote::SQL;
 
 #*login = \&login_by_sql;
 *login = \&login_by_perl;
@@ -83,9 +84,14 @@ sub login_by_perl {
         if (!$login_meth eq 'password') {
             die "Password for $account.$role is incorrect.\n";
         }
-        my $res = $openresty->select("select count(*) from _roles where name = " . Q($role) . " and password = " . Q($password) . ";");
-        ### with password: $res
-        if ($res->[0][0] == 0) {
+        my $res = $openresty->select([:sql|
+            select id
+            from _roles
+            where name = $role and password = $password
+            limit 1;
+        |]);
+        #### with password: $res
+        if (! @$res) {
             die "Password for $account.$role is incorrect.\n";
         }
     } else {

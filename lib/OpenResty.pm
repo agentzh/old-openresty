@@ -485,11 +485,14 @@ sub has_role {
         where name = $role
         limit 1;
     |];
-    my $ret;
-    eval { $ret = $self->select($sql)->[0][0]; };
-    if ($ret) { $Cache->set_has_role($user, $role, $ret) }
+    my $ret = $self->select($sql);
+    if ($ret && ref $ret) {
+        $ret = $ret->[0][0];
+        if ($ret) { $Cache->set_has_role($user, $role, $ret) }
+        return $ret;
+    }
+    return undef;
     #warn "HERE!";
-    return $ret;
 }
 
 sub has_view {

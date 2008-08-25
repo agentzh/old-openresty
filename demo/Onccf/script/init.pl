@@ -38,6 +38,7 @@ $resty->post(
             { name => 'name', type => 'ltree', label => 'Menu name (anchor)' },
             { name => 'label', type => 'text', label => 'Menu label' },
             { name => 'content', type => 'text', label => 'Menu content' },
+            { name => 'display_order', type => 'smallint', label => 'Menu content', default => 0 },
         ],
     }
 );
@@ -52,6 +53,20 @@ I<Howdy>, nina!
 My blog is here:
 
 L<http://blog.agentzh.org>
+
+=begin html
+
+<p> <I>This</I> is <b><font color="red">plain HTML</font></b> </p>
+
+<center>
+<table width="100%" border="1">
+    <tr><td>Cat</td><td>Dog</td></tr>
+    <tr><td>Monkey</td><td>Banana</td></tr>
+    <tr><td>Yahoo</td><td>Google</td></tr>
+</table>
+</center>
+
+=end html
 
 _EOC_
         { name => "home", label => "Home", content => <<"_EOC_" },
@@ -247,7 +262,7 @@ In 2004, Mr Kan launched ON Capital China Fund and has returned 4.0 times realiz
 
 Mr Kan graduated in business from the HK Baptist College and from the Stanford Graduate School of Business Executive Program for Smaller Companies. He is an active participant in the advancement of the IT industry in HK and the PRC, and proactively served on a number of influential committees
 _EOC_
-        { name => 'contact.seller', label => 'Sellers', content => <<"_EOC_" },
+        { order => 2, name => 'contact.seller', label => 'Sellers', content => <<"_EOC_" },
 =over
 
 =item 1.
@@ -268,12 +283,19 @@ I'm a very I<good> seller.
 
 =back
 
+Order 2
 _EOC_
 
-        { name => 'contact.dev', label => 'Developers', content => <<"_EOC_" },
+        { order => 1, name => 'contact.dev', label => 'Developers', content => <<"_EOC_" },
 This site was powered by L<http://search.cpan.org/dist/OpenResty|OpenResty> and was developed by agentzh.
 
 If you have any questions regarding the implementation, please send mail to L<mailto:agentzh\@yahoo.cn|my email box>.
+
+Order 1
+_EOC_
+        { order => 3, name => 'contact.dev', label => 'Developers', content => <<"_EOC_" },
+
+Order 3
 _EOC_
         { name => 'contact', label => 'Contact us', content => <<"_EOC_" },
 =over
@@ -314,7 +336,7 @@ $resty->post(
 select name, label
 from Menu
 where name ~ '*{1}'
-order by $order_by | id asc
+order by display_order asc, $order_by | id asc
 _EOC_
 );
 
@@ -324,7 +346,7 @@ $resty->post(
 select name, label
 from Menu
 where name ~ ($parent || '.*{1}') :: lquery
-order by $order_by | id asc
+order by display_order asc, $order_by | id asc
 _EOC_
 );
 

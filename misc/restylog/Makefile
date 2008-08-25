@@ -12,7 +12,7 @@ $(html_file): stats.html
 	podhtm --index --css perl.css -o $@ $<
 
 %.pod: %.podx
-	DSN=dbi:Pg:dbname=test /usr/local/bin/podx -u agentzh -p agentzh $<
+	DSN=dbi:Pg:dbname=test /usr/local/bin/podx -u agentz $<
 
 %.podx: %.tt
 	tpage --define year=$(year) --define month=$(month) --define day=$(day) $< > $@

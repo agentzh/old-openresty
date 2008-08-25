@@ -18,6 +18,7 @@ $.fn.postprocess = function (className, options) {
         //debug("Anchor: " + anchor);
         $(this).click( function () {
             //debug(location.hash);
+            $(".location-anchor")[0].id = anchor;
             location.hash = anchor;
             //alert(location.hash);
             if (savedAnchor == anchor) savedAnchor = null;

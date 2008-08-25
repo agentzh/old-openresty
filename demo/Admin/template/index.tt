@@ -5,6 +5,7 @@
     </head>
 
     <body>
+        <a class="location-anchor"></a>
 
         [%- PROCESS 'banner.tt' %]
 
