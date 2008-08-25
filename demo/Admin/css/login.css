@@ -171,3 +171,15 @@ div#wait-message {
     display: block;
 }
 
+ul#def-list li {
+    list-style-image: none !important;
+    list-style-type:square !important;
+    list-style-position: inside !important;
+}
+
+ul#def-list {
+    padding-left: 40px !important;
+    display:block;
+    list-style-type:square !important;
+}
+
