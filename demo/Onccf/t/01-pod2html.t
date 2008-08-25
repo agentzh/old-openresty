@@ -494,3 +494,23 @@ Heh, that's cool!
 </div>
 <p>Heh, that's cool!</p>
 
+
+=== TEST 24: =begin comment & =end comment
+--- pod
+=head1 header
+
+=begin comment
+
+<a href="#hi">Hello, world</a>
+<div>
+    Nothing!
+</div>
+
+=end comment
+
+Heh, that's cool!
+
+--- html
+<h1>header</h1>
+<p>Heh, that's cool!</p>
+
