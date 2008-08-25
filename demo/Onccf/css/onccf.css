@@ -7,9 +7,7 @@ div.wait-message {
     top: 20px;
     right: 30px;
     padding: 4px;
-    border-width: 2px;
-    border-style: outset;
-    border-color: white;
+    border-width: 0;
     display: none;
 }
 

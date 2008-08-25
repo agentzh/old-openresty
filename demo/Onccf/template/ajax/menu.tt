@@ -1,6 +1,6 @@
 [% FOREACH menu = menu_list %]
 <li>
-    <a href="#menu/[% menu.name %]" onclick="savedAnchor = null;">
+    <a href="#menu/[% menu.name %]">
     <span>[% menu.label %]</span>
     </a>
     <ul id="menu-[% menu.name %]" class="submenu" loaded="">
