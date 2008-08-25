@@ -111,7 +111,7 @@
 <div id="yregpmtxt">
     <h3>OpenResty is a</h3>
     <div>
-    <ul class="list">
+    <ul id="def-list">
         <li>REST wrapper for relational databases</li>
         <li>web runtime for 100% JavaScript web sites and other RIAs.</li>
         <li>"meta web site" supporting other sites via web services.</li>
