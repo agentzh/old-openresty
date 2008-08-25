@@ -215,7 +215,7 @@ sub dump_res {
         $tb->rule('-'),
         $tb->title,
         $tb->rule('-'),
-        Encode::encode('utf8', $tb->body),
+        $tb->body,
         $tb->rule('-'),
         "\n";
 }
