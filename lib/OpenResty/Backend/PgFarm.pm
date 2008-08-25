@@ -3,7 +3,7 @@ package OpenResty::Backend::PgFarm;
 use strict;
 use warnings;
 
-#use Smart::Comments;
+#use Smart::Comments '####';
 use OpenResty::Limits;
 use JSON::XS ();
 use DBI;
@@ -87,12 +87,13 @@ sub quote_identifier {
 }
 
 sub last_insert_id {
-    my ($self, $table) = @_;
-    #die "Found table!!! $table";
+    my ($self, $model) = @_;
+    #warn "Found table!!! $model";
     #my $sql = "select xquery('$self->{user}',')', 0)";
     #my $dbh = $self->{dbh};
-    my $sql = "select max(id) from \"$table\"";
+    my $sql = "select max(id) from \"$model\";";
     my $res = $self->select($sql);
+    #### RES: $res
     return $res->[0][0];
 }
 

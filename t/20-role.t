@@ -131,7 +131,7 @@ GET /=/role/Public/~/~
 POST /=/role/Public/~/~
 {"method":"GET","url":"/=/model"}
 --- response_like
-{"last_row":"/=/role/Public/id/\d+","rows_affected":1,"success":1}
+"success":1
 
 
 

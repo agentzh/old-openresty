@@ -21,6 +21,7 @@ sub check_type {
     my $type = shift;
     if ($type !~ m{^ \s*
                 (
+                    smallint |
                     bigint |
                     cidr |
                     inet |
@@ -508,7 +509,12 @@ sub new_model {
 
     #register_columns
     eval {
-        $openresty->do($sql2 . $sql);
+        #if ($OpenResty::BackendName eq 'PgFarm') {
+            # XXX to work around a bug in our PL/Proxy cluster
+            #$openresty->select($sql2 . $sql);
+            #} else {
+            $openresty->do($sql2 . $sql);
+            #}
     };
     if ($@) {
         die "Failed to create model \"$model\": $@\n";

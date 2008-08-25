@@ -312,7 +312,7 @@ sub upgrade_local_metamodel {
     my ($self, $base) = @_;
 
     if (!defined $base) { die "No upgrading base specified" }
-    if (!$self->has_user('_global')) {
+    if ( ! $self->has_user('_global')) {
         my $user = $self->{user};
         $self->upgrade_global_metamodel(0);
         $self->set_user($user);
