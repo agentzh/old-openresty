@@ -57,7 +57,7 @@
 
                 <form action="" id="login-form">
                 <table id="yreglgtb" summary="form: login information" cellspacing="0" cellpadding="0">
-                <tr><th><label for="login-user">User</label></th></tr>
+                <tr><th><label for="login-user">OpenResty User</label></th></tr>
                 <tr><td><input id="login-user" type="text">
                 <script language="JavaScript" type="text/javascript">if(document.getElementById) document.getElementById('login-user').focus();</script>
 
