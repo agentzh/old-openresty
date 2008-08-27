@@ -1,2 +1,4 @@
-See lib/WWW/OpenAPI.pm for the Perl version of the OpenAPI client-side library WWW::OpenAPI.
+See the WWW::OpenResty and WWW::OpenResty::Simple modules on CPAN for the Perl version of the OpenAPI client-side library:
+
+    http://search.cpan.org/dist/WWW-OpenResty
 
