@@ -19,6 +19,7 @@ all:
 	cp js/*.js out/
 	cp js/*/*.js out/
 	cp css/*.css out/
+	cp image/*.* out/
 	tar cf site-binary.tar out
 	gzip -q --best site-binary.tar
 	mv site-binary.tar.gz out/
