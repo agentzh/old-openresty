@@ -206,6 +206,11 @@ function renderSubmenu (res, menu) {
     //alert(JSON.stringify(res));
     //$(".submenu").html('');
     //alert("HERE 1");
+
+    // hide other visible submenus
+    //debug("Submenu count: " + $("ul.submenu:visible").not("#menu-" + menu).length);
+    $("ul.submenu:visible").not("#menu-" + menu).hide();
+
     var list = $("#menu-" + menu);
     //list.html('');
     if ( ! list.attr('loaded')) {
@@ -224,6 +229,7 @@ function renderSubmenu (res, menu) {
         //alert("HERE???");
         //list.show();
         //alert("HERE!!!");
+        list.show();
     } else {
         list.toggle();
     }

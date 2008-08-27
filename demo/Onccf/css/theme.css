@@ -9,9 +9,9 @@ Theme: Portland - Derived From: Portland
 #bd{float:left;width:625px;position:relative;left:50%;margin-left:-215px;margin-top:-10px}
 /* to keep the background image properly aligned in IE 7 and to make sure elements do not overlap */
 #hd{padding:30px 0;overflow:hidden;width:100%;position:relative}
-#hContent{float:left;width:395px;position:relative;left:50%;margin:40px 0 0 -190px;display:inline;padding-bottom:25px}
+#hContent{float:left;width:400;position:relative;left:50%;margin:40px 0 0 -190px;display:inline;padding-bottom:25px}
 #hMisc{float:left;width:170px;position:relative;left:50%;margin-left:40px;display:inline}
-#navigation{clear:left;float:left;width:180px;position:relative;left:50%;margin-left:-393px;margin-top:-10px;display:inline}
+#navigation{clear:left;float:left;width:185px;position:relative;left:49%;margin-left:-400px;margin-top:-10px;display:inline}
 ul#mainNav li a{_zoom:1;display:block;padding:3px 3px 3px 20px}
 /* to reveal the border on the first list item */
 ul#mainNav li.active{_zoom:1}
@@ -124,7 +124,7 @@ ul#mainNav li.active{background:none}
 		
 		ul#mainNav li a:link,
 		ul#mainNav li a:visited {
-			text-transform: lowercase;
+			/* text-transform: lowercase; */
 			font-family: Helvetica, Arial, sans-serif;
 			color: #bdbba6;
 			font-size: 24px;

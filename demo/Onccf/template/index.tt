@@ -1,6 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 [%- PROCESS "header.tt" %]
 <body>
+  <a class="location-anchor" name=""></a>
   <center>
   <div id="body">
     <div id="doc">
@@ -15,7 +16,6 @@
             </div>
           </div>
         </div>
-        <a class="location-anchor" name=""></a>
 
         <div id="hMisc">
             <div id="ie-wait-message" class="wait-message">
