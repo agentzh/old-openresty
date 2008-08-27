@@ -16,7 +16,7 @@
             <input type="text" size="18" id="create-model-desc"></input>
         </p>
 
-        <div id="create-model-columns"></div>
+        <p><div id="create-model-columns"></div></p>
         <p class="add-column">
             <a href="javascript:void(0);" onclick="addOneMoreColumn()">Add a column</a>
         </p>

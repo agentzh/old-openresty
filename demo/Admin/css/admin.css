@@ -41,6 +41,11 @@ span.column-inputs {
     margin-left: 2em;
 }
 
+span.column-inputs label {
+	display:inline;
+	float:none;
+}
+
 input.column-input {
     margin-left: 4px;
     margin-right: 4px;
@@ -67,6 +72,11 @@ input.column-input {
 .create-model label {
     padding: 5px;
     text-align: left;
+    display: block;
+    width: 100px;
+    float:left;
+    z-index:2;
+    font-family:tahoma,arial,helvetica,sans-serif;
 }
 
 input.create-button {

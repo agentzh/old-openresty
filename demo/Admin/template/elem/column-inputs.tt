@@ -1,4 +1,4 @@
-<label>name</label><input size="5" class="column-input" type="input" resty_key="name"></input>
+<label>name</label><input size="5" class="column-input column-input-name" type="input" resty_key="name"></input>
 <label>label</label><input size="10" class="column-input" type="input" resty_key="label"></input>
 <label>type</label><input size="8" class="column-input" type="input" resty_key="type"></input>
 <label>default (in JSON)</label><input size="8" class="column-input" type="input" resty_key="default"></input>

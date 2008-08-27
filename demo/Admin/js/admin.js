@@ -396,6 +396,11 @@ function addNewColumn (model) {
     $("li.add-col").html(
         '<form onsubmit="return false;">' + Jemplate.process('column-inputs.tt') + '<input class="column-create-button" type="submit" value="Create" onclick="createColumn(\'' + model + '\')"></input></form>'
     );
+    setTimeout( function () {
+        //alert($('.column-input-name:last').length);
+        $('.column-input-name:last')[0].focus();
+        //$('column-input :last')[0].focus();
+    }, 0 );
 }
 
 function createColumn (model) {
@@ -430,10 +435,19 @@ function afterCreateColumn (res) {
     }
 }
 
+/* in create model */
 function addOneMoreColumn () {
+    //debug("HERE!");
     $("#create-model-columns").append(
-        '<tr><td><span class="column-inputs">' + Jemplate.process('column-inputs.tt') + "</span></td></tr>"
+        '<table><tr><td><span class="column-inputs">' + Jemplate.process('column-inputs.tt') + "</span></td></tr></table>"
     );
+    //alert("HERE!");
+        //alert("HERE!");
+    setTimeout( function () {
+        //alert($('.column-input-name:last').length);
+        $('.column-input-name:last')[0].focus();
+        //$('column-input :last')[0].focus();
+    }, 0 );
 }
 
 function createModel () {
