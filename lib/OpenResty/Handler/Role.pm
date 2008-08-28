@@ -69,28 +69,53 @@ sub GET_access_rule {
     if ($col ne '~' and $col ne 'method' and $col ne 'url' and $col ne 'id') {
         die "Unknown access rule field: $col\n";
     }
+    $col = 'prefix' if $col eq 'url';
 
     my $sql;
     if ($value eq '~') {
-        $sql = "select id,method,url from _access where role = '$role';";
+        $sql = [:sql|
+            select id, method, prefix, segments, prohibiting
+            from _access
+            where role = $role;
+        |];
     } else {
         my $op = $openresty->{_cgi}->url_param('op') || 'eq';
         $op = $OpenResty::OpMap{$op};
         if ($op eq 'like') {
             $value = "%$value%";
         }
-        my $quoted = Q($value);
+        #my $quoted = Q($value);
 
         if ($col eq '~') {
-            $sql = "select id,method,url from _access where role = '$role' and ( id::text $op $quoted or method $op $quoted or url $op $quoted);";
+            $sql = [:sql|
+                select id, method, prefix, segments, prohibiting
+                from _access where role = $role and
+                    (id::text $kw:op $value or method $kw:op $value or
+                     prefix $kw:op $value);
+            |];
         } else {
-            $sql = "select id,method,url from _access where role = '$role' and $col $op $quoted;";
+            $sql = [:sql|
+                select id, method, prefix, segments, prohibiting
+                from _access
+                where role = $role and $sym:col $kw:op $value;
+            |];
         }
     }
     ### $sql
     my $res = $openresty->select($sql, { use_hash => 1 });
     $res ||= [];
+    $self->adjust_rules($res);
     return $res;
+}
+
+sub adjust_rules {
+    my ($self, $rules) = @_;
+    for my $rule (@$rules) {
+        my $prefix = delete $rule->{prefix};
+        my $segments = delete $rule->{segments};
+        my @prefix_segs = split /\//, $prefix;
+        $rule->{url} = '/=/' . $prefix . ('/~' x ($segments - @prefix_segs));
+    }
 }
 
 sub PUT_access_rule {
@@ -117,7 +142,17 @@ sub PUT_access_rule {
         if (lc($col) eq 'id') {
             die "Column \"id\" reserved.\n";
         }
-        $update->set($col => Q($val));
+        if ($col eq 'url') {
+            $val =~ s/^\/=\/+//;
+            my @bits = split /\/+/, $val;
+            (my $prefix = $val) =~ s/(?:\/~)+$//g;
+            $prefix = '' if $prefix eq '~';
+            my $segs = @bits;
+            $update->set(prefix => Q($prefix));
+            $update->set(segments => Q($segs));
+        } else {
+            $update->set(QI($col) => Q($val));
+        }
     }
 
     if ($value eq '~') {
@@ -133,7 +168,7 @@ sub PUT_access_rule {
         if ($col eq '~') {
             $update->where(
                 'role', '=', Q($role),
-                "(id::text $op $quoted or method $op $quoted or url $op $quoted)"
+                "(id::text $op $quoted or method $op $quoted or prefix $op $quoted)"
             );
 
         } else {
@@ -198,7 +233,8 @@ sub insert_rule {
     if (!defined $url) {
         die "row $row: Column \"url\" is missing.\n";
     }
-    if ($url !~ /^\/=\//) {
+    my $prohibiting = delete $data->{prohibiting} ? 'true' : 'false';
+    if ($url !~ s/^\/=\/+//) {
         die "URL must be lead by \"/=/\".\n";
     }
     if (%$data) {
@@ -206,9 +242,13 @@ sub insert_rule {
             join(" ", keys %$data),
             "\n";
     }
+    my @bits = split /\/+/, $url;
+    (my $prefix = $url) =~ s/(?:\/~)+$//g;
+    $prefix = '' if $prefix eq '~';
+    my $segs = @bits;
     my $sql = [:sql|
-        insert into _access (role, method, url)
-        values($role, $method, $url) |];
+        insert into _access (role, method, prefix, segments, prohibiting)
+        values($role, $method, $prefix, $segs, $prohibiting) |];
     return $openresty->do($sql);
 }
 
