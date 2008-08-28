@@ -246,6 +246,14 @@ begin
     alter table _models drop column table_name;
     alter table _columns rename column table_name to model;
     alter table _access add column segments smallint;
+    alter table _access add column prohibiting boolean default false;
+    alter table _access rename column url to prefix;
+    update _access
+    set segments = char_length(regexp_replace(prefix, '[^/]+', '', 'g')) - 1,
+        prohibiting = false, prefix = regexp_replace(prefix, '(/~)+$', '');
+    alter table _access alter column prohibiting set not null;
+    alter table _access alter column prefix set not null;
+
     return 0;
 end;
 $$ language plpgsql;

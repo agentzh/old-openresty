@@ -431,25 +431,19 @@ sub emit_data {
 
 sub current_user_can {
     my ($self, $meth, $bits) = @_;
-    my @urls = $bits;
+    my $url = join '/', @$bits;
     my $role = $self->{_role};
-    my $max_i = @$bits - 1;
-    while ($max_i >= 0) {
-        my @last_bits = @{ $urls[-1] };
-        if ($last_bits[$max_i] ne '~') {
-            $last_bits[$max_i] = '~';
-            push @urls, \@last_bits;
-        }
-    } continue { $max_i-- }
-    map { $_ = '/=/' . join '/', @$_ } @urls;
-    my $or_clause = join ' or ', map { [:sql| url = $_ |] } @urls;
+    my $segs = @$bits;
     my $sql = [:sql|
-        select count(*)
+        select id
         from _access
-        where role = $role and method = $meth and ( |] . "$or_clause);";
+        where role = $role and method = $meth and segments = $segs
+            and $url like (prefix || '%')
+        limit 1;
+    |];
     ### $sql
     my $res = $self->select($sql);
-    return do { $res->[0][0] };
+    return ($res && @$res);
 }
 
 sub has_feed {
