@@ -12,11 +12,10 @@ This site can be downloaded from <a href="site-binary.tar.gz">here</a> (.tar.gz)
 </p>
 <hr>
 <center>
-<p>Powered by <a href="http://search.cpan.org/dist/OpenResty">OpenResty</a> and your web browser.</p>
-<div id="copyright" class="cp1">
-    <p>Copyright © 2008 Yahoo! China EEEE Works, Alibaba Inc.</p>
+<p style="padding-left: 6em">Powered by <a href="http://search.cpan.org/dist/OpenResty">OpenResty</a> and your web browser.</p>
+<div id="copyright">
 </div>
-<!--}}end:copy -->
+<p style="text-align: center">Copyright © 2008 Yahoo! China <a target="_blank" href="http://www.eeeeworks.org">EEEE Works</a>, Alibaba Inc.</p>
 </center>
 
 </div>
