@@ -50,6 +50,7 @@
             <div class="top yregbx">
 
     <div class=" badge">
+    <span class="ct"><span class="cl"></span></span>
     <div class="yregbxi">
         <h1>Sign in to OpenResty Admin</h1>
         <fieldset>
@@ -87,9 +88,9 @@
             </form>
             </fieldset>
 
-            </div>
-            <span class="cb"><span class="cl"></span></span>
-        </div>
+    </div>
+    <span class="cb"><span class="cl"></span></span>
+    </div>
 
 
         </div>
