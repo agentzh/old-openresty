@@ -13,3 +13,11 @@ and the Jemplate module on CPAN. Then you can issue the following command:
 
 The resulting site will be in the out/ directory ready for deployment :)
 
+There's also a small test suite for the JavaScript file js/pod2html.js.
+To run this test suite, simply enter the command
+
+    $ prove -r t
+
+Note that you need perl and several other CPAN modules like Test::Base,
+JavaScript::SpiderMonkey, and JSON::XS.
+
