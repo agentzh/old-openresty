@@ -2,10 +2,10 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" id="sixapart-standard">
 
-[% PROCESS 'header.tt' %]
+[%- PROCESS 'header.tt' -%]
 
 <body class="layout-two-column-left">
-    <a name="#posts/1" class="blog-top"></a>
+    <a name="top" class="blog-top"></a>
     <a class="anchor-location"></a>
     <div id="container">
         <div id="container-inner" class="pkg">
@@ -35,6 +35,7 @@
             </div>
             [%- PROCESS 'footer.tt' %]
     </div>
+</div>
 </body>
 </html>
 

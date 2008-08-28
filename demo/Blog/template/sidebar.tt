@@ -5,7 +5,7 @@
 <div class="module-archives module">
     <h2 class="module-header">Site search</h2>
     <div id="search-posts" class="module-content">
-        <form id="form-search" onsubmit="doPostSearch();return false;">
+        <form id="form-search" onsubmit="doPostSearch();return false;" action="">
             <input type="text" size="20" maxlength="125" id="searchbox"></input><br/>
             <input type="submit" value="Search posts"></input>
             <!-- <input type="button" value="Comments"></input> -->
@@ -28,28 +28,11 @@
 <div class="module-categories module">
     <h2 class="module-header">Categories</h2>
     <div class="module-content">
-        <ul class="module-list">
-                    <!--
-                        <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/app/index.html">App</a></li>
-                    -->
-
-        </ul>
     </div>
 </div>
     <div class="module-archives module">
         <h2 class="module-header">Archives</h2>
         <div class="module-content" id="archive-list">
-            <!--
-                                                <ul class="module-list">
-
-                <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/10/index.html">October 2007</a></li>
-
-
-                <li class="module-list-item"><a href="http://pugs.blogs.com/pugs/2007/08/index.html">August 2007</a></li>
-
-                    </ul>
-                    <p class="module-more"><a href="http://pugs.blogs.com/pugs/archives.html">More...</a></p>
-            -->
         </div>
     </div>
 
