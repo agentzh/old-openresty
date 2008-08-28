@@ -1,6 +1,12 @@
 <div id="ft">
 <!--{{start:copy -->
 <br>
+<p style="float: right;">
+    <a href="http://validator.w3.org/check?uri=referer"><img
+        src="http://www.w3.org/Icons/valid-html401-blue"
+        alt="Valid HTML 4.01 Transitional" height="31" width="88"></a>
+</p>
+
 <p style="text-align: left; padding-left: 1em;">
 This site can be downloaded from <a href="site-binary.tar.gz">here</a> (.tar.gz) and <a href="http://svn.openfoundry.org/openapi/trunk/demo/Admin/">its Subversion repository</a> has anonymous access to all.
 </p>
@@ -10,7 +16,8 @@ This site can be downloaded from <a href="site-binary.tar.gz">here</a> (.tar.gz)
 <div id="copyright" class="cp1">
     <p>Copyright © 2008 Yahoo! China EEEE Works, Alibaba Inc.</p>
 </div>
-</center>
 <!--}}end:copy -->
+</center>
+
 </div>
 
