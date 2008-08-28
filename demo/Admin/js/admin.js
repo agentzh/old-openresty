@@ -296,7 +296,7 @@ function renderVersionInfo (res) {
        .replace(/</, '&lt;')
        .replace(/>/, '&gt;')
        .replace(/"/, '&quot;')
-       .replace(/\n/, '<br/>')
+       .replace(/\n.*/, '')
        .replace(/\(c\)/, '©');
     $("#copyright").html(res);
 }
