@@ -1,0 +1,15 @@
+This is the source code for the site http://www.onccf.com .
+
+For now, a temporary instance of this site is running at
+
+    http://agentzh.org/misc/onccf/out/#menu/home
+
+but it will soon be moved to the domain www.onccf.com when it's ready.
+
+To generate this site, you need a complete OpenResty source tree, perl,
+and the Jemplate module on CPAN. Then you can issue the following command:
+
+    $ make
+
+The resulting site will be in the out/ directory ready for deployment :)
+
