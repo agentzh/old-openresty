@@ -145,9 +145,8 @@ end;
 \$\$ language plpgsql;
 _EOC_
     ],
-    [
-        '0.005' => '',
-    ],
+    [ '0.005' => '' ],
+    [ '0.006' => '' ],
 );
 
 our @LocalVersionDelta = (
@@ -237,6 +236,16 @@ begin
     update _columns set "default" = regexp_replace("default", '^''|''$', '"', 'g') where "default" ~ '^''.*''$';
     alter table _views drop constraint _views_definition_key;
 
+    return 0;
+end;
+$$ language plpgsql;
+_EOC_
+    [ '0.006' => <<'_EOC_' ],
+create or replace function _upgrade() returns integer as $$
+begin
+    alter table _models drop column table_name;
+    alter table _columns rename column table_name to model;
+    alter table _access add column segments smallint;
     return 0;
 end;
 $$ language plpgsql;
