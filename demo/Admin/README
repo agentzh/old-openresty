@@ -6,3 +6,7 @@ To build the site:
 
 Then out/ will hold the binary site ready for deployment.
 
+Note that you need the whole OpenResty source tree to build this site.
+Because some of the .js files are copied over from ../../clients/js/
+and somewhere else :)
+
