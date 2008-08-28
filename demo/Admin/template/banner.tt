@@ -1,5 +1,5 @@
 <div id="wait-message">
-    <img src="loading.gif"/>
+    <img src="loading.gif" alt="">
     &nbsp; <b>Loading...</b>&nbsp;
 </div>
 
