@@ -1,5 +1,9 @@
 This is the source code for the site http://openresty.org/admin/ .
 
+It requires the CPAN packages Jemplate and Template. Please install them like this:
+
+    $ sudo cpan Jemplate Template
+
 To build the site:
 
     $ make
