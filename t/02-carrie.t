@@ -270,7 +270,7 @@ GET /=/model/Test2/~/~?_user=$TestAccount&_password=$TestPass
 --- request
 GET /=/delete/Test2/~/~?_user=$TestAccount&_password=$TestPass
 --- response
-{"error":"Unknown URL catagory: Test2","success":0}
+{"error":"Handler for the \"Test2\" category not found.","success":0}
 
 
 

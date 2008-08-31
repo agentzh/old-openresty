@@ -9,6 +9,16 @@ use OpenResty::Util;
 use File::Spec;
 use File::ShareDir qw( module_dir );
 
+use base 'OpenResty::Handler::Base';
+
+__PACKAGE__->register('version');
+
+sub requires_acl { undef }
+
+sub level2name {
+    qw< version >[$_[-1]]
+}
+
 our $Revision;
 
 sub trim {

@@ -3,6 +3,7 @@
 use t::OpenResty;
 
 plan tests => 3 * blocks() - 3 * 2;
+#plan tests => 3 * blocks();
 
 run_tests;
 
@@ -13,7 +14,6 @@ __DATA__
 GET /=/login/$TestAccount.Admin
 --- response
 {"success":0,"error":"$TestAccount.Admin is not anonymous."}
-
 
 
 === TEST 2: Delete existing models (w/o login)

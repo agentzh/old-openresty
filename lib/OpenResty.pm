@@ -28,15 +28,6 @@ use OpenResty::Limits;
 #use encoding "utf8";
 
 use OpenResty::Util;
-use OpenResty::Handler::Model;
-use OpenResty::Handler::View;
-use OpenResty::Handler::Feed;
-use OpenResty::Handler::Action;
-use OpenResty::Handler::Role;
-use OpenResty::Handler::Unsafe;
-use OpenResty::Handler::Login;
-use OpenResty::Handler::Captcha;
-use OpenResty::Handler::Version;
 use Encode::Guess;
 
 #$YAML::Syck::ImplicitUnicode = 1;
@@ -112,6 +103,15 @@ sub new {
 
 sub call_level {
     return $_[0]->{_call_level};
+}
+
+sub config {
+    my $key = pop;
+    $OpenResty::Config{$key};
+}
+
+sub cache {
+    $OpenResty::Cache;
 }
 
 sub init {
@@ -429,21 +429,21 @@ sub emit_data {
     return eval { $Dumper->($data); }
 }
 
-sub current_user_can {
-    my ($self, $meth, $bits) = @_;
-    my $url = join '/', @$bits;
-    my $role = $self->{_role};
-    my $segs = @$bits;
-    my $sql = [:sql|
-        select id
-        from _access
-        where role = $role and method = $meth and segments = $segs
-            and $url like (prefix || '%')
-        limit 1;
-    |];
-    ### $sql
-    my $res = $self->select($sql);
-    return ($res && @$res);
+sub get_session {
+    my ($self) = @_;
+    my ($session, $session_from_cookie);
+    my $call_level = $self->{_call_level};
+    if ($call_level == 0) { # only check cookies on the toplevel call
+        my $cookies = CGI::Cookie::XS->fetch;
+        if ($cookies) {
+            my $cookie = $cookies->{session};
+            if ($cookie) {
+                $self->{_session_from_cookie} =
+                    $session_from_cookie = $cookie->[-1];
+            }
+        }
+    }
+    $session = $self->{_session} || $session_from_cookie;
 }
 
 sub has_feed {

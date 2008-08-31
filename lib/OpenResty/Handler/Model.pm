@@ -14,8 +14,16 @@ use Encode qw(is_utf8);
 use OpenResty::QuasiQuote::SQL;
 use OpenResty::QuasiQuote::Validator;
 
+use base 'OpenResty::Handler::Base';
+
 #%OpenResty::AccountFiltered = %OpenResty::AccountFiltered;
 #$OpenResty::OpMap = $OpenResty::OpMap;
+
+__PACKAGE__->register('model');
+
+sub level2name {
+    qw< model_list model model_column model_row >[$_[-1]]
+}
 
 sub check_type {
     my $type = shift;

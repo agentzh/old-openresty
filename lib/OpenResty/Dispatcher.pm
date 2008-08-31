@@ -3,6 +3,8 @@ package OpenResty::Dispatcher;
 use strict;
 use warnings;
 
+our %Handlers;
+
 #use Smart::Comments '####';
 use CGI::Cookie::XS;
 use OpenResty::Limits;
@@ -16,33 +18,6 @@ our $InitFatal;
 our $StatsLog;
 
 # XXX Excpetion not caputred...when database 'test' not created.
-my %Dispatcher = (
-    model => [
-        qw< model_list model model_column model_row >
-    ],
-    view => [
-        qw< view_list view view_param view_exec >
-    ],
-    feed => [
-        qw< feed_list feed feed_param feed_exec >
-    ],
-    action => [
-        qw< action_list action action_param action_exec  >
-    ],
-    unsafe => [
-        qw< unsafe unsafe_op >
-    ],
-    role => [
-        qw< role_list role access_rule_column access_rule >
-    ],
-    login => [
-        qw< login login_user login_user_password >
-    ],
-    captcha => [
-        qw< captcha_list captcha_column captcha_value >
-    ],
-    version => [ qw< version > ],
-);
 
 my $url_prefix = $ENV{OPENRESTY_URL_PREFIX};
 if ($url_prefix) {
@@ -108,6 +83,21 @@ sub init {
             $OpenResty::UnsafeAccounts{$account} = 1;
         }
     }
+
+    my $hdls = $OpenResty::Config{'frontend.handlers'};
+    my @handlers;
+    if (!defined $hdls) {
+        @handlers = qw< Model View Feed Action Role Unsafe Login Captcha Version >;
+    } else {
+        @handlers = split /\s+|\s*,\s*/, $hdls;
+    }
+    for my $hdl (@handlers) {
+        eval "use OpenResty::Handler::$hdl";
+        if ($@) {
+            $InitFatal = "Failed to load handler class OpenResty::Handler::$hdl: $@\n";
+            last;
+        }
+    }
 }
 
 sub process_request {
@@ -135,6 +125,8 @@ sub process_request {
     } else {
         $openresty = OpenResty::Inlined->new($cgi, $call_level);
     }
+    $openresty->{_call_level} = $call_level;
+    $openresty->{_parent_account} = $parent_account;
 
     #warn "InitFatal2: $InitFatal\n";
     eval {
@@ -188,18 +180,6 @@ sub process_request {
     }
 
     # XXX hacks...
-    my ($session, $session_from_cookie);
-    if ($call_level == 0) { # only check cookies on the toplevel call
-        my $cookies = CGI::Cookie::XS->fetch;
-        if ($cookies) {
-            my $cookie = $cookies->{session};
-            if ($cookie) {
-                $openresty->{_session_from_cookie} =
-                    $session_from_cookie = $cookie->[-1];
-            }
-        }
-    }
-
     if ($http_meth eq 'GET' and @bits >= 2 and $bits[0] eq 'last' and $bits[1] eq 'response') {
         my $last_res_id = $bits[2];
         if (!$last_res_id) {
@@ -217,117 +197,42 @@ sub process_request {
         return;
     }
 
-    $session = $openresty->{_session} || $session_from_cookie;
-    if ($key eq 'logout') {
-        ### Yeah yeah yeah!
-        if ($session) {
-            $OpenResty::Cache->remove($session);
-        }
-        $openresty->{_bin_data} = "{\"success\":1}\n";
-        return $openresty->response;
-    }
-
-    my ($account, $role);
-    if ($key !~ /^(?:login|captcha|version)$/) {
-        eval {
-            # XXX this part is lame...
-            # XXX param user is now deprecated; use _user instead
-            my $user = $openresty->builtin_param('_user');
-            if (defined $user) {
-                #$OpenResty::Cache->remove($uuid);
-                my $captcha = $openresty->builtin_param('_captcha');
-                ### URL param capture: $captcha
-                #require OpenResty::Handler::Login;
-                my $res = OpenResty::Handler::Login->login($openresty, $user, {
-                    password => $openresty->builtin_param('_password'),
-                    captcha => $captcha,
-                });
-                $account = $res->{account};
-                $role = $res->{role};
-                # XXX login as $account.$role...
-                # XXX if account is anonymous, then create a session
-                # XXX else check password, if correct, create a session
-            } else {
-                ### First bit: $bits[0]
-                if ($session) {
-                    my $user = $OpenResty::Cache->get($session);
-                    ### User from cookie: $user
-                    if ($user) {
-                        ($account, $role) = split /\./, $user, 2;
-                    }
-                    ### $account
-                    ### $role
-                }
-            }
-
-            if ($call_level == 0) {
-                # this part is lame?
-                if (!$account) {
-                    die "Login required.\n";
-                }
-                if (!$openresty->has_user($account)) {
-                    ### Found user: $user
-                    die "Account \"$account\" does not exist.\n";
-                }
-            } else {
-                if (!$account) {
-                    $account = $parent_account;
-                } else {
-                    if (!$openresty->has_user($account)) {
-                        ### Found user: $user
-                        die "Account \"$account\" does not exist.\n";
-                    }
-                }
-            }
-            $openresty->set_user($account);
-
-            $role ||= 'Admin';
-            if (!$openresty->has_role($role)) {
-                ### Found user: $user
-                die "Role \"$role\" does not exist.\n";
-            }
-            $openresty->set_role($role);
-        };
-        if ($@) {
-            return $openresty->fatal($@);
-        }
-    }
-
     # XXX check ACL rules...
-    if (!defined $role || $role ne 'Admin') {
-        if ($key !~ /^(?:login|logout|captcha|version)$/) {
-            my $res = $openresty->current_user_can($http_meth => \@bits);
+
+    my $category = $key;
+    if ($category) {
+        my $package = $Handlers{$category};
+        #### handlers: %Handlers
+        #eval "use $package";
+        if (!defined $package) {
+            return $openresty->fatal("Handler for the \"$category\" category not found.\n");
+        }
+        if ($package->requires_acl) {
+            my $res;
+            eval {
+                my $login_pkg = $Handlers{login};
+                if (!$login_pkg) { die "Login handler not loaded.\n" }
+                my $role_pkg = $Handlers{role};
+                if (!$role_pkg) { die "Role handler not loaded.\n" }
+                OpenResty::Handler::Login->login_per_request($openresty, \@bits);
+                $res = OpenResty::Handler::Role->current_user_can($openresty, $http_meth => \@bits);
+            };
+            if ($@) {
+                return $openresty->fatal($@);
+            }
             if (!$res) {
+                my $role = $openresty->{_role};
                 return $openresty->fatal("Permission denied for the \"$role\" role.");
             }
         }
-    }
-
-    my $category = $Dispatcher{$key};
-    if ($category) {
-        my $object = $category->[$#bits];
-        ### $object
-        if (!defined $object) {
-            return $openresty->fatal("Unknown URL level: $url");
-        }
-        my $package = 'OpenResty::Handler::' . ucfirst($key);
-        #eval "use $package";
-        if ($@) {
-            return $openresty->fatal("Failed to load $package");
-        }
-        my $meth = $http_meth . '_' . $object;
-        $meth =~ s/\./_/g;
-        if (!$package->can($meth)) {
-            $object =~ s/_/ /g;
-            return $openresty->fatal("HTTP $http_meth method not supported for $object.");
-        }
         my $data;
         eval {
+            my $hdl = $package->new;
+            # XXX global_model_check is a hack...
             if ($key eq 'model') {
                 $package->global_model_check($openresty, \@bits, $http_meth);
             }
-
-            $data = $package->$meth($openresty, \@bits);
+            $data = $package->go($openresty, $http_meth, \@bits);
         };
         if ($@) {
             return $openresty->fatal($@);
@@ -335,7 +240,7 @@ sub process_request {
         $openresty->data($data);
         $openresty->response();
     } else {
-        $openresty->fatal("Unknown URL catagory: $key");
+        $openresty->fatal("Unknown URL catagory: $category");
     }
 }
 

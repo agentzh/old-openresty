@@ -76,6 +76,7 @@ sub select {
         OpenResty::Backend::PgMocked->record($sql => $res);
         return $res;
     } else {
+        #warn "==== ", $OpenResty::Dumper->($sql), "\n";
         return $dbh->selectall_arrayref(
             $sql,
             $opts->{use_hash} ? {MaxRows => $MAX_SELECT_LIMIT, Slice=>{}} : ()
@@ -96,6 +97,7 @@ sub do {
         OpenResty::Backend::PgMocked->record($sql => $res);
         return $res;
     } else {
+        #warn "==== ", $OpenResty::Dumper->($sql), "\n";
          $self->{dbh}->do($sql);
     }
 

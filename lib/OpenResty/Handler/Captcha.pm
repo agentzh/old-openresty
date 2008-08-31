@@ -12,6 +12,16 @@ use MIME::Base64;
 use Digest::MD5 qw/md5/;
 use Encode qw( encode decode is_utf8 );
 
+use base 'OpenResty::Handler::Base';
+
+__PACKAGE__->register('captcha');
+
+sub requires_acl { undef }
+
+sub level2name {
+    qw< captcha_list captcha_column captcha_value >[$_[-1]]
+}
+
 my $FontPath = "$FindBin::Bin/../share/font/wqy-zenhei.ttf";
 eval {
     if ( !-f $FontPath )

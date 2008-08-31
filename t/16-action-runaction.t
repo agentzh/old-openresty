@@ -283,7 +283,7 @@ GET '/=/model';"
 --- response
 [
     [{"id":"4","num":"6","title":"Google","url":"google.com"}],
-    {"error":"Unknown URL catagory: blah","success":0},
+    {"error":"Handler for the \"blah\" category not found.","success":0},
     [{"description":"我的书签","name":"Carrie","src":"/=/model/Carrie"}]
 ]
 
