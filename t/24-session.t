@@ -93,7 +93,7 @@ GET /=/logout
 DELETE /=/model.js
 --- response
 {"success":0,"error":"Login required."}
-
+--- LAST
 
 
 === TEST 12: Login with cookie

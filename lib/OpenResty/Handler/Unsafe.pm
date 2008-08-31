@@ -5,6 +5,14 @@ use warnings;
 
 use Params::Util qw( _STRING );
 
+use base 'OpenResty::Handler::Base';
+
+__PACKAGE__->register('unsafe');
+
+sub level2name {
+    qw< unsafe unsafe_op >[$_[-1]];
+}
+
 # XXX TODO we should provide a config option to turn off or on the Unsafe API
 sub POST_unsafe_op {
     my ($self, $openresty, $bits) = @_;

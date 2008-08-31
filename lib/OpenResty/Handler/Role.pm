@@ -9,6 +9,14 @@ use OpenResty::Util;
 use OpenResty::Limits;
 use OpenResty::QuasiQuote::SQL;
 
+use base 'OpenResty::Handler::Base';
+
+__PACKAGE__->register('role');
+
+sub level2name {
+    qw< role_list role access_rule_column access_rule >[$_[-1]];
+}
+
 sub DELETE_role {
     my ($self, $openresty, $bits) = @_;
     my $role = $bits->[1];
@@ -445,6 +453,24 @@ sub PUT_role {
     }
     my $retval = $openresty->do("$update" . $extra_sql) + 0;
     return { success => $retval >= 0 ? 1 : 0 };
+}
+
+sub current_user_can {
+    my ($self, $openresty, $meth, $bits) = @_;
+    my $role = $openresty->{_role};
+    return 1 if $role eq 'Admin'; # short cut
+    my $url = join '/', @$bits;
+    my $segs = @$bits;
+    my $sql = [:sql|
+        select id
+        from _access
+        where role = $role and method = $meth and segments = $segs
+            and $url like (prefix || '%')
+        limit 1;
+    |];
+    ### $sql
+    my $res = $openresty->select($sql);
+    return ($res && @$res);
 }
 
 1;

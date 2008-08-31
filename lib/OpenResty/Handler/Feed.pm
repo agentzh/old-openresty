@@ -14,6 +14,14 @@ use OpenResty::FeedWriter::RSS;
 use POSIX qw( strftime );
 use OpenResty::QuasiQuote::SQL;
 
+use base 'OpenResty::Handler::Base';
+
+__PACKAGE__->register('feed');
+
+sub level2name {
+    qw< feed_list feed feed_param feed_exec >[$_[-1]];
+}
+
 my $FormatterPattern = '%a, %d %b %Y %H:%M:%S GMT';
 my $Formatter = DateTime::Format::Strptime->new(pattern => $FormatterPattern);
 

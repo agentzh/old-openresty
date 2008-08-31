@@ -8,6 +8,82 @@ use CGI::Simple::Cookie;
 use OpenResty::Util;
 use Params::Util qw( _STRING );
 use OpenResty::QuasiQuote::SQL;
+use OpenResty::Handler::Logout;
+
+use base 'OpenResty::Handler::Base';
+
+__PACKAGE__->register('login');
+
+sub requires_acl { undef }
+
+sub level2name {
+    qw< login login_user login_user_password >[$_[-1]]
+}
+
+sub login_per_request {
+    my ($class, $openresty, $bits) = @_;
+    my ($account, $role);
+    # XXX this part is lame...
+    # XXX param user is now deprecated; use _user instead
+    my $session = $openresty->get_session;
+    my $user = $openresty->builtin_param('_user');
+    #warn "_user = $user\n";
+    if (defined $user) {
+        #$OpenResty::Cache->remove($uuid);
+        my $captcha = $openresty->builtin_param('_captcha');
+        ### URL param capture: $captcha
+        #require OpenResty::Handler::Login;
+        my $res = OpenResty::Handler::Login->login($openresty, $user, {
+            password => $openresty->builtin_param('_password'),
+            captcha => $captcha,
+        });
+        $account = $res->{account};
+        $role = $res->{role};
+        # XXX login as $account.$role...
+        # XXX if account is anonymous, then create a session
+        # XXX else check password, if correct, create a session
+    } else {
+        if ($session) {
+            my $user = $OpenResty::Cache->get($session);
+            #### User from cache: $user
+            if ($user) {
+                ($account, $role) = split /\./, $user, 2;
+            }
+            #### $account
+            ### $role
+        }
+    }
+
+    my $call_level = $openresty->{_call_level};
+    if ($call_level == 0) {
+        # this part is lame?
+        if (!$account) {
+            die "Login required.\n";
+        }
+        if (!$openresty->has_user($account)) {
+            ### Found user: $user
+            die "Account \"$account\" does not exist.\n";
+        }
+    } else {
+        if (!$account) {
+            $account = $openresty->{_parent_account};
+        } else {
+            if (!$openresty->has_user($account)) {
+                ### Found user: $user
+                die "Account \"$account\" does not exist.\n";
+            }
+        }
+    }
+    #warn "Setting user: $account ", join ('/', @$bits), "\n";
+    $openresty->set_user($account);
+
+    $role ||= 'Admin';
+    if (!$openresty->has_role($role)) {
+        ### Found user: $user
+        die "Role \"$role\" does not exist.\n";
+    }
+    $openresty->set_role($role);
+}
 
 #*login = \&login_by_sql;
 *login = \&login_by_perl;
@@ -70,7 +146,6 @@ sub login_by_perl {
         if (!$id or !$user_sol) {
             die "Bad captcha parameter: $captcha\n";
         }
-        ### with captcha: $res
         #warn "!!! $login_meth !!!\n";
         if ($login_meth ne 'captcha') {
             die "Cannot login as $account.$role via captchas.\n";

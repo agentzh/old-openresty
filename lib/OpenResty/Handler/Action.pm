@@ -10,6 +10,14 @@ use OpenResty::RestyScript;
 use OpenResty::Limits;
 use Data::Dumper qw(Dumper);
 
+use base 'OpenResty::Handler::Base';
+
+__PACKAGE__->register('action');
+
+sub level2name {
+    qw< action_list action action_param action_exec  >[$_[-1]]
+}
+
 sub POST_action_exec {
     my ($self, $openresty, $bits) = @_;
     my $action = $bits->[1];

@@ -9,6 +9,15 @@ use Params::Util qw( _HASH _STRING );
 use OpenResty::Limits;
 use OpenResty::RestyScript::View;
 use OpenResty::QuasiQuote::SQL;
+use OpenResty::Handler::Model;
+
+use base 'OpenResty::Handler::Base';
+
+__PACKAGE__->register('view');
+
+sub level2name {
+    qw< view_list view view_param view_exec >[$_[-1]]
+}
 
 sub POST_view {
     my ($self, $openresty, $bits) = @_;
