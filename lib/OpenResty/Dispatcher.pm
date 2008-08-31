@@ -191,7 +191,7 @@ sub process_request {
             $openresty->fatal("No last response found for ID $last_res_id");
             return;
         }
-        $openresty->{_bin_data} = $res . "\n";
+        $openresty->{_bin_data} = "$res\n";
         $openresty->response;
         #warn "last_response: $response_from_cookie\n";
         return;

@@ -338,16 +338,19 @@ sub response {
     my $str = '';
     if (my $bin_data = $self->{_bin_data}) {
         binmode \*STDOUT;
-        print $cgi->header(
-            -type => "$type" . ($type =~ /text/ ? "; charset=$charset" : ""),
-            @cookies ? (-cookie => \@cookies) : ()
-        );
+        local $_;
         if (my $callback = $self->{_callback}) {
             chomp($bin_data);
-            print "$callback($bin_data);\n";
+            *_ = \"$callback($bin_data);\n";
         } else {
-            print $bin_data;
+            *_ = \$bin_data;
         }
+
+        print $cgi->header(
+            -type => "$type" . ($type =~ /text/ ? "; charset=$charset" : ""),
+            '-content-length' => length,
+            @cookies ? (-cookie => \@cookies) : ()
+        ), $_;
         return;
     }
     if ($self->{_error}) {
@@ -373,12 +376,12 @@ sub response {
     }; warn $@ if $@;
     #warn $Dumper;
     #warn $ext2dumper{'.js'};
+    $str =~ s/\n+$//s;
     if (my $var = $self->{_var} and $Dumper eq $ext2dumper{'.js'}) {
         $str = "$var=$str;";
     } elsif (my $callback = $self->{_callback} and $Dumper eq $ext2dumper{'.js'}) {
         $str = "$callback($str);";
     }
-    $str =~ s/\n+$//s;
 
     #my $meth = $self->{_http_method};
     # XXX last_response is deprecated; use _last_response instead
@@ -393,16 +396,21 @@ sub response {
     if (length($str) < 500 && $use_gzip) {
         undef $use_gzip;
     }
-    print $cgi->header(
-        -type => "$type" . ($type =~ /text/ ? "; charset=$charset" : ""),
-        $use_gzip ? ('-content-encoding' => 'gzip', '-accept-encoding' => 'Vary') : (),
-        @cookies ? (-cookie => \@cookies) : ()
-    );
-    if ($use_gzip) {
-        # compress the content part
-        print Compress::Zlib::memGzip($str);
-    } else {
-        print $str, "\n";
+    {
+        local $_;
+        if ($use_gzip) {
+            # compress the content part
+            *_ = \(Compress::Zlib::memGzip($str));
+        } else {
+            *_ = \"$str\n";
+        }
+
+        print $cgi->header(
+            -type => "$type" . ($type =~ /text/ ? "; charset=$charset" : ""),
+            '-content-length' => length,
+            $use_gzip ? ('-content-encoding' => 'gzip', '-accept-encoding' => 'Vary') : (),
+            @cookies ? (-cookie => \@cookies) : ()
+        ), $_;
     }
 }
 
