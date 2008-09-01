@@ -250,7 +250,7 @@ begin
     alter table _access rename column url to prefix;
     update _access
     set segments = char_length(regexp_replace(prefix, '[^/]+', '', 'g')) - 1,
-        prohibiting = false, prefix = regexp_replace(prefix, '(/~)+$', '');
+        prohibiting = false, prefix = regexp_replace(prefix, '^/=/|(/~)+$', '', 'g');
     alter table _access alter column prohibiting set not null;
     alter table _access alter column prefix set not null;
     delete from _access where role = 'Admin';
