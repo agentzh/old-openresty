@@ -28,6 +28,10 @@ if ($@) { warn $@ }
 #_views _models _columns _feeds _roles _access _general
 #);
 if ($backend_name eq 'Pg') {
+    my $db = $OpenResty::Config{'backend.database'};
+    my $user = $OpenResty::Config{'backend.user'};
+    my $password = $OpenResty::Config{'backend.password'};
+
     for my $account ('_global', @accounts) {
         my $sql = <<'_EOC_';
 SELECT
@@ -73,8 +77,9 @@ _EOC_
         }
     }
     #die;
-    if (system("psql -d test -f result.sql") != 0) {
+    warn "Importing metamodel from result.sql...\n";
+    if (system("psql -U $user -qn -d $db -f result.sql > /dev/null") != 0) {
         warn "Failed to import metamodel from result.sql\n";
-    }
+    } else { warn "Done.\n"; }
 }
 
