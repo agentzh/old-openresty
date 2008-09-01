@@ -179,26 +179,6 @@ sub process_request {
             if $http_meth eq 'POST' or $http_meth eq 'PUT';
     }
 
-    # XXX hacks...
-    if ($http_meth eq 'GET' and @bits >= 2 and $bits[0] eq 'last' and $bits[1] eq 'response') {
-        my $last_res_id = $bits[2];
-        if (!$last_res_id) {
-            $openresty->fatal("No last response ID specified.");
-            return;
-        }
-        my $res = $OpenResty::Cache->get_last_res($last_res_id);
-        if (!defined $res) {
-            $openresty->fatal("No last response found for ID $last_res_id");
-            return;
-        }
-        $openresty->{_bin_data} = "$res\n";
-        $openresty->response;
-        #warn "last_response: $response_from_cookie\n";
-        return;
-    }
-
-    # XXX check ACL rules...
-
     my $category = $key;
     if ($category) {
         my $package = $Handlers{$category};

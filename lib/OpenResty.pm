@@ -195,10 +195,13 @@ sub init {
     #die "#XXXX !!!! $http_meth", Dumper($self);
 
     my $url = $$rurl;
-    eval {
-        from_to($url, $charset, 'utf8');
-    };
-    warn $@ if $@;
+    if ($charset ne 'UTF-8') {
+        eval {
+            #warn "HERE!";
+            from_to($url, $charset, 'utf8');
+        };
+        warn $@ if $@;
+    }
     #warn $url;
 
     $url =~ s{/+$}{}g;
@@ -353,9 +356,9 @@ sub response {
         ), $_;
         return;
     }
-    if ($self->{_error}) {
+    if (exists $self->{_error}) {
         $str = $self->emit_error($self->{_error});
-    } elsif ($self->{_data}) {
+    } elsif (exists $self->{_data}) {
         my $data = $self->{_data};
         if ($self->{_warning}) {
             $data->{warning} = $self->{_warning};
@@ -364,16 +367,19 @@ sub response {
     }
     #die $charset;
     # XXX if $charset is 'UTF-8' then don't bother decoding and encoding...
-    eval {
-        #$str = decode_utf8($str);
-        #if (is_utf8($str)) {
-            #} else {
-            #warn "Encoding: $charset\n";
-        from_to($str, 'utf8', $charset);
-            #$str = decode('UTF-8', $str);
-            #$str = encode($charset, $str);
-            #}
-    }; warn $@ if $@;
+    if ($charset ne 'UTF-8') {
+        #warn "HERE!";
+        eval {
+            #$str = decode_utf8($str);
+            #if (is_utf8($str)) {
+                #} else {
+                #warn "Encoding: $charset\n";
+            from_to($str, 'utf8', $charset);
+                #$str = decode('UTF-8', $str);
+                #$str = encode($charset, $str);
+                #}
+        }; warn $@ if $@;
+    }
     #warn $Dumper;
     #warn $ext2dumper{'.js'};
     $str =~ s/\n+$//s;
@@ -384,18 +390,13 @@ sub response {
     }
 
     #my $meth = $self->{_http_method};
-    # XXX last_response is deprecated; use _last_response instead
-    my $last_res_id = $self->builtin_param('_last_response');
-    ### $last_res_id;
-    ### $meth;
-    if (defined $last_res_id) {
-        #warn "!!!!!!!!!!!!!!!!!!!!!!!!!!wdy!";
-        $Cache->set_last_res($last_res_id, $str);
+    if (my $LastRes = $OpenResty::Dispatcher::Handlers{last}) {
+        $LastRes->set_last_response($self, $str);
     }
     #warn ">>>>>>>>>>>>Cookies<<<<<<<<<<<<<<: @cookies\n";
-    if (length($str) < 500 && $use_gzip) {
-        undef $use_gzip;
-    }
+    #if (length($str) < 500 && $use_gzip) {
+    #undef $use_gzip;
+    #}
     {
         local $_;
         if ($use_gzip) {
