@@ -1,5 +1,8 @@
 Change Log for OpenResty
 
+0.4.0 Sep 1 2008
+* no longer encode/decode stuff when the encoding is already UTF-8.
+
 0.3.21 Aug 20 2008
 * fixed the ACL mechanism; now we allow ACL rules like GET /=/~/~/~/~.
 * fixed the "space-in-column-name" bug for POST model column API reported by carrie++

@@ -253,6 +253,7 @@ begin
         prohibiting = false, prefix = regexp_replace(prefix, '(/~)+$', '');
     alter table _access alter column prohibiting set not null;
     alter table _access alter column prefix set not null;
+    delete from _access where role = 'Admin';
 
     return 0;
 end;

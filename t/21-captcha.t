@@ -25,6 +25,7 @@ GET /=/captcha/id
 --- LAST
 
 
+
 === TEST 2: get the captcha image using the ID
 --- res_type: image/png
 --- request

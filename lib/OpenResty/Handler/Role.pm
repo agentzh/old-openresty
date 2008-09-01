@@ -1,6 +1,6 @@
 package OpenResty::Handler::Role;
 
-#use Smart::Comments;
+#use Smart::Comments '####';
 use strict;
 use warnings;
 
@@ -256,7 +256,7 @@ sub insert_rule {
     my $segs = @bits;
     my $sql = [:sql|
         insert into _access (role, method, prefix, segments, prohibiting)
-        values($role, $method, $prefix, $segs, $prohibiting) |];
+        values ($role, $method, $prefix, $segs, $prohibiting) |];
     return $openresty->do($sql);
 }
 
@@ -462,15 +462,22 @@ sub current_user_can {
     my $url = join '/', @$bits;
     my $segs = @$bits;
     my $sql = [:sql|
-        select id
+        select prohibiting
         from _access
         where role = $role and method = $meth and segments = $segs
             and $url like (prefix || '%')
+        order by prohibiting desc
         limit 1;
     |];
     ### $sql
     my $res = $openresty->select($sql);
-    return ($res && @$res);
+    if ($res && @$res) {
+        my $rule = $res->[0];
+        #### $rule
+        if ($rule->[0]) { return undef; }
+        return 1;
+    }
+    return undef;
 }
 
 1;

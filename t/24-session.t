@@ -96,6 +96,7 @@ DELETE /=/model.js
 --- LAST
 
 
+
 === TEST 12: Login with cookie
 --- request
 GET /=/login/$TestAccount.Admin/$TestPass?_use_cookie=1
