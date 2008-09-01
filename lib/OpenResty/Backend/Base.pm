@@ -413,7 +413,10 @@ sub drop_user {
     my ($self, $user) = @_;
     if ($self->has_user('_global')) {
         $self->set_user('_global');
-        $self->do("delete from _accounts where name ='$user'");
+        eval {
+            $self->do("delete from _accounts where name ='$user'");
+        };
+        if ($@) { warn $@ }
         $OpenResty::Cache->remove_has_user($user) if $OpenResty::Cache;
     }
 }
