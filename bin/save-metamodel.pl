@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use utf8;
 
-use Smart::Comments;
+#use Smart::Comments;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use OpenResty::Dispatcher;
@@ -25,7 +25,12 @@ my @accounts = $backend->get_all_accounts;
 #);
 if ($backend_name eq 'Pg') {
     unlink 'result.sql';
+    my $db = $OpenResty::Config{'backend.database'};
+    my $user = $OpenResty::Config{'backend.user'};
+    my $password = $OpenResty::Config{'backend.password'};
+
     for my $account ('_global', @accounts) {
+        warn "Dumping account $account...\n";
         my $sql = <<'_EOC_';
 SELECT
   c.relname
@@ -47,7 +52,9 @@ _EOC_
         ### @tables
         #else {dump_res($res);
         my $tables = join ' ', map { "-t '$account.$_'" } @tables;
-        if (system("pg_dump test -x $tables -f tmp.sql") != 0) {
+        my $cmd = "pg_dump -U $user -x $tables -f tmp.sql $db";
+        #warn $cmd;
+        if (system($cmd) != 0) {
             warn "Failed to dump metamodel from $account\n";
         }
         system("cat tmp.sql >> result.sql");
