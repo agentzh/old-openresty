@@ -14,7 +14,7 @@ eval {
 };
 warn $@ if $@;
 
-my $dump_file = 'metamodel.sql';
+#my $dump_file = 'metamodel.sql';
 my $backend = $OpenResty::Backend;
 my $backend_name = $OpenResty::BackendName;
 
@@ -25,13 +25,13 @@ my @accounts = $backend->get_all_accounts;
 #_views _models _columns _feeds _roles _access _general
 #);
 if ($backend_name eq 'Pg') {
-    system("mv $dump_file $dump_file.old");
+    if ( ! -d 'metamodel' ) { mkdir 'metamodel' }
+    #system("mv $dump_file $dump_file.old");
     my $db = $OpenResty::Config{'backend.database'};
     my $user = $OpenResty::Config{'backend.user'};
     my $password = $OpenResty::Config{'backend.password'};
 
     for my $account ('_global', @accounts) {
-        warn "Dumping account $account...\n";
         my $sql = <<'_EOC_';
 SELECT
   c.relname
@@ -53,12 +53,13 @@ _EOC_
         ### @tables
         #else {dump_res($res);
         my $tables = join ' ', map { "-t '$account.$_'" } @tables;
-        my $cmd = "pg_dump -U $user -x $tables -f tmp.sql $db";
+        my $cmd = "pg_dump -U $user -x $tables -f metamodel/$account.sql $db";
         #warn $cmd;
+        warn "Dumping account $account to metamodel/$account.sql...\n";
         if (system($cmd) != 0) {
             warn "Failed to dump metamodel from $account\n";
         }
-        system("cat tmp.sql >> $dump_file");
+        #system("cat tmp.sql >> $dump_file");
     }
 }
 

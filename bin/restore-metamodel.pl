@@ -14,15 +14,19 @@ eval {
 };
 warn $@ if $@;
 
-my $dump_file = 'metamodel.sql';
+#my $dump_file = 'metamodel.sql';
 my $backend = $OpenResty::Backend;
 my $backend_name = $OpenResty::BackendName;
 
+my @files = map glob, (@ARGV || 'metamodel/*.sql');
 my @accounts;
-eval {
-    @accounts = $backend->get_all_accounts;
-};
-if ($@) { warn $@ }
+for my $file (@files) {
+    if ($file =~ /(\w+).sql/) {
+        push @accounts, $1;
+    } else {
+        die "Bad SQL file name: $file\n";
+    }
+}
 ### @accounts
 
 #my @tables = qw(
@@ -33,7 +37,8 @@ if ($backend_name eq 'Pg') {
     my $user = $OpenResty::Config{'backend.user'};
     my $password = $OpenResty::Config{'backend.password'};
 
-    for my $account ('_global', @accounts) {
+    for my $account (@accounts) {
+        my $sql_file = shift @files;
         my $sql = <<'_EOC_';
 SELECT
   c.relname, c.relkind
@@ -74,13 +79,14 @@ _EOC_
             } else {
                 die "Ignoring database object $name of kind $kind\n";
             }
-            #die;
         }
+        warn "Importing metamodel for account $account from $sql_file...\n";
+        if (system("psql -U $user -qn -d $db -f $sql_file > /dev/null") != 0) {
+            warn "Failed to import metamodel for account $account from $sql_file.\n";
+        } else { warn "Done.\n"; }
+
+        #die;
     }
     #die;
-    warn "Importing metamodel from $dump_file...\n";
-    if (system("psql -U $user -qn -d $db -f $dump_file > /dev/null") != 0) {
-        warn "Failed to import metamodel from $dump_file.\n";
-    } else { warn "Done.\n"; }
 }
 
