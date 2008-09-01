@@ -47,6 +47,7 @@ DELETE /=/role
 {"success":1,"warning":"Predefined roles skipped."}
 
 
+
 === TEST 6: Delete existing roles (using wildcard)
 --- request
 DELETE /=/role/~
@@ -265,7 +266,6 @@ POST /=/model/~
 {"columns":[{"name":"title","type":"text", "label":"name"}],"description":"A","name":"A"}
 --- response
 {"success":1}
-
 
 
 
