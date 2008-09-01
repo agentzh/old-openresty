@@ -14,6 +14,7 @@ eval {
 };
 warn $@ if $@;
 
+my $dump_file = 'metamodel.sql';
 my $backend = $OpenResty::Backend;
 my $backend_name = $OpenResty::BackendName;
 
@@ -77,9 +78,9 @@ _EOC_
         }
     }
     #die;
-    warn "Importing metamodel from result.sql...\n";
-    if (system("psql -U $user -qn -d $db -f result.sql > /dev/null") != 0) {
-        warn "Failed to import metamodel from result.sql\n";
+    warn "Importing metamodel from $dump_file...\n";
+    if (system("psql -U $user -qn -d $db -f $dump_file > /dev/null") != 0) {
+        warn "Failed to import metamodel from $dump_file.\n";
     } else { warn "Done.\n"; }
 }
 
