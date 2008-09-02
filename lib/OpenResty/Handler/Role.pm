@@ -122,7 +122,16 @@ sub adjust_rules {
         my $prefix = delete $rule->{prefix};
         my $segments = delete $rule->{segments};
         my @prefix_segs = split /\//, $prefix;
-        $rule->{url} = '/=/' . $prefix . ('/~' x ($segments - @prefix_segs));
+        $rule->{url} = '/=' . ($prefix ? '/' : '') .
+            $prefix . ('/~' x ($segments - @prefix_segs));
+        my $prohibit = $rule->{prohibiting};
+        if ($prohibit && $prohibit eq 'f') {
+            $rule->{prohibiting} = JSON::XS::false;
+        } elsif ($prohibit) {
+            $rule->{prohibiting} = JSON::XS::true;
+        } else {
+            $rule->{prohibiting} = JSON::XS::false;
+        }
     }
 }
 
@@ -474,7 +483,11 @@ sub current_user_can {
     if ($res && @$res) {
         my $rule = $res->[0];
         #### $rule
-        if ($rule->[0]) { return undef; }
+        my $prohibiting = $rule->[0];
+        if ($prohibiting) {
+            if ($prohibiting eq 'f') { return 1; }
+            return undef;
+        }
         return 1;
     }
     return undef;
