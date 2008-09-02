@@ -12,6 +12,9 @@ BEGIN {
     if ($OpenResty::Config{'backend.type'} ne 'PgFarm') {
         $reason = 'backend.type in the config files is not PgFarm.';
     }
+    elsif ($OpenResty::Config{'test_suite.use_http'}) {
+        $reason = 'test_suite.use_http is on in the config file.';
+    }
 }
 use Test::More $reason ? (skip_all => $reason) : 'no_plan';
 
