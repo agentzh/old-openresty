@@ -43,7 +43,7 @@ sub init {
             my $base = $backend->get_upgrading_base;
             #warn "BASE: $base\n";
             if ($base >= 0) {
-                die "The server's global MetaModel is out of date. ",
+                warn "The server's global MetaModel is out of date. ",
                     "Please run the command \"bin/openresty upgrade\" first.\n";
             }
         };

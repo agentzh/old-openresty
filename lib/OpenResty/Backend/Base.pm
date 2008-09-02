@@ -245,6 +245,8 @@ create or replace function _upgrade() returns integer as $$
 begin
     alter table _models drop column table_name;
     alter table _columns rename column table_name to model;
+
+    delete from _access where role = 'Admin';
     alter table _access add column segments smallint;
     alter table _access add column prohibiting boolean default false;
     alter table _access rename column url to prefix;
@@ -253,7 +255,6 @@ begin
         prohibiting = false, prefix = regexp_replace(prefix, '^/=/|(/~)+$', '', 'g');
     alter table _access alter column prohibiting set not null;
     alter table _access alter column prefix set not null;
-    delete from _access where role = 'Admin';
 
     return 0;
 end;

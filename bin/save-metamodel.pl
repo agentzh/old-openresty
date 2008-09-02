@@ -26,6 +26,10 @@ my @accounts = $backend->get_all_accounts;
 #_views _models _columns _feeds _roles _access _general
 #);
 if ( ! -d 'metamodel' ) { mkdir 'metamodel' }
+elsif (glob 'metamodel/*.sql') {
+    system("mv metamodel metamodel.old");
+    mkdir 'metamodel';
+}
 #system("mv $dump_file $dump_file.old");
 my $db = $OpenResty::Config{'backend.database'};
 my $user = $OpenResty::Config{'backend.user'};
