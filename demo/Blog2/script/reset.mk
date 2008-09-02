@@ -5,8 +5,8 @@ user=
 export:
 	-mkdir backup
 	-cp *.json backup
-	../../bin/export-model.pl --user $(user) --model Comment --server $(server) --out Comment.json --password $(password)
-	../../bin/export-model.pl --user $(user) --model Post --server $(server) --out Post.json --password $(password)
+	../../bin/export-model.pl --user $(user) --model Comment --server $(server) --out Comment.json
+	../../bin/export-model.pl --user $(user) --model Post --server $(server) --out Post.json
 
 import:
 	script/init.pl -u $(user) -p $(password) -s $(server)
