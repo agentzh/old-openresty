@@ -13,6 +13,7 @@ use DateTime::Format::Strptime;
 use OpenResty::FeedWriter::RSS;
 use POSIX qw( strftime );
 use OpenResty::QuasiQuote::SQL;
+use Data::Structure::Util qw( _utf8_off );
 
 use base 'OpenResty::Handler::Base';
 
@@ -225,7 +226,10 @@ sub exec_feed {
         $rss->add_entry($entry);
     }
     ### DONE...
+    #local *_ = \($rss->as_xml);
+    #_utf8_off($_);
     $openresty->{_bin_data} = $rss->as_xml;
+    _utf8_off($openresty->{_bin_data});
     $openresty->{_type} = 'application/rss+xml; charset=utf-8';
     return undef;
 }
