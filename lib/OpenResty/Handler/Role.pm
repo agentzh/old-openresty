@@ -126,6 +126,7 @@ sub adjust_rules {
             $prefix . ('/~' x ($segments - @prefix_segs));
         my $prohibit = $rule->{prohibiting};
         if ($prohibit && $prohibit eq 'f') {
+            # XXX to work around a bug in PgFarm's JSON emitter
             $rule->{prohibiting} = JSON::XS::false;
         } elsif ($prohibit) {
             $rule->{prohibiting} = JSON::XS::true;
@@ -485,6 +486,7 @@ sub current_user_can {
         #### $rule
         my $prohibiting = $rule->[0];
         if ($prohibiting) {
+            # XXX to work around a bug in PgFarm's JSON emitter
             if ($prohibiting eq 'f') { return 1; }
             return undef;
         }
