@@ -2,6 +2,7 @@ Change Log for OpenResty
 
 0.4.0 Sep 1 2008
 * no longer encode/decode stuff when the encoding is already UTF-8.
+* no longer die when metamodel's version mismatch (merely warn instead).
 
 0.3.21 Aug 20 2008
 * fixed the ACL mechanism; now we allow ACL rules like GET /=/~/~/~/~.
