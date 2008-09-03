@@ -1,4 +1,4 @@
 #!/bin/sh
 
-sudo rm -rf /tmp/FileCache; find -name '*.pmc'; prove "$@"
+sudo rm -rf /tmp/FileCache; find -name '*.pmc' -delete; prove -Ilib "$@"
 
