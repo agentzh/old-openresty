@@ -4,7 +4,7 @@ define CMDS
     -sudo killall lighttpd
     sudo /etc/init.d/lighttpd restart
     sleep 1
-    -find -name '*.pmc' -delete
+    -sudo find lib -name '*.pmc' -delete
     -sudo rm -rf /tmp/FileCache
     -rm  -f t/cur-timer.dat
     -time prove -Ilib -r t
