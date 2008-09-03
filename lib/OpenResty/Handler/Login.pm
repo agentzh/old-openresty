@@ -7,8 +7,8 @@ use warnings;
 use CGI::Simple::Cookie;
 use OpenResty::Util;
 use Params::Util qw( _STRING );
-use OpenResty::QuasiQuote::SQL;
 use OpenResty::Handler::Logout;
+use OpenResty::QuasiQuote::SQL cached => 1;
 
 use base 'OpenResty::Handler::Base';
 
@@ -141,7 +141,9 @@ sub login_by_perl {
     ### $role
     ### $password
     ### capture param:  $captcha
+    #warn "!!!!!!!!!!!!!!!!!!! Captcha Value: $captcha\n";
     if (defined $captcha) {
+        warn "!!!!!!!!!!!!!!!!!!! Captcha Value: $captcha\n";
         my ($id, $user_sol) = split /:/, $captcha, 2;
         if (!$id or !$user_sol) {
             die "Bad captcha parameter: $captcha\n";

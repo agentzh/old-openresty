@@ -7,7 +7,7 @@ use warnings;
 use Params::Util qw( _HASH _STRING _ARRAY );
 use OpenResty::Util;
 use OpenResty::Limits;
-use OpenResty::QuasiQuote::SQL;
+use OpenResty::QuasiQuote::SQL cached => 1;
 
 use base 'OpenResty::Handler::Base';
 
