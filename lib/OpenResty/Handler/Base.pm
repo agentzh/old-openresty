@@ -3,13 +3,6 @@ package OpenResty::Handler::Base;
 use strict;
 use warnings;
 
-sub new {
-    my ($proto) = @_;
-    my $class = ref $proto || $proto;
-    bless {
-    }, $class;
-}
-
 sub go {
     my ($self, $openresty, $http_meth, $bits) = @_;
     my $level = @$bits - 1;
