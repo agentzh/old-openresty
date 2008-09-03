@@ -5,7 +5,7 @@ our $VERSION = '0.003021';
 use strict;
 use warnings;
 
-#use Smart::Comments;
+#use Smart::Comments '####';
 use Data::UUID;
 use YAML::Syck ();
 use JSON::XS ();
@@ -127,6 +127,19 @@ sub init {
         OpenResty->connect($backend);
         #die "Backend connection lost: ", $db_state, "\n";
     }
+
+    # cache the results of CGI::Simple::url_param
+    $self->{_url_params} = {};
+    #my $cgi2 = bless {}, 'CGI::Simple';
+    #$cgi2->_parse_params( $ENV{'QUERY_STRING'} );
+    #return $self->{'.url_param'}->param( $param );
+    for my $param ($cgi->url_param) {
+        #die $param;
+        $self->{_url_params}->{$param} = $cgi->url_param($param);
+    }
+    #### params: $self->{_url_params}
+    #### use_cookie: $self->builtin_param('_use_cookie')
+    #### session: $self->builtin_param('_session')
 
     $self->{_use_cookie}  = $self->builtin_param('_use_cookie') || 0;
     $self->{_session}  = $self->builtin_param('_session');
@@ -600,11 +613,15 @@ sub set_role {
     $self->{_role} = $role;
 }
 
-sub builtin_param {
-    my ($self, $key) = @_;
-    my $cgi = $self->{_cgi};
-    return scalar($cgi->url_param($key));
+sub url_param {
+    if (@_ > 1) {
+        $_[0]->{_url_params}->{$_[1]};
+    } else {
+        keys %{ $_[0]->{_url_params} };
+    }
 }
+
+*builtin_param = \&url_param;
 
 1;
 __END__
