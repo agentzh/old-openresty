@@ -165,8 +165,8 @@ sub exec_view {
     my $exists;
     my %vars;
 
-    foreach my $var ($cgi->url_param) {
-        $vars{$var} = $cgi->url_param($var);
+    foreach my $var ($openresty->url_param) {
+        $vars{$var} = $openresty->url_param($var) unless $var =~ /^_/;
     }
 
     if ($fix_var ne '~' and $fix_var_value ne '~') {
