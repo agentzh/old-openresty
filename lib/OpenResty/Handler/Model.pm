@@ -12,7 +12,7 @@ use OpenResty::Limits;
 use Clone 'clone';
 use Encode qw(is_utf8);
 use OpenResty::QuasiQuote::SQL;
-use OpenResty::QuasiQuote::Validator;
+use OpenResty::QuasiQuote::Validator cached => 1;
 
 use base 'OpenResty::Handler::Base';
 

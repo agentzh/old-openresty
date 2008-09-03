@@ -8,7 +8,7 @@ use OpenResty::Util;
 use Params::Util qw( _HASH _STRING );
 use OpenResty::Limits;
 use OpenResty::RestyScript::View;
-use OpenResty::QuasiQuote::SQL;
+use OpenResty::QuasiQuote::SQL cached => 1;
 use OpenResty::Handler::Model;
 
 use base 'OpenResty::Handler::Base';
