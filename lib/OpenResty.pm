@@ -440,7 +440,7 @@ sub emit_data {
 
 sub get_session {
     my ($self) = @_;
-    my ($session, $session_from_cookie);
+    my $session_from_cookie;
     my $call_level = $self->{_call_level};
     if ($call_level == 0) { # only check cookies on the toplevel call
         my $cookies = CGI::Cookie::XS->fetch;
@@ -452,7 +452,7 @@ sub get_session {
             }
         }
     }
-    $session = $self->{_session} || $session_from_cookie;
+    $self->{_session} || $session_from_cookie;
 }
 
 sub has_feed {
