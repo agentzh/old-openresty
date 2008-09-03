@@ -6,6 +6,8 @@ use warnings;
 require Filter::QuasiQuote;
 our @ISA = qw( Filter::QuasiQuote );
 
+#use Module::Optimize -base; sub pmc_optimize { return $_[1]; }
+
 sub sql {
     my ($self, $s, $file, $line, $col) = @_;
     my $package = ref $self;

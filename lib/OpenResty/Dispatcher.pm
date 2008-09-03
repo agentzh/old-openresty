@@ -207,7 +207,7 @@ sub process_request {
         }
         my $data;
         eval {
-            my $hdl = $package->new;
+            #my $hdl = $package;
             # XXX global_model_check is a hack...
             if ($key eq 'model') {
                 $package->global_model_check($openresty, \@bits, $http_meth);
