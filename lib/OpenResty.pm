@@ -603,12 +603,7 @@ sub set_role {
 sub builtin_param {
     my ($self, $key) = @_;
     my $cgi = $self->{_cgi};
-    if (substr($key, 0, 1) ne '_') {
-        die "Builtin param must be preceded by an underscore.\n";
-    }
-    (my $deprecated = $key) =~ s/^_//;
-    return scalar($cgi->url_param($deprecated)) ||
-        scalar($cgi->url_param($key));
+    return scalar($cgi->url_param($key));
 }
 
 1;
