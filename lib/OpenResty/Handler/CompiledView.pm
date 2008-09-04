@@ -52,6 +52,7 @@ sub GET_view_exec {
     my $res = $Dispatcher->{$key} or die "Can't find the compiled form for view \"$view\"";
     my ($required_params, $hdl) = @$res;
     while (my ($key, $val) = each %$required_params) {
+        next if !$key;
         my $user_val = $openresty->url_param($key);
         if (!defined $user_val || $user_val ne $val) {
             die "Required params do not meet for view \"$view\".\n";

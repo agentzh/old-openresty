@@ -221,9 +221,9 @@ sub process_request {
             return $openresty->fatal($@);
         }
         $openresty->data($data);
-        $openresty->response();
+        return $openresty->response();
     } else {
-        $openresty->fatal("Unknown URL catagory: $category");
+        return $openresty->fatal("Unknown URL catagory: $category");
     }
 }
 
