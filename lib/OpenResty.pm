@@ -130,12 +130,15 @@ sub init {
 
     # cache the results of CGI::Simple::url_param
     $self->{_url_params} = {};
-    #my $cgi2 = bless {}, 'CGI::Simple';
-    #$cgi2->_parse_params( $ENV{'QUERY_STRING'} );
+    my $cgi2 = bless {}, 'CGI::Simple';
+    #die $ENV{'QUERY_STRING'};
+    $cgi2->_parse_params( $ENV{'QUERY_STRING'} );
     #return $self->{'.url_param'}->param( $param );
-    for my $param ($cgi->url_param) {
+    #use Data::Dumper;
+    #warn Dumper($cgi2);
+    for my $param ($cgi2->param) {
         #die $param;
-        $self->{_url_params}->{$param} = $cgi->url_param($param);
+        $self->{_url_params}->{$param} = $cgi2->param($param);
     }
     #### params: $self->{_url_params}
     #### use_cookie: $self->builtin_param('_use_cookie')

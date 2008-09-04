@@ -171,6 +171,9 @@ if ($cmd eq 'adduser') {
 	} else {
 		print "Captcha secret updated.\n";
 	}
+} elsif ($cmd eq 'compile') {
+    require OpenResty::Script::Compile;
+    OpenResty::Script::Compile->go(\@ARGV);
 } else {
     die "Unknown command: $cmd\n";
 }
