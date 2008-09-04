@@ -147,6 +147,8 @@ sub exec_RunAction {
             local %ENV;
             $ENV{REQUEST_URI} = $url;
             $ENV{REQUEST_METHOD} = $http_meth;
+            (my $query = $url) =~ s/(.*?\?)//g;
+            $ENV{QUERY_STRING} = $query;
             my $cgi = new_mocked_cgi($url, $content);
             my $call_level = $openresty->call_level;
             $call_level++;
