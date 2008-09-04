@@ -10,26 +10,34 @@ OpenResty::Spec::RunTestsOnWin32_cn - Running the OpenResty test suite on Win32
 
 =head1 安装perl
 
-从下面的位置下载 AgentPerl 安装程序（推荐使用 FlashGet 这样的多线程下载器）：
+从下面的位置下载 C<AgentPerl> 安装程序（推荐使用 C<FlashGet> 这样的多线程下载器）：
 
 L<http://agentzh.org/misc/win32/AgentPerl.exe>
 
 下载完毕后，双击即开始安装过程。应注意安装过程中不要轻易修改默认的设置，除非您知道自己在做什么 ;)
 
-使用 ActiveState 的 ActivePerl 亦可，只不过需要手动安装一些 CPAN 模块，比如 
+使用 ActiveState 的 C<ActivePerl> 亦可，只不过需要手动安装一些 CPAN 模块，比如 
 L<Class::Prototyped>, L<Test::LongString>, L<Text::Diff>, L<LWP::UserAgent>, L<HTTP::Response>, L<Cache::Cache>, 以及 L<WWW::OpenResty>.
 
 =head1 Checkout OpenResty 源码
 
-首先安装 TortoiseSVN. TortoiseSVN 安装程序可以从 TortoiseSVN 官方网站取得。
+=over
 
-取得 OpenResty SVN head
+=item 1.
+
+首先安装 C<TortoiseSVN>. C<TortoiseSVN> 安装程序可以从 TortoiseSVN 官方网站取得。
+
+=item 2.
+
+取得 OpenResty 的 SVN head
 
 在 TortoiseSVN 中 checkout 下面的地址：
 
 L<http://svn.openfoundry.org/openapi/trunk>
 
-比如 checkout 到的地址目录是 F<C:\openresty>
+比如 checkout 到的地址目录是 F<C:\openresty>.
+
+=back
 
 =head1 编辑配置文件
 
@@ -37,7 +45,7 @@ L<http://svn.openfoundry.org/openapi/trunk>
 
 =item 1.
 
-将 FL<C:\openresty\etc\openresty.conf> 复制成同一目录下的 L<site_openresty.conf> 文件.
+将 F<C:\openresty\etc\openresty.conf> 复制成同一目录下的 F<site_openresty.conf> 文件.
 
 =item 2.
 
