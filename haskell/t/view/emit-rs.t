@@ -676,7 +676,7 @@ select * from "A" where "a" @< 'hello'
 --- in
 select * from getquery($spell) as (query text, pop integer, des text) limit $t;
 --- ast
-Query [Select [AnyColumn],From [Alias (FuncCall (Symbol "getquery") [Variable (1,25) "spell"]) (Capture [(Symbol "query",Symbol "text"),(Symbol "pop",Symbol "integer"),(Symbol "des",Symbol "text")])],Limit (Variable (1,78) "t")]
+Query [Select [AnyColumn],From [Alias (FuncCall (Symbol "getquery") [Variable (1,25) "spell"]) (Capture [(Symbol "query",Type "text"),(Symbol "pop",Type "integer"),(Symbol "des",Type "text")])],Limit (Variable (1,78) "t")]
 --- out
-select * from "getquery"($spell) as ("query" "text", "pop" "integer", "des" "text") limit $t
+select * from "getquery"($spell) as ("query" text, "pop" integer, "des" text) limit $t
 

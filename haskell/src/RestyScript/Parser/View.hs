@@ -100,8 +100,13 @@ parseCapture = liftM Capture $ parens (sepBy1 parseParam listSep)
 
 parseParam :: Parser (RSVal, RSVal)
 parseParam = do param <- parseIdent
-                typ <- spaces >> parseIdent
+                typ <- spaces >> parseType
                 return (param, typ)
+
+parseType :: Parser RSVal
+parseType = do s <- symbol
+               spaces
+               return $ Type s
 
 parseSelect :: Parser RSVal
 parseSelect = do keyword "select" >> many1 space

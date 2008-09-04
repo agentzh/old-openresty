@@ -41,6 +41,7 @@ emit node = case node of
     Model model -> emit model
     Column col -> emit col
     Symbol name -> bs $ quoteIdent name
+    Type name -> bs name
     Integer int -> bs $ show int
     Float float -> bs $ printf "%0f" float
     Or a b -> "(" ~~ emit a ~~ " or " ~~ emit b ~~ ")"

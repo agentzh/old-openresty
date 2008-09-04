@@ -461,5 +461,5 @@ select * from Post order by $col $dir
 --- in
 select * from getquery($spell) as (query text, pop integer, des text) limit $t;
 --- out
-["select * from \"getquery\"(",["spell","unknown"],") as (\"query\" \"text\", \"pop\" \"integer\", \"des\" \"text\") limit ",["t","literal"]]
+["select * from \"getquery\"(",["spell","unknown"],") as (\"query\" text, \"pop\" integer, \"des\" text) limit ",["t","literal"]]
 
