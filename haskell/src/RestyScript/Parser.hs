@@ -67,7 +67,7 @@ opTable = [
                 arithOp "||"
                 ],
             [
-                relOp "@@",
+                relOp "@@", relOp "@>", relOp "@<", relOp "~", relOp "@",
                 relOp "<<=", relOp "<<", relOp ">>=", relOp ">>",
                 relOp ">=", relOp ">",
                 relOp "<=", relOp "<>", relOp "<",
@@ -213,10 +213,13 @@ parseColumn = do a <- parseIdent
                     otherwise -> QualifiedColumn a b
           <?> "column"
 
+parseSet :: Parser RSVal
+parseSet = try(parseFuncCall)
+        <|> parseModel
+        <?> "model"
+
 parseModel :: Parser RSVal
-parseModel = try(parseFuncCall)
-         <|> liftM Model parseIdent
-         <?> "model"
+parseModel = liftM Model parseIdent
 
 parseIdent :: Parser RSVal
 parseIdent = do s <- symbol

@@ -86,14 +86,22 @@ parseFrom = liftM From (keyword "from" >> many1 space >>
         <?> "from clause"
 
 parseFromItem :: Parser RSVal
-parseFromItem = do model <- parseModel
-                   alias <- option Null parseModelAlias
+parseFromItem = do set <- parseSet
+                   alias <- option Null parseSetAlias
                    return $ case alias of
-                                Null -> model
-                                otherwise -> Alias model alias
+                                Null -> set
+                                otherwise -> Alias set alias
 
-parseModelAlias :: Parser RSVal
-parseModelAlias = keyword "as" >> many1 space >> parseIdent
+parseSetAlias :: Parser RSVal
+parseSetAlias = keyword "as" >> many1 space >> (parseIdent <|> parseCapture)
+
+parseCapture :: Parser RSVal
+parseCapture = liftM Capture $ parens (sepBy1 parseParam listSep)
+
+parseParam :: Parser (RSVal, RSVal)
+parseParam = do param <- parseIdent
+                typ <- spaces >> parseIdent
+                return (param, typ)
 
 parseSelect :: Parser RSVal
 parseSelect = do keyword "select" >> many1 space

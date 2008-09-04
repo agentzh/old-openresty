@@ -50,6 +50,7 @@ data RSVal = SetOp !String !RSVal !RSVal
            | All ![RSVal]
            | RSTrue
            | RSFalse
+           | Capture [(RSVal, RSVal)]
                deriving (Eq, Show)
 
 traverse :: (RSVal->a) -> (a->a->a) -> RSVal -> a
@@ -108,5 +109,7 @@ traverse visit merge node =
         RSFalse -> cur
         All _ -> cur
         Distinct _ -> cur
+        Capture sig -> mergeAll $ cur : map aux sig
+            where aux (a, b) = merge (self a) (self b)
         -- otherwise -> cur
 
