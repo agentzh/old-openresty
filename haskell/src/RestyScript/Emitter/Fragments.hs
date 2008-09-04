@@ -89,6 +89,7 @@ emit node =
         Where cond -> str "where " <+> emit cond
         OrderBy pairs -> str "order by " <+> emitForList pairs
         Symbol name -> str $ bs $ quoteIdent name
+        Type name -> str $ bs name
         Keyword s -> str $ bs $ s
 
         GroupBy (Variable _ v) -> [FString $ "group by ", FVariable v VTSymbol]

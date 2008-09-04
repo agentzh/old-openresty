@@ -20,6 +20,7 @@ data RSVal = SetOp !String !RSVal !RSVal
            | Column !RSVal
            | Model !RSVal
            | Symbol !String
+           | Type !String
            | Keyword !String  -- for asc and desc
            | QualifiedColumn !RSVal !RSVal
            | Integer !Int
@@ -104,6 +105,7 @@ traverse visit merge node =
         Float _ -> cur
         Integer _ -> cur
         Symbol _ -> cur
+        Type _ -> cur
         Keyword _ -> cur
         RSTrue -> cur
         RSFalse -> cur
