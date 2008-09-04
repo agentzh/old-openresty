@@ -456,3 +456,10 @@ select * from Post order by $col $dir
 ["select * from \"Post\" order by ",["col","symbol"]," ",["dir","keyword"]]
 
 
+
+=== TEST 54: as (col1 type1, col2 type2, ...)
+--- in
+select * from getquery($spell) as (query text, pop integer, des text) limit $t;
+--- out
+["select * from \"getquery\"(",["spell","unknown"],") as (\"query\" \"text\", \"pop\" \"integer\", \"des\" \"text\") limit ",["t","literal"]]
+
