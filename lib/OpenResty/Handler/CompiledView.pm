@@ -51,6 +51,8 @@ sub GET_view_exec {
     #warn "Key: $key\n";
     my $res = $Dispatcher->{$key} or die "Can't find the compiled form for view \"$view\"";
     my ($required_params, $hdl) = @$res;
+    $hdl = eval $hdl;
+    if ($@) { die "Failed to eval the handler: $@\n" }
     while (my ($key, $val) = each %$required_params) {
         next if !$key;
         my $user_val = $openresty->url_param($key);
@@ -66,7 +68,7 @@ sub GET_view_exec {
     if ($fix_var ne '~' and $fix_var_value ne '~') {
         $vars{$fix_var} = $fix_var_value;
     }
-    my $sql = $hdl->($openresty, \%vars);
+    my $sql = $hdl->(\%vars);
         #warn "!!!!! $sql";
     $openresty->set_user($user);
     return $openresty->select($sql, {use_hash => 1});
