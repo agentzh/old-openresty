@@ -16,18 +16,25 @@ sub level2name {
     qw< view_list view view_param view_exec >[$_[-1]]
 }
 
-# XXX merely a hard-coded hack...
-my %Views = (
-    'yquestion|getquery' => [
-        { _user => 'yquestion.Public' },
-        sub {
-            my ($openresty, $vars) = @_;
-            #$resty->set_use
-            my $query = $vars->{spell};
-            return [:sql|select * from getquery($query) as (query text, pop integer, des text) limit 10 |];
-        }
-    ],
-);
+our $Dispatcher;
+
+BEGIN {
+    my $root_path = "$FindBin::Bin/..";
+    my $filename = 'compiled.views';
+
+    my $path = "$root_path/etc/$filename";
+    unless (-f $path) {
+        $path = "/etc/openresty/$filename";
+    }
+    if (!-f $path) {
+        die "Can't find $filename under  $root_path/etc/ nor /etc/openresty/.\n";
+    }
+    unless ($Dispatcher = do $path) {
+        die "Couldn't parse $path: $@\n" if $@;
+        die "Couldn't read $path: $!\n"   unless defined $Dispatcher;
+        die "Couldn't run $path\n"       unless $Dispatcher;
+    }
+}
 
 sub GET_view_exec {
     my ($self, $openresty, $bits) = @_;
@@ -41,8 +48,8 @@ sub GET_view_exec {
     } else {
         die "Invalid _user param.\n";
     }
-    warn "Key: $key\n";
-    my $res = $Views{$key} or die "Can't find the compiled form for view \"$view\"";
+    #warn "Key: $key\n";
+    my $res = $Dispatcher->{$key} or die "Can't find the compiled form for view \"$view\"";
     my ($required_params, $hdl) = @$res;
     while (my ($key, $val) = each %$required_params) {
         my $user_val = $openresty->url_param($key);
@@ -65,3 +72,37 @@ sub GET_view_exec {
 }
 
 1;
+__END__
+
+=head1 NAME
+
+OpenResty::Handler::CompiledView - Handler for pre-compiled views
+
+=head1 DESCRIPTION
+
+It loads compiled.views file from etc/ or /etc/openresty/ (in such an order).
+
+A sample compiled.views looks like this:
+
+    use OpenResty::QuasiQuote::SQL;
+    {
+        'yquestion|getquery' => [
+            { _user => 'yquestion.Public' },
+            sub {
+                my ($openresty, $vars) = @_;
+                #$resty->set_use
+                my $query = $vars->{spell};
+                return [:sql|select * from getquery($query) as (query text, pop integer, des text) limit 10 |];
+            }
+        ],
+    }
+
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
+
+=head1 SEE ALSO
+
+L<OpenResty::Handler::View>, L<OpenResty::Handler::Role>, L<OpenResty::Handler::Action>, L<OpenResty::Handler::Feed>, L<OpenResty::Handler::Version>, L<OpenResty::Handler::Captcha>, L<OpenResty::Handler::Login>, L<OpenResty>.
+

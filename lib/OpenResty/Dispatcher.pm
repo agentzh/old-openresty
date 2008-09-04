@@ -87,7 +87,10 @@ sub init {
     my $hdls = $OpenResty::Config{'frontend.handlers'};
     my @handlers;
     if (!defined $hdls) {
-        @handlers = qw< Model View Feed Action Role Unsafe Login Captcha Version LastResponse >;
+        @handlers = qw<
+            Model View Feed Action Role Unsafe Login
+            Captcha Version LastResponse
+        >;
     } else {
         @handlers = split /\s+|\s*,\s*/, $hdls;
     }
