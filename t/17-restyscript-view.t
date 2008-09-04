@@ -115,7 +115,7 @@ run {
     if (defined $ex_cols) {
         is join(' ', @cols), $block->cols, "$name - model cols ok";
     }
-    if (defined $block->out) {
+    if (defined $block->out) {'
         (my $expected = $block->out) =~ s/\n$//g;
         is $pgsql, $expected, "$name - sql emittion ok";
     }
