@@ -9,7 +9,7 @@ use Params::Util qw( _HASH _STRING );
 use OpenResty::Limits;
 use OpenResty::RestyScript::View;
 use OpenResty::Handler::Model;
-use OpenResty::QuasiQuote::SQL cached => 1;
+use OpenResty::QuasiQuote::SQL;
 
 use base 'OpenResty::Handler::Base';
 

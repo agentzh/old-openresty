@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use OpenResty::Util qw( Q QI );
-use OpenResty::QuasiQuote::SQL cached => 1;
+use OpenResty::QuasiQuote::SQL;
 
 use base 'OpenResty::Handler::Base';
 

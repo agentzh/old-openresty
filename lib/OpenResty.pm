@@ -16,7 +16,7 @@ use Params::Util qw(_HASH _STRING _ARRAY0 _ARRAY _SCALAR);
 use Encode qw(from_to encode decode);
 use Data::Structure::Util qw( _utf8_on _utf8_off );
 use DBI;
-use OpenResty::QuasiQuote::SQL cached => 1;
+use OpenResty::QuasiQuote::SQL;
 
 use OpenResty::SQL::Select;
 use OpenResty::SQL::Update;

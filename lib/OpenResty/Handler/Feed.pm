@@ -13,7 +13,7 @@ use DateTime::Format::Strptime;
 use OpenResty::FeedWriter::RSS;
 use POSIX qw( strftime );
 use Data::Structure::Util qw( _utf8_off );
-use OpenResty::QuasiQuote::SQL cached => 1;
+use OpenResty::QuasiQuote::SQL;
 
 use base 'OpenResty::Handler::Base';
 
