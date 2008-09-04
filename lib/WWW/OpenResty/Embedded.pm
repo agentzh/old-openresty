@@ -121,6 +121,9 @@ sub _request {
         $uri = encode('utf8', $uri);
     }
     $ENV{REQUEST_URI} = $uri;
+    (my $query = $uri) =~ s/(.*?\?)//g;
+    #$query .= '&';
+    $ENV{QUERY_STRING} = $query;
 
     if (%Cookies) {
         my @vals;
