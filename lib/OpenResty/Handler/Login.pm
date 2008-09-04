@@ -8,7 +8,7 @@ use CGI::Simple::Cookie;
 use OpenResty::Util;
 use Params::Util qw( _STRING );
 use OpenResty::Handler::Logout;
-use OpenResty::QuasiQuote::SQL cached => 1;
+use OpenResty::QuasiQuote::SQL;
 
 use base 'OpenResty::Handler::Base';
 
