@@ -11,6 +11,9 @@ import Data.List (intersperse)
 import Text.Printf (printf)
 import Text.JSON
 import qualified Data.ByteString.Char8 as B
+import qualified RestyScript.Emitter.RestyScript as RS
+
+infixr 6 <+>
 
 data VarType = VTLiteral
              | VTSymbol
@@ -47,6 +50,9 @@ bs = B.pack
 
 (~~) = B.append
 (<+>) = merge
+
+joinStr :: B.ByteString -> [B.ByteString] -> B.ByteString
+joinStr sep ls = B.intercalate sep ls
 
 emit :: RSVal -> [Fragment]
 emit node =
@@ -128,7 +134,7 @@ emit node =
         RSTrue -> str "true"
         RSFalse -> str "false"
         HttpCmd _ _ _ -> []  -- this shouldn't happen
-
+        Capture _ -> str $ RS.emit node
     where emitForList ls = join ", " $ map emit ls
 
 str :: B.ByteString -> [Fragment]
