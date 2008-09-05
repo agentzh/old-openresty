@@ -15,7 +15,7 @@ clean:
 	-rm bin/restyscript
 	-rm `find -name '*.o'` `find -name '*.hi'` `find -name '*.ho'`
 
-static: OOPTS = -static -optl-static -optl-pthread
+static: OOPTS = -static -optl-static -optl-pthread -O2 -fvia-c -optc-O2
 static: restyscript
 
 optimized: OOPTS = -O2
