@@ -614,12 +614,13 @@ function afterCreateRole (res) {
 function createACLRule (role) {
     var method = $("#create-rule-method").val();
     var url = $("#create-rule-url").val();
+    var prohibiting = $("#create-rule-prohibiting").val();
     setStatus(true, "createACLRule");
+    var data = { method: method, url: url };
+    if (prohibiting == "true")
+        data.prohibiting = true;
     openresty.callback = afterCreateACLRule;
-    openresty.postByGet(
-        '/=/role/' + role + '/~/~',
-        { method: method, url: url }
-    );
+    openresty.postByGet('/=/role/' + role + '/~/~', data);
     return false;
 }
 

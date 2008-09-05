@@ -24,12 +24,15 @@
             <th>ID</th>
             <th>HTTP method</th>
             <th>Resource</th>
+            <th>Prohibiting</th>
+            <th></th>
         </tr>
         [%- FOREACH rule = rules %]
         <tr>
             <td>[% rule.id %]</td>
             <td>[% INCLUDE editable_rule_value id=rule.id, key="method", value=rule.method %]</td>
             <td>[% INCLUDE editable_rule_value id=rule.id, key="url", value=rule.url %]</td>
+            <td>[% INCLUDE editable_rule_value id=rule.id, key="prohibiting", value=rule.prohibiting %]</td>
             <td>
               <b><a href="javascript:void(0);" onclick="deleteRoleRule('[% role %]', [% rule.id %])">Delete</a></b>
             </td>
@@ -61,6 +64,13 @@
     <p>
         <label>Resource</label>
         <input type="text" size="25" id="create-rule-url"></input>
+    </p>
+    <p>
+        <label>Prohibiting</label>
+        <select id="create-rule-prohibiting">
+            <option value ="false">false</option>
+            <option value ="true">true</option>
+        </select>
     </p>
 
     <p>
