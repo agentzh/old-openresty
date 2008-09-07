@@ -310,12 +310,15 @@ sub DELETE_role_list {
     my ($self, $openresty, $bits) = @_;
 
     my $sql = [:sql|
-        select name, description
+        select name
         from _roles |];
     my $roles = $openresty->select($sql);
     my $user = $openresty->current_user;
     $roles ||= [];
     for my $role (@$roles) {
+        $role = $role->[0];
+        next if $role eq 'Admin' or $role eq 'Public';
+        #die "Removing cache for role $user.$role...\n";
         $OpenResty::Cache->remove_has_role($user, $role);
     }
 

@@ -10,6 +10,7 @@ use YAML 'Dump';
 use WWW::OpenResty::Simple;
 #use Date::Manip;
 use Getopt::Std;
+use Digest::MD5 'md5_hex';
 
 my %opts;
 getopts('u:s:p:h', \%opts);
@@ -29,6 +30,7 @@ $resty->delete("/=/role/Public/~/~");
 $resty->delete("/=/view");
 $resty->delete("/=/feed");
 $resty->delete("/=/model");
+$resty->delete('/=/role');
 
 $resty->post(
     '/=/model/Menu',
@@ -65,6 +67,25 @@ _EOC_
 
 $resty->post(
     '/=/role/Public/~/~',
+    [
+        {url => '/=/model/Menu/~/~'},
+        {url => '/=/model/Menu/name/contact', prohibiting => 1},
+        {url => '/=/view/MenuList/~/~'},
+        {url => '/=/view/SubMenuList/~/~'},
+    ]
+);
+
+$resty->post(
+    '/=/role/nina',
+    {
+        description => 'nina role',
+        login => 'password',
+        password => md5_hex('password'),
+    }
+);
+
+$resty->post(
+    '/=/role/nina/~/~',
     [
         {url => '/=/model/Menu/~/~'},
         {url => '/=/view/MenuList/~/~'},
