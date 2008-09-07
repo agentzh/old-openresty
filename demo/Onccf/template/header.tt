@@ -3,6 +3,7 @@
         'jquery.js',
         'pod2html.js',
         'onccf-jemplate.js',
+        'md5.js',
         'openresty.js',
         'onccf.js',
       ];

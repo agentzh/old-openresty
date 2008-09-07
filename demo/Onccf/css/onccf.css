@@ -1,3 +1,14 @@
+#login-panel {
+    width: 200px;
+    padding-left: 3em;
+}
+
+p#login-error {
+    color: red;
+    font-weight: bold;
+    padding-left: 3em;
+}
+
 div.wait-message {
     color: red !important;
     background: white !important;

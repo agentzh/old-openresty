@@ -180,10 +180,16 @@ function getContent (menu) {
 function renderContent (res) {
     setStatus(false, 'getContent');
     if (!openresty.isSuccess(res)) {
+        if (/Permission denied for the/.test(res.error)) {
+            $("#page-content").html( Jemplate.process('login.tt') )
+                .postprocess();
+            return;
+        }
         error("Failed to get content: " + res.error);
         return;
     }
     var menu = res[0];
+    if (!menu) { error("No menu found."); return; }
     $("#page-title").text(menu.label);
     var html = pod2html(menu.content);
     $("#page-content").html( html ).postprocess();
@@ -233,5 +239,33 @@ function renderSubmenu (res, menu) {
     } else {
         list.toggle();
     }
+}
+
+function loginByRole (form) {
+    var role = $("#login-role", form).val();
+    var pass = $("#login-pass", form).val();
+    //alert("Role is " + role);
+    //alert("Password is " + pass);
+    if (!pass) {
+        $("#login-error").html("No password given.");
+        return;
+    }
+    openresty.callback = postLogin;
+    openresty.login(account + '.' + role, pass);
+}
+
+function postLogin (res) {
+    if (!openresty.isSuccess(res)) {
+        $("#login-error").html(res.error.replace(/onccf\./g, ''));
+        return;
+    }
+    gotoNextPage();
+}
+
+function gotoNextPage (nextPage) {
+    if (!nextPage) nextPage = savedAnchor;
+    if (nextPage == savedAnchor) savedAnchor = null;
+    location.hash = nextPage;
+    dispatchByAnchor();
 }
 
