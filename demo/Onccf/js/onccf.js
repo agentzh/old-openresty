@@ -73,6 +73,7 @@ function init () {
     openresty = new OpenResty.Client(
         { server: host, user: account + '.Public' }
     );
+    openresty.onerror = function () {};
     //openresty.formId = 'new_model';
     if (timer) {
         clearInterval(timer);
@@ -181,6 +182,7 @@ function renderContent (res) {
     setStatus(false, 'getContent');
     if (!openresty.isSuccess(res)) {
         if (/Permission denied for the/.test(res.error)) {
+            $("#page-title").text("Permission denied");
             $("#page-content").html( Jemplate.process('login.tt') )
                 .postprocess();
             return;
@@ -246,8 +248,12 @@ function loginByRole (form) {
     var pass = $("#login-pass", form).val();
     //alert("Role is " + role);
     //alert("Password is " + pass);
+    if (!role) {
+        $("#login-error").html("No role name specified.");
+        return;
+    }
     if (!pass) {
-        $("#login-error").html("No password given.");
+        $("#login-error").html("No password specified.");
         return;
     }
     openresty.callback = postLogin;
