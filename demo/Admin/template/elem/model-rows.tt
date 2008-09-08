@@ -33,8 +33,7 @@
         [%- FOREACH row IN rows %]
             <li>
             [%- FOREACH key IN row.keys %]
-            [%- value = row.$key;
-                NEXT IF !value AND value != 0 %]
+            [%- value = row.$key %]
             <b class="key">[%- key | html %]</b>: [% INCLUDE editable_row_value id=row.id %] &nbsp;&nbsp;
             [%- END %]
 
