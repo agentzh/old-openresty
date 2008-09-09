@@ -1,5 +1,5 @@
 [%- FOREACH comment IN comments -%]
-    <a id="post-[% comment.post %]:comment-[% comment.id %]"></a>
+    <a name="post-[% comment.post %]:comment-[% comment.id %]" id="post-[% comment.post %]:comment-[% comment.id %]"></a>
     <div class="comment" id="comment-95523406">
         <div class="comment-content">
             [%- IF comment.body %]

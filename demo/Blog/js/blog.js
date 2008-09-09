@@ -47,7 +47,7 @@ $.fn.postprocess = function (className, options) {
         //debug("Anchor: " + anchor);
         $(this).click( function () {
             //debug(location.hash);
-            $(".anchor-location")[0].id = anchor;
+            //$(".bnchor-location")[0].id = anchor;
             location.hash = anchor;
             //alert(location.hash);
             if (savedAnchor == anchor) savedAnchor = null;
@@ -543,6 +543,7 @@ function renderComments (res) {
             Jemplate.process('comments.tt', { comments: res })
         );
         resetAnchor();
+        //setTimeout( function () { alert("Hi"); resetAnchor(); }, 1000 );
     }
 }
 

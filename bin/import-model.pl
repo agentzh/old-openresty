@@ -54,7 +54,7 @@ if ($help) { print usage() }
 $user or die "No --user given.\n";
 $model or die "No --model given.\n";
 
-my $json_xs = JSON::XS->new->utf8;
+my $json_xs = JSON::XS->new->utf8->allow_nonref;
 
 my $openresty = WWW::OpenResty::Simple->new(
     { server => $server, retries => $retries, ignore_dup_error => $ignore_dup_error }
@@ -100,8 +100,8 @@ sub insert_rows {
             $rows
         );
     };
-    if (!_HASH($res)) {
-        die Dumper($res);
+    if ($@ || !_HASH($res)) {
+        die "Around line $.: $@", (defined $res ? $json_xs->encode($res) : $res);
         return 0;
     }
     #warn Dumper($res);
