@@ -199,3 +199,15 @@ limit 5;
 
 =back
 
+=head2 有待升级调用接口的应用
+
+=begin SQL
+
+select account, regexp_replace(url, '(/=/[^/]+/[^/]+).*', '\\1') as query
+from access_20080907
+where url ~ '[^_]user=' or url ~ '[^_]op=' or url ~ '[^_]password=' or url ~ '[^_]var=' or url ~ '[^_]callback='
+group by query, account
+limit 50;
+
+=end SQL
+

@@ -6,7 +6,7 @@
 
 <body class="layout-two-column-left">
     <a name="top" class="blog-top"></a>
-    <a class="anchor-location"></a>
+    <!-- <a class="anchor-location"></a> -->
     <div id="container">
         <div id="container-inner" class="pkg">
 
