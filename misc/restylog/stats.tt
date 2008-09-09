@@ -204,7 +204,7 @@ limit 5;
 =begin SQL
 
 select account, regexp_replace(url, '(/=/[^/]+/[^/]+).*', '\\1') as query
-from access_20080907
+from access_[% ymd %]
 where url ~ '[^_]user=' or url ~ '[^_]op=' or url ~ '[^_]password=' or url ~ '[^_]var=' or url ~ '[^_]callback='
 group by query, account
 limit 50;

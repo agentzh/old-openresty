@@ -447,7 +447,7 @@ sub PUT_role {
         }
         _STRING($new_password) or
             die "Bad password: ", $OpenResty::Dumper->($new_password), "\n";
-        check_password($new_password);
+        #check_password($new_password);
         $update->set(password => Q($new_password));
     }
 
