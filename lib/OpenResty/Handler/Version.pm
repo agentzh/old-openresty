@@ -73,6 +73,10 @@ This OpenResty handler class implements the Version API, i.e., the C</=/version>
 
 Typically it returns something like this
 
+"0.3.9"
+
+More detailed information can be obtained by C<GET /=/version/more>:
+
 "OpenResty 0.3.9 (revision 1682) with the PgFarm (op901000) backend.\nCopyright (c) 2007-2008 by Yahoo! China EEEE Works, Alibaba Inc.\n"
 
 =head1 METHODS
