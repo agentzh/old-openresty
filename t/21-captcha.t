@@ -22,7 +22,6 @@ __DATA__
 GET /=/captcha/id
 --- response_like
 ^"([0-9a-zA-Z._-]+)"$
---- LAST
 
 
 
