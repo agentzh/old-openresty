@@ -16,7 +16,7 @@ __PACKAGE__->register('version');
 sub requires_acl { undef }
 
 sub level2name {
-    qw< version >[$_[-1]]
+    qw< version version_verbose >[$_[-1]]
 }
 
 our $Revision;
@@ -26,7 +26,9 @@ sub trim {
     $s;
 }
 
-sub GET_version {
+sub GET_version { OpenResty->version }
+
+sub GET_version_verbose {
     my ($self, $openresty, $bits) = @_;
     if (!defined $Revision) {
         my $path = "$FindBin::Bin/../share/openresty_revision";
