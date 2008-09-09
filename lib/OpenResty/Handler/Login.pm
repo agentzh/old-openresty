@@ -143,7 +143,7 @@ sub login_by_perl {
     ### capture param:  $captcha
     #warn "!!!!!!!!!!!!!!!!!!! Captcha Value: $captcha\n";
     if (defined $captcha) {
-        warn "!!!!!!!!!!!!!!!!!!! Captcha Value: $captcha\n";
+        #warn "!!!!!!!!!!!!!!!!!!! Captcha Value: $captcha\n";
         my ($id, $user_sol) = split /:/, $captcha, 2;
         if (!$id or !$user_sol) {
             die "Bad captcha parameter: $captcha\n";

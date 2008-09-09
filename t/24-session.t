@@ -93,7 +93,6 @@ GET /=/logout
 DELETE /=/model.js
 --- response
 {"success":0,"error":"Login required."}
---- LAST
 
 
 

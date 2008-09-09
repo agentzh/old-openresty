@@ -1,6 +1,13 @@
 use strict;
 use warnings;
 
+#use utf8;
+use Getopt::Long;
+
+my $charset = 'utf8';
+GetOptions('charset=s', \$charset) or
+    die "Usage: $0 --charset=utf8 *.txt\n";
+
 #use Encode qw(decode encode);
 use JSON::XS;
 
@@ -23,7 +30,7 @@ sub process_file {
     my ($infile, $outfile) = @_;
     open my $out, ">$outfile" or
         die "Cannot open output file $outfile for writing: $!\n";
-    open my $in, "<:utf8", $infile or
+    open my $in, "<:$charset", $infile or
         die "Cannot open input file $infile for reading: $!\n";
     my $first = <$in>;
     $first =~ s/[\n\r]+$//g;
