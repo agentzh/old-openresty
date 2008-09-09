@@ -61,12 +61,12 @@ requires:
   Encode::Guess: 0
   FCGI: 0
   File::ShareDir: 0
-  Filter::QuasiQuote: 0.06
+  Filter::QuasiQuote: 0.07
   GD::SecurityImage: 1.64
   Hash::Merge: 0
   IPC::Run: 0
   IPC::Run3: 0
-  JSON::XS: 2.2
+  JSON::XS: 2.2222
   List::MoreUtils: 0
   List::Util: 0
   Params::Util: 0.22
@@ -75,4 +75,4 @@ requires:
   Time::HiRes: 0
   YAML::Syck: 1.04
   perl: 5.6.1
-version: 0.3.21
+version: 0.4.0

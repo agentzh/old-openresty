@@ -1399,6 +1399,7 @@ PUT /=/role/Poster
 }
 --- response
 {"error":"Password too short; at least 6 chars are required.","success":0}
+--- SKIP
 
 
 

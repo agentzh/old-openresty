@@ -2,7 +2,7 @@ NAME
     OpenResty - General-purpose web service platform for web applications
 
 VERSION
-    This document describes OpenResty 0.3.21 released on August 20, 2008.
+    This document describes OpenResty 0.4.0 released on September 9, 2008.
 
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
@@ -10,7 +10,7 @@ DESCRIPTION
     and client-side (pure AJAX) web applications.
 
     Currently this module can serve as a public web interface to a
-    distributive or desktop PostgreSQL database system. In particular, it
+    distributed or desktop PostgreSQL database system. In particular, it
     provides roles, models, views, actions, captchas, the minisql language,
     and many more to the web users.
 

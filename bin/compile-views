@@ -1,4 +1,0 @@
-#!/bin/sh
-
-bin/openresty compile '/=/view/getquery/spell/q.yml?_user=yquestion.Public' '/=/view/t/a/水煮鱼?c=北京&_user=lifecai.s&t=50'
-
