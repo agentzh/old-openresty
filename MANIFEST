@@ -232,7 +232,6 @@ lib/OpenResty/Handler/Base.pm
 lib/OpenResty/Handler/CompiledView.pm
 lib/OpenResty/Handler/LastResponse.pm
 lib/OpenResty/Handler/Logout.pm
-lib/OpenResty/QuasiQuote/Compile.pm
 lib/OpenResty/Script/Compile.pm
 lib/OpenResty/FeedWriter/RSS.pm
 lib/OpenResty/Handler/Feed.pm
