@@ -1,8 +1,37 @@
 Change Log for OpenResty
 
 0.4.0 Sep 1 2008
+* updated the metamodel to version 0.006.
+* added a "prohibiting" property to ACL rules so that these rules with "prohibiting" set to true can deny certain accesses specifically. Prohibiting rules have higher priority than ordinary "white rules".
+* refactored the server kernel and now the kernel is almost independent of the various handler classes, so the user can code up their own handler classes w/o modifying the OpenResty kernel.
+* added a frontend.handler option to the config file to allow the site runner specify exactly which handlers to be loaded to the server kernel.
+* added support for GET /=/version and GET /=/version/more.
+* now we only allow _user/_password/_use_cookie/_session/etc for builtin params.
 * no longer encode/decode stuff when the encoding is already UTF-8.
 * no longer die when metamodel's version mismatch (merely warn instead).
+* fixed the cache bug regarding DELETE_role_list.
+* do not check password in Role.pm and allow special chars in the password.
+
+* demo/Onccf - a new demo web site based on OpenResty
+* demo/Onccf - added the pod2html.js script, which is a JavaScript implementation for the pod2html script.
+
+* demo/Admin - always display every fields in the model row listing even if the value is an empty string
+* demo/Admin - now we have a more pretty login UI.
+* demo/Admin - now we use true POST for updating and inserting row values.
+* demo/Admin - fixed the page width of the model row view and also use POST for model row creation.
+* demo/Admin - fixed the newline to textarea mapping.
+
+* added a new script for saving metamodels for every account: bin/save-metamodel.pl.
+* added a new script named bin/restore-metamodel.pl for restoring metamodels saved by bin/save-metamodel.pl.
+* added a new script bin/tab2json.pl.
+* added view precompilation support:
+** a new CompiledView handler
+** commandline interface for compiling view invocation urls to the compiled.view file which could be loaded by the CompiledView handler:
+    $ bin/openresty compile '/=/view/a/b?c=d' '/=/view/f/z/okay?foo=bar'
+
+* perl minisql compiler - added support for operators @ and ~
+* haskell restyscript compiler - added support for type signature to the frags emitter, as in
+    select * from foo(...) as (col1 type1, col2 type2) where ...
 
 0.3.21 Aug 20 2008
 * fixed the ACL mechanism; now we allow ACL rules like GET /=/~/~/~/~.
