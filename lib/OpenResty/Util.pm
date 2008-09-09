@@ -41,9 +41,9 @@ sub check_password {
     if (length($password) < $PASSWORD_MIN_LEN) {
         die "Password too short; at least $PASSWORD_MIN_LEN chars are required.\n";
     }
-    if ($password !~ /^[_A-Za-z0-9]+$/) {
-        die "Invalid password; only underscores, letters, and digits are allowed.\n";
-    }
+    #if ($password !~ /^[_A-Za-z0-9]+$/) {
+    #die "Invalid password; only underscores, letters, and digits are allowed.\n";
+    #}
 }
 
 sub slurp {
