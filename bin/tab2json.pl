@@ -2,6 +2,7 @@ use strict;
 use warnings;
 
 #use utf8;
+use Encode qw( encode decode );
 use Getopt::Long;
 
 my $charset = 'utf8';
@@ -30,12 +31,13 @@ sub process_file {
     my ($infile, $outfile) = @_;
     open my $out, ">$outfile" or
         die "Cannot open output file $outfile for writing: $!\n";
-    open my $in, "<:$charset", $infile or
+    open my $in, $infile or
         die "Cannot open input file $infile for reading: $!\n";
-    my $first = <$in>;
+    my $first = decode($charset, scalar <$in>);
     $first =~ s/[\n\r]+$//g;
     my @fields = split_by_tab $first;
     while (<$in>) {
+        $_ = decode($charset, $_);
         s/[\n\r]+$//g;
         my @vals = split_by_tab $_;
         my %data;
