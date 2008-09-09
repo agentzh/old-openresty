@@ -488,13 +488,16 @@ sub has_feed {
 
 sub has_role {
     my ($self, $role) = @_;
-    return 1 if $role eq 'Admin' or $role eq 'Public'; # shortcut...
+    return 'password' if $role eq 'Admin';
+    return 'anonymous' if $role eq 'Public'; # shortcut...
     _IDENT($role) or
         die "Bad role name: ", $OpenResty::Dumper->($role), "\n";
+
 
     my $user = $self->current_user;
     if (my $login_meth = $Cache->get_has_role($user, $role)) {
         #warn "has view cache HIT\n";
+        #warn "from cache: $login_meth\n";
         return $login_meth;
     }
 
@@ -507,6 +510,7 @@ sub has_role {
     my $ret = $self->select($sql);
     if ($ret && ref $ret) {
         $ret = $ret->[0][0];
+        #warn "Returned: $ret\n";
         if ($ret) { $Cache->set_has_role($user, $role, $ret) }
         return $ret;
     }
