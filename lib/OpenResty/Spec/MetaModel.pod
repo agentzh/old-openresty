@@ -4,7 +4,7 @@ OpenResty::Spec::MetaModel - Metamodel for OpenResty backends
 
 =head1 VERSION
 
-This document describes OpenResty 0.3.20's meta model, version 0.005.
+This document describes OpenResty 0.4.0's meta model, version 0.006.
 
 =head1 DESCRIPTION
 
@@ -109,13 +109,15 @@ associated with the OpenResty Role objects.
         id serial primary key,
         role text not null,
         method varchar(10) not null,
-        url text not null
+        prefix text not null,
+        segments smallint,
+        prohibiting boolean default false not null
     );
 
 The C<role> column stores the name of the role which owns the current rule.
 
 Each access rule has two components, HTTP method and the (abbreviated) URL,
-which are saved in the columns C<method> and C<url>, respectively. An example
+which are saved in the columns C<method>, C<prefix>, and C<segments>, respectively. An example
 is that C<method> has a value of C<'GET'> and C<url> has a value of
 C<'/=/model/~/~/~'>.
 
@@ -150,22 +152,22 @@ columns.
     create table _columns (
         id serial primary key,
         name text not null,
-        table_name text not null,
+        model text not null,
         label text not null,
         type text not null,
         "default" text,
         indexed text,
-        unique(table_name, name)
+        unique(model, name)
     );
 
-The C<name> column keeps the names of user models' columns and the C<table_name>
+The C<name> column keeps the names of user models' columns and the C<model>
 column stores the names of the corresponding models.
 
 The C<lable> column stores the textual label provided by the user who created
 the column and types of the model columns are stored in the C<type> column.
 
 None of the columns above but C<default> and C<indexed> can be null
-and in addition, the combination of the columns C<table_name> and C<name> should
+and in addition, the combination of the columns C<model> and C<name> should
 be unique.
 
 User columns have default values and the corresponding JSON representation
