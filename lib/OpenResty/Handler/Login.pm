@@ -158,7 +158,9 @@ sub login_by_perl {
             die $err."\n";
         }
     } elsif (defined $password) {
-        if (!$login_meth eq 'password') {
+        #warn "Login meth: $login_meth\n";
+        if ($login_meth ne 'password') { # short-cut
+            #warn "HERE!!!";
             die "Password for $account.$role is incorrect.\n";
         }
         my $res = $openresty->select([:sql|
