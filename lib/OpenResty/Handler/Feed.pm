@@ -345,7 +345,11 @@ sub DELETE_feed_list {
 sub time_pg2rss {
     my $time = shift;
     return undef if !$time;
-    my $dt = DateTime::Format::Pg->parse_timestamp_with_time_zone($time);
+    my $dt;
+    eval {
+        $dt = DateTime::Format::Pg->parse_timestamp_with_time_zone($time);
+    };
+    if (!$dt) { return $time }
     #print DateTime::Format::Pg->format_time_with_time_zone($dt);
     # Fri, 04 Apr 2008 08:36:27 GMT
     $dt->set_time_zone('GMT');
