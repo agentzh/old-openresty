@@ -11,7 +11,7 @@ build_requires:
   LWP::UserAgent: 0
   Test::LongString: 0
   Text::Diff: 0
-  WWW::OpenResty: 0.06
+  WWW::OpenResty: 0.08
 distribution_type: module
 generated_by: 'Module::Install version 0.77'
 license: artistic2
