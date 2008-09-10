@@ -137,8 +137,11 @@ sub has_user {
 
 sub set_user {
     my ($self, $user) = @_;
-    $self->do("set search_path to $user,public");
-    $self->{user} = $user;
+    my $old_user = $self->{user};
+    if (!$old_user or $user ne $old_user) {
+        $self->do("set search_path to $user,public");
+        $self->{user} = $user;
+    }
 }
 
 sub add_user {
