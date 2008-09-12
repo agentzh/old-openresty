@@ -18,7 +18,7 @@ $version .= 0 until length($version) >= length('0.123456');
 $version =~ s{^(\d+)\.(\d{3})(\d{3})?$}{join '.', int($1), int($2), int($3||0)}e;
 version($version);
 
-requires            ('CGI::Cookie::XS' => '0.14');
+requires            ('CGI::Cookie::XS' => '0.15');
 requires            ('FCGI');
 requires            ('CGI::Simple' => '1.103');
 requires            ('CGI::Simple::Cookie');
