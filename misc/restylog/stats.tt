@@ -203,10 +203,11 @@ limit 5;
 
 =begin SQL
 
-select account, regexp_replace(url, '(/=/[^/]+/[^/]+).*', '\\1') as query
+select count(*), account, regexp_replace(url, '(/=/[^/]+/[^/]+).*', '\\1') as query
 from access_[% ymd %]
 where url ~ '[^_]user=' or url ~ '[^_]op=' or url ~ '[^_]password=' or url ~ '[^_]var=' or url ~ '[^_]callback='
 group by query, account
+order by account
 limit 50;
 
 =end SQL
