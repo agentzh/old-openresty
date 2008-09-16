@@ -74,8 +74,8 @@ input.column-input {
     text-align: left;
     display: block;
     width: 100px;
-    float:left;
-    z-index:2;
+    /*float:left;
+    z-index:2;*/
     font-family:tahoma,arial,helvetica,sans-serif;
 }
 
