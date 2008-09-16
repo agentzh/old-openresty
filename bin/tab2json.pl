@@ -62,9 +62,9 @@ sub split_by_tab ($) {
             last;
         } else {
             push @vals, undef;
+            last;
         }
     }
-    @vals
-    #map { $_ ? $_ : undef } @vals;
+    map { defined $_ && $_ eq "" ? undef : $_ } @vals;
 }
 
