@@ -21,6 +21,7 @@
         [%- ELSE %]
         <input type="text" size="15" class="row-input" resty_key="[% col.name %]"></input>
         [%- END %]
+        <br/>
     [%- END %]
     <p>
         <input type="submit" class="create-button" value="Create" onclick="createModelRow('[% model.name %]')"></input>
