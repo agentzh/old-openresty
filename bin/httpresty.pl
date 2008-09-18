@@ -18,7 +18,7 @@ my $json_xs = JSON::XS->new->utf8->allow_nonref;
 my %opts;
 getopts('u:s:p:h', \%opts);
 if ($opts{h}) {
-    die "Usage: $0 -u <user> -p <password> -s <openresty_server>\n";
+    die "Usage: $0 -u <user> -p <password> -s <openresty_server> <http_method> <url>\n";
 }
 my $user = $opts{u} or
     die "No OpenResty account name specified via option -u\n";
