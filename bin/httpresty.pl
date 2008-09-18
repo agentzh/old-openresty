@@ -10,7 +10,7 @@ use YAML 'Dump';
 use WWW::OpenResty::Simple;
 #use Date::Manip;
 use Getopt::Std;
-use Encode qw(from_to);
+use Encode qw(encode decode from_to);
 
 #$JSON::Syck::ImplicitUnicode = 1;
 #$YAML::Syck::ImplicitUnicode = 1;
@@ -47,7 +47,7 @@ if (!$resty->can($meth)) {
 my $res = $resty->$meth($url);
 my $out = Dump($res);
 if ($opts{c}) {
-    from_to($out, 'utf8', $opts{c});
+    $out = encode($opts{c}, $out);
 }
 print $out, "\n";
 
