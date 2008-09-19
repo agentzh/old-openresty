@@ -188,7 +188,7 @@ sub exec_view {
     if (@unbound) {
         die "Parameters required: @unbound\n";
     }
-    return $openresty->select($res->{sql}, { use_hash=>1, read_only=>1 });
+    return $openresty->select($res->{sql}, { use_hash => 1, read_only => 1 });
 
 }
 

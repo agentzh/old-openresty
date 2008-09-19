@@ -71,7 +71,7 @@ sub GET_view_exec {
     my $sql = $hdl->(\%vars);
         #warn "!!!!! $sql";
     $openresty->set_user($user);
-    return $openresty->select($sql, {use_hash => 1});
+    return $openresty->select($sql, { use_hash => 1, read_only => 1 });
 }
 
 1;
