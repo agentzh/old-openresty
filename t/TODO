@@ -1,3 +1,7 @@
+Coverage testing TODOs:
+
+
+Old TODOs:
 * add column hits limit.
 * /=/model.json?var=foo
 * t/p3p-cookie.t for cross-site cookie support and the cookie_site url param

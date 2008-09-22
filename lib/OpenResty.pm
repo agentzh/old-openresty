@@ -603,11 +603,6 @@ sub last_insert_id {
     $Backend->last_insert_id(@_);
 }
 
-sub emit_success {
-    my $self = shift;
-    return $self->emit_data( { success => 1 } );
-}
-
 sub emit_error {
     my $self = shift;
     my $msg = shift;

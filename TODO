@@ -8,6 +8,7 @@
 * Captcha ID should not saved in a cookie and get expired during login.  [fixed]
 
 == Implementation
+* Remove the support for _charset=guessing.
 * Added no-cache headers to the responses:
     Expires: Thu, 01 Jan 1970 00:00:01 GMT
     Cache-Control: no-cache, must-revalidate
