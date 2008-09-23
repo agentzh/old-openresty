@@ -17,4 +17,5 @@ etc/site_openresty.conf
 share/font
 haskell/bin/restyscript
 t/*.dat
-
+demo/Blog2/script/upload
+demo/Blog/script/upload
