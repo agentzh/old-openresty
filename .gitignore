@@ -23,3 +23,6 @@ t/*.dat
 demo/Blog2/script/upload
 demo/Blog/script/upload
 demo/Springbot/staff/*.sql
+demo/Click4honor/JSON.js
+demo/Click4honor/jquery.js
+demo/Click4honor/openresty.js
