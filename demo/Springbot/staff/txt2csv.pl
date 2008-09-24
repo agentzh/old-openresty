@@ -7,11 +7,11 @@ use Text::CSV;
 use Encode qw(encode decode);
 
 my %PinYin;
-my $pinyin_file = 'PinYin.csv';
+my $pinyin_file = 'pinyin.txt';
 open my $fh, $pinyin_file or
     die "Can't open $pinyin_file for reading: $!\n";
 while (<$fh>) {
-    my ($han, $pinyin) = split /,/, $_;
+    my ($han, $pinyin) = split / /, $_;
     $pinyin =~ s/\W//g;
     $han = decode('utf8', $han);
     next if $PinYin{$han};
