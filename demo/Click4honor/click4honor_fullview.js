@@ -1,5 +1,5 @@
-//var restyhost = 'http://api.openresty.org';
-var restyhost = 'http://localhost';
+var restyhost = 'http://api.openresty.org';
+//var restyhost = 'http://localhost';
 var account = 'qyliu';
 
 var openresty;
