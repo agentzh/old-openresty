@@ -38,8 +38,8 @@ $resty->post(
     "/=/model/$model",
     { description => 'Honor list',
       columns => [
-        { name => 'w', label => 'Where you are fighting for' },
-        { name => 'c', label => 'Click count', type => 'integer' }
+        { name => 'w', type => 'text', label => 'Where you are fighting for' },
+        { name => 'c', type => 'text', label => 'Click count', type => 'integer' }
       ]
     }
 );
@@ -71,3 +71,4 @@ $resty->post(
     ]
 );
 
+warn "Done.\n";
