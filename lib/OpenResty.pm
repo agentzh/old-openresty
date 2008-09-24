@@ -51,8 +51,8 @@ our %OpMap = (
 );
 
 our %ext2dumper = (
-    '.yml' => \&YAML::Syck::Dump,
-    '.yaml' => \&YAML::Syck::Dump,
+    '.yml' => sub { _utf8_on($_[0]); YAML::Syck::Dump($_[0]); },
+    '.yaml' => sub { _utf8_on($_[0]); YAML::Syck::Dump($_[0]); },
     '.js' => sub { _utf8_on($_[0]); $JsonXs->encode($_[0]) },
     '.json' => sub { _utf8_on($_[0]); $JsonXs->encode($_[0]) },
 );
