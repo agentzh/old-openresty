@@ -43,6 +43,7 @@ my $Error;
 eval "use GD::SecurityImage;";
 $Error = $@;
 
+# XXX TODO: We should put the dictionary to elsewhere...
 my @CnWordList = qw(
     一本正经 上升 下降 不假思索 专门
     严严实实 严寒 丰收 乌龟 乱成一团
@@ -364,7 +365,7 @@ sub gen_en_image {
     my ( $self, $openresty, $str ) = @_;
     my $angle   = 2 + int rand 4;
     my $captcha = GD::SecurityImage->new(
-        width   => 120,
+        width   => 130,
         height  => 30,
         lines   => 1,
         gd_font => 'giant',
