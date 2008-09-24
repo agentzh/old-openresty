@@ -7,8 +7,11 @@ blib
 demo/*/out
 demo/Blog2/js
 demo/Blog2/template
+demo/Springbot/staff/import
 demo/*/script/import-localhost
 *.old
+*.swp
+demo/Springbot/staff/staff.*
 pm_to_blib
 demo/Springbot/staff/staff.html
 demo/Blog2/script/init.pl
@@ -19,3 +22,4 @@ haskell/bin/restyscript
 t/*.dat
 demo/Blog2/script/upload
 demo/Blog/script/upload
+demo/Springbot/staff/*.sql
