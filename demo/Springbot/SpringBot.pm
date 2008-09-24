@@ -96,7 +96,7 @@ sub said {
                     channel => $channel,
                     body => $line,
                 );
-                $self->log($channel, $self->nick, $line);
+                #$self->log($channel, $self->nick, $line);
             }
         };
         if ($@) { $self->log_error($@); }
@@ -111,7 +111,7 @@ sub said {
     #$say->("[$enc]: $text\n");
     #}
     $self->process_msg($text, $say, $sender);
-    $self->log($e->{channel}, $e->{who}, $e->{raw_body});
+    #$self->log($e->{channel}, $e->{who}, $e->{raw_body});
     return undef;
 }
 
@@ -329,10 +329,13 @@ sub find_employee {
         highway => '周海维',
         carriezh => '张皛珏',
         tangch => 'cheng.tang',
-        'whj' => '王惠军',
+        whj => '王惠军',
+        laser => '何伟平',
+        Yi => '赵熠',
     );
     $text =~ s/$pattern//;
     $text =~ s/\n+//sg;
+    $text =~ s/^\s+|\s+$//g;
     if ($text) {
         $text = $map{$text} || $text;
         my $url = 'http://api.openresty.org/=/model/YahooStaff/~/' . $text;
