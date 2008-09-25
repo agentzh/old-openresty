@@ -1,5 +1,26 @@
 Change Log for OpenResty
 
+0.4.1 Sep 25 2008
+* demo/RestyCheck - added dispatcher and timer.
+* demo/Click4honor - use leading underscore for builtin url parameters.
+* demo/Springbot -
+** various improvements for the staff searching feature
+** fixed the builtin url parameter syntax for OpenResty interaction.
+* demo/Blog -
+** fixed the titles for init.pl.
+** fixed the RSS links.
+* demo/Admin - fixed the appearance of the create model row panel.
+
+* CompiledView handler - use read_only => 1 for DB requests.
+* Feed handler - ignore potential errors in time_pg2rss.
+* Pg backend - now we cached the set_user operation.
+* Login handler - fixed a bug regarding login method mismatch.
+
+* added the bin/httpresty.pl script for doing HTTP REST on the command line.
+* fixed the infinite-looping bugs in bin/tab2json.pl.
+
+* Makefile.PL - now we demand CGI::Coookie::XS 0.15. The earlier versions have serious vulnerabilities.
+
 0.4.0 Sep 1 2008
 * updated the metamodel to version 0.006.
 * added a "prohibiting" property to ACL rules so that these rules with "prohibiting" set to true can deny certain accesses specifically. Prohibiting rules have higher priority than ordinary "white rules".
