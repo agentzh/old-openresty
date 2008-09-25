@@ -20,6 +20,7 @@ etc/site_openresty.conf
 share/font
 haskell/bin/restyscript
 t/*.dat
+*.tar.gz
 demo/Blog2/script/upload
 demo/Blog/script/upload
 demo/Springbot/staff/*.sql
