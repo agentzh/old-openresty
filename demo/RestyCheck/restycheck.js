@@ -1,5 +1,7 @@
 var openresty = null
 var Server = 'api.openresty.org';
+var savedAnchor = null;
+var timer = null;
 
 $(document).ready(init);
 
@@ -9,21 +11,38 @@ var Links = [
     ['/=/model/Post/~/~', {_offset:0, _count: 10, _user:'agentzh.Public'}],
     ['/=/view/FetchTitles/~/~', {container:'review', parentid:0, offset:0, count:11, child_offset:0, child_count:5, dsc:'desc', orderby:'updated', _user: 'carrie.Public'}],
     ['/=/view/FetchResults/~/~', {offset:0, _user:'people.Public', parentid:0, url:'http://www.yahoo.cn/person/bbs/index.html?id=%E5%88%98%E5%BE%B7%E5%8D%8E', offset:0, count:11, child_offset:0, child_count:5, dsc:'desc', orderby: 'support+deny,id'}],
-    ['/=/view/ipbase/~/~', {q:'124.1.34.1', _user:'ipbase.Public'}]
+    ['/=/view/ipbase/~/~', {q:'124.1.34.1', _user:'ipbase.Public'}],
+    ['/=/view/getquery/spell/yao', { _user: 'yquestion.Public' }]
 ]
 
 function init () {
-    var loc = location.hash;
-    loc = loc.replace(/^\#/, '');
-    //alert(loc);
-    if (loc) {
-        server = loc;
+    if (timer) {
+        clearInterval(timer);
+    }
+    dispatchByAnchor();
+    timer = setInterval(dispatchByAnchor, 600);
+}
+
+function dispatchByAnchor () {
+    var anchor = location.hash;
+    anchor = anchor.replace(/^\#/, '');
+    if (savedAnchor == anchor)
+        return;
+    if (anchor == "") {
+        anchor = 'posts/1';
+        location.hash = 'posts/1';
+    }
+    savedAnchor = anchor;
+
+    if (anchor) {
+        server = anchor;
     } else {
         server = Server;
     }
     openresty = new OpenResty.Client(
         { server: server }
     );
+    $("tr.result").remove();
     for (var i = 0; i < Links.length; i++) {
         //alert("i = " + i);
         var link = Links[i];
@@ -90,7 +109,7 @@ function renderRes (link, elapsed, res) {
 }
 
 function genRowHtml (row) {
-    var html = '<tr>';
+    var html = '<tr class="result">';
     for (var i = 0; i < row.length; i++) {
         html += '<td>' + row[i] + '</td>';
     }
