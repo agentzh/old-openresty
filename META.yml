@@ -42,7 +42,7 @@ recommends:
   Text::Diff: 0
   Text::Table: 0
 requires:
-  CGI::Cookie::XS: 0.11
+  CGI::Cookie::XS: 0.15
   CGI::Simple: 1.103
   CGI::Simple::Cookie: 0
   Cache::Memcached::Fast: 0.06
@@ -75,4 +75,4 @@ requires:
   Time::HiRes: 0
   YAML::Syck: 1.04
   perl: 5.6.1
-version: 0.4.0
+version: 0.4.1
