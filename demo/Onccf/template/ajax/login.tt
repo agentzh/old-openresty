@@ -1,0 +1,23 @@
+<p><b>Authorized access is required for viewing this page.</b></p>
+<p><b>Please sign in first.</b></p>
+
+<br/>
+<p id="login-error"></p>
+
+<div id="login-panel">
+<form action="" onsubmit="loginByRole(this); return false">
+<p>
+    <label>Role</label><br/>
+    <input type="text" id="login-role"></input>
+    <script language="JavaScript" type="text/javascript">if(document.getElementById) document.getElementById('login-role').focus();</script>
+</p>
+<p>
+    <label>Password</label><br/>
+    <input type="password" id="login-pass"></input>
+</p>
+<p>
+    <input type="submit" id="login-button" value="Sign in" style="float: right"></input>
+</p>
+</form>
+</div>
+

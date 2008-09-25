@@ -1,3 +1,8 @@
+bin/compile-views
+bin/httpresty.pl
+demo/Springbot/staff/sql2txt.pl
+demo/Springbot/staff/pinyin.txt
+share/README
 demo/Onccf/css/global.css
 demo/Onccf/css/layout.css
 demo/Onccf/css/onccf.css
@@ -32,7 +37,6 @@ AUTHORS
 bin/restore-metamodel.pl
 bin/save-metamodel.pl
 bin/tab2json.pl
-bin/test-sql.pl
 bin/export-model.pl
 bin/fetch-font.pl
 bin/import-model.pl
@@ -254,7 +258,6 @@ lib/OpenResty/Backend/Pg.pm
 lib/OpenResty/Backend/PLPerl.pm
 lib/OpenResty/Backend/PgFarm.pm
 lib/OpenResty/Backend/PgMocked.pm
-lib/OpenResty/PLPerl.pm
 lib/OpenResty/Script/Upgrade.pm
 lib/OpenResty/Cache.pm
 lib/OpenResty/CheatSheet.pod
@@ -376,8 +379,6 @@ t/pgmock-data/28-feed.t.json
 t/pgmock-data/29-cache.t.json
 t/pgmock-data/33-duplicate-def.t.json
 t/pgmock-data/sanity.t.json
-t/pgmock-data/30-action.t.json
-t/pgmock-data/31-action.t.json
 t/pgmock-data/34-unique.t.json
 t/pgmock-data/35-model-order-by.t.json
 t/pgmock-data/36-subquery.t.json
