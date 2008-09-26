@@ -188,7 +188,7 @@ function renderEditPost (res) {
     var post = res[0];
     $("#main").html(
         Jemplate.process('edit.tt',
-            { post: post }
+            { post: post, title: 'Update post' }
         )
     ).postprocess();
 
@@ -273,7 +273,7 @@ function updatePost (form, id) {
 
     setStatus(true, 'updatePost');
     openresty.callback = afterUpdatePost;
-    openresty.formId = 'update-post-form';
+    openresty.formId = 'edit-post-form';
     openresty.put('/=/model/Post/id/' + id, data);
     return false;
 }
@@ -341,5 +341,60 @@ function afterDeletePost (res, id, nextPage) {
         return;
     }
     gotoNextPage(nextPage);
+}
+
+function newPost () {
+    $("#main").html(
+        Jemplate.process('edit.tt',
+            { title: 'New post', action: 'createPost', post: { id: 0 }  }
+        )
+    ).postprocess();
+
+    jQuery(".edit-post-input").wymeditor({
+       html: ''
+    });
+
+}
+
+function createPost (form) {
+    var title = $("#title-input", form).val();
+    //alert("iframes: " + $("iframe", form).length);
+    //alert("iframe: " + iframe);
+    //alert("iframe doc: " + iframe.contentWindow.document);
+    //alert("div in iframe: " + $(".item-body", iframe.contentWindow.document).length);
+    var author = $("#author-input", form).val();
+    var content;
+    var isRTE = ($("#edit-in-rte", form).css('display') == 'none');
+    if (isRTE) {
+        content = getRTEContent(form);
+    } else {
+        content = $("#content-input", form).val();
+    }
+    //alert("content: " + content);
+    //return false;
+    if (content == null) {
+        alert("Failed to get content from RTE");
+        return false;
+    }
+
+    var data = {
+        author: author,
+        content: content,
+        title: title
+    };
+    setStatus(true, 'newPost');
+    openresty.callback = afterNewPost;
+    openresty.formId = 'edit-post-form';
+    openresty.post('/=/model/Post/~/~', data);
+    return false;
+}
+
+function afterNewPost (res) {
+    setStatus(false, 'newPost');
+    if (!openresty.isSuccess(res)) {
+        error("Failed to create post: " + res.error);
+        return;
+    }
+    gotoNextPage('list/1');
 }
 
