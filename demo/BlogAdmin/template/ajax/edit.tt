@@ -1,0 +1,21 @@
+<h1>Edit Post</h1>
+
+<p>
+<form id="edit-post-form" action="" onsubmit="updatePost(this, [% post.id %]);return false;">
+<label for="title-input">Title</label>
+<input id="title-input" type="text" value="[% post.title | html %]" style="width: [% post.title.length + 5 %]em"></input>
+<br/>
+<label for="content-input">Content</label><br/>
+<textarea class="edit-post-input" style="display: none"></textarea>
+<textarea id="content-input" cols="80" rows="15" style="display: none"></textarea><br/>
+<label for="author-input">Author</label>
+<input id="author-input" type="text" value="[% post.author | html %]" style="width: [% post.author.length + 5 %]em"></input>
+<br/>
+<a id="edit-in-html" style="display: block" href="javascript:editInHTML()">Edit content in HTML</a>
+<a id="edit-in-rte" style="display: none" style="display: none" href="javascript:editInRTE()">Edit content in Rich Text Editor</a>
+<br/>
+<input type="submit" class="wymupdate" value="Update" />
+</form>
+<form id="update-post-form" style="display: none" method="POST"></form>
+</p>
+

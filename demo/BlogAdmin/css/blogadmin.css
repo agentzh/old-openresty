@@ -1,0 +1,16 @@
+div#wait-message {
+    color: red !important;
+    background: white !important;
+    font-size: 18px !important;
+    float: right;
+    position: fixed;
+    top: 2px;
+    right: 30px;
+    padding: 4px;
+    border-width: 2px;
+    border-style: outset;
+    border-color: white;
+    display: none;
+}
+
+
