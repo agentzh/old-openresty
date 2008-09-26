@@ -282,7 +282,7 @@ function renderRoleRules (res, role) {
 function getVersionInfo () {
     setStatus(true, 'getVersionInfo');
     openresty.callback = renderVersionInfo;
-    openresty.get('/=/version');
+    openresty.get('/=/version/verbose');
 }
 
 function renderVersionInfo (res) {
