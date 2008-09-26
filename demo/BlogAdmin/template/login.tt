@@ -1,0 +1,134 @@
+[%- IF ! pack_js;
+        js_files = [
+            'openresty.js',
+            'vars.js',
+            'md5.js',
+            'jquery.js',
+            'jquery.cookie.pack.js',
+            'login.js',
+        ];
+    ELSE;
+        js_files = [
+            'jquery-min.js',
+            'login-min.js'
+        ];
+    END;
+-%]
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <title>Sign into Blog Admin</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" href="login.css" type="text/css" media="screen">
+        <link rel="stylesheet" href="vars.css" type="text/css" media="screen">
+        <link rel="stylesheet" href="fonts.css" type="text/css" media="screen">
+
+    [%- FOR file IN js_files %]
+        <script type="text/javascript" src="[% file %]"></script>
+    [%- END -%]
+
+    </head>
+    <body>
+        <div id="wait-message">
+            <img src="loading.gif" alt="loading">
+            &nbsp; <b>Loading...</b>&nbsp;
+        </div>
+
+<div id="yregwp">
+            <table>
+                <tr>
+                <td>
+            <div><a href="http://www.yahoo.cn"><img src="http://cn.yimg.com/i/os/v004/ylg.gif" alt="中国雅虎"></a></div>
+                </td>
+                <td>
+                    <span class="page-title">Blog Admin</span>
+                </td>
+                </tr>
+            </table>
+
+<div id="yregct" class="yregclb">
+    <div id="yreglg">
+    <!-- login box goes here -->
+            <div class="top yregbx">
+
+    <div class=" badge">
+    <span class="ct"><span class="cl"></span></span>
+    <div class="yregbxi">
+        <h1>Sign in to Blog Admin</h1>
+        <fieldset>
+                <legend>Login Form</legend>
+
+                <form action="" id="login-form">
+                <table id="yreglgtb" summary="form: login information" cellspacing="0" cellpadding="0">
+                <tr><th><label for="login-user">OpenResty User</label></th></tr>
+                <tr><td><input id="login-user" type="text">
+                <script language="JavaScript" type="text/javascript">if(document.getElementById) document.getElementById('login-user').focus();</script>
+
+                <div class="dbidTip">(e.g. my_team.Marry)</div>
+                </td></tr>
+                <tr><th><label for="login-password">Password</label></th></tr>
+                <tr><td><input id="login-password" type="password"></td></tr>
+                <tr><th><label for="login-server">OpenResty Server</label></th></tr>
+                <tr>
+                    <td><input id="login-server" type="text" value="api.openresty.org">
+                    <div class="dbidTip">(e.g. foo.bar.com:8080)</div>
+                    </td>
+                </tr>
+            </table>
+
+            <p class="yreglgsb">
+                <input type="submit" id="login-button" value="Login">
+            </p>
+
+            <div class="clear"> &nbsp; &nbsp;</div>
+            <div class="yreglgsu">
+                <a id="register-link" href="javascript:void(0);">
+                Register an account
+                </a>
+            </div>
+
+            </form>
+            </fieldset>
+
+    </div>
+    <span class="cb"><span class="cl"></span></span>
+    </div>
+
+
+        </div>
+
+
+        </div>
+    <div id="yregtxt">
+
+<!-- begin left side content -->
+<div id="yregptxt">
+<h2>Enjoy all the benefits of OpenResty.</h2>
+    <ul class="list">
+        <li><strong>Create applications</strong> using relational models, views, actions, and feeds.</li>
+        <li><strong>Manage user access</strong> with roles and ACL rules.</li>
+        <li><strong>Read and write your database</strong> from anywhere on the Internet and any programming languages supporting HTTP access.</li>
+        <li><strong>Access your own instance</strong> of OpenResty server setup on your own machines (even a single PC).</li>
+    </ul>
+</div>
+<div id="yregpmtxt">
+    <h3>OpenResty is a</h3>
+    <div>
+    <ul id="def-list">
+        <li>REST wrapper for relational databases.</li>
+        <li>web runtime for 100% JavaScript web sites and other RIAs.</li>
+        <li>"meta web site" supporting other sites via web services.</li>
+        <li>handy personal or company database which can be accessed from anywhere on the web.</li>
+    </ul>
+    </div>
+    <p>OpenResty is <a href="http://search.cpan.org/dist/OpenResty">opensourced on CPAN</a> under a permissive <a href="http://opensource.org/licenses/artistic-license-2.0.php">Artistic 2 License</a>.</p>
+    </div>
+
+</div>
+</div>
+    [% PROCESS footer.tt %]
+</div>
+
+    </body>
+</html>
+

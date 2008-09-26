@@ -1,0 +1,185 @@
+/*
+table {
+    background: #eef;
+    padding: 1em;
+}
+
+td {
+    padding: 5;
+}
+
+#main {
+    padding-top: 10em;
+}
+    */
+
+
+
+/* from Yahoo! login */
+
+@import url(https://a248.e.akamai.net/sec.yimg.com/lib/reg/css/yregbase_sec_200704191234.css);
+.ct{background:transparent url(https://a248.e.akamai.net/sec.yimg.com/i/reg/cr_gg_ne.gif) no-repeat top right;top:-1px}
+.ct .cl{background:transparent url(https://a248.e.akamai.net/sec.yimg.com/i/reg/cr_gg_nw.gif) no-repeat top left}
+.cb{background:transparent url(https://a248.e.akamai.net/sec.yimg.com/i/reg/cr_gg_se.gif) no-repeat bottom right;bottom:-1px}
+.cb .cl{background:transparent url(https://login.yahoo.com/i/reg/cr_gg_sw.gif) no-repeat bottom left}
+.clear{clear:both}
+#yreglg select, #yreglg input, #yreglg p, #yreglgtb td, #yreglgtb th{font-size:93%}
+div.yregdsilu h2.yregdnt, div.yregdsilu p.yregsueasy{width:110px}
+/*popup template css */
+#yregtpopup #yregtxt {width:260px;margin:0 0 10px} /* popup template */
+#yregtpopup #yregwp, #yregtpopup #yregmst{width:525px}
+#yregtpopup #yregmst{margin-bottom:5px}
+#yregtpopup #yreglg{margin-bottom:0}
+#yregtpopup #yregft{padding-top:5px}
+
+#yregtgen #yregtxt h2, #yregtpopup #yregtxt h2, #yregpmtxt h3{font:bold 152%/152% arial;color:#333;margin:0}
+#yregtgen #yregtxt p.yregpti, #yregtpopup #yregtxt p.yregpti {color:#666;margin:0 0 2px;font:bold 100%/100% arial}
+#yregtgen #yregtxt, #yregtpopup #yregtxt{margin-bottom:20px}
+#yregtgen #yregtxt #yreghtxt h3, #yregtpopup #yregtxt #yreghtxt h3{margin:0;font:bold 107%/114% arial;color:#8C57A1}
+#yregtgen #yregtxt li h3, #yregtpopup #yregtxt li h3{font:bold 114%/122% arial}
+#yregtgen #yregtxt p, #yregtpopup #yregtxt p{margin:0 0 0.8em;line-height:129%}
+#yregtgen #yregtxt .yregbpt li, #yregtpopup #yregtxt .yregbpt li{margin:0 0 10px 4px;padding:0 0 10px 22px;background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/purple_arrow.gif) no-repeat 1px 4px}
+
+#yregtgen.yregab #yregtxt{width:auto;}
+#yregtgen.yregab #yreghtxt{margin-right:60px;}
+#yregtpopup.yregab #yregtxt{width:180px}
+#yregtgen #yregtxt #yreghtxt h2, #yregtpopup #yregtxt #yreghtxt h2{color:#7A067F}
+.yregbx{z-index:3;margin-right:0!important}
+.flicker h3 span {color:#ff0084;font-weight:bold}
+.flicker h3 a {text-decoration:underline;}
+
+/* persistency message right above "sign in" bottom */
+em.nwred a {font-style: normal; font-size: 85%; vertical-align:5px;}
+.kmsibold {font-weight:bold; font-size: 114%;}
+input#persistent {margin-bottom: -0em;}
+.subperstxt {line-height:1.75em;}
+.subperstxt2 {margin: 0 0 0 2em; display:block;}
+/* #yregft p.yregfb { font-size:120%; padding-bottom: 5px; padding-up: 5px} */
+
+.yreglgsb{margin-top:0}
+
+#yregwp #yregct #yreglg .yregbxi #yreglgmd {margin-top:1.75em}
+body#yregtgen fieldset {margin-bottom:2.5em}
+#yreglgtb tr {width:17.92em}
+/* p#sigcopys {text-align: left; font-size: 85%; float: right; padding: .4em; margin: .6em .4em 1em 0; border-bottom: 1px dotted #9D9C9D; border-top: 1px dotted #9D9C9D;}
+ * */
+p#sigcopys {text-align: left; font-size: 85%; padding: .4em; margin: .6em .0em 1em 0; border-bottom: 1px dotted #9D9C9D; border-top: 1px dotted #9D9C9D;}
+#sigcopys label{display:block; margin:-1.5em 0 0 2em;}
+
+
+#yregtgen #yregct {margin-right: 0px;}
+#yregtgen #yregtxt { margin-left: 5px; margin-right: 245px }
+
+/*anti phish badge */
+.top {position:relative}
+#antiphish{position:absolute;right:5px;top:5px;}
+#antiphish.dogear{right:0px;top:0px;}
+#antiphish a {font-size:92%;}
+img.picture {border:2px solid}
+
+/* badge backgrounds */
+.badge{background-color:#f9f9f9; background-repeat:no-repeat; background-position:top right;}
+.badge #yreglgtb {margin-top:18px;} /* increased badge size */
+
+
+/* popup code... */
+#security {display:none;position:absolute;top:-15px;left:-85px;z-index:1000;background-color:#a5a5a5;}
+#security.noimage {left:-76px;top:-10px}
+#securityi{position:relative;z-index:1;right:1px;bottom:1px;padding:11px;width:219px;background-color:#fff;border:1px solid #636363;}
+#knob{position:absolute;top:30px;right:-10px;width:10px;height:18px;background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/sideknob.png) no-repeat top left}
+.noimage #knob{top:22px}
+#security p, #security ul li{font:77%/107% verdana;}
+#security p a {text-decoration:underline;}
+#security p{padding-bottom:5px;}
+#security ul{margin:5px 0 0;padding:0 5px 0 0;text-align:right;list-style:none;}
+#security ul li{margin:0;padding:0 0 2px;}
+
+/* help text updates... */
+#yregtgen #yregtxt .yregbpt li ul{margin:10px 0 0;padding:0 0 0 15px;}
+#yregtgen #yregtxt .yregbpt li ul li{background:none;list-style:disc;margin:0 0 5px 0;padding:0;}
+#yreghtxt ul{margin-left:0}
+#yreghtxt ul.inlineHeaders li h3{display:inline;}
+/* remove top margin on li ul */
+.addressbar {display:block;margin:1em 0 1em 0}
+.mono{font-family: courier new, courier, monospace;color:#000;font-weight:bold}
+
+
+#rcta {width:99%; border:1px solid #898989; margin-top:10px; background-image:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/gradient.png); background-repeat:repeat-x; background-color:#fde37c}
+.ct {background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/upper-right.gif) no-repeat scroll right top; top:-1px}
+.ct .cl {background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/upper-left.gif) no-repeat scroll left top;}
+#rcta .key {width:40px; height:40px; border:1px solid #666666; background-image:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/key.png); background-repeat: no-repeat; float:left; margin-top:1px}
+#rcta .txt {margin-left:48px}
+.cb {background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/lower-right.gif) no-repeat scroll right bottom; bottom:-1px}
+.cb .cl {background:url(https://a248.e.akamai.net/sec.yimg.com/i/reg/lower-left.gif) no-repeat scroll left bottom;}
+#rcta .ctact {margin:4px 10px;min-height:44px}
+#rcta .txt .qs {font:normal bold 92% arial, Helvetica, sans-serif; color:#000; text-decoration:none}
+#rcta .txt .sl {font:normal normal 100% arial, Helvetica, sans-serif; color:#000; text-decoration:none}
+#rcta .txt .why {font:normal normal 85% arial, Helvetica, sans-serif;}
+#rcta .txt .sltxt {line-height:0.9em}
+.sltxt a {line-height:0.5em; font-size:85%}
+.sltxt .why a{font-size:100%}
+.yregertxt { margin-top: 25px }
+.yreglgsut { margin-top: 15px }
+
+#yreglgtb, #yreglgtb th {text-align: left; width: 100%;}
+#yreglgtb td { width:179px;  text-align: left; padding: 0 0 16px 0}
+#yreglgtb td input{ width:179px  } 
+.dbidTip {padding: 3px 0 0 0;  font-size:85%}  
+
+#yregtgen #yregtxt p.yregpti, #yregtpopup #yregtxt p.yregpti {login?.d...&.intl=us (line 39)
+    -x-system-font:none;
+    color:#666666;
+    font-family:arial;
+    font-size:100%;
+    font-size-adjust:none;
+    font-stretch:normal;
+    font-style:normal;
+    font-variant:normal;
+    font-weight:bold;
+    line-height:100%;
+    margin:0 0 2px;
+}
+
+.page-title {
+    text-align: left;
+    font-size: 14pt;
+    color: #c00;
+    padding-left: 12px;
+    font-weight: bold;
+}
+
+#register-link, #login-button {
+    float: right;
+    margin-right: 2em
+    font-size: 14pt;
+    padding: 2px;
+}
+
+#yreglg p.yreglgsb input {
+    font-size:107%;
+}
+
+div#wait-message {
+    color: red !important;
+    background: white !important;
+    font-size: 18px !important;
+    float: right;
+    position: fixed;
+    top: 2px;
+    right: 200px;
+    padding: 4px;
+    display: block;
+}
+
+ul#def-list li {
+    list-style-image: none !important;
+    list-style-type:square !important;
+    list-style-position: inside !important;
+}
+
+ul#def-list {
+    padding-left: 20px !important;
+    display:block;
+    list-style-type:square !important;
+}
+

@@ -1,0 +1,46 @@
+[%- IF ! pack_js;
+        js_files = [
+            'openresty.js',
+            'vars.js',
+            'jquery.js',
+            'jquery.cookie.pack.js',
+            'dojo.openresty.js',
+            'wymeditor/jquery.wymeditor.pack.js',
+            'blogadmin.js',
+            'blogadmin-jemplate.js',
+        ];
+    ELSE;
+        js_files = [
+            'jquery-min.js',
+            'login-min.js'
+        ];
+    END;
+-%]
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Blog Admin</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" media="screen" href="wymeditor/skins/default/screen.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="blogadmin.css" />
+
+[%- FOR file IN js_files %]
+<script type="text/javascript" src="[% file %]"></script>
+[%- END -%]
+
+</head>
+
+<body>
+    <div id="wait-message">
+        <img src="loading.gif" alt=""/>
+        &nbsp; <b>Loading...</b>&nbsp;
+    </div>
+
+    <div id="main">
+    </div>
+
+</body>
+
+</html>
+
