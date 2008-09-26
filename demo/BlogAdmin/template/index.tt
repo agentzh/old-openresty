@@ -37,6 +37,9 @@
         &nbsp; <b>Loading...</b>&nbsp;
     </div>
 
+    <p id="greeting"><p/>
+    <p><a id="logout-link" href="login.html">Logout</a></p>
+    <hr/>
     <div id="main">
     </div>
 
