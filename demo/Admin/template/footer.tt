@@ -1,18 +1,13 @@
 <div id="ft">
 <!--{{start:copy -->
 <br>
-<p style="float: right;">
-    <a href="http://validator.w3.org/check?uri=referer"><img
-        src="http://www.w3.org/Icons/valid-html401-blue"
-        alt="Valid HTML 4.01 Transitional" height="31" width="88"></a>
-</p>
-
 <p style="text-align: left; padding-left: 1em;">
 This site can be downloaded from <a href="site-binary.tar.gz">here</a> (.tar.gz) and <a href="http://svn.openfoundry.org/openapi/trunk/demo/Admin/">its Subversion repository</a> has anonymous access to all.
 </p>
 <hr>
 <center>
-<p style="padding-left: 6em">Powered by <a href="http://search.cpan.org/dist/OpenResty">OpenResty</a> and your web browser.</p>
+<p>Powered by <a href="http://search.cpan.org/dist/OpenResty">OpenResty</a> and your web browser.</p>
+<br>
 <div id="copyright">
 </div>
 <p style="text-align: center">Copyright © 2008 Yahoo! China <a target="_blank" href="http://www.eeeeworks.org">EEEE Works</a>, Alibaba Inc.</p>
