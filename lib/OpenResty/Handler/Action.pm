@@ -32,51 +32,16 @@ sub POST_action_exec {
         return $self->$meth($openresty);
     }
 
-    # Process user-defined actions
-    _IDENT($action) or die "Invalid action name.\n";
-
-    my $sql = [:sql|
-        select id, compiled
-        from _actions
-        where name = $action |];
-    my $res = $openresty->select( $sql, { use_hash => 1 } );
-    if ( !$res || @$res == 0 ) {
-        die "Action \"$action\" not found.\n";
-    }
-
-    my $act_id   = $res->[0]{id};
-    my $compiled = $res->[0]{compiled};
-    eval { $compiled = $json->decode($compiled); };
-    if ($@) {
-        die "Failed to load compiled fragments for action \"$action\".\n";
-    }
-
     # Get parameters from POST body content
-    my $user_args = $openresty->{_req_data};
+    my $args = $openresty->{_req_data};
     die "Invalid POST body content, must be a JSON object"
-        unless ref $user_args eq 'HASH';
-
-    $sql = [:sql|
-        select name, type, default_value
-        from _action_params
-        where action_id = $act_id and used = true |];
-    my $params = $openresty->select( $sql, { use_hash => 1 } );
+        unless _HASH($args);
+    my $url_params = $openresty->{_url_params};
+    $args = Hash::Merge::merge($args, $url_params);
 
     # Complement parameter values from URL
-    my %args = ();
-    for my $param (@$params) {
-        my $val = $user_args->{ $param->{name} }
-            || $self->get_param( $openresty, $bits, $param->{name} );
-
-        if ( !defined $val && !defined $param->{default_value} ) {
-            # Some parameter were not given
-            die "Parameter \"$param->{name}\" were not given, and no default value was set.\n";
-        }
-        $args{ $param->{name} } = $val || $param->{default_value};
-    }
-
     # Execute action
-    return $self->execute_cmds( $openresty, $compiled, \%args );
+    return $self->exec_user_action( $openresty, $action, $args );
 }
 
 # Remove all existing actions for current user (not including builtin actions)
@@ -84,10 +49,10 @@ sub DELETE_action_list {
     my ( $self, $openresty, $bits ) = @_;
 
     # Try to remove all action parameters
-    my $rv = $openresty->do("delete from _action_params; delete from _actions");
+    $openresty->do("delete from _action_params; delete from _actions");
     # All actions except builtin ones were removed successfully
     return {
-        success => $rv >= 0 ? 1 : 0,
+        success => 1,
         warning => 'Builtin actions were skipped.',
     };
 }
@@ -98,18 +63,16 @@ sub GET_action_list {
     my $sql = [:sql|
         select name, description
         from _actions |];
-    my $act_lst = $openresty->select( $sql, { use_hash => 1 } );
+    my $actions = $openresty->select( $sql, { use_hash => 1 } );
 
     # Prepend builtin actions
-    unshift( @$act_lst,
+    unshift @$actions,
         { name => 'RunView',   description => 'View interpreter' },
-        { name => 'RunAction', description => 'Action interpreter' },
-    );
+        { name => 'RunAction', description => 'Action interpreter' };
 
     # Add src property for each action entry
-    map { $_->{src} = "/=/action/$_->{name}" } @$act_lst;
-
-    $act_lst;
+    map { $_->{src} = "/=/action/$_->{name}" } @$actions;
+    $actions;
 }
 
 # List the details of action with the given name, if the given action name is '~' then
@@ -132,7 +95,7 @@ sub GET_action {
         where name = $act_name |];
     $res = $openresty->select( $sql, { use_hash => 1 } );
     if ( !$res || @$res == 0 ) {
-        die "Action \"$act_name\" not found.";
+        die "Action \"$act_name\" not found.\n";
     }
 
     # Retrieve the action parameter information
@@ -145,76 +108,25 @@ sub GET_action {
     $res = $openresty->select( $sql, { use_hash => 1 } );
 
     # Rename the field "default_value" to "default" and remove field "id"
-    map {
-        $_->{default} = $_->{default_value};
-        delete $_->{default_value};
-    } @$res;
     $act_info->{parameters} = $res;
     delete $act_info->{id};
 
     $act_info;
 }
 
-# Get the parameters given at the 2/3 bit or query string
-sub get_param {
-    my ( $self, $openresty, $bits, $param_name ) = @_;
-    my %var_map = ();
-    my $param1  = $bits->[2];
-    my $value1  = $bits->[3];
-    if ( defined($param1) && $param1 ne '~' && $param1 eq $param_name ) {
-        return $value1;
-    }
-    return $openresty->{_cgi}->url_param($param_name);
-}
-
 # Execute the given action, possibly with parameters
 sub GET_action_exec {
     my ( $self, $openresty, $bits ) = @_;
-    my $act_name = $bits->[1];
-
-    if ( $act_name eq '~' ) {
-        die "Action name must be specified before executing.";
+    my $args = $openresty->{_url_params};
+    if ($bits->[2] ne '~' && $bits->[3] ne '~') {
+        $args->{$bits->[2]} = $bits->[3];
     }
-
-    my $sql = [:sql|
-        select id, compiled
-        from _actions
-        where name = $act_name |];
-    my $res = $openresty->select( $sql, { use_hash => 1 } );
-    if ( !$res || @$res == 0 ) {
-        die "Action \"$act_name\" not found.";
-    }
-
-    my $act_id   = $res->[0]{id};
-    my $compiled = $res->[0]{compiled};
-    eval { $compiled = $json->decode($compiled); };
-    if ($@) {
-        die "Failed to load compiled fragments for action \"$act_name\"";
-    }
-
-    $sql = [:sql|
-        select name, type, default_value
-        from _action_params
-        where action_id = $act_id and used = true |];
-    $res = $openresty->select( $sql, { use_hash => 1 } );
-
-    my %var_map = ();
-    for my $row (@$res) {
-        my $val = $self->get_param( $openresty, $bits, $row->{name} );
-        unless ( defined($val) || defined( $row->{default_value} ) ) {
-
-            # Some parameter were not given
-            die
-                "Parameter \"$row->{name}\" were not given, and no default value was set";
-        }
-        $var_map{ $row->{name} } = $val || $row->{default_value};
-    }
-
-    return $self->execute_cmds( $openresty, $compiled, \%var_map );
+    #### $args
+    return $self->exec_user_action( $openresty, $bits->[1], $args );
 
 }
 
-sub join_with_params {
+sub join_frags_with_args {
     my ( $frags, $var_map ) = @_;
     my $result;
     my $ref = ref($frags);
@@ -272,19 +184,49 @@ sub join_with_params {
     return $result;
 }
 
-sub execute_cmds {
-    my ( $self, $openresty, $cmds, $var_map ) = @_;
-    my @outputs;
+sub exec_user_action {
+    my ( $self, $openresty, $action, $args ) = @_;
     my $i = 0;
 
-    for my $cmd (@$cmds) {
+    if ( $action eq '~' ) {
+        die "Action name must be specified before executing.";
+    }
+
+
+    my $sql = [:sql|
+        select compiled
+        from _actions
+        where name = $action |];
+    my $res = $openresty->select( $sql );
+    if ( !$res || @$res == 0 ) {
+        die "Action \"$action\" not found.\n";
+    }
+
+    my $compiled = $res->[0][0];
+    eval { $compiled = $OpenResty::JsonXs->decode($compiled); };
+    if ($@) {
+        die "Failed to load compiled fragments for action \"$action\".\n";
+    }
+    my ($params, $canon_cmds) = @$compiled;
+
+    while (my ($name, $param) = each %$params) {
+        my $val = $args->{ $name };
+        if ( !defined $val && !defined $param->{default_value} ) {
+            # Some parameter were not given
+            die "Parameter \"$name\" were not given, and no default value was set.\n";
+        }
+        $args->{ $name } = $val || $param->{default_value};
+    }
+
+    my @outputs;
+    for my $cmd (@$canon_cmds) {
         $i++;
         if ( !ref( $cmd->[0] ) ) {    # being an HTTP method
             my ( $http_meth, $url, $content ) = @$cmd;
 
             # Proceeds variable value substitutions
-            $url     = join_with_params( $url, $var_map );
-            $content = join_with_params( $url, $var_map );
+            $url     = join_frags_with_args( $url, $args );
+            $content = join_frags_with_args( $content, $args );
 
   # DO NOT permit cross-domain HTTP method!!!
   #            if ($url !~ m{^/=/}) {
@@ -304,7 +246,7 @@ sub execute_cmds {
             push @outputs, $res;
 
         } else {    # being a SQL method, $cmd->[0] is the fragments list
-            my $pg_sql = join_with_params( $cmd->[0], $var_map );
+            my $pg_sql = join_frags_with_args( $cmd->[0], $args );
 
             if ( substr( $pg_sql, 0, 6 ) eq 'select' ) {
                 my $res = $openresty->select( $pg_sql,
@@ -326,24 +268,20 @@ sub execute_cmds {
 # all existing actions for current user will be deleted by DELETE_action_list.
 sub DELETE_action {
     my ( $self, $openresty, $bits ) = @_;
-    my $act_name = $bits->[1];
+    my $name = $bits->[1];
 
 # If the given action name is wildcard ('~'), then forward the request to DELETE_action_list
-    if ( $act_name eq '~' ) {
+    if ( $name eq '~' ) {
         return $self->DELETE_action_list( $openresty, $bits );
     }
 
-    my ( $sql, $res );
-    $sql = [:sql|
-        select id
-        from _actions
-        where name = $act_name |];
-    $res = $openresty->select( $sql, { use_hash => 1 } );
-
     # Delete parameters used by the action
+    #die "HERE!";
     $openresty->do(
-        "delete from _action_params where action_id=" . Q( $res->{id} ) );
-    $openresty->do( "delete from _actions where id=" . Q( $res->{id} ) );
+        [:sql|
+            delete from _actions
+            where name = $name cascade; |]
+    );
 
     return { success => 1 };
 }
@@ -380,11 +318,11 @@ sub POST_action {
         from _actions
         where name = $act_name |];
     my $act_list = $openresty->select( $sql, { use_hash => 1 } );
-    die "Action \"$act_name\" already exists."
+    die "Action \"$act_name\" already exists.\n"
         if (@$act_list);
 
     # Only array reference type allowed for parameter list
-    die "Invalid \"parameters\" list: $act_params"
+    die "Invalid \"parameters\" list: $act_params\n"
         unless ( ref($act_params) eq 'ARRAY' );
 
 # Each action parameter is described by a hash containing the following keys:
@@ -392,23 +330,18 @@ sub POST_action {
 #     type     - Param type, mandatory. Must be one of 'literal', 'symbol' or 'keyword'
 #     label     - Param label/description, optional. Default to '';
 #     default - Param default value, optional. Default to null.
-    my $act_param_hash = {
+    my $params = {
         map {
-            die "Missing parameter name."
+            die "Missing parameter name.\n"
                 unless ( defined( $_->{name} ) );
-            die "Missing \"type\" for parameter \"$_->{name}\"."
+            die "Missing \"type\" for parameter \"$_->{name}\".\n"
                 unless ( defined( $_->{type} ) );
             die "Invalid \"type\" for parameter \"$_->{name}\": "
-                . $json->encode( $_->{type} )
+                . $json->encode( $_->{type} ) . "\n"
                 unless ( !ref( $_->{type} )
                 && $_->{type} =~ /^(?:symbol|literal|keyword)$/i );
 
-            $_->{name} => {
-                type    => $_->{type},
-                label   => $_->{label},
-                default => $_->{default},
-                }
-            } @$act_params
+            $_->{name} => $_ } @$act_params
     };
 
     # Instance a restyscript object to compile action
@@ -424,17 +357,17 @@ sub POST_action {
             "Too many commands in the action (should be no more than $ACTION_CMD_COUNT_LIMIT)\n";
     }
 
-    my ( $var_map, $canon_cmds )
-        = $self->commands_scanner( $openresty, $cmds );
-    $self->validate_action_parameters( $openresty, $var_map,
-        $act_param_hash );
+    # $vars is the vars actually used in the action definition
+    my ( $vars, $canon_cmds )
+        = $self->compile_frags( $openresty, $cmds );
+    $self->process_params_with_vars( $openresty, $vars, $params );
 
     # Verify existences for models used in the action definition
     my @models = @{ $stats->{modelList} };
     $self->validate_model_names( $openresty, \@models );
 
     # Insert action definition into backend
-    my $compiled = $json->encode($canon_cmds);
+    my $compiled = $OpenResty::JsonXs->encode([ $params, $canon_cmds ]);
     $sql = [:sql|
         insert into _actions (name, definition, description, compiled)
         values($act_name, $act_def, $act_desc, $compiled) |];
@@ -444,52 +377,49 @@ sub POST_action {
     my $act_id = $openresty->last_insert_id('_actions');
 
     # Insert action parameters into backend
-    for my $param_name ( keys(%$act_param_hash) ) {
-        my $param = $act_param_hash->{$param_name};
+    $sql = '';
+    for my $name ( keys(%$params) ) {
+        my $param = $params->{$name};
         my $type = $param->{type};
         my $label = $param->{label};
-        my $default = $param->{default};
+        my $default = $param->{default_value};
         my $used = $param->{used} ? 'true' : 'false';
-        my $sql = [:sql|
+        $sql .= [:sql|
             insert into _action_params (name, type, label, default_value, used, action_id)
-            values ($param_name, $type, $label, $default, $used, $act_id) |];
-        $rv = $openresty->do($sql);
-        die
-            "Failed to insert action parameter \"$param_name\" into backend DB"
-            unless ( defined($rv) );
+            values ($name, $type, $label, $default, $kw:used, $act_id) |];
     }
-
+    $rv = $openresty->do($sql);
+    #warn $rv;
     return { success => 1 };
 }
 
 # Verify the types for variables used in action definition against those in parameter list
-sub validate_action_parameters {
-    my ( $self, $openresty, $cmd_var_hash, $param_var_hash ) = @_;
+sub process_params_with_vars {
+    my ( $self, $openresty, $vars, $params ) = @_;
 
-    for my $var_name ( keys(%$cmd_var_hash) ) {
-        die
-            "Parameter \"$var_name\" used in the action definition is not defined in the \"parameters\" list."
-            unless ( exists( $param_var_hash->{$var_name} ) );
-        die
-            "Invalid \"type\" for parameter \"$var_name\". (It's used as a $cmd_var_hash->{$var_name} in the action definition.)"
-            unless ( $cmd_var_hash->{$var_name} eq 'unknown'
-            || $cmd_var_hash->{$var_name} eq
-            $param_var_hash->{$var_name}{type} );
+    for my $name ( keys(%$vars) ) {
+        if (!exists $params->{$name}) {
+            die "Parameter \"$name\" used in the action definition is not defined in the \"parameters\" list.\n"
+        }
+        if ($vars->{$name} ne 'unknown' and
+                $vars->{$name} ne $params->{$name}{type}) {
+            die "Invalid \"type\" for parameter \"$name\". (It's used as a $vars->{$name} in the action definition.)\n";
+         }
 
         # TODO: perform type checks
-        $param_var_hash->{$var_name}{used} = 1;
+        $params->{$name}{used} = 1;
     }
 }
 
 # Walking through the compiled action definition, collect variables and their inferenced types
-sub commands_scanner {
+sub compile_frags {
     my ( $self, $openresty, $cmds ) = @_;
 
     my %vars;
-    my @final_cmds;
+    my @canon_cmds;
     for my $cmd (@$cmds) {
         die "Invalid command: ", Dumper($cmd), "\n" unless ref $cmd;
-        if ( @$cmd == 1 and ref( $cmd->[0] ) ) {    # being a SQL command
+        if ( @$cmd == 1 and ref $cmd->[0] ) {    # being a SQL command
             my $seq = $cmd->[0];
 
             # Check for variable uses:
@@ -499,11 +429,10 @@ sub commands_scanner {
 
 # Make sure inferenced variable type is consistent
 # FIXME: 'unknown' type should be overwritten by concrete types (eg. 'symbol')
-                    if ( exists( $vars{$var_name} )
+                    if ( exists $vars{$var_name}
                         && $vars{$var_name} ne $var_type )
                     {
-                        die
-                            "Type inference conflict for variable \"$var_name\".";
+                        die "Type inference conflict for variable \"$var_name\".";
                     }
 
                     # Collect variable and its type
@@ -512,7 +441,7 @@ sub commands_scanner {
             }
             #### SQL: $cmd->[0]
       # We preserve a nested array ref here to distinguish SQL and HTTP method
-            push @final_cmds, $cmd;
+            push @canon_cmds, $cmd;
         } else {    # being an HTTP command
             my ( $http_meth, $url, $content ) = @$cmd;
             if ( $http_meth ne 'POST' and $http_meth ne 'PUT' and $content ) {
@@ -522,11 +451,11 @@ sub commands_scanner {
 
             # Check for variable uses in $url:
             for my $fr (@$url) {
-                if ( ref($fr) ) {    # being a variable
+                if ( ref $fr ) {    # being a variable
                     my ( $vname, $vtype ) = @$fr;
 
      # Variable type inferenced in SQL action is preferred than in HTTP action
-                    unless ( exists( $vars{$vname} ) ) {
+                    unless ( exists $vars{$vname} ) {
                         $vars{$vname} = $vtype;
                     }
                 }
@@ -541,7 +470,7 @@ sub commands_scanner {
                         my ( $var_name, $var_type ) = @$frag;
 
      # Variable type inferenced in SQL action is preferred than in HTTP action
-                        unless ( exists( $vars{$var_name} ) ) {
+                        unless ( exists $vars{$var_name} ) {
                             $vars{$var_name} = $var_type;
                         }
                     }
@@ -549,11 +478,11 @@ sub commands_scanner {
 
                 push @bits, $content;
             }
-            push @final_cmds, \@bits;
+            push @canon_cmds, \@bits;
         }
     }
 
-    return ( \%vars, \@final_cmds );
+    return ( \%vars, \@canon_cmds );
 }
 
 sub exec_RunView {

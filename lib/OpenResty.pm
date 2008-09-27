@@ -129,7 +129,8 @@ sub init {
     }
 
     # cache the results of CGI::Simple::url_param
-    $self->{_url_params} = {};
+    #$self->{_url_params} = $self->{_url{};
+    my (%url_params, %builtin_params);
     my $cgi2 = bless {}, 'CGI::Simple';
     #die $ENV{'QUERY_STRING'};
     $cgi2->_parse_params( $ENV{'QUERY_STRING'} );
@@ -138,8 +139,15 @@ sub init {
     #warn Dumper($cgi2);
     for my $param ($cgi2->param) {
         #die $param;
-        $self->{_url_params}->{$param} = $cgi2->param($param);
+        if ($param =~ /^[A-Za-z]\w*$/) {
+            $url_params{$param} = $cgi2->param($param);
+        } elsif ($param =~ /^_\w+/) {
+            $builtin_params{$param} = $cgi2->param($param);
+        }
     }
+    $self->{_url_params} = \%url_params;
+    $self->{_builtin_params} = \%builtin_params;
+
     #### params: $self->{_url_params}
     #### use_cookie: $self->builtin_param('_use_cookie')
     #### session: $self->builtin_param('_session')
@@ -306,6 +314,7 @@ sub fatal {
 
 sub error {
     my ($self, $s) = @_;
+=begin bad
     my $lowlevel = ($s =~ s/^DBD::Pg::(?:db|st) \w+ failed:\s*//);
     #warn $s, "\n";
     if ($s =~ s{^\s*ERROR:\s+PL/Proxy function \w+.\w+\(\d+\): remote error:\s*}{}) {
@@ -320,6 +329,7 @@ sub error {
         $s =~ s{ at \S+ line \d+, <\w+> line \d+\.?$}{}g;
     }
     #$s =~ s/^DBD::Pg::db do failed:\s.*?ERROR:\s+//;
+=cut
     $self->{_error} .= $s . "\n";
 
 }
@@ -623,7 +633,13 @@ sub url_param {
     }
 }
 
-*builtin_param = \&url_param;
+sub builtin_param {
+    if (@_ > 1) {
+        $_[0]->{_builtin_params}->{$_[1]};
+    } else {
+        keys %{ $_[0]->{_builtin_params} };
+    }
+}
 
 1;
 __END__
