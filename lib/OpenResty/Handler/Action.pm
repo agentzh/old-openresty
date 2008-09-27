@@ -11,6 +11,8 @@ use OpenResty::Limits;
 use JSON::XS;
 use Data::Dumper qw(Dumper);
 use OpenResty::QuasiQuote::SQL;
+use OpenResty::QuasiQuote::Validator;
+use List::Util qw(first);
 
 use base 'OpenResty::Handler::Base';
 
@@ -47,14 +49,33 @@ sub POST_action_exec {
 # Remove all existing actions for current user (not including builtin actions)
 sub DELETE_action_list {
     my ( $self, $openresty, $bits ) = @_;
+    my $user = $openresty->current_user;
+    my $res = $self->get_actions($openresty);
+    if ($res && @$res) {
+        my @actions = map { @$_ } @$res;
 
-    # Try to remove all action parameters
-    $openresty->do("delete from _action_params; delete from _actions");
-    # All actions except builtin ones were removed successfully
-    return {
-        success => 1,
-        warning => 'Builtin actions were skipped.',
-    };
+        for my $action (@actions) {
+            $OpenResty::Cache->remove_has_action($user, $action);
+        }
+
+        $openresty->do('truncate _actions cascade;');
+    }
+    return { success => 1, warning => 'Builtin actions were skipped.' };
+}
+
+sub drop_action {
+    my ($self, $openresty, $action) = @_;
+    my $user = $openresty->current_user;
+    $OpenResty::Cache->remove_has_action($user, $action);
+    return [:sql|
+        delete from _actions where name = $action cascade;
+    |];
+}
+
+sub get_actions {
+    my ($self, $openresty) = @_;
+    my $sql = [:sql| select name from _actions |];
+    return $openresty->select($sql);
 }
 
 # List all existing actions for current user (including builtin actions)
@@ -200,7 +221,7 @@ sub has_action {
     |];
     my $ret;
     eval { $ret = $openresty->select($sql)->[0][0]; };
-    if ($ret) { $Cache->set_has_action($user, $action, $ret) }
+    if ($ret) { $OpenResty::Cache->set_has_action($user, $action, $ret) }
     return $ret;
 }
 
@@ -212,30 +233,27 @@ sub exec_user_action {
         die "Action name must be specified before executing.";
     }
 
-    my $compiled = $self->has_action($action);
-    my $sql = [:sql|
-        select compiled
-        from _actions
-        where name = $action |];
-    my $res = $openresty->select( $sql );
-    if ( !$res || @$res == 0 ) {
+    my $compiled = $self->has_action($openresty, $action);
+    if (!$compiled) {
         die "Action \"$action\" not found.\n";
     }
-
-    my $compiled = $res->[0][0];
     eval { $compiled = $OpenResty::JsonXs->decode($compiled); };
     if ($@) {
-        die "Failed to load compiled fragments for action \"$action\".\n";
+        die "Failed to load compiled fragments for action \"$action\"\n";
     }
     my ($params, $canon_cmds) = @$compiled;
 
+    my @missed_args;
     while (my ($name, $param) = each %$params) {
         my $val = $args->{ $name };
         if ( !defined $val && !defined $param->{default_value} ) {
             # Some parameter were not given
-            die "Parameter \"$name\" were not given, and no default value was set.\n";
+            push @missed_args, $name;
         }
         $args->{ $name } = $val || $param->{default_value};
+    }
+    if (@missed_args) {
+        die "Arguments required: @missed_args\n";
     }
 
     my @outputs;
@@ -288,21 +306,18 @@ sub exec_user_action {
 # all existing actions for current user will be deleted by DELETE_action_list.
 sub DELETE_action {
     my ( $self, $openresty, $bits ) = @_;
-    my $name = $bits->[1];
-
-# If the given action name is wildcard ('~'), then forward the request to DELETE_action_list
-    if ( $name eq '~' ) {
+    my $action = $bits->[1];
+    if ( $action eq '~' ) {
         return $self->DELETE_action_list( $openresty, $bits );
+    }
+    if (!$openresty->has_action($openresty, $action)) {
+        die "Action \"$action\" not found.\n";
     }
 
     # Delete parameters used by the action
     #die "HERE!";
-    $openresty->do(
-        [:sql|
-            delete from _actions
-            where name = $name cascade; |]
-    );
-
+    my $sql = $self->drop_action($openresty, $action);
+    $openresty->do($sql);
     return { success => 1 };
 }
 
@@ -329,17 +344,17 @@ sub POST_action {
         $action = $data->{name};
     }
 
-    if ($name = delete $data->{name} and $name eq $action) {
+    if ($name = delete $data->{name} and $name ne $action) {
         $openresty->warning("name \"$name\" in POST content ignored.");
     }
-    $data->{name} = $model;
+    $data->{name} = $action;
     return $self->new_action($openresty, $data);
 }
 
 sub new_action {
     my ($self, $openresty, $data) = @_;
     my $action_count = $self->action_count($openresty);
-    if ($action_acount >= $ACTION_LIMIT) {
+    if ($action_count >= $ACTION_LIMIT) {
         die "Exceeded action count limit: $ACTION_LIMIT.\n";
     }
 
@@ -348,12 +363,13 @@ sub new_action {
         $data ~~
         {
             name: IDENT :required :to($action),
-            description: STRING :nonempty :required :to($desc),
+            description: STRING :nonempty :to($desc),
             parameters: [
                 {
                     name: IDENT :required,
                     label: STRING :nonempty,
-                    type: STRING :nonempty :required,
+                    type: STRING :nonempty :required
+                        :allowed('keyword', 'literal', 'symbol'),
                     default_value: STRING,
                 }
             ] :to($params),
@@ -365,41 +381,23 @@ sub new_action {
         die "Exceeded model column count limit: $ACTION_LIMIT.\n";
     }
 
-    if ($openresty->has_action($action)) {
-        die "Model \"$action\" already exists.\n";
+    if ($self->has_action($openresty, $action)) {
+        die "Action \"$action\" already exists.\n";
     }
-    # Check if the action has been defined to prevent overwriting
-    die "Action \"$act_name\" already exists.\n"
-        if (@$act_list);
-
-    # Only array reference type allowed for parameter list
-    die "Invalid \"parameters\" list: $act_params\n"
-        unless ( ref($act_params) eq 'ARRAY' );
 
 # Each action parameter is described by a hash containing the following keys:
 #     name     - Param name, mandatory. No duplicate name allowed.
 #     type     - Param type, mandatory. Must be one of 'literal', 'symbol' or 'keyword'
 #     label     - Param label/description, optional. Default to '';
 #     default - Param default value, optional. Default to null.
-    my $params = {
-        map {
-            die "Missing parameter name.\n"
-                unless ( defined( $_->{name} ) );
-            die "Missing \"type\" for parameter \"$_->{name}\".\n"
-                unless ( defined( $_->{type} ) );
-            die "Invalid \"type\" for parameter \"$_->{name}\": "
-                . $json->encode( $_->{type} ) . "\n"
-                unless ( !ref( $_->{type} )
-                && $_->{type} =~ /^(?:symbol|literal|keyword)$/i );
-
-            $_->{name} => $_ } @$act_params
-    };
+    $params = { map { $_->{name} => $_ } @$params };
 
     # Instance a restyscript object to compile action
-    my $view = OpenResty::RestyScript->new( 'action', $act_def );
-    my ( $frags, $stats ) = $view->compile;
-    die 'Failed to invoke RestyScript'
-        if ( !$frags && !$stats );
+    my $restyc = OpenResty::RestyScript->new( 'action', $def );
+    my ( $frags, $stats ) = $restyc->compile;
+    if ( !$frags && !$stats ) {
+        die "Failed to invoke RestyScript.\n"
+    }
 
     # Check if too many commands are given:
     my $cmds = $frags;
@@ -419,13 +417,13 @@ sub new_action {
 
     # Insert action definition into backend
     my $compiled = $OpenResty::JsonXs->encode([ $params, $canon_cmds ]);
-    $sql = [:sql|
+    my $sql = [:sql|
         insert into _actions (name, definition, description, compiled)
-        values($act_name, $act_def, $act_desc, $compiled) |];
+        values($action, $def, $desc, $compiled) |];
     my $rv = $openresty->do($sql);
     die "Failed to insert action into backend DB"
         unless ( defined($rv) );
-    my $act_id = $openresty->last_insert_id('_actions');
+    my $id = $openresty->last_insert_id('_actions');
 
     # Insert action parameters into backend
     $sql = '';
@@ -437,7 +435,7 @@ sub new_action {
         my $used = $param->{used} ? 'true' : 'false';
         $sql .= [:sql|
             insert into _action_params (name, type, label, default_value, used, action_id)
-            values ($name, $type, $label, $default, $kw:used, $act_id) |];
+            values ($name, $type, $label, $default, $kw:used, $id) |];
     }
     $rv = $openresty->do($sql);
     #warn $rv;
@@ -452,7 +450,12 @@ sub process_params_with_vars {
         if (!exists $params->{$name}) {
             die "Parameter \"$name\" used in the action definition is not defined in the \"parameters\" list.\n"
         }
-        if ($vars->{$name} ne 'unknown' and
+
+        if ($vars->{$name} eq 'unknown' &&
+                $params->{$name}{type} eq 'keyword') {
+            die "Parameter \"$name\" is not used as a \"keyword\" in the action definition.\n";
+        }
+        if ($vars->{$name} ne 'unknown' &&
                 $vars->{$name} ne $params->{$name}{type}) {
             die "Invalid \"type\" for parameter \"$name\". (It's used as a $vars->{$name} in the action definition.)\n";
          }
@@ -687,24 +690,176 @@ sub validate_model_names {
 # Modify a existing action property (rise error when the dest action didn't exist)
 sub PUT_action {
     my ( $self, $openresty, $bits ) = @_;
-    my $act_name = $bits->[1];
-    if ( $act_name eq '~' ) {
+    my $name = $bits->[1];
+    if ( $name eq '~' ) {
         die "Action name must be specified before executing.";
     }
 
+    my $data = $openresty->{_req_data};
+    return $self->alter_action($openresty, $name, $data);
+}
+
+sub alter_action {
     # Make sure the given action already existed
-    my $sql = [:sql|
-        select compiled
-        from _actions
-        where name = $act_name |];
-    my $res = $openresty->select( $sql, { use_hash => 1 } );
-    if ( !$res || @$res == 0 ) {
-        die "Action \"$act_name\" not found.";
+    my $self = shift;
+    my $openresty = $_[0];
+    my $action = _IDENT($_[1]) or die "Invalid action name \"$_[1]\".\n";
+    my $data = $_[2];
+    my $user = $openresty->current_user;
+    my $old_compiled = $self->has_action($openresty, $action);
+    if (!$old_compiled) {
+        die "Action \"$action\" not found.\n";
     }
 
-    my $body = $openresty->{_req_data};
-    die "Invalid PUT body content, must be a JSON object"
-        unless ( ref($body) eq 'HASH' );
+    my ($new_action, $desc, $def);
+
+    [:validator|
+        $data ~~
+        {
+            name: IDENT :to($new_action),
+            description: STRING :nonempty :to($desc),
+            definition: STRING :nonempty :to($def),
+        } :required :nonempty
+    |]
+
+    my $sql;
+    if ($new_action) {
+        if ($self->has_action($openresty, $new_action)) {
+            die "Action \"$new_action\" already exists.\n";
+        }
+        $OpenResty::Cache->remove_has_action($user, $action);
+        $sql .= [:sql|
+            update _actions set name=$new_action where name=$action;
+        |];
+    }
+    $new_action ||= $action;
+    if ($desc) {
+        $sql .= [:sql|
+            update _actions
+            set description = $desc
+            where name = $new_action;
+        |];
+    }
+    if ($def) {
+        eval { $old_compiled = $OpenResty::JsonXs->decode($old_compiled) };
+        if ($@) { die "Failed to load old compiled action: $@\n"; }
+        my $params = $old_compiled->[0];
+        my $restyc = OpenResty::RestyScript->new( 'action', $def );
+        my ( $frags, $stats ) = $restyc->compile;
+        if ( !$frags && !$stats ) {
+            die "Failed to invoke RestyScript.\n"
+        }
+
+        # Check if too many commands are given:
+        my $cmds = $frags;
+        if ( @$cmds > $ACTION_CMD_COUNT_LIMIT ) {
+            die
+                "Too many commands in the action (should be no more than $ACTION_CMD_COUNT_LIMIT)\n";
+        }
+
+        # $vars is the vars actually used in the action definition
+        my ( $vars, $canon_cmds )
+            = $self->compile_frags( $openresty, $cmds );
+        #### $params
+        #### $vars
+        $self->process_params_with_vars( $openresty, $vars, $params );
+
+        # Verify existences for models used in the action definition
+        my @models = @{ $stats->{modelList} };
+        $self->validate_model_names( $openresty, \@models );
+
+        # Insert action definition into backend
+        my $compiled = $OpenResty::JsonXs->encode([ $params, $canon_cmds ]);
+
+        $sql .= [:sql|
+            update _actions
+            set compiled = $compiled, definition = $def
+            where name = $new_action;
+        |];
+
+    }
+    #warn "SQL: $sql";
+    $openresty->do($sql);
+    return { success => 1 };
+}
+
+sub POST_action_param {
+    my ($self, $openresty, $bits) = @_;
+    my $action = $bits->[1];
+    #warn "ACTION is $action\n";
+    my $param = $bits->[2];
+    #warn "PARAM is $param\n";
+    my $data = _HASH($openresty->{_req_data}) or
+        die "Value must be a HASH.\n";
+
+    my $compiled = $self->has_action($openresty, $action);
+    if (!$compiled) {
+        die "Action \"$action\" not found.\n";
+    }
+    eval { $compiled = $OpenResty::JsonXs->decode($compiled); };
+    if ($@) { die "Failed to load compiled action: $@\n" }
+    my $params = $compiled->[0];
+    my @param_names = keys %$params;
+
+    if (@param_names >= $ACTION_PARAM_LIMIT) {
+        die "Exceeded model column count limit: $ACTION_PARAM_LIMIT.\n";
+    }
+
+    my $alias;
+    if ($param ne '~') {
+        $alias = $data->{name};
+        $data->{name} = $param || die "Name for the new action parameter required.\n";
+    }
+
+    my ($label, $default, $type);
+
+    [:validator|
+        $data ~~
+            {
+                name: IDENT :required :to($param),
+                label: STRING :nonempty :to($label),
+                type: STRING :nonempty :required
+                    :to($type) :allowed('keyword', 'literal', 'symbol'),
+                default_value: STRING :to($default),
+            } :required :nonempty
+    |]
+
+    my $fst = first { $param eq $_ } @param_names;
+    if (defined $fst) {
+        die "Parameter \"$param\" already exists in action \"$action\".\n";
+    }
+
+    my $user = $openresty->current_user;
+    $OpenResty::Cache->remove_has_action($user, $action);
+
+    $params->{$param} = {
+        name => $param,
+        type => $type,
+        label => $label,
+        default_value => $default,
+    };
+    $compiled = $OpenResty::JsonXs->encode($compiled);
+
+    my $id = $openresty->select(
+        [:sql| select id from _actions where name = $action |]
+    )->[0][0];
+    my $sql = [:sql|
+        insert into _action_params (name, type, label, default_value, used, action_id)
+        values ($param, $type, $label, $default, false, $id);
+        update _actions set compiled = $compiled where name = $action;
+    |];
+    $openresty->do($sql);
+
+    return { success => 1,
+             src => "/=/model/$action/$param",
+             warning => "Parameter name \"$alias\" ignored."
+     } if $alias && $alias ne $param;
+    return { success => 1, src => "/=/model/$action/$param" };
+
+}
+
+sub PUT_action_param {
+}
 
 # TODO: PUT更改action的定义时需要注意：
 # 1. 更改action的name时需要检测是否存在已经与目标name同名的action，若有则失败;
@@ -715,8 +870,6 @@ sub PUT_action {
 # 4. 更改action的parameters时，需要检测新参数列表是否包含了原action definition所需
 # 的变量，若没有完全包含则失败，否则就更新参数变量并根据使用情况修改变量的used
 # 字段。
-    die "Not completed yet.";
-}
 
 1;
 __END__

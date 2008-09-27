@@ -64,7 +64,6 @@ POST /=/action/Action
 {"success":0,"error":"Model \"A\" not found."}
 
 
-
 === TEST 7: Create model A
 --- request
 POST /=/model/A
@@ -261,7 +260,7 @@ POST /=/action/~
     "parameters":32,
     "definition":"select title from A order by $col"}
 --- response
-{"success":0,"error":"Invalid \"parameters\" list: 32"}
+{"error":"Invalid value for \"parameters\": Array expected.","success":0}
 
 
 
@@ -275,7 +274,7 @@ POST /=/action/~
     ],
     "definition":"select title from A order by $col"}
 --- response
-{"success":0,"error":"Missing \"type\" for parameter \"col\"."}
+{"error":"Value for \"type\" for \"parameters\" array element required.","success":0}
 
 
 
@@ -289,7 +288,7 @@ POST /=/action/~
     ],
     "definition":"select title from A order by $col"}
 --- response
-{"success":0,"error":"Invalid \"type\" for parameter \"col\": [32]"}
+{"error":"Bad value for \"type\" for \"parameters\" array element: String expected.","success":0}
 
 
 
@@ -406,7 +405,6 @@ GET /=/action/Action2/col/id
     {"title":"Sohu"},
     {"title":"163"}
 ]]
---- LAST
 
 
 
@@ -435,10 +433,9 @@ GET /=/action/~
 [
     {"name":"RunView","description":"View interpreter","src":"/=/action/RunView"},
     {"name":"RunAction","description":"Action interpreter","src":"/=/action/RunAction"},
-    {"name":"Action","description":null,"src":"/=/action/Action"},
+    {"name":"Action","description":"My first action","src":"/=/action/Action"},
     {"name":"TitleOnly","description":null,"src":"/=/action/TitleOnly"}
 ]
-
 
 
 === TEST 40: Check the TitleOnly action
@@ -448,12 +445,11 @@ GET /=/action/TitleOnly
 {
     "name":"TitleOnly",
     "parameters":[
-        {"name":"col","type":"symbol","default_value":null}
+        {"name":"col","type":"symbol","label":null,"default_value":null}
     ],
     "description":null,
     "definition":"select title from A order by $col"
 }
-
 
 
 === TEST 41: Invoke TitleOnly w/o params
@@ -468,7 +464,7 @@ GET /=/action/TitleOnly/~/~
 --- request
 GET /=/action/TitleOnly/col/title
 --- response
-[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]
+[[{"title":"163"},{"title":"Baidu"},{"title":"Google"},{"title":"Sina"},{"title":"Sohu"},{"title":"Yahoo"}]]
 
 
 
@@ -477,7 +473,7 @@ GET /=/action/TitleOnly/col/title
 PUT /=/action/TitleOnly
 { "definition":"select $select_col from A order by $order_by" }
 --- response
-{"success":0,"error":"Parameter \"select_col\" used in the action definition is not defined in \"parameters\"."}
+{"success":0,"error":"Parameter \"select_col\" used in the action definition is not defined in the \"parameters\" list."}
 
 
 
@@ -486,8 +482,7 @@ PUT /=/action/TitleOnly
 POST /=/action/TitleOnly/~
 { "name":"select_col" }
 --- response
-{"success":0,"error":"No \"type\" specified for parameter \"select_col\"."}
-
+{"error":"Value for \"type\" required.","success":0}
 
 
 === TEST 45: Adding a new parameter
@@ -495,7 +490,7 @@ POST /=/action/TitleOnly/~
 POST /=/action/TitleOnly/~
 { "type":"symbol" }
 --- response
-{"success":0,"error":"No \"name\" specified for the new parameter."}
+{"error":"Value for \"name\" required.","success":0}
 
 
 
@@ -504,7 +499,7 @@ POST /=/action/TitleOnly/~
 POST /=/action/TitleOnly/~
 1234
 --- response
-{"success":0,"error":"Invalid parameter specification: 1234"}
+{"error":"Value must be a HASH.","success":0}
 
 
 
@@ -513,7 +508,7 @@ POST /=/action/TitleOnly/~
 POST /=/action/TitleOnly/~
 ["hello"]
 --- response
-{"success":0,"error":"Invalid parameter specification: [\"hello\"]"}
+{"error":"Value must be a HASH.","success":0}
 
 
 
@@ -522,7 +517,7 @@ POST /=/action/TitleOnly/~
 POST /=/action/TitleOnly/select_col
 {"type":"keyword"}
 --- response
-{"success":1}
+{"src":"/=/model/TitleOnly/select_col","success":1}
 
 
 
@@ -533,6 +528,7 @@ PUT /=/action/TitleOnly
 --- response
 {"success":0,"error":"Parameter \"select_col\" is not used as a \"keyword\" in the action definition."}
 
+--- LAST
 
 
 === TEST 50: Update the type of the select_col param

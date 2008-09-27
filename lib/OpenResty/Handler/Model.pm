@@ -183,7 +183,10 @@ sub POST_model_column {
     my ($self, $openresty, $bits) = @_;
     my $model = $bits->[1];
     my $col = $bits->[2];
-    my $data = $openresty->{_req_data};
+    my $data = _HASH($openresty->{_req_data}) or
+        die "Value must be a HASH.\n";
+
+    # XXX has_model check?
 
     my $num = $self->column_count($openresty, $model);
 
@@ -211,7 +214,7 @@ sub POST_model_column {
         } :required :nonempty
     |]
 
-    if ($col eq 'id') {
+    if (lc($col) eq 'id') {
         die "Column id is reserved.";
     }
 
@@ -605,7 +608,7 @@ sub get_tables {
     #my ($self, $openresty, $user) = @_;
     my ($self, $openresty) = @_;
     my $sql = [:sql| select name from _models |];
-    return $openresty->select("$sql");
+    return $openresty->select($sql);
 }
 
 sub model_count {
@@ -1003,7 +1006,7 @@ sub alter_model {
         $data ~~
         {
             name: IDENT :to($new_model),
-            description: STRING :nonempty :required :to($desc),
+            description: STRING :nonempty :to($desc),
         } :required :nonempty
     |]
 
