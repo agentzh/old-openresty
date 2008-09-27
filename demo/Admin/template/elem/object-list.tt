@@ -57,6 +57,10 @@
                 [%- ELSIF category == 'role' %]
                 <b><a href="#rolerules-[% object.name %]">View ACL rules</a></b>
                 &nbsp; &nbsp; &nbsp;
+                [%- ELSIF category == 'action' %]
+                <b><a href="#callaction-[% object.name %]">Call this action</a></b>
+                &nbsp; &nbsp; &nbsp;
+
                 [%- END %]
 
                 <b><a href="javascript:void(0);" onclick="delete[% category | ucfirst %]('[% object.name %]')">Delete this [% category %]</a></b>

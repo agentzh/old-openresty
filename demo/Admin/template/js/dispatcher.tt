@@ -1,5 +1,5 @@
 [%- DEFAULT
-      cats = [ 'Model', 'View', 'Role', 'Feed' ];
+      cats = [ 'Model', 'View', 'Role', 'Action', 'Feed' ];
 %]
 function dispatchByAnchor () {
     var anchor = location.hash;

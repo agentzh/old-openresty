@@ -1,0 +1,5 @@
+<label>name</label><input size="5" class="param-input param-input-name" type="input" resty_key="name"></input>
+<label>label</label><input size="10" class="param-input" type="input" resty_key="label"></input>
+<label>type</label><input size="8" class="param-input" type="input" resty_key="type"></input>
+<label>default value</label><input size="8" class="param-input" type="input" resty_key="default_value"></input>
+

@@ -1,0 +1,52 @@
+[% BLOCK editable_action_value -%]
+<span class="editable" [% is_json ? 'resty_json="1"' : "" %] resty_path="action/[% action.name %][% param ? "/" _ param : "" | html %]" resty_key="[% key | html %]" resty_value="[% value | html %]">[% value | html %]</span>
+[% END -%]
+
+<!-- block begin -->
+<div class="ttl">
+    <span class="text">
+        <a href="#callaction/[% action.name %]/1">[% action.name %]</a>
+    </span>
+</div>
+
+<div class="listcon">
+    <ul>
+        <li><b class="key">Name</b>: [% action.name | html %]</li>
+        <li><b class="key">Description</b>: [% INCLUDE editable_action_value key="description", value=action.description %]</li>
+        <li><b class="key">Parameters</b>:
+            <ul id="create-param">
+            [%- FOREACH param IN action.parameters %]
+                <li>
+              [%- FOREACH key IN ["name", "label", "type", "default_value"] %]
+                [%- value = param.$key; %]
+                [%- is_json = key == 'default' ? 1 : 0 %]
+                <b class="key">[%- key | html %]</b>: [% INCLUDE editable_action_value param=param.name %] &nbsp;&nbsp;
+              [%- END %]
+                <b><a class="show-detail" href="javascript:void(0);" onclick="deleteActionParam('[% action.name %]', '[% param.name %]')">Delete</a></b>
+                </li>
+            [%- END %]
+                <li class="add-param">
+                <a class="add-param-link" href="javascript:void(0);" onclick="addNewParam('[% action.name %]')">Add a new parameter</a>
+                </li>
+            </ul>
+        </li>
+        <li><b>Definition</b>:
+            <br/>
+            <pre class="action-def">[% INCLUDE editable_action_value key="definition", param=undef, value=action.definition %]</pre>
+        </li>
+    </ul>
+    <ul>
+        <li>
+            <a class="show-detail" href="#callaction/[% action.name %]/1">Call this action</a>
+            &nbsp; &nbsp; &nbsp;
+            <b><a class="show-detail" href="javascript:void(0);" onclick="deleteAction('[% action.name %]', 'actions')">Delete this action</a></b>
+        </li>
+    </ul>
+    <div class="clearit"></div>
+</ul>
+
+<ul>
+<li><b><a href="#actions">Back to the action list</a></b></p></li>
+</ul>
+</div>
+

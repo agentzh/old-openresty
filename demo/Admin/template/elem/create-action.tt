@@ -1,0 +1,36 @@
+<div class="ttl2">
+    <span class="text">
+        New action
+    </span>
+</div>
+
+<div class="create-action">
+<form id="create-action-form" onsubmit="return false;">
+
+        <p>
+            <label>Name</label>
+            <input type="text" size="8" id="create-action-name"></input>
+        </p>
+        <p>
+            <label>Description</label>
+            <input type="text" size="18" id="create-action-desc"></input>
+        </p>
+
+        <p><div id="create-action-params"></div></p>
+        <p class="add-param">
+            <a href="javascript:void(0);" onclick="addOneMoreParam()">Add a parameter</a>
+        </p>
+        <p>
+            <label>Definition (RestyScript)</label>
+        </p>
+        <p>
+            <textarea size="18" id="create-action-def"></textarea>
+        </p>
+
+        <p>
+            <input type="submit" class="create-button" value="Create" onclick="createAction()"></input>
+        </p>
+
+</form>
+</div>
+
