@@ -2,6 +2,7 @@ var itemsPerPage = 20;
 var sessionCookie = 'admin_session';
 var serverCookie  = 'admin_server';
 var userCookie    = 'admin_user';
+var cachedModelCount = {};
 
 var openresty = null;
 
@@ -203,16 +204,22 @@ function getModelRows (name, page, pat) {
 
 function getPager (name, page, prefix, suffix) {
     setStatus(true, 'getPager');
-    openresty.callback = function (res) {
-        renderPager(res, page, prefix, suffix);
-    };
-    openresty.postByGet(
-        '/=/action/RunView/~/~',
-        "select count(*) as count from " + name
-    );
+    var count = cachedModelCount[name];
+    if (count == null) {
+        openresty.callback = function (res) {
+            renderPager(res, page, prefix, suffix, name);
+        };
+        openresty.postByGet(
+            '/=/action/RunView/~/~',
+            "select count(*) as count from " + name
+        );
+    } else {
+        //alert("Hit cache count: " + count);
+        renderPager([{count: count}], page, prefix, suffix, name);
+    }
 }
 
-function renderPager (res, page, prefix, suffix) {
+function renderPager (res, page, prefix, suffix, model) {
     //alert("Render pager: " + JSON.stringify(res));
     setStatus(false, 'getPager');
     if (!openresty.isSuccess(res)) {
@@ -220,6 +227,7 @@ function renderPager (res, page, prefix, suffix) {
         return;
     }
     var count = res[0].count;
+    cachedModelCount[model] = count;
     $(".total-rows").html('For total <b>' + res[0].count + '</b> rows.');
     var pageCount = Math.ceil(parseInt(count) / itemsPerPage);
     //.processalert(pageCount);
@@ -330,6 +338,7 @@ function deleteModelRow (model, id, nextPage) {
     openresty.callback = function (res) {
         afterDeleteModelRow(res, model, id, nextPage);
     };
+    delete cachedModelCount[model];
     openresty.del("/=/model/" + model + "/id/" + id);
 }
 
@@ -635,6 +644,7 @@ function deleteAllModelRows (model) {
     if (confirm("Are you sure to remove all the rows in model \""
                 + model + "\"?")) {
         openresty.callback = afterDeleteAllModelRows;
+        delete cachedModelCount[model];
         openresty.del("/=/model/" + model + "/~/~");
     }
 }
@@ -672,6 +682,7 @@ function createModelBulkRow (model) {
     var json = "[" + resLines.join(",") + "]";
     //alert(json);
     setStatus(true, 'createModelBulkRow');
+    delete cachedModelCount[model];
     openresty.formId = 'dummy-form';
     openresty.callback = afterCreateModelBulkRow;
     openresty.post("/=/model/" + model + "/~/~", JSON.parse(json));
@@ -740,6 +751,7 @@ function createModelRow (model) {
         return false;
     }
     setStatus(true, 'createModelRow');
+    delete cachedModelCount[model];
     openresty.callback = afterCreateModelRow;
     openresty.formId = 'dummy-form';
     openresty.post(
