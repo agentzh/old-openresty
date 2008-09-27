@@ -304,8 +304,6 @@ sub PUT_model_column {
     }
 
     if (defined $label) {
-        _STRING($label) or die "Lable must be a non-empty string: ",
-            $OpenResty::Dumper->($label);
         $update_meta->set(label => Q($label));
     }
 
@@ -337,7 +335,7 @@ sub PUT_model_column {
 
     my $res = $openresty->do($sql);
 
-    return { success => $res ? 1 : 0 };
+    return { success => 1 };
 }
 
 sub DELETE_model_column {

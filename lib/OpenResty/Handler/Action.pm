@@ -243,8 +243,10 @@ sub exec_user_action {
     }
     my ($params, $canon_cmds) = @$compiled;
 
+    #### $params
     my @missed_args;
     while (my ($name, $param) = each %$params) {
+        next unless $param->{used};
         my $val = $args->{ $name };
         if ( !defined $val && !defined $param->{default_value} ) {
             # Some parameter were not given
@@ -446,6 +448,7 @@ sub new_action {
 sub process_params_with_vars {
     my ( $self, $openresty, $vars, $params ) = @_;
 
+    my %used;
     for my $name ( keys(%$vars) ) {
         if (!exists $params->{$name}) {
             die "Parameter \"$name\" used in the action definition is not defined in the \"parameters\" list.\n"
@@ -461,7 +464,14 @@ sub process_params_with_vars {
          }
 
         # TODO: perform type checks
-        $params->{$name}{used} = 1;
+        $used{$name} = 1;
+    }
+    while (my ($name, $param) = each %$params) {
+        if ($used{$name}) {
+            $param->{used} = 1;
+        } else {
+            delete $param->{used};
+        }
     }
 }
 
@@ -722,12 +732,13 @@ sub alter_action {
         } :required :nonempty
     |]
 
+    $OpenResty::Cache->remove_has_action($user, $action);
+
     my $sql;
     if ($new_action) {
         if ($self->has_action($openresty, $new_action)) {
             die "Action \"$new_action\" already exists.\n";
         }
-        $OpenResty::Cache->remove_has_action($user, $action);
         $sql .= [:sql|
             update _actions set name=$new_action where name=$action;
         |];
@@ -859,6 +870,120 @@ sub POST_action_param {
 }
 
 sub PUT_action_param {
+    my ($self, $openresty, $bits) = @_;
+    my $action = $bits->[1];
+    my $param = $bits->[2];
+    my $data = $openresty->{_req_data};
+    my $user = $openresty->current_user;
+
+    my $compiled = $self->has_action($openresty, $action);
+    if (!$compiled) {
+        die "Action \"$action\" not found.\n";
+    }
+    $compiled = $OpenResty::JsonXs->decode($compiled);
+    my $params = $compiled->[0];
+
+    my ($new_param, $type, $label, $default);
+
+    my $has_default = exists $data->{default};
+
+    [:validator|
+        $data ~~ {
+            name: IDENT :to($new_param),
+            label: STRING :nonempty :to($label),
+            type: STRING :nonempty :to($type)
+                :allowed('keyword', 'literal', 'symbol'),
+            default_value: STRING,
+        } :required :nonempty
+    |]
+
+    $OpenResty::Cache->remove_has_action($user, $action);
+
+    my $update_meta = OpenResty::SQL::Update->new('_action_params');
+    if ($new_param) {
+        #$new_col = $new_col);
+        $update_meta->set(name => Q($new_param));
+        $params->{$new_param} = delete $params->{$param};
+    } else {
+        $new_param = $param;
+    }
+    if ($type) {
+        #die "Changing column type is not supported.\n";
+        $update_meta->set(type => Q($type));
+        $params->{$new_param}{type} = $type;
+    }
+
+    if (defined $label) {
+        $update_meta->set(label => Q($label));
+        $params->{$new_param}{label} = $label;
+    }
+
+    if ($has_default) {
+        my $default = $data->{default_value};
+        if (defined $default) {
+            #warn "DEFAULT: $default\n";
+            $update_meta->set(default_value => Q($default));
+        } else {
+            $update_meta->set(default_value => 'null');
+        }
+        $params->{$new_param}{default_value} = $default;
+    }
+
+    my $id = $openresty->select(
+        [:sql| select id from _actions where name = $action |]
+    )->[0][0];
+    $update_meta->where(action_id => Q($id))
+        ->where(name => Q($param));
+
+    # XXX TODO: add support for updating column's uniqueness
+
+    $compiled = $OpenResty::JsonXs->encode($compiled);
+    my $sql = $update_meta . [:sql|
+        update _actions set compiled = $compiled where id = $id
+    |];
+    #warn "SQL:: $sql\n";
+
+    my $res = $openresty->do($sql);
+
+    return { success => 1 };
+
+}
+
+sub GET_action_param {
+    my ($self, $openresty, $bits) = @_;
+    my $action = $bits->[1];
+    my $param = $bits->[2];
+
+    if (!$self->has_action($openresty, $action)) {
+        die "Action \"$action \" not found.\n";
+    }
+
+    my $id = $openresty->select(
+        [:sql| select id from _actions where name = $action |]
+    )->[0][0];
+
+    if ($param eq '~') {
+        my $sql = [:sql|
+            select name, type, label, default_value
+            from _action_params
+            where action_id = $id
+            order by id |];
+        my $list = $openresty->select($sql, { use_hash => 1 });
+        if (!$list or !ref $list) { $list = []; }
+
+        return $list;
+    } else {
+        my $sql = [:sql|
+            select name, type, label, default_value
+            from _action_params
+            where name = $param and action_id = $id
+            order by id |];
+        my $res = $openresty->select($sql, { use_hash => 1 });
+        if (!$res or !@$res) {
+            die "Action parameter \"$param\" not found.\n";
+        }
+        return $res->[0];
+    }
 }
 
 # TODO: PUT更改action的定义时需要注意：
