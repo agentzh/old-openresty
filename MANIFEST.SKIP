@@ -52,7 +52,7 @@ bin/.*\.dat
 ^demo/Admin/JSON\.js$
 ^demo/Blog/out
 ^demo/Blog/script/upload
-^demo/Blog/script/import-local
+^demo/Blog.*?/script/import-local
 ^demo/Blog2/out
 ^demo/Blog/backup
 ^demo/Blog2/js
@@ -76,8 +76,6 @@ bin/.*\.dat
 ^haskell/bin/x$
 ^haskell/bin/x\.c$
 RD_TRACE
-^t/30-action\.t$
-^t/31-action\.t$
 demo/Blog/doc/a\.png$
 demo/Blog/doc/foo\.dot$
 demo/Blog/doc/graphviz\.mk\.png$

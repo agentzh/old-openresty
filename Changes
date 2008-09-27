@@ -1,5 +1,15 @@
 Change Log for OpenResty
 
+0.5.0 Sep 27 2008
+* implemented the Action handler.
+* demo/Admin -
+** added model row cache.
+** added action support to the Action menu.
+* openresty.js - always put setTimeout around get to work around IE 6 HTTP-request-aborting bugs.
+* demo/Blog -
+** use action NewComment and true POST for comment publishing.
+** use action GetSidebar to group the AJAX requests for the sidebar.
+
 0.4.2 Sep 27 2008
 * demo/BlogAdmin - added a new demo app.
 * added documentation for metamodel duplication and recovery tools bin/save-metamode.pl and bin/restore-metamodel.pl to the OpenResty::Spec::Upgrading document.
