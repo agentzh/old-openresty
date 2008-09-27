@@ -537,7 +537,30 @@ GET /=/action/Query/~/~
 
 
 
-=== TEST 56: Add a new parameter model
+=== TEST 56: Invoke it using yaml
+--- request
+GET /=/action/Query/~/~.yml
+--- format: YAML
+--- response
+---
+-
+  -
+    id: 4
+    num: 6
+    title: Google
+    url: google.com
+-
+  error: Handler for the "blah" category not found.
+  success: 0
+-
+  -
+    description: "\xE6\x88\x91\xE7\x9A\x84\xE4\xB9\xA6\xE7\xAD\xBE"
+    name: Carrie
+    src: /=/model/Carrie
+
+
+
+=== TEST 57: Add a new parameter model
 --- request
 POST /=/action/Query/~
 {"name":"model","type":"symbol"}
@@ -546,7 +569,7 @@ POST /=/action/Query/~
 
 
 
-=== TEST 57: delete mixed in 2 GET
+=== TEST 58: delete mixed in 2 GET
 --- request
 PUT /=/action/Query
 {"definition":
@@ -557,7 +580,7 @@ PUT /=/action/Query
 
 
 
-=== TEST 58: Invoke it
+=== TEST 59: Invoke it
 --- request
 GET /=/action/Query/model/Carrie
 --- response
@@ -573,7 +596,7 @@ GET /=/action/Query/model/Carrie
 
 
 
-=== TEST 59: access another account
+=== TEST 60: access another account
 --- request
 POST /=/action/Query2
 {"definition":
@@ -587,7 +610,7 @@ POST /=/action/Query2
 
 
 
-=== TEST 60: Invoke it
+=== TEST 61: Invoke it
 --- request
 POST /=/action/Query2/user/$TestAccount2
 {"pass":"$TestPass2"}
@@ -604,7 +627,7 @@ POST /=/action/Query2/user/$TestAccount2
 
 
 
-=== TEST 61: check Test account 2:
+=== TEST 62: check Test account 2:
 --- request
 GET /=/model?_user=$TestAccount2&_password=$TestPass2
 --- response
@@ -612,7 +635,7 @@ GET /=/model?_user=$TestAccount2&_password=$TestPass2
 
 
 
-=== TEST 62: recheck Test account 1:
+=== TEST 63: recheck Test account 1:
 --- request
 GET /=/model?_user=$TestAccount&_password=$TestPass
 --- response
@@ -623,7 +646,7 @@ GET /=/model?_user=$TestAccount&_password=$TestPass
 
 
 
-=== TEST 63: logout
+=== TEST 64: logout
 --- request
 GET /=/logout
 --- response
