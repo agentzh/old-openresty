@@ -19,40 +19,40 @@ span.search-box {
     font-weight: normal;
 }
 
-pre.view-def {
+pre.view-def, pre.action-def {
     margin-left: 4em;
 }
 
-textarea#create-view-def {
+textarea#create-view-def, textarea#create-action-def {
     width: 250px;
     height: 10em;
     margin-left: 2em;
 }
 
-li.add-col label {
+li.add-col label, li.add-param label {
     font-size: 11pt;
 }
 
-p.add-column {
+p.add-column, p.add-param {
     margin-left: 2em;
 }
 
-span.column-inputs {
+span.column-inputs, span.param-inputs {
     margin-left: 2em;
 }
 
-span.column-inputs label {
+span.column-inputs label, span.param-inputs label {
 	display:inline;
 	float:none;
 }
 
-input.column-input {
+input.column-input, input.action-input {
     margin-left: 4px;
     margin-right: 4px;
     margin: 4px;
 }
 
-.create-model {
+.create-model, .create-action {
     background: #eef;
     padding: 10px;
     padding-left: 2em;
@@ -60,11 +60,11 @@ input.column-input {
     text-align: left;
 }
 
-.create-model-columns {
+.create-model-columns, .create-action-params {
     text-align: left;
 }
 
-.create-model p {
+.create-model p, .create-action p {
     padding: 5px;
     text-align: left;
 }
@@ -85,9 +85,6 @@ input.create-button {
     margin-left: 15em;
     font-weight: bold;
     font-size: 102%;
-}
-
-input.column-create-button {
 }
 
 #greeting {

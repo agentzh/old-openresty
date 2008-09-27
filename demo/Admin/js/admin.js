@@ -771,3 +771,145 @@ function html2text (text) {
     return text;
 }
 
+function addOneMoreParam () {
+    //debug("HERE!");
+    $("#create-action-params").append(
+        '<table><tr><td><span class="param-inputs">' + Jemplate.process('param-inputs.tt') + "</span></td></tr></table>"
+    );
+    //alert("HERE!");
+        //alert("HERE!");
+    setTimeout( function () {
+        //alert($('.column-input-name:last').length);
+        $('.param-input-name:last')[0].focus();
+        //$('column-input :last')[0].focus();
+    }, 0 );
+}
+
+function createAction () {
+    var name = $("#create-action-name").val();
+    var desc = $("#create-action-desc").val();
+    var def = $("#create-action-def").val();
+    var params = [];
+    var parameters = document.getElementById('create-action-params');
+    if (parameters) {
+        try {
+            $(".param-inputs", parameters).each( function () {
+                var param = getParamSpec(this);
+                if (param) params.push(param);
+            } );
+        } catch (e) {
+            error(e);
+            return false;
+        }
+    } else {
+        error("parameters not found!");
+        return false;
+    }
+    var data = {
+        name: name,
+        description: desc,
+        parameters: params,
+        definition: def
+    };
+    //debug("JSON: " + JSON.stringify(data));
+    //return;
+    setStatus(true, "createAction");
+    openresty.callback = afterCreateAction;
+    openresty.postByGet(
+        '/=/action/~',
+        data
+    );
+    return false;
+}
+
+function afterCreateAction (res) {
+    setStatus(false, "createAction");
+    if (!openresty.isSuccess(res)) {
+        error("Failed to create action: " + res.error);
+    } else {
+        gotoNextPage('actions');
+    }
+}
+
+function getParamSpec (container) {
+    //alert("HERE!");
+    var col = {};
+    var found = false;
+    //debug(div);
+    $("input.param-input", container).each( function () {
+        var key = $(this).attr('resty_key');
+        //debug("Key: " + key);
+        if (!key) return;
+        var val = $(this).val();
+        if (val != '') {
+            col[key] = val;
+            found = true;
+        }
+    } );
+    return found ? col : null;
+}
+
+function deleteActionParam (action, param, nextPage) {
+    if (!confirm("Are you sure to delete parameter " + param +
+                " from action " + action + "?"))
+        return;
+    setStatus(true, 'deleteActionParam');
+    openresty.callback = function (res) {
+        afterDeleteActionParam(res, action, param, nextPage);
+    };
+    openresty.del("/=/action/" + action + "/" + param);
+}
+
+function afterDeleteActionParam (res, action, param, nextPage) {
+    setStatus(false, 'deleteActionParam');
+    if (!openresty.isSuccess(res)) {
+        error("Failed to delete parameter " + param + " from action " +
+                action + ": " + res.error);
+        return;
+    }
+    gotoNextPage(nextPage);
+}
+
+function addNewParam (action) {
+    $("li.add-param").html(
+        '<form onsubmit="return false;">' + Jemplate.process('param-inputs.tt') + '<input class="param-create-button" type="submit" value="Create" onclick="createParam(\'' + action + '\')"></input></form>'
+    );
+    setTimeout( function () {
+        //alert($('.column-input-name:last').length);
+        $('.param-input-name:last')[0].focus();
+        //$('column-input :last')[0].focus();
+    }, 0 );
+}
+
+function createParam (action) {
+    //alert("Creating column .column-inputsfor model " + model);
+    var data;
+    try {
+        data = getParamSpec(document);
+    } catch (e) {
+        error(e);
+        return false;
+    }
+    if (data == null) {
+        error("Parameter spec is empty.");
+        return false;
+    }
+    //alert("Col json: " + JSON.stringify(data));
+    setStatus(true, "createParam");
+    openresty.callback = afterCreateParam;
+    openresty.postByGet(
+        '/=/action/' + action + "/~",
+        data
+    );
+    return false;
+}
+
+function afterCreateParam (res) {
+    setStatus(false, "createParam");
+    if (!openresty.isSuccess(res)) {
+        error("Failed to add a new parameter: " + res.error);
+    } else {
+        gotoNextPage();
+    }
+}
+
