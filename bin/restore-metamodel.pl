@@ -99,7 +99,7 @@ _EOC_
     }
     warn "Importing metamodel for account $account from $sql_file...\n";
     my $cmd = "psql -U $user -qn -h $host -d $db -f $sql_file > /dev/null";
-    warn "!!!!!!! $cmd\n";
+    warn "$cmd\n";
     if (system($cmd) != 0) {
         warn "Failed to import metamodel for account $account from $sql_file.\n";
     } #else { warn "Done.\n"; }
