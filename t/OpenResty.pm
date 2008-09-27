@@ -142,8 +142,8 @@ sub smart_is ($$$$) {
         }
     }
     #use Test::LongString;
-    is_string $got, $expected, $desc;
-    #is $got, $expected, $desc;
+    #is_string $got, $expected, $desc;
+    is $got, $expected, $desc;
 }
 
 sub run_tests () {
