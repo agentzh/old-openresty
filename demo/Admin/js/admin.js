@@ -330,10 +330,7 @@ function deleteModelRow (model, id, nextPage) {
     openresty.callback = function (res) {
         afterDeleteModelRow(res, model, id, nextPage);
     };
-    // we need a 0 timeout here to workaround an IE bug:
-    setTimeout(function () {
-        openresty.del("/=/model/" + model + "/id/" + id);
-    }, 0);
+    openresty.del("/=/model/" + model + "/id/" + id);
 }
 
 function afterDeleteModelRow (res, model, id, nextPage) {
@@ -698,10 +695,7 @@ function afterCreateModelBulkRow (res) {
 function getModelRowForm (model) {
     setStatus(true, 'getModelRowForm');
     openresty.callback = renderModelRowForm;
-    // we need a 0 timeout here to workaround an IE bug:
-    setTimeout(function () {
-        openresty.get('/=/model/' + model);
-    }, 0);
+    openresty.get('/=/model/' + model);
 }
 
 function renderModelRowForm (res) {
