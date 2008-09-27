@@ -1,6 +1,6 @@
 package OpenResty::Handler::Action;
 
-#use Smart::Comments '####';
+#use Smart::Comments '#####';
 use strict;
 use warnings;
 
@@ -38,8 +38,12 @@ sub POST_action_exec {
     my $args = $openresty->{_req_data};
     die "Invalid POST body content, must be a JSON object"
         unless _HASH($args);
+    if ($bits->[-1] ne '~' && $bits->[-2] ne '~') {
+        $args->{$bits->[-2]} = $bits->[-1];
+    }
     my $url_params = $openresty->{_url_params};
     $args = Hash::Merge::merge($args, $url_params);
+    ##### $args
 
     # Complement parameter values from URL
     # Execute action
@@ -144,9 +148,10 @@ sub GET_action_exec {
 }
 
 sub join_frags_with_args {
-    my ( $frags, $params, $args ) = @_;
+    my ( $frags, $params, $args, $quote_literal) = @_;
     my $result;
     my $ref = ref $frags;
+    $quote_literal ||= \&Q;
 
     if ($ref) {
         die "Unknown fragments reference type \"$ref\""
@@ -164,7 +169,10 @@ sub join_frags_with_args {
                     unless $frag_ref eq 'ARRAY';
 
                 my $name = $frag->[0];
-                my $type = $params->{$name}{type};
+                my $type = $frag->[1];
+                if ($type eq 'unknown') {
+                    $type = $params->{$name}{type};
+                }
                 die "Required parameter \"$name\" not assigned"
                     unless ( exists( $args->{$name} ) );
 
@@ -176,7 +184,7 @@ sub join_frags_with_args {
                 } elsif ( $type eq 'literal' ) {
 
                     # Param should be interpolated as a literal
-                    $result .= Q($args->{$name});
+                    $result .= $quote_literal->($args->{$name});
                 } elsif ( $type eq 'symbol' ) {
 
                     # Param should be treated like a symbol
@@ -193,7 +201,7 @@ sub join_frags_with_args {
 
           # Unrecognized param type, coerced to interpolate as a quoted string
                     # XXX croak?
-                    $result .= Q( $args->{$name} );
+                    $result .= $quote_literal->( $args->{$name} );
                 }
 
             } else {
@@ -257,7 +265,7 @@ sub exec_user_action {
         my $val = $args->{ $name };
         if ( !defined $val && !defined $param->{default_value} ) {
             # Some parameter were not given
-            push @missed_args, $name;
+            push @missed_args, $name if $param->{used};
         }
         $args->{ $name } = $val || $param->{default_value};
     }
@@ -265,6 +273,7 @@ sub exec_user_action {
         die "Arguments required: @missed_args\n";
     }
 
+    #### $canon_cmds
     my @outputs;
     for my $cmd (@$canon_cmds) {
         $i++;
@@ -273,7 +282,9 @@ sub exec_user_action {
 
             # Proceeds variable value substitutions
             $url     = join_frags_with_args( $url, $params, $args );
-            $content = join_frags_with_args( $content, $params, $args );
+            $content = join_frags_with_args( $content, $params, $args, sub { $OpenResty::JsonXs->encode($_[0]) });
+            #### $url
+            #### $content
 
   # DO NOT permit cross-domain HTTP method!!!
   #            if ($url !~ m{^/=/}) {
@@ -283,6 +294,11 @@ sub exec_user_action {
             local %ENV;
             $ENV{REQUEST_URI}    = $url;
             $ENV{REQUEST_METHOD} = $http_meth;
+            (my $query = $url) =~ s/(.*?\?)//g;
+            #$query .= '&';
+            #warn "Query: $query\n";
+            $ENV{QUERY_STRING} = $query;
+
             my $cgi = new_mocked_cgi( $url, $content );
             my $call_level = $openresty->call_level;
             $call_level++;
@@ -460,6 +476,8 @@ sub new_action {
 
 sub check_default {
     my ($default, $type, $name) = @_;
+    #warn "Type: $type\n";
+    #warn "Default: $type\n";
     if ($type eq 'symbol' && $default !~ /^[A-Za-z]\w*$/) {
         die "Bad default value for parameter \"$name\" of type $type.\n";
     }
@@ -478,14 +496,20 @@ sub process_params_with_vars {
             die "Parameter \"$name\" used in the action definition is not defined in the \"parameters\" list.\n"
         }
 
-        if ($vars->{$name} eq 'unknown' &&
-                $params->{$name}{type} eq 'keyword') {
-            die "Parameter \"$name\" is not used as a \"keyword\" in the action definition.\n";
+        if ($vars->{$name} ne 'quoted') {
+            if ($vars->{$name} eq 'unknown' &&
+                    $params->{$name}{type} eq 'keyword') {
+                die "Parameter \"$name\" is not used as a \"keyword\" in the action definition.\n";
+            }
+            if ($vars->{$name} ne 'unknown' &&
+                    $vars->{$name} ne $params->{$name}{type}) {
+                die "Invalid \"type\" for parameter \"$name\". (It's used as a $vars->{$name} in the action definition.)\n";
+            }
+            #if ($vars->{$name} eq 'unknown') {
+            #$vars->{$name} = $params->{$name}{type};
+            #warn "HERE!!!!!!!!!!! unknown!!!!";
+            #}
         }
-        if ($vars->{$name} ne 'unknown' &&
-                $vars->{$name} ne $params->{$name}{type}) {
-            die "Invalid \"type\" for parameter \"$name\". (It's used as a $vars->{$name} in the action definition.)\n";
-         }
 
         # TODO: perform type checks
         $used{$name} = 1;
@@ -714,7 +738,9 @@ sub exec_RunAction {
 sub validate_model_names {
     my ( $self, $openresty, $models ) = @_;
     for my $model (@$models) {
-        next if $model =~ /^\$[A-Za-z]\w*$/;
+        if ($model =~ /^\$[A-Za-z]\w*$/) {
+            die "Parameters cannot be used as model names.\n";
+        }
         _IDENT($model) or die "Bad model name: \"$model\"\n";
         if ( !$openresty->has_model($model) ) {
             die "Model \"$model\" not found.\n";
@@ -849,6 +875,8 @@ sub POST_action_param {
 
     my ($label, $default, $type);
 
+    my $has_default = exists $data->{default_value};
+
     [:validator|
         $data ~~
             {
@@ -872,8 +900,17 @@ sub POST_action_param {
         name => $param,
         type => $type,
         label => $label,
-        default_value => $default,
     };
+
+    if ($has_default) {
+        $default = $data->{default_value};
+        if (defined $default) {
+            #warn "DEFAULT: $default\n";
+            check_default($default, $type, $param);
+        }
+        $params->{$param}{default_value} = $default;
+    }
+
     $compiled = $OpenResty::JsonXs->encode($compiled);
 
     my $id = $openresty->select(
@@ -910,7 +947,7 @@ sub PUT_action_param {
 
     my ($new_param, $type, $label, $default);
 
-    my $has_default = exists $data->{default};
+    my $has_default = exists $data->{default_value};
 
     [:validator|
         $data ~~ {
@@ -957,10 +994,12 @@ sub PUT_action_param {
         $params->{$new_param}{label} = $label;
     }
 
+    $type ||= $params->{$new_param}{type};
     if ($has_default) {
         my $default = $data->{default_value};
         if (defined $default) {
             #warn "DEFAULT: $default\n";
+            #warn "TYPE: $type\n";
             $update_meta->set(default_value => Q($default));
             check_default($default, $type, $new_param);
         } else {

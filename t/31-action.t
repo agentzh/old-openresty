@@ -10,7 +10,7 @@ __DATA__
 
 === TEST 1: Delete existing models
 --- request
-DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
+DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 {"success":1}
 
@@ -20,7 +20,7 @@ DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
 --- request
 DELETE /=/action
 --- response
-{"success":1,"warning":"Builtin actions are skipped."}
+{"success":1,"warning":"Builtin actions were skipped."}
 
 
 
@@ -30,8 +30,8 @@ POST /=/model/Carrie.js
 {
     "description": "我的书签",
     "columns": [
-        { "name": "title", "label": "标题" },
-        { "name": "url", "label": "网址" },
+        { "name": "title", "type":"text", "label": "标题" },
+        { "name": "url", "type":"text", "label": "网址" },
         { "name": "num", "type": "integer", "label": "num" }
     ]
 }
@@ -86,62 +86,90 @@ PUT /=/action/Query
     "parameters":[{"name":"num","type":"literal"}],
     "definition": "select title from Carrie where num = $num; select url from Carrie where num = $num"}
 --- response
+{"error":"Unrecognized key in hash: parameters","success":0}
+
+
+
+=== TEST 9: Add a parameter
+--- request
+POST /=/action/Query/~
+{"name":"num","type":"literal"}
+--- response
+{"src":"/=/model/Query/num","success":1}
+
+
+
+=== TEST 10: Update the definition
+--- request
+PUT /=/action/Query
+{ "definition": "select title from Carrie where num = $num; select url from Carrie where num = $num"}
+--- response
 {"success":1}
 
 
 
-=== TEST 9: Invoke the action
+=== TEST 11: Invoke the action
 --- request
 GET /=/action/Query/num/10
 --- response
 [
     [{"title":"hello carrie"}],
-    [{"url":"http://www.carriezh.cn"}]
+    [{"url":"http://www.carriezh.cn/"}]
 ]
 
 
 
-=== TEST 10: Invoke the action
+=== TEST 12: Invoke the action
 --- request
 GET /=/action/Query/num/1
 --- response
 [
     [{"title":"second"}],
-    [{"url":"http://zhangziaojue.cn"}]
+    [{"url":"http://zhangxiaojue.cn"}]
 ]
 
 
 
-=== TEST 11: Reference nonexistent models
+=== TEST 13: Reference nonexistent models
 --- request
 PUT /=/action/Query
 { "definition":
 "select * from BlahBlah limit 1 offset 1"}
 --- response
-[{"success":0,"error":"Model \"BlahBlah\" not found."}]
+{"success":0,"error":"Model \"BlahBlah\" not found."}
 
 
 
-=== TEST 12: Try to reference meta models
+=== TEST 14: Try to reference meta models
 --- request
 PUT /=/action/Query
 { "definition":
 "select * from _models limit 1 offset 1"}
 --- response
-{"error":"\"action\" (line 1, column 15):\nunexpected \"_\"\nexpecting space or model","success":0};
+{"error":"\"action\" (line 1, column 15):\nunexpected \"_\"\nexpecting space or model","success":0}
 
 
 
-=== TEST 13: Empty restyscript string
+=== TEST 15: Invalid method
 --- request
 PUT /=/action/RunAction/~/~
 {"definition":""}
 --- response
+{"success":0,"error":"HTTP PUT method not supported for action exec."}
+
+
+
+=== TEST 16: Empty restyscript string
+--- request
+PUT /=/action/RunAction
+{"definition":""}
+--- response
 {"error":"Restyscript source must be an non-empty literal string: \"\"","success":0}
+--- SKIP
 
 
 
-=== TEST 14: GET rows
+=== TEST 17: GET rows
 --- request
 GET /=/model/Carrie/~/~
 --- response
@@ -152,21 +180,37 @@ GET /=/model/Carrie/~/~
 
 
 
-=== TEST 15: Update some rows
+=== TEST 18: Add a new parameter
+--- request
+POST /=/action/Query/~
+{"name":"num","type":"literal","default":"5"}
+--- response
+{"success":0,"error":"Unrecognized key in hash: default"}
+
+
+
+=== TEST 19: Add a default value
+--- request
+PUT /=/action/Query/num
+{"default_value":"5"}
+--- response
+{"success":1}
+
+
+
+=== TEST 20: Update some rows
 --- request
 PUT /=/action/Query
 {
   "definition":
-    "update Carrie set num=$num where num=10 or num=1",
-"parameters":
-    [{"name":"num","type":"literal","default":"5"}]
+    "update Carrie set num=$num where num=10 or num=1"
 }
 --- response
 {"success":1}
 
 
 
-=== TEST 16: Invoke the new Query action
+=== TEST 21: Invoke the new Query action
 --- request
 GET /=/action/Query/~/~
 --- response
@@ -174,7 +218,7 @@ GET /=/action/Query/~/~
 
 
 
-=== TEST 17: check rows again
+=== TEST 22: check rows again
 --- request
 GET /=/model/Carrie/~/~
 --- response
@@ -185,7 +229,7 @@ GET /=/model/Carrie/~/~
 
 
 
-=== TEST 18: run the action again
+=== TEST 23: run the action again
 --- request
 GET /=/action/Query/~/~
 --- response
@@ -193,7 +237,7 @@ GET /=/action/Query/~/~
 
 
 
-=== TEST 19: run the action again (with argument)
+=== TEST 24: run the action again (with argument)
 --- request
 GET /=/action/Query/num/7
 --- response
@@ -201,53 +245,70 @@ GET /=/action/Query/num/7
 
 
 
-=== TEST 20: Do two updates
+=== TEST 25: Add a parameter
+--- request
+POST /=/action/Query/~
+{"name":"col","type":"symbol"}
+--- response
+{"success":1,"src":"/=/model/Query/col"}
+
+
+
+=== TEST 26: Do two updates
 --- request
 PUT /=/action/Query
 {"definition":
-    "update $model set num=7 where id=1; update $model set num=8 where id=2",
-    "parameters":[{"name":"model","type":"symbol"}]}
+    "update Carrie set $col=7 where id=1; update Carrie set $col=8 where id=2"}
 --- response
 {"success":1}
 
 
 
-=== TEST 21: Run the action w/o arguments
+=== TEST 27: Run the action w/o arguments
 --- request
 GET /=/action/Query/~/~
 --- response
-{"success":0,"error":"Arguments required: model"}
+{"success":0,"error":"Arguments required: col"}
 
 
 
-=== TEST 22: Run the action with arguments
+=== TEST 28: Run the action with arguments
 --- request
 POST /=/action/Query/~/~
-{"model":"Blah"}
+{"col":"_access"}
 --- response
-{"success":0,"error":"Model \"Blah\" not found."}
+{"success":0,"error":"Bad value for parameter \"col\"."}
 
 
 
-=== TEST 23: Run the action with invalid arguments
+=== TEST 29: Run the action with arguments
 --- request
 POST /=/action/Query/~/~
-{"model":"@#@@$^^#@"}
+{"col":"num"}
 --- response
-{"success":0,"error":"Invalid symbol for parameter \"model\": \"@#@@$^^#@\""}
+[{"success":1,"rows_affected":1},{"success":1,"rows_affected":1}]
 
 
 
-=== TEST 24: Run the action in the right way
+=== TEST 30: Run the action with invalid arguments
 --- request
 POST /=/action/Query/~/~
-{"model":"Carrie"}
+{"col":"@#@@$^^#@"}
+--- response
+{"success":0,"error":"Bad value for parameter \"col\"."}
+
+
+
+=== TEST 31: Run the action in the right way
+--- request
+POST /=/action/Query/~/~
+{"col":"num"}
 --- response
 [{"rows_affected":1,"success":1},{"rows_affected":1,"success":1}]
 
 
 
-=== TEST 25: check rows again
+=== TEST 32: check rows again
 --- request
 GET /=/model/Carrie/~/~
 --- response
@@ -258,59 +319,108 @@ GET /=/model/Carrie/~/~
 
 
 
-=== TEST 26: order by a var
+=== TEST 33: remove parameters
+--- request
+DELETE /=/action/Query/~
+--- response
+{"success":0,"error":"Failed to remove parameter \"col\": it's used in the definition."}
+
+
+
+=== TEST 34: remove parameters
 --- request
 PUT /=/action/Query
-{"definition":
-"select id from Carrie order by id $dir",
-"parameters":[{"name":"dir","type":"keyword"}]
+{"definition":"select 0"}
 --- response
 {"success":1}
 
 
 
-=== TEST 27: invoke it with dir = asc
+=== TEST 35: remove parameters
+--- request
+DELETE /=/action/Query/~
+--- response
+{"success":1}
+
+
+
+=== TEST 36: check the action
+--- request
+GET /=/action/Query/~
+--- response
+[]
+
+
+
+=== TEST 37: Add a new parameter
+--- request
+POST /=/action/Query/dir
+{"type":"keyword"}
+--- response
+{"success":1,"src":"/=/model/Query/dir"}
+
+
+
+=== TEST 38: order by a var
+--- request
+PUT /=/action/Query
+{"definition":
+"select id from Carrie order by id $dir"}
+--- response
+{"success":1}
+
+
+
+=== TEST 39: invoke it with dir = asc
 --- request
 GET /=/action/Query/dir/asc
 --- response
 [[
-    {"num":"7","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"},
-    {"num":"8","url":"http://zhangxiaojue.cn","title":"second","id":"2"}
+    {"id":"1"},
+    {"id":"2"}
 ]]
 
 
 
-=== TEST 28: invoke it with dir = desc
+=== TEST 40: invoke it with dir = desc
 --- request
 GET /=/action/Query/dir/desc
 --- response
 [[
-    {"num":"8","url":"http://zhangxiaojue.cn","title":"second","id":"2"},
-    {"num":"7","url":"http://www.carriezh.cn/","title":"hello carrie","id":"1"}
+    {"id":"2"},
+    {"id":"1"}
 ]]
 
 
 
-=== TEST 29: invoke with invalid dir
+=== TEST 41: invoke with invalid dir
 --- request
 GET /=/action/Query/dir/blah'
 --- response
-{"success":0,"error":"Invalid keyword for parameter \"dir\": \"blah'\""}
+{"error":"Invalid valud for parameter \"dir\".","success":0}
 
 
 
-=== TEST 30: Delete rows
+=== TEST 42: Add a new parameter
+--- request
+POST /=/action/Query/num
+{"type":"literal"}
+--- response
+{"success":1,"src":"/=/model/Query/num"}
+
+
+
+=== TEST 43: Delete rows
 --- request
 PUT /=/action/Query
-{"definition":"delete from Carrie\n where num = $num;;",
-    "parameters":[{"name":"num","type":"literal"}]
+{"definition":"delete from Carrie\n where num = $num;;"
 }
 --- response
 {"success":1}
 
 
 
-=== TEST 31: Invoke the action
+=== TEST 44: Invoke the action
 --- request
 GET /=/action/Query/num/7
 --- response
@@ -318,7 +428,7 @@ GET /=/action/Query/num/7
 
 
 
-=== TEST 32: check rows again
+=== TEST 45: check rows again
 --- request
 GET /=/model/Carrie/~/~
 --- response
@@ -326,44 +436,73 @@ GET /=/model/Carrie/~/~
 
 
 
-=== TEST 33: Insert some more data via actions
+=== TEST 46: Add a new parameter Yahoo
+--- request
+POST /=/action/Query/~
+{"name":"Yahoo","type":"literal"}
+--- response
+{"success":1,"src":"/=/model/Query/Yahoo"}
+
+
+
+=== TEST 47: Add a new parameter Yahoo (twice)
+--- request
+POST /=/action/Query/~
+{"name":"Yahoo","type":"literal"}
+--- response
+{"error":"Parameter \"Yahoo\" already exists in action \"Query\".","success":0}
+
+
+
+=== TEST 48: Add a new parameter Google
+--- request
+POST /=/action/Query/~
+{"name":"Google","type":"literal"}
+--- response
+{"success":1,"src":"/=/model/Query/Google"}
+
+
+
+=== TEST 49: Insert some more data via actions
 --- request
 PUT /=/action/Query
 {"definition":
-"POST '/=/model/Carrie' || '/~/~' [{num: 5, url: 'yahoo.cn', title: $Yahoo}, {'num': 6, url: 'google' || '.com', \"title\": $Google}]",
-    "parameters": [
-        {"name":"Yahoo","type":"literal"},
-        {"name":"Google","type":"literal"}
-    ]
+"POST '/=/model/Carrie' || '/~/~' [{num: 5, url: 'yahoo.cn', title: $Yahoo}, {'num': 6, url: 'google' || '.com', \"title\": $Google}]"
 }
 --- response
 {"success":1}
 
 
 
-=== TEST 34: Invoke it
+=== TEST 50: Invoke it
 --- request
 GET /=/action/Query/Yahoo/Yahoo?Google=Google
 --- response
 [{"success":1,"rows_affected":2,"last_row":"/=/model/Carrie/id/4"}]
 
---- LAST
+
+
+=== TEST 51: Add a new parameter col
+--- request
+POST /=/action/Query/~
+{"name":"col","type":"symbol"}
+--- response
+{"success":1,"src":"/=/model/Query/col"}
 
 
 
-=== TEST 35: three GET in an action
+=== TEST 52: three GET in an action
 --- request
 PUT /=/action/Query
 {"definition":
-"GET '/=/model/Carrie' || '/' || $col || '/4'; GET '/=/model/Carrie/' || $col || '/3';\n GET '/=/model/Carrie/' || $col || '/2';",
-    "parameters":[{"name":"col","type":"symbol"}]
+"GET '/=/model/Carrie' || '/' || $col || '/4'; GET '/=/model/Carrie/' || $col || '/3';\n GET '/=/model/Carrie/' || $col || '/2';"
 }
 --- response
 {"success":1}
 
 
 
-=== TEST 36: Invoke it
+=== TEST 53: Invoke it
 --- request
 GET /=/action/Query/col/id
 --- response
@@ -375,42 +514,50 @@ GET /=/action/Query/col/id
 
 
 
-=== TEST 37: three GET in an action (with exceptions)
+=== TEST 54: three GET in an action (with exceptions)
 --- request
 PUT /=/action/Query
 {"definition":
-"GET '/=/model/Carrie' || '/id/4'; GET '/=/blah/blah'; GET '/=/model';",
-"parameters":[]}
---- response
-{"success":1}
-
-
-
-=== TEST 38: Invoke it
---- request
-GET /=/action/Query/~/~
---- response
-[
-    [{"id":"4","num":"6","title":"Google","url":"google.com"}],
-    {"error":"Unknown URL catagory: blah","success":0},
-    [{"description":"我的书签","name":"Carrie","src":"/=/model/Carrie"}]
-]
-
-
-
-=== TEST 39: delete mixed in 2 GET
---- request
-PUT /=/action/Query
-{"definition":
-"DELETE '/=/model/'||$model|| '/id/4';\n GET ('/=/model/'||$model||'/~/~') ; delete from $model where id = 3\n ;GET '/=/' || ('model/' || $model ||'/~/~')",
-"parameters":[{"name":"model","type":"symbol"}]
+"GET '/=/model/Carrie' || '/id/4'; GET '/=/blah/blah'; GET '/=/model';"
 }
 --- response
 {"success":1}
 
 
 
-=== TEST 40: Invoke it
+=== TEST 55: Invoke it
+--- request
+GET /=/action/Query/~/~
+--- response
+[
+    [{"id":"4","num":"6","title":"Google","url":"google.com"}],
+    {"error":"Handler for the \"blah\" category not found.","success":0},
+    [{"description":"我的书签","name":"Carrie","src":"/=/model/Carrie"}]
+]
+
+
+
+=== TEST 56: Add a new parameter model
+--- request
+POST /=/action/Query/~
+{"name":"model","type":"symbol"}
+--- response
+{"success":1,"src":"/=/model/Query/model"}
+
+
+
+=== TEST 57: delete mixed in 2 GET
+--- request
+PUT /=/action/Query
+{"definition":
+"DELETE '/=/model/'||$model|| '/id/4';\n GET ('/=/model/'||$model||'/~/~') ; delete from Carrie where id = 3\n ;GET '/=/' || ('model/' || $model ||'/~/~')"
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 58: Invoke it
 --- request
 GET /=/action/Query/model/Carrie
 --- response
@@ -426,11 +573,11 @@ GET /=/action/Query/model/Carrie
 
 
 
-=== TEST 41: access another account
+=== TEST 59: access another account
 --- request
 POST /=/action/Query2
 {"definition":
-"DELETE '/=/model?user=$user&password=$pass';\nPOST '/=/model/Another' {\"description\":\"a model in another account\"};\n GET '/=/model';\n GET '/=/model?user=$TestAccount2&password=$TestPass2'",
+"DELETE '/=/model?_user=' || $user || '&_password=' || $pass;\nPOST '/=/model/Another' {\"description\":\"a model in another account\"};\n GET '/=/model';\n GET '/=/model?_user=$TestAccount2&_password=$TestPass2'",
 "parameters":[
     {"name":"user","type":"literal"},
     {"name":"pass","type":"literal"}
@@ -440,7 +587,7 @@ POST /=/action/Query2
 
 
 
-=== TEST 42: Invoke it
+=== TEST 60: Invoke it
 --- request
 POST /=/action/Query2/user/$TestAccount2
 {"pass":"$TestPass2"}
@@ -457,17 +604,17 @@ POST /=/action/Query2/user/$TestAccount2
 
 
 
-=== TEST 43: check Test account 2:
+=== TEST 61: check Test account 2:
 --- request
-GET /=/model?user=$TestAccount2&password=$TestPass2
+GET /=/model?_user=$TestAccount2&_password=$TestPass2
 --- response
 []
 
 
 
-=== TEST 44: recheck Test account 1:
+=== TEST 62: recheck Test account 1:
 --- request
-GET /=/model?user=$TestAccount&password=$TestPass
+GET /=/model?_user=$TestAccount&_password=$TestPass
 --- response
 [
     {"src":"/=/model/Carrie","name":"Carrie","description":"我的书签"},
@@ -476,7 +623,7 @@ GET /=/model?user=$TestAccount&password=$TestPass
 
 
 
-=== TEST 45: logout
+=== TEST 63: logout
 --- request
 GET /=/logout
 --- response
