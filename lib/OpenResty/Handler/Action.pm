@@ -68,7 +68,7 @@ sub drop_action {
     my $user = $openresty->current_user;
     $OpenResty::Cache->remove_has_action($user, $action);
     return [:sql|
-        delete from _actions where name = $action cascade;
+        delete from _actions where name = $action;
     |];
 }
 
@@ -100,39 +100,35 @@ sub GET_action_list {
 # list all existing actions for current user by using GET_action_list.
 sub GET_action {
     my ( $self, $openresty, $bits ) = @_;
-    my $act_name = $bits->[1];
+    my $action = $bits->[1];
 
 # If the given action name is wildcard ('~'), then forward the request to GET_action_list
-    if ( $act_name eq '~' ) {
+    if ( $action eq '~' ) {
         my $act_lst = $self->GET_action_list( $openresty, $bits );
         return $act_lst;
     }
 
+    my $compiled = $self->has_action($openresty, $action);
+    if (!$compiled) {
+        die "Action \"$action\" not found.\n";
+    }
+    $compiled = $OpenResty::JsonXs->decode($compiled);
+    my $params = $compiled->[0];
+
     # Retrieve the corresponding action information
     my ( $sql, $res );
     $sql = [:sql|
-        select id, name, description, definition
+        select name, description, definition
         from _actions
-        where name = $act_name |];
+        where name = $action |];
     $res = $openresty->select( $sql, { use_hash => 1 } );
-    if ( !$res || @$res == 0 ) {
-        die "Action \"$act_name\" not found.\n";
-    }
+    my $rt = $res->[0];
 
+    my @params = map { delete $_->{used}; $_ } values %$params;
     # Retrieve the action parameter information
-    my $act_info = $res->[0];
-    my $id = $act_info->{id};
-    $sql = [:sql|
-        select name, type, label, default_value
-        from _action_params
-        where action_id = $id and used = true |];
-    $res = $openresty->select( $sql, { use_hash => 1 } );
-
     # Rename the field "default_value" to "default" and remove field "id"
-    $act_info->{parameters} = $res;
-    delete $act_info->{id};
-
-    $act_info;
+    $rt->{parameters} = \@params;
+    $rt;
 }
 
 # Execute the given action, possibly with parameters
@@ -148,9 +144,9 @@ sub GET_action_exec {
 }
 
 sub join_frags_with_args {
-    my ( $frags, $var_map ) = @_;
+    my ( $frags, $params, $args ) = @_;
     my $result;
-    my $ref = ref($frags);
+    my $ref = ref $frags;
 
     if ($ref) {
         die "Unknown fragments reference type \"$ref\""
@@ -158,36 +154,37 @@ sub join_frags_with_args {
 
         # Given command fragments, proceeding with variable substitution
         for my $frag (@$frags) {
-            my $frag_ref = ref($frag);
+            my $frag_ref = ref $frag;
 
             if ($frag_ref) {
 
                 # Variable fragment encountered
                 die
                     "Parameter fragment reference type should be \"ARRAY\": currently \"$frag_ref\""
-                    unless ( $frag_ref eq 'ARRAY' );
+                    unless $frag_ref eq 'ARRAY';
 
-                my ( $name, $type ) = @$frag;
+                my $name = $frag->[0];
+                my $type = $params->{$name}{type};
                 die "Required parameter \"$name\" not assigned"
-                    unless ( exists( $var_map->{$name} ) );
+                    unless ( exists( $args->{$name} ) );
 
                 $type = lc($type);
                 if ( $type eq 'quoted' ) {
 
                     # Param should be interpolated as a quoted string
-                    $result .= Q( $var_map->{$name} );
+                    $result .= Q( $args->{$name} );
                 } elsif ( $type eq 'literal' || $type eq 'keyword' ) {
 
                     # Param should be interpolated as a literal
-                    $result .= $var_map->{$name};
+                    $result .= $args->{$name};
                 } elsif ( $type eq 'symbol' ) {
 
                     # Param should be treated like a symbol
-                    $result .= QI( $var_map->{$name} );
+                    $result .= QI( $args->{$name} );
                 } else {
 
           # Unrecognized param type, coerced to interpolate as a quoted string
-                    $result .= Q( $var_map->{$name} );
+                    $result .= Q( $args->{$name} );
                 }
 
             } else {
@@ -201,6 +198,7 @@ sub join_frags_with_args {
         # Given a solid string, no more works to do
         $result = $frags;
     }
+    #### $result
 
     return $result;
 }
@@ -265,8 +263,8 @@ sub exec_user_action {
             my ( $http_meth, $url, $content ) = @$cmd;
 
             # Proceeds variable value substitutions
-            $url     = join_frags_with_args( $url, $args );
-            $content = join_frags_with_args( $content, $args );
+            $url     = join_frags_with_args( $url, $params, $args );
+            $content = join_frags_with_args( $content, $params, $args );
 
   # DO NOT permit cross-domain HTTP method!!!
   #            if ($url !~ m{^/=/}) {
@@ -286,7 +284,7 @@ sub exec_user_action {
             push @outputs, $res;
 
         } else {    # being a SQL method, $cmd->[0] is the fragments list
-            my $pg_sql = join_frags_with_args( $cmd->[0], $args );
+            my $pg_sql = join_frags_with_args( $cmd->[0], $params, $args );
 
             if ( substr( $pg_sql, 0, 6 ) eq 'select' ) {
                 my $res = $openresty->select( $pg_sql,
@@ -312,7 +310,7 @@ sub DELETE_action {
     if ( $action eq '~' ) {
         return $self->DELETE_action_list( $openresty, $bits );
     }
-    if (!$openresty->has_action($openresty, $action)) {
+    if (!$self->has_action($openresty, $action)) {
         die "Action \"$action\" not found.\n";
     }
 
@@ -421,7 +419,7 @@ sub new_action {
     my $compiled = $OpenResty::JsonXs->encode([ $params, $canon_cmds ]);
     my $sql = [:sql|
         insert into _actions (name, definition, description, compiled)
-        values($action, $def, $desc, $compiled) |];
+        values($action, $def, $desc, $compiled); |];
     my $rv = $openresty->do($sql);
     die "Failed to insert action into backend DB"
         unless ( defined($rv) );
@@ -437,7 +435,7 @@ sub new_action {
         my $used = $param->{used} ? 'true' : 'false';
         $sql .= [:sql|
             insert into _action_params (name, type, label, default_value, used, action_id)
-            values ($name, $type, $label, $default, $kw:used, $id) |];
+            values ($name, $type, $label, $default, $kw:used, $id); |];
     }
     $rv = $openresty->do($sql);
     #warn $rv;
@@ -690,6 +688,7 @@ sub exec_RunAction {
 sub validate_model_names {
     my ( $self, $openresty, $models ) = @_;
     for my $model (@$models) {
+        next if $model =~ /^\$[A-Za-z]\w*$/;
         _IDENT($model) or die "Bad model name: \"$model\"\n";
         if ( !$openresty->has_model($model) ) {
             die "Model \"$model\" not found.\n";
@@ -881,7 +880,7 @@ sub PUT_action_param {
         die "Action \"$action\" not found.\n";
     }
     $compiled = $OpenResty::JsonXs->decode($compiled);
-    my $params = $compiled->[0];
+    my ($params, $frags) = @$compiled;
 
     my ($new_param, $type, $label, $default);
 
@@ -909,8 +908,17 @@ sub PUT_action_param {
     }
     if ($type) {
         #die "Changing column type is not supported.\n";
+        $params->{$new_param} ||= {};
+        #my $old_type = $params->{$new_param}{type};
+        #warn "Old type: $old_type\n";
+        #if ($params->{$new_param}{used} && $old_type && $old_type ne $type) {
+        #die "Parameter \"$new_param\" is not used as a \"$type\" in the action definition.\n";
+        #}
         $update_meta->set(type => Q($type));
         $params->{$new_param}{type} = $type;
+        my ( $vars, $new_frags )
+            = $self->compile_frags( $openresty, $frags );
+        $self->process_params_with_vars( $openresty, $vars, $params );
     }
 
     if (defined $label) {
@@ -984,6 +992,57 @@ sub GET_action_param {
         }
         return $res->[0];
     }
+}
+
+sub DELETE_action_param {
+    my ($self, $openresty, $bits) = @_;
+    my $action = $bits->[1];
+    my $param = $bits->[2];
+
+    my $compiled = $self->has_action($openresty, $action);
+    if (!$compiled) {
+        die "Action \"$action \" not found.\n";
+    }
+
+    $compiled = $OpenResty::JsonXs->decode($compiled);
+    my $params = $compiled->[0];
+    #my @param_names = keys %$params;
+
+    my $id = $openresty->select(
+        [:sql| select id from _actions where name = $action |]
+    )->[0][0];
+
+    my $sql = '';
+    if ($param eq '~') {
+        while (my ($key, $val) = each %$params) {
+            if ($val->{used}) {
+                die "Failed to remove parameter \"$key\": it's used in the definition.\n";
+            }
+        }
+        %$params = ();
+
+        $sql .= [:sql|
+            delete from _action_params
+            where action_id = $id; |];
+    } else {
+        if ($params->{$param}{used}) {
+            die "Failed to remove parameter \"$param\": it's used in the definition.\n";
+        }
+        $params = delete $params->{$param};
+        $sql = [:sql|
+            delete from _action_params
+            where action_id=$id and name=$param; |];
+    }
+    my $user = $openresty->current_user;
+    $OpenResty::Cache->remove_has_action($user, $action);
+
+    $compiled = $OpenResty::JsonXs->encode($compiled);
+
+    my $res = $openresty->do($sql . [:sql|
+        update _actions set compiled = $compiled where name = $action
+    |]);
+    return { success => 1 };
+
 }
 
 # TODO: PUT更改action的定义时需要注意：

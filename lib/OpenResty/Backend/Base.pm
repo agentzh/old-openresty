@@ -279,7 +279,7 @@ begin
         label text,
         default_value text,
         used bool not null,
-        action_id integer references _actions(id)
+        action_id integer references _actions(id) on delete cascade
     );
     return 0;
 end
