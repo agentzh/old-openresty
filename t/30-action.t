@@ -528,13 +528,14 @@ PUT /=/action/TitleOnly
 --- response
 {"success":0,"error":"Parameter \"select_col\" is not used as a \"keyword\" in the action definition."}
 
---- LAST
 
 
 === TEST 50: Update the type of the select_col param
 --- request
 PUT /=/action/TitleOnly/select_col
 {"type":"literal"}
+--- response
+{"success":1}
 
 
 
@@ -567,9 +568,10 @@ GET /=/action/TitleOnly/~/~?select_col=123
 GET /=/action/TitleOnly/~
 --- response
 [
-    {"name":"col","type":"symbol","default_value":null},
-    {"name":"select_col","type":"literal","default_value":null}
+    {"name":"col","label":null,"type":"symbol","default_value":null},
+    {"name":"select_col","label":null,"type":"literal","default_value":null}
 ]
+--- LAST
 
 
 
