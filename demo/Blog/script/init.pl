@@ -307,29 +307,26 @@ $resty->post(
     }
 );
 
-=begin comment
 $resty->post(
-    '/=/action/GetPostListWithPager',
+    '/=/action/GetFullPost',
     {
-        description => "Get sidebar",
+        description => "Get full post (with the navigator and comments",
         parameters => [
-            { name => 'offset', type => 'literal' },
-            { name => 'order_by', type => 'literal' },
-            { name => 'count', type => 'literal' },
+            { name => 'id', type => 'literal' },
         ],
         definition => q{
-            GET '/=/model/Post/~/~?' || '_count=' || $count || '&_order_by=' || $order_by || '&_offset=' || $offset;
-            GET '/=/view/RowCount/model/Post';
+            GET '/=/model/Post/id/' || $id;
+            GET '/=/view/PrevNextPost/current/' || $id;
+            GET '/=/model/Comment/post/' || $id;
         },
     }
 );
-=cut
-
 
 $resty->post(
     '/=/role/Public/~/~',
     [
         { method => "GET", url => '/=/action/GetSidebar/~/~' },
+        { method => "GET", url => '/=/action/GetFullPost/~/~' },
 
         { method => "GET", url => '/=/model/Post/~/~' },
         { method => "GET", url => '/=/model/Comment/~/~' },

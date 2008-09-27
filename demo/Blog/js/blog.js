@@ -57,7 +57,7 @@ $.fn.postprocess = function (className, options) {
     } );
 };
 
-//var count = 0;;
+var count = 0;;
 function setStatus (isLoading, category) {
     if (isLoading) {
         if (++loadingCount == 1) {
@@ -80,8 +80,8 @@ function setStatus (isLoading, category) {
 
         }
     }
-    //count++;
-    //debug("[" + count + "] setStatus: " + category + ": " + loadingCount + "(" + isLoading + ")");
+    count++;
+    debug("[" + count + "] setStatus: " + category + ": " + loadingCount + "(" + isLoading + ")");
 }
 
 function init () {
@@ -245,7 +245,7 @@ function getSearchResults (query, page) {
 
 function doPostSearch () {
     var query = $('#searchbox').val();
-    savedAndhor = null;
+    savedAnchor = null;
     var anchor = '#search/1/' + query;
     location.hash = anchor;
     //alert(location.hash);
@@ -518,7 +518,7 @@ function getPost (id) {
     //alert($(".blog-top").attr('id'));
     setStatus(true, 'renderPost');
     openresty.callback = renderPost;
-    openresty.get('/=/model/Post/id/' + id);
+    openresty.get('/=/action/GetFullPost/id/' + id);
 }
 
 function renderPost (res) {
@@ -527,22 +527,19 @@ function renderPost (res) {
     if (!openresty.isSuccess(res)) {
         error("Failed to render post: " + res.error);
     } else {
-        var post = res[0];
+        var post = res[0][0];
         //if (!post) return;
         $("#beta-inner.pkg").html(
             Jemplate.process('post-page.tt', { post: post })
         ).postprocess();
 
-        openresty.callback = function (res) {
-            renderPrevNextPost(post.id, res);
-        };
+        renderPrevNextPost(post.id, res[1]);
         //debug(JSON.stringify(post));
-        openresty.get('/=/view/PrevNextPost/current/' + post.id);
 
         setStatus(true, 'renderComments');
-        openresty.callback = renderComments;
-        openresty.get('/=/model/Comment/post/' + post.id);
+        renderComments(res[2]);
         $(".pager").html('');
+        resetAnchor();
     }
 }
 
@@ -555,7 +552,7 @@ function renderPrevNextPost (currentId, res) {
         $(".content-nav").html(
             Jemplate.process('nav.tt', { posts: res, current: currentId })
         ).postprocess();
-        resetAnchor();
+        //resetAnchor();
     }
 }
 
@@ -568,7 +565,7 @@ function renderComments (res) {
         $(".comments-content").html(
             Jemplate.process('comments.tt', { comments: res })
         );
-        resetAnchor();
+        //resetAnchor();
         //setTimeout( function () { alert("Hi"); resetAnchor(); }, 1000 );
     }
 }
@@ -583,7 +580,7 @@ function renderPostList (res) {
             Jemplate.process('post-list.tt', { post_list: res })
         ).postprocess();
     }
-    resetAnchor();
+    //resetAnchor();
 }
 
 function renderSearchResults (res, query) {
