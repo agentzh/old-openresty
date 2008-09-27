@@ -716,7 +716,7 @@ C<$name> 和 C<$parent_id> 都是参数变量。
 每一个 Action 都有一个界面，界面一般由若干个 parameters 组成。就像每一个 model
 都由若干个 columns 组成一样。
 
-Action 亦可分为内建 Action (如 C<WebSearch> 和 C<Select> ) 和用户自定义 Action 两大类.
+Action 亦可分为内建 Action (如 C<RunAction> 和 C<RunView> ) 和用户自定义 Action 两大类.
 
 Action 的定义是全功能的 RestyScript 语言（不同于 View 定义中只能使用 RestyScript 中的 SQL select 语句）。
 
