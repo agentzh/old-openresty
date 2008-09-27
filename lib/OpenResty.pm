@@ -1,6 +1,6 @@
 package OpenResty;
 
-our $VERSION = '0.004001';
+our $VERSION = '0.004002';
 
 use strict;
 use warnings;
@@ -636,7 +636,7 @@ OpenResty - General-purpose web service platform for web applications
 
 =head1 VERSION
 
-This document describes OpenResty 0.4.1 released on September 25, 2008.
+This document describes OpenResty 0.4.2 released on September 27, 2008.
 
 =head1 DESCRIPTION
 
@@ -704,6 +704,18 @@ L<OpenResty::CheatSheet> also provides a good enough summary for the REST interf
 You'll find my slides for the D2 conference interesting as well:
 
 L<http://agentzh.org/misc/openresty-d2.pdf>
+
+or the original XUL version:
+
+L<http://agentzh.org/misc/openresty-d2/openresty-d2.xul> (Firefox required)
+
+Another good introduction to OpenResty's REST API is summerized in the slides for my Y!ES talk and my Beijing Perl Workshop 2008 talk:
+
+L<http://agentzh.org/misc/openresty-yes.pdf>
+
+and a more pretty (XUL) version can be got from here:
+
+L<http://agentzh.org/misc/openresty-yes/openresty-yes.xul> (Firefox required)
 
 There're also a few interesting discussions about OpenResty on my blog site:
 
