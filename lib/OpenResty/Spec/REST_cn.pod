@@ -709,7 +709,7 @@ C<$name> 和 C<$parent_id> 都是参数变量。
 
 =back
 
-=head2 Actions(TODO)
+=head2 Actions
 
 "动作(Action)"是一种抽象的功能实体。Action 在概念上与编程语言中的函数相近。
 
@@ -732,7 +732,7 @@ Action 的目的在于使多个操作捆绑成一个整体，而不是所有的�
 
     POST /=/action/RemoveBookmarks
     { "description": "Action for removing bookmarks",
-      "parameters":[ {"name":"pattern","type":"literal"} ],
+      "parameters":[ {"name":"pattern", "label":"Pattern", "type":"literal"} ],
       "definition":
         "delete from Bookmark where url like $pattern andescription like $pattern" }
 
@@ -750,7 +750,7 @@ Action 的目的在于使多个操作捆绑成一个整体，而不是所有的�
 
     {
         "description": "Action for removing bookmarks",
-        "parameters":[{"name":"pattern","type":"literal"}],
+        "parameters":[{"name":"pattern","label":"Pattern","type":"literal"}],
         "definition": "delete from Bookmark where url like $pattern description like pattern"
     }
 
@@ -781,7 +781,7 @@ Action 的目的在于使多个操作捆绑成一个整体，而不是所有的�
 
     DELETE /=/action/<action name>
 
-=head3 Built-in Actions(已实现)
+=head3 Built-in Actions
 
 =over
 
@@ -801,10 +801,10 @@ View 中使用的 RestyScript 代码与 SQL 的语法非常近似，不同的是
 RunAction 与 RunView 类似，但它是为 Action 定义提供了一个解释器界面。例如：
 
     POST /=/action/RunAction/~/~
-    "DELETE '/=/model?_user=$TestAccount2&_password=$TestPass2';
+    "DELETE '/=/model?_user=agentzh&_password=blahblahblah';
     POST '/=/model/Another' {\"description\":\"a model in another account\"};
     GET '/=/model';
-    GET '/=/model?_user=$TestAccount2&_password=$TestPass2'"
+    GET '/=/model?_user=eeee&_password=foofoofoo'"
 
 =back
 

@@ -375,9 +375,6 @@ than the default 20, giving more options to my blog readers.
 
 =head2 Actions
 
-B<Note:> Actions have not yet been implemented. Below is just
-some basic ideas.
-
 An openresty action is a bunch of RestyScript commands with a name
 attached to it. Such a command can be either a SQL-like statement or an
 HTTP-like command.
@@ -403,12 +400,12 @@ it's default to the current OpenResty server being requested. If a full
 URL is specified here, one can do some really cool things by invoking
 the resources of some other OpenResty server.
 
-Similarly, for the SQL-like command, a optional C<run on> clause can be
-specified to run "SQL" on remote OpenResty servers, such as:
+Similarly, for the SQL-like command such as:
 
     delete from Comment
     where post = $post_id and sender = $spammer
-    run on http://some.other.openresty.server
+
+[TODO: a optional C<run on> clause might be specified to run "SQL" on remote OpenResty servers if permitted.]
 
 Furthermore, we can put multiple RestyScript commands together using
 the C<;> separator to define a full action object:
@@ -416,6 +413,11 @@ the C<;> separator to define a full action object:
     {
         "name": "PostComment",
         "description": "Action for posting a comment",
+        "parameters":[
+            {"name":"post_id","label":"Post ID","type":"literal"},
+            {"name":"sender","label":"Sender","type":"literal","default":"agentzh"},
+            {"name":"body","label":"Body","type":"literal"}
+        ],
         "definition":
         "
             update Post
