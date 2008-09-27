@@ -64,6 +64,7 @@ POST /=/action/Action
 {"success":0,"error":"Model \"A\" not found."}
 
 
+
 === TEST 7: Create model A
 --- request
 POST /=/model/A
@@ -438,6 +439,7 @@ GET /=/action/~
 ]
 
 
+
 === TEST 40: Check the TitleOnly action
 --- request
 GET /=/action/TitleOnly
@@ -450,6 +452,7 @@ GET /=/action/TitleOnly
     "description":null,
     "definition":"select title from A order by $col"
 }
+
 
 
 === TEST 41: Invoke TitleOnly w/o params
@@ -483,6 +486,7 @@ POST /=/action/TitleOnly/~
 { "name":"select_col" }
 --- response
 {"error":"Value for \"type\" required.","success":0}
+
 
 
 === TEST 45: Adding a new parameter
@@ -979,7 +983,6 @@ POST /=/action/Foo
     "definition":"update _action set "}
 --- response
 {"error":"\"action\" (line 1, column 8):\nunexpected \"_\"\nexpecting space or identifier entry","success":0}
---- LAST
 
 
 
@@ -994,7 +997,7 @@ POST /=/action/Foo
     ],
     "definition":"select * from $model  where $col > $val"}
 --- response
-{"success":0,"error":"Bad default value for parameter \"model\": "'A'"}
+{"success":0,"error":"Bad default value for parameter \"model\" of type symbol."}
 
 
 
@@ -1009,7 +1012,7 @@ POST /=/action/Foo
     ],
     "definition":"select * from $model  where $col > $val"}
 --- response
-{"success":0,"error":"Bad default value for parameter \"model\": [3]}
+{"error":"Bad value for \"default_value\" for \"parameters\" array element: String expected.","success":0}
 
 
 
@@ -1059,9 +1062,10 @@ GET /=/action/Foo/val/林\?col=title
 
 === TEST 103: Invoke the action (bad fixed var name)
 --- request
-GET /=/action/Foo/!@/2
+GET /=/action/Foo/!@/2?val=3
 --- response
 {"success":0,"error":"Bad parameter name: \"!@\""}
+--- SKIP
 
 
 
@@ -1090,7 +1094,7 @@ GET /=/action/Foo/~/~?!@=2
 --- request
 GET /=/action/Foo/~/~?val=2&col=id"
 --- response
-{"success":0,"error":"Bad symbol for parameter \"col\": id\""}
+{"error":"Bad value for parameter \"col\".","success":0}
 
 
 
@@ -1145,7 +1149,7 @@ POST /=/action/TC
 --- request
 GET /=/action/TC/~/~
 --- response
-[[{"cidr":"202.165.100.143"}]]
+[[{"count":"1"}]]
 
 
 
@@ -1157,7 +1161,7 @@ POST /=/action/RowCount
    ],
    "definition": "select count(*) from $model" }
 --- response
-{"success":0,"error":"Bad type for parameter: \"blah\"}
+{"error":"Invalid value for \"type\" for \"parameters\" array element: Allowed values are 'keyword', 'literal', 'symbol'.","success":0}
 
 
 
@@ -1173,30 +1177,18 @@ POST /=/action/RowCount
 
 
 
-=== TEST 114: bug
---- request
-POST /=/action/RowCount
-{ "parameters":[
-    {"name":"model","type":"literal"}
-   ],
-   "definition": "select count(*) from $model" }
---- response
-{"success":1}
-
-
-
-=== TEST 115: view the TitleOnly action
+=== TEST 114: view the TitleOnly action
 --- request
 GET /=/action/TitleOnly
 --- response
 {"name":"TitleOnly","parameters":[
-        {"name":"select_col","type":"symbol","default_value":null},
-        {"name":"order_by","type":"symbol","default_value":null}
+        {"name":"select_col","label":null,"type":"symbol","default_value":null},
+        {"name":"order_by","label":null,"type":"symbol","default_value":null}
     ],"description":null,"definition":"select $select_col from A order by $order_by"}
 
 
 
-=== TEST 116: change the action def
+=== TEST 115: change the action def
 --- request
 PUT /=/action/TitleOnly
 { "definition": "select 32" }
@@ -1205,15 +1197,18 @@ PUT /=/action/TitleOnly
 
 
 
-=== TEST 117: get the action def again:
+=== TEST 116: get the action def again:
 --- request
 GET /=/action/TitleOnly
 --- response
-{"name":"TitleOnly","description":null,"parameters":[],"definition":"select 32"}
+{"name":"TitleOnly","description":null,"parameters":[
+        {"name":"select_col","label":null,"type":"symbol","default_value":null},
+        {"name":"order_by","label":null,"type":"symbol","default_value":null}
+    ],"definition":"select 32"}
 
 
 
-=== TEST 118: change the action def (syntax error)
+=== TEST 117: change the action def (syntax error)
 --- request
 PUT /=/action/TitleOnly
 { "definition": "abc 32" }
@@ -1222,7 +1217,7 @@ PUT /=/action/TitleOnly
 
 
 
-=== TEST 119: logout
+=== TEST 118: logout
 --- request
 GET /=/logout
 --- response

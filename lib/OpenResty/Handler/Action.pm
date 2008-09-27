@@ -172,18 +172,27 @@ sub join_frags_with_args {
                 if ( $type eq 'quoted' ) {
 
                     # Param should be interpolated as a quoted string
-                    $result .= Q( $args->{$name} );
-                } elsif ( $type eq 'literal' || $type eq 'keyword' ) {
+                    $result .= $args->{$name};
+                } elsif ( $type eq 'literal' ) {
 
                     # Param should be interpolated as a literal
-                    $result .= $args->{$name};
+                    $result .= Q($args->{$name});
                 } elsif ( $type eq 'symbol' ) {
 
                     # Param should be treated like a symbol
+                    if ($args->{$name} !~ /^[A-Za-z]\w*$/) {
+                        die "Bad value for parameter \"$name\".\n";
+                    }
                     $result .= QI( $args->{$name} );
+                } elsif ( $type eq 'keyword') {
+                    if ($args->{$name} !~ /^(asc|desc)$/) {
+                        die "Invalid valud for parameter \"$name\".\n";
+                    }
+                    $result .= $args->{$name};
                 } else {
 
           # Unrecognized param type, coerced to interpolate as a quoted string
+                    # XXX croak?
                     $result .= Q( $args->{$name} );
                 }
 
@@ -415,6 +424,13 @@ sub new_action {
     my @models = @{ $stats->{modelList} };
     $self->validate_model_names( $openresty, \@models );
 
+    for my $name ( keys %$params ) {
+        my $param = $params->{$name};
+        my $type = $param->{type};
+        my $default = $param->{default_value};
+        check_default($default, $type, $name) if defined $default;
+    }
+
     # Insert action definition into backend
     my $compiled = $OpenResty::JsonXs->encode([ $params, $canon_cmds ]);
     my $sql = [:sql|
@@ -427,7 +443,7 @@ sub new_action {
 
     # Insert action parameters into backend
     $sql = '';
-    for my $name ( keys(%$params) ) {
+    for my $name ( keys %$params ) {
         my $param = $params->{$name};
         my $type = $param->{type};
         my $label = $param->{label};
@@ -440,6 +456,16 @@ sub new_action {
     $rv = $openresty->do($sql);
     #warn $rv;
     return { success => 1 };
+}
+
+sub check_default {
+    my ($default, $type, $name) = @_;
+    if ($type eq 'symbol' && $default !~ /^[A-Za-z]\w*$/) {
+        die "Bad default value for parameter \"$name\" of type $type.\n";
+    }
+    if ($type eq 'keyword' && $default !~ /^(?:desc|asc)$/) {
+        die "Bad default value for parameter \"$name\" of type $type.\n";
+    }
 }
 
 # Verify the types for variables used in action definition against those in parameter list
@@ -906,6 +932,11 @@ sub PUT_action_param {
     } else {
         $new_param = $param;
     }
+
+    # XXX TODO: check default_value versus the type
+
+    #my $old_type = $params->{$new_param}{type};
+    #my $old_default = $params->{$new_param}{default};
     if ($type) {
         #die "Changing column type is not supported.\n";
         $params->{$new_param} ||= {};
@@ -931,6 +962,7 @@ sub PUT_action_param {
         if (defined $default) {
             #warn "DEFAULT: $default\n";
             $update_meta->set(default_value => Q($default));
+            check_default($default, $type, $new_param);
         } else {
             $update_meta->set(default_value => 'null');
         }

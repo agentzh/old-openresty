@@ -274,7 +274,7 @@ begin
     );
     create table _action_params (
         id serial primary key,
-        name text unique not null,
+        name text not null,
         type text not null,
         label text,
         default_value text,
