@@ -146,7 +146,8 @@ end;
 _EOC_
     ],
     [ '0.005' => '' ],
-    [ '0.006' => '' ],
+    [ '0.006' => '' ],  # v0.4.0
+    [ '0.007' => '' ],  # v0.5.0
 );
 
 our @LocalVersionDelta = (
@@ -260,6 +261,31 @@ begin
 end;
 $$ language plpgsql;
 _EOC_
+    [ '0.007' => <<'_EOC_' ],
+create or replace function _upgrade() returns integer as $$
+begin
+    create table _actions (
+        id serial primary key,
+        name text unique not null,
+        definition text not null,
+        description text,
+        compiled text,
+        created timestamp(0) with time zone default now()
+    );
+    create table _action_params (
+        id serial primary key,
+        name text unique not null,
+        type text not null,
+        label text,
+        default_value text,
+        used bool not null,
+        action_id integer references _actions(id)
+    );
+    return 0;
+end
+$$ language plpgsql;
+_EOC_
+
 );
 
 sub upgrade_all {
@@ -331,7 +357,7 @@ sub upgrade_local_metamodel {
     my ($self, $base) = @_;
 
     if (!defined $base) { die "No upgrading base specified" }
-    if ( ! $self->has_user('_global')) {
+    if (!$self->has_user('_global')) {
         my $user = $self->{user};
         $self->upgrade_global_metamodel(0);
         $self->set_user($user);
@@ -415,9 +441,11 @@ sub drop_user {
     if ($self->has_user('_global')) {
         $self->set_user('_global');
         eval {
+            # XXX quasiquoting?
             $self->do("delete from _accounts where name ='$user'");
         };
         if ($@) { warn $@ }
+        #$self->do("delete from _accounts where name ='$user'");
         $OpenResty::Cache->remove_has_user($user) if $OpenResty::Cache;
     }
 }
