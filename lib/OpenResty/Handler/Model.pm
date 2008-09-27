@@ -435,7 +435,7 @@ sub new_model {
     [:validator|
         $data ~~
         {
-            name: IDENT :to($model),
+            name: IDENT :required :to($model),
             description: STRING :nonempty :required :to($desc),
             columns: [
                 {

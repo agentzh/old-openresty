@@ -184,15 +184,35 @@ sub join_frags_with_args {
     return $result;
 }
 
+sub has_action {
+    my ($self, $openresty, $action) = @_;
+    my $user = $openresty->current_user;
+
+    if (my $compiled = $OpenResty::Cache->get_has_action($user, $action)) {
+        #warn "has model cache HIT\n";
+        return $compiled;
+    }
+    my $sql = [:sql|
+        select compiled
+        from _actions
+        where name = $action
+        limit 1;
+    |];
+    my $ret;
+    eval { $ret = $openresty->select($sql)->[0][0]; };
+    if ($ret) { $Cache->set_has_action($user, $action, $ret) }
+    return $ret;
+}
+
 sub exec_user_action {
     my ( $self, $openresty, $action, $args ) = @_;
     my $i = 0;
 
-    if ( $action eq '~' ) {
+    if ($action eq '~' ) {
         die "Action name must be specified before executing.";
     }
 
-
+    my $compiled = $self->has_action($action);
     my $sql = [:sql|
         select compiled
         from _actions
@@ -286,6 +306,11 @@ sub DELETE_action {
     return { success => 1 };
 }
 
+sub action_count {
+    my ($self, $openresty) = @_;
+    return $openresty->select("select count(*) from _actions")->[0][0];
+}
+
 # Create a named action (no overwrite permitted)
 # This routine will do the following things:
 #     1. Make sure there are no actions with the same name yet.
@@ -295,29 +320,55 @@ sub DELETE_action {
 #     4.
 sub POST_action {
     my ( $self, $openresty, $bits ) = @_;
+    my $data = _HASH($openresty->{_req_data}) or
+        die "The action schema must be a HASH.\n";
+    my $action = $bits->[1];
 
-    my $body = $openresty->{_req_data};
-    die "Invalid body content, must be a JSON object"
-        unless ( ref($body) eq 'HASH' );
-    die "Action definition must be given"
-        unless ( exists( $body->{definition} ) );
+    my $name;
+    if ($action eq '~') {
+        $action = $data->{name};
+    }
 
-    my $act_name = ( $bits->[1] eq '~' ) ? $body->{name} : $bits->[1];
-    my $act_def  = $body->{definition};  # action definition, no default value
-    my $act_desc = $body->{description}; # action description, default to ''
-    my $act_params = $body->{parameters}
-        || [];    # action parameter list, default to []
+    if ($name = delete $data->{name} and $name eq $action) {
+        $openresty->warning("name \"$name\" in POST content ignored.");
+    }
+    $data->{name} = $model;
+    return $self->new_action($openresty, $data);
+}
 
-    # Make sure action name was given
-    die "Action name should be specified in URL or body content."
-        unless ($act_name);
+sub new_action {
+    my ($self, $openresty, $data) = @_;
+    my $action_count = $self->action_count($openresty);
+    if ($action_acount >= $ACTION_LIMIT) {
+        die "Exceeded action count limit: $ACTION_LIMIT.\n";
+    }
 
+    my ($action, $desc, $params, $def);
+    [:validator|
+        $data ~~
+        {
+            name: IDENT :required :to($action),
+            description: STRING :nonempty :required :to($desc),
+            parameters: [
+                {
+                    name: IDENT :required,
+                    label: STRING :nonempty,
+                    type: STRING :nonempty :required,
+                    default_value: STRING,
+                }
+            ] :to($params),
+            definition: STRING :nonempty :required :to($def),
+        } :required :nonempty
+    |]
+    $params ||= [];
+    if (@$params > $ACTION_PARAM_LIMIT) {
+        die "Exceeded model column count limit: $ACTION_LIMIT.\n";
+    }
+
+    if ($openresty->has_action($action)) {
+        die "Model \"$action\" already exists.\n";
+    }
     # Check if the action has been defined to prevent overwriting
-    my $sql = [:sql|
-        select name
-        from _actions
-        where name = $act_name |];
-    my $act_list = $openresty->select( $sql, { use_hash => 1 } );
     die "Action \"$act_name\" already exists.\n"
         if (@$act_list);
 
@@ -643,7 +694,7 @@ sub PUT_action {
 
     # Make sure the given action already existed
     my $sql = [:sql|
-        select id, compiled
+        select compiled
         from _actions
         where name = $act_name |];
     my $res = $openresty->select( $sql, { use_hash => 1 } );
