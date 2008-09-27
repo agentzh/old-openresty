@@ -2,7 +2,7 @@ This is the source for the blog administration site http://openresty.org/blogadm
 
 How to setup the site:
 
-    $ sudo cpan Jemplate WWW::OpenResty YAML
+    $ sudo cpan Jemplate Template
     $ make
     $ firefox out/index.html &
 

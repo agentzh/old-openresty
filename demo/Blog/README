@@ -6,7 +6,7 @@ How to setup the site:
 
 * cd into this directory and enter the following commands:
 
-    $ sudo cpan Jemplate WWW::OpenResty YAML
+    $ sudo cpan Jemplate WWW::OpenResty YAML Template
     $ script/init.pl -u your_account -p your_password -s your_server
     $ vim js/blog.js  # change "agentzh" to your account name
     $ vim Makefile    # change blog_name and blog_desc to your own
