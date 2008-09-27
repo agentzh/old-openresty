@@ -49,6 +49,7 @@ pack: all
 	cp -r out/* pack_out/
 	for file in `find out -name '*.js' | grep -v 'jquery.js'`; do echo "packing $$file..."; cat $$file | jsmin > pack_out/`basename $$file`; done
 	cat pack_out/blog-jemplate.js pack_out/openresty.js pack_out/blog.js > pack_out/blog_min.js
+	cat pack_out/jquery.js pack_out/dojo.openresty.js > pack_out/jquery-dojo.js
 	rm pack_out/blog-jemplate.js pack_out/openresty.js pack_out/blog.js
 	rm -rf out
 	mv pack_out out
