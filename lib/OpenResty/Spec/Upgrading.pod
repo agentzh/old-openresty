@@ -26,7 +26,33 @@ Note that it's highly recommended to use only the CPAN release for upgrading. Th
 
 If you're a developer, however, the use of the SVN head is certainly encouraged ;)
 
-In case the upgrading failed (it should not happen often), one might have to fix the failure himself. A metamodel recovering tool is in our TODO list though.
+=head1 Failure Recovery
+
+In case the upgrading failed (it should not happen very often but we know that it could happen), one might have to fix the failure himself.
+
+So, for production servers it's highly recommended to save your metamodels using the following command before upgrading:
+
+    $ bin/save-metamodel.pl
+
+A typycal output might be:
+
+    Dumping account _global to metamodel/_global.sql...
+    Dumping account agentzh to metamodel/agentzh.sql...
+    Dumping account onccf to metamodel/onccf.sql...
+    Dumping account tester to metamodel/tester.sql...
+    Dumping account tester2 to metamodel/tester2.sql...
+    Dumping account zjjresty to metamodel/zjjresty.sql...
+    Dumping account zjjresty2 to metamodel/zjjresty2.sql...
+
+As you might have figured out, every account (including the global metamodel schema C<_global>) is dumped out to a local SQL file under F<metamodel/>.
+
+If the F<metamodel/> directory already exists, F<bin/save-metamodel.pl> will gracefully moved it to F<metamodel.old/> before dumping. But existing F<metamodel.old/> will be overritten.
+
+In case upgrading failed, one can restore the previous working metamodel saved by the F<bin/save-metamodel.pl> script by the following command:
+
+    $ bin/restore-metamodel.pl
+
+This script will read all the F<.sql> files under F<metamodel/> and overwrite the (broken) metamodel in the database.
 
 =head1 AUTHOR
 
