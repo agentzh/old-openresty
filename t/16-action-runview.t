@@ -93,7 +93,7 @@ POST /=/action/.Select/lang/minisql
 "select * from Carrie where title = 'hello carrie' and num=10;"
 --- response
 {"error":"Action \".Select\" not found.","success":0}
-
+--- SKIP
 
 
 === TEST 9: use minisql to find record
