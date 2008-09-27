@@ -20,7 +20,7 @@ DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- request
 DELETE /=/action
 --- response
-{"success":1,"warning":"Builtin actions are skipped."}
+{"success":1,"warning":"Builtin actions were skipped."}
 
 
 
@@ -52,7 +52,7 @@ GET /=/action/~
 --- request
 DELETE /=/action/~
 --- response
-{"success":1,"warning":"Builtin actions are skipped."}
+{"success":1,"warning":"Builtin actions were skipped."}
 
 
 

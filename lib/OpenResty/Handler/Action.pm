@@ -33,9 +33,7 @@ sub POST_action_exec {
     }
 
     # Process user-defined actions
-    if ( $action eq '~' ) {
-        die "Action name must be specified before executing.";
-    }
+    _IDENT($action) or die "Invalid action name.\n";
 
     my $sql = [:sql|
         select id, compiled
@@ -43,64 +41,54 @@ sub POST_action_exec {
         where name = $action |];
     my $res = $openresty->select( $sql, { use_hash => 1 } );
     if ( !$res || @$res == 0 ) {
-        die "Action \"$action\" not found.";
+        die "Action \"$action\" not found.\n";
     }
 
     my $act_id   = $res->[0]{id};
-    my $act_comp = $res->[0]{compiled};
-    eval { $act_comp = $json->decode($act_comp); };
+    my $compiled = $res->[0]{compiled};
+    eval { $compiled = $json->decode($compiled); };
     if ($@) {
-        die "Failed to load compiled fragments for action \"$action\"";
+        die "Failed to load compiled fragments for action \"$action\".\n";
     }
 
     # Get parameters from POST body content
-    my $act_param = $openresty->{_req_data};
+    my $user_args = $openresty->{_req_data};
     die "Invalid POST body content, must be a JSON object"
-        unless ( ref($act_param) eq 'HASH' );
+        unless ref $user_args eq 'HASH';
 
     $sql = [:sql|
         select name, type, default_value
         from _action_params
         where action_id = $act_id and used = true |];
-    $res = $openresty->select( $sql, { use_hash => 1 } );
+    my $params = $openresty->select( $sql, { use_hash => 1 } );
 
     # Complement parameter values from URL
-    my %var_map = ();
-    for my $row (@$res) {
-        my $val = $act_param->{ $row->{name} }
-            || $self->get_param( $openresty, $bits, $row->{name} );
-        unless ( defined($val) || defined( $row->{default_value} ) ) {
+    my %args = ();
+    for my $param (@$params) {
+        my $val = $user_args->{ $param->{name} }
+            || $self->get_param( $openresty, $bits, $param->{name} );
 
+        if ( !defined $val && !defined $param->{default_value} ) {
             # Some parameter were not given
-            die
-                "Parameter \"$row->{name}\" were not given, and no default value was set";
+            die "Parameter \"$param->{name}\" were not given, and no default value was set.\n";
         }
-        $var_map{ $row->{name} } = $val || $row->{default_value};
+        $args{ $param->{name} } = $val || $param->{default_value};
     }
 
     # Execute action
-    return $self->execute_cmds( $openresty, $act_comp, \%var_map );
+    return $self->execute_cmds( $openresty, $compiled, \%args );
 }
 
 # Remove all existing actions for current user (not including builtin actions)
 sub DELETE_action_list {
     my ( $self, $openresty, $bits ) = @_;
-    my $rv;
 
     # Try to remove all action parameters
-    $rv = $openresty->do("delete from _action_params");
-    die 'Failed to remove all action parameters.'
-        unless ( defined($rv) );
-
-    # Try to remove all actions
-    $rv = $openresty->do("delete from _actions");
-    die 'Failed to remove all actions.'
-        unless ( defined($rv) );
-
+    my $rv = $openresty->do("delete from _action_params; delete from _actions");
     # All actions except builtin ones were removed successfully
     return {
-        success => 1,
-        warning => 'Builtin actions are skipped.',
+        success => $rv >= 0 ? 1 : 0,
+        warning => 'Builtin actions were skipped.',
     };
 }
 
@@ -198,8 +186,8 @@ sub GET_action_exec {
     }
 
     my $act_id   = $res->[0]{id};
-    my $act_comp = $res->[0]{compiled};
-    eval { $act_comp = $json->decode($act_comp); };
+    my $compiled = $res->[0]{compiled};
+    eval { $compiled = $json->decode($compiled); };
     if ($@) {
         die "Failed to load compiled fragments for action \"$act_name\"";
     }
@@ -222,7 +210,7 @@ sub GET_action_exec {
         $var_map{ $row->{name} } = $val || $row->{default_value};
     }
 
-    return $self->execute_cmds( $openresty, $act_comp, \%var_map );
+    return $self->execute_cmds( $openresty, $compiled, \%var_map );
 
 }
 
@@ -446,10 +434,10 @@ sub POST_action {
     $self->validate_model_names( $openresty, \@models );
 
     # Insert action definition into backend
-    my $act_comp = $json->encode($canon_cmds);
+    my $compiled = $json->encode($canon_cmds);
     $sql = [:sql|
         insert into _actions (name, definition, description, compiled)
-        values($act_name, $act_def, $act_desc, $act_comp) |];
+        values($act_name, $act_def, $act_desc, $compiled) |];
     my $rv = $openresty->do($sql);
     die "Failed to insert action into backend DB"
         unless ( defined($rv) );
