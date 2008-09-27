@@ -637,7 +637,7 @@ GET /=/model?_user=$TestAccount2&_password=$TestPass2
 
 === TEST 63: recheck Test account 1:
 --- request
-GET /=/model?_user=$TestAccount&_password=$TestPass
+GET /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 [
     {"src":"/=/model/Carrie","name":"Carrie","description":"我的书签"},
@@ -646,7 +646,26 @@ GET /=/model?_user=$TestAccount&_password=$TestPass
 
 
 
-=== TEST 64: logout
+=== TEST 64: NewComment
+--- request
+POST /=/action/NewComment
+{
+    "description":"New comment",
+    "parameters":[
+        { "name": "sender", "type": "literal" },
+        { "name": "email", "type": "literal" },
+        { "name": "url", "type": "literal" },
+        { "name": "body", "type": "literal" },
+        { "name": "post_id", "type": "literal" }
+    ],
+    "definition":"POST '/=/model/Comment/~/~' { sender: $sender, email: $email, url: $url, body: $body, post: $post_id }; update Carrie set num = num + 1 where id = $post_id;"
+}
+--- response
+{"success":1}
+
+
+
+=== TEST 65: logout
 --- request
 GET /=/logout
 --- response

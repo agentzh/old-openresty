@@ -323,10 +323,31 @@ $resty->post(
 );
 
 $resty->post(
+    '/=/action/NewComment',
+    {
+        description => "Get full post (with the navigator and comments",
+        parameters => [
+            { name => 'sender', type => 'literal' },
+            { name => 'email', type => 'literal' },
+            { name => 'url', type => 'literal' },
+            { name => 'body', type => 'literal' },
+            { name => 'post_id', type => 'literal' },
+        ],
+        definition => q{
+            POST '/=/model/Comment/~/~'
+            { sender: $sender, email: $email, url: $url, body: $body, post: $post_id };
+            update Post set comments = comments + 1 where id = $post_id;
+        },
+    }
+);
+
+
+$resty->post(
     '/=/role/Public/~/~',
     [
         { method => "GET", url => '/=/action/GetSidebar/~/~' },
         { method => "GET", url => '/=/action/GetFullPost/~/~' },
+        { method => "POST", url => '/=/action/NewComment/~/~' },
 
         { method => "GET", url => '/=/model/Post/~/~' },
         { method => "GET", url => '/=/model/Comment/~/~' },

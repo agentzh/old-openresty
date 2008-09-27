@@ -530,7 +530,7 @@ sub compile_frags {
     my %vars;
     my @canon_cmds;
     for my $cmd (@$cmds) {
-        die "Invalid command: ", Dumper($cmd), "\n" unless ref $cmd;
+        die "Invalid command: ", $OpenResty::Dumper->($cmd), "\n" unless ref $cmd;
         if ( @$cmd == 1 and ref $cmd->[0] ) {    # being a SQL command
             my $seq = $cmd->[0];
 
@@ -541,10 +541,10 @@ sub compile_frags {
 
 # Make sure inferenced variable type is consistent
 # FIXME: 'unknown' type should be overwritten by concrete types (eg. 'symbol')
-                    if ( exists $vars{$var_name}
+                    if ( $var_type ne 'unknown' && exists $vars{$var_name}
                         && $vars{$var_name} ne $var_type )
                     {
-                        die "Type inference conflict for variable \"$var_name\".";
+                        die "Type inference conflict for variable \"$var_name\": $var_type expected.\n";
                     }
 
                     # Collect variable and its type

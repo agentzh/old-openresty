@@ -41,6 +41,7 @@ function debug (msg) {
 
 $.fn.postprocess = function (className, options) {
     return this.find("a[@href*='#']").each( function () {
+        //debug("HERE!");
         var href = $(this).attr('href');
         // We need the following hack because IE expands href to
         // absolute URL:
@@ -57,7 +58,7 @@ $.fn.postprocess = function (className, options) {
     } );
 };
 
-var count = 0;;
+//var count = 0;;
 function setStatus (isLoading, category) {
     if (isLoading) {
         if (++loadingCount == 1) {
@@ -80,8 +81,8 @@ function setStatus (isLoading, category) {
 
         }
     }
-    count++;
-    debug("[" + count + "] setStatus: " + category + ": " + loadingCount + "(" + isLoading + ")");
+    //count++;
+    //debug("[" + count + "] setStatus: " + category + ": " + loadingCount + "(" + isLoading + ")");
 }
 
 function init () {
@@ -281,11 +282,13 @@ function getSidebar () {
     //getRecentPosts();
     //getRecentComments();
     //getArchiveList();
+    setStatus(true, 'renderSidebar');
     openresty.callback = function (res) { renderSidebar(res) };
     openresty.get('/=/action/GetSidebar/~/~', { year: thisYear, month: thisMonth + 1 });
 }
 
 function renderSidebar (res) {
+    setStatus(false, 'renderSidebar');
     getCalendar(thisYear, thisMonth, res[0]);
 
     setStatus(true, 'renderRecentPosts');
@@ -455,7 +458,7 @@ function postComment (form) {
     data.email = $("#comment-email").val();
     data.url = $("#comment-url").val();
     data.body = $("#comment-text").val();
-    data.post = $("#comment-for").val();
+    data.post_id = $("#comment-for").val();
     //alert(JSON.stringify(data));
     if (!data.sender) {
         error("Name is required.");
@@ -473,8 +476,8 @@ function postComment (form) {
     //openresty.purge();
     setStatus(true, 'afterPostComment');
     openresty.callback = afterPostComment;
-    //openresty.formId = 'comment-form';
-    openresty.postByGet('/=/model/Comment/~/~', data);
+    openresty.formId = 'comment-form';
+    openresty.post('/=/action/NewComment/~/~', data);
     return false;
 }
 
@@ -492,22 +495,11 @@ function afterPostComment (res) {
 
         //debug(JSON.stringify(res));
         var commentId;
-        var match = res.last_row.match(/\d+$/);
+        var match = res[0].last_row.match(/\d+$/);
         if (match.length) commentId = match[0];
         location.hash = 'post-' + postId + ':' +
             (commentId ? 'comment-' + commentId : 'comments');
-        openresty.callback = function (res) {
-            if (!openresty.isSuccess(res)) {
-                error("Failed to increment the comment count for post " +
-                    postId + ": " + res.error);
-            } else {
-                spans.text(commentCount + 1);
-            }
-        };
-        openresty.putByGet(
-            '/=/model/Post/id/' + postId,
-            { comments: commentCount + 1 }
-        );
+        spans.text(commentCount + 1);
         getRecentComments(0);
     }
 }
