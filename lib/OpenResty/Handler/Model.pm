@@ -349,12 +349,14 @@ sub DELETE_model_column {
     }
     my $sql = '';
 
-    if($col eq '~') {
+    if ($col eq '~') {
          $openresty->warning("Column \"id\" is reserved.");
-     my $columns = $self->get_model_col_names($openresty, $model);
-     for my $c (@$columns) {
-        $sql .= "delete from _columns where model = '$model' and name='$c';" .
-                      "alter table \"$model\" drop column \"$c\" restrict;";
+         my $columns = $self->get_model_col_names($openresty, $model);
+         for my $c (@$columns) {
+             $sql .= [:sql|
+                delete from _columns where model = $model and name=$c;
+                alter table $sym:model drop column $sym:c restrict;
+            |];
          }
     } else {
         $sql = "delete from _columns where model='$model' and name='$col'; alter table \"$model\" drop column \"$col\" restrict;";

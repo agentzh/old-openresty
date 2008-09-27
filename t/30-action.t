@@ -571,7 +571,6 @@ GET /=/action/TitleOnly/~
     {"name":"col","label":null,"type":"symbol","default_value":null},
     {"name":"select_col","label":null,"type":"literal","default_value":null}
 ]
---- LAST
 
 
 
@@ -579,7 +578,7 @@ GET /=/action/TitleOnly/~
 --- request
 DELETE /=/action/TitleOnly/col
 --- response
-{"sucess":1}
+{"success":1}
 
 
 
@@ -587,7 +586,7 @@ DELETE /=/action/TitleOnly/col
 --- request
 DELETE /=/action/TitleOnly/select_col
 --- response
-{"success":0,"error":"Parameter \"select_col\" is referenced in the action definition."}
+{"error":"Failed to remove parameter \"select_col\": it's used in the definition.","success":0}
 
 
 
@@ -596,7 +595,7 @@ DELETE /=/action/TitleOnly/select_col
 GET /=/action/TitleOnly/~
 --- response
 [
-    {"name":"select_col","type":"literal","default_value":null}
+    {"name":"select_col","label":null,"type":"literal","default_value":null}
 ]
 
 
@@ -605,7 +604,7 @@ GET /=/action/TitleOnly/~
 --- request
 GET /=/action/TitleOnly/select_col
 --- response
-{"name":"select_col","type":"literal","default_value":null}
+{"name":"select_col","label":null,"type":"literal","default_value":null}
 
 
 
@@ -614,7 +613,7 @@ GET /=/action/TitleOnly/select_col
 PUT /=/action/TitleOnly
 {"definition":"select $select_col from A order by $order_by"}
 --- response
-{"success":0,"error":"Parameter \"order_by\" used in the action definition is not defined in \"parameters\"."}
+{"success":0,"error":"Parameter \"order_by\" used in the action definition is not defined in the \"parameters\" list."}
 
 
 
@@ -622,8 +621,8 @@ PUT /=/action/TitleOnly
 --- request
 POST /=/action/TitleOnly/~
 {"name":"order_by","type":"symbol"}
--- response
-{"success":1}
+--- response
+{"src":"/=/model/TitleOnly/order_by","success":1}
 
 
 
@@ -643,11 +642,11 @@ GET /=/action/TitleOnly
 {
     "name":"TitleOnly",
     "parameters":[
-        {"name":"select_col","type":"literal","default_value":null},
-        {"name":"order_by","type":"symbol","default_value":null}
+        {"name":"select_col","label":null,"type":"literal","default_value":null},
+        {"name":"order_by","label":null,"type":"symbol","default_value":null}
     ],
     "description":null,
-    "definition":"select $select_col from A order by $col"
+    "definition":"select $select_col from A order by $order_by"
 }
 
 
@@ -674,7 +673,7 @@ PUT /=/action/TitleOnly/select_col
 --- request
 GET /=/action/TitleOnly/select_col
 --- response
-{"name":"select_col","type":"symbol"}
+{"default_value":null,"label":null,"name":"select_col","type":"symbol"}
 
 
 
@@ -817,8 +816,8 @@ GET /=/action/Foo
     "name":"Foo",
     "description":null,
     "parameters":[
-        {"name":"col","default_value":"id","type":"symbol"},
-        {"name":"by","type":"symbol","default_value":"title"}
+        {"name":"col","label":null,"default_value":"id","type":"symbol"},
+        {"name":"by","label":null,"type":"symbol","default_value":"title"}
     ],
     "definition":"select $col from A order by $by"
 }
@@ -861,7 +860,7 @@ GET /=/action/Foo/col/title?by=id
 --- request
 GET /=/action/!@
 --- response
-{"success":0,"error":"Bad action name: !@"}
+{"error":"Action \"!@\" not found.","success":0}
 
 
 
@@ -902,7 +901,10 @@ GET /=/action/Bah
 {
     "name":"Bah",
     "description":null,
-    "parameters":[],
+    "parameters":[
+        {"name":"col","label":null,"default_value":"id","type":"symbol"},
+        {"name":"by","label":null,"type":"symbol","default_value":"title"}
+    ],
     "definition":"select * from A"
 }
 
@@ -913,7 +915,7 @@ GET /=/action/Bah
 PUT /=/action/Bah
 { "descripition": "Blah blah blah..." }
 --- response
-{"success":0,"error":"Unknown keys in POST data: descripition"}
+{"error":"Unrecognized key in hash: descripition","success":0}
 
 
 
@@ -933,7 +935,10 @@ GET /=/action/Bah
 {
     "name":"Bah",
     "description":"Blah blah blah...",
-    "parameters":[],
+    "parameters":[
+        {"default_value":"id","label":null,"name":"col","type":"symbol"},
+        {"default_value":"title","label":null,"name":"by","type":"symbol"}
+    ],
     "definition":"select * from A"
 }
 
@@ -953,7 +958,7 @@ POST /=/action/Foo
 POST /=/action/Foo
 {"cat":3}
 --- response
-{"success":0,"error":"No \"definition\" specified."}
+{"error":"Value for \"definition\" required.","success":0}
 
 
 
@@ -963,7 +968,7 @@ POST /=/action/Foo
 {"description":"Test vars for vals","name":"Foo",
     "definition":""}
 --- response
-{"success":0,"error":"Bad definition: \"\""}
+{"error":"Invalid value for \"definition\": Nonempty scalar expected.","success":0}
 
 
 
@@ -973,7 +978,8 @@ POST /=/action/Foo
 {"description":"Test vars for vals","name":"Foo",
     "definition":"update _action set "}
 --- response
-{"success":0,"error":"\"action\" (line 1, column 8):\nunexpected \"_\"\nexpecting space or model"}
+{"error":"\"action\" (line 1, column 8):\nunexpected \"_\"\nexpecting space or identifier entry","success":0}
+--- LAST
 
 
 
