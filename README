@@ -2,7 +2,7 @@ NAME
     OpenResty - General-purpose web service platform for web applications
 
 VERSION
-    This document describes OpenResty 0.4.1 released on September 25, 2008.
+    This document describes OpenResty 0.4.2 released on September 27, 2008.
 
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
@@ -57,6 +57,21 @@ DESCRIPTION
     You'll find my slides for the D2 conference interesting as well:
 
     <http://agentzh.org/misc/openresty-d2.pdf>
+
+    or the original XUL version:
+
+    <http://agentzh.org/misc/openresty-d2/openresty-d2.xul> (Firefox
+    required)
+
+    Another good introduction to OpenResty's REST API is summerized in the
+    slides for my Y!ES talk and my Beijing Perl Workshop 2008 talk:
+
+    <http://agentzh.org/misc/openresty-yes.pdf>
+
+    and a more pretty (XUL) version can be got from here:
+
+    <http://agentzh.org/misc/openresty-yes/openresty-yes.xul> (Firefox
+    required)
 
     There're also a few interesting discussions about OpenResty on my blog
     site:
