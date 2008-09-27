@@ -45,8 +45,8 @@ pack: all
 	mv pack_out out
 
 upload2: pack
-	scp -l 10000 -r `pwd`/out agentz@openresty.org:~/admin
+	script/upload
 
 upload: all
-	scp -l 10000 -r `pwd`/out agentz@openresty.org:~/admin
+	script/upload
 
