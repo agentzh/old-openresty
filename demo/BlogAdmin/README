@@ -10,3 +10,4 @@ Note that you need the whole OpenResty source tree to build this site.
 Because some of the .js files are copied over from ../../clients/js/
 and somewhere else :)
 
+Note that, this BlogAdmin site is only supposed to work with the blog app under ../Blog/

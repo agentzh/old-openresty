@@ -1,5 +1,10 @@
 Change Log for OpenResty
 
+0.4.2 Sep 27 2008
+* demo/BlogAdmin - added a new demo app.
+* added documentation for metamodel duplication and recovery tools bin/save-metamode.pl and bin/restore-metamodel.pl to the OpenResty::Spec::Upgrading document.
+* added the link to my Y!ES talk's slides to OpenResty's main POD.
+
 0.4.1 Sep 25 2008
 * demo/RestyCheck - added dispatcher and timer.
 * demo/Click4honor - use leading underscore for builtin url parameters.
