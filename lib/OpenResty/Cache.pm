@@ -166,6 +166,22 @@ sub remove_has_role {
     $self->remove("hasrole:$user:$role");
 }
 
+sub get_has_action {
+    my ($self, $user, $action) = @_;
+    #return undef;
+    $self->get("hasrole:$user:$action", 'trivial')
+}
+
+sub set_has_action {
+    my ($self, $user, $action, $compiled) = @_;
+    $self->set("hasrole:$user:$action", $compiled, 3600, 'trivial');
+}
+
+sub remove_has_action {
+    my ($self, $user, $action) = @_;
+    $self->remove("hasrole:$user:$action");
+}
+
 1;
 __END__
 

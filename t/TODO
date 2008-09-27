@@ -3,6 +3,7 @@ Coverage testing TODOs:
 
 Old TODOs:
 * PUT an empty hash to model rows?
+* values in the url takes priority over the values in the data? or the other way around? TODO...
 * add column hits limit.
 * /=/model.json?var=foo
 * t/p3p-cookie.t for cross-site cookie support and the cookie_site url param
