@@ -12,7 +12,7 @@ all:
 	-cp ../../clients/js/*.js out/
 	-rm out/JSON.js
 	-rm out/md5.js
-	-rm out/*dojo*.js
+	#rm out/*dojo*.js
 	-rm template/elem/*.tt~
 	jemplate --runtime > out/blog-jemplate.js
 	jemplate --compile template/elem/ >> out/blog-jemplate.js
@@ -46,7 +46,8 @@ pack: all
 	cp -r out/* pack_out/
 	for file in `find out -name '*.js' | grep -v 'jquery.js'`; do echo "packing $$file..."; cat $$file | jsmin > pack_out/`basename $$file`; done
 	cat pack_out/blog-jemplate.js pack_out/openresty.js pack_out/blog.js > pack_out/blog_min.js
-	rm pack_out/blog-jemplate.js pack_out/openresty.js pack_out/blog.js
+	cat pack_out/jquery.js pack_out/dojo.openresty.js > pack_out/jquery-dojo.js
+	rm pack_out/blog-jemplate.js pack_out/openresty.js pack_out/blog.js pack_out/dojo.openresty.js pack_out/jquery.js
 	rm -rf out
 	mv pack_out out
 

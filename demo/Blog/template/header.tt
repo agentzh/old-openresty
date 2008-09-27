@@ -7,10 +7,11 @@
         'jquery.js',
         'blog-jemplate.js',
         'openresty.js',
+        'dojo.openresty.js',
         'blog.js',
       ];
    ELSE;
-      js_files = ['jquery.js', 'blog_min.js'];
+      js_files = ['jquery-dojo.js', 'blog_min.js'];
    END;
 -%]
 <head>
