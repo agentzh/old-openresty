@@ -646,8 +646,8 @@ GET /=/action/TitleOnly
 {
     "name":"TitleOnly",
     "parameters":[
-        {"name":"select_col","label":null,"type":"literal","default_value":null},
-        {"name":"order_by","label":null,"type":"symbol","default_value":null}
+        {"name":"select_col","label":null,"type":"literal"},
+        {"name":"order_by","label":null,"type":"symbol"}
     ],
     "description":null,
     "definition":"select $select_col from A order by $order_by"
@@ -995,7 +995,7 @@ POST /=/action/Foo
         {"name":"col", "type":"symbol", "default_value":"id"},
         {"name":"val","type":"literal"}
     ],
-    "definition":"select * from $model  where $col > $val"}
+    "definition":"select * from A  where $col > $val"}
 --- response
 {"success":0,"error":"Bad default value for parameter \"model\" of type symbol."}
 
@@ -1010,13 +1010,13 @@ POST /=/action/Foo
         {"name":"col", "type":"symbol", "default_value":"id"},
         {"name":"val","type":"literal"}
     ],
-    "definition":"select * from $model  where $col > $val"}
+    "definition":"select * from A where $col > $val"}
 --- response
 {"error":"Bad value for \"default_value\" for \"parameters\" array element: String expected.","success":0}
 
 
 
-=== TEST 99: Re-add action Foo
+=== TEST 99: use vars for model names
 --- request
 POST /=/action/Foo
 {"description":"Test vars for vals","name":"Foo",
@@ -1027,11 +1027,26 @@ POST /=/action/Foo
     ],
     "definition":"select * from $model  where $col > $val"}
 --- response
+{"error":"Parameters cannot be used as model names.","success":0}
+
+
+
+=== TEST 100: Re-add action Foo
+--- request
+POST /=/action/Foo
+{"description":"Test vars for vals","name":"Foo",
+    "parameters":[
+        {"name":"model", "type":"symbol", "default_value":"A"},
+        {"name":"col", "type":"symbol", "default_value":"id"},
+        {"name":"val","type":"literal"}
+    ],
+    "definition":"select * from A  where $col > $val"}
+--- response
 {"success":1}
 
 
 
-=== TEST 100: Invoke the action (required vars missing)
+=== TEST 101: Invoke the action (required vars missing)
 --- request
 GET /=/action/Foo/~/~
 --- response
@@ -1039,7 +1054,7 @@ GET /=/action/Foo/~/~
 
 
 
-=== TEST 101: Invoke the action
+=== TEST 102: Invoke the action
 --- request
 GET /=/action/Foo/val/2
 --- response
@@ -1052,7 +1067,7 @@ GET /=/action/Foo/val/2
 
 
 
-=== TEST 102: Escaped char
+=== TEST 103: Escaped char
 --- request
 GET /=/action/Foo/val/林\?col=title
 --- response
@@ -1060,7 +1075,7 @@ GET /=/action/Foo/val/林\?col=title
 
 
 
-=== TEST 103: Invoke the action (bad fixed var name)
+=== TEST 104: Invoke the action (bad fixed var name)
 --- request
 GET /=/action/Foo/!@/2?val=3
 --- response
@@ -1069,7 +1084,7 @@ GET /=/action/Foo/!@/2?val=3
 
 
 
-=== TEST 104: Invoke the action (another way)
+=== TEST 105: Invoke the action (another way)
 --- request
 GET /=/action/Foo/~/~?val=2
 --- response
@@ -1082,7 +1097,7 @@ GET /=/action/Foo/~/~?val=2
 
 
 
-=== TEST 105: Invoke the action (bad free var name)
+=== TEST 106: Invoke the action (bad free var name)
 --- request
 GET /=/action/Foo/~/~?!@=2
 --- response
@@ -1090,7 +1105,7 @@ GET /=/action/Foo/~/~?!@=2
 
 
 
-=== TEST 106: Invoke the action (bad symbol)
+=== TEST 107: Invoke the action (bad symbol)
 --- request
 GET /=/action/Foo/~/~?val=2&col=id"
 --- response
@@ -1098,7 +1113,7 @@ GET /=/action/Foo/~/~?val=2&col=id"
 
 
 
-=== TEST 107: Invoke the action (overriding vars)
+=== TEST 108: Invoke the action (overriding vars)
 --- request
 GET /=/action/Foo/~/~?val=2&col=id
 --- response
@@ -1111,7 +1126,7 @@ GET /=/action/Foo/~/~?val=2&col=id
 
 
 
-=== TEST 108: Create a model with cidr type
+=== TEST 109: Create a model with cidr type
 --- request
 POST /=/model/T
 {
@@ -1125,7 +1140,7 @@ POST /=/model/T
 
 
 
-=== TEST 109: Insert lines to cidr table
+=== TEST 110: Insert lines to cidr table
 --- request
 POST /=/model/T/~/~
 [
@@ -1136,7 +1151,7 @@ POST /=/model/T/~/~
 
 
 
-=== TEST 110: create a action with operator >>=
+=== TEST 111: create a action with operator >>=
 --- request
 POST /=/action/TC
 { "definition": "select count(*) from T where cidr >>= '202.165.100.143'" }
@@ -1145,7 +1160,7 @@ POST /=/action/TC
 
 
 
-=== TEST 111: Invoke the T action
+=== TEST 112: Invoke the T action
 --- request
 GET /=/action/TC/~/~
 --- response
@@ -1153,7 +1168,7 @@ GET /=/action/TC/~/~
 
 
 
-=== TEST 112: bug
+=== TEST 113: bug
 --- request
 POST /=/action/RowCount
 { "parameters":[
@@ -1165,7 +1180,7 @@ POST /=/action/RowCount
 
 
 
-=== TEST 113: bug
+=== TEST 114: bug
 --- request
 POST /=/action/RowCount
 { "parameters":[
@@ -1177,18 +1192,18 @@ POST /=/action/RowCount
 
 
 
-=== TEST 114: view the TitleOnly action
+=== TEST 115: view the TitleOnly action
 --- request
 GET /=/action/TitleOnly
 --- response
 {"name":"TitleOnly","parameters":[
-        {"name":"select_col","label":null,"type":"symbol","default_value":null},
-        {"name":"order_by","label":null,"type":"symbol","default_value":null}
+        {"name":"select_col","label":null,"type":"symbol"},
+        {"name":"order_by","label":null,"type":"symbol"}
     ],"description":null,"definition":"select $select_col from A order by $order_by"}
 
 
 
-=== TEST 115: change the action def
+=== TEST 116: change the action def
 --- request
 PUT /=/action/TitleOnly
 { "definition": "select 32" }
@@ -1197,18 +1212,18 @@ PUT /=/action/TitleOnly
 
 
 
-=== TEST 116: get the action def again:
+=== TEST 117: get the action def again:
 --- request
 GET /=/action/TitleOnly
 --- response
 {"name":"TitleOnly","description":null,"parameters":[
-        {"name":"select_col","label":null,"type":"symbol","default_value":null},
-        {"name":"order_by","label":null,"type":"symbol","default_value":null}
+        {"name":"select_col","label":null,"type":"symbol"},
+        {"name":"order_by","label":null,"type":"symbol"}
     ],"definition":"select 32"}
 
 
 
-=== TEST 117: change the action def (syntax error)
+=== TEST 118: change the action def (syntax error)
 --- request
 PUT /=/action/TitleOnly
 { "definition": "abc 32" }
@@ -1217,7 +1232,7 @@ PUT /=/action/TitleOnly
 
 
 
-=== TEST 118: logout
+=== TEST 119: logout
 --- request
 GET /=/logout
 --- response
