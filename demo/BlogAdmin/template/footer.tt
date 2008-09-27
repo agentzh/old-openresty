@@ -1,3 +1,9 @@
+<br>
+<p style="text-align: left; padding-left: 1em;">
+This site can be downloaded from <a href="site-binary.tar.gz">here</a> (.tar.gz) and <a href="http://svn.openfoundry.org/openapi/trunk/demo/BlogAdmin/">its Subversion repository</a> has anonymous access to all.
+</p>
+
+<hr>
 <div id="copyright">
     <center>
         <p>Powered by <a href="http://search.cpan.org/dist/OpenResty">OpenResty</a> and your web browser.</p>

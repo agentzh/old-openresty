@@ -42,7 +42,7 @@
     <hr/>
     <div id="main">
     </div>
-
+    [%- PROCESS 'footer.tt' %]
 </body>
 
 </html>
