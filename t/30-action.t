@@ -343,7 +343,7 @@ GET /=/action/Action2
 {
     "name":"Action2",
     "description":null,
-    "parameters":[{"name":"col","type":"symbol","label":null,"default":null}],
+    "parameters":[{"name":"col","type":"symbol","label":null,"default_value":null}],
     "definition":"select title from A order by $col"
 }
 
@@ -448,7 +448,7 @@ GET /=/action/TitleOnly
 {
     "name":"TitleOnly",
     "parameters":[
-        {"name":"col","type":"symbol","default":null}
+        {"name":"col","type":"symbol","default_value":null}
     ],
     "description":null,
     "definition":"select title from A order by $col"
@@ -571,8 +571,8 @@ GET /=/action/TitleOnly/~/~?select_col=123
 GET /=/action/TitleOnly/~
 --- response
 [
-    {"name":"col","type":"symbol","default":null},
-    {"name":"select_col","type":"literal","default":null}
+    {"name":"col","type":"symbol","default_value":null},
+    {"name":"select_col","type":"literal","default_value":null}
 ]
 
 
@@ -598,7 +598,7 @@ DELETE /=/action/TitleOnly/select_col
 GET /=/action/TitleOnly/~
 --- response
 [
-    {"name":"select_col","type":"literal","default":null}
+    {"name":"select_col","type":"literal","default_value":null}
 ]
 
 
@@ -607,7 +607,7 @@ GET /=/action/TitleOnly/~
 --- request
 GET /=/action/TitleOnly/select_col
 --- response
-{"name":"select_col","type":"literal","default":null}
+{"name":"select_col","type":"literal","default_value":null}
 
 
 
@@ -645,8 +645,8 @@ GET /=/action/TitleOnly
 {
     "name":"TitleOnly",
     "parameters":[
-        {"name":"select_col","type":"literal","default":null},
-        {"name":"order_by","type":"symbol","default":null}
+        {"name":"select_col","type":"literal","default_value":null},
+        {"name":"order_by","type":"symbol","default_value":null}
     ],
     "description":null,
     "definition":"select $select_col from A order by $col"
@@ -802,8 +802,8 @@ GET /=/action
 POST /=/action/Foo
 {
     "parameters": [
-        {"name":"col", "type":"symbol", "default":"id"},
-        {"name":"by", "type":"symbol", "default":"title"}
+        {"name":"col", "type":"symbol", "default_value":"id"},
+        {"name":"by", "type":"symbol", "default_value":"title"}
     ],
     "definition":"select $col from A order by $by"}
 --- response
@@ -819,8 +819,8 @@ GET /=/action/Foo
     "name":"Foo",
     "description":null,
     "parameters":[
-        {"name":"col","default":"id","type":"symbol"},
-        {"name":"by","type":"symbol","default":"title"}
+        {"name":"col","default_value":"id","type":"symbol"},
+        {"name":"by","type":"symbol","default_value":"title"}
     ],
     "definition":"select $col from A order by $by"
 }
@@ -984,8 +984,8 @@ POST /=/action/Foo
 POST /=/action/Foo
 {"description":"Test vars for vals","name":"Foo",
     "parameters":[
-        {"name":"model", "type":"symbol", "default":"'A'"},
-        {"name":"col", "type":"symbol", "default":"id"},
+        {"name":"model", "type":"symbol", "default_value":"'A'"},
+        {"name":"col", "type":"symbol", "default_value":"id"},
         {"name":"val","type":"literal"}
     ],
     "definition":"select * from $model  where $col > $val"}
@@ -999,8 +999,8 @@ POST /=/action/Foo
 POST /=/action/Foo
 {"description":"Test vars for vals","name":"Foo",
     "parameters":[
-        {"name":"model", "type":"symbol", "default":[3]},
-        {"name":"col", "type":"symbol", "default":"id"},
+        {"name":"model", "type":"symbol", "default_value":[3]},
+        {"name":"col", "type":"symbol", "default_value":"id"},
         {"name":"val","type":"literal"}
     ],
     "definition":"select * from $model  where $col > $val"}
@@ -1014,8 +1014,8 @@ POST /=/action/Foo
 POST /=/action/Foo
 {"description":"Test vars for vals","name":"Foo",
     "parameters":[
-        {"name":"model", "type":"symbol", "default":"A"},
-        {"name":"col", "type":"symbol", "default":"id"},
+        {"name":"model", "type":"symbol", "default_value":"A"},
+        {"name":"col", "type":"symbol", "default_value":"id"},
         {"name":"val","type":"literal"}
     ],
     "definition":"select * from $model  where $col > $val"}
@@ -1186,8 +1186,8 @@ POST /=/action/RowCount
 GET /=/action/TitleOnly
 --- response
 {"name":"TitleOnly","parameters":[
-        {"name":"select_col","type":"symbol","default":null},
-        {"name":"order_by","type":"symbol","default":null}
+        {"name":"select_col","type":"symbol","default_value":null},
+        {"name":"order_by","type":"symbol","default_value":null}
     ],"description":null,"definition":"select $select_col from A order by $order_by"}
 
 
