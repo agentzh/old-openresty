@@ -2,7 +2,7 @@ NAME
     OpenResty - General-purpose web service platform for web applications
 
 VERSION
-    This document describes OpenResty 0.4.2 released on September 27, 2008.
+    This document describes OpenResty 0.5.0 released on September 27, 2008.
 
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.

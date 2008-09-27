@@ -1,5 +1,6 @@
 *~
 *.json
+!*.t.json
 cover_db
 Makefile
 bin/test-account.sh

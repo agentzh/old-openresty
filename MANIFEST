@@ -1,3 +1,10 @@
+demo/Admin/template/elem/action.tt
+demo/Admin/template/elem/create-action.tt
+demo/Admin/template/elem/param-inputs.tt
+t/30-action.t
+t/31-action.t
+t/pgmock-data/30-action.t.json
+t/pgmock-data/31-action.t.json
 demo/BlogAdmin/css/blogadmin.css
 demo/BlogAdmin/css/fonts.css
 demo/BlogAdmin/css/login.css

@@ -4,7 +4,7 @@ OpenResty::Spec::MetaModel - Metamodel for OpenResty backends
 
 =head1 VERSION
 
-This document describes OpenResty 0.4.2's meta model, version 0.006.
+This document describes OpenResty 0.5.0's meta model, version 0.007.
 
 =head1 DESCRIPTION
 
@@ -199,20 +199,30 @@ defining the functionality of the view.
 
 The C<_actions> table stores the information of the OpenResty Action objects.
 
-    create table _action (
+    create table _actions (
         id serial primary key,
         name text unique not null,
+        definition text not null,
         description text,
-        definition text unique not null,
-        confirmed_by text
+        compiled text,
+        created timestamp(0) with time zone default now()
+    );
+
+    create table _action_params (
+        id serial primary key,
+        name text not null,
+        type text not null,
+        label text,
+        default_value text,
+        used bool not null,
+        action_id integer references _actions(id) on delete cascade
     );
 
 Most of the columns are similar to those in the C<_view> table except that
-the last C<confirmed_by> column specifies the confirmation method used to
-fire the action. Allowed values for this column are "email", "cellphone",
-and "captcha".
+it takes an auxiliary table C<_action_params>.
 
-B<WARNING> This part deserves more treatment. As of OpenResty 0.2.x, the _action table has not been included in the MetaModel implementation yet.
+[TODO: add the C<confirmed_by> column to specify the confirmation
+method used to fire the action. Allowed values for this column are "email", "cellphone", and "captcha".]
 
 =item _feeds
 
