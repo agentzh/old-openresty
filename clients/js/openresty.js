@@ -195,6 +195,7 @@ OpenResty.Client.prototype.get = function (url, args) {
     }
     OpenResty.isDone[reqId] = false;
     this.callback = function (res) {
+        //debug("In call back! " + reqId);
         OpenResty.isDone[reqId] = true;
         OpenResty.callbackMap[reqId] = null;
         callback(res);
@@ -230,6 +231,7 @@ OpenResty.Client.prototype.get = function (url, args) {
             setTimeout(function () {
                 if (!OpenResty.isDone[reqId]) {
                     //alert("reqId: " + reqId);
+                    //debug("onerror firing... " + reqId);
                     onerror();
                     OpenResty.isDone[reqId] = true;
                     setTimeout(function () {
@@ -241,7 +243,9 @@ OpenResty.Client.prototype.get = function (url, args) {
             }, 50);
         }
     };
-    headTag.appendChild(scriptTag);
+    setTimeout( function () {
+        headTag.appendChild(scriptTag);
+    }, 0);
 };
 
 OpenResty.Client.prototype.del = function (url, args) {
