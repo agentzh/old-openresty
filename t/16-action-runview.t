@@ -96,6 +96,7 @@ POST /=/action/.Select/lang/minisql
 --- SKIP
 
 
+
 === TEST 9: use minisql to find record
 --- request
 POST /=/action/RunView/~/~
