@@ -11,6 +11,7 @@ var timer = null;
 var thisYear = null;
 var thisMonth = null;
 var thisDay = null;
+var cachedPostCountRes = null;
 
 var months = [
     null,
@@ -267,18 +268,37 @@ function getPagerForSearch (query, page) {
 
 function getPager (page) {
     setStatus(true, 'renderPager');
-    openresty.callback = function (res) { renderPager(res, page, 'posts/', ''); };
-    openresty.get('/=/view/RowCount/model/Post');
+    if (cachedPostCountRes) {
+        //alert("Hit!");
+        renderPager(cachedPostCountRes, page, 'posts/', '');
+    } else {
+        openresty.callback = function (res) { renderPager(res, page, 'posts/', ''); };
+        openresty.get('/=/view/RowCount/model/Post');
+    }
 }
 
 function getSidebar () {
-    getCalendar();
-    getRecentPosts();
-    getRecentComments();
-    getArchiveList();
+    //getRecentPosts();
+    //getRecentComments();
+    //getArchiveList();
+    openresty.callback = function (res) { renderSidebar(res) };
+    openresty.get('/=/action/GetSidebar/~/~', { year: thisYear, month: thisMonth + 1 });
 }
 
-function getCalendar (year, month) {
+function renderSidebar (res) {
+    getCalendar(thisYear, thisMonth, res[0]);
+
+    setStatus(true, 'renderRecentPosts');
+    renderRecentPosts(res[1], 0, 6);
+
+    setStatus(true, 'renderRecentComments');
+    renderRecentComments(res[2], 0, 6);
+
+    setStatus(true, 'getArchiveList');
+    renderArchiveList(res[3], 0, 12);
+}
+
+function getCalendar (year, month, posts) {
     if (year == undefined || month == undefined) {
         year = thisYear;
         month = thisMonth;
@@ -311,13 +331,19 @@ function getCalendar (year, month) {
     ).postprocess();
 
     // We need this 0 timeout hack for IE 6 :(
-    setTimeout( function () {
+    if (posts) {
+        //alert("Shortcut!");
         setStatus(true, 'renderPostsInCalendar');
-        openresty.callback = function (res) {
-            renderPostsInCalendar(res, year, month);
-        };
-        openresty.get('/=/view/PostsByMonth/~/~', { year: year, month: month + 1 });
-    }, 0 );
+        renderPostsInCalendar(posts, year, month);
+    } else {
+        setTimeout( function () {
+            setStatus(true, 'renderPostsInCalendar');
+            openresty.callback = function (res) {
+                renderPostsInCalendar(res, year, month);
+            };
+            openresty.get('/=/view/PostsByMonth/~/~', { year: year, month: month + 1 });
+        }, 0 );
+    }
 }
 
 function renderPostsInCalendar (res, year, month) {
@@ -580,6 +606,7 @@ function renderPager (res, page, prefix, suffix) {
         error("Failed to render pager: " + res.error);
     } else {
         //debug("before rendering pager...");
+        cachedPostCountRes = res;
         var pageCount = Math.ceil(parseInt(res[0].count) / itemsPerPage);
         if (pageCount < 2) return;
         //debug("before redering pager (2)...");

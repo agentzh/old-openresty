@@ -41,6 +41,7 @@ $resty->login($user, $password);
 $resty->delete("/=/role/Public/~/~");
 $resty->delete("/=/role");
 $resty->delete("/=/view");
+$resty->delete("/=/action");
 $resty->delete("/=/feed");
 
 if ($resty->has_model('Post')) {
@@ -290,8 +291,46 @@ $resty->post(
 );
 
 $resty->post(
+    '/=/action/GetSidebar',
+    {
+        description => "Get sidebar",
+        parameters => [
+            { name => 'year', type => 'literal' },
+            { name => 'month', type => 'literal' },
+        ],
+        definition => q{
+            GET '/=/view/PostsByMonth/~/~?' || 'year=' || $year || '&month=' || $month;
+            GET '/=/view/RecentPosts/limit/6';
+            GET '/=/view/RecentComments/limit/6';
+            GET '/=/view/PostCountByMonths/count/12';
+        },
+    }
+);
+
+=begin comment
+$resty->post(
+    '/=/action/GetPostListWithPager',
+    {
+        description => "Get sidebar",
+        parameters => [
+            { name => 'offset', type => 'literal' },
+            { name => 'order_by', type => 'literal' },
+            { name => 'count', type => 'literal' },
+        ],
+        definition => q{
+            GET '/=/model/Post/~/~?' || '_count=' || $count || '&_order_by=' || $order_by || '&_offset=' || $offset;
+            GET '/=/view/RowCount/model/Post';
+        },
+    }
+);
+=cut
+
+
+$resty->post(
     '/=/role/Public/~/~',
     [
+        { method => "GET", url => '/=/action/GetSidebar/~/~' },
+
         { method => "GET", url => '/=/model/Post/~/~' },
         { method => "GET", url => '/=/model/Comment/~/~' },
 

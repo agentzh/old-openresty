@@ -1,6 +1,6 @@
 package OpenResty::Handler::Action;
 
-#use Smart::Comments '#####';
+#use Smart::Comments '####';
 use strict;
 use warnings;
 
