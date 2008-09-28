@@ -38,6 +38,9 @@ our (%AccountFiltered, %UnsafeAccounts);
 our $Cache;
 our $UUID = Data::UUID->new;
 
+# XXX we should really put this into the Action handler...
+our %AllowForwarding;
+
 our $JsonXs = JSON::XS->new->utf8->allow_nonref;
 
 our %OpMap = (
