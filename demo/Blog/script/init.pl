@@ -366,9 +366,6 @@ $resty->post(
 
         { method => "GET", url => '/=/feed/Post/~/~' },
         { method => "GET", url => '/=/feed/Comment/~/~' },
-
-        { method => "POST", url => '/=/model/Comment/~/~' },
-        { method => "PUT", url => '/=/model/Post/id/~' },
     ]
 );
 
