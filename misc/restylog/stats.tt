@@ -44,7 +44,7 @@ limit 5;
 
 =SQL select count(distinct account) from [% table %]
 
-=item 流量最大的前十个应用
+=item 流量最大的二十个应用
 
 =begin SQL
 
@@ -53,11 +53,11 @@ from [% table %]
 where account is not null
 group by account
 order by req_count desc
-limit 10;
+limit 20;
 
 =end SQL
 
-=item 流量最大的十个客户端
+=item 流量最大的二十个客户端
 
 =begin SQL
 
@@ -65,7 +65,7 @@ select client_addr, count(*) as req_count
 from [% table %]
 group by client_addr
 order by req_count desc
-limit 10
+limit 20
 
 =end SQL
 
