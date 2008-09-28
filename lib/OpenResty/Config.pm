@@ -77,6 +77,14 @@ sub init {
     $CGI::Simple::POST_MAX = to_num $OpenResty::Limits::POST_LEN_LIMIT;
     # max 100 K posts
     $CGI::Simple::DISABLE_UPLOADS = 1;  # no uploads
+    my $list = $OpenResty::Config{'frontend.allow_forwarding'};
+    if ($list) {
+        my @accounts = split /\s+/, $list;
+        for my $account (@accounts) {
+            #warn "Allowing account $account...\n";
+            $OpenResty::AllowForwarding{$account} = 1;
+        }
+    }
 }
 
 1;

@@ -4,11 +4,13 @@ package OpenResty::Handler::Action;
 use strict;
 use warnings;
 
+use LWP::UserAgent;
 use OpenResty::Util;
 use Params::Util qw( _HASH _STRING );
 use OpenResty::RestyScript;
 use OpenResty::Limits;
-use JSON::XS;
+use JSON::XS ();
+use LWP::UserAgent ();
 use Data::Dumper qw(Dumper);
 use OpenResty::QuasiQuote::SQL;
 use OpenResty::QuasiQuote::Validator;
@@ -22,7 +24,9 @@ sub level2name {
     qw< action_list action action_param action_exec  >[$_[-1]]
 }
 
-my $json = JSON::XS->new->utf8;
+my $json = JSON::XS->new->utf8->allow_nonref;
+my $ua = LWP::UserAgent->new;
+$ua->timeout(2);
 
 sub POST_action_exec {
     my ( $self, $openresty, $bits ) = @_;
@@ -273,7 +277,11 @@ sub exec_user_action {
         die "Arguments required: @missed_args\n";
     }
 
+    my $account = $openresty->current_user;
+    #### %OpenResty::AllowForwarding
+    my $allow_forwarding = $OpenResty::AllowForwarding{$account};
     #### $canon_cmds
+    #warn "Allow: $allow_forwarding";
     my @outputs;
     for my $cmd (@$canon_cmds) {
         $i++;
@@ -282,32 +290,35 @@ sub exec_user_action {
 
             # Proceeds variable value substitutions
             $url     = join_frags_with_args( $url, $params, $args );
-            $content = join_frags_with_args( $content, $params, $args, sub { $OpenResty::JsonXs->encode($_[0]) });
+            $content = join_frags_with_args(
+                $content, $params, $args,
+                sub { $OpenResty::JsonXs->encode($_[0]) }
+            );
             #### $url
             #### $content
 
-  # DO NOT permit cross-domain HTTP method!!!
-  #            if ($url !~ m{^/=/}) {
-  #                die "Error in command $i: url does not start by \"/=/\"\n";
-  #            }
+            if ($url =~ m{^/=/}) {
+                local %ENV;
+                $ENV{REQUEST_URI}    = $url;
+                $ENV{REQUEST_METHOD} = $http_meth;
+                (my $query = $url) =~ s/(.*?\?)//g;
+                #$query .= '&';
+                #warn "Query: $query\n";
+                $ENV{QUERY_STRING} = $query;
 
-            local %ENV;
-            $ENV{REQUEST_URI}    = $url;
-            $ENV{REQUEST_METHOD} = $http_meth;
-            (my $query = $url) =~ s/(.*?\?)//g;
-            #$query .= '&';
-            #warn "Query: $query\n";
-            $ENV{QUERY_STRING} = $query;
-
-            my $cgi = new_mocked_cgi( $url, $content );
-            my $call_level = $openresty->call_level;
-            $call_level++;
-            my $account = $openresty->current_user;
-            my $res
-                = OpenResty::Dispatcher->process_request( $cgi, $call_level,
-                $account );
-            push @outputs, $res;
-
+                my $cgi = new_mocked_cgi( $url, $content );
+                my $call_level = $openresty->call_level;
+                $call_level++;
+                push @outputs,
+                    OpenResty::Dispatcher->process_request(
+                        $cgi, $call_level, $account
+                    );
+            } else { # absolute requests
+                if ( ! $allow_forwarding ) {
+                    die "Error in command $i: url does not start with \"/=/\"\n";
+                }
+                push @outputs, do_http_request($http_meth, \$url, \$content);
+            }
         } else {    # being a SQL method, $cmd->[0] is the fragments list
             my $pg_sql = join_frags_with_args( $cmd->[0], $params, $args );
 
@@ -325,6 +336,46 @@ sub exec_user_action {
         }
     }
     return \@outputs;
+}
+
+sub do_http_request {
+    my ($meth, $rurl, $rcontent) = @_;
+    #no strict 'subs';
+    #### $meth
+    my $url = $$rurl;
+    #### $url
+
+    my $req = HTTP::Request->new($meth);
+    $req->header('Content-Type' => 'text/plain');
+    $req->header('Accept', '*/*');
+    $req->url($$rurl);
+
+    my $res = $ua->request($req);
+        # judge result and next action based on $response_code
+    if ($res->is_success) {
+        my $content = $res->content;
+        my $type = $res->header('Content-Type');
+        if ($type !~ /^text\//) {
+            return {
+                success => 0, error => 'Text response expected.',
+            };
+        }
+
+        my $data;
+        #warn "content: $content";
+        eval {
+            $data = $json->decode($content);
+        };
+        if ($@) {
+            return $content;
+        } else {
+            return $data;
+        }
+    } else {
+        return {
+            success => 0, error => $res->status_line,
+        };
+    }
 }
 
 # Delete action with the given name, if the given action name is '~' then
