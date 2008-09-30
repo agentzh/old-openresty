@@ -16,7 +16,7 @@ use WWW::OpenResty::Simple;
 use Params::Util qw( _HASH _ARRAY0 );
 use JSON::XS ();
 
-my $step = 500;
+my $step = 20;
 my $server = 'api.eeeeworks.org';
 GetOptions(
     'user|u=s' => \(my $user),
@@ -51,9 +51,9 @@ my $exported = 0;
 while (1) {
     my $url = "/=/model/$model/~/~";
     my %args = (
-        offset => $offset,
-        count => $step,
-        order_by => "id:asc",
+        _offset => $offset,
+        _count => $step,
+        _order_by => "id:asc",
     );
     my $res = $resty->get($url, \%args);
     if (_ARRAY0($res)) {
