@@ -29,8 +29,8 @@ function dispatchByAnchor () {
     if (savedAnchor == anchor)
         return;
     if (anchor == "") {
-        anchor = 'posts/1';
-        location.hash = 'posts/1';
+        anchor = Server;
+        location.hash = Server;
     }
     savedAnchor = anchor;
 
