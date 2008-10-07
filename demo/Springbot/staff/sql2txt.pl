@@ -28,6 +28,7 @@ while (<>) {
             my $phone = $vals[15];
             my $cell= $vals[16];
             $pos =~ s/高级|资深|首席//g;
+            $pos = '' if $pos eq '总监';
             print "$name|$emp_id|$depart|$email|$phone|$cell|$yid|$pos|$sex|$place|\n";
         }
     }
