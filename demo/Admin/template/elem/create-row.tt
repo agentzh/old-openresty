@@ -17,9 +17,9 @@
         [%- NEXT IF col.name == 'id' %]
         <label>[% col.name %]</label>
         [%- IF col.type == "text" %]
-        <textarea rows="3" cols="15" class="row-input" resty_key="[% col.name %]"></textarea>
+        <textarea rows="3" cols="80" class="row-input" resty_key="[% col.name %]"></textarea>
         [%- ELSE %]
-        <input type="text" size="15" class="row-input" resty_key="[% col.name %]"></input>
+        <input type="text" size="80" class="row-input" resty_key="[% col.name %]"></input>
         [%- END %]
         <br/>
     [%- END %]

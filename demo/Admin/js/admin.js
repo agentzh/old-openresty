@@ -32,7 +32,7 @@ $.fn.postprocess = function (className, options) {
                 var data = $(this).attr('resty_value');
                 var type = $(this).attr('resty_type');
                 //debug(type);
-                if ((data && data.length > 128) || /\n/.test(data)) {
+                if ((data && data.length > 30) || /\n/.test(data)) {
                     type = 'textarea';
                 }
                 if (!type) type = 'text';
@@ -41,7 +41,7 @@ $.fn.postprocess = function (className, options) {
                     settings.width = 600;
                     settings.height = 200;
                 } else {
-                    settings.width = '15em';
+                    settings.width = data.length + 5 + 'em';
                 }
                 settings.data = data;
                 settings.type = type;
