@@ -34,7 +34,8 @@ DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- request
 DELETE /=/action
 --- response
-{"success":1,"warning":"Builtin actions are skipped."}
+{"success":1,"warning":"Builtin actions were skipped."}
+
 
 
 
@@ -140,11 +141,38 @@ PUT /=/action/VarQuery
 GET /=/action/VarQuery/p/0
 --- response
 [
-    [{"title":"url var"}],
-    [{"url":"http://zhan.cn.yahoo.com?p=0"}]
+    {"title":"url var","url":"http://zhan.cn.yahoo.com?p=0","num":"0","id":4}
 ]
 
-=== TEST 14: logout
+
+
+=== TEST 14: insert another record with url var
+--- request
+POST /=/model/Carrie/~/~.js
+{ "title":"中文","url":"http://zhan.cn.yahoo.com","num":"0"}
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/6"}
+
+
+=== TEST 15: Update the definition
+--- request
+PUT /=/action/CNQuery
+ "parameters":[{"name":"title","type":"literal"}],
+{ "definition": "select * from Carrie where title=$title"}
+--- response
+{"success":1}
+
+=== TEST 16: Invoke the action
+--- request
+GET /=/action/CNQuery/title/中文
+--- response
+[
+   {"title":"中文","url":"http://zhan.cn.yahoo.com","num":"0","id":"6"}
+]
+
+
+
+=== TEST 17: logout
 --- request
 GET /=/logout
 --- response
