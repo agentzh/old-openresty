@@ -1,5 +1,9 @@
 *~
 *.json
+*.o
+*.hi
+haskell/bin/openhesty
+haskell/openhesty.txt
 !*.t.json
 cover_db
 Makefile
