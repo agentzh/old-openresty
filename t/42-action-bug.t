@@ -1,6 +1,19 @@
 ﻿# vi:filetype=
 
-use t::OpenResty;
+my $ExePath;
+BEGIN {
+    use FindBin;
+    $ExePath = "$FindBin::Bin/../haskell/bin/restyscript";
+    if (!-f $ExePath) {
+        $skip = "$ExePath is not found.\n";
+        return;
+    }
+    if (!-x $ExePath) {
+        $skip = "$ExePath is not an executable.\n";
+        return;
+    }
+};
+use t::OpenResty $skip ? (skip_all => $skip) : ();
 
 plan tests => 3 * blocks();
 
@@ -8,9 +21,10 @@ run_tests;
 
 __DATA__
 
+
 === TEST 1: Delete existing models
 --- request
-DELETE /=/model?user=$TestAccount&password=$TestPass&use_cookie=1
+DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 {"success":1}
 
@@ -56,7 +70,7 @@ POST /=/model/Carrie/~/~.js
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/2"}
 
-=== TEST 5: insert another record
+=== TEST 6: insert another record
 --- request
 POST /=/model/Carrie/~/~.js
 { "title":"Num 0","url":"http://zhan.cn.yahoo.com","num":"0"}
@@ -65,7 +79,7 @@ POST /=/model/Carrie/~/~.js
 
 
 
-=== TEST 8: Update the def to introduce vars
+=== TEST 7: Update the def to introduce vars
 --- request
 PUT /=/action/Query
 {
@@ -76,7 +90,7 @@ PUT /=/action/Query
 
 
 
-=== TEST 9: Invoke the action
+=== TEST 8: Invoke the action
 --- request
 GET /=/action/Query/num/10
 --- response
@@ -87,7 +101,7 @@ GET /=/action/Query/num/10
 
 
 
-=== TEST 10: Invoke the action
+=== TEST 9: Invoke the action
 --- request
 GET /=/action/Query/num/0
 --- response
@@ -96,7 +110,7 @@ GET /=/action/Query/num/0
     [{"url":"http://zhan.cn.yahoo.com"}]
 ]
 
-=== TEST 5: insert another record with url var
+=== TEST 10: insert another record with url var
 --- request
 POST /=/model/Carrie/~/~.js
 { "title":"url var","url":"http://zhan.cn.yahoo.com?p=0","num":"0"}
@@ -104,7 +118,7 @@ POST /=/model/Carrie/~/~.js
 {"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/4"}
 
 
-=== TEST 5: insert another record
+=== TEST 11: insert another record
 --- request
 POST /=/model/Carrie/~/~.js
 { "title":"url var","url":"http://zhan.cn.yahoo.com?p=1","num":"0"}
@@ -112,7 +126,7 @@ POST /=/model/Carrie/~/~.js
 {"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/5"}
 
 
-=== TEST 8: def action with var
+=== TEST 12: def action with var
 --- request
 PUT /=/action/VarQuery
 {
@@ -121,7 +135,7 @@ PUT /=/action/VarQuery
 --- response
 {"success":1}
 
-=== TEST 10: Invoke the action
+=== TEST 13: Invoke the action
 --- request
 GET /=/action/VarQuery/p/0
 --- response
@@ -130,7 +144,7 @@ GET /=/action/VarQuery/p/0
     [{"url":"http://zhan.cn.yahoo.com?p=0"}]
 ]
 
-=== TEST 45: logout
+=== TEST 14: logout
 --- request
 GET /=/logout
 --- response
