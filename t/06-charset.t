@@ -243,7 +243,25 @@ GET /=/model/Big5?_charset=UTF-8
 
 
 
-=== TEST 20: logout
+=== TEST 20: POST utf-8 chars
+--- charset: UTF-8
+--- request
+POST /=/model/Big5/~/~
+{"bar":"你好么？"}
+--- response
+{"success":1,"rows_affected":1,"last_row":"/=/model/Big5/id/1"}
+
+
+
+=== TEST 21: Get the row
+--- request
+GET /=/model/Big5/id/1
+--- response
+[{"bar":"你好么？","id":"1"}]
+
+
+
+=== TEST 22: logout
 --- request
 GET /=/logout
 --- response
