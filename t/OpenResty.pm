@@ -28,10 +28,13 @@ use Encode 'from_to';
 our @EXPORT = qw(init do_request run_tests run_test);
 
 my $timer;
-eval {
-    require Benchmark::Timer;
+eval "use Benchmark::Timer";
+if ($@) {
+    #warn "Benchmark::Timer is missing and no benchmark will be performed.\n"
+} else {
     $timer = Benchmark::Timer->new();
-};
+}
+
 my $SavedCapture;
 
 our $server = $ENV{'OPENRESTY_TEST_SERVER'} ||

@@ -271,6 +271,7 @@ sub exec_user_action {
             # Some parameter were not given
             push @missed_args, $name if $param->{used};
         }
+        # XXX a bug here...
         $args->{ $name } = $val || $param->{default_value};
     }
     if (@missed_args) {
