@@ -1,6 +1,19 @@
 # vi:filetype=
 
-use t::OpenResty;
+my $ExePath;
+BEGIN {
+    use FindBin;
+    $ExePath = "$FindBin::Bin/../haskell/bin/restyscript";
+    if (!-f $ExePath) {
+        $skip = "$ExePath is not found.\n";
+        return;
+    }
+    if (!-x $ExePath) {
+        $skip = "$ExePath is not an executable.\n";
+        return;
+    }
+};
+use t::OpenResty $skip ? (skip_all => $skip) : ();
 
 plan tests => 3 * blocks();
 
@@ -8,12 +21,12 @@ run_tests;
 
 __DATA__
 
+
 === TEST 1: Delete existing models
 --- request
 DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 {"success":1}
-
 
 
 === TEST 2: Delete existing views
