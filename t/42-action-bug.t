@@ -1,4 +1,4 @@
-﻿# vi:filetype=
+# vi:filetype=
 
 use t::OpenResty;
 
@@ -89,7 +89,7 @@ GET /=/action/Query/num/10
 
 
 
-=== TEST 9: Invoke the action
+=== TEST 9: Invoke the action with a 0 param value
 --- request
 GET /=/action/Query/num/0
 --- response
@@ -123,19 +123,17 @@ POST /=/model/Carrie/~/~.js
 POST /=/action/VarQuery
 {
     "parameters":[{"name":"p","type":"literal"}],
-    "definition": "select * from Carrie where url = '﻿http://zhan.cn.yahoo.com?p=' || $p"}
+    "definition": "select * from Carrie where url = 'http://zhan.cn.yahoo.com?p=' || $p"}
 --- response
 {"success":1}
 
 
 
-=== TEST 13: Invoke the action
+=== TEST 13: Invoke the action using a 0 param value
 --- request
 GET /=/action/VarQuery/p/0
 --- response
-[
-    {"title":"url var","url":"http://zhan.cn.yahoo.com?p=0","num":"0","id":4}
-]
+[[{"id":"4","num":"0","title":"url var","url":"http://zhan.cn.yahoo.com?p=0"}]]
 
 
 

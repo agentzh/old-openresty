@@ -272,7 +272,8 @@ sub exec_user_action {
             push @missed_args, $name if $param->{used};
         }
         # XXX a bug here...
-        $args->{ $name } = $val || $param->{default_value};
+        if (!defined $val) { $val = $param->{default_value}; }
+        $args->{ $name } = $val;
     }
     if (@missed_args) {
         die "Arguments required: @missed_args\n";
