@@ -1,19 +1,6 @@
 ﻿# vi:filetype=
 
-my $ExePath;
-BEGIN {
-    use FindBin;
-    $ExePath = "$FindBin::Bin/../haskell/bin/restyscript";
-    if (!-f $ExePath) {
-        $skip = "$ExePath is not found.\n";
-        return;
-    }
-    if (!-x $ExePath) {
-        $skip = "$ExePath is not an executable.\n";
-        return;
-    }
-};
-use t::OpenResty $skip ? (skip_all => $skip) : ();
+use t::OpenResty;
 
 plan tests => 3 * blocks();
 
@@ -45,14 +32,13 @@ POST /=/model/Carrie.js
 {
     "description": "我的书签",
     "columns": [
-        { "name": "title", "label": "标题" },
-        { "name": "url", "label": "网址" },
+        { "name": "title", "type":"text","label": "标题" },
+        { "name": "url","type":"text", "label": "网址" },
         { "name": "num", "type": "integer", "label": "num" }
     ]
 }
 --- response
 {"success":1}
-
 
 
 === TEST 4: insert a record
@@ -71,6 +57,8 @@ POST /=/model/Carrie/~/~.js
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/2"}
 
+
+
 === TEST 6: insert another record
 --- request
 POST /=/model/Carrie/~/~.js
@@ -82,7 +70,7 @@ POST /=/model/Carrie/~/~.js
 
 === TEST 7: Update the def to introduce vars
 --- request
-PUT /=/action/Query
+POST /=/action/Query
 {
     "parameters":[{"name":"num","type":"literal"}],
     "definition": "select title from Carrie where num = $num; select url from Carrie where num = $num"}
@@ -97,7 +85,7 @@ GET /=/action/Query/num/10
 --- response
 [
     [{"title":"hello carrie"}],
-    [{"url":"http://www.carriezh.cn"}]
+    [{"url":"http://www.carriezh.cn/"}]
 ]
 
 
@@ -129,7 +117,7 @@ POST /=/model/Carrie/~/~.js
 
 === TEST 12: def action with var
 --- request
-PUT /=/action/VarQuery
+POST /=/action/VarQuery
 {
     "parameters":[{"name":"p","type":"literal"}],
     "definition": "select * from Carrie where url = '﻿http://zhan.cn.yahoo.com?p=' || $p"}
@@ -154,11 +142,12 @@ POST /=/model/Carrie/~/~.js
 {"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/6"}
 
 
-=== TEST 15: Update the definition
+=== TEST 15: def action with paraments in Chinese
 --- request
-PUT /=/action/CNQuery
+POST /=/action/CNQuery
+{
  "parameters":[{"name":"title","type":"literal"}],
-{ "definition": "select * from Carrie where title=$title"}
+ "definition": "select * from Carrie where title=$title"}
 --- response
 {"success":1}
 
@@ -167,7 +156,7 @@ PUT /=/action/CNQuery
 GET /=/action/CNQuery/title/中文
 --- response
 [
-   {"title":"中文","url":"http://zhan.cn.yahoo.com","num":"0","id":"6"}
+   [{"title":"中文","url":"http://zhan.cn.yahoo.com","num":"0","id":"6"}]
 ]
 
 
