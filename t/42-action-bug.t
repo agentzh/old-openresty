@@ -8,7 +8,6 @@ run_tests;
 
 __DATA__
 
-
 === TEST 1: Delete existing models
 --- request
 DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
@@ -25,7 +24,6 @@ DELETE /=/action
 
 
 
-
 === TEST 3: Create a model
 --- request
 POST /=/model/Carrie.js
@@ -39,6 +37,7 @@ POST /=/model/Carrie.js
 }
 --- response
 {"success":1}
+
 
 
 === TEST 4: insert a record
@@ -99,12 +98,15 @@ GET /=/action/Query/num/0
     [{"url":"http://zhan.cn.yahoo.com"}]
 ]
 
+
+
 === TEST 10: insert another record with url var
 --- request
 POST /=/model/Carrie/~/~.js
 { "title":"url var","url":"http://zhan.cn.yahoo.com?p=0","num":"0"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/4"}
+
 
 
 === TEST 11: insert another record
@@ -115,6 +117,7 @@ POST /=/model/Carrie/~/~.js
 {"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/5"}
 
 
+
 === TEST 12: def action with var
 --- request
 POST /=/action/VarQuery
@@ -123,6 +126,8 @@ POST /=/action/VarQuery
     "definition": "select * from Carrie where url = '﻿http://zhan.cn.yahoo.com?p=' || $p"}
 --- response
 {"success":1}
+
+
 
 === TEST 13: Invoke the action
 --- request
@@ -142,6 +147,7 @@ POST /=/model/Carrie/~/~.js
 {"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/6"}
 
 
+
 === TEST 15: def action with paraments in Chinese
 --- request
 POST /=/action/CNQuery
@@ -150,6 +156,8 @@ POST /=/action/CNQuery
  "definition": "select * from Carrie where title=$title"}
 --- response
 {"success":1}
+
+
 
 === TEST 16: Invoke the action
 --- request
