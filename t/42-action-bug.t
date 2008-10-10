@@ -167,7 +167,51 @@ GET /=/action/CNQuery/title/中文
 
 
 
-=== TEST 17: logout
+=== TEST 17: define a recursive action
+--- request
+PUT /=/action/CNQuery
+{
+ "definition": "POST '/=/action/CNQuery/~/~' { title: $title }" }
+--- response
+{"success":1}
+
+
+
+=== TEST 18: Call this action recursively
+--- request
+GET /=/action/CNQuery/title/英文
+--- response
+[[[{"success":0,"error":"Action calling chain is too deep. (The limit is 3.)"}]]]
+
+
+
+=== TEST 19: define an action that does POST model rows
+--- request
+PUT /=/action/CNQuery
+{
+ "definition": "POST '/=/model/Carrie/~/~' { title: $title }" }
+--- response
+{"success":1}
+
+
+
+=== TEST 20: Call this action with Chinese chars
+--- request
+GET /=/action/CNQuery/title/英文
+--- response
+[{"success":1,"rows_affected":1,"last_row":"/=/model/Carrie/id/7"}]
+
+
+
+=== TEST 21: Check the rows to see if the chars got right
+--- request
+GET /=/model/Carrie/title/英文
+--- response
+[{"num":null,"url":null,"title":"英文","id":"7"}]
+
+
+
+=== TEST 22: logout
 --- request
 GET /=/logout
 --- response

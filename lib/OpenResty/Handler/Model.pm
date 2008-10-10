@@ -214,6 +214,9 @@ sub POST_model_column {
         } :required :nonempty
     |]
 
+    #warn "label is $label\n";
+    #warn "\$label is utf8? ", (is_utf8($label) ? 1: 0), "\n";
+
     if (lc($col) eq 'id') {
         die "Column id is reserved.";
     }
@@ -229,7 +232,10 @@ sub POST_model_column {
         #### default exists!
         $default = $data->{default};
         if (defined $default) {
-            $json_default = $OpenResty::JsonXs->encode($default);
+            #warn "\$default is utf8? ", (is_utf8($default) ? 1: 0), "\n";
+            $json_default = OpenResty::json_encode($default);
+            #warn "json default: $json_default\n";
+            #warn "\$json_default is utf8? ", (is_utf8($json_default) ? 1: 0), "\n";
             $default = $self->process_default($openresty, $default);
         } else {
             $default = 'null';
@@ -238,16 +244,22 @@ sub POST_model_column {
         undef $default;
     }
 
+    #warn "label 2 is $label\n";
+    #warn "\$label 2 is utf8? ", (is_utf8($label) ? 1: 0), "\n";
+
     my $sql = [:sql|
         insert into _columns (name, label, type, model, "default")
             values( $col, $label, $type, $model, $json_default);
     |];
+    #warn "SQL 0 is $sql\n";
     #### $default
+    #warn "\$default is utf8? ", (is_utf8($default) ? 1: 0), "\n";
 
     $sql .= [:sql|
         alter table $sym:model
         add column $sym:col $kw:type |] .
         (defined $default ? [:sql| default ($kw:default); |] : ';');
+        #warn "SQL: $sql";
 
     my $res = $openresty->do($sql);
 
@@ -311,7 +323,7 @@ sub PUT_model_column {
         my $default = $data->{default};
         if (defined $default) {
             #warn "DEFAULT: $default\n";
-            my $json_default = $OpenResty::JsonXs->encode($default);
+            my $json_default = OpenResty::json_encode($default);
             $default = $self->process_default($openresty, $default);
 
             $update_meta->set(QI('default') => Q($json_default));
@@ -495,7 +507,8 @@ sub new_model {
 
         my $json_default;
         if (defined $default) {
-            $json_default = $OpenResty::JsonXs->encode($default);
+            $json_default = OpenResty::json_encode($default);
+            #warn "JSON_DEFAULT: ", utf8::is_utf8($json_default), "\n";
             $default = $self->process_default($openresty, $default);
             # XXX
             $sql .= " default ($default)";
