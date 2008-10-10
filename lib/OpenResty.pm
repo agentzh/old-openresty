@@ -53,11 +53,18 @@ our %OpMap = (
     ne => '<>',
 );
 
+sub json_encode {
+    _utf8_on($_[0]);
+    local *_ = \( $JsonXs->encode($_[0]) );
+    _utf8_off($_[0]);
+    $_;
+}
+
 our %ext2dumper = (
     '.yml' => sub { _utf8_on($_[0]); YAML::Syck::Dump($_[0]); },
     '.yaml' => sub { _utf8_on($_[0]); YAML::Syck::Dump($_[0]); },
-    '.js' => sub { _utf8_on($_[0]); $JsonXs->encode($_[0]) },
-    '.json' => sub { _utf8_on($_[0]); $JsonXs->encode($_[0]) },
+    '.js' => \&json_encode,
+    '.json' => \&json_encode,
 );
 
 our %EncodingMap = (

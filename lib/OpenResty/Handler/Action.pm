@@ -24,7 +24,6 @@ sub level2name {
     qw< action_list action action_param action_exec  >[$_[-1]]
 }
 
-my $json = JSON::XS->new->utf8->allow_nonref;
 my $ua = LWP::UserAgent->new;
 $ua->timeout(2);
 
@@ -294,7 +293,7 @@ sub exec_user_action {
             $url     = join_frags_with_args( $url, $params, $args );
             $content = join_frags_with_args(
                 $content, $params, $args,
-                sub { $OpenResty::JsonXs->encode($_[0]) }
+                \&OpenResty::json_encode,
             );
             #### $url
             #### $content
@@ -364,9 +363,8 @@ sub do_http_request {
         }
 
         my $data;
-        #warn "content: $content";
         eval {
-            $data = $json->decode($content);
+            $data = $OpenResty::JsonXs->decode($content);
         };
         if ($@) {
             return $content;
@@ -501,7 +499,7 @@ sub new_action {
     }
 
     # Insert action definition into backend
-    my $compiled = $OpenResty::JsonXs->encode([ $params, $canon_cmds ]);
+    my $compiled = OpenResty::json_encode([ $params, $canon_cmds ]);
     my $sql = [:sql|
         insert into _actions (name, definition, description, compiled)
         values($action, $def, $desc, $compiled); |];
@@ -884,7 +882,7 @@ sub alter_action {
         $self->validate_model_names( $openresty, \@models );
 
         # Insert action definition into backend
-        my $compiled = $OpenResty::JsonXs->encode([ $params, $canon_cmds ]);
+        my $compiled = OpenResty::json_encode([ $params, $canon_cmds ]);
 
         $sql .= [:sql|
             update _actions
@@ -964,7 +962,7 @@ sub POST_action_param {
         $params->{$param}{default_value} = $default;
     }
 
-    $compiled = $OpenResty::JsonXs->encode($compiled);
+    $compiled = OpenResty::json_encode($compiled);
 
     my $id = $openresty->select(
         [:sql| select id from _actions where name = $action |]
@@ -1069,7 +1067,7 @@ sub PUT_action_param {
 
     # XXX TODO: add support for updating column's uniqueness
 
-    $compiled = $OpenResty::JsonXs->encode($compiled);
+    $compiled = OpenResty::json_encode($compiled);
     my $sql = $update_meta . [:sql|
         update _actions set compiled = $compiled where id = $id
     |];
@@ -1160,7 +1158,7 @@ sub DELETE_action_param {
     my $user = $openresty->current_user;
     $OpenResty::Cache->remove_has_action($user, $action);
 
-    $compiled = $OpenResty::JsonXs->encode($compiled);
+    $compiled = OpenResty::json_encode($compiled);
 
     my $res = $openresty->do($sql . [:sql|
         update _actions set compiled = $compiled where name = $action
