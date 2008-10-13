@@ -19,6 +19,16 @@ stats - OpenResty 前端机 ced02 的日志分析 ([% year %]-[% month %]-[% day
 
 =SQL CREATE AGGREGATE array_accum ( sfunc = array_append, basetype = anyelement, stype = anyarray, initcond = '{}');
 
+建立 ip2host 函数
+
+=begin SQL
+
+CREATE OR REPLACE FUNCTION pg_catalog.ip2host(text) returns text as
+$$ use Socket; my $ip = shift; $ip =~ s{/\d+$}{}; return scalar gethostbyaddr(inet_aton($ip), AF_INET) $$
+language 'plperlu';
+
+=end SQL
+
 =head2 所有应用
 
 =over
@@ -61,11 +71,23 @@ limit 20;
 
 =begin SQL
 
-select client_addr, count(*) as req_count
+select client_addr, ip2host(client_addr :: text), count(*) as req_count
 from [% table %]
 group by client_addr
 order by req_count desc
 limit 20
+
+=end SQL
+
+=item QPS 最高的二十个客户端
+
+=begin SQL
+
+select count(*) as count, requested, client_addr, ip2host(client_addr :: text)
+from [% table %]
+group by requested, client_addr
+order by count desc
+limit 10;
 
 =end SQL
 
