@@ -12,6 +12,10 @@ use OpenResty::Limits;
 use Getopt::Std;
 use Time::HiRes;
 
+use constant {
+    MAX_STATS_CACHE_SIZE => 500,
+};
+
 my $cmd = lc(shift) || $ENV{OPENRESTY_COMMAND};
 
 if ($ENV{REQUEST_URI}) {
@@ -28,9 +32,13 @@ eval {
 };
 warn $@ if $@;
 
+our @StatsCache;
+our $StatsDir;
+
+# XXX this part is terribly hacky...
 sub do_stats {
     my ($begin_time) = @_;
-    if (my $stats_dir = $OpenResty::Dispatcher::StatsLog) {
+    if ($StatsDir ||= $OpenResty::Dispatcher::StatsLog) {
         my $diff = Time::HiRes::time - $begin_time;
         my $now = localtime;
         my ($sec, $min, $hour, $mday, $mon, $year) = localtime;
@@ -38,16 +46,30 @@ sub do_stats {
         #my $now = "$year-$mon-$mday $hour:$min:$sec";
         #my ($sec, $min, $hour, $mday, $mon, $year) = localtime;
         #$year += 1900; $mon += 1;
-        my $stats_file = sprintf("$stats_dir/%04d-%02d-%02d.log", $year, $mon, $mday);
-        open my $log, ">>$stats_file" or die "Can't open stats_log file $stats_file for writing: $!\n";
         my $client = $ENV{REMOTE_ADDR};
         my $meth = $ENV{REQUEST_METHOD};
         my $url = $ENV{REQUEST_URI};
         ### %ENV
-        print $log sprintf("[%04d-%02d-%02d %02d:%02d:%02d] %.03f %s \"%s %s\"\n", $year, $mon, $mday, $hour, $min, $sec, $diff, $client, $meth, $url);
-        close $log;
+        push @StatsCache, sprintf("[%04d-%02d-%02d %02d:%02d:%02d] %.03f %s \"%s %s\"\n", $year, $mon, $mday, $hour, $min, $sec, $diff, $client, $meth, $url);
+        if (@StatsCache >= MAX_STATS_CACHE_SIZE) {
+            write_log();
+            @StatsCache = ();
+        }
     }
 }
+
+sub write_log {
+    #my $stats_dir = shift;
+    return unless $StatsDir;
+    my ($sec, $min, $hour, $mday, $mon, $year) = localtime;
+    $year += 1900; $mon += 1;
+    my $stats_file = sprintf("$StatsDir/%04d-%02d-%02d.log", $year, $mon, $mday);
+    open my $log, ">>$stats_file" or die "Can't open stats_log file $stats_file for writing: $!\n";
+    print $log @StatsCache;
+    close $log;
+}
+
+END { write_log() }
 
 if ($cmd eq 'fastcgi') {
     require OpenResty::FastCGI;
