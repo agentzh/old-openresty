@@ -41,7 +41,7 @@ $.fn.postprocess = function (className, options) {
                     settings.width = 600;
                     settings.height = 200;
                 } else {
-                    settings.width = data.length + 5 + 'em';
+                    settings.width = data ? (data.length + 5 + 'em') : '5em';
                 }
                 settings.data = data;
                 settings.type = type;
