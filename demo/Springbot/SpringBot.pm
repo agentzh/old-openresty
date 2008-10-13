@@ -220,6 +220,11 @@ sub process_url {
             ### $title
             $title = decode($enc, $title);
             ### $enc
+            $title =~ s/\&nbsp;/ /g;
+            $title =~ s/\&lt;/</g;
+            $title =~ s/\&gt;/>/g;
+            $title =~ s/\&quot;/"/g;
+            $title =~ s/\&amp;/\&/g;
             $say->($title);
         }
     } else {
