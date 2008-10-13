@@ -317,7 +317,7 @@ $resty->post(
         definition => q{
             GET '/=/model/Post/id/' || $id;
             GET '/=/view/PrevNextPost/current/' || $id;
-            GET '/=/model/Comment/post/' || $id;
+            GET '/=/model/Comment/post/' || $id || '?_order_by=id:desc';
         },
     }
 );
