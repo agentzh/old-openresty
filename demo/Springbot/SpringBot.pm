@@ -110,7 +110,7 @@ sub said {
     #warn "Hit!\n";
     #$say->("[$enc]: $text\n");
     #}
-    $self->process_msg($text, $say, $sender);
+    $self->process_msg($text, $say, $sender) if $sender !~ /bot$/i;
     #$self->log($e->{channel}, $e->{who}, $e->{raw_body});
     return undef;
 }
