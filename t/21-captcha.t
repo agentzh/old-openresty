@@ -54,7 +54,7 @@ GET /=/captcha/id/$SavedCapture.jpeg
 
 === TEST 5: get the captcha ID (en)
 --- request
-GET /=/captcha/id?lang=en
+GET /=/captcha/id?_lang=en
 --- response_like
 ^"([0-9a-zA-Z._-]+)"$
 
@@ -71,7 +71,7 @@ GET /=/captcha/id/$SavedCapture.jpeg
 
 === TEST 7: get the captcha ID (En)
 --- request
-GET /=/captcha/id?lang=En
+GET /=/captcha/id?_lang=En
 --- response_like
 ^"([0-9a-zA-Z._-]+)"$
 
@@ -88,7 +88,7 @@ GET /=/captcha/id/$SavedCapture.jpeg
 
 === TEST 9: get the captcha ID (cn)
 --- request
-GET /=/captcha/id?lang=cn
+GET /=/captcha/id?_lang=cn
 --- response_like
 ^"([0-9a-zA-Z._-]+)"$
 
@@ -106,7 +106,7 @@ GET /=/captcha/id/$SavedCapture.jpeg
 
 === TEST 11: get the captcha ID (Cn)
 --- request
-GET /=/captcha/id?lang=Cn
+GET /=/captcha/id?_lang=Cn
 --- response_like
 ^"([0-9a-zA-Z._-]+)"$
 
@@ -124,7 +124,7 @@ GET /=/captcha/id/$SavedCapture.jpeg
 
 === TEST 13: get the captcha ID (fr)
 --- request
-GET /=/captcha/id?lang=fr
+GET /=/captcha/id?_lang=fr
 --- response
 {"success":0,"error":"Unsupported lang (only cn and en allowed): fr"}
 
@@ -295,7 +295,7 @@ GET /=/captcha/id
 === TEST 33: Get the image
 --- res_type: image/png
 --- request
-GET /=/captcha/id/$SavedCapture?lang=en
+GET /=/captcha/id/$SavedCapture?_lang=en
 --- response_like
 .
 
@@ -312,7 +312,7 @@ GET /=/model?_user=$TestAccount.Poster&_captcha=$SavedCapture:helloworldd
 
 === TEST 35: Get a new captcha ID
 --- request
-GET /=/captcha/id?lang=cn
+GET /=/captcha/id?_lang=cn
 --- response_like
 ^"([0-9a-zA-Z._-]+)"$
 
@@ -340,7 +340,7 @@ GET /=/model?_user=$TestAccount.Poster&_captcha=$SavedCapture:你好，世界！
 
 === TEST 38: Get a new captcha ID
 --- request
-GET /=/captcha/id?lang=en
+GET /=/captcha/id?_lang=en
 --- response_like
 ^"([0-9a-zA-Z._-]+)"$
 

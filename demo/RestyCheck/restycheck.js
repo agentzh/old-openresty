@@ -42,6 +42,12 @@ function dispatchByAnchor () {
     openresty = new OpenResty.Client(
         { server: server }
     );
+    openresty.callback = function (res) { renderCaptcha(res, 'en'); };
+    openresty.get('/=/captcha/id', { _lang: 'en' });
+
+    openresty.callback = function (res) { renderCaptcha(res, 'cn'); };
+    openresty.get('/=/captcha/id', { _lang: 'cn' });
+
     $("tr.result").remove();
     for (var i = 0; i < Links.length; i++) {
         //alert("i = " + i);
@@ -51,6 +57,15 @@ function dispatchByAnchor () {
         openresty.get(link[0], link[1]);
         //}
     }
+}
+
+function renderCaptcha (res, lang) {
+    if (!openresty.isSuccess(res)) {
+        $("#captcha-" + lang).html("<span class=\"error\">Failed to get captcha ID: " + res.error + "</span>");
+        return;
+    }
+    var url = 'http://' + server + '/=/captcha/id/' + res;
+    $("#captcha-" + lang).html("<img src=\"" + url + "\">");
 }
 
 function now () {
