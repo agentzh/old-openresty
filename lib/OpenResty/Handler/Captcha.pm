@@ -208,7 +208,7 @@ sub GET_captcha_column {
     if ( $col eq 'id' ) {
 
         # Get captcha language param
-        my $lang = lc( $openresty->{_cgi}->url_param('lang') ) || 'en';
+        my $lang = lc( $openresty->builtin_param('_lang') ) || 'en';
 
         # Generate captcha solution in the language
         my $solution;
