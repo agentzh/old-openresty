@@ -71,7 +71,7 @@ limit 20;
 
 =begin SQL
 
-select client_addr, ip2host(client_addr :: text), count(*) as req_count
+select client_addr, count(*) as req_count
 from [% table %]
 group by client_addr
 order by req_count desc
@@ -79,15 +79,16 @@ limit 20
 
 =end SQL
 
-=item QPS 最高的二十个客户端
+=item QPS 最高的十个客户端
 
 =begin SQL
 
-select count(*) as count, requested, client_addr, ip2host(client_addr :: text)
-from [% table %]
-group by requested, client_addr
-order by count desc
-limit 10;
+select count, requested, client, ip2host(client :: text)
+from (select count(*) as count, requested, client_addr as client
+    from [% table %]
+    group by requested, client_addr
+    order by count desc
+    limit 10) as res
 
 =end SQL
 
