@@ -161,7 +161,9 @@ atom2: proc_call2
     | true_number
     ;
 
-proc_call2: IDENT '(' parameter_list2 ')'
+proc_call2: IDENT '(' ')'
+             { join(' ', @_[1..$#_]) }
+         | IDENT '(' parameter_list2 ')'
              { join(' ', @_[1..$#_]) }
          | IDENT '(' '*' ')'
              { join(' ', @_[1..$#_]) }
