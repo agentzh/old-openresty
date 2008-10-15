@@ -3,6 +3,8 @@ var sessionCookie = 'admin_session';
 var serverCookie  = 'admin_server';
 var userCookie    = 'admin_user';
 var cachedModelCount = {};
+var linesPerBulk = 20;
+var cancelInsertRows = false;
 
 var openresty = null;
 
@@ -668,38 +670,81 @@ function createModelBulkRow (model) {
     //alert(data);
     if (!data) { alert("No lines found!"); return; }
     var lines = data.split(/\n/);
-    var resLines = [];
-    for (var i = 0; i < lines.length; i++) {
-        value = lines[i];
-        if (/^\s*$/.test(value)) continue;
-        var res = JSON.parse(value);
+    var count = lines.length;
+    if (count == 0) return false;
+
+    delete cachedModelCount[model];
+    for (var i = 0; i < count; i++) {
+        if (/^\s*$/.test(lines[i])) { lines[i] = null; continue; }
+        var res = JSON.parse(lines[i]);
         if (res == false && typeof res == typeof false && value != false) {
-            error("Invalid JSON value for line " + (i+1) + ": " + value);
+            $("#import-results").html(
+                '<span class="error">Invalid JSON value for line ' +
+                    (i+1) + ": " + lines[i] +
+                '</span>'
+            );
             return false;
         }
-        resLines.push(value);
     }
-    var json = "[" + resLines.join(",") + "]";
-    //alert(json);
     setStatus(true, 'createModelBulkRow');
-    delete cachedModelCount[model];
-    openresty.formId = 'dummy-form';
-    openresty.callback = afterCreateModelBulkRow;
-    openresty.post("/=/model/" + model + "/~/~", JSON.parse(json));
-    //alert("HERE! ;)");
+    cancelInsertRows = false;
+    insertRows(model, lines, 0, count);
     return false;
 }
 
-function afterCreateModelBulkRow (res) {
-    //alert("HERE!");
-    setStatus(false, 'createModelBulkRow');
-    if (openresty.isSuccess(res)) {
-        $("form#create-row-bulk-form>textarea").val('');
-        gotoNextPage();
-    } else {
-        alert("Failed to import: " + res.error);
+function insertRows (model, lines, pos, count) {
+    debug("cancel? " + cancelInsertRows);
+    if (cancelInsertRows) return false;
+    var resLines = [];
+    for (; pos < count; pos++) {
+        if (lines[pos] == null) continue;
+        resLines.push(lines[pos]);
+        if (resLines.length >= linesPerBulk)
+            break;
     }
-    //$("#import-results").html(JSON.stringify(res));
+
+    var json = "[" + resLines.join(",") + "]";
+    //alert(json);
+    //var pos = i + 0;
+    //debug("outer: " + pos);
+    openresty.callback = function (res) {
+        //debug("inner: " + pos);
+        //debug(pos);
+        afterCreateModelBulkRow(res, model, lines, pos, count);
+    };
+    if (jQuery.browser.opera) {
+        openresty.postByGet("/=/model/" + model + "/~/~", JSON.parse(json));
+    } else {
+        openresty.formId = 'dummy-form';
+        openresty.post("/=/model/" + model + "/~/~", JSON.parse(json));
+    }
+}
+
+function afterCreateModelBulkRow (res, model, lines, pos, count) {
+    //alert("HERE!");
+    //setStatus(false, 'createModelBulkRow');
+    if ( ! openresty.isSuccess(res)) {
+        setStatus(false, 'createModelBulkRow');
+        $("#import-results").html(
+            '<span class="error">Failed to import: ' +
+            res.error + '</span>'
+        );
+        return false;
+    }
+    var num = pos + 1;
+    var ratio = Math.floor( num * 100 / count );
+    $("#import-results").html(
+        '<span class="good">Inserted ' + ratio + '% (' + num +
+            ' out of ' + count +
+            ' rows) <a class="cancel" href="javascript:void(0);" onclick="cancelInsertRows = true;">Cancel</a></span>'
+    );
+    if (num >= count) {
+        setStatus(false, 'createModelBulkRow');
+        gotoNextPage();
+        return;
+    }
+    insertRows(model, lines, pos, count);
+        //$("form#create-row-bulk-form>textarea").val('');
     //alert(JSON.stringify(res));
 }
 

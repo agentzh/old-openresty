@@ -1,3 +1,19 @@
+.error {
+    color: red;
+    font-weight: bold;
+}
+
+.good {
+    color: green;
+    font-weight: bold;
+}
+
+.cancel {
+    color: black;
+    font-weight: bold;
+    margin-left: 2em;
+}
+
 .page-title {
     text-align: left;
     font-size: 14pt;
