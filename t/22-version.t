@@ -30,3 +30,18 @@ GET /=/
 --- response_like
 ^"\d+\.\d+\.\d+"$
 
+
+
+=== TEST 3: Another way using YAML with _callback
+--- request
+GET /=/version.yml?_callback=foo
+--- response_like
+^foo\("--- \d+\.\d+\.\d+"\);$
+
+
+=== TEST 3: Another way using YAML with _var
+--- request
+GET /=/version.yml?_var=foo
+--- response_like
+^foo="--- \d+\.\d+\.\d+";$
+
