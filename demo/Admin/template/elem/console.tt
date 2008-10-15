@@ -6,7 +6,8 @@
 </div>
 
 <div class="listcon">
-<form>
+<form id="http-console-dummy-form" method="POST"></form>
+<form onsubmit="doHttpRequest(this);return false;">
 <ul>
 <li>
     <select id="http-console-meth">
@@ -15,9 +16,18 @@
     [%- END %]
     </select>
     &nbsp;
-    <input type="text" style="width: 40em;"></input>
-    &nbsp;
+    /=/<input id="http-console-url" type="text" style="width: 40em;"></input>
+</li>
+<li>
+    <label for="http-console-body">Content</label><br/>
+    <textarea id="http-console-body" rows="5" cols="50"></textarea>
+</li>
+<li>
     <input type="submit" value="Go!" style="width: 5em"></input>
+</li>
+<li>
+    <label for="http-console-out">Response</label><br/>
+    <pre id="http-console-out"></pre>
 </li>
 </ul>
 </form>
