@@ -666,6 +666,7 @@ function getModelBulkRowForm (model) {
 }
 
 function createModelBulkRow (model) {
+    setStatus(true, 'createModelBulkRow');
     var data = $("form#create-row-bulk-form>textarea").val();
     //alert(data);
     if (!data) { alert("No lines found!"); return; }
@@ -683,10 +684,10 @@ function createModelBulkRow (model) {
                     (i+1) + ": " + lines[i] +
                 '</span>'
             );
+            setStatus(false, 'createModelBulkRow');
             return false;
         }
     }
-    setStatus(true, 'createModelBulkRow');
     cancelInsertRows = false;
     insertRows(model, lines, 0, count);
     return false;
@@ -699,9 +700,16 @@ function insertRows (model, lines, pos, count) {
     for (; pos < count; pos++) {
         if (lines[pos] == null) continue;
         resLines.push(lines[pos]);
+        lines[pos] = null; // to force GC
         if (resLines.length >= linesPerBulk)
             break;
     }
+    if (resLines.length == 0) {
+        setStatus(false, 'createModelBulkRow');
+        gotoNextPage();
+        return;
+    }
+    //debug(resLines.length);
 
     var json = "[" + resLines.join(",") + "]";
     //alert(json);
@@ -744,7 +752,7 @@ function afterCreateModelBulkRow (res, model, lines, pos, count) {
         return;
     }
     insertRows(model, lines, pos, count);
-        //$("form#create-row-bulk-form>textarea").val('');
+    //$("form#create-row-bulk-form>textarea").val('');
     //alert(JSON.stringify(res));
 }
 

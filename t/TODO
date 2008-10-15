@@ -18,4 +18,5 @@ Old TODOs:
 
 * model columns' default values contain UTF-8 chars.
 * action definition contains UTF-8 chars.
+* insert rows - POST an empty list?
 
