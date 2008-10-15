@@ -266,6 +266,21 @@ function renderModelRows (res, model, page, pat) {
     getPager(model, page, 'modelrows/' + model + '/', '/' + pat);
 }
 
+function getConsoles () {
+    $("#menu").html(
+        Jemplate.process(
+            'menu.tt',
+            { active_item: 'Consoles', submenu: [] }
+        )
+    ).postprocess();
+
+    $("#main").html(
+        Jemplate.process(
+            'console.tt'
+        )
+    ).postprocess();
+}
+
 function getRoleRules (name) {
     setStatus(true, 'renderRoleRules');
     openresty.callback = function (res) { renderRoleRules(res, name); };

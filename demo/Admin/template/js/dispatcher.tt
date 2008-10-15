@@ -33,7 +33,7 @@ function dispatchByAnchor () {
 
     [%- END %]
 
-    var match = anchor.match(/^modelrows\/([A-Za-z]\w*)\/(\d+)(?:\/(.*))?$/);
+    match = anchor.match(/^modelrows\/([A-Za-z]\w*)\/(\d+)(?:\/(.*))?$/);
     if (match) {
         var model = match[1];
         var page = match[2] || 1;
@@ -45,10 +45,15 @@ function dispatchByAnchor () {
         return;
     }
 
-    var match = anchor.match(/^rolerules-([A-Za-z]\w*)$/);
+    match = anchor.match(/^rolerules-([A-Za-z]\w*)$/);
     if (match) {
         var role = match[1];
         getRoleRules(role);
+        return;
+    }
+
+    if (anchor == 'consoles') {
+        getConsoles();
         return;
     }
 

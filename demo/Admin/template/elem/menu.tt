@@ -5,6 +5,7 @@
         'Feeds',
         'Actions',
         'Roles',
+        'Consoles',
     ],
     active_item = 'Views',
     submenu = [

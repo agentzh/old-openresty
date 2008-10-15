@@ -1,0 +1,53 @@
+<!-- block begin -->
+<div class="ttl">
+    <span class="text">
+        HTTP Console
+    </span>
+</div>
+
+<div class="listcon">
+<form>
+<ul>
+<li>
+    <select id="http-console-meth">
+    [%- FOREACH meth IN ['GET', 'POST', 'PUT', 'DELETE'] %]
+        <option value ="[% meth %]">[% meth %]</option>
+    [%- END %]
+    </select>
+    &nbsp;
+    <input type="text" style="width: 40em;"></input>
+    &nbsp;
+    <input type="submit" value="Go!" style="width: 5em"></input>
+</li>
+</ul>
+</form>
+</div>
+
+<div class="ttl">
+    <span class="text">
+        RunView Console
+    </span>
+</div>
+
+<div class="listcon">
+<ul>
+<li>
+    <textarea rows="8" cols="60"></textarea>
+</li>
+</ul>
+</div>
+
+<div class="ttl">
+    <span class="text">
+        RunAction Console
+    </span>
+</div>
+
+<div class="listcon">
+<ul>
+<li>
+    <textarea rows="8" cols="60"></textarea>
+</li>
+</ul>
+</div>
+
