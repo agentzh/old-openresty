@@ -789,12 +789,8 @@ function insertRows (model, lines, pos, count) {
         //debug(pos);
         afterCreateModelBulkRow(res, model, lines, pos, count);
     };
-    if (jQuery.browser.opera) {
-        openresty.postByGet("/=/model/" + model + "/~/~", JSON.parse(json));
-    } else {
-        openresty.formId = 'dummy-form';
-        openresty.post("/=/model/" + model + "/~/~", JSON.parse(json));
-    }
+    openresty.formId = 'dummy-form';
+    openresty.post("/=/model/" + model + "/~/~", JSON.parse(json));
 }
 
 function afterCreateModelBulkRow (res, model, lines, pos, count) {
