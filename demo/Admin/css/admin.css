@@ -40,8 +40,6 @@ pre.view-def, pre.action-def {
 }
 
 textarea#create-view-def, textarea#create-action-def {
-    width: 250px;
-    height: 10em;
     margin-left: 2em;
 }
 
