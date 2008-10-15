@@ -266,6 +266,60 @@ function renderModelRows (res, model, page, pat) {
     getPager(model, page, 'modelrows/' + model + '/', '/' + pat);
 }
 
+function doHttpRequest (form) {
+    var meth = $('#http-console-meth', form).val();
+    var url = $('#http-console-url', form).val();
+    var content = $('#http-console-body', form).val();
+    var canonUrl = url.replace(/^\/=\//, '').replace(/^\/+/, '');
+    url = '/=/' + canonUrl;    //alert(meth + " " + url);
+    if (url != canonUrl) {
+        $('#http-console-url', form).val(canonUrl);
+    }
+    /*
+    if ( ! /^\/=\//.test(url) ) {
+        alert("URL not start with /=/");
+        return;
+    }
+    */
+
+    if ( content != undefined && content != "" ) {
+        res = JSON.parse(content);
+        if (res == false && typeof res == typeof false && content != false) {
+            error("Invalid JSON for the column's default value: " + content);
+            return;
+        }
+        content = res;
+    }
+
+    setStatus(true, 'doHttpRequest');
+    openresty.callback = renderHttpConsoleRes;
+    openresty.formId = 'http-console-dummy-form';
+    try {
+        if (meth == "GET")
+            openresty.get(url);
+        else if (meth == "POST")
+            openresty.post(url, content);
+        else if (meth == "PUT")
+            openresty.put(url, content);
+        else if (meth == "DELETE")
+            openresty.del(url, content);
+        else {
+            error("Unknown HTTP method: " + meth);
+            setStatus(false, 'doHttpRequest');
+        }
+    } catch (e) {
+        error("Failed to perform HTTP request: " + e);
+        setStatus(false, 'doHttpRequest');
+    }
+}
+
+function renderHttpConsoleRes (res) {
+    setStatus(false, 'doHttpRequest');
+    if (typeof res == 'object') res = JSON.stringify(res);
+    //alert(res);
+    $("#http-console-out").text(res);
+}
+
 function getConsoles () {
     $("#menu").html(
         Jemplate.process(
