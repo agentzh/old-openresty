@@ -89,7 +89,7 @@ input.column-input, input.action-input {
     padding: 5px;
     text-align: left;
     display: block;
-    width: 100px;
+    width: 35em;
     /*float:left;
     z-index:2;*/
     font-family:tahoma,arial,helvetica,sans-serif;
