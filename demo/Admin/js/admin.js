@@ -693,7 +693,7 @@ function createModelBulkRow (model) {
 }
 
 function insertRows (model, lines, pos, count) {
-    debug("cancel? " + cancelInsertRows);
+    //debug("cancel? " + cancelInsertRows);
     if (cancelInsertRows) return false;
     var resLines = [];
     for (; pos < count; pos++) {
