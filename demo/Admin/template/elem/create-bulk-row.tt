@@ -18,7 +18,7 @@
     </pre>
     <textarea class="row-input" resty_key="[% col.name %]" rows="20" cols="100"></textarea>
     <p>
-        <input type="submit" class="create-button" value="Create" onclick="createModelBulkRow('[% model %]')"></input>
+        <input type="submit" class="create-button" value="Create" onclick="createModelBulkRow('[% model %]'); return false;"></input>
     </p>
 </form>
 </div>
