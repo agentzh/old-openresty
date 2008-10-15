@@ -416,10 +416,18 @@ sub response {
     #warn $Dumper;
     #warn $ext2dumper{'.js'};
     $str =~ s/\n+$//s;
-    if (my $var = $self->{_var} and $self->{_dumper} eq $ext2dumper{'.js'}) {
-        $str = "$var=$str;";
-    } elsif (my $callback = $self->{_callback} and $self->{_dumper} eq $ext2dumper{'.js'}) {
-        $str = "$callback($str);";
+    if (my $var = $self->{_var}) {
+        if ($self->{_dumper} eq $ext2dumper{'.js'}) {
+            $str = "$var=$str;";
+        } else {
+            $str = "$var=" . OpenResty::json_encode($str) . ";";
+        }
+    } elsif (my $callback = $self->{_callback}) {
+        if ($self->{_dumper} eq $ext2dumper{'.js'}) {
+            $str = "$callback($str);";
+        } else {
+            $str = "$callback(" . OpenResty::json_encode($str) . ");";
+        }
     }
 
     #my $meth = $self->{_http_method};
