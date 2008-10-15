@@ -5,8 +5,8 @@
     </span>
 </div>
 
+<form method="post" id="http-console-dummy-form" style="display: none"></form>
 <div class="listcon">
-<form id="http-console-dummy-form" method="POST"></form>
 <form onsubmit="doHttpRequest(this);return false;">
 <ul>
 <li>

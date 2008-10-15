@@ -72,6 +72,10 @@ OpenResty.Client.prototype.genId = function () {
 }
 
 OpenResty.Client.prototype.post = function (url) {
+    if (jQuery.browser.opera) {  // work around an Opera bug
+        return OpenResty.Client.prototype.postByGet.apply(this, arguments);
+    }
+
     var args, content;
     if (arguments.length == 3) {
         args = arguments[1];
@@ -81,7 +85,7 @@ OpenResty.Client.prototype.post = function (url) {
     }
     if (!args) args = {};
     //url = url.replace(/^\/=\//, '/=/post/');
-    if (url.match(/\?/)) throw "URL should not contain '?'.";
+    //if (url.match(/\?/)) throw "URL should not contain '?'.";
     if (!this.callback) throw "No callback specified for OpenResty.";
     var formId = this.formId;
     if (!formId) throw "No form specified.";
@@ -101,23 +105,33 @@ OpenResty.Client.prototype.post = function (url) {
     for (var key in args) {
         arg_list.push(key + "=" + encodeURIComponent(args[key]));
     }
-    url += "?" + arg_list.join("&");
-    //alert("URL: " + url);
-    //alert("Content: " + content);
-    //
-    //
+    //url += "?" + arg_list.join("&");
+
+    var fullURL = this.server + url;
+    if ( /\?$/.test(url) )
+        fullURL += arg_list.join("&");
+    else if ( /\?/.test(url) )
+        fullURL += '&' + arg_list.join("&");
+    else
+        fullURL += '?' + arg_list.join("&");
+
     var self = this;
+    //if (jQuery.browser.opera) {  // work around an Opera bug
+        //$("#" + formId).html($("#" + formId).html());
+    //}
     var form = document.getElementById(formId);
     form.method = 'POST';
+
     var ts = dojo.io.iframe.send({
         form: form,
-        url: this.server + url,
+        url: fullURL,
         content: { data: content },
         preventCache: true,
         method: "post",
         handleAs: 'html',
         handle: function () {
             //alert("Getting last response!");
+            //alert(args._last_response);
             self.get('/=/last/response/' + args._last_response);
         }
     });
@@ -152,6 +166,10 @@ OpenResty.Client.prototype.putByGet = function (url) {
 };
 
 OpenResty.Client.prototype.put = function (url) {
+    if (jQuery.browser.opera) {  // work around an Opera bug
+        return OpenResty.Client.prototype.putByGet.apply(this, arguments);
+    }
+
     var args, content;
     if (arguments.length == 3) {
         args = arguments[1];
