@@ -178,7 +178,7 @@ OpenResty.Client.prototype.get = function (url, args) {
         args._user = this.user;
 
     //args.password = this.password || '';
-    if (url.match(/\?/)) throw "URL should not contain '?'.";
+    //if (url.match(/\?/)) throw "URL should not contain '?'.";
     var reqId = this.genId();
     //args._rand = reqId;
 
@@ -212,7 +212,16 @@ OpenResty.Client.prototype.get = function (url, args) {
     for (var key in args) {
         arg_list.push(key + "=" + encodeURIComponent(args[key]));
     }
-    scriptTag.src = this.server + url + "?" + arg_list.join("&");
+
+    var fullURL = this.server + url;
+    if ( /\?$/.test(url) )
+        fullURL += arg_list.join("&");
+    else if ( /\?/.test(url) )
+        fullURL += '&' + arg_list.join("&");
+    else
+        fullURL += '?' + arg_list.join("&");
+
+    scriptTag.src = fullURL;
     scriptTag.type = "text/javascript";
     scriptTag.onload = scriptTag.onreadystatechange = function () {
         var done = OpenResty.isDone[reqId];
