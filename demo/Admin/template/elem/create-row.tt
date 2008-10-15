@@ -15,7 +15,7 @@
 <form id="create-row-form" onsubmit="return false;">
     [%- FOREACH col = model.columns %]
         [%- NEXT IF col.name == 'id' %]
-        <label>[% col.name %]</label>
+        <label>[% col.name %] [% IF col.label != undefined %]([% col.label %])[% END %]</label>
         [%- IF col.type == "text" %]
         <textarea rows="3" cols="80" class="row-input" resty_key="[% col.name %]"></textarea>
         [%- ELSE %]
