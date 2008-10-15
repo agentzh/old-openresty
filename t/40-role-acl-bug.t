@@ -161,7 +161,7 @@ POST /=/role/Reader
 --- request
 GET /=/role/Reader?_user=$TestAccount.Public&_password=blah
 --- response
-{"success":0,"error":"Password for tester.Public is incorrect."}
+{"success":0,"error":"Password for $TestAccount.Public is incorrect."}
 
 
 
