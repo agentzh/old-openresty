@@ -2,5 +2,5 @@
 <a id="export-cancel" class="cancel" href="javascript:void(0);" onclick="cancelDumpModelRows = true;">Cancel</a>
 <br/>
 <br/>
-<textarea readonly="1" id="model-dump-res" cols="60" rows="30"></textarea>
+<textarea readonly="1" id="model-dump-res" style="width: 855px" rows="30"></textarea>
 
