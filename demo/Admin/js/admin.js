@@ -6,8 +6,10 @@ var cachedModelCount = {};
 var linesPerBulk = 20;
 var cancelInsertRows = false;
 var cancelDumpModelRows = false;
+
 var dumpedModelRows = null;
-var dumpRowsLimit = 50000;
+var dumpModelRowsLimit = 50000;
+var dumpModelRowsKeys = null;
 
 var openresty = null;
 
@@ -728,7 +730,7 @@ function afterDeleteAllModelRows (res) {
     gotoNextPage();
 }
 
-function dumpModelRows (model, pat, page) {
+function dumpModelRows (model, fmt, pat, page) {
     var anchor = savedAnchor;
     if (page == null) page = 1;
     if (pat == null) {
@@ -749,10 +751,11 @@ function dumpModelRows (model, pat, page) {
     dumpedModelRows = '';
     document.getElementById('model-dump-res').value = "Please wait...";
     cancelDumpModelRows = false;
-    dumpModelRowsHelper(model, pat, page);
+    dumpModelRowsKeys = [];
+    dumpModelRowsHelper(model, fmt, pat, page);
 }
 
-function dumpModelRowsHelper (model, pat, page) {
+function dumpModelRowsHelper (model, fmt, pat, page) {
     if (cancelDumpModelRows) {
         $("#export-results").append('<span class="good">...Cancelled!</span>');
         document.getElementById('model-dump-res').value = dumpedModelRows;
@@ -760,7 +763,7 @@ function dumpModelRowsHelper (model, pat, page) {
         return;
     }
     openresty.callback = function (res) {
-        afterDumpModelRows(res, model, pat, page);
+        afterDumpModelRows(res, model, fmt, pat, page);
     };
     openresty.get(
         '/=/model/' + model + '/~/' + encodeURIComponent(pat),
@@ -768,7 +771,15 @@ function dumpModelRowsHelper (model, pat, page) {
     );
 }
 
-function afterDumpModelRows (res, model, pat, page) {
+function toCSV (value) {
+    return '"' + value.replace(/\\/, '\\\\', 'g')
+        .replace(/\n/, '\\n', 'g')
+        .replace(/\t/, '\\t', 'g')
+        .replace(/\r/, '\\r', 'g')
+        .replace(/"/, '\\"', 'g') + '"'
+}
+
+function afterDumpModelRows (res, model, fmt, pat, page) {
     setStatus(false, 'dumpModelRows');
     if ( ! openresty.isSuccess(res)) {
         $("#export-results").append(
@@ -784,19 +795,38 @@ function afterDumpModelRows (res, model, pat, page) {
         '<span class="good">Exported ' + exported + ' </span>'
     );
 
-    for (var i = 0; i < res.length; i++)
-         dumpedModelRows += JSON.stringify(res[i]) + "\n";
+    if (fmt == "csv" && dumpModelRowsKeys.length == 0 && res.length > 0) {
+        var keys = [];
+        for (var key in res[0]) {
+            //alert(key);
+            dumpModelRowsKeys.push(key);
+            keys.push( toCSV(key) );
+        }
+        dumpedModelRows = keys.join(',') + "\n";
+    }
+    debug(JSON.stringify(dumpModelRowsKeys));
+    for (var i = 0; i < res.length; i++) {
+        var row = res[i];
+        var values = [];
+        if (fmt == "csv") {
+            for (var j = 0; j < dumpModelRowsKeys.length; j++)
+                values.push( toCSV(row[ dumpModelRowsKeys[j] ]) );
+            dumpedModelRows += values.join(",") + "\n";
+        } else {
+            dumpedModelRows += JSON.stringify(row) + "\n";
+        }
+    }
     if (res.length < itemsPerPage) {
         $("#export-results").append('<span class="good">...Done!</span>');
         document.getElementById('model-dump-res').value = dumpedModelRows;
         $("#export-cancel").hide();
         return;
     }
-    if (exported >= dumpRowsLimit) {
-        error("Too many rows exported (more than " + dumpRowsLimit + "). Cancelling...");
+    if (exported >= dumpModelRowsLimit) {
+        error("Too many rows exported (more than " + dumpModelRowsLimit + "). Cancelling...");
         cancelDumpModelRows = true;
     }
-    dumpModelRowsHelper(model, pat, page + 1);
+    dumpModelRowsHelper(model, fmt, pat, page + 1);
 }
 
 function getModelBulkRowForm (model) {

@@ -54,7 +54,8 @@
 &nbsp; &nbsp; &nbsp; &nbsp;
 <b><a href="javascript:void(0);" title="Delete all rows" onclick="deleteAllModelRows('[% model %]')">Delete all rows</a></b>
 &nbsp; &nbsp; &nbsp; &nbsp;
-<b><a href="javascript:void(0);" title="Dump rows" onclick="dumpModelRows('[% model %]')">Dump model rows</a></b>
+<b><a href="javascript:void(0);" title="Dump rows in JSON" onclick="dumpModelRows('[% model %]', 'json')">Dump model rows in JSON</a> <span style="color: black">or</span>
+<a href="javascript:void(0);" title="Dump rows in CSV" onclick="dumpModelRows('[% model %]', 'csv')">CSV</a></b>
 
 </p>
 <br/>
