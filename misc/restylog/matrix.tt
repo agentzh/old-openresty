@@ -1,0 +1,38 @@
+[% DEFAULT
+    year = '2008',
+    month = '07',
+    day = '04'
+-%]
+[% ymd = year _ month _ day -%]
+[% table = 'access_' _ ymd %]
+=encoding utf8
+
+=head1 NAME
+
+matrix_stats - 腐败魔方应用的 ced02 日志分析 ([% year %]-[% month %]-[% day %])
+
+
+=SQL set search_path to restylog;
+
+=head1 Queries for 腐败魔方
+
+总请求数目:
+
+=begin SQL
+
+select count(*) from restylog.[% table %] where account = 'lives';
+
+=end SQL
+
+请求列表
+
+=begin SQL
+
+select count(*),
+    regexp_replace(url, '/=/view/.*?\\?|&_user=lives\\.Public|&limit=\\d+&offset=\\d+', '', 'g') as query
+from restylog.[% table %]
+where account = 'lives' and url like '/=/view/magicbox_cool%' and url like '%&addr=%'
+group by query
+order by query
+
+=end SQL
