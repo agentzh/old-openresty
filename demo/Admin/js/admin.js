@@ -772,7 +772,7 @@ function dumpModelRowsHelper (model, fmt, pat, page) {
 }
 
 function toCSV (value) {
-    return '"' + value.replace(/\\/, '\\\\', 'g')
+    return value == null ? "" : '"' + value.replace(/\\/, '\\\\', 'g')
         .replace(/\n/, '\\n', 'g')
         .replace(/\t/, '\\t', 'g')
         .replace(/\r/, '\\r', 'g')
