@@ -1,7 +1,9 @@
 #/bin/sh
 
 #sudo cpan -f Term::ReadLine::Gnu
-sudo cpan YAML GD CGI::Cookie::XS FCGI CGI::Simple YAML::Syck List::Util \
+sudo cpan Jemplate Template YAML GD CGI::Cookie::XS FCGI CGI::Simple \
+	YAML::Syck \
+	List::Util \
     DBI Clone Params::Util Parse::Yapp DBD::Pg Data::UUID \
     GD::SecurityImage Cache::Memcached::Fast Hash::Merge \
     Config::Simple Encode::Guess List::MoreUtils JSON::XS \
