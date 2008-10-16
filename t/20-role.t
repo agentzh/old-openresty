@@ -85,7 +85,8 @@ GET /=/role/Admin
 {
     "columns":[
         {"label":"HTTP method","name":"method","type":"text"},
-        {"label":"Resource","name":"url","type":"text"}
+        {"label":"Resource","name":"url","type":"text"},
+        {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
     ],
     "name":"Admin",
     "description":"Administrator",
@@ -101,7 +102,8 @@ GET /=/role/Public
 {
   "columns":[
     {"label":"HTTP method","name":"method","type":"text"},
-    {"label":"Resource","name":"url","type":"text"}
+    {"label":"Resource","name":"url","type":"text"},
+    {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
   ],
   "name":"Public",
   "description":"Anonymous",
@@ -719,7 +721,8 @@ GET /=/role/Admin
 {
     "columns":[
         {"label":"HTTP method","name":"method","type":"text"},
-        {"label":"Resource","name":"url","type":"text"}
+        {"label":"Resource","name":"url","type":"text"},
+        {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
     ],
     "name":"Admin",
     "description":"Administrator",
@@ -743,7 +746,8 @@ GET /=/role/Public
 {
     "columns":[
         {"label":"HTTP method","name":"method","type":"text"},
-        {"label":"Resource","name":"url","type":"text"}
+        {"label":"Resource","name":"url","type":"text"},
+        {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
     ],
     "name":"Public",
     "description":"Anonymous",
@@ -873,7 +877,8 @@ GET /=/role/Poster
 {
   "columns":[
     {"label":"HTTP method","name":"method","type":"text"},
-    {"label":"Resource","name":"url","type":"text"}
+    {"label":"Resource","name":"url","type":"text"},
+    {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
   ],
   "name":"Poster",
   "description":"Comment poster",
@@ -949,7 +954,8 @@ GET /=/role/Newposter
 {
   "columns":[
     {"label":"HTTP method","name":"method","type":"text"},
-    {"label":"Resource","name":"url","type":"text"}
+    {"label":"Resource","name":"url","type":"text"},
+    {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
   ],
   "name":"Newposter",
   "description":"Comment poster",
@@ -987,7 +993,8 @@ GET /=/role/Newposter
 {
   "columns":[
     {"label":"HTTP method","name":"method","type":"text"},
-    {"label":"Resource","name":"url","type":"text"}
+    {"label":"Resource","name":"url","type":"text"},
+    {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
   ],
   "name":"Newposter",
   "description":"my description",
@@ -1015,7 +1022,8 @@ GET /=/role/Newname
 {
   "columns":[
     {"label":"HTTP method","name":"method","type":"text"},
-    {"label":"Resource","name":"url","type":"text"}
+    {"label":"Resource","name":"url","type":"text"},
+    {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
   ],
   "name":"Newname",
   "description":"Newdescription",
@@ -1080,7 +1088,8 @@ GET /=/role/Newname
 {
   "columns":[
     {"label":"HTTP method","name":"method","type":"text"},
-    {"label":"Resource","name":"url","type":"text"}
+    {"label":"Resource","name":"url","type":"text"},
+    {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
   ],
   "name":"Newname",
   "description":"Newdescription",
@@ -1198,7 +1207,8 @@ GET /=/role/Poster
 {
   "columns":[
     {"label":"HTTP method","name":"method","type":"text"},
-    {"label":"Resource","name":"url","type":"text"}
+    {"label":"Resource","name":"url","type":"text"},
+    {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
   ],
   "name":"Poster",
   "description":"Comment poster",

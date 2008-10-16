@@ -22,11 +22,15 @@ run_tests;
 __DATA__
 
 
+
+
+
 === TEST 1: Delete existing models
 --- request
 DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 {"success":1}
+
 
 
 === TEST 2: Delete existing views
@@ -78,14 +82,19 @@ POST /=/view/View
 {"success":1}
 
 
-=== TEST 29: Create the view with duplicate name
+
+
+=== TEST 7: Create the view with duplicate name
 --- request
 POST /=/view/View
 { "definition": "select * from A, B where A.id = B.a order by A.title" }
 --- response
 {"success":0,"error":"View \"View\" already exists."}
 
-=== TEST 30: Create the view with duplicate definition
+
+
+
+=== TEST 8: Create the view with duplicate definition
 --- request
 POST /=/view/View1
 { "definition": "select * from A, B where A.id = B.a order by A.title" }
@@ -93,7 +102,8 @@ POST /=/view/View1
 {"success":1}
 
 
-=== TEST 28: logout
+
+=== TEST 9: logout
 --- request
 GET /=/logout
 --- response
