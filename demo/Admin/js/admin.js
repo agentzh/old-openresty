@@ -5,6 +5,9 @@ var userCookie    = 'admin_user';
 var cachedModelCount = {};
 var linesPerBulk = 20;
 var cancelInsertRows = false;
+var cancelDumpModelRows = false;
+var dumpedModelRows = null;
+var dumpRowsLimit = 50000;
 
 var openresty = null;
 
@@ -199,7 +202,7 @@ function getModelRows (name, page, pat) {
         pat = decodeURIComponent(pat);
     }
     openresty.get(
-        '/=/model/' + name + '/~/' + pat,
+        '/=/model/' + name + '/~/' + encodeURIComponent(pat),
         { _offset: itemsPerPage * (page - 1), _count: itemsPerPage, _order_by: 'id:desc', _op: 'contains' }
     );
 }
@@ -723,6 +726,77 @@ function deleteAllModelRows (model) {
 function afterDeleteAllModelRows (res) {
     alert(JSON.stringify(res));
     gotoNextPage();
+}
+
+function dumpModelRows (model, pat, page) {
+    var anchor = savedAnchor;
+    if (page == null) page = 1;
+    if (pat == null) {
+        var matches = anchor.match(/^modelrows\/\w+\/\d+\/(.*)$/);
+        if (matches) {
+            pat = matches[1];
+            if (/\%[A-Za-z0-9]{2}/.test(pat))
+                pat = decodeURIComponent(pat);
+        } else {
+            pat = '~';
+        }
+    }
+    setStatus(true, 'dumpModelRows');
+    $("#new-row").html(
+        Jemplate.process('model-dump-res.tt')
+    );
+    $("#export-cancel").show();
+    dumpedModelRows = '';
+    document.getElementById('model-dump-res').value = "Please wait...";
+    cancelDumpModelRows = false;
+    dumpModelRowsHelper(model, pat, page);
+}
+
+function dumpModelRowsHelper (model, pat, page) {
+    if (cancelDumpModelRows) {
+        $("#export-results").append('<span class="good">...Cancelled!</span>');
+        document.getElementById('model-dump-res').value = dumpedModelRows;
+        $("#export-cancel").hide();
+        return;
+    }
+    openresty.callback = function (res) {
+        afterDumpModelRows(res, model, pat, page);
+    };
+    openresty.get(
+        '/=/model/' + model + '/~/' + encodeURIComponent(pat),
+        { _offset: itemsPerPage * (page - 1), _count: itemsPerPage, _order_by: 'id:desc', _op: 'contains' }
+    );
+}
+
+function afterDumpModelRows (res, model, pat, page) {
+    setStatus(false, 'dumpModelRows');
+    if ( ! openresty.isSuccess(res)) {
+        $("#export-results").append(
+            '<span class="error">Failed to import: ' +
+            res.error + '</span>'
+        );
+        document.getElementById('model-dump-res').value = dumpedModelRows;
+        $("#export-cancel").hide();
+        return false;
+    }
+    var exported = (page - 1) * itemsPerPage + res.length;
+    $("#export-results").html(
+        '<span class="good">Exported ' + exported + ' </span>'
+    );
+
+    for (var i = 0; i < res.length; i++)
+         dumpedModelRows += JSON.stringify(res[i]) + "\n";
+    if (res.length < itemsPerPage) {
+        $("#export-results").append('<span class="good">...Done!</span>');
+        document.getElementById('model-dump-res').value = dumpedModelRows;
+        $("#export-cancel").hide();
+        return;
+    }
+    if (exported >= dumpRowsLimit) {
+        error("Too many rows exported (more than " + dumpRowsLimit + "). Cancelling...");
+        cancelDumpModelRows = true;
+    }
+    dumpModelRowsHelper(model, pat, page + 1);
 }
 
 function getModelBulkRowForm (model) {

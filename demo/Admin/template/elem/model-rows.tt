@@ -48,12 +48,15 @@
 <div class="pager"></div>
 
 <p style="text-align: left; margin-left: 6em;">
-<b><a href="javascript:void(0);" title="Create a new row" onclick="getModelRowForm('[% model %]')">Add a new row</a></b>
+<b><a href="javascript:void(0);" title="Add a new row" onclick="getModelRowForm('[% model %]')">Add a new row</a></b>
 &nbsp; &nbsp; &nbsp; &nbsp;
-<b><a href="javascript:void(0);" title="Create multiple new rows" onclick="getModelBulkRowForm('[% model %]')">Add multiple rows</a></b>
+<b><a href="javascript:void(0);" title="Add multiple new rows" onclick="getModelBulkRowForm('[% model %]')">Add multiple rows</a></b>
 &nbsp; &nbsp; &nbsp; &nbsp;
-<b><a href="javascript:void(0);" title="Create multiple new rows" onclick="deleteAllModelRows('[% model %]')">Delete all rows</a></b>
+<b><a href="javascript:void(0);" title="Delete all rows" onclick="deleteAllModelRows('[% model %]')">Delete all rows</a></b>
+&nbsp; &nbsp; &nbsp; &nbsp;
+<b><a href="javascript:void(0);" title="Dump rows" onclick="dumpModelRows('[% model %]')">Dump model rows</a></b>
 
 </p>
+<br/>
 <p style="text-align: left; margin-left: 6em;" id="new-row"></p>
 
