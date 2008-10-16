@@ -301,7 +301,8 @@ sub GET_role {
     my $res = $openresty->select($sql, {use_hash => 1})->[0];
     $res->{columns} = [
         { name => "method", type => "text", label => "HTTP method" },
-        { name => "url", type => "text", label => "Resource"}
+        { name => "url", type => "text", label => "Resource"},
+        { name => "prohibiting", type => "boolean", label => "Prohibiting"}
     ];
     return $res;
 }
