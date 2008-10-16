@@ -804,7 +804,7 @@ function afterDumpModelRows (res, model, fmt, pat, page) {
         }
         dumpedModelRows = keys.join(',') + "\n";
     }
-    debug(JSON.stringify(dumpModelRowsKeys));
+    //debug(JSON.stringify(dumpModelRowsKeys));
     for (var i = 0; i < res.length; i++) {
         var row = res[i];
         var values = [];
