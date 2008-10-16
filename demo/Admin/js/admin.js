@@ -806,13 +806,16 @@ function getModelBulkRowForm (model) {
             { model: model }
         )
     );
+    $("textarea.row-input").focus();
 }
 
 function createModelBulkRow (model) {
     setStatus(true, 'createModelBulkRow');
     var data = $("form#create-row-bulk-form>textarea").val();
+    ignoreImportId = $("#import-ignore-id").attr("checked");
+    //debug(ignoreImportId);
     //alert(data);
-    if (!data) { alert("No lines found!"); return; }
+    if (!data) { error("No lines found!"); return; }
     var lines = data.split(/\n/);
     var count = lines.length;
     if (count == 0) return false;
@@ -841,9 +844,15 @@ function insertRows (model, lines, pos, count) {
     if (cancelInsertRows) return false;
     var resLines = [];
     for (; pos < count; pos++) {
+        //var value = lines[pos];
         if (lines[pos] == null) continue;
-        resLines.push(lines[pos]);
+        var row = JSON.parse(lines[pos]);
         lines[pos] = null; // to force GC
+
+        if (ignoreImportId) {
+            delete row.id;
+        }
+        resLines.push(row);
         if (resLines.length >= linesPerBulk)
             break;
     }
@@ -854,7 +863,6 @@ function insertRows (model, lines, pos, count) {
     }
     //debug(resLines.length);
 
-    var json = "[" + resLines.join(",") + "]";
     //alert(json);
     //var pos = i + 0;
     //debug("outer: " + pos);
@@ -864,7 +872,7 @@ function insertRows (model, lines, pos, count) {
         afterCreateModelBulkRow(res, model, lines, pos, count);
     };
     openresty.formId = 'dummy-form';
-    openresty.post("/=/model/" + model + "/~/~", JSON.parse(json));
+    openresty.post("/=/model/" + model + "/~/~", resLines);
 }
 
 function afterCreateModelBulkRow (res, model, lines, pos, count) {
@@ -873,8 +881,9 @@ function afterCreateModelBulkRow (res, model, lines, pos, count) {
     if ( ! openresty.isSuccess(res)) {
         setStatus(false, 'createModelBulkRow');
         $("#import-results").html(
-            '<span class="error">Failed to import: ' +
-            res.error + '</span>'
+            '<span class="error">Failed to import: between rows ' +
+            (pos - linesPerBulk + 2) + ' ~ ' + (pos+1)
+            + ": " + res.error + '</span>'
         );
         return false;
     }

@@ -20,6 +20,10 @@
     <p>
         <input type="submit" class="create-button" value="Create" onclick="createModelBulkRow('[% model %]'); return false;"></input>
     </p>
+    <p>
+        <input type="checkbox" id="import-ignore-id">&nbsp; Ignore "id" values</input>
+        <!-- <input type="checkbox" name="import-ignore-dup">Ignore rows that violates unique constraints.</input> -->
+    </p>
 </form>
 </div>
 
