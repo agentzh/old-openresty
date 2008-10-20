@@ -1,26 +1,12 @@
-# vi:filetype=
+﻿# vi:filetype=
 
-my $ExePath;
-BEGIN {
-    use FindBin;
-    $ExePath = "$FindBin::Bin/../haskell/bin/restyscript";
-    if (!-f $ExePath) {
-        $skip = "$ExePath is not found.\n";
-        return;
-    }
-    if (!-x $ExePath) {
-        $skip = "$ExePath is not an executable.\n";
-        return;
-    }
-};
-use t::OpenResty $skip ? (skip_all => $skip) : ();
+use t::OpenResty;
 
 plan tests => 3 * blocks();
 
 run_tests;
 
 __DATA__
-
 
 
 
