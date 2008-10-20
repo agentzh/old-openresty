@@ -19,7 +19,7 @@
 <!-- block begin -->
 <div class="ttl">
     <span class="text">
-        <a href="#modelrows/[% model.name %]/1">[% model.name %]</a>
+        <a href="#modelrows/[% model.name %]/_all/contains/1">[% model.name %]</a>
     </span>
 </div>
 
@@ -47,7 +47,7 @@
     </ul>
     <ul>
         <li>
-            <a class="show-detail" href="#modelrows/[% model.name %]/1">View model rows</a>
+            <a class="show-detail" href="#modelrows/[% model.name %]/_all/contains/1">View model rows</a>
             &nbsp; &nbsp; &nbsp;
             <b><a class="show-detail" href="javascript:void(0);" onclick="deleteModel('[% model.name %]', 'models')">Delete this model</a></b>
         </li>

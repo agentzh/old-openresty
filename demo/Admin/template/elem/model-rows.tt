@@ -7,6 +7,15 @@
     ],
     pat = 'hello'
 %]
+[% SET op2name = {
+        lt => '<',
+        le => '<=',
+        gt => '>',
+        ge => '>=',
+        eq => '=',
+        ne => '<>',
+   }
+%]
 
 [% BLOCK editable_row_value -%]
 <span class="editable" [% type ? 'resty_type="' _ type _ '"' : "" %] resty_path="model/[% model %]/id/[% id %]" resty_key="[% key %]" resty_value="[% value | html %]">[% value | html %]</span>
@@ -20,9 +29,30 @@
 </div>
 
 <span class="search-box">
-    <form onsubmit="searchRows();return false;">
+    <form onsubmit="searchRows('[% model %]');return false;">
         <label>Search rows</label>&nbsp; &nbsp;
         <input id="search-box-input" type="text" size="15" value="[% pat == '~' ? '' : pat | html %]"></input>
+        [%- row = rows.first %]
+            in
+            <select id="search-in">
+                    <option value="_all">All columns</option>
+            [%- IF row %]
+                [%- FOREACH key IN row.keys %]
+                    <option value="[%- key | html %]"
+                        [% key == column ? 'selected="selected"' : '' %]
+                    >[% key | html %]</option>
+                [%- END %]
+            [%- ELSIF column != '_all' %]
+                <option value="[% column %]" selected="selected">[% column | html %]</option>
+            [%- END %]
+            </select>
+            using
+            <select id="search-op">
+                [%- FOREACH item IN ['contains', 'eq', 'lt', 'le', 'gt', 'ge', 'ne'] %]
+                    <option value="[% item %]" [% item == operator ? 'selected="selected"' : '' %]>[% op2name.$item || item %]</option>
+                [%- END %]
+            </select>
+            <input type="submit" value="  Go!  "></input>
     </form>
 </span>
 
@@ -54,8 +84,8 @@
 &nbsp; &nbsp; &nbsp; &nbsp;
 <b><a href="javascript:void(0);" title="Delete all rows" onclick="deleteAllModelRows('[% model %]')">Delete all rows</a></b>
 &nbsp; &nbsp; &nbsp; &nbsp;
-<b><a href="javascript:void(0);" title="Dump rows in JSON" onclick="dumpModelRows('[% model %]', 'json')">Dump model rows in JSON</a> <span style="color: black">or</span>
-<a href="javascript:void(0);" title="Dump rows in CSV" onclick="dumpModelRows('[% model %]', 'csv')">CSV</a></b>
+<b><a href="javascript:void(0);" title="Dump rows in JSON" onclick="dumpModelRows('[% model %]', '[% column | html %]', '[% operator | html %]', 'json')">Dump model rows in JSON</a> <span style="color: black">or</span>
+<a href="javascript:void(0);" title="Dump rows in CSV" onclick="dumpModelRows('[% model %]', '[% column | html %]', '[% operator | html %]', 'csv')">CSV</a></b>
 
 </p>
 <br/>
