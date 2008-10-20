@@ -33,15 +33,17 @@ function dispatchByAnchor () {
 
     [%- END %]
 
-    match = anchor.match(/^modelrows\/([A-Za-z]\w*)\/(\d+)(?:\/(.*))?$/);
+    match = anchor.match(/^modelrows\/([A-Za-z]\w*)\/(\w+)\/(\w+)\/(\d+)(?:\/(.*))?$/);
     if (match) {
         var model = match[1];
-        var page = match[2] || 1;
-        var pattern = match[3] || '~';
+        var col = match[2];
+        var op = match[3];
+        var page = match[4] || 1;
+        var pattern = match[5] || '~';
         page = parseInt(page);
         //alert("Model: " + model);
         //alert("Page: " + page);
-        getModelRows(model, page, pattern);
+        getModelRows(model, col, op, page, pattern);
         return;
     }
 

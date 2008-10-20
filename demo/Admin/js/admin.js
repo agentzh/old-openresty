@@ -196,16 +196,17 @@ function init () {
     getVersionInfo();
 }
 
-function getModelRows (name, page, pat) {
+function getModelRows (name, col, op, page, pat) {
     setStatus(true, 'renderModelRows');
     if (!page) page = 1;
-    openresty.callback = function (res) { renderModelRows(res, name, page, pat); };
+    openresty.callback = function (res) { renderModelRows(res, name, col, op, page, pat); };
     if (/\%[A-Za-z0-9]{2}/.test(pat)) {
         pat = decodeURIComponent(pat);
     }
     openresty.get(
-        '/=/model/' + name + '/~/' + encodeURIComponent(pat),
-        { _offset: itemsPerPage * (page - 1), _count: itemsPerPage, _order_by: 'id:desc', _op: 'contains' }
+        '/=/model/' + name + '/' +
+        (col == '_all' ? '~' : col) + '/' + encodeURIComponent(pat),
+        { _offset: itemsPerPage * (page - 1), _count: itemsPerPage, _order_by: 'id:desc', _op: op }
     );
 }
 
@@ -253,7 +254,7 @@ function renderPager (res, page, prefix, suffix, model) {
 //////////////////////////////////////////////////////////////////////
 // static handlers (others can be found in template/js/handlers.tt)
 
-function renderModelRows (res, model, page, pat) {
+function renderModelRows (res, model, col, op, page, pat) {
     setStatus(false, 'renderModelRows');
     if (!openresty.isSuccess(res)) {
         error("Failed to get model rows: " + res.error);
@@ -265,10 +266,15 @@ function renderModelRows (res, model, page, pat) {
     $("#main").html(
         Jemplate.process(
             'model-rows.tt',
-            { model: model, rows: res, pat: pat }
+            { model: model, column: col, operator: op, rows: res, pat: pat }
         )
     ).postprocess();
-    getPager(model, page, 'modelrows/' + model + '/', '/' + pat);
+    getPager(
+        model,
+        page,
+        'modelrows/' + model + '/' + col + '/' + op + '/',
+        '/' + pat
+    );
 }
 
 function doHttpRequest (form) {
@@ -449,21 +455,15 @@ function afterDeleteRoleRule (res, role, id, nextPage) {
     gotoNextPage(nextPage);
 }
 
-function searchRows () {
+function searchRows (model) {
     var pat = $("#search-box-input").val();
+    var col = $("#search-in").val();
+    var op = $("#search-op").val();
+    //alert(col);
     if (!pat) pat = '~';
     var anchor = savedAnchor;
-    var matches = anchor.match(/^modelrows\/(\w+)\/\d+\/(.*)$/);
-    if (matches) {
-        var model = matches[1];
-        anchor = 'modelrows/' + model + '/1/' + pat;
-    } else {
-        matches = anchor.match(/^modelrows\/\w+\/\d+$/);
-        if (matches)
-            anchor += '/' + pat;
-        else
-            return;
-    }
+    anchor = 'modelrows/' + model + '/' + col + '/' + op + '/1/' + pat;
+    //alert(anchor);
     gotoNextPage(anchor);
 }
 
@@ -730,13 +730,15 @@ function afterDeleteAllModelRows (res) {
     gotoNextPage();
 }
 
-function dumpModelRows (model, fmt, pat, page) {
+function dumpModelRows (model, col, op, fmt, pat, page) {
     var anchor = savedAnchor;
     if (page == null) page = 1;
     if (pat == null) {
-        var matches = anchor.match(/^modelrows\/\w+\/\d+\/(.*)$/);
+        var matches = anchor.match(/^modelrows\/\w+\/(\w+)\/(\w+)\/\d+\/(.*)$/);
         if (matches) {
-            pat = matches[1];
+            col = matches[1];
+            op = matches[2];
+            pat = matches[3];
             if (/\%[A-Za-z0-9]{2}/.test(pat))
                 pat = decodeURIComponent(pat);
         } else {
@@ -752,10 +754,11 @@ function dumpModelRows (model, fmt, pat, page) {
     document.getElementById('model-dump-res').value = "Please wait...";
     cancelDumpModelRows = false;
     dumpModelRowsKeys = [];
-    dumpModelRowsHelper(model, fmt, pat, page);
+    //debug("page 1: " + page);
+    dumpModelRowsHelper(model, col, op, fmt, pat, page);
 }
 
-function dumpModelRowsHelper (model, fmt, pat, page) {
+function dumpModelRowsHelper (model, col, op, fmt, pat, page) {
     if (cancelDumpModelRows) {
         $("#export-results").append('<span class="good">...Cancelled!</span>');
         document.getElementById('model-dump-res').value = dumpedModelRows;
@@ -763,11 +766,13 @@ function dumpModelRowsHelper (model, fmt, pat, page) {
         return;
     }
     openresty.callback = function (res) {
-        afterDumpModelRows(res, model, fmt, pat, page);
+        afterDumpModelRows(res, model, col, op, fmt, pat, page);
     };
+    //debug("page 2: " + page);
     openresty.get(
-        '/=/model/' + model + '/~/' + encodeURIComponent(pat),
-        { _offset: itemsPerPage * (page - 1), _count: itemsPerPage, _order_by: 'id:desc', _op: 'contains' }
+        '/=/model/' + model + '/' + (col == '_all' ? '~' : col)
+            + '/' + encodeURIComponent(pat),
+        { _offset: itemsPerPage * (page - 1), _count: itemsPerPage, _order_by: 'id:desc', _op: op }
     );
 }
 
@@ -779,7 +784,7 @@ function toCSV (value) {
         .replace(/"/, '\\"', 'g') + '"'
 }
 
-function afterDumpModelRows (res, model, fmt, pat, page) {
+function afterDumpModelRows (res, model, col, op, fmt, pat, page) {
     setStatus(false, 'dumpModelRows');
     if ( ! openresty.isSuccess(res)) {
         $("#export-results").append(
@@ -826,7 +831,7 @@ function afterDumpModelRows (res, model, fmt, pat, page) {
         error("Too many rows exported (more than " + dumpModelRowsLimit + "). Cancelling...");
         cancelDumpModelRows = true;
     }
-    dumpModelRowsHelper(model, fmt, pat, page + 1);
+    dumpModelRowsHelper(model, col, op, fmt, pat, page + 1);
 }
 
 function getModelBulkRowForm (model) {

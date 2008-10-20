@@ -160,7 +160,9 @@ L<http://ysearchblog.cn/2008/06/post_120.html>
 
 L<http://blog.agentzh.org>
 
-一般使用我们的 C<openresty.js> 库.
+一般使用我们的 C<openresty.js> 库：
+
+L<http://svn.openfoundry.org/openapi/trunk/clients/js/>
 
 =head1 AUTHOR
 
