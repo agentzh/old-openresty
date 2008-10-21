@@ -680,3 +680,13 @@ Query [Select [AnyColumn],From [Alias (FuncCall (Symbol "getquery") [Variable (1
 --- out
 select * from "getquery"($spell) as ("query" text, "pop" integer, "des" text) limit $t
 
+
+
+=== TEST 73: builtin vars
+--- in
+select $_ACCOUNT as account, $_ROLE as role
+--- ast
+Query [Select [Alias (Variable (1,9) "_ACCOUNT") (Symbol "account"),Alias (Variable (1,31) "_ROLE") (Symbol "role")]]
+--- out
+select $_ACCOUNT as "account", $_ROLE as "role"
+

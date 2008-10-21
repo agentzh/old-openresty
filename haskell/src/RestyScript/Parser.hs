@@ -158,9 +158,10 @@ parseAnyColumn = do char '*'
 parseVariable :: Parser RSVal
 parseVariable = do char '$'
                    pos <- getPosition
+                   prefix <- option "" $ string "_"
                    v <- symbol
                    spaces
-                   return $ Variable pos v
+                   return $ Variable pos $ prefix ++ v
 
 parseNumber :: Parser RSVal
 parseNumber = try (parseFloat)
