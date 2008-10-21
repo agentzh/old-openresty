@@ -28,7 +28,11 @@ if ($url_prefix) {
 sub init {
     my ($class, $context) = @_;
     #warn "init: $backend\n";
-    $Context = $context;
+    if (defined $context) {
+        $Context = $context;
+    } else {
+        $context = $Context;
+    }
     undef $InitFatal;
 
     eval {
