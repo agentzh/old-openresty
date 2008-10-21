@@ -132,8 +132,9 @@ sub init {
     if (!$Backend || !$Backend->ping) {
         warn "Re-connecting the database...\n";
         eval { $Backend->disconnect };
-        my $backend = $OpenResty::Config{'backend.type'};
-        OpenResty->connect($backend);
+        #my $backend = $OpenResty::Config{'backend.type'};
+        #OpenResty->connect($backend);
+        OpenResty::Dispatcher->init;
         #die "Backend connection lost: ", $db_state, "\n";
     }
 
