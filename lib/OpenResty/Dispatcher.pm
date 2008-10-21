@@ -16,6 +16,7 @@ use File::Spec;
 
 our $InitFatal;
 our $StatsLog;
+our $Context;
 
 # XXX Excpetion not caputred...when database 'test' not created.
 
@@ -27,6 +28,9 @@ if ($url_prefix) {
 sub init {
     my ($class, $context) = @_;
     #warn "init: $backend\n";
+    $Context = $context;
+    undef $InitFatal;
+
     eval {
         OpenResty::Config->init;
         my $backend = $OpenResty::Config{'backend.type'};
@@ -105,6 +109,11 @@ sub init {
 
 sub process_request {
     my ($class, $cgi, $call_level, $parent_account) = @_;
+
+    if ($InitFatal) {
+        warn "Found init fatal error. Now we re-init the dispatcher...\n";
+        $class->init($Context);
+    }
 
     $call_level ||= 0;
 
