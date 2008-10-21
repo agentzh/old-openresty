@@ -642,6 +642,10 @@ sub set_role {
     $self->{_role} = $role;
 }
 
+sub get_role {
+    $_[0]->{_role}
+}
+
 sub url_param {
     if (@_ > 1) {
         $_[0]->{_url_params}->{$_[1]};

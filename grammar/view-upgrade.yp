@@ -373,7 +373,7 @@ sub _Lexer {
                 and return (lc($1), lc($1));
         s/^\s*([A-Za-z][A-Za-z0-9_]*)\b//s
                 and return ('IDENT', $1);
-        s/^(\$\w+)//s
+        s/^(\$[A-Za-z]\w*)//s
                 and return ('VAR', $1);
         s/^\s*(\S)//s
                 and return ($1, $1);
