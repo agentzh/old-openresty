@@ -9,6 +9,7 @@ cover_db
 Makefile
 bin/test-account.sh
 blib
+haskell/big.sql
 demo/Springbot/staff/update.sh
 demo/*/out
 demo/Blog2/js
