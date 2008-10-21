@@ -261,6 +261,13 @@ sub exec_user_action {
     }
     my ($params, $canon_cmds) = @$compiled;
 
+    $args->{_ACCOUNT} = $openresty->current_user;
+    $args->{_ROLE} = $openresty->get_role;
+    $params->{_ROLE} = $params->{_ACCOUNT} = {
+        used => 1,
+        type => 'literal',
+    };
+
     #### $params
     my @missed_args;
     while (my ($name, $param) = each %$params) {
@@ -270,7 +277,6 @@ sub exec_user_action {
             # Some parameter were not given
             push @missed_args, $name if $param->{used};
         }
-        # XXX a bug here...
         if (!defined $val) { $val = $param->{default_value}; }
         $args->{ $name } = $val;
     }
@@ -543,6 +549,13 @@ sub process_params_with_vars {
 
     my %used;
     for my $name ( keys(%$vars) ) {
+        if ($name =~ /^_/) {
+            if ($name =~ /^(?:_ACCOUNT|_ROLE)$/) {
+                next;
+            } else {
+                die "Unknown built-in parameter: $name\n";
+            }
+        }
         if (!exists $params->{$name}) {
             die "Parameter \"$name\" used in the action definition is not defined in the \"parameters\" list.\n"
         }
