@@ -13,8 +13,14 @@
 </div>
 <div class="create-model">
 <form id="create-row-form" onsubmit="return false;">
+    [%- cols = {} %]
     [%- FOREACH col = model.columns %]
         [%- NEXT IF col.name == 'id' %]
+        [%- name = col.name %]
+        [%- cols.$name = col %]
+    [%- END %]
+    [%- FOREACH name IN cols.keys.sort %]
+        [%- col = cols.$name %]
         <label>[% col.name %] [% IF col.label != undefined %]([% col.label %])[% END %]</label>
         [%- IF col.type == "text" %]
         <textarea rows="3" cols="80" class="row-input" resty_key="[% col.name %]"></textarea>

@@ -21,12 +21,17 @@
 <span class="editable" [% type ? 'resty_type="' _ type _ '"' : "" %] resty_path="model/[% model %]/id/[% id %]" resty_key="[% key %]" resty_value="[% value | html %]">[% value | html %]</span>
 [% END -%]
 
+
 <div class="ttl">
     <span class="text">
         <a href="#model-[% model %]">[% model %]</a>
     </span>
     <span class="total-rows"></span>
 </div>
+
+<p style="padding-top: 5px; padding-left: 2em; text-align: left">
+<a href="javascript:void(0);" onclick="$('.location-anchor')[0].id = null; $('.end-anchor')[0].id = savedAnchor; location.hash = savedAnchor">Go to end
+</a></p>
 
 <span class="search-box">
     <form onsubmit="searchRows('[% model %]');return false;">
@@ -62,9 +67,9 @@
     <ul>
         [%- FOREACH row IN rows %]
             <li>
-            [%- FOREACH key IN row.keys %]
+            [%- FOREACH key IN row.keys.sort %]
             [%- value = row.$key %]
-            <b class="key">[%- key | html %]</b>: [% INCLUDE editable_row_value id=row.id %] &nbsp;&nbsp;
+            <b class="key">[%- key | html %]</b>: [% INCLUDE editable_row_value id=row.id %] <br/>
             [%- END %]
 
             <b><a href="javascript:void(0);" onclick="deleteModelRow('[% model %]', [% row.id %])">Delete</a></b>
@@ -90,4 +95,5 @@
 </p>
 <br/>
 <p style="text-align: left; margin-left: 6em;" id="new-row"></p>
+<a name="" id="" class="end-anchor"></a>
 
