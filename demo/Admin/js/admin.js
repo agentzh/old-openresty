@@ -1,4 +1,4 @@
-var itemsPerPage = 20;
+var itemsPerPage = 10;
 var sessionCookie = 'admin_session';
 var serverCookie  = 'admin_server';
 var userCookie    = 'admin_user';
