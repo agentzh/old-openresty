@@ -33,7 +33,14 @@ sub GET_version_verbose {
     if (!defined $Revision) {
         my $path = "$FindBin::Bin/../share/openresty_revision";
         unless (-f $path) {
-            $path = File::Spec->catfile(module_dir('OpenResty'), 'openresty_revision');
+            my $dir;
+            eval {
+                $dir = module_dir('OpenResty');
+            };
+            if ($@) {$Revision = 'Unknown'; }
+            else {
+                $path = File::Spec->catfile(module_dir('OpenResty'), 'openresty_revision');
+            }
         }
         my $s;
         eval {
