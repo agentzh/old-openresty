@@ -715,13 +715,27 @@ function afterCreateACLRule (res) {
     }
 }
 
-function deleteAllModelRows (model) {
+function deleteAllModelRows (model, col, op, fmt, pat) {
     //alert("No implemented yet!");
     if (confirm("Are you sure to remove all the rows in model \""
                 + model + "\"?")) {
         openresty.callback = afterDeleteAllModelRows;
         delete cachedModelCount[model];
-        openresty.del("/=/model/" + model + "/~/~");
+        var anchor = savedAnchor;
+        if (pat == null) {
+            var matches = anchor.match(/^modelrows\/\w+\/(\w+)\/(\w+)\/\d+\/(.*)$/);
+            if (matches) {
+                col = matches[1];
+                op = matches[2];
+                pat = matches[3];
+                if (/\%[A-Za-z0-9]{2}/.test(pat))
+                    pat = decodeURIComponent(pat);
+            } else {
+                pat = '~';
+            }
+        }
+        openresty.del('/=/model/' + model + '/' + (col == '_all' ? '~' : col) + '/' + encodeURIComponent(pat), {_op: op }); 
+       /* openresty.del("/=/model/" + model + "/~/~");*/
     }
 }
 
