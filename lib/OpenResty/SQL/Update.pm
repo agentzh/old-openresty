@@ -17,11 +17,15 @@ sub update {
     $_[0]->{update} = $_[1];
     $_[0]
 }
-
 sub set {
     my $self = shift;
     push @{ $self->{set} }, "$_[0] = $_[1]";
     $self;
+}
+
+sub op {
+    $_[0]->{op} = lc($_[1]);
+    $_[0];
 }
 
 sub generate {
@@ -31,7 +35,8 @@ sub generate {
     $sql .= "update $self->{update}
 set @{ $self->{set} }";
     my @where = @{ $self->{where} };
-    my $where = join ' and ', map { join(' ', @$_) } @where;
+    my $op = $self->{op} || 'and';
+    my $where = join ' '.$op.' ', map { join(' ', @$_) } @where;
     if ($where) { $sql .= "\nwhere $where" }
     return $sql . ";\n";
 }

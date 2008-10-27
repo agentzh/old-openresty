@@ -889,13 +889,22 @@ sub select_records {
         }
         $select->select('id', QI(@$cols));
         if ($user_col eq '~') {
+            if ($op ne '=' && $op ne 'like' ) {
+                die '_op value not supported for values other than contains and eq.';
+            }
             # XXX
             $select->op('or');
             for my $col (@$cols) {
                 $select->where(qq{"$col"::text} => $op => Q($val));
             }
         } else {
-            $select->where(QI($user_col) => $op => Q($val));
+            my $tmp_col;
+            if ($op eq 'like') {
+                $tmp_col = qq{"$user_col"::text};
+            } else {
+                $tmp_col = QI($user_col);
+            }
+            $select->where($tmp_col => $op => Q($val));
         }
     } else {
         $select->select($user_col);
@@ -946,7 +955,7 @@ sub delete_records {
         die "Model \"$model\" not found.\n";
     }
     my $cols = $self->get_model_col_names($openresty, $model);
-    if (lc($user_col) ne 'id') {
+    if (lc($user_col) ne 'id' && $user_col ne '~') {
         my $found = 0;
         for my $col (@$cols) {
             if ($col eq $user_col) { $found = 1; last; }
@@ -956,7 +965,29 @@ sub delete_records {
     #my $flds = join(",", @$cols);
     my $sql;
     if (defined $val) {
-        $sql = "delete from \"$model\" where \"$user_col\"=" . Q($val);
+        my $op = $openresty->builtin_param('_op') || 'eq';
+        $op = $OpenResty::OpMap{$op};
+        if ($op eq 'like') {
+            $val = "%$val%";
+        }
+        if ($user_col eq '~') {
+            if ($op ne '=' && $op ne 'like' ) {
+                die '_op value not supported for values other than contains and eq.';
+            }
+            $sql = "delete from \"$model\" where 1=0 ";
+            for my $col (@$cols) {
+                $sql .= ' or ' .  qq{"$col"::text} . ' ' . $op . " " . Q($val);
+            }
+        } else {
+            my $tmp_col;
+            if ($op eq 'like') {
+                $tmp_col = qq{"$user_col"::text};
+            } else {
+                $tmp_col = "\"$user_col\""; 
+            }
+            $sql = "delete from \"$model\" where $tmp_col  $op " . Q($val);
+        
+        }
     } else {
         $sql = "delete from \"$model\"";
     }
@@ -968,7 +999,7 @@ sub delete_records {
 sub update_records {
     my ($self, $openresty, $model, $user_col, $val, $data) = @_;
     my $cols = $self->get_model_col_names($openresty, $model);
-    if ($user_col ne 'id' && $user_col ne '~') {
+    if (lc($user_col) ne 'id' && $user_col ne '~') {
         my $found = 0;
         for my $col (@$cols) {
             if ($col eq $user_col) { $found = 1; last; }
@@ -991,8 +1022,30 @@ sub update_records {
     }
 
     if (defined $val and $val ne '~') {
+        my $op = $openresty->builtin_param('_op') || 'eq';
+        $op = $OpenResty::OpMap{$op};
+        if ($op eq 'like') {
+            $val = "%$val%";
+        }
+        if ($user_col eq '~') {
+            if ($op ne '=' && $op ne 'like' ) {
+                die '_op value not supported for values other than contains and eq.';
+            }
+            $update->op('or');
+            for my $col (@$cols) {
+                $update->where(qq{"$col"::text} => $op => Q($val));
+            }
+        } else {
+            my $tmp_col;
+            if ($op eq 'like') {
+                $tmp_col = qq{"$user_col"::text};
+            } else {
+                $tmp_col = QI($user_col);
+            }
+            $update->where($tmp_col => $op => Q($val));
+        }
         # XXX SQL injection point
-        $update->where(QI($user_col) => Q($val));
+        # $update->where(QI($user_col) => Q($val));
     }
     #warn "VAL:  $val";
     #warn "is_utf8:", is_utf8($val), "\n";

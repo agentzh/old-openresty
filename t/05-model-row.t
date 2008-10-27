@@ -133,7 +133,7 @@ GET /=/model/Address/id/1
 
 === TEST 13: PUT by selector
 --- request
-PUT /=/model/Address/name/Perl?op=contain
+PUT /=/model/Address/name/Perl?op=contains
 {"name":"Haskell"}
 --- response
 {"success":1,"rows_affected":1}
@@ -142,7 +142,7 @@ PUT /=/model/Address/name/Perl?op=contain
 
 === TEST 14: PUT by selector (again)
 --- request
-PUT /=/model/Address/name/Perl?op=contain
+PUT /=/model/Address/name/Perl?op=contains
 {"name":"Haskell"}
 --- response
 {"success":0,"rows_affected":0}
