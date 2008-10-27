@@ -49,6 +49,7 @@ sub check_type {
                     ltree |
                     line |
                     point |
+                    hstore |
                     lseg |
                     path |
                     date |
