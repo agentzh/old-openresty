@@ -33,6 +33,7 @@ sub reindex {
     my $counter = $init;
     my $changed;
     while (<$in>) {
+        s/\r$//;
         my $num;
         s/ ^ === \s+ TEST \s+ (\d+)/$num=$1; "=== TEST " . $counter++/xie;
         next if !defined $num;
