@@ -28,7 +28,7 @@ sub level2name {
 sub check_type {
     my $type = shift;
     if ($type !~ m{^ \s*
-                (
+                ( (?:
                     smallint |
                     bigint |
                     cidr |
@@ -56,7 +56,7 @@ sub check_type {
                         (?: \s* with(?:out)? \s+ time \s+ zone)? |
                     interval (?: \s* \( \s* \d+ \s* \) )? |
                     prefix_range
-                ) \s* $
+                ) \s* (?:\[ \d* \])? ) \s* $
             }x) {
         die "Bad column type: $type\n";
     }
