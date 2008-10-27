@@ -120,6 +120,7 @@ POST /=/model/account/~/~
 {"success":1,"rows_affected":1,"last_row":"/=/model/account/id/3"}
 
 
+
 === TEST 14: Insert a record with value of D is 0
 --- request
 POST /=/model/account/~/~
@@ -189,6 +190,7 @@ POST /=/model/account/~/~
 {"success":1,"rows_affected":1,"last_row":"/=/model/account/id/5"}
 
 
+
 === TEST 22: Add a new column not null is true
 --- request
 POST /=/model/account/E
@@ -196,11 +198,14 @@ POST /=/model/account/E
 --- response
 {"success":1,"src":"/=/model/account/D"}
 
+
+
 === TEST 23: Check the  column E
 --- request
 GET /=/model/account/C
 --- response
 {"name":"E","default":null,"label":"e","type":"text","not_null",true}
+
 
 
 === TEST 24: Insert a record with value of E is null
@@ -211,12 +216,14 @@ POST /=/model/account/~/~
 {"success":0,"error":"Not null constraint violated"} 
 
 
+
 === TEST 25: Insert a record with value of E is not null
 --- request
 POST /=/model/account/~/~
 { "A": "jingjing4","C":"3","E":"test E"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/account/id/6"}
+
 
 
 === TEST 26: Insert a record with value of E is not null
