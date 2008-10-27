@@ -55,9 +55,10 @@ sub GET_view_exec {
     if ($@) { die "Failed to eval the handler: $@\n" }
     while (my ($key, $val) = each %$required_params) {
         next if !$key;
-        my $user_val = $openresty->url_param($key);
+        my $user_val = substr($key, 0, 1) eq '_' ?
+            $openresty->builtin_param($key) : $openresty->url_param($key);
         if (!defined $user_val || $user_val ne $val) {
-            die "Required params do not meet for view \"$view\".\n";
+            die "Required params do not meet for view \"$view\": $key\n";
         }
     }
     my ($fix_var, $fix_var_value) = ($bits->[2], $bits->[3]);
