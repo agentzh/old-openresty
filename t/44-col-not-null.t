@@ -16,7 +16,7 @@ DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 
 
 
-=== TEST 2: create a model
+=== TEST 2: create a new model
 --- request
 POST /=/model/account
 { "description": "test model","columns": [{ "name":"A","type":"text","label":"A" }]}
