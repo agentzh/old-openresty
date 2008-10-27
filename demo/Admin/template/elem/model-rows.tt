@@ -87,7 +87,7 @@
 &nbsp; &nbsp; &nbsp; &nbsp;
 <b><a href="javascript:void(0);" title="Add multiple new rows" onclick="getModelBulkRowForm('[% model %]')">Add multiple rows</a></b>
 &nbsp; &nbsp; &nbsp; &nbsp;
-<b><a href="javascript:void(0);" title="Delete all rows" onclick="deleteAllModelRows('[% model %]')">Delete all rows</a></b>
+<b><a href="javascript:void(0);" title="Delete all rows" onclick="deleteAllModelRows('[% model %]', '[% column | html %]', '[% operator | html %]')">Delete all rows</a></b>
 &nbsp; &nbsp; &nbsp; &nbsp;
 <b><a href="javascript:void(0);" title="Dump rows in JSON" onclick="dumpModelRows('[% model %]', '[% column | html %]', '[% operator | html %]', 'json')">Dump model rows in JSON</a> <span style="color: black">or</span>
 <a href="javascript:void(0);" title="Dump rows in CSV" onclick="dumpModelRows('[% model %]', '[% column | html %]', '[% operator | html %]', 'csv')">CSV</a></b>
