@@ -232,11 +232,15 @@ DELETE /=/model/grade/~/~
 --- response
 {"rows_affected":10,"success":1}
 
+
+
 === TEST 27: add unique attribute
 PUT /=/model/grade
 { "unique": ["student_id", "subject_name"] }
 --- response
 {"success":1}
+
+
 
 === TEST 28: Insert a record with existed student id and subject name value
 --- request
@@ -244,6 +248,8 @@ POST /=/model/grade/~/~
 { "student_id": "1","subject_name":"english"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/grade/id/1"}
+
+
 
 === TEST 29: Insert a record with existed student id and subject name value
 --- request
