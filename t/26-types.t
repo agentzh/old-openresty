@@ -117,7 +117,16 @@ POST /=/model/Test
 
 
 
-=== TEST 10: logout
+=== TEST 10: Dreate a column of type text array
+--- request
+POST /=/model/Test/blah
+{ "label":"Blah", "type":"text[]"}
+--- response
+{"src":"/=/model/Test/blah","success":1}
+
+
+
+=== TEST 11: logout
 --- request
 GET /=/logout
 --- response
