@@ -8,9 +8,6 @@ run_tests;
 
 __DATA__
 
-
-
-
 === TEST 1: Delete existing models
 --- request
 DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
@@ -69,14 +66,12 @@ POST /=/view/View
 
 
 
-
 === TEST 7: Create the view with duplicate name
 --- request
 POST /=/view/View
 { "definition": "select * from A, B where A.id = B.a order by A.title" }
 --- response
 {"success":0,"error":"View \"View\" already exists."}
-
 
 
 
