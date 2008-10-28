@@ -891,17 +891,17 @@ sub select_records {
         $select->select('id', QI(@$cols));
         if ($user_col eq '~') {
             if ($op ne '=' && $op ne 'like' ) {
-                die '_op value not supported for values other than contains and eq.';
+                die "_op value not supported for values other than contains and eq.\n";
             }
             # XXX
             $select->op('or');
             for my $col (@$cols) {
-                $select->where(qq{"$col"::text} => $op => Q($val));
+                $select->where(QI($col).'::text' => $op => Q($val));
             }
         } else {
             my $tmp_col;
             if ($op eq 'like') {
-                $tmp_col = qq{"$user_col"::text};
+                $tmp_col = QI($user_col) . '::text';
             } else {
                 $tmp_col = QI($user_col);
             }
@@ -973,24 +973,21 @@ sub delete_records {
         }
         if ($user_col eq '~') {
             if ($op ne '=' && $op ne 'like' ) {
-                die '_op value not supported for values other than contains and eq.';
+                die "_op value not supported for values other than contains and eq.\n";
             }
-            $sql = "delete from \"$model\" where 1=0 ";
+            $sql .= [:sql|delete from $sym:model where 1=0|];
             for my $col (@$cols) {
-                $sql .= ' or ' .  qq{"$col"::text} . ' ' . $op . " " . Q($val);
+                $sql .= [:sql| or $sym:col::text $kw:op $val|];
             }
         } else {
-            my $tmp_col;
             if ($op eq 'like') {
-                $tmp_col = qq{"$user_col"::text};
+                $sql .= [:sql|delete from $sym:model where $sym:user_col::text $kw:op $val|]; 
             } else {
-                $tmp_col = "\"$user_col\""; 
+                $sql .= [:sql|delete from $sym:model where $sym:user_col $kw:op $val|];
             }
-            $sql = "delete from \"$model\" where $tmp_col  $op " . Q($val);
-        
         }
     } else {
-        $sql = "delete from \"$model\"";
+        $sql = [:sql|delete from $sym::$model|];
     }
 
     my $retval = $openresty->do($sql);
@@ -1030,16 +1027,16 @@ sub update_records {
         }
         if ($user_col eq '~') {
             if ($op ne '=' && $op ne 'like' ) {
-                die '_op value not supported for values other than contains and eq.';
+                die "_op value not supported for values other than contains and eq.\n";
             }
             $update->op('or');
             for my $col (@$cols) {
-                $update->where(qq{"$col"::text} => $op => Q($val));
+                $update->where(QI($col).'::text' => $op => Q($val));
             }
         } else {
             my $tmp_col;
             if ($op eq 'like') {
-                $tmp_col = qq{"$user_col"::text};
+                $tmp_col = QI($user_col) . '::text';
             } else {
                 $tmp_col = QI($user_col);
             }
