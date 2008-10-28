@@ -1,0 +1,28 @@
+Coverage testing TODOs:
+
+
+Old TODOs:
+* add column hits limit.
+* /=/model.json?var=foo
+* t/p3p-cookie.t for cross-site cookie support and the cookie_site url param
+* view description should be mandatory
+* [bug] when view name is duplicate (POST/PUT)
+* [bug] when view definition is duplicate (POST/PUT)
+* [bug] reject updating the names of the builtin roles.
+* add the sorting capability (i.e. the order_by url param) to model/view/role lists
+* [bug] PUT an empty label.
+* [bug] PUT /=/role/Foo/id/32 does not work as expected.
+* order in ACL rule listing
+
+1、
+action 的参数值为 0 时会有错误。。。
+agent.zhang: 1. action 参数用于 URL 拼接
+agent.zhang: 2. action 参数用于 SQL 语句比如 where col > $value 中的 value 参数
+
+2、
+agent.zhang: 1. 递归调用 action （分直接递归和间接递归两种）
+
+3、
+agent.zhang: 创建一个带参数的 action
+agent.zhang: 然后在调用它时，参数提供一个带汉字的值
+agent.zhang: 目前的（错误的）实现是会引入乱码
