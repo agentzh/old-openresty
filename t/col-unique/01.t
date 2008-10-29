@@ -10,12 +10,12 @@ run_tests;
 
 __DATA__
 
-
 === TEST 1: Delete existing models
 --- request
 DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 --- response
 {"success":1}
+
 
 
 === TEST 2: create a model(column without unique attribute)
@@ -26,6 +26,7 @@ POST /=/model/testunique
 {"success":1}
 
 
+
 === TEST 3: check the model
 --- request
 GET /=/model/
@@ -33,11 +34,13 @@ GET /=/model/
 [{"description": "test unique path01","name": "testunique","src":"/=/model/testunique"}]
 
 
+
 === TEST 4: check the column
 --- request
 GET /=/model/testunique/jx01
 --- response
 {"name":"jx01","default":null,"label":"jx01","type":"text"}
+
 
 
 === TEST 5: Insert one record
@@ -48,11 +51,13 @@ POST /=/model/testunique/~/~
 {"success":1,"rows_affected":1,"last_row":"/=/model/testunique/id/1"}
 
 
+
 === TEST 6: Get all records(1 record)
 --- request
 GET /=/model/testunique/~/~
 --- response
 [{"id":"1","jx01":"A01"}]
+
 
 
 === TEST 7: Insert the same record
@@ -61,6 +66,7 @@ POST /=/model/testunique/~/~
 { "jx01": "A01"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/testunique/id/2"}
+
 
 
 === TEST 8: Get all records(2 records)
