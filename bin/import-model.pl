@@ -72,7 +72,7 @@ while (<>) {
     my $row = $json_xs->decode($_);
 
     if (!defined $row->{id}) {
-        warn "ADDing id...\n";
+        #warn "ADDing id...\n";
         $row->{id} = $add_id++;
     }
     if ($no_id) {
