@@ -855,6 +855,7 @@ function getModelBulkRowForm (model) {
             { model: model }
         )
     );
+    $("#import-step").val(linesPerBulk);
     $("textarea.row-input").focus();
 }
 
@@ -883,6 +884,13 @@ function createModelBulkRow (model) {
             return false;
         }
     }
+
+    var num = $("#import-step").val();
+    if ( ! /^\d+$/.test(num) && ! /^0+$/.test(num) ) {
+        alert("Invalid step value: " + num);
+        return false;
+    }
+    linesPerBulk = parseInt(num);
     cancelInsertRows = false;
     insertRows(model, lines, 0, count);
     return false;

@@ -5,6 +5,7 @@ all:
 	-mkdir out
 	-cp ../../clients/js/*.js out/
 	-rm template/elem/*.tt~
+	-cp image/*.* out/
 	jemplate --runtime > out/admin-jemplate.js
 	jemplate --compile template/elem/ >> out/admin-jemplate.js
 	tpage --include_path=template template/index.tt > out/index.html

@@ -22,6 +22,10 @@
         <!-- <input type="checkbox" name="import-ignore-dup">Ignore rows that violates unique constraints.</input> -->
     </p>
     <p>
+        <input type="text" id="import-step" length="10">&nbsp; Lines per request (step)</input>
+        <!-- <input type="checkbox" name="import-ignore-dup">Ignore rows that violates unique constraints.</input> -->
+    </p>
+    <p>
         <input type="submit" class="create-button" value="Create" onclick="createModelBulkRow('[% model %]'); return false;"></input>
     </p>
 </form>
