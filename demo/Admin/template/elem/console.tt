@@ -26,13 +26,14 @@
     <input type="submit" value="Go!" style="width: 5em"></input>
 </li>
 <li>
-    <label for="http-console-out">Response</label><br/>
+    <label for="http-console-out"><b>Response</b></label><br/>
     <pre id="http-console-out"></pre>
 </li>
 </ul>
 </form>
 </div>
 
+<!--
 <div class="ttl">
     <span class="text">
         RunView Console
@@ -42,22 +43,42 @@
 <div class="listcon">
 <ul>
 <li>
-    <textarea rows="8" cols="60"></textarea>
+    <textarea rows="8" cols="30"></textarea>
 </li>
 </ul>
 </div>
+-->
 
 <div class="ttl">
     <span class="text">
-        RunAction Console
+        Action Console
     </span>
+    <p>SQL update/select/delete statements, as well as HTTP commands, are all allowed here, separated by semicolons. </p>
 </div>
 
 <div class="listcon">
+<form onsubmit="runActionConsole(this.console, this.format);return false;">
 <ul>
 <li>
-    <textarea rows="8" cols="60"></textarea>
+    <div id="run-action-console-error" class="error"></div>
+    <textarea name="console" rows="8" cols="60"></textarea><br/>
+</li>
+<li>
+    <label>Data Format</lable>
+    <select name="format">
+    [%- FOREACH fmt IN ['JSON', 'YAML'] %]
+        <option value ="[% fmt | lower %]">[% fmt %]</option>
+    [%- END %]
+    </select>
+<li>
+<li>
+    <input type="submit" value="Go!" style="width: 5em"></input>
+</li>
+<li>
+    <label for="action-console-out"><b>Response</b></label><br/>
+    <pre id="action-console-out"></pre>
 </li>
 </ul>
+</form>
 </div>
 

@@ -690,3 +690,18 @@ Query [Select [Alias (Variable (1,9) "_ACCOUNT") (Symbol "account"),Alias (Varia
 --- out
 select $_ACCOUNT as "account", $_ROLE as "role"
 
+
+
+=== TEST 74: is null
+--- in
+select * from Foo where col is null
+--- out
+select * from "Foo" where "col" is null
+
+
+=== TEST 74: is not null
+--- in
+select * from Foo where col is not null
+--- out
+select * from "Foo" where "col" is not null
+
