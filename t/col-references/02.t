@@ -1,6 +1,6 @@
-# vi:filetype=
+ï»¿# vi:filetype=
 
-#´´½¨1ÁĞ£¬ÆäReferencesÖ¸ÏòÒ»¸ö´æÔÚµÄmodelÖĞ²»´æÔÚµÄÁĞ
+#åˆ›å»º1åˆ—ï¼Œå…¶ReferencesæŒ‡å‘ä¸€ä¸ªå­˜åœ¨çš„modelä¸­ä¸å­˜åœ¨çš„åˆ—
 
 use t::OpenResty;
 
