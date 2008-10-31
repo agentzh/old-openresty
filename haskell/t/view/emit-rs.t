@@ -699,7 +699,8 @@ select * from Foo where col is null
 select * from "Foo" where "col" is null
 
 
-=== TEST 74: is not null
+
+=== TEST 75: is not null
 --- in
 select * from Foo where col is not null
 --- out
