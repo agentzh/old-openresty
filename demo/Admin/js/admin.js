@@ -1177,3 +1177,24 @@ function afterCreateParam (res) {
     }
 }
 
+function runActionConsole (console, format) {
+    //alert(console.value);
+    setStatus(true, 'runActionConsole');
+    $("#run-action-console-error").empty();
+    openresty.callback = afterRunActionConsole;
+    openresty.postByGet(
+        '/=/action/RunAction/~/~.' + format.value,
+        console.value
+    );
+}
+
+function afterRunActionConsole (res) {
+    setStatus(false, 'runActionConsole');
+    if (!openresty.isSuccess(res)) {
+        $("#run-action-console-error").text("Failed to run action: " + res.error);
+    } else {
+        if (typeof res == 'object') res = JSON.stringify(res);
+        $("#action-console-out").text(res);
+    }
+}
+
