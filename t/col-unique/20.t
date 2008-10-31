@@ -1,7 +1,7 @@
-# vi:filetype=
+﻿# vi:filetype=
 
-#ĳһ�е� unique Լ������Ӱ�쵽����û�� unique Լ������
-#�ȴ���1��û��unique=false���ԣ���ֵ���ٴ���1����unique = false���Ե�
+#某一列的 unique 约束不会影响到其他没有 unique 约束的列
+#先创建1列没有unique=false属性，有值，再创建1列有unique = false属性的
 
 use t::OpenResty;
 
