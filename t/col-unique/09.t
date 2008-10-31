@@ -1,6 +1,6 @@
-# vi:filetype=
+ï»¿# vi:filetype=
 
-##´´½¨ unique ÊôĞÔÎª false µÄÁĞ£¬²åÈëÊı¾İÎª¿Õ×Ö·û´® "" µÄÁĞ»áÎ¥·´µ½ unique Ô¼Êø
+##åˆ›å»º unique å±æ€§ä¸º false çš„åˆ—ï¼Œæ’å…¥æ•°æ®ä¸ºç©ºå­—ç¬¦ä¸² "" çš„åˆ—ä¼šè¿ååˆ° unique çº¦æŸ
 
 use t::OpenResty;
 
