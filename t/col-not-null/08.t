@@ -1,6 +1,6 @@
-# vi:filetype=
-# Ä³ÁÐµÄnot_nullÊôÐÔ²»»áÓ°Ïìµ½ÆäËûÃ»ÓÐnot_nullÊôÐÔµÄÁÐ
-#Í¬Ê±´´½¨Á½ÁÐ£¬Ò»ÁÐÓÐ£¬Ò»ÁÐÃ»ÓÐ 
+ï»¿# vi:filetype=
+# æŸåˆ—çš„not_nullå±žæ€§ä¸ä¼šå½±å“åˆ°å…¶ä»–æ²¡æœ‰not_nullçš„åˆ—
+#åŒæ—¶åˆ›å»ºä¸¤åˆ—ï¼Œä¸€åˆ—æœ‰ï¼Œä¸€åˆ—æ²¡æœ‰
 use t::OpenResty;
 
 plan tests => 3 * blocks();
@@ -30,7 +30,7 @@ POST /=/model/account
 --- request
 GET /=/model/account
 --- response
-{"name":"D","default":null,"label":"b","type":"integer","not_null":true}
+{"name":"D","default":null,"label":"b","type":"integer","not_null":true,"unique":false}
 
 
 
