@@ -89,7 +89,7 @@ function plantEditableHook (node, settings) {
         width: settings.width || 130,
         height: settings.height || 20,
         data: settings.data || '',
-        tooltip   : 'Click to edit'
+        tooltip   : ''
     } );
 }
 
