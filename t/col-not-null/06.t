@@ -1,5 +1,5 @@
-# vi:filetype=
-# ÐÞ¸Änot_null=true µ½false
+ï»¿# vi:filetype=
+#ä¿®æ”¹not_null=trueåˆ°false
 use t::OpenResty;
 
 plan tests => 3 * blocks();
@@ -38,7 +38,7 @@ POST /=/model/account/D
 --- request
 GET /=/model/account/D
 --- response
-{"name":"D","default":null,"label":"d","type":"integer","not_null":true}
+{"name":"D","default":null,"label":"d","type":"integer","not_null":true,"unique":false}
 
 
 
@@ -73,7 +73,7 @@ PUT /=/model/account/D
 --- request
 GET /=/model/account/D
 --- response
-{"name":"D","default":null,"label":"d","type":"integer","not_null":false}
+{"name":"D","default":null,"label":"d","type":"integer","not_null":false,"unique":false}
 
 
 
