@@ -13,6 +13,8 @@ all:
 	cp -r ../Blog/js/thirdparty/* out/
 	cp -r ../Admin/js/thirdparty/jquery.cookie.pack.js out/
 	cp -r js/thirdparty/* out/
+	cp -r ../Admin/image/*.* out/
+	cp -r ../Admin/css/* out/
 	-rm out/JSON.js
 	-rm template/elem/*.tt~
 	jemplate --runtime > out/blogadmin-jemplate.js
