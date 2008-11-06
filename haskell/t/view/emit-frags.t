@@ -463,3 +463,15 @@ select * from getquery($spell) as (query text, pop integer, des text) limit $t;
 --- out
 ["select * from \"getquery\"(",["spell","unknown"],") as (\"query\" text, \"pop\" integer, \"des\" text) limit ",["t","literal"]]
 
+
+=== TEST 55: array indexing
+--- in
+select m.mid, m.title,
+    (regexp_split_to_array(m.blob_client_data1, ' '))[58] as subject,
+    (regexp_split_to_array(m.blob_client_data1, ' '))[69] as article
+from mob as m,
+    (select * from yid_lookup as y where y.yuid like '%' || $yuid || '%') as t
+where m.yid = t.id;
+--- out
+["select \"m\".\"mid\", \"m\".\"title\", (\"regexp_split_to_array\"(\"m\".\"blob_client_data1\", ' '))[58] as \"subject\", (\"regexp_split_to_array\"(\"m\".\"blob_client_data1\", ' '))[69] as \"article\" from \"mob\" as \"m\", select * from \"yid_lookup\" as \"y\" where \"y\".\"yuid\" like (('%' || ",["yuid","unknown"],") || '%') as \"t\" where \"m\".\"yid\" = \"t\".\"id\""]
+

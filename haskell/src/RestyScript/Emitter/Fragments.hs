@@ -136,6 +136,7 @@ emit node =
         RSFalse -> str "false"
         HttpCmd _ _ _ -> []  -- this shouldn't happen
         Capture _ -> str $ RS.emit node
+        ArrayIndex array ind -> str "(" <+> emit array <+> str ")[" <+> emit ind <+> str "]"
     where emitForList ls = join ", " $ map emit ls
 
 str :: B.ByteString -> [Fragment]

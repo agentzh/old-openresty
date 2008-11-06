@@ -74,5 +74,6 @@ emit node = case node of
     RSFalse -> "false"
     Capture sig -> "(" ~~ (joinStr ", " $ map aux sig) ~~ ")"
         where aux (param, typ) = emit param ~~ " " ~~ emit typ
+    ArrayIndex array ind -> "(" ~~ emit array ~~ ")[" ~~ emit ind ~~ "]"
     where bs = B.pack
 
