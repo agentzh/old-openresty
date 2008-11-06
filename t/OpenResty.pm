@@ -12,7 +12,7 @@ use Digest::MD5 qw(md5_hex);
 my $client_module;
 use OpenResty::Config;
 BEGIN {
-    OpenResty::Config->init('.');
+    OpenResty::Config->init( {root_path => '.'});
     my $use_http = $OpenResty::Config{'test_suite.use_http'};
     if ($use_http) {
         $client_module = 'WWW::OpenResty';

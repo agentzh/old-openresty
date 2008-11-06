@@ -18,9 +18,15 @@ sub to_num ($) {
 sub init {
     return if $Initialized;
     $Initialized = 1;
-    my ($class, $root_path) = @_;
-    $root_path ||= "$FindBin::Bin/..";
-
+    my ($class, $opts) = @_;
+    # warn "$opts->{'conf_file'}";
+    my $root_path;
+    if (defined $opts->{root_path}) {
+        $root_path = $opts->{root_path};
+    } else {
+        $root_path = "$FindBin::Bin/..";
+    }
+    
     my $path = "$root_path/etc/openresty.conf";
     unless (-f $path) {
         $path = "/etc/openresty/openresty.conf";
@@ -31,15 +37,16 @@ sub init {
     my $config = new Config::Simple($path) or
         die "Cannot open config file $path\n";
     my $default_vars = $config->vars;
-
-    $path = "$root_path/etc/site_openresty.conf";
+    
+    my $conf_file = $opts->{conf_file} || 'site_openresty.conf';
+    $path = $root_path . '/etc/' . $conf_file;
     unless (-f $path) {
         $path = "/etc/openresty/site_openresty.conf";
     }
     if (!-f $path) {
-        die "Config file site_openresty.conf not fouund.\n";
+        die "Config file $path not fouund.\n";
     }
-
+    # warn $path;
     $config = new Config::Simple($path) or
         die "Cannot open config file $path\n";
     my $site_vars = $config->vars;
@@ -60,7 +67,7 @@ sub init {
         $OpenResty::Config{'backend.type'} = 'Pg';
     }
     if (!$OpenResty::Config{'cache.type'}) {
-        warn "backend.type=mmap\n" if $do_echo;
+        warn "cache.type=mmap\n" if $do_echo;
         $OpenResty::Config{'cache.type'} = 'mmap';
     }
     $OpenResty::Limits::RECORD_LIMIT = to_num
