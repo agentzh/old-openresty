@@ -6,7 +6,7 @@ use OpenResty::Config;
 
 my $reason;
 BEGIN {
-    OpenResty::Config->init('.');
+    OpenResty::Config->init({root_path => '.'});
     if ($OpenResty::Config{'backend.type'} ne 'PgFarm') {
         $reason = 'backend.type in the config files is not PgFarm.';
     }
