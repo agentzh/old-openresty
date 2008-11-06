@@ -83,8 +83,10 @@ sub GET_action_exec {
     $res = $hdl->(\%vars);
     # warn $res;
     my $req = do_http_request('GET', $res);
+    my @outs;
+    push @outs, $req;
 
-    return '[' . $req . ']';
+    return \@outs;
 
     #warn "!!!!! $sql";
     #$openresty->set_user($user);
