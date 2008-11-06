@@ -121,7 +121,7 @@ sub process_request {
     my ($class, $cgi, $call_level, $parent_account) = @_;
 
     if ($InitFatal) {
-        warn "google: $InitFatal";
+        # warn "Init error: $InitFatal";
         warn "Found init fatal error. Now we re-init the dispatcher...\n";
         
         $class->init({'context' => $Context});
