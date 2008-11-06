@@ -193,7 +193,7 @@ GET /=/model/Employee/~/~?_order_by=id
 
 === TEST 16: get all rows that a column contain "china"
 --- request
-GET /=/model/Employee/~/china?_op=contains
+GET /=/model/Employee/~/china?_op=contains&_order_by=id
 --- response
 [
     {"id": "7", "name": "china7", "age": "30", "salary": "4500", "addr": "上海市南京路" },
@@ -287,7 +287,7 @@ PUT /=/model/Employee/~/china?_op=ge
 
 === TEST 25: get all rows that age contain "2"
 --- request
-GET /=/model/Employee/age/2?_op=contains
+GET /=/model/Employee/age/2?_op=contains&_order_by=id
 --- response
 [
     {"id": "5", "name": "name5", "age": "23", "salary": "2000", "addr": "南京路" },
