@@ -16,7 +16,14 @@ use constant {
     MAX_STATS_CACHE_SIZE => 500,
 };
 
+my %opts;
+
+my $arg = $ARGV[0];
+if ($arg && substr($arg, 0, 1) eq '-') {
+    getopts('p:f:r:', \%opts);
+}
 my $cmd = lc(shift) || $ENV{OPENRESTY_COMMAND};
+if (@ARGV) { getopts('p:f:r:', \%opts); }
 
 if ($ENV{REQUEST_URI}) {
     if (!$cmd) {
@@ -27,8 +34,8 @@ if ($ENV{REQUEST_URI}) {
 
 $cmd ||= '';
 
-my %opts;
-getopts('p:f:r:', \%opts);
+#my %opts;
+#getopts('p:f:r:', \%opts);
 
 my $port = $opts{p} || 8000;
 $opts{context} = $cmd;
