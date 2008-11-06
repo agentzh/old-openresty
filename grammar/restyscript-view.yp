@@ -115,10 +115,17 @@ type: symbol
     ;
 
 atom: proc_call
+    | array_index
     | column
     | true_literal
     | true_number
     ;
+
+array_index: column '[' expr ']'
+             { join(' ', @_[1..$#_]) }
+           | '(' expr ')' '[' expr ']'
+             { join(' ', @_[1..$#_]) }
+           ;
 
 proc_call: IDENT '(' parameter_list ')'
              { join(' ', @_[1..$#_]) }
