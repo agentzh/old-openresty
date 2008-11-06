@@ -44,6 +44,12 @@ parseQuery = do select <- spaces >> parseSelect
          <|> parens parseSetExpr
          <?> "select statement"
 
+parseSet :: Parser RSVal
+parseSet = try(parseFuncCall)
+        <|> parseModel
+        <|> parseQuery
+        <?> "model"
+
 parseMoreClause :: Parser RSVal
 parseMoreClause = parseOrderBy
               <|> parseLimit
