@@ -9,14 +9,14 @@ use subs 'dump';
 
 my $reason;
 BEGIN {
-    OpenResty::Config->init('.');
+    OpenResty::Config->init({root_path => '.'});
     if ($OpenResty::Config{'backend.type'} ne 'Pg') {
         $reason = 'backend.type in the config files is not Pg.';
     }
 }
 use Test::More $reason ? (skip_all => $reason) : 'no_plan';
 
-OpenResty::Config->init('.');
+OpenResty::Config->init({root_path => '.'});
 my $backend = OpenResty::Backend::Pg->new({ RaiseError => 0, PrintWarn => 0 });
 ok $backend, "database handle okay";
 if ($backend->has_user("agentz")) {

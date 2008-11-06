@@ -8,7 +8,7 @@ use OpenResty::Config;
 
 my $reason;
 BEGIN {
-    OpenResty::Config->init('.');
+    OpenResty::Config->init({root_path => '.'});
     if ($OpenResty::Config{'backend.type'} ne 'PgFarm') {
         $reason = 'backend.type in the config files is not PgFarm.';
     }
@@ -28,7 +28,7 @@ use constant {
     USER_COUNT => 10,
 };
 
-OpenResty::Config->init('.');
+OpenResty::Config->init({root_path => '.'});
 my $backend = OpenResty::Backend::PgFarm->new({ RaiseError => 0 });
 ok $backend, "database handle okay";
 
