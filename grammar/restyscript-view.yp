@@ -127,6 +127,12 @@ array_index: column '[' expr ']'
              { join(' ', @_[1..$#_]) }
            ;
 
+array_index2: column '[' expr2 ']'
+             { join(' ', @_[1..$#_]) }
+           | '(' expr2 ')' '[' expr2 ']'
+             { join(' ', @_[1..$#_]) }
+           ;
+
 proc_call: IDENT '(' parameter_list ')'
              { join(' ', @_[1..$#_]) }
          | IDENT '(' '*' ')'
@@ -166,6 +172,7 @@ atom2: proc_call2
     | column
     | literal
     | true_number
+    | array_index2
     ;
 
 proc_call2: IDENT '(' ')'
