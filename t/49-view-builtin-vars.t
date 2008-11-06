@@ -29,7 +29,7 @@ POST /=/view/Foo
 --- request
 GET /=/view/Foo/_ACCOUNT/32?_ROLE=56
 --- response
-{"success":0,"error":"Bad parameter name: \"_ACCOUNT\""}
+[{"account":"tester","role":"Admin"}]
 
 
 

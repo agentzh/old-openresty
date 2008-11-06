@@ -27,8 +27,16 @@ if ($ENV{REQUEST_URI}) {
 
 $cmd ||= '';
 
+my %opts;
+getopts('p:f:r:', \%opts);
+
+my $port = $opts{p} || 8000;
+$opts{context} = $cmd;
+$opts{conf_file} = $opts{f};
+$opts{root_path} = $opts{r};
+
 eval {
-    OpenResty::Dispatcher->init($cmd);
+    OpenResty::Dispatcher->init(\%opts);
 };
 warn $@ if $@;
 
@@ -100,9 +108,9 @@ if ($cmd eq 'fastcgi') {
     OpenResty::Dispatcher->process_request($cgi);
     exit;
 } elsif ($cmd eq 'start') {
-    my %opts;
-    getopts('p:', \%opts);
-    my $port = $opts{p} || 8000;
+    # my %opts;
+    # getopts('p:f:', \%opts);
+    # my $port = $opts{p} || 8000;
 
     require OpenResty::Server;
     my $server = OpenResty::Server->new;

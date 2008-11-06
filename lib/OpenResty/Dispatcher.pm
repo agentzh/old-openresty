@@ -26,22 +26,28 @@ if ($url_prefix) {
 }
 
 sub init {
-    my ($class, $context) = @_;
-    #warn "init: $backend\n";
+    my ($class, $opts) = @_;
+    
+    my $context = $opts->{context};
     if (defined $context) {
         $Context = $context;
     } else {
         $context = $Context;
     }
+    
     undef $InitFatal;
 
     eval {
-        OpenResty::Config->init;
+        OpenResty::Config->init($opts);
         my $backend = $OpenResty::Config{'backend.type'};
         $OpenResty::Cache = OpenResty::Cache->new;
         OpenResty->connect($backend);
     };
-    if ($@) { $InitFatal = $@; return; }
+    if ($@) { 
+        # warn $@; 
+        $InitFatal = $@; 
+        return; 
+    }
     #warn "InitFatal: $InitFatal\n";
 
     if (!$context || ($context ne 'upgrade' && $context !~ /user/)) {
@@ -115,8 +121,10 @@ sub process_request {
     my ($class, $cgi, $call_level, $parent_account) = @_;
 
     if ($InitFatal) {
+        warn "google: $InitFatal";
         warn "Found init fatal error. Now we re-init the dispatcher...\n";
-        $class->init($Context);
+        
+        $class->init({'context' => $Context});
     }
 
     $call_level ||= 0;
@@ -171,15 +179,21 @@ sub process_request {
 
     map { s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg; } @bits;
     ## @bits
-
+    
     my $fst = shift @bits;
     if ($fst ne '=') {
         return $openresty->fatal("URLs must be led by '=': $url");
     }
-
+    
     my $key = $bits[0];
     if (!defined $key) { $key = $bits[0] = 'version'; }
 
+    if (scalar(@bits) == 4 && $bits[2] =~ m{^_\w+} ) {
+        # warn $openresty->{_builtin_params};
+        $openresty->{_builtin_params}->{$bits[2]} = $bits[3]; 
+        $bits[2] = '~';
+        $bits[3] = '~';
+    }
     my $http_meth = $openresty->{'_http_method'};
     if (!$http_meth) {
         return $openresty->fatal("HTTP method not detected.");

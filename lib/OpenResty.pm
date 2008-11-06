@@ -134,7 +134,7 @@ sub init {
         eval { $Backend->disconnect };
         #my $backend = $OpenResty::Config{'backend.type'};
         #OpenResty->connect($backend);
-        OpenResty::Dispatcher->init;
+        OpenResty::Dispatcher->init({});
         #die "Backend connection lost: ", $db_state, "\n";
     }
 
@@ -300,8 +300,9 @@ sub init {
 
         #warn "Content: ", $Dumper->($content);
         #warn "Data: ", $Dumper->($req_data);
-    }
-
+    } 
+    
+    # 
     $$rurl = $url;
     $self->{'_url'} = $url;
     $self->{'_http_method'} = $http_meth;
