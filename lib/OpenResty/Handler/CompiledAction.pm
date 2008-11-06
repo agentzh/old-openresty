@@ -55,7 +55,7 @@ sub GET_action_exec {
     } else {
         die "Invalid _user param.\n";
     }
-    
+
     my $res = $Dispatcher->{$key} or die "Can't find the compiled form for action \"$action\"";
     # warn "result: $res";
     my ($required_params, $hdl) = @$res;
@@ -63,7 +63,7 @@ sub GET_action_exec {
     #$hdl = eval $hdl;
     #if ($@) { die "Failed to eval the handler: $@\n" }
     my $user_test = $openresty->builtin_param("_user");
-    warn "_user: $user_test \n";
+    #warn "_user: $user_test \n";
     while (my ($key, $val) = each %$required_params) {
         next if !$key;
         my $user_val = substr($key, 0, 1) eq '_' ?
