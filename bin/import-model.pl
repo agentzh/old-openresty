@@ -9,6 +9,7 @@ use Params::Util qw( _HASH );
 use JSON::XS ();
 use WWW::OpenResty::Simple;
 use Data::Dumper;
+use Data::Structure::Util qw(_utf8_off);
 
 sub usage {
     my $progname;
@@ -123,7 +124,8 @@ sub insert_rows {
 
 sub url_encode {
     my $s = shift;
-    $s =~ s/([^\w\-\.\@])/$1 eq "\n" ? "\n":sprintf("%%%2.2x",ord($1))/eg;
+    _utf8_off($s);
+    $s =~ s/[^\w\-\.\@]/sprintf("%%%2.2x",ord($&))/eg;
     $s;
 }
 
