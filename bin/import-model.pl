@@ -27,6 +27,7 @@ Options:
     --no-id            Skipped the id field in the records being imported
     --skip N           Skipped the first N rows in the input file (default 0)
     --add-id N          Add ID started from N (default 1)
+    --update-col <col>  Update records according to the column given
 _EOC_
 }
 
@@ -34,6 +35,7 @@ my $server = 'api.openresty.org';
 my $step = 20;
 my $skip = 0;
 my $add_id = 1;
+my $update_col;
 GetOptions(
     'help|h'   => \(my $help),
     'user|u=s' => \(my $user),
@@ -47,6 +49,7 @@ GetOptions(
     'skip=i' => \$skip,
     'add-id=i' => \$add_id,
     'ignore-dup-error' => \(my $ignore_dup_error),
+    'update-col=s' => \$update_col,
 ) or die usage();
 
 if ($help) { print usage() }
@@ -61,6 +64,8 @@ my $openresty = WWW::OpenResty::Simple->new(
 );
 $openresty->login($user, $password);
 if ($reset) { $openresty->delete("/=/model/$model/~/~"); }
+
+if ($update_col) { $step = 1 }
 
 my @rows;
 my $inserted = 0;
@@ -82,7 +87,7 @@ while (<>) {
     if (@rows % $step == 0) {
         $inserted += insert_rows(\@rows);
         @rows = ();
-        print STDERR "\rInserted rows: $inserted (row $.)";
+        print STDERR "\r", ($update_col ? "Updated" : "Inserted"), " rows: $inserted (row $.)";
     }
 }
 
@@ -94,6 +99,14 @@ print STDERR "\n$inserted row(s) inserted.\n";
 sub insert_rows {
     my $rows = shift;
     my $res;
+    if ($update_col) {
+        eval {
+            $res = $openresty->delete(
+                "/=/model/$model/$update_col/" . url_encode($rows[0]->{$update_col})
+            );
+        };
+        if ($@) { warn $@, "\n" };
+    }
     eval {
         $res = $openresty->post(
             "/=/model/$model/~/~",
@@ -106,6 +119,12 @@ sub insert_rows {
     }
     #warn Dumper($res);
     return $res->{rows_affected} || 0;
+}
+
+sub url_encode {
+    my $s = shift;
+    $s =~ s/([^\w\-\.\@])/$1 eq "\n" ? "\n":sprintf("%%%2.2x",ord($1))/eg;
+    $s;
 }
 
 warn "\nFor tatal $inserted records inserted.\n";
