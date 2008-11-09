@@ -29,7 +29,7 @@ contact your PostgreSQL DBA for it or read the PostgreSQL manual.
 Normally, the following commands are used:
 
     $ createdb test
-    $ createuser -P agnetzh
+    $ createuser -P agentzh
     $ createlang plpgsql test
 
 =item 3.
