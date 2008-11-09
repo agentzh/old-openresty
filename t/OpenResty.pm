@@ -1,5 +1,5 @@
 package t::OpenResty;
-
+use t::OpenResty::Util;
 #use Smart::Comments '####';
 use lib 'lib';
 use lib 'inc';
@@ -11,8 +11,19 @@ use Digest::MD5 qw(md5_hex);
 
 my $client_module;
 use OpenResty::Config;
+use OpenResty::Cache;
+use OpenResty;
 BEGIN {
     OpenResty::Config->init( {root_path => '.'});
+    my $backend = $OpenResty::Config{'backend.type'};
+    $OpenResty::Cache = OpenResty::Cache->new;
+    # clear the cache if the test is running locally
+    $OpenResty::Cache->{obj}->Clear
+        if !$ENV{'OPENRESTY_TEST_SERVER'}
+            && $OpenResty::Cache->{obj}->can('Clear');
+
+    OpenResty->connect($backend);
+
     my $use_http = $OpenResty::Config{'test_suite.use_http'};
     if ($use_http) {
         $client_module = 'WWW::OpenResty';
@@ -43,6 +54,7 @@ our $server = $ENV{'OPENRESTY_TEST_SERVER'} ||
 our ($user, $password, $host);
 if ($server =~ /^(\w+):(\S+)\@(\S+)$/) {
     ($user, $password, $host) = ($1, $2, $3);
+    t::OpenResty::Util::ensure_test_user($user, $password);
 } else {
     die "test_suite.server syntax error in conf file: $server\n";
 }
@@ -54,6 +66,7 @@ our $server2 = $ENV{'OPENRESTY_TEST_SERVER2'} ||
 our ($user2, $password2, $host2);
 if ($server2 =~ /^(\w+):(\S+)\@(\S+)$/) {
     ($user2, $password2, $host2) = ($1, $2, $3);
+    t::OpenResty::Util::ensure_test_user($user2, $password2);
 } else {
     die "test_suite.server2 syntax error in conf file: $server2\n";
 }
