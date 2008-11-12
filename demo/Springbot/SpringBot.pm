@@ -350,7 +350,7 @@ sub find_employee {
         eval {
             $res = $Resty->get(
                 $url,
-                { _op => 'contains', _limit => 3, _order_by => 'order_id' }
+                { _op => 'contains', _limit => 3, _order_by => 'order_id:desc' }
             );
         };
         if ($@ =~ /Login required/i) {
