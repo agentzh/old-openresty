@@ -36,6 +36,9 @@ while (<>) {
                     $order++;
                 }
             }
+            if ($name =~ /张皛珏/) {
+                $order = 2;
+            }
             print "$name|$emp_id|$depart|$email|$phone|$cell|$yid|$pos|$sex|$place|$order\n";
         }
     }
