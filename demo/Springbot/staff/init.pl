@@ -41,6 +41,7 @@ $resty->post(
             { name => 'position', label => 'Position', type => 'text' },
             { name => 'gender', label => 'Position', type => 'text' },
             { name => 'workplace', label => 'Position', type => 'text' },
+            { name => 'order_id', label => 'Order ID', type => 'integer', default => 0 },
         ],
     }
 );
