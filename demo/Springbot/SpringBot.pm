@@ -361,7 +361,7 @@ sub find_employee {
             );
         }
         if (_ARRAY($res)) {
-            delete $res->{order_id};
+            delete $_->{order_id} for @$res;
             my $s = res2table($res);
             $say->($s);
         } else {
