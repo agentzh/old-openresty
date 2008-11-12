@@ -21,7 +21,11 @@ close $fh;
 
 sub to_pinyin {
     my $s = shift;
+    $s =~ s/^\s+|\s+$//g;
     $s = decode('utf8', $s);
+    if ($s !~ /\p{Han}/) {
+        return $s;
+    }
     my $o;
     for my $h (split //, $s) {
         #die $h;

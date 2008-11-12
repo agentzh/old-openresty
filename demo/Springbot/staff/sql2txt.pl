@@ -8,7 +8,7 @@ use JSON::Syck qw(Dump);
 use Encode qw(decode encode);
 use Smart::Comments;
 
-print "姓名|工号|部门|邮箱|分机号|手机|雅虎通|职位|性别|工作地|\n";
+print "姓名|工号|部门|邮箱|分机号|手机|雅虎通|职位|性别|工作地|序号|\n";
 while (<>) {
     if (s/^INSERT INTO `rolldata` VALUES //) {
         #$_ = dtf8', $_);
@@ -29,7 +29,14 @@ while (<>) {
             my $cell= $vals[16];
             $pos =~ s/高级|资深|首席//g;
             $pos = '' if $pos eq '总监';
-            print "$name|$emp_id|$depart|$email|$phone|$cell|$yid|$pos|$sex|$place|\n";
+            my $order = 0;
+            if ($depart =~ /雅虎/) {
+                $order++;
+                if ($depart =~ /搜索/) {
+                    $order++;
+                }
+            }
+            print "$name|$emp_id|$depart|$email|$phone|$cell|$yid|$pos|$sex|$place|$order\n";
         }
     }
 }

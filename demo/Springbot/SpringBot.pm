@@ -350,17 +350,18 @@ sub find_employee {
         eval {
             $res = $Resty->get(
                 $url,
-                { _op => 'contains', _limit => 3 }
+                { _op => 'contains', _limit => 3, _order_by => 'order_id' }
             );
         };
         if ($@ =~ /Login required/i) {
             $Resty->login($self->resty_account, $self->resty_password);
             $res = $Resty->get(
                 $url,
-                { _op => 'contains', _limit => 3 }
+                { _op => 'contains', _limit => 3, _order_by => 'order_id:desc' }
             );
         }
         if (_ARRAY($res)) {
+            delete $res->{order_id};
             my $s = res2table($res);
             $say->($s);
         } else {

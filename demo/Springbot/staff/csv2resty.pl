@@ -31,19 +31,23 @@ while (<>) {
     next if $. == 1;
     chomp;
     my @cols = split /,/;
-    my ($name_pinyin, $name, $id, $department, $email, $office_phone, $cellphone, $im_id, $pos, $sex, $place)
+    my ($name_pinyin, $name, $id, $department, $email, $office_phone, $cellphone, $im_id, $pos, $sex, $place, $order_id)
         = @cols;
     my $row = {};
-    for my $key (qw< name_pinyin name employee_id department email office_phone cellphone yahoo_im_id position gender workplace>) {
+    for my $key (qw< name_pinyin name employee_id department email office_phone cellphone yahoo_im_id position gender workplace order_id>) {
         my $value = shift @cols;
         $row->{$key} = $value;
     }
-    push @rows, $row;
+    if ($order_id !~ /^\d+$/) {
+        warn $_;
+    } else {
+        push @rows, $row;
+    }
     ### $row
-    if (@rows % 20 == 0) {
+    if (@rows % 10 == 0) {
         $inserted += insert_rows(\@rows);
         @rows = ();
-        print STDERR "\t$inserted" if $inserted % 20 == 0;
+        print STDERR "\t$inserted " if $inserted % 10 == 0;
     }
 }
 if (@rows) {
@@ -56,6 +60,6 @@ sub insert_rows {
     my $res = $resty->post('/=/model/YahooStaff/~/~', $rows);
     return 0 unless _HASH($res);
     return $res->{rows_affected} || 0;
-    print STDERR "\t$inserted" if $inserted % 20 == 0;
+    print STDERR "\t$inserted " if $inserted % 10 == 0;
 }
 
