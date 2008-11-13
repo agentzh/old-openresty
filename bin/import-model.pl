@@ -29,6 +29,7 @@ Options:
     --skip N           Skipped the first N rows in the input file (default 0)
     --add-id N          Add ID started from N (default 1)
     --update-col <col>  Update records according to the column given
+    --ignore-dup-error  Ignore dupliciate errors
 _EOC_
 }
 
