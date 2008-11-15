@@ -24,7 +24,7 @@
             <label>Definition (RestyScript)</label>
         </p>
         <p>
-            <textarea cols="60" rows="10" id="create-view-def"></textarea>
+            <textarea cols="60" rows="10" id="create-action-def"></textarea>
         </p>
 
         <p>
