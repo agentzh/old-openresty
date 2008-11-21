@@ -40,7 +40,7 @@ GET /=/model/
 --- request
 GET /=/model/testunique/jx1401
 --- response
-{"name":"jx1401","default":null,"label":"jx1401","type":"text","not_null":false}
+{"name":"jx1401","default":null,"label":"jx1401","type":"text","unique":false,"not_null":false}
 
 
 

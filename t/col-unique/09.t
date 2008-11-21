@@ -82,8 +82,7 @@ GET /=/model/testunique/~/~
 PUT /=/model/testunique/jx09
 {"unique": true}
 --- response
-{"success":0,"error":"column has same value so can't change unique attribute from false to true"}
-
+{"error":"could not create unique index \"testunique_jx09_key\"\nDETAIL:  Table contains duplicated values.","success":0}
 
 
 === TEST 10: check the column

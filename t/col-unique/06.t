@@ -82,8 +82,7 @@ GET /=/model/testunique/~/~
 PUT /=/model/testunique/jx06
 {"unique": true}
 --- response
-{"success":0,"error":"column has same value so can't change unique attribute from false to true"}
-
+{"error":"could not create unique index \"testunique_jx06_key\"\nDETAIL:  Table contains duplicated values.","success":0}
 
 
 === TEST 10: check the column
@@ -157,8 +156,7 @@ GET /=/model/testunique/jx06
 POST /=/model/testunique/~/~
 { "jx06": "A06"}
 --- response
-{"success":0,"error":"Unique constraint violated."}
-
+{"error":"duplicate key value violates unique constraint \"testunique_jx06_key\"","success":0}
 
 
 === TEST 19: Get all records(1 records)

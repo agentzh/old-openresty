@@ -65,8 +65,7 @@ GET /=/model/testunique/~/~
 POST /=/model/testunique/~/~
 { "jx03": "A03"}
 --- response
-{"success":0,"error":"Unique constraint violated."}
-
+{"error":"duplicate key value violates unique constraint \"testunique_jx03_key\"","success":0}
 
 
 === TEST 8: Get all records(1 records)

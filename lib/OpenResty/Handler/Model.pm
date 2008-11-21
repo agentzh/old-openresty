@@ -152,7 +152,6 @@ sub GET_model_column {
         my $list = $self->get_model_cols($openresty, $model);
         return $list;
     } else {
-        warn "test";
         my $res = $self->get_model_cols($openresty, $model, $col);
         if (!$res or !@$res) {
             die "Column '$col' not found.\n";
@@ -228,8 +227,8 @@ sub POST_model_column {
         alter table $sym:model
         add column $sym:col $kw:type |] .
         (defined $default ? [:sql| default ($kw:default); |] : ' ') .
-        (defined $unique ? 'unique' : '') .
-        (defined $not_null ? 'not null ' : '');
+        ($unique? 'unique' : '') .
+        ($not_null ? 'not null ' : '');
     $sql .= ';';
 
     $sql .= [:sql|comment on column $sym:model.$sym:col  is $label|];
