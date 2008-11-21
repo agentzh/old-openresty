@@ -39,7 +39,7 @@ GET /=/model/
 --- request
 GET /=/model/testunique/jx04
 --- response
-{"name":"jx04","default":null,"label":"jx04","type":"text","unique":true}
+{"name":"jx04","default":null,"label":"jx04","type":"text","unique":true,"not_null":false}
 
 
 
@@ -90,7 +90,7 @@ PUT /=/model/testunique/jx04
 --- request
 GET /=/model/testunique/jx04
 --- response
-{"name":"jx04","default":null,"label":"jx04","type":"text","unique":false}
+{"name":"jx04","default":null,"label":"jx04","type":"text","unique":false,"not_null":false}
 
 
 

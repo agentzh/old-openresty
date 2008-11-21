@@ -1,4 +1,4 @@
-﻿# vi:filetype=
+# vi:filetype=
 
 ##创建 unique 属性为 false 的列，插入数据为空字符串 "" 的列会违反到 unique 约束
 
@@ -39,7 +39,7 @@ GET /=/model/
 --- request
 GET /=/model/testunique/jx09
 --- response
-{"name":"jx09","default":null,"label":"jx09","type":"text","unique":false}
+{"name":"jx09","default":null,"label":"jx09","type":"text","unique":false,"not_null":false}
 
 
 
@@ -90,7 +90,7 @@ PUT /=/model/testunique/jx09
 --- request
 GET /=/model/testunique/jx09
 --- response
-{"name":"jx09","default":null,"label":"jx09","type":"text","unique":false}
+{"name":"jx09","default":null,"label":"jx09","type":"text","unique":false,"not_null":false}
 
 
 

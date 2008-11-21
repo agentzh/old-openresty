@@ -748,7 +748,6 @@ sub drop_table {
     return [:sql|
         drop table if exists $sym:model;
         delete from _models where name = $model;
-        delete from _columns where model = $model;
     |];
 }
 
@@ -1105,7 +1104,6 @@ sub alter_model {
         $OpenResty::Cache->remove_has_model($user, $model);
         $sql .= [:sql|
             update _models set name=$new_model where name=$model;
-            update _columns set model=$new_model where model=$model;
             alter table $sym:model rename to $sym:new_model;
         |];
     }
