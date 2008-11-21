@@ -296,7 +296,7 @@ begin
     model_sql := 'select name, description from _models';
     -- loop for per model
     for model_rec in execute model_sql loop
-       execute 'comment on table ' || quote_ident(model_rec.name) || ' is ' || quote_literal(model.description) || ';';
+       execute 'comment on table ' || quote_ident(model_rec.name) || ' is ' || quote_literal(model_rec.description) || ';';
        execute 'comment on column ' || quote_ident(model_rec.name) || '.id is ' || quote_literal('ID') || ';';
        col_sql := 'select name, label from _columns where model = ' || quote_literal(model_rec.name) || ';';
        -- loop for per column except id
