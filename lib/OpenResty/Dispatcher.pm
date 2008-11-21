@@ -179,18 +179,18 @@ sub process_request {
 
     map { s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg; } @bits;
     ## @bits
-    
+
     my $fst = shift @bits;
     if ($fst ne '=') {
         return $openresty->fatal("URLs must be led by '=': $url");
     }
-    
+
     my $key = $bits[0];
     if (!defined $key) { $key = $bits[0] = 'version'; }
 
     if (scalar(@bits) == 4 && $bits[2] =~ m{^_\w+} ) {
         # warn $openresty->{_builtin_params};
-        $openresty->{_builtin_params}->{$bits[2]} = $bits[3]; 
+        $openresty->{_builtin_params}->{$bits[2]} = $bits[3];
         $bits[2] = '~';
         $bits[3] = '~';
     }
