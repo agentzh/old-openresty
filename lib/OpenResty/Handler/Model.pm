@@ -69,11 +69,11 @@ sub check_type {
 sub DELETE_model_list {
     my ($self, $openresty, $bits) = @_;
     my $user = $openresty->current_user;
-    my $res = $self->get_tables($openresty);
+    my $res = $self->get_model_list($openresty);
     if (!$res) {
         return { success => 1 };
     }; # no-op
-    my @tables = map { @$_ } @$res;
+    my @tables = map { $_->{name} } @$res;
     #$tables = $tables->[0];
     my $sql;
     for my $table (@tables) {
@@ -88,7 +88,7 @@ sub DELETE_model_list {
 
 sub GET_model_list {
     my ($self, $openresty, $bits) = @_;
-    my $models = $self->get_models($openresty);
+    my $models = $self->get_model_list($openresty);
     $models ||= [];
 
     map { $_->{src} = "/=/model/$_->{name}" } @$models;
@@ -100,14 +100,13 @@ sub GET_model {
     my $model = $bits->[1];
     _IDENT($model) or $model eq '~' or die "Bad model name: ", $OpenResty::Dumper->($model), "\n";
     if ($model eq '~' ) {
-        return $self->get_models();
+        return $self->get_model_list($openresty);
+    } else {
+        my $list = $self->get_model_list($openresty, $model); 
+        my $desc = $list->[0]->{description};
+        $list = $self->get_model_cols($openresty, $model);
+        return { description => $desc, name => $model, columns => $list };
     }
-
-    my $sql = [:sql| select  obj_description(c.oid, 'pg_class') as description from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname <> 'pg_catalog' and n.nspname !~ '^pg_toast' and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_' and c.relname = $model|];
-    my $list = $openresty->select($sql);
-    my $desc = $list->[0][0];
-    $list = $self->get_model_cols($openresty, $model);
-    return { description => $desc, name => $model, columns => $list };
 }
 
 sub POST_model {
@@ -614,13 +613,6 @@ sub global_model_check {
     }
 }
 
-sub get_tables {
-    #my ($self, $openresty, $user) = @_;
-    my ($self, $openresty) = @_;
-    my $sql = [:sql| select c.relname as name from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname <> 'pg_catalog' and n.nspname !~ '^pg_toast' and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_' order by c.oid|];
-    return $openresty->select($sql);
-}
-
 sub model_count {
     my ($self, $openresty) = @_;
     my $sql = [:sql| select count(*) from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname <> 'pg_catalog' and n.nspname !~ '^pg_toast' and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_'|];
@@ -645,9 +637,15 @@ sub row_count {
     )->[0][0];
 }
 
-sub get_models {
-    my ($self, $openresty) = @_;
-    my $sql = [:sql| select c.relname as name, obj_description(c.oid, 'pg_class') as description from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname <> 'pg_catalog' and n.nspname !~ '^pg_toast' and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_' order by c.oid|];
+sub get_model_list {
+    my ($self, $openresty, $model) = @_;
+
+    my $user = $openresty->current_user;
+    my $sql = [:sql| select c.relname as name, obj_description(c.oid, 'pg_class') as description from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname = $user and n.nspname !~ '^pg_toast' and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_' |];
+    if (defined $model) {
+        $sql .= [:sql| and c.relname = $model |];
+    }
+    $sql .= [:sql| order by c.oid|];
     return $openresty->select($sql, { use_hash => 1 });
 }
 
