@@ -1,4 +1,4 @@
-﻿# vi:filetype=
+# vi:filetype=
 # ""不会被认为是null
 use t::OpenResty;
 
@@ -28,7 +28,7 @@ POST /=/model/account
 === TEST 3: Add a new column not null is true
 --- request
 POST /=/model/account/D
-{"type":"integer","label":"d","not_null":true}
+{"type":"text","label":"d","not_null":true}
 --- response
 {"success":1,"src":"/=/model/account/D"}
 
@@ -38,7 +38,7 @@ POST /=/model/account/D
 --- request
 GET /=/model/account/D
 --- response
-{"name":"D","default":null,"label":"d","type":"integer","not_null":true,"unique":false}
+{"name":"D","default":null,"label":"d","type":"text","not_null":true,"unique":false}
 
 
 
@@ -47,7 +47,7 @@ GET /=/model/account/D
 POST /=/model/account/~/~
 { "A": "jingjing3"}
 --- response
-{"success":0,"error":"Not null constraint violated"} 
+{"success":0,"error":"null value in column \"D\" violates not-null constraint"}
 
 
 
@@ -56,15 +56,15 @@ POST /=/model/account/~/~
 POST /=/model/account/~/~
 { "A": "jingjing3","D":"1"}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/1"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/2"}
 
 
 
 === TEST 7: Insert a record with value of D is ""
 --- request
 POST /=/model/account/~/~
-{ "A": "jingjing3","D":""}
+{ "A": "jingjing3", "D": ""}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/2"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/3"}
 
 

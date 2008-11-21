@@ -1,4 +1,4 @@
-﻿# vi:filetype=
+# vi:filetype=
 # 0不会被认为是null
 use t::OpenResty;
 
@@ -47,7 +47,7 @@ GET /=/model/account/D
 POST /=/model/account/~/~
 { "A": "jingjing3"}
 --- response
-{"success":0,"error":"Not null constraint violated"} 
+{"success":0,"error":"null value in column \"D\" violates not-null constraint"}
 
 
 
@@ -56,7 +56,7 @@ POST /=/model/account/~/~
 POST /=/model/account/~/~
 { "A": "jingjing3","D":"1"}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/1"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/2"}
 
 
 
@@ -65,6 +65,6 @@ POST /=/model/account/~/~
 POST /=/model/account/~/~
 { "A": "jingjing3","D":"0"}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/2"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/3"}
 
 

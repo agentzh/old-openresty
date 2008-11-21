@@ -1,4 +1,4 @@
-﻿# vi:filetype=
+# vi:filetype=
 # 某列的not_null属性不会影响到其他没有not_null属性的列
 # 先创建两列没有not_null属性的，再将一列not_null属性改为true
 use t::OpenResty;
@@ -47,7 +47,7 @@ GET /=/model/account/B
 PUT /=/model/account/B
 {"type":"text","label":"b","not_null":true}
 --- response
-{"success":1,"src":"/=/model/account/B"}
+{"success":1}
 
 
 
@@ -90,7 +90,7 @@ POST /=/model/account/~/~
 POST /=/model/account/~/~
 { "A": "a2"}
 --- response
-{"success":0,"error":"Not null constraint violated"} 
+{"success":0,"error":"null value in column \"B\" violates not-null constraint"} 
 
 
 
@@ -99,6 +99,6 @@ POST /=/model/account/~/~
 POST /=/model/account/~/~
 { "A": "a3","B":"3"}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/3"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/4"}
 
 

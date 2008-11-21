@@ -1,4 +1,4 @@
-﻿# vi:filetype=
+# vi:filetype=
 # 某列的not_null属性不会影响到其他没有not_null的列
 #同时创建两列，一列有，一列没有
 use t::OpenResty;
@@ -26,11 +26,11 @@ POST /=/model/account
 
 
 
-=== TEST 3: Check the new model
+=== TEST 3: Check the new model 
 --- request
 GET /=/model/account
 --- response
-{"name":"D","default":null,"label":"b","type":"integer","not_null":true,"unique":false}
+{"columns":[{"label":"ID","name":"id","type":"serial"},{"default":null,"label":"A","name":"A","not_null":false,"type":"text","unique":false},{"default":null,"label":"b","name":"B","not_null":true,"type":"text","unique":false}],"description":"test model","name":"account"}
 
 
 
@@ -57,7 +57,7 @@ POST /=/model/account/~/~
 POST /=/model/account/~/~
 { "A": "a2"}
 --- response
-{"success":0,"error":"Not null constraint violated"} 
+{"success":0,"error":"null value in column \"B\" violates not-null constraint"}
 
 
 
@@ -66,15 +66,15 @@ POST /=/model/account/~/~
 POST /=/model/account/~/~
 { "A": "a3","B":"b3"}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/3"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/4"}
 
 
 
 === TEST 8: Insert a record with value of D is not null
 --- request
 POST /=/model/account/~/~
-{ "A": "a4","b":"b4"}
+{ "A": "a4","B":"b4"}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/4"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/5"}
 
 

@@ -1,4 +1,4 @@
-﻿# vi:filetype=
+# vi:filetype=
 # 某列的not_null属性不会影响到其他没有not_null属性的列
 # 先后创建两列，先创建的有not_null，后创建的没有not_null
 use t::OpenResty;
@@ -39,7 +39,7 @@ POST /=/model/account/B
 --- request
 GET /=/model/account/A
 --- response
-{"name":"A","default":null,"label":"a","type":"integer","not_null":true,"unique":false}
+{"name":"A","default":null,"label":"a","type":"text","not_null":true,"unique":false}
 
 
 
@@ -56,7 +56,7 @@ GET /=/model/account/B
 POST /=/model/account/~/~
 { "B":"1"}
 --- response
-{"success":0,"error":"Not null constraint violated"}
+{"success":0,"error":"null value in column \"A\" violates not-null constraint"}
 
 
 
@@ -65,7 +65,7 @@ POST /=/model/account/~/~
 POST /=/model/account/~/~
 { "A":"a1","B":"1"}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/1"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/2"}
 
 
 
@@ -74,7 +74,7 @@ POST /=/model/account/~/~
 POST /=/model/account/~/~
 { "A": "a2"}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/2"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/3"}
 
 
 
@@ -83,6 +83,6 @@ POST /=/model/account/~/~
 POST /=/model/account/~/~
 { "A": "a3","B":"2"}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/3"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/4"}
 
 
