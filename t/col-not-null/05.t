@@ -1,4 +1,4 @@
-﻿# vi:filetype=
+# vi:filetype=
 # 修改not_null=false属性为true
 use t::OpenResty;
 
@@ -45,18 +45,18 @@ GET /=/model/account/C
 === TEST 5: Insert a record
 --- request
 POST /=/model/account/~/~
-{ "A": "jingjing2"}
+{ "A": "jingjing2", "C": 1}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/account/id/1"}
 
 
 
-=== TEST 6: alter C 
+=== TEST 6: alter C
 --- request
 PUT /=/model/account/C
 {"type":"integer","label":"c","not_null":true}
 --- response
-{"success":1,"src":"/=/model/account/C"}
+{"success":1}
 
 
 
@@ -64,7 +64,7 @@ PUT /=/model/account/C
 --- request
 GET /=/model/account/C
 --- response
-{"name":"C","default":null,"label":"c","type":"integer","not_null":true}
+{"name":"C","default":null,"label":"c","type":"integer","unique":false,"not_null":true}
 
 
 
@@ -73,7 +73,7 @@ GET /=/model/account/C
 POST /=/model/account/~/~
 { "A": "jingjing4","C":"1"}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/4"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/2"}
 
 
 
@@ -82,7 +82,7 @@ POST /=/model/account/~/~
 POST /=/model/account/~/~
 { "A": "jingjing4"}
 --- response
-{"success":0,"error":"Not null constraint violated"} 
+{"success":0,"error":"null value in column \"C\" violates not-null constraint"}
 
 
 

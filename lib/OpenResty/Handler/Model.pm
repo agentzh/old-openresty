@@ -221,7 +221,7 @@ sub POST_model_column {
         alter table $sym:model
         add column $sym:col $kw:type |] .
         (defined $default ? [:sql| default ($kw:default); |] : ' ') .
-        ($unique? 'unique' : '') .
+        ($unique? 'unique ' : '') .
         ($not_null ? 'not null ' : '');
     $sql .= ';';
 
@@ -685,7 +685,7 @@ sub get_model_cols {
                 $row->{unique} = JSON::XS::false;
             }
 
-            if ($row->{not_null} eq 'T') {
+            if ($row->{not_null}) {
                 $row->{not_null} = JSON::XS::true;
             } else {
                 $row->{not_null} = JSON::XS::false;

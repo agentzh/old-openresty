@@ -1,4 +1,4 @@
-﻿# vi:filetype=
+# vi:filetype=
 #添加not_null属性为false的列
 use t::OpenResty;
 

@@ -1,4 +1,4 @@
-﻿# vi:filetype=
+# vi:filetype=
 #添加not_null属性为true的列
 use t::OpenResty;
 
@@ -28,7 +28,7 @@ POST /=/model/account
 === TEST 3: Add a new column not null is true
 --- request
 POST /=/model/account/D
-{"type":"integer","label":"d","not_null":true}
+{"type":"integer","label":"d","not_null":true, "unique":false}
 --- response
 {"success":1,"src":"/=/model/account/D"}
 
@@ -47,7 +47,7 @@ GET /=/model/account/D
 POST /=/model/account/~/~
 { "A": "jingjing3"}
 --- response
-{"success":0,"error":"Not null constraint violated"} 
+{"success":0,"error":"null value in column \"D\" violates not-null constraint"}
 
 
 
@@ -56,5 +56,5 @@ POST /=/model/account/~/~
 POST /=/model/account/~/~
 { "A": "jingjing3","D":"1"}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/1"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/account/id/2"}
 
