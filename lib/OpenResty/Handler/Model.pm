@@ -208,7 +208,7 @@ sub POST_model_column {
         die "Column '$col' already exists in model '$model'.\n";
     }
     $type = check_type($type);
-    
+
     if ($has_default) {
         $default = $data->{default};
         $default = check_default($default);
