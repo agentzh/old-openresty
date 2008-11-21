@@ -22,8 +22,8 @@ POST /=/model/Foo
 {
   "description":"Foo",
   "columns": [
-    {"name":"title", "type":"text", "label": "title", "default":"No title"},
-    {"name":"content", "type":"text", "label": "content", "default":"No content" }
+    {"name":"title", "type":"text", "label": "title", "default":"'No title'"},
+    {"name":"content", "type":"text", "label": "content", "default":"'No content'" }
   ]
 }
 --- response
@@ -35,16 +35,7 @@ POST /=/model/Foo
 --- request
 GET /=/model/Foo
 --- response
-{
-  "columns":
-    [
-      {"name":"id","label":"ID","type":"serial"},
-      {"name":"title","default":"No title","label":"title","type":"text"},
-      {"name":"content","default":"No content","label":"content","type":"text"}
-    ],
-    "name":"Foo",
-    "description":"Foo"
-}
+{"columns":[{"label":"ID","name":"id","type":"serial"},{"default":"'No title'::text","label":"title","name":"title","not_null":false,"type":"text","unique":false},{"default":"'No content'::text","label":"content","name":"content","not_null":false,"type":"text","unique":false}],"description":"Foo","name":"Foo"}
 
 
 
@@ -77,7 +68,7 @@ GET /=/model/Foo/id/1
 === TEST 7: Add a column with default now()
 --- request
 POST /=/model/Foo/~
-{ "name": "created", "label": "创建日期", "type": "timestamp", "default": ["now()"] }
+{ "name": "created", "label": "创建日期", "type": "timestamp", "default": "now()" }
 --- response
 {"success":1,"src":"/=/model/Foo/created"}
 
@@ -87,7 +78,7 @@ POST /=/model/Foo/~
 --- request
 GET /=/model/Foo/created
 --- response
-{"name":"created","default":["now()"],"label":"创建日期","type":"timestamp"}
+{"name":"created","default":"now()","label":"创建日期","type":"timestamp without time zone","unique":false,"not_null":false}
 
 
 
@@ -97,9 +88,9 @@ GET /=/model/Foo/~
 --- response
 [
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"title","default":"No title","label":"title","type":"text"},
-    {"name":"content","default":"No content","label":"content","type":"text"},
-    {"name":"created","default":["now()"],"label":"创建日期","type":"timestamp"}]
+    {"name":"title","default":"'No title'::text","label":"title","type":"text","unique":false,"not_null":false},
+    {"name":"content","default":"'No content'::text","label":"content","type":"text","unique":false,"not_null":false},
+    {"name":"created","default":"now()","label":"创建日期","type":"timestamp without time zone","unique":false,"not_null":false}]
 
 
 
@@ -140,7 +131,7 @@ GET /=/model/Foo/id/3
 === TEST 14: change the default value of the "content" column
 --- request
 PUT /=/model/Foo/content
-{ "default": "hi" }
+{ "default": "'hi'" }
 --- response
 {"success":1}
 
@@ -166,7 +157,7 @@ GET /=/model/Foo/id/4
 === TEST 17: change the default value of the "content" column to now()
 --- request
 PUT /=/model/Foo/content
-{ "default": [" now ( ) "] }
+{"default": "now()"}
 --- response
 {"success":1}
 
@@ -195,11 +186,11 @@ POST /=/model/~
 { "name":"Howdy", "description":"Howdy",
   "columns":[
     {"name":"title","type":"text","label":"title"},
-    {"name":"updated","type":"text","label":"updated","default":["now() at time zone 'UTC'"]}
+    {"name":"updated","type":"text","label":"updated","default":"now() at time zone 'UTC'"}
   ] }
 --- response
 {"success":1}
-
+--- LAST
 
 
 === TEST 21: Check the columns
@@ -208,7 +199,7 @@ GET /=/model/Howdy/~
 --- response
 [
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"title","default":null,"label":"title","type":"text"},
+    {"name":"title","default":null,"label":"title","type":"text","unique":false,"not_null":false},
     {"name":"updated","default":["now() at time zone 'UTC'"],"label":"updated","type":"text"}
 ]
 

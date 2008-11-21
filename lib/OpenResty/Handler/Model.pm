@@ -41,7 +41,9 @@ sub check_type {
                     boolean |
                     text |
                     varchar \s* \( \s* \d+ \s* \) |
+                    character varying \s* \( \s* \d+ \s* \) |
                     char \s* \( \s* \d+ \s* \) |
+                    character \s* \( \s* \d+ \s* \) |
                     integer |
                     serial |
                     real |
@@ -210,19 +212,14 @@ sub POST_model_column {
         die "Column '$col' already exists in model '$model'.\n";
     }
     $type = check_type($type);
-    my $json_default;
+    
     if ($has_default) {
         $default = $data->{default};
-        if (defined $default) {
-            $json_default = OpenResty::json_encode($default);
-            $default = $self->process_default($openresty, $default);
-        } else {
-            $default = 'null';
-        }
+        $default = check_default($default);
     } else {
         undef $default;
     }
-    
+
     my $sql .= [:sql|
         alter table $sym:model
         add column $sym:col $kw:type |] .
@@ -285,17 +282,13 @@ sub PUT_model_column {
             alter table $sym:model alter column $sym:new_col type $kw:type;
         |];
     }
-
+    
     if ($has_default) {
         my $default = $data->{default};
-        if (defined $default) {
-            #warn "DEFAULT: $default\n";
-            my $json_default = OpenResty::json_encode($default);
-            $default = $self->process_default($openresty, $default);
-            $sql .= [:sql| alter table $sym:model alter column $sym:new_col set default ($default);|];
-        } else {
-            $sql .= [:sql| alter table $sym:model alter column $sym:new_col set default null;|];
-        }
+        # warn "default: $default";
+        $default = check_default($default);
+        $sql .= [:sql| alter table $sym:model alter column $sym:new_col set default $kw:default;|];
+        # warn "sql: $sql";
     }
     
     if (defined $not_null) {
@@ -440,7 +433,7 @@ sub new_model {
                     name: IDENT :required,
                     label: STRING :nonempty :required,
                     type: STRING :nonempty :required,
-                    default: ANY,
+                    default: ANY, 
                     unique: BOOL,
                     not_null: BOOL
                 }
@@ -486,30 +479,32 @@ sub new_model {
         }
 
         $label_sql .= [:sql|comment on column $sym:model.$sym:name is $label;|];
-        my $default = $col->{default};
         $type = check_type($type);
         $sql .= [:sql| , $sym:name $kw:type |];
 
-        my $json_default;
-        if (defined $default) {
-            $json_default = OpenResty::json_encode($default);
-            #warn "JSON_DEFAULT: ", utf8::is_utf8($json_default), "\n";
-            $default = $self->process_default($openresty, $default);
-            # XXX
-            $sql .= " default ($default)";
+        my $default = $col->{default};
+        $default = check_default($default);
+        if ($default ne 'null') {
+            if ($type eq 'serial')  {
+                warn  "default $default ignored if type is serial\n";
+            } else {
+                $sql .= [:sql| default $kw:default |];
+            }
         }
+
         # unique supported
         my $unique = delete $col->{unique};
         if ($unique) {
             $sql .= " unique";
         }
-        
+
         my $not_null = delete $col->{not_null};
         if ($not_null) {
             $sql .= " not null";
         }
-        
+
     }
+    #  warn "sql: $sql";
     $sql .= "\n);\ngrant select on table \"$model\" to anonymous;\n";
 
     $sql .= $label_sql;
@@ -528,6 +523,36 @@ sub new_model {
         success => 1,
         $found_id ? (warning => "Column \"id\" reserved. Ignored.") : ()
     };
+}
+
+sub format_default {
+    my $default = shift;
+    if (defined $default && $default =~ /^NULL::/) {
+        return undef ;
+    }
+    return $default;
+}
+
+sub check_default {
+    my $default = shift;
+    if (defined $default) {
+        if ($default =~ /^\d+$/ ) {
+            return $default;
+        }
+        elsif ($default =~ /^\s*now\s*\(\s*\)\s*$/) {
+            # warn "test now: $default";
+            return $default;
+        } 
+        elsif ($default =~  /^\s*('[^']*')/ ){
+            # warn $1;
+            return $1;
+        }
+        else {
+            die "Bad default expression: $default, only supported now() expression and string that doesn't catain ' and :\n";
+        }
+    } else {
+        return 'null';
+    }
 }
 
 sub check_default_expr {
@@ -641,15 +666,15 @@ sub get_model_cols {
     if (!$openresty->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
-    
+
     my $sql = [:sql|
         select a.attname as name,
-               pg_catalog.format_type(a.atttypid, a.atttypmod) as type, 
+               pg_catalog.format_type(a.atttypid, a.atttypmod) as type,
                col_description(a.attrelid, a.attnum) as "label",
                (select pg_catalog.pg_get_expr(d.adbin, d.adrelid)  from pg_catalog.pg_attrdef d  where d.adrelid = a.attrelid and d.adnum = a.attnum and a.atthasdef) as "default",
                (select con.conname from pg_catalog.pg_constraint con where con.conrelid=a.attrelid and con.contype='u' and array_upper(con.conkey,1)=1 and con.conkey[1]=a.attnum) as "unique",
-               a.attnotnull as not_null 
-         from pg_catalog.pg_attribute a 
+               a.attnotnull as not_null
+         from pg_catalog.pg_attribute a
         where a.attnum > 0 and not a.attisdropped and a.attname <> 'id'|];
     if (defined $col) {
         $sql .= [:sql|
@@ -658,8 +683,8 @@ sub get_model_cols {
     $sql .= [:sql| and a.attrelid = (select oid from pg_catalog.pg_class c where c.relname= $model)
         order by a.attnum |];
     my $list = $openresty->select($sql, { use_hash => 1 });
-    if (!$list or !ref $list) { 
-        $list = []; 
+    if (!$list or !ref $list) {
+        $list = [];
     } else {
         for my $row (@$list) {
             next if $row->{name} eq 'id';
@@ -669,19 +694,16 @@ sub get_model_cols {
             } else {
                 $row->{unique} = JSON::XS::false;
             }
-            
+
             if ($row->{not_null} eq 'T') {
                 $row->{not_null} = JSON::XS::true;
             } else {
                 $row->{not_null} = JSON::XS::false;
-            }    
-            
-            if (my $json_default = $row->{default}) {
-                #$row->{default} = $OpenResty::JsonXs->decode($json_default);
             }
+            $row->{default} = format_default($row->{default});
         }
 
-    } 
+    }
 
     #### model handler: $list
     if (!$col or $col eq '~') {

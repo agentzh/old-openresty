@@ -35,7 +35,7 @@ DELETE /=/model.js?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 POST /=/model/Human
 { "description":"人类",
   "columns":
-    [ { "name": "gender", "type":"text", "label": "性别","default": "male","unique": false,"not_null":true } ]
+    [ { "name": "gender", "type":"text", "label": "性别","default": "'male'","unique": false,"not_null":true } ]
 }
 --- response
 {"success":1}
