@@ -98,18 +98,15 @@ sub GET_model_list {
 sub GET_model {
     my ($self, $openresty, $bits) = @_;
     my $model = $bits->[1];
-    #
-    # TODO: need to deal with '~'
-    #
-    my $sql = [:sql|
-        select description
-        from _models
-        where name = $model |];
+    _IDENT($model) or $model eq '~' or die "Bad model name: ", $OpenResty::Dumper->($model), "\n";
+    if ($model eq '~' ) {
+        return $self->get_models();
+    }
+
+    my $sql = [:sql| select  obj_description(c.oid, 'pg_class') as description from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname <> 'pg_catalog' and n.nspname !~ '^pg_toast' and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_' and c.relname = $model|];
     my $list = $openresty->select($sql);
     my $desc = $list->[0][0];
-    
     $list = $self->get_model_cols($openresty, $model);
-    
     return { description => $desc, name => $model, columns => $list };
 }
 
@@ -433,7 +430,7 @@ sub new_model {
                     name: IDENT :required,
                     label: STRING :nonempty :required,
                     type: STRING :nonempty :required,
-                    default: ANY, 
+                    default: ANY,
                     unique: BOOL,
                     not_null: BOOL
                 }
@@ -456,12 +453,8 @@ sub new_model {
     if ($openresty->has_model($model)) {
         die "Model \"$model\" already exists.\n";
     }
-    my $sql = [:sql|
-        insert into _models (name, description)
-        values ($model, $desc); |];
 
-    $sql .=
-        [:sql| create table $sym:model (id serial primary key |];
+    my $sql = [:sql| create table $sym:model (id serial primary key |];
     my $label_sql = [:sql|comment on column $sym:model.id is 'ID';|];
     my $found_id = undef;
     for my $col (@$columns) {
@@ -505,9 +498,11 @@ sub new_model {
 
     }
     #  warn "sql: $sql";
-    $sql .= "\n);\ngrant select on table \"$model\" to anonymous;\n";
-
+    $sql .= ");";
+    $sql .= [:sql| grant select on table $sym:model to anonymous;|];
+    $sql .= [:sql| comment on table $sym:model is $desc; |];
     $sql .= $label_sql;
+    # warn "sql: $sql";
     eval {
         #if ($OpenResty::BackendName eq 'PgFarm') {
             # XXX to work around a bug in our PL/Proxy cluster
@@ -622,15 +617,14 @@ sub global_model_check {
 sub get_tables {
     #my ($self, $openresty, $user) = @_;
     my ($self, $openresty) = @_;
-    my $sql = [:sql| select name from _models |];
+    my $sql = [:sql| select c.relname as name from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname <> 'pg_catalog' and n.nspname !~ '^pg_toast' and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_' order by c.oid|];
     return $openresty->select($sql);
 }
 
 sub model_count {
     my ($self, $openresty) = @_;
-    return $openresty->select(
-        [:sql| select count(*) from _models |]
-    )->[0][0];
+    my $sql = [:sql| select count(*) from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname <> 'pg_catalog' and n.nspname !~ '^pg_toast' and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_'|];
+    return $openresty->select($sql)->[0][0];
 }
 
 sub column_count {
@@ -653,7 +647,7 @@ sub row_count {
 
 sub get_models {
     my ($self, $openresty) = @_;
-    my $sql = [:sql| select name, description from _models order by id |];
+    my $sql = [:sql| select c.relname as name, obj_description(c.oid, 'pg_class') as description from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname <> 'pg_catalog' and n.nspname !~ '^pg_toast' and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_' order by c.oid|];
     return $openresty->select($sql, { use_hash => 1 });
 }
 
@@ -765,7 +759,6 @@ sub drop_table {
     $OpenResty::Cache->remove_has_model($user, $model);
     return [:sql|
         drop table if exists $sym:model;
-        delete from _models where name = $model;
     |];
 }
 
@@ -1121,17 +1114,12 @@ sub alter_model {
         }
         $OpenResty::Cache->remove_has_model($user, $model);
         $sql .= [:sql|
-            update _models set name=$new_model where name=$model;
             alter table $sym:model rename to $sym:new_model;
         |];
     }
     $new_model ||= $model;
     if ($desc) {
-        $sql .= [:sql|
-            update _models
-            set description = $desc
-            where name = $new_model;
-        |];
+        $sql .= [:sql| comment on table $sym:new_model is $desc |];
     }
     #warn "SQL: $sql";
     my $retval = $openresty->do($sql);

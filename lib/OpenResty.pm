@@ -578,12 +578,9 @@ sub has_model {
         #warn "has model cache HIT\n";
         return 1;
     }
-    my $sql = [:sql|
-        select id
-        from _models
-        where name = $model
-        limit 1;
-    |];
+    my $sql = [:sql| select c.oid from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname <> 'pg_catalog' and n.nspname !~ '^pg_toast' and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_' and c.relname = $model limit 1|];
+
+
     my $ret;
     eval { $ret = $self->select($sql)->[0][0]; };
     if ($ret) { $Cache->set_has_model($user, $model) }
