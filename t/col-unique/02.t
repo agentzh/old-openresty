@@ -1,6 +1,14 @@
-ï»¿# vi:filetype=
+# vi:filetype=
 
-#åˆ›å»º unique å±žæ€§ä¸º false çš„åˆ—æ—¶ï¼ŒéªŒè¯æ’å…¥ä¸¤è¡Œå¸¦ç›¸åŒå€¼çš„è¡Œæ²¡æœ‰æŠ¥é”™
+#¿¿ unique ¿¿¿ false ¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿
+
+use t::OpenResty;
+
+plan tests => 3 * blocks();
+
+run_tests;
+
+__DATA__
 
 use t::OpenResty;
 
@@ -17,14 +25,12 @@ DELETE /=/model?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 {"success":1}
 
 
-
 === TEST 2: create a model(column with unique attribute is false)
 --- request
 POST /=/model/testunique
 { "description": "test unique path02","columns": [{ "name":"jx02","type":"text","label":"jx02","unique":false}]}
 --- response
 {"success":1}
-
 
 
 === TEST 3: check the model
@@ -34,13 +40,11 @@ GET /=/model/
 [{"description": "test unique path02","name": "testunique","src":"/=/model/testunique"}]
 
 
-
 === TEST 4: check the column
 --- request
 GET /=/model/testunique/jx02
 --- response
-{"name":"jx02","default":null,"label":"jx02","type":"text","unique":false}
-
+{"name":"jx02","default":null,"label":"jx02","type":"text","unique":false,"not_null":false}
 
 
 === TEST 5: Insert one record
@@ -51,13 +55,11 @@ POST /=/model/testunique/~/~
 {"success":1,"rows_affected":1,"last_row":"/=/model/testunique/id/1"}
 
 
-
 === TEST 6: Get all records(1 record)
 --- request
 GET /=/model/testunique/~/~
 --- response
 [{"id":"1","jx02":"A02"}]
-
 
 
 === TEST 7: Insert the same record
@@ -66,7 +68,6 @@ POST /=/model/testunique/~/~
 { "jx02": "A02"}
 --- response
 {"success":1,"rows_affected":1,"last_row":"/=/model/testunique/id/2"}
-
 
 
 === TEST 8: Get all records(2 records)

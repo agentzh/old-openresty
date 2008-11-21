@@ -30,17 +30,15 @@ DELETE /=/model.js?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 {"success":1}
 
 
-
 === TEST 2: Create a new model
 --- request
 POST /=/model/Human
 { "description":"人类",
   "columns":
-    [ { "name": "gender", "type":"text", "label": "性别" } ]
+    [ { "name": "gender", "type":"text", "label": "性别","default": "male","unique": false,"not_null":true } ]
 }
 --- response
 {"success":1}
-
 
 
 === TEST 3: Create a model with the same name
@@ -117,7 +115,6 @@ GET /=/model/Blah
   "name":"Blah",
   "description":"Blah"
 }
-
 
 
 === TEST 9: Syntax error in JSON data
@@ -245,7 +242,7 @@ POST /=/model/Tiger
 --- request
 POST /=/model/Tiger
 { "description": "Tiger", "columns":
-    [ { "name":"ddddddddddddddddddddddddddddddd", "type":"text", "label":"hiya" } ]
+    [ { "name":"ddddddddddddddddddddddddddddddd", "type":"text", "label":"hiya","unique": false} ]
 }
 --- response
 {"success":1}
@@ -315,8 +312,7 @@ GET /=/model/Tiger
 {
     "columns":
         [{"name":"id","label":"ID","type":"serial"},
-         {"name":"ddddddddddddddddddddddddddddddd","default":null,"label":"hiya","type":"text
-        "}],
+         {"name":"ddddddddddddddddddddddddddddddd","default":null,"label":"hiya","type":"text", "unique": false, "not_null": false}],
     "name":"Tiger","description":"Hello!"}
 
 
