@@ -7,9 +7,11 @@ use CGI::Simple ();
 use Class::Prototyped;
 
 use OpenResty::Limits;
+use Data::Structure::Util qw(_utf8_off);
+
 use base 'Exporter';
 
-our @EXPORT = qw( _IDENT Q QI check_password slurp new_mocked_cgi );
+our @EXPORT = qw( _IDENT Q QI check_password slurp url_encode new_mocked_cgi );
 
 my $Cgi = CGI::Simple->new;
 
@@ -53,6 +55,14 @@ sub slurp {
     close $in;
     $s;
 }
+
+sub url_encode {
+    my $s = shift;
+    _utf8_off($s);
+    $s =~ s/[^\w\-\.\@]/sprintf("%%%2.2x",ord($&))/eg;
+    $s;
+}
+
 
 sub new_mocked_cgi {
     my ($uri, $content) = @_;
