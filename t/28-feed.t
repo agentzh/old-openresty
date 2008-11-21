@@ -67,7 +67,7 @@ POST /=/model/Post
         {"name": "title", "label": "Title", "type": "text"},
         {"name": "author", "label": "Author", "type": "text"},
         {"name": "content", "label": "Content", "type": "text"},
-        {"name": "created_on", "label": "Created on", "type": "timestamp (0) with time zone", "default": ["now()"]},
+        {"name": "created_on", "label": "Created on", "type": "timestamp (0) with time zone", "default": "now()"},
         {"name": "comments", "label": "Number of comments", "type":"integer", "default":0}
     ]
 }

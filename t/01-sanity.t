@@ -98,7 +98,7 @@ GET /=/model/Bookmark.js
    [
     {"name":"id","label":"ID","type":"serial"},
     {"name":"title","default":null,"label":"标题","type":"text","unique":false,"not_null":false},
-    {"name":"url","default":null,"label":"网址","type":"varchar(20)","unique":false,"not_null":false}
+    {"name":"url","default":null,"label":"网址","type":"character varying(20)","unique":false,"not_null":false}
    ],
   "name":"Bookmark",
   "description":"我的书签"
@@ -333,7 +333,7 @@ GET /=/model/MyFavorites.js
    [
     {"name":"id","label":"ID","type":"serial"},
     {"name":"title","default":null,"label":"标题","type":"text","unique":false,"not_null":false},
-    {"name":"url","default":null,"label":"网址","type":"varchar(20)","unique":false,"not_null":false}
+    {"name":"url","default":null,"label":"网址","type":"character varying(20)","unique":false,"not_null":false}
    ],
   "name":"MyFavorites",
   "description":"我的最爱"

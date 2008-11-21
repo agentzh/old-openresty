@@ -80,8 +80,8 @@ foo({
   "columns":
    [
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"title","default":null,"label":"标题","type":"text"},
-    {"name":"url","default":null,"label":"网址","type":"text"}
+    {"name":"title","default":null,"label":"标题","type":"text","unique":false,"not_null":false},
+    {"name":"url","default":null,"label":"网址","type":"text","unique":false,"not_null":false}
    ],
   "name":"Bookmark",
   "description":"我的书签"
@@ -259,8 +259,8 @@ foo({
   "columns":
    [
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"title","default":null,"label":"标题","type":"text"},
-    {"name":"url","default":null,"label":"网址","type":"text"}
+    {"name":"title","default":null,"label":"标题","type":"text","unique":false,"not_null":false},
+    {"name":"url","default":null,"label":"网址","type":"text","unique":false,"not_null":false}
    ],
   "name":"MyFavorites",
   "description":"我的最爱"

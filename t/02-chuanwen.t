@@ -248,7 +248,7 @@ DELETE /=/model/bookmark
 POST /=/model/Bookmark.js
 {
     "description": "我的书签",
-    "columns": [{ "name": "id_chen", "type": "serial", "label": "ID" }]
+    "columns": [{ "name": "id_chen", "type": "serial", "label": "ID"}]
 }
 --- response
 {"success":1}
