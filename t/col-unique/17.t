@@ -66,8 +66,7 @@ GET /=/model/testunique/~/~
 POST /=/model/testunique/~/~
 { "jx1701": "A1701"}
 --- response
-{"success":0,"error":"Unique constraint violated."}
-
+{"error":"duplicate key value violates unique constraint \"testunique_jx1701_key\"","success":0}
 
 
 === TEST 8: Get record(1 record)
@@ -83,7 +82,7 @@ GET /=/model/testunique/~/~
 POST /=/model/testunique/~/~
 { "jx1701": "A1701-1"}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/testunique/id/2"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/testunique/id/3"}
 
 
 
@@ -91,7 +90,7 @@ POST /=/model/testunique/~/~
 --- request
 GET /=/model/testunique/~/~
 --- response
-[{"id":"1","jx1701":"A1701"},{"id":"2","jx1701":"A1701-1"}]
+[{"id":"1","jx1701":"A1701"},{"id":"3","jx1701":"A1701-1"}]
 
 
 
@@ -117,15 +116,14 @@ GET /=/model/testunique/jx1702
 POST /=/model/testunique/~/~
 { "jx1701": "A1701","jx1702":"A1702"}
 --- response
-{"success":0,"error":"Unique constraint violated."}
-
+{"error":"duplicate key value violates unique constraint \"testunique_jx1701_key\"","success":0}
 
 
 === TEST 14: Get record(2 record)
 --- request
 GET /=/model/testunique/~/~
 --- response
-[{"id":"1","jx1701":"A1701","jx1702",null},{"id":"2","jx1701":"A1701-1","jx1702":null}]
+[{"id":"1","jx1701":"A1701","jx1702":null},{"id":"3","jx1701":"A1701-1","jx1702":null}]
 
 
 
@@ -134,7 +132,7 @@ GET /=/model/testunique/~/~
 POST /=/model/testunique/~/~
 { "jx1701": "A1701-2","jx1702":"A1702"}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/testunique/id/3"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/testunique/id/5"}
 
 
 
@@ -142,7 +140,7 @@ POST /=/model/testunique/~/~
 --- request
 GET /=/model/testunique/~/~
 --- response
-[{"id":"1","jx1701":"A1701","jx1702":null},{"id":"2","jx1701":"A1701-1","jx1702":null},{"id":"3","jx1701":"A1701-2","jx1702":"A1702"}]
+[{"id":"1","jx1701":"A1701","jx1702":null},{"id":"3","jx1701":"A1701-1","jx1702":null},{"id":"5","jx1701":"A1701-2","jx1702":"A1702"}]
 
 
 
@@ -151,15 +149,14 @@ GET /=/model/testunique/~/~
 POST /=/model/testunique/~/~
 { "jx1701": "A1701-3","jx1702":"A1702"}
 --- response
-{"success":0,"error":"Unique constraint violated."}
-
+{"error":"duplicate key value violates unique constraint \"testunique_jx1702_key\"","success":0}
 
 
 === TEST 18: Get record(3 record)
 --- request
 GET /=/model/testunique/~/~
 --- response
-[{"id":"1","jx1701":"A1701","jx1702":null},{"id":"2","jx1701":"A1701-1","jx1702":null},{"id":"3","jx1701":"A1701-2","jx1702":"A1702"}]
+[{"id":"1","jx1701":"A1701","jx1702":null},{"id":"3","jx1701":"A1701-1","jx1702":null},{"id":"5","jx1701":"A1701-2","jx1702":"A1702"}]
 
 
 
@@ -168,7 +165,7 @@ GET /=/model/testunique/~/~
 POST /=/model/testunique/~/~
 { "jx1701": "A1701-4","jx1702":"A1702-1"}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/testunique/id/4"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/testunique/id/7"}
 
 
 
@@ -176,4 +173,4 @@ POST /=/model/testunique/~/~
 --- request
 GET /=/model/testunique/~/~
 --- response
-[{"id":"1","jx1701":"A1701","jx1702":null},{"id":"2","jx1701":"A1701-1","jx1702":null},{"id":"3","jx1701":"A1701-2","jx1702":"A1702"},{"id":"4","jx1701":"A1701-3","jx1702":"A1702-1"}]
+[{"id":"1","jx1701":"A1701","jx1702":null},{"id":"3","jx1701":"A1701-1","jx1702":null},{"id":"5","jx1701":"A1701-2","jx1702":"A1702"},{"id":"7","jx1701":"A1701-4","jx1702":"A1702-1"}]

@@ -116,15 +116,14 @@ GET /=/model/testunique/~/~
 POST /=/model/testunique/~/~
 { "jx07": "A07"}
 --- response
-{"success":0,"error":"Unique constraint violated."}
-
+{"error":"duplicate key value violates unique constraint \"testunique_jx07_key\"","success":0}
 
 
 === TEST 14: Get all records(3 records)
 --- request
 GET /=/model/testunique/~/~
 --- response
-[{"id":"1","jx07":null},{"id":"2","jx07":null},{"id":"3","jx07":"A07-1"}]
+[{"id":"1","jx07":null},{"id":"2","jx07":null},{"id":"3","jx07":"A07"}]
 
 
 

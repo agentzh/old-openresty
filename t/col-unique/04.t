@@ -65,8 +65,7 @@ GET /=/model/testunique/~/~
 POST /=/model/testunique/~/~
 { "jx04": "A04"}
 --- response
-{"success":0,"error":"Unique constraint violated."}
-
+{"error":"duplicate key value violates unique constraint \"testunique_jx04_key\"","success":0}
 
 
 === TEST 8: Get all records(1 records)
@@ -99,7 +98,7 @@ GET /=/model/testunique/jx04
 POST /=/model/testunique/~/~
 { "jx04": "A04"}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/testunique/id/2"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/testunique/id/3"}
 
 
 
@@ -107,4 +106,4 @@ POST /=/model/testunique/~/~
 --- request
 GET /=/model/testunique/~/~
 --- response
-[{"id":"1","jx04":"A04"},{"id":"2","jx04":"A04"}]
+[{"id":"1","jx04":"A04"},{"id":"3","jx04":"A04"}]
