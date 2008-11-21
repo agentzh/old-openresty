@@ -621,7 +621,8 @@ sub global_model_check {
 
 sub model_count {
     my ($self, $openresty) = @_;
-    my $sql = [:sql| select count(*) from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname <> 'pg_catalog' and n.nspname !~ '^pg_toast' and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_'|];
+    my $user = $openresty->current_user;
+    my $sql = [:sql| select count(*) from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname = $user and n.nspname !~ '^pg_toast' and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_'|];
     return $openresty->select($sql)->[0][0];
 }
 
@@ -715,8 +716,8 @@ sub get_model_col_names {
         where a.attnum > 0 and not a.attisdropped and a.attname <> 'id' |];
     if (defined $col) {
         $sql .= [:sql| and  a.attname = $col |];
-    } 
-    
+    }
+
     $sql .= [:sql| 
         and  a.attrelid = (select oid from pg_catalog.pg_class c where c.relname= $model)
         order by a.attnum |];
@@ -735,11 +736,11 @@ sub get_unique_name {
         select (select con.conname from pg_catalog.pg_constraint con where con.conrelid=a.attrelid and con.contype='u' and array_upper(con.conkey,1)=1 and con.conkey[1]=a.attnum) as "unique_name"
          from pg_catalog.pg_attribute a 
         where a.attnum > 0 and not a.attisdropped and a.attname <> 'id' and a.attname = $col and a.attrelid = (select oid from pg_catalog.pg_class c where c.relname= $model)|];
-    
-    my $list = $openresty->select($sql); 
-    if (!$list or !ref $list) { 
+
+    my $list = $openresty->select($sql);
+    if (!$list or !ref $list) {
        die "Column '$col' not found.\n";
-    } else { 
+    } else {
         return $list->[0][0];
     }
 }
@@ -750,7 +751,7 @@ sub has_model_col {
     _IDENT($col) or die "Bad model column name: $col\n";
 
     return 1 if $col eq 'id';
-    my $res = $self->get_model_col_names($openresty, $model, $col);  
+    my $res = $self->get_model_col_names($openresty, $model, $col);
     return $#$res != -1;
 }
 
