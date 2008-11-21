@@ -31,7 +31,14 @@
             <ul id="create-column">
             [%- FOREACH column IN model.columns %]
                 <li>
-              [%- FOREACH key IN column.keys %]
+              [%- first_time = 1;
+                  col_names = column.keys.sort;
+                  col_names = col_names.unshift('name');
+                FOREACH key IN col_names %]
+                [% NEXT IF NOT first_time AND key == 'name' %]
+                [% IF first_time %]
+                    [% first_time = 0 %]
+                [% END %]
                 [%- value = column.$key; %]
                 [%- is_json = 0 %]
                 [%- resty_type = (key == 'unique' || key == 'not_null') ? 'select':'text' %]

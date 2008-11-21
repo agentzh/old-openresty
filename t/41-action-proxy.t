@@ -54,6 +54,6 @@ POST /=/action/Test
 === TEST 3: Invoke it
 --- request
 GET /=/action/Test/~/~
---- response
-["0.5.0"]
+--- response_like
+^\["\d+\.\d+\.\d+"\]$
 
