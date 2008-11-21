@@ -222,8 +222,12 @@ sub run_test ($) {
         $client->content_type($type);
         my $res = $client->request($body, $method, $url);
         if ($should_skip) { return; }
-        ok $res->is_success, "request returns OK - $name";
-        if (!$res->is_success) { warn $res->status_line }
+        my $good_res = $res->is_success || $res->is_redirect;
+        ok $good_res, "request returns OK - $name";
+        if (!$good_res) { warn $res->status_line }
+        if (defined $block->status) {
+            is $res->status_line, $block->status, "status line ok - $name"
+        }
         #warn $res->content, '!!!!!!!!!!!!!!!';
         my $expected_res = $block->response || $block->response_like;
         if ($expected_res) {

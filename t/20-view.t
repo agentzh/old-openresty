@@ -226,7 +226,7 @@ POST /=/view/Test2
 
 
 
-=== TEST 25: Insert data for testing 
+=== TEST 25: Insert data for testing
 --- request
 POST /=/model/A/~/~
 [

@@ -34,7 +34,7 @@ sub init {
     } else {
         $context = $Context;
     }
-    
+
     undef $InitFatal;
 
     eval {
@@ -43,10 +43,10 @@ sub init {
         $OpenResty::Cache = OpenResty::Cache->new;
         OpenResty->connect($backend);
     };
-    if ($@) { 
-        # warn $@; 
-        $InitFatal = $@; 
-        return; 
+    if ($@) {
+        # warn $@;
+        $InitFatal = $@;
+        return;
     }
     #warn "InitFatal: $InitFatal\n";
 
@@ -123,7 +123,7 @@ sub process_request {
     if ($InitFatal) {
         # warn "Init error: $InitFatal";
         warn "Found init fatal error. Now we re-init the dispatcher...\n";
-        
+
         $class->init({'context' => $Context});
     }
 
