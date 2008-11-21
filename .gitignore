@@ -41,3 +41,5 @@ demo/RestyCheck/openresty.js
 demo/RestyCheck/upload
 demo/*/script/upload
 metamodel
+demo/Onccf/pack_out
+log.txt
