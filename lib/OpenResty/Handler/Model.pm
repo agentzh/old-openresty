@@ -622,7 +622,7 @@ sub model_count {
 sub column_count {
     my ($self, $openresty, $model) = @_;
 
-    my $sql = [:sql| select count(*) from pg_catalog.pg_attribute a where a.attnum > 0 and not a.attisdropped and a.attname <> 'id' and a.attrelid = (select oid from pg_catalog.pg_class c where c.relname= $model) |]
+    my $sql = [:sql| select count(*) from pg_catalog.pg_attribute a where a.attnum > 0 and not a.attisdropped and a.attname <> 'id' and a.attrelid = (select oid from pg_catalog.pg_class c where c.relname= $model) |];
 
     return $openresty->select($sql)->[0][0];
 }
