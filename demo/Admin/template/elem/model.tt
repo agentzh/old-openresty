@@ -33,7 +33,7 @@
                 <li>
               [%- FOREACH key IN column.keys %]
                 [%- value = column.$key; %]
-                [%- is_json = key == 'default' ? 1 : 0 %]
+                [%- is_json = 0 %]
                 [%- resty_type = (key == 'unique' || key == 'not_null') ? 'select':'text' %]
                 [%- resty_value = (key == 'unique' || key =='not_null') ? '{true:"true",false:"false","selected":true}': value %]
                 <b class="key">[%- key | html %]</b>: [% INCLUDE editable_model_value column=column.name %] &nbsp;&nbsp;

@@ -596,13 +596,15 @@ function getColumnSpec (container) {
         //debug("Key: " + key);
         var val = $(this).val();
         if (!key) return;
+        // alert(key);
+        /* default expression doesn't need parse *
         if (key == 'default' && val) {
             var res = JSON.parse(val);
             if (res == false && typeof res == typeof false && value != false) {
                 throw("Invalid JSON for the column's default value: " + val);
             }
             val = res;
-        }
+        } */
         if (key == "unique" || key == "not_null") {
             if (val == 'true'){
                 val = true;
