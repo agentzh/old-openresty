@@ -190,7 +190,7 @@ POST /=/model/~
   ] }
 --- response
 {"success":1}
---- LAST
+
 
 
 === TEST 21: Check the columns
@@ -200,7 +200,7 @@ GET /=/model/Howdy/~
 [
     {"name":"id","label":"ID","type":"serial"},
     {"name":"title","default":null,"label":"title","type":"text","unique":false,"not_null":false},
-    {"name":"updated","default":["now() at time zone 'UTC'"],"label":"updated","type":"text"}
+    {"name":"updated","default":"timezone('UTC'::text, now())","label":"updated","type":"text","unique":false,"not_null":false}
 ]
 
 
@@ -306,7 +306,7 @@ POST /=/model/Foo/~
 === TEST 33: Add a column with default ""
 --- request
 POST /=/model/Foo/~
-{ "name": "empty", "label": "num", "type": "text", "default": "" }
+{ "name": "empty", "label": "num", "type": "text", "default": "''" }
 --- response
 {"success":1,"src":"/=/model/Foo/empty"}
 

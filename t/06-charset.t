@@ -51,14 +51,14 @@ POST /=/model/Foo?_charset=GBK
 
 
 === TEST 4: Check the data in GB2312
---- charset: GB2312 
---- request 
+--- charset: GB2312
+--- request
 GET /=/model/Foo?_charset=GB2312
---- response 
-{ 
-    "columns":[ 
-        {"name":"id","label":"ID","type":"serial"}, 
-        {"name":"bar","default":null,"label":"嘿嘿","type":"text","unique":false,"not_null":false} 
+--- response
+{
+    "columns":[
+        {"name":"id","label":"ID","type":"serial"},
+        {"unique":false,"not_null":false,"name":"bar","default":null,"label":"嘿嘿","type":"text"}
     ],
     "name":"Foo",
     "description":"你好么？"
@@ -87,7 +87,7 @@ GET /=/model/Foo?_charset=big5
 {
     "columns":[
         {"name":"id","label":"ID","type":"serial"},
-        {"name":"bar","default":null,"label":"嘿嘿","type":"text","unique":false,"not_null":false}
+        {"unique":false,"not_null":false,"name":"bar","default":null,"label":"嘿嘿","type":"text"}
     ],
     "name":"Foo",
     "description":"你好么？"

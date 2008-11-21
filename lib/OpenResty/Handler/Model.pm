@@ -488,7 +488,7 @@ sub new_model {
             if ($type eq 'serial')  {
                 warn  "default $default ignored if type is serial\n";
             } else {
-                $sql .= [:sql| default $kw:default |];
+                $sql .= [:sql| default ( $kw:default ) |];
             }
         }
 
@@ -538,17 +538,13 @@ sub check_default {
     if (defined $default) {
         if ($default =~ /^\d+$/ ) {
             return $default;
-        }
-        elsif ($default =~ /^\s*now\s*\(\s*\)\s*$/) {
+        } elsif ($default =~ /^\s*now\s*\(\s*\)(?:\s+at\s+time\s+zone\s+'[^']+')?\s*$/) {
             # warn "test now: $default";
             return $default;
-        } 
-        elsif ($default =~  /^\s*('[^']*')/ ){
-            # warn $1;
+        } elsif ($default =~  /^\s*('(?:''|\\.|.)*')/){
             return $1;
-        }
-        else {
-            die "Bad default expression: $default, only supported now() expression and string that doesn't catain ' and :\n";
+        } else {
+            die "Bad default expression: $default, only supported now() expression and string\n";
         }
     } else {
         return 'null';
