@@ -46,202 +46,7 @@ GET /=/model/laser/A
 
 
 
-=== TEST 4: Add a new column
---- request
-POST /=/model/laser/B
-{"type":"integer","label":"b"}
---- response
-{"success":1,"src":"/=/model/laser/B"}
-
-
-
-=== TEST 5: Check the newly-added column
---- request
-GET /=/model/laser/B
---- response
-{"name":"B","default":null,"label":"b","type":"integer"}
-
-
-
-=== TEST 6: Check the whole schema
---- request
-GET /=/model/laser
---- response
-{
-    "columns":
-        [
-          {"name":"id","label":"ID","type":"serial"},
-          {"name":"A","default":null,"label":"A","type":"text"},
-          {"name":"B","default":null,"label":"b","type":"integer"}
-        ],
-    "name":"laser",
-    "description":"test model"
-}
-
-
-
-=== TEST 7: Add one column twice
---- request
-POST /=/model/laser/B
-{"type":"integer","label":"b"}
---- response
-{"success":0,"error":"Column 'B' already exists in model 'laser'."}
-
-
-
-=== TEST 8: Add one column twice
---- request
-POST /=/model/laser/B
-{"type":"integer","label":"b"}
---- response
-{"success":0,"error":"Column 'B' already exists in model 'laser'."}
-
-
-
-=== TEST 9: Rename the column
---- request
-PUT /=/model/laser/B
-{"name":"C"}
---- response
-{"success":1}
-
-
-
-=== TEST 10: Check the schema again
---- request
-GET /=/model/laser
---- response
-{
-    "columns":
-      [
-        {"name":"id","label":"ID","type":"serial"},
-        {"name":"A","default":null,"label":"A","type":"text"},
-        {"name":"C","default":null,"label":"b","type":"integer"}
-      ],
-      "name":"laser",
-      "description":"test model"
-}
-
-
-
-=== TEST 11: Check the new column
---- request
-GET /=/model/laser/C
---- response
-{"name":"C","default":null,"label":"b","type":"integer"}
-
-
-
-=== TEST 12: Check the removed column 'B'
---- request
-GET /=/model/laser/B
---- response
-{"success":0,"error":"Column 'B' not found."}
-
-
-
-=== TEST 13: Try to rename a nonexistent column
---- request
-PUT /=/model/laser/B
-{"name":"C"}
---- response
-{"success":0,"error":"Column 'B' not found."}
-
-
-
-=== TEST 14: Try updating type
---- request
-PUT /=/model/laser/C
-{"type":"real"}
---- response
-{"success":1}
-
-
-
-=== TEST 15: Check the column with a new type
---- request
-GET /=/model/laser/C
---- response
-{"name":"C","default":null,"label":"b","type":"real"}
-
-
-
-=== TEST 16: Update the column label
---- request
-PUT /=/model/laser/C
-{"label":"c"}
---- response
-{"success":1}
-
-
-
-=== TEST 17: Check the column with a new label
---- request
-GET /=/model/laser/C
---- response
-{"name":"C","default":null,"label":"c","type":"real"}
-
-
-
-=== TEST 18: Check the schema again
---- request
-GET /=/model/laser
---- response
-{
-    "columns":
-      [
-        {"name":"id","label":"ID","type":"serial"},
-        {"name":"A","default":null,"label":"A","type":"text"},
-        {"name":"C","default":null,"label":"c","type":"real"}
-      ],
-      "name":"laser",
-      "description":"test model"
-}
-
-
-
-=== TEST 19: Insert a record
---- request
-POST /=/model/laser/~/~
-{ "C": 3.14159 }
---- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/laser/id/1"}
-
-
-
-=== TEST 20: Check the newly-added record
---- request
-GET /=/model/laser/id/1
---- response
-[{"A":null,"C":"3.14159","id":"1"}]
-
-
-
-=== TEST 21: Remove the column
---- request
-DELETE /=/model/laser/C
---- response
-{"success":1}
-
-
-
-=== TEST 22: Check the schema again
---- request
-GET /=/model/laser
---- response
-{
-    "columns":
-      [
-        {"name":"id","label":"ID","type":"serial"},
-        {"name":"A","default":null,"label":"A","type":"text"}
-      ],
-      "name":"laser",
-      "description":"test model"
-}
-
-
-
-=== TEST 23: Remove the column
+=== TEST 4 : delete the nonexistent column
 --- request
 DELETE /=/model/laser/C
 --- response
@@ -249,23 +54,7 @@ DELETE /=/model/laser/C
 
 
 
-=== TEST 24: Access the nonexistent column
---- request
-GET /=/model/laser/C
---- response
-{"success":0,"error":"Column 'C' not found."}
-
-
-
-=== TEST 25 : delete the nonexistent column
---- request
-DELETE /=/model/laser/C
---- response
-{"success":0,"error":"Column 'C' not found."}
-
-
-
-=== TEST 26 : Get all the columns
+=== TEST 5 : Get all the columns
 --- request
 GET /=/model/laser/~
 --- response
@@ -276,7 +65,7 @@ GET /=/model/laser/~
 
 
 
-=== TEST 27 : Get a column (invalid char)
+=== TEST 6 : Get a column (invalid char)
 --- request
 GET /=/model/laser/@
 --- response
@@ -284,7 +73,7 @@ GET /=/model/laser/@
 
 
 
-=== TEST 28 : Add a new column with '~'
+=== TEST 7 : Add a new column with '~'
 --- request
 POST /=/model/laser/~
 {"name":"M","type":"real","label":"M"}
@@ -293,7 +82,7 @@ POST /=/model/laser/~
 
 
 
-=== TEST 29 : Add a new column with invalid char '@'
+=== TEST 8 : Add a new column with invalid char '@'
 --- request
 POST /=/model/laser/@
 {"name":"M","type":"real","label":"M"}
@@ -302,7 +91,7 @@ POST /=/model/laser/@
 
 
 
-=== TEST 30 : Add a new column
+=== TEST 9 : Add a new column
 --- request
 POST /=/model/laser/N
 {"name":"M","type":"text","label":"N"}
@@ -311,7 +100,7 @@ POST /=/model/laser/N
 
 
 
-=== TEST 31 : Get a column with other invalid symbol
+=== TEST 10 : Get a column with other invalid symbol
 --- request
 GET /=/model/laser/!
 --- response
@@ -319,7 +108,7 @@ GET /=/model/laser/!
 
 
 
-=== TEST 32 : Add a new column with other invalid symbol
+=== TEST 11 : Add a new column with other invalid symbol
 --- request
 POST /=/model/laser/!
 {"name":"D","type":"text","label":"D"}
@@ -328,7 +117,7 @@ POST /=/model/laser/!
 
 
 
-=== TEST 33 : Remove all the columns with other invalid symbol
+=== TEST 12 : Remove all the columns with other invalid symbol
 --- request
 DELETE /=/model/laser/!
 --- response
@@ -336,7 +125,7 @@ DELETE /=/model/laser/!
 
 
 
-=== TEST 34 : Remove the reserved column "id"
+=== TEST 13 : Remove the reserved column "id"
 --- request
 DELETE /=/model/laser/id
 --- response
@@ -344,7 +133,7 @@ DELETE /=/model/laser/id
 
 
 
-=== TEST 35 : Remove all the columns
+=== TEST 14 : Remove all the columns
 --- request
 DELETE /=/model/laser/~
 --- response
@@ -352,7 +141,7 @@ DELETE /=/model/laser/~
 
 
 
-=== TEST 36: Get columns
+=== TEST 15: Get columns
 --- request
 GET /=/model/laser/~
 --- response
@@ -360,7 +149,7 @@ GET /=/model/laser/~
 
 
 
-=== TEST 37: Re-add an old column
+=== TEST 16: Re-add an old column
 --- request
 POST /=/model/laser/~
 {"name":"M","type":"real","label":"M"}
@@ -369,7 +158,7 @@ POST /=/model/laser/~
 
 
 
-=== TEST 38: Insert a record
+=== TEST 17: Insert a record
 --- request
 GET /=/post/model/laser/~/~?_data={"M":3.14}
 --- response
@@ -377,7 +166,7 @@ GET /=/post/model/laser/~/~?_data={"M":3.14}
 
 
 
-=== TEST 39: query via id
+=== TEST 18: query via id
 --- request
 GET /=/model/laser/id/2
 --- response
@@ -385,7 +174,7 @@ GET /=/model/laser/id/2
 
 
 
-=== TEST 40: Put a model column with empty hash
+=== TEST 19: Put a model column with empty hash
 --- request
 PUT /=/model/laser/M
 {}
@@ -394,7 +183,7 @@ PUT /=/model/laser/M
 
 
 
-=== TEST 41: create a column without type
+=== TEST 20: create a column without type
 --- request
 POST /=/model/laser/title
 {"label":"Title"}
@@ -403,7 +192,7 @@ POST /=/model/laser/title
 
 
 
-=== TEST 42: logout
+=== TEST 21: logout
 --- request
 GET /=/logout
 --- response
