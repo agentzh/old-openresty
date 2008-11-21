@@ -14,15 +14,15 @@ Old TODOs:
 * [bug] PUT /=/role/Foo/id/32 does not work as expected.
 * order in ACL rule listing
 
-1¡¢
-action µÄ²ÎÊıÖµÎª 0 Ê±»áÓĞ´íÎó¡£¡£¡£
-agent.zhang: 1. action ²ÎÊıÓÃÓÚ URL Æ´½Ó
-agent.zhang: 2. action ²ÎÊıÓÃÓÚ SQL Óï¾ä±ÈÈç where col > $value ÖĞµÄ value ²ÎÊı
+1ã€
+action çš„å‚æ•°å€¼ä¸º 0 æ—¶ä¼šæœ‰é”™è¯¯ã€‚ã€‚ã€‚
+agent.zhang: 1. action å‚æ•°ç”¨äº URL æ‹¼æ¥
+agent.zhang: 2. action å‚æ•°ç”¨äº SQL è¯­å¥æ¯”å¦‚ where col > $value ä¸­çš„ value å‚æ•°
 
-2¡¢
-agent.zhang: 1. µİ¹éµ÷ÓÃ action £¨·ÖÖ±½Óµİ¹éºÍ¼ä½Óµİ¹éÁ½ÖÖ£©
+2ã€
+agent.zhang: 1. é€’å½’è°ƒç”¨ action ï¼ˆåˆ†ç›´æ¥é€’å½’å’Œé—´æ¥é€’å½’ä¸¤ç§ï¼‰
 
-3¡¢
-agent.zhang: ´´½¨Ò»¸ö´ø²ÎÊıµÄ action
-agent.zhang: È»ºóÔÚµ÷ÓÃËüÊ±£¬²ÎÊıÌá¹©Ò»¸ö´øºº×ÖµÄÖµ
-agent.zhang: Ä¿Ç°µÄ£¨´íÎóµÄ£©ÊµÏÖÊÇ»áÒıÈëÂÒÂë
+3ã€
+agent.zhang: åˆ›å»ºä¸€ä¸ªå¸¦å‚æ•°çš„ action
+agent.zhang: ç„¶ååœ¨è°ƒç”¨å®ƒæ—¶ï¼Œå‚æ•°æä¾›ä¸€ä¸ªå¸¦æ±‰å­—çš„å€¼
+agent.zhang: ç›®å‰çš„ï¼ˆé”™è¯¯çš„ï¼‰å®ç°æ˜¯ä¼šå¼•å…¥ä¹±ç 
