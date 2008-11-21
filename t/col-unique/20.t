@@ -1,4 +1,4 @@
-﻿# vi:filetype=
+# vi:filetype=
 
 #某一列的 unique 约束不会影响到其他没有 unique 约束的列
 #先创建1列没有unique=false属性，有值，再创建1列有unique = false属性的
@@ -40,7 +40,7 @@ GET /=/model/
 --- request
 GET /=/model/testunique/jx2001
 --- response
-{"name":"jx2001","default":null,"label":"jx2001","type":"text","unique":false}
+{"name":"jx2001","default":null,"label":"jx2001","type":"text","unique":false,"not_null":false}
 
 
 
@@ -108,7 +108,7 @@ POST /=/model/testunique/jx2002
 --- request
 GET /=/model/testunique/jx2002
 --- response
-{"name":"jx2002","default":null,"label":"jx2002","type":"text","unique":false}
+{"name":"jx2002","default":null,"label":"jx2002","type":"text","unique":false,"not_null":false}
 
 
 
