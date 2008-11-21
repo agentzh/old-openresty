@@ -12,10 +12,13 @@ use Encode qw(from_to encode decode);
 use WWW::OpenResty::Simple;
 use Params::Util qw(_ARRAY);
 use Digest::MD5 qw(md5_hex);
+use JSON::XS ();
+my $json_xs = JSON::XS->new->allow_nonref;
 
 use LWP::UserAgent;
 my $ua = LWP::UserAgent->new;
-$ua->timeout(2);
+$ua->agent('Mozilla/5.0');
+$ua->timeout(3);
 $ua->env_proxy;
 
 $SIG{CHLD} = "IGNORE";
@@ -24,6 +27,8 @@ our @Brain = (
     [0 => qr{https?://[^\(\)（）？。]+} => \&process_url],
     [0 => qr{(?:哈你个头|ｆｕｃｋ|f\s*u\s*c\s*k|[^A-Za-z]TMD[^A-Za-z]|\bTMD\b|\bshit\b|\bf[us\*]ck(?:ing)?\b|\bdammit\b|\bdamn(?:\s+it)?\b|\bbastard\b|perl.*?邪教|\bMD\b)}i => \&punish_him],
     [1 => qr{^\s*baidu\s+}i => \&baidu_stuff],
+    [0 => qr{^\s*tcn\s+}i => \&tcn],
+    [0 => qr{^\s*tdcn\s+}i => \&tdcn],
     [0 => qr{^\s*emp(?:loyee)?\s+} => \&find_employee],
     [1 => qr{.} => \&reply_crap],
     [0 => qr{^\s*seen\s+([^?？]+)\s*[?？]?\s*$} => \&seen_person],
@@ -102,8 +107,8 @@ sub said {
         if ($@) { $self->log_error($@); }
     };
     my $enc = guess_charset($text, $charset);
-    log_error("msg in charset: $enc\n");
-    log_error("Charset:  $charset\n");
+    # log_error("msg in charset: $enc\n");
+    # log_error("Charset:  $charset\n");
     #from_to($text, $enc, 'utf8');
     #warn length($orig_text);
     #if (length($orig_text) > 4 and $enc ne 'ascii' and $enc ne $charset and $text !~ /^\[\w+\]: /) {
@@ -430,7 +435,7 @@ sub html2text {
 sub guess_charset {
     my ($data, $charset) = @_;
     my @enc = qw( utf8 gbk Big5 Latin1 );
-    warn "guess charset: $charset";
+    # warn "guess charset: $charset";
     for my $enc ($charset, @enc) {
         my $decoder = guess_encoding($data, $enc);
         if (ref $decoder) {
@@ -469,6 +474,82 @@ sub res2table {
         push @lines, join ' | ', @items;
     }
     return join "\n", @lines;
+}
+
+sub tcn {
+    my ($self, $pattern, $text, $cmd, $say, $sender) = @_;
+    $text =~ s/$pattern//;
+    $text =~ s/\n+//sg;
+    if ($text) {
+        my $url;
+        my $dec_text = $text;
+        $text = encode('utf8', $text);
+
+        if (defined $dec_text && $dec_text =~ /\p{Han}+/) {
+            $url = "http://translate.google.cn/translate_a/t?client=t&text=$text&sl=zh-CN&tl=en";
+        }
+        else {
+            $url = "http://translate.google.cn/translate_a/t?client=t&text=$text&sl=en&tl=zh-CN";
+        }
+        my $res = $ua->get($url);
+        my $msg;
+        if ($res->is_success) {
+            $msg = $res->content;
+            $msg = $json_xs->decode($msg);
+        }
+        else {
+            $msg = 'sorry! somsomething is wrong.....';
+        }
+        $msg = decode('utf8', $msg);
+        $say->("$sender: $msg");
+    }
+}
+
+sub tdcn {
+    my ($self, $pattern, $text, $cmd, $say, $sender) = @_;
+    $text =~ s/$pattern//;
+    $text =~ s/\n+//sg;
+    if ($text) {
+        my $url;
+        # warn "1: $text\n";
+        my $dec_text = $text;
+        $text = encode('utf8', $text);
+        if ($dec_text =~ /\p{Han}+/) {
+            $url = "http://translate.google.cn/translate_dict/feeds?client=tr&restrict=pr&q=$text&langpair=zh-CN|en";
+        }
+        else {
+            $url = "http://translate.google.cn/translate_dict/feeds?client=tr&restrict=pr&q=$text&langpair=en|zh-CN";
+        }
+        my $res = $ua->get($url);
+        my $msg;
+        if ($res->is_success) {
+            $msg = tdcn_html_extract($res->content);
+        }
+        else {
+            $msg = 'sorry!, something is wrong....';
+        }
+        if (defined $msg) {
+            my $cnt = 0;
+            for (split "\n", $msg) {
+                next if $_ eq $text;
+                last if $cnt++ == 6;
+                $_ = decode('utf8', $_);
+                $say->("$sender: $_");
+            }
+        } else {
+            $say->("$sender: sorry, 0 hits.....");
+        }
+    }
+}
+
+sub tdcn_html_extract {
+    my $html = shift;
+    my $res;
+    while ($html =~ m{<text>\s*(.+)\s*</text>}mg){
+        $res .= "$1\n";
+    }
+    # warn "res: $res";
+    return $res;
 }
 
 1;
