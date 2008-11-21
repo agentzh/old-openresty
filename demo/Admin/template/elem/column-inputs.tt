@@ -2,4 +2,6 @@
 <label>label</label><input size="20" class="column-input" type="input" resty_key="label"></input>
 <label>type</label><input size="16" class="column-input" type="input" resty_key="type"></input>
 <label>default (in JSON)</label><input size="16" class="column-input" type="input" resty_key="default"></input>
+<label>unique</label><select id="unique" size="1" class="column-input" resty_key="unique"><option value=false selected>false</option><option value=true>true</option></select>
+<labe>not null</label><select id="not_null" size="1" class="column-input" resty_key="not_null"><option value=false selected>false</option><option value=true>true</option></select>
 

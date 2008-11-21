@@ -39,16 +39,23 @@ $.fn.postprocess = function (className, options) {
                 var data = $(this).attr('resty_value');
                 var type = $(this).attr('resty_type');
                 //debug(type);
-                if ((data && data.length > 30) || /\n/.test(data)) {
+                if (!type) {
+                    type = 'text';
+                } 
+                
+                if (type != 'select' && ((data && data.length > 30) || /\n/.test(data))) {
                     type = 'textarea';
                 }
-                if (!type) type = 'text';
                 if (type == 'textarea') {
                     //debug("found textarea!");
                     settings.width = 600;
                     settings.height = 200;
-                } else {
+                } else if (type == 'text') {
                     settings.width = data ? (data.length + 5 + 'em') : '5em';
+                } else if (type == 'select') {
+                    settings.width = '10em';
+                } else {
+            
                 }
                 settings.data = data;
                 settings.type = type;
@@ -73,6 +80,9 @@ function plantEditableHook (node, settings) {
                 return html2text(value);
             }
             value = res;
+        }
+        if (key == 'unique' || key == 'not_null') {
+            value = (value == 'true' ? true: false);
         }
         data[key] = value;
         //debug("PUT /=/" + path + " " + JSON.stringify(data));
@@ -581,7 +591,7 @@ function getColumnSpec (container) {
     var col = {};
     var found = false;
     //debug(div);
-    $("input.column-input", container).each( function () {
+    $(".column-input", container).each( function () {
         var key = $(this).attr('resty_key');
         //debug("Key: " + key);
         var val = $(this).val();
@@ -592,6 +602,13 @@ function getColumnSpec (container) {
                 throw("Invalid JSON for the column's default value: " + val);
             }
             val = res;
+        }
+        if (key == "unique" || key == "not_null") {
+            if (val == 'true'){
+                val = true;
+            } else {
+                val = false;
+            }
         }
         if (val != '') {
             col[key] = val;

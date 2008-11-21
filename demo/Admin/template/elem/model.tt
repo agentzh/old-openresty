@@ -13,7 +13,7 @@
 %]
 
 [% BLOCK editable_model_value -%]
-<span class="editable" [% is_json ? 'resty_json="1"' : "" %] resty_path="model/[% model.name %][% column ? "/" _ column : "" | html %]" resty_key="[% key | html %]" resty_value="[% value | html %]">[% value | html %]</span>
+<span class="editable" [% is_json ? 'resty_json="1"' : "" %] resty_path="model/[% model.name %][% column ? "/" _ column : "" | html %]" resty_key="[% key | html %]" resty_value="[% resty_value | html %]" resty_type="[% resty_type |html %]">[% value | html %]</span>
 [% END -%]
 
 <!-- block begin -->
@@ -34,6 +34,8 @@
               [%- FOREACH key IN column.keys %]
                 [%- value = column.$key; %]
                 [%- is_json = key == 'default' ? 1 : 0 %]
+                [%- resty_type = (key == 'unique' || key == 'not_null') ? 'select':'text' %]
+                [%- resty_value = (key == 'unique' || key =='not_null') ? '{true:"true",false:"false","selected":true}': value %]
                 <b class="key">[%- key | html %]</b>: [% INCLUDE editable_model_value column=column.name %] &nbsp;&nbsp;
               [%- END %]
                 <b><a class="show-detail" href="javascript:void(0);" onclick="deleteModelColumn('[% model.name %]', '[% column.name %]')">Delete</a></b>
