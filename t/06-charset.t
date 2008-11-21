@@ -39,24 +39,29 @@ DELETE /=/model?_charset=GBK
 --- charset: GBK
 --- request
 POST /=/model/Foo?_charset=GBK
-{ "description": "你好么？", "columns": [{"name":"bar","type":"text","label":"嘿嘿"}] }
+{ 
+    "description": "你好么？", 
+    "columns": [
+        {"name":"bar","type":"text","label":"嘿嘿"}
+    ] 
+}
 --- response
 {"success":1}
 
 
 
 === TEST 4: Check the data in GB2312
---- charset: GB2312
---- request
+--- charset: GB2312 
+--- request 
 GET /=/model/Foo?_charset=GB2312
---- response
-{
-  "columns":[
-    {"name":"id","label":"ID","type":"serial"},
-    {"name":"bar","default":null,"label":"嘿嘿","type":"text"}
-  ],
-  "name":"Foo",
-  "description":"你好么？"
+--- response 
+{ 
+    "columns":[ 
+        {"name":"id","label":"ID","type":"serial"}, 
+        {"name":"bar","default":null,"label":"嘿嘿","type":"text","unique":false,"not_null":false} 
+    ],
+    "name":"Foo",
+    "description":"你好么？"
 }
 
 
@@ -68,7 +73,7 @@ GET /=/model/Foo?_charset=utf8
 --- response
 {"columns":[
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"bar","default":null,"label":"嘿嘿","type":"text"}
+    {"name":"bar","default":null,"label":"嘿嘿","type":"text","unique":false,"not_null":false}
     ],
     "name":"Foo","description":"你好么？"}
 
@@ -79,11 +84,14 @@ GET /=/model/Foo?_charset=utf8
 --- request
 GET /=/model/Foo?_charset=big5
 --- response
-{"columns":[
-    {"name":"id","label":"ID","type":"serial"},
-    {"name":"bar","default":null,"label":"嘿嘿","type":"text"}
+{
+    "columns":[
+        {"name":"id","label":"ID","type":"serial"},
+        {"name":"bar","default":null,"label":"嘿嘿","type":"text","unique":false,"not_null":false}
     ],
-    "name":"Foo","description":"你好么？"}
+    "name":"Foo",
+    "description":"你好么？"
+}
 
 
 
@@ -92,7 +100,7 @@ GET /=/model/Foo?_charset=big5
 --- request
 GET /=/model/Foo/bar?_charset=latin-1
 --- response
-{"name":"bar","default":null,"label":"??","type":"text"}
+{"name":"bar","default":null,"label":"??","type":"text","unique":false,"not_null":false}
 
 
 
@@ -154,7 +162,7 @@ GET /=/model/Utf8?_charset=UTF-8
 {
   "columns":[
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"bar","default":null,"label":"我们的open api","type":"text"}
+    {"name":"bar","default":null,"label":"我们的open api","type":"text","unique":false,"not_null":false}
   ],
   "name":"Utf8",
   "description":"文字编码测试utf8"
@@ -181,7 +189,7 @@ GET /=/model/Gbk?_charset=UTF-8
 {
   "columns":[
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"bar","default":null,"label":"我们的open api","type":"text"}
+    {"name":"bar","default":null,"label":"我们的open api","type":"text","unique":false,"not_null":false}
   ],
   "name":"Gbk",
   "description":"文字编码测试GBK 张皛珏 万珣新"
@@ -208,7 +216,7 @@ GET /=/model/Gb2312?_charset=UTF-8
 {
   "columns":[
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"bar","default":null,"label":"我们的open api","type":"text"}
+    {"name":"bar","default":null,"label":"我们的open api","type":"text","unique":false,"not_null":false}
   ],
   "name":"Gb2312",
   "description":"文字编码测试GB2312"
@@ -235,7 +243,7 @@ GET /=/model/Big5?_charset=UTF-8
 {
   "columns":[
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"bar","default":null,"label":"我們的open api","type":"text"}
+    {"name":"bar","default":null,"label":"我們的open api","type":"text","unique":false,"not_null":false}
   ],
   "name":"Big5",
   "description":"文字編碼測試big5"

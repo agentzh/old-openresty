@@ -97,8 +97,8 @@ GET /=/model/Bookmark.js
   "columns":
    [
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"title","default":null,"label":"标题","type":"text"},
-    {"name":"url","default":null,"label":"网址","type":"varchar(20)"}
+    {"name":"title","default":null,"label":"标题","type":"text","unique":false,"not_null":false},
+    {"name":"url","default":null,"label":"网址","type":"varchar(20)","unique":false,"not_null":false}
    ],
   "name":"Bookmark",
   "description":"我的书签"
@@ -332,8 +332,8 @@ GET /=/model/MyFavorites.js
   "columns":
    [
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"title","default":null,"label":"标题","type":"text"},
-    {"name":"url","default":null,"label":"网址","type":"varchar(20)"}
+    {"name":"title","default":null,"label":"标题","type":"text","unique":false,"not_null":false},
+    {"name":"url","default":null,"label":"网址","type":"varchar(20)","unique":false,"not_null":false}
    ],
   "name":"MyFavorites",
   "description":"我的最爱"
@@ -362,7 +362,7 @@ GET /=/model.js
 --- request
 GET /=/model/MyFavorites/count
 --- response
-{"name":"count","default":null,"label":"标题","type":"text"}
+{"name":"count","default":null,"label":"标题","type":"text","unique":false,"not_null":false}
 
 
 
