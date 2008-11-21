@@ -285,7 +285,29 @@ begin
 end
 $$ language plpgsql;
 _EOC_
-
+   [ '0.008' => <<'_EOC_' ],
+create or replace function _upgrade() returns integer as $$
+declare
+    model_sql varchar;
+    col_sql   varchar;
+    model_rec record;
+    col_rec   record;
+begin
+    model_sql := 'select name, description from _models';
+    -- loop for per model
+    for model_rec in execute model_sql loop
+       execute 'comment on table ' || quote_ident(model_rec.name) || ' is ' || quote_literal(model.description) || ';';
+       execute 'comment on column ' || quote_ident(model_rec.name) || '.id is ' || quote_literal('ID') || ';';
+       col_sql := 'select name, label from _columns where model = ' || quote_literal(model_rec.name) || ';';
+       -- loop for per column except id
+       for col_rec in execute col_sql loop
+          execute 'comment on column ' || quote_ident(model_rec.name) || '.' || quote_ident(col_rec.name) || ' is ' || quote_literal(col_rec.label) || ';';
+       end loop;
+    end loop;
+    return 0;
+end;
+$$ language plpgsql;
+_EOC_
 );
 
 sub upgrade_all {
