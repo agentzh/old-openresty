@@ -27,7 +27,7 @@ if ($url_prefix) {
 
 sub init {
     my ($class, $opts) = @_;
-    
+
     my $context = $opts->{context};
     if (defined $context) {
         $Context = $context;

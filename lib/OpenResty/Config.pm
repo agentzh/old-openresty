@@ -24,27 +24,33 @@ sub init {
     if (defined $opts->{root_path}) {
         $root_path = $opts->{root_path};
     } else {
-        $root_path = "$FindBin::Bin/..";
+        $root_path = File::Spec->catfile($FindBin::Bin, "..");
     }
-    
-    my $path = "$root_path/etc/openresty.conf";
-    unless (-f $path) {
-        $path = "/etc/openresty/openresty.conf";
-    }
-    if (!-f $path) {
-        die "Config file openresty.conf not fouund.\n";
-    }
+
+    my $os_root = File::Spec->rootdir();
+    my $os_cur_dir = File::Spec->curdir();
+
+    my $path = File::Spec->catfile($root_path, 'etc', 'openresty.conf');
+    $path = File::Spec->catfile($os_root, "etc", "openresty", "openresty.conf") if (!-f $path);
+    die "Config file $path not found.\n" if (!-f $path);
+
     my $config = new Config::Simple($path) or
         die "Cannot open config file $path\n";
     my $default_vars = $config->vars;
-    
-    my $conf_file = $opts->{conf_file} || 'site_openresty.conf';
-    $path = $root_path . '/etc/' . $conf_file;
-    unless (-f $path) {
-        $path = "/etc/openresty/site_openresty.conf";
-    }
-    if (!-f $path) {
-        die "Config file $path not fouund.\n";
+
+    my $conf_file = $opts->{conf_file};
+    if (defined $conf_file) {
+        my $is_absolute = File::Spec->file_name_is_absolute($conf_file);
+        if ($is_absolute) {
+            $path = $conf_file;
+        } else {
+            $path = File::Spec->catfile($os_cur_dir, $conf_file);
+        }
+        die "Config file $path not found or not a file.\n" if (!-f $path);
+    } else {
+        $path = File::Spec->catfile($os_cur_dir, 'etc', 'site_openresty.conf');
+        $path = File::Spec->catfile($os_root, "etc", "openresty", "site_openresty.conf") if (!-f $path);
+        die "Config file $path not found.\n" if (!-f $path);
     }
     # warn $path;
     $config = new Config::Simple($path) or
@@ -52,6 +58,7 @@ sub init {
     my $site_vars = $config->vars;
 
     my $vars = Hash::Merge::merge($site_vars, $default_vars);
+
     my $cmd = $ENV{OPENRESTY_COMMAND};
     my $do_echo;
     if ($cmd and $cmd eq 'start') { $do_echo = 1; }
@@ -132,9 +139,13 @@ hash, say, Hash A.
 
 =item 3.
 
-Look for the config file F<$FindBin::Bin/../etc/site_openresty.conf>. If
-it does not exist or is not a file, it tries to look for
-F</etc/openresty/site_openresty.conf>.
+If you set the option -f, the openresty will load the config file you set,
+
+or the openresty will look for the config file
+
+F<$FindBin::Bin/../etc/site_openresty.conf>. If it does not exist or
+
+is not a file, it tries to look for F</etc/openresty/site_openresty.conf>.
 
 =item 4.
 
