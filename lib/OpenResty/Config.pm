@@ -48,7 +48,7 @@ sub init {
         }
         die "Config file $path not found or not a file.\n" if (!-f $path);
     } else {
-        $path = File::Spec->catfile($os_cur_dir, 'etc', 'site_openresty.conf');
+        $path = File::Spec->catfile($root_path, 'etc', 'site_openresty.conf');
         $path = File::Spec->catfile($os_root, "etc", "openresty", "site_openresty.conf") if (!-f $path);
         die "Config file $path not found.\n" if (!-f $path);
     }
