@@ -1,5 +1,83 @@
 Change Log for OpenResty
 
+0.5.1 Nov 21 2008
+* added support for builtin vars in the main url, as in
+    GET /=/feed/Post/_user/agentzh.Public
+  (xunxin)
+* added the CompiledAction handler (currently for GET http commands only). (xunxin)
+* now _callback and _var work with non-JSON data format as well.
+* Model API
+** use quasiquotes for function delete_records. (xunxin)
+** added support for the Pg hstore column type.
+** now we finally support _op = contains|le|ge|... correctly.
+** now we support model columns of array types.
+** started to stub out the prophet handler and model code (jesse)
+* Version API
+** fixed the revision inspection bug.
+* Action API
+** fixed the bug involved in params with unicode characters.
+** fixed the bug involved in action call with param values of 0.
+** added $_ROLE and $_ACCOUNT support.
+** implemented HTTP forwarding to any sites in an action.
+** added support for the frontend.allow_forwarding config option.
+* View API
+** added $_ROLE and $_ACCOUNT support.
+* OpenResty.pm - enhances the DB re-connection stuff.
+* Dispatcher - now we try to re-init at every request even if we have InitFatal.
+* Captcha handler - now we use _lang rather than lang for languague indication.
+
+* perl minisql compiler
+** added support for the Pg array indexing syntax.
+** now we allow proc() w/o arguments.
+
+* haskell restyscript
+** added support for subquery in from clause.
+** added support for array indexing.
+** added support for operators is and is not.
+** added support for builtin variables.
+
+* demo/Admin
+** implemented the HTTP Console and Action Console panels.
+** implemented incremental bulk insertion for rows.
+** now the "Delete all rows" link can remove rows selectively
+** enlarged the input boxes in the model creation form.
+** added the "Go to end" link to the model row panel.
+** sort the row fields by field name in both row display and row creation views.
+** removed yahoo logo from the UI.
+** added operator option list and other functionalities to the model row search panel.
+** added support for exporting as CSV format and stream JSON format.
+** added "prohibiting" to the columns for role spec.
+** removed the "Click to edit" placeholder since it has been problematic.
+** marked column labels to create model row panel.
+* updated demo/BlogAdmin.
+* demo/RestyCheck - now checks captcha images as well.
+* demo/Blog
+** now we sort comment list for a full post.
+** fixed the ACL rule leaks in init.pl.
+* demo/Springbot - now ignores fancybot and any other bots from now on.
+
+* openresty.js
+** worked around the cross-site POST issue in Opera.
+** added support for urls *with* "?" in it
+
+* added bin/install-deps.sh to install or upgrade all the CPAN dependencies.
+* bin/reindex - stripped trailing \r.
+* bin/openresty
+** add the -f option for explicitly specifying a config file.
+** bin/openresty - now we cahce the stats log.
+* added the test-memcached.pl script.
+* import-model.pl
+** added --ignore-dup-error option in the usage message.
+** fixed url_encode.
+** added support for the --update-col option.
+
+* added notes about irc.openresty.net to POD
+
+* modify some test files for the proper config initialization. (xunxin)
+* 00-prereq to bail out if we fail basic test, most likely due to incorrect db config. (clkao)
+* clear cache for local tests. (clkao)
+* auto create test accounts for local tests. (clkao)
+
 0.5.0 Sep 27 2008
 * implemented the Action handler.
 * demo/Admin -
