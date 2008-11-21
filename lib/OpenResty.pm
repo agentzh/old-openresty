@@ -107,6 +107,7 @@ sub new {
         _call_level => $call_level,
         _dumper => $Dumper,
         _importer => $Importer,
+        _http_status => 'HTTP/1.1 200 OK'
     }, $class;
 }
 
@@ -283,9 +284,9 @@ sub init {
 
         #warn "Content: ", $Dumper->($content);
         #warn "Data: ", $Dumper->($req_data);
-    } 
-    
-    # 
+    }
+
+    #
     $$rurl = $url;
     $self->{'_url'} = $url;
     $self->{'_http_method'} = $http_meth;
@@ -334,6 +335,10 @@ sub warning {
     $_[0]->{_warning} = $_[1];
 }
 
+sub http_status {
+    $_[0]->{_http_status} = $_[1];
+}
+
 sub response {
     my $self = shift;
     if ($self->{_no_response}) { return; }
@@ -352,8 +357,9 @@ sub response {
     my $use_gzip = $OpenResty::Config{'frontend.use_gzip'} &&
         index($ENV{HTTP_ACCEPT_ENCODING} || '', 'gzip') >= 0;
     #warn "use gzip: $use_gzip\n";
-
-    print "HTTP/1.1 200 OK\n";
+    my $http_status = $self->{_http_status};
+    print "$http_status\n";
+    # warn "$http_status";
     my $type = $self->{_type} || 'text/plain';
     #warn $s;
     my $str = '';

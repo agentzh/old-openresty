@@ -335,7 +335,6 @@ sub POST_role {
     my $data = _HASH($openresty->{_req_data}) or
         die "The role schema must be a HASH.\n";
     my $role = $bits->[1];
-
     my $name;
     if ($role eq '~') {
         $role = $data->{name};
