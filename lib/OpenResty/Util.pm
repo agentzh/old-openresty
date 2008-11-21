@@ -92,6 +92,9 @@ sub new_mocked_cgi {
             my $self = shift;
             return $Cgi->header(@_);
         },
+        remote_host => sub {
+            return '127.0.0.1';
+        },
     );
 }
 

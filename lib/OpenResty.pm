@@ -127,41 +127,30 @@ sub init {
     my ($self, $rurl) = @_;
     my $class = ref $self;
     my $cgi = $self->{_cgi};
+    my $client_ip = $cgi->remote_host();
 
-    #warn "DB state: $db_state\n";
     if (!$Backend || !$Backend->ping) {
         warn "Re-connecting the database...\n";
         eval { $Backend->disconnect };
-        #my $backend = $OpenResty::Config{'backend.type'};
-        #OpenResty->connect($backend);
         OpenResty::Dispatcher->init({});
-        #die "Backend connection lost: ", $db_state, "\n";
     }
 
     # cache the results of CGI::Simple::url_param
-    #$self->{_url_params} = $self->{_url{};
     my (%url_params, %builtin_params);
+
     my $cgi2 = bless {}, 'CGI::Simple';
-    #die $ENV{'QUERY_STRING'};
     $cgi2->_parse_params( $ENV{'QUERY_STRING'} );
-    #return $self->{'.url_param'}->param( $param );
-    #use Data::Dumper;
-    #warn Dumper($cgi2);
     for my $param ($cgi2->param) {
-        #die $param;
         if ($param =~ /^[A-Za-z]\w*$/) {
             $url_params{$param} = $cgi2->param($param);
         } elsif ($param =~ /^_\w+/) {
             $builtin_params{$param} = $cgi2->param($param);
         }
     }
+    $builtin_params{_client_ip} = $client_ip;
+
     $self->{_url_params} = \%url_params;
     $self->{_builtin_params} = \%builtin_params;
-
-    #### params: $self->{_url_params}
-    #### use_cookie: $self->builtin_param('_use_cookie')
-    #### session: $self->builtin_param('_session')
-
     $self->{_use_cookie}  = $self->builtin_param('_use_cookie') || 0;
     $self->{_session}  = $self->builtin_param('_session');
 
@@ -180,9 +169,6 @@ sub init {
         for my $enc (@enc) {
             my $decoder = guess_encoding($data, $enc);
             if (ref $decoder) {
-    #            if ($enc ne 'ascii') {
-    #                print "line $.: $enc message found: ", $decoder->decode($s), "\n";
-    #            }
                 $charset = $decoder->name;
                 $charset = $EncodingMap{$charset} || $charset;
                 last;
@@ -224,9 +210,6 @@ sub init {
     $self->{_limit} = $limit;
 
     my $http_meth = $ENV{REQUEST_METHOD};
-    #$self->{'_method'} = $http_meth;
-
-    #die "#XXXX !!!! $http_meth", Dumper($self);
 
     my $url = $$rurl;
     if ($charset ne 'UTF-8') {
