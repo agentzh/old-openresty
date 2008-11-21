@@ -42,7 +42,7 @@ POST /=/model/laser
 --- request
 GET /=/model/laser/A
 --- response
-{"name":"A","default":null,"label":"A","type":"text"}
+{"name":"A","default":null,"label":"A","type":"text","unique":false,"not_null":false}
 
 
 
@@ -60,7 +60,7 @@ GET /=/model/laser/~
 --- response
 [
     {"name":"id","label":"ID","type":"serial"},
-    {"name":"A","default":null,"label":"A","type":"text"}
+    {"name":"A","default":null,"label":"A","type":"text","unique":false,"not_null":false}
 ]
 
 
@@ -162,15 +162,15 @@ POST /=/model/laser/~
 --- request
 GET /=/post/model/laser/~/~?_data={"M":3.14}
 --- response
-{"success":1,"rows_affected":1,"last_row":"/=/model/laser/id/2"}
+{"success":1,"rows_affected":1,"last_row":"/=/model/laser/id/1"}
 
 
 
 === TEST 18: query via id
 --- request
-GET /=/model/laser/id/2
+GET /=/model/laser/id/1
 --- response
-[{"M":"3.14","id":"2"}]
+[{"M":"3.14","id":"1"}]
 
 
 

@@ -350,6 +350,10 @@ sub DELETE_model_column {
             |];
          }
     } else {
+        my $columns = $self->get_model_col_names($openresty,$model,$col);
+        if ($#$columns == -1) {
+            die "Column '$col' not found.";
+        }
         $sql = [:sql|alter table $sym:model drop column $sym:col restrict|];
     }
     my $res = $openresty->do($sql);
@@ -470,7 +474,6 @@ sub new_model {
     for my $col (@$columns) {
         my $name = $col->{name};
         my $label = $col->{label};
-        $label_sql .= [:sql|comment on column $sym:model.$sym:name is $label;|];
         my $type = $col->{type};
         if (length($name) >= 32) {
             die "Column name too long: $name\n";
@@ -482,6 +485,7 @@ sub new_model {
             next;
         }
 
+        $label_sql .= [:sql|comment on column $sym:model.$sym:name is $label;|];
         my $default = $col->{default};
         $type = check_type($type);
         $sql .= [:sql| , $sym:name $kw:type |];
@@ -673,7 +677,7 @@ sub get_model_cols {
             }    
             
             if (my $json_default = $row->{default}) {
-                $row->{default} = $OpenResty::JsonXs->decode($json_default);
+                #$row->{default} = $OpenResty::JsonXs->decode($json_default);
             }
         }
 
@@ -733,11 +737,8 @@ sub has_model_col {
     _IDENT($col) or die "Bad model column name: $col\n";
 
     return 1 if $col eq 'id';
-    my $res;    
-    eval {
-        $res = $self->get_model_col_names($openresty, $model, $col);
-    };
-    return $res;
+    my $res = $self->get_model_col_names($openresty, $model, $col);  
+    return $#$res != -1;
 }
 
 sub drop_table {
