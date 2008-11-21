@@ -530,15 +530,21 @@ sub format_default {
 sub check_default {
     my $default = shift;
     if (defined $default) {
-        if ($default =~ /^\d+$/ ) {
-            return $default;
+        if ($default =~ /^\s*null\s*/i) {
+            return 'null';
+        } elsif ($default =~  /^\s*('(?:''|\\.|.)*')/){
+            return $1;
+        } elsif ($default =~ /^\s*true\s*/i) {
+            return 'true';
+        } elsif ($default =~ /^\s*false\s*/i) {
+            return 'false';
+        } elsif ($default =~ /^\s*(\d+)\s*$/) {
+            return $1;
         } elsif ($default =~ /^\s*now\s*\(\s*\)(?:\s+at\s+time\s+zone\s+'[^']+')?\s*$/) {
             # warn "test now: $default";
             return $default;
-        } elsif ($default =~  /^\s*('(?:''|\\.|.)*')/){
-            return $1;
         } else {
-            die "Bad default expression: $default, only supported now() expression and string\n";
+            die "Bad default expression: $default, only supported null,true,false,now() expression and string\n";
         }
     } else {
         return 'null';
