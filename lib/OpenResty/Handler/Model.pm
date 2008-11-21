@@ -622,15 +622,15 @@ sub global_model_check {
 sub model_count {
     my ($self, $openresty) = @_;
     my $user = $openresty->current_user;
-    my $sql = [:sql| select count(*) from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname = $user and n.nspname !~ '^pg_toast' and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_'|];
+    my $sql = [:sql| select count(*) from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname = $user and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_'|];
     return $openresty->select($sql)->[0][0];
 }
 
 sub column_count {
     my ($self, $openresty, $model) = @_;
+    my $user = $openresty->current_user;
 
-    my $sql = [:sql| select count(*) from pg_catalog.pg_attribute a where a.attnum > 0 and not a.attisdropped and a.attname <> 'id' and a.attrelid = (select oid from pg_catalog.pg_class c where c.relname= $model) |];
-
+    my $sql = [:sql| select count(*) from pg_catalog.pg_attribute a where a.attnum > 0 and not a.attisdropped and a.attname <> 'id' and a.attrelid = (select c.oid from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relname =$model and n.nspname = $user)|];
     return $openresty->select($sql)->[0][0];
 }
 
@@ -643,9 +643,9 @@ sub row_count {
 
 sub get_model_list {
     my ($self, $openresty, $model) = @_;
-
     my $user = $openresty->current_user;
-    my $sql = [:sql| select c.relname as name, obj_description(c.oid, 'pg_class') as description from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname = $user and n.nspname !~ '^pg_toast' and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_' |];
+
+    my $sql = [:sql| select c.relname as name, obj_description(c.oid, 'pg_class') as description from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname = $user and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_' |];
     if (defined $model) {
         $sql .= [:sql| and c.relname = $model |];
     }
@@ -655,6 +655,7 @@ sub get_model_list {
 
 sub get_model_cols {
     my ($self, $openresty, $model, $col) = @_;
+    my $user = $openresty->current_user;
     if (!$openresty->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
@@ -672,7 +673,7 @@ sub get_model_cols {
         $sql .= [:sql|
             and a.attname = $col |];
     }
-    $sql .= [:sql| and a.attrelid = (select oid from pg_catalog.pg_class c where c.relname= $model)
+    $sql .= [:sql| and a.attrelid = (select c.oid from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relname =$model and n.nspname = $user)
         order by a.attnum |];
     my $list = $openresty->select($sql, { use_hash => 1 });
     if (!$list or !ref $list) {
@@ -706,20 +707,20 @@ sub get_model_cols {
 
 sub get_model_col_names {
     my ($self, $openresty, $model, $col) = @_;
-
+    my $user = $openresty->current_user;
     if (!$openresty->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
     my $sql = [:sql|
         select a.attname as name
-        from pg_catalog.pg_attribute a 
+        from pg_catalog.pg_attribute a
         where a.attnum > 0 and not a.attisdropped and a.attname <> 'id' |];
     if (defined $col) {
         $sql .= [:sql| and  a.attname = $col |];
     }
 
-    $sql .= [:sql| 
-        and  a.attrelid = (select oid from pg_catalog.pg_class c where c.relname= $model)
+    $sql .= [:sql|
+        and  a.attrelid = (select c.oid from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relname =$model and n.nspname = $user)
         order by a.attnum |];
 
     my $list = $openresty->select($sql);
@@ -729,14 +730,14 @@ sub get_model_col_names {
 
 sub get_unique_name {
     my ($self, $openresty, $model, $col) = @_;
+    my $user = $openresty->current_user;
     if (!$openresty->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
     my $sql = [:sql|
         select (select con.conname from pg_catalog.pg_constraint con where con.conrelid=a.attrelid and con.contype='u' and array_upper(con.conkey,1)=1 and con.conkey[1]=a.attnum) as "unique_name"
-         from pg_catalog.pg_attribute a 
-        where a.attnum > 0 and not a.attisdropped and a.attname <> 'id' and a.attname = $col and a.attrelid = (select oid from pg_catalog.pg_class c where c.relname= $model)|];
-
+         from pg_catalog.pg_attribute a
+        where a.attnum > 0 and not a.attisdropped and a.attname <> 'id' and a.attname = $col and a.attrelid = (select c.oid from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relname =$model and n.nspname = $user) |];
     my $list = $openresty->select($sql);
     if (!$list or !ref $list) {
        die "Column '$col' not found.\n";
