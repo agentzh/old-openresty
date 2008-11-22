@@ -5,13 +5,12 @@
   <center>
   <div id="body">
     <div id="doc">
-
       <div xmlns="" id="hd">
+        <a href="#menu/home"><img style="width: 200; margin-left: 200; float: left;" src="logo.png"></a>
         <div id="hContent">
-
           <div id="headerContent" class="editorWrap">
             <div id="headerZoneElement" class=
-            "editable rte flexContent" rel="itemGuid.sit.hc.001">
+            "flexContent" rel="itemGuid.sit.hc.001">
               <h1>ON Capital China Fund</h1>
             </div>
           </div>
