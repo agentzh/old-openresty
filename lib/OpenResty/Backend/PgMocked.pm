@@ -64,9 +64,11 @@ sub DumpFile {
 }
 
 sub start_recording_file {
-    my $class = shift;
-    my $file = shift;
-    $DataFile = "$path/$file.json";
+    my ($class, $file, $dir) = @_;
+    if (!-d "$path/$dir") {
+        mkdir "$path/$dir";
+    }
+    $DataFile = "$path/$dir/$file.json";
     if (!-f $DataFile) {
         $Data = {};
     } else {
@@ -100,8 +102,8 @@ sub stop_recording_file {
 # -------------------
 
 sub start_playing_file {
-    my ($class, $file) = @_;
-    $DataFile = "$path/$file.json";
+    my ($class, $file, $dir) = @_;
+    $DataFile = "$path/$dir/$file.json";
     $Data = LoadFile($DataFile) or
         die "No hash found in data file $DataFile.\n";
     $TransList = $Data or
@@ -146,9 +148,12 @@ sub new {
     my $class = shift;
     ### Creating class: $class
     my $t_file;
-    if ($0 =~ m{[^/]+\.t$}) {
-        $t_file = $&;
-        $class->start_playing_file($t_file);
+    #my $dir = $0;
+    if ($0 =~ m{([^/]+)/([^/]+\.t)$}) {
+        my $dir = '';
+        if ($1 ne 't') { $dir = $1; }
+        my $file = $2;
+        $class->start_playing_file($file, $dir);
     } else {
         die "The PgMocked backend is for testing only and it can only work when test_suite.use_http is set to 0.\n\tPerhaps you forgot to edit /etc/openresty/site_openresty.conf?\n";
     }

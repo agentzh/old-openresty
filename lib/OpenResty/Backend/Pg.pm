@@ -34,11 +34,12 @@ sub new {
 
     $Recording = $OpenResty::Config{'backend.recording'} && ! $OpenResty::Config{'test_suite.use_http'};
     if ($Recording) {
-        my $t_file;
-        if ($0 =~ m{[^/]+\.t$}) {
-            $t_file = $&;
+        if ($0 =~ m{([^/]+)/([^/]+\.t)$}) {
+            my $dir = '';
+            if ($1 ne 't') { $dir = $1; }
+            my $file = $2;
             require OpenResty::Backend::PgMocked;
-            OpenResty::Backend::PgMocked->start_recording_file($t_file);
+            OpenResty::Backend::PgMocked->start_recording_file($file, $dir);
         } else {
             warn "Config setting backend.recording ignored.";
             undef $Recording;

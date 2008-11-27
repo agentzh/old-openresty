@@ -4,7 +4,7 @@ OpenResty::Spec::MetaModel - Metamodel for OpenResty backends
 
 =head1 VERSION
 
-This document describes OpenResty 0.5.1's meta model, version 0.007.
+This document describes OpenResty 0.5.2's meta model, version 0.008.
 
 =head1 DESCRIPTION
 
@@ -121,64 +121,6 @@ which are saved in the columns C<method>, C<prefix>, and C<segments>, respective
 is that C<method> has a value of C<'GET'> and C<url> has a value of
 C<'/=/model/~/~/~'>.
 
-=item _models
-
-The C<_models> table stores the meta information regarding the OpenResty
-models.
-
-The definition of _models is
-
-    create table _models (
-        id serial primary key,
-        name text unique not null,
-        description text,
-        created timestamp(0) with time zone default now()
-    );
-
-The C<name> column stores the names of user models. Every user model is
-represented by a physical PostgreSQL table under the same schema and the
-leading character of its name must be case-sensitive letters. Table names
-leading by an underscore are preserved for meta tables.
-
-The C<description> column stores users' textual description for their models.
-
-Neither C<name> nor C<description> can be null.
-
-=item _columns
-
-The C<_columns> table stores the meta information regarding OpenResty models'
-columns.
-
-    create table _columns (
-        id serial primary key,
-        name text not null,
-        model text not null,
-        label text not null,
-        type text not null,
-        "default" text,
-        indexed text,
-        unique(model, name)
-    );
-
-The C<name> column keeps the names of user models' columns and the C<model>
-column stores the names of the corresponding models.
-
-The C<lable> column stores the textual label provided by the user who created
-the column and types of the model columns are stored in the C<type> column.
-
-None of the columns above but C<default> and C<indexed> can be null
-and in addition, the combination of the columns C<model> and C<name> should
-be unique.
-
-User columns have default values and the corresponding JSON representation
-is stored in the C<default> column. Note that the values for
-C<default> are JSON literals, for instance, C<"32">, C<["now()"]>,
-and etc.
-
-The C<indexed> column stores the index method applied to the current user
-column if any; null otherwise. Possible values are 'fulltext', 'btree',
-'rtree', 'gist', and 'hash'.
-
 =item _views
 
 The C<_views> table stores the information of the OpenResty View objects.
@@ -246,7 +188,55 @@ The C<view> argument specifies the OpenResty view name from which the RSS/Atom f
 
 The C<title>, C<link>, C<logo>, C<copyright>, and C<author> are properties of the web site the current feed is referred to.
 
+=item _ylogins
+
+    create table _ylogins(
+        id serial primary key,
+        name text unique not null,
+        mapping_view text,
+        on_register text not null,
+        on_login text,
+        next_page text not null,
+        error_page text not null,
+        description text,
+        created timestamp(0) with time zone default now()
+    );
+
+The C<_ylogins> table merely serves our proprietary YLogin (Yahoo! Login) handler.
+
 =back
+
+=head1 HISTORY
+
+=over
+
+=item 0.008
+
+=over
+
+=item *
+
+Left tables _models and _columns alone; no longer make use of them.
+
+=item *
+
+Added _ylogins for our closed-source YLogin (Yahoo! Login) handler.
+
+=item *
+
+Added a DB index for _access;
+
+=back
+
+=item 0.007
+
+Added tables _actions and _action_params.
+
+=back
+
+=head1 Upgrading
+
+OpenResty supports automatic upgrading for its meta model. See L<OpenResty::Spec::Upgrading> for details.
 
 =head1 AUTHOR
 

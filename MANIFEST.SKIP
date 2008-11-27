@@ -1,3 +1,4 @@
+^t/col-references
 ^log\.txt$
 ^\.git
 \.ttf$
@@ -104,8 +105,14 @@ agentzh-live\.json$
 \.sh$
 \.dat$
 ^tmp/
+^TODO1$
+^etc/compiled\.actions$
+^etc/taobao_vip\.conf$
+^diff\.txt$
+^lib/OpenResty/Handler/YLogin\.pm$
 ^util/
 ^YisouComments.*\.yml
 ^t/25-filter\.t$
 ^ChangeLogs$
 ^bin/test-account.sh
+demo/Onccf/out
