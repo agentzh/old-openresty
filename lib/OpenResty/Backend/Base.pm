@@ -294,7 +294,7 @@ declare
     model_rec record;
     col_rec   record;
 begin
-    -- loop to comment all model's all column 
+    -- loop to comment all model's all column
     model_sql := 'select name, description from _models';
     -- loop for per model
     for model_rec in execute model_sql loop

@@ -96,6 +96,7 @@ if (-f 'haskell/bin/restyscript') {
 
 use_test_base();
 no_index( directory => qw< etc misc tmp demo minisql clients doc t > );
+tests('t/*.t t/col-not-null/*.t t/col-unique/*.t');
 
 auto_install();
 
