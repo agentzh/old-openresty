@@ -5,7 +5,8 @@ package t::OpenResty::Util;
 
 sub ensure_test_user {
     my ($user, $password) = @_;
-    if ($OpenResty::Config{'backend.type'} eq 'PgMocked') {
+    if ($OpenResty::Config{'backend.type'} eq 'PgMocked' ||
+            $OpenResty::Config{'test_suite.use_http'}) {
         return;
     }
     local $SIG{__WARN__} = sub { }
