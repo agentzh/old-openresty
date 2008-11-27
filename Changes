@@ -1,5 +1,16 @@
 Change Log for OpenResty
 
+0.5.2 Nov 27 2008
+* added support for the "unique" attribute of Model columns and updated the Admin site for it.
+* rewrote the "default" attribute to support expressions and updated the Admin site for it.
+* Bumped the version number of metamodel to 0.008 and we now no longer make use of the meta tables _models and _columns.
+* now the -f option of the bin/openresty script supports absolute path and relative path of config files. No etc/ prefix assumed now.
+* the proprietary YLogin API is mostly working.
+* modify the default value of ACCOUNT_CMD_COUNT_LIMIT to 20.
+* demo/Onccf - minor css fixes.
+* added --- status section to t::OpenResty so as to test status code.
+* skipped clkao++'s sanity check in http mode.
+
 0.5.1 Nov 21 2008
 * added support for builtin vars in the main url, as in
     GET /=/feed/Post/_user/agentzh.Public

@@ -14,7 +14,7 @@ build_requires:
   WWW::OpenResty: 0.09
 distribution_type: module
 generated_by: 'Module::Install version 0.77'
-license: artistic2
+license: GPLv2
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
