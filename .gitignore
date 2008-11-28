@@ -43,3 +43,17 @@ demo/*/script/upload
 metamodel
 demo/Onccf/pack_out
 log.txt
+TODO1
+demo/Onccf/out1
+demo/Onccf/out2
+demo/Onccf/out3
+demo/Onccf/out4
+demo/Onccf/out5
+demo/Onccf/out6
+demo/Onccf/out7
+demo/Onccf/out8
+diff.txt
+etc/compiled.actions
+etc/taobao_vip.conf
+lib/OpenResty/Handler/YLogin.pm
+
