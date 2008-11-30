@@ -189,7 +189,7 @@ sub POST_model_column {
             name: IDENT :required :to($col),
             label: STRING :nonempty :required :to($label),
             type: STRING :nonempty :required :to($type),
-            default: ANY,
+            default: STRING :nonempty,
             unique: BOOL :to($unique),
             not_null: BOOL :to($not_null),
         } :required :nonempty
@@ -255,7 +255,7 @@ sub PUT_model_column {
             name: IDENT :to($new_col),
             label: STRING :nonempty :to($label),
             type: STRING :nonempty :to($type),
-            default: ANY,
+            default: STRING :nonempty,
             unique: BOOL :to($unique),
             not_null: BOOL :to($not_null),
         } :required :nonempty
@@ -429,7 +429,7 @@ sub new_model {
                     name: IDENT :required,
                     label: STRING :nonempty :required,
                     type: STRING :nonempty :required,
-                    default: ANY,
+                    default: STRING :nonempty,
                     unique: BOOL,
                     not_null: BOOL
                 }

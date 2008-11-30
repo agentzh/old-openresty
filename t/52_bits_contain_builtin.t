@@ -78,6 +78,8 @@ GET /=/model/Employee/~/~?_order_by=id
     {"id": "5", "name": "name5", "age": "23", "salary": "1500", "addr": "南京路" }
 ]
 
+
+
 === TEST 6: get all rows use _user in bits
 --- request
 GET /=/model/Employee/_user/$TestAccount?_password=$TestPass&_use_cookie=1&_order_by=id
@@ -92,7 +94,7 @@ GET /=/model/Employee/_user/$TestAccount?_password=$TestPass&_use_cookie=1&_orde
 
 
 
-=== TEST 6: if salary less than or equal 1600 , then update the salary = 2000  
+=== TEST 7: if salary less than or equal 1600 , then update the salary = 2000  
 --- request
 PUT /=/model/Employee/salary/1600?_op=le
 { "salary": "2000"}
@@ -101,7 +103,7 @@ PUT /=/model/Employee/salary/1600?_op=le
 
 
 
-=== TEST 7: get all rows
+=== TEST 8: get all rows
 --- request
 GET /=/model/Employee/~/~?_order_by=id
 --- response
@@ -115,7 +117,7 @@ GET /=/model/Employee/~/~?_order_by=id
 
 
 
-=== TEST 8: if addr contains 上海, then update the salary = 3000  
+=== TEST 9: if addr contains 上海, then update the salary = 3000  
 --- request
 PUT /=/model/Employee/addr/上海?_op=contains
 { "salary": "3000"}
@@ -124,7 +126,7 @@ PUT /=/model/Employee/addr/上海?_op=contains
 
 
 
-=== TEST 9: get all rows
+=== TEST 10: get all rows
 --- request
 GET /=/model/Employee/~/~?_order_by=id
 --- response
@@ -138,7 +140,7 @@ GET /=/model/Employee/~/~?_order_by=id
 
 
 
-=== TEST 10: if addr contains 上海, then delete the row  
+=== TEST 11: if addr contains 上海, then delete the row  
 --- request
 DELETE /=/model/Employee/addr/上海?_op=contains
 --- response
@@ -146,7 +148,7 @@ DELETE /=/model/Employee/addr/上海?_op=contains
 
 
 
-=== TEST 11: get all rows
+=== TEST 12: get all rows
 --- request
 GET /=/model/Employee/~/~?_order_by=id
 --- response
@@ -157,7 +159,7 @@ GET /=/model/Employee/~/~?_order_by=id
 
 
 
-=== TEST 12: if age less than 24, then delete the row  
+=== TEST 13: if age less than 24, then delete the row  
 --- request
 DELETE /=/model/Employee/age/24?op_lt
 --- response
@@ -165,7 +167,7 @@ DELETE /=/model/Employee/age/24?op_lt
 
 
 
-=== TEST 13: get all rows
+=== TEST 14: get all rows
 --- request
 GET /=/model/Employee/~/~?_order_by=id
 --- response
@@ -175,7 +177,7 @@ GET /=/model/Employee/~/~?_order_by=id
 
 
 
-=== TEST 14: insert multiple records again
+=== TEST 15: insert multiple records again
 --- request
 POST /=/model/Employee/~/~
 [
@@ -189,7 +191,7 @@ POST /=/model/Employee/~/~
 
 
 
-=== TEST 15: get all rows
+=== TEST 16: get all rows
 --- request
 GET /=/model/Employee/~/~?_order_by=id
 --- response
@@ -203,7 +205,7 @@ GET /=/model/Employee/~/~?_order_by=id
 
 
 
-=== TEST 16: get all rows that a column contain "china"
+=== TEST 17: get all rows that a column contain "china"
 --- request
 GET /=/model/Employee/~/china?_op=contains&_order_by=id
 --- response
@@ -214,7 +216,7 @@ GET /=/model/Employee/~/china?_op=contains&_order_by=id
 
 
 
-=== TEST 17: test get rows by op value "ge" 
+=== TEST 18: test get rows by op value "ge" 
 --- request
 GET /=/model/Employee/~/china?_op=ge
 --- response
@@ -222,7 +224,7 @@ GET /=/model/Employee/~/china?_op=ge
 
 
 
-=== TEST 18: update rows that a col contain "china"
+=== TEST 19: update rows that a col contain "china"
 --- request
 PUT /=/model/Employee/~/china?_op=contains
 {"salary": "5000"}
@@ -231,7 +233,7 @@ PUT /=/model/Employee/~/china?_op=contains
 
 
 
-=== TEST 19: get all rows
+=== TEST 20: get all rows
 --- request
 GET /=/model/Employee/~/~?_order_by=id
 --- response
@@ -245,7 +247,7 @@ GET /=/model/Employee/~/~?_order_by=id
 
 
 
-=== TEST 20: test update rows by op value le
+=== TEST 21: test update rows by op value le
 --- request
 PUT /=/model/Employee/~/china?_op=le
 {"salary": "4000"}
@@ -254,7 +256,7 @@ PUT /=/model/Employee/~/china?_op=le
 
 
 
-=== TEST 21: get all rows
+=== TEST 22: get all rows
 --- request
 GET /=/model/Employee/~/~?_order_by=id
 --- response
@@ -268,7 +270,7 @@ GET /=/model/Employee/~/~?_order_by=id
 
 
 
-=== TEST 22: delete rows that a col contain "china"
+=== TEST 23: delete rows that a col contain "china"
 --- request
 DELETE /=/model/Employee/~/china?_op=contains
 --- response
@@ -276,7 +278,7 @@ DELETE /=/model/Employee/~/china?_op=contains
 
 
 
-=== TEST 23: get all rows
+=== TEST 24: get all rows
 --- request
 GET /=/model/Employee/~/~?_order_by=id
 --- response
@@ -288,7 +290,7 @@ GET /=/model/Employee/~/~?_order_by=id
 
 
 
-=== TEST 24: delete rows by op value le
+=== TEST 25: delete rows by op value le
 --- request
 PUT /=/model/Employee/~/china?_op=ge
 {"salary": "4000"}
@@ -297,7 +299,7 @@ PUT /=/model/Employee/~/china?_op=ge
 
 
 
-=== TEST 25: get all rows that age contain "2"
+=== TEST 26: get all rows that age contain "2"
 --- request
 GET /=/model/Employee/age/2?_op=contains&_order_by=id
 --- response
@@ -309,7 +311,7 @@ GET /=/model/Employee/age/2?_op=contains&_order_by=id
 
 
 
-=== TEST 26: update rows that salary contain "2"
+=== TEST 27: update rows that salary contain "2"
 --- request
 PUT /=/model/Employee/salary/500?_op=contains
 {"addr": "上海市南京路"}
@@ -318,7 +320,7 @@ PUT /=/model/Employee/salary/500?_op=contains
 
 
 
-=== TEST 27: get all rows
+=== TEST 28: get all rows
 --- request
 GET /=/model/Employee/~/~?_order_by=id
 --- response
@@ -330,7 +332,7 @@ GET /=/model/Employee/~/~?_order_by=id
 
 
 
-=== TEST 28: delete rows that salary contain "2"
+=== TEST 29: delete rows that salary contain "2"
 --- request
 DELETE /=/model/Employee/salary/500?_op=contains
 --- response
@@ -338,7 +340,7 @@ DELETE /=/model/Employee/salary/500?_op=contains
 
 
 
-=== TEST 29: get all rows
+=== TEST 30: get all rows
 --- request
 GET /=/model/Employee/~/~?_order_by=id
 --- response
@@ -348,7 +350,7 @@ GET /=/model/Employee/~/~?_order_by=id
 
 
 
-=== TEST 30: logout
+=== TEST 31: logout
 --- request
 GET /=/logout
 --- response

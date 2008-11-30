@@ -56,7 +56,7 @@ if ($resty->has_model('Post')) {
                 { name => 'title', type => 'text', label => 'Post title' },
                 { name => 'content', type => 'text', label => 'Post content' },
                 { name => 'author', type => 'text', label => 'Post author' },
-                { name => 'created', default => ['now()'], type => 'timestamp(0) with time zone', label => 'Post creation time' },
+                { name => 'created', default => 'now()', type => 'timestamp(0) with time zone', label => 'Post creation time' },
                 { name => 'comments', label => 'Number of comments', type => "integer", default => 0 },
             ],
         }
@@ -75,7 +75,7 @@ if ($resty->has_model('Comment')) {
                 { name => 'email', type => 'text', label => 'Sender email address' },
                 { name => 'url', type => 'text', label => 'Sender homepage URL' },
                 { name => 'body', type => 'text', label => 'Comment body' },
-                { name => 'created', default => ['now()'], type => 'timestamp(0) with time zone', label => 'Comment creation time' },
+                { name => 'created', default => 'now()', type => 'timestamp(0) with time zone', label => 'Comment creation time' },
                 { name => 'post', label => 'target post', type => 'integer' },
             ],
         }
