@@ -1,5 +1,9 @@
 Change Log for OpenResty
 
+0.5.3 Nov 30 2008
+* switched the license from GPLv2 to BSD.
+* updated demo/Blog/script/init.pl to use the new column default value syntax.
+
 0.5.2 Nov 27 2008
 * added support for the "unique" attribute of Model columns and updated the Admin site for it.
 * rewrote the "default" attribute to support expressions and updated the Admin site for it.
