@@ -890,11 +890,13 @@ Attachment API, which supports binary file uploading and downloading.
 
 =item 0.8.x
 
-Mail API, which also allows actions triggered and/or confirmed by emails.
+Mail API, which introduces builtin Models for email sentbox and inbox based on third-party POP3/STMP servers.
+
+It will also allow actions to be triggered and/or confirmed by emails.
 
 =item 0.9.x
 
-Prophet integration.
+Prophet/Git integration.
 
 =back
 
