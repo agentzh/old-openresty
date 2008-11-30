@@ -1,6 +1,6 @@
 package OpenResty;
 
-our $VERSION = '0.005002';
+our $VERSION = '0.005003';
 
 use strict;
 use warnings;
@@ -660,7 +660,7 @@ OpenResty - General-purpose web service platform for web applications
 
 =head1 VERSION
 
-This document describes OpenResty 0.5.2 released on November 27, 2008.
+This document describes OpenResty 0.5.3 released on November 30, 2008.
 
 =head1 DESCRIPTION
 
@@ -867,6 +867,10 @@ L<http://svn.openfoundry.org/openapi/trunk>
 
 There is anonymous access to all. If you'd like a commit bit, please let
 us know. :)
+
+=head1 IRC Channel
+
+Join us via IRC on C<#openresty> of the irc.freenode.net server ;)
 
 =head1 Project Roadmap
 
