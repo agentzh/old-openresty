@@ -868,6 +868,38 @@ L<http://svn.openfoundry.org/openapi/trunk>
 There is anonymous access to all. If you'd like a commit bit, please let
 us know. :)
 
+=head1 Project Roadmap
+
+Below is a list of currently planned release milestones (but it's also supposed to change as we go):
+
+=over
+
+=item 0.5.x (Where we are)
+
+Action API and an enhanced version of the Model API.
+
+=item 0.6.x
+
+Migrate the View handler to the same style and implementation of the Action handler, i.e., using explicit parameter list and taking advantage of the Haskell version of the restyscript compiler.
+
+Compiling view definition to native PostgreSQL functions is also supposed to realize in this series.
+
+=item 0.7.x
+
+Attachment API, which supports binary file uploading and downloading.
+
+=item 0.8.x
+
+Mail API, which also allows actions triggered and/or confirmed by emails.
+
+=item 0.9.x
+
+Prophet integration.
+
+=back
+
+Please don't hesitate to tell us what you love to see in future releases of OpenResty ;)
+
 =head1 TODO
 
 For the project's TODO list, please check out L<http://svn.openfoundry.org/openapi/trunk/TODO>

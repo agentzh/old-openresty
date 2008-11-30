@@ -3,6 +3,8 @@ Change Log for OpenResty
 0.5.3 Nov 30 2008
 * switched the license from GPLv2 to BSD.
 * updated demo/Blog/script/init.pl to use the new column default value syntax.
+* added the benchmark results for various configurations to the main POD.
+* added the milestones and release plans to the main POD.
 
 0.5.2 Nov 27 2008
 * added support for the "unique" attribute of Model columns and updated the Admin site for it.
