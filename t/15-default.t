@@ -68,13 +68,22 @@ GET /=/model/Foo/id/1
 === TEST 7: Add a column with default now()
 --- request
 POST /=/model/Foo/~
+{ "name": "created", "label": "创建日期", "type": "timestamp", "default": ["now()"] }
+--- response
+{"success":0,"error":"Bad value for \"default\": String expected."}
+
+
+
+=== TEST 8: Add a column with default now()
+--- request
+POST /=/model/Foo/~
 { "name": "created", "label": "创建日期", "type": "timestamp", "default": "now()" }
 --- response
 {"success":1,"src":"/=/model/Foo/created"}
 
 
 
-=== TEST 8: Check the column
+=== TEST 9: Check the column
 --- request
 GET /=/model/Foo/created
 --- response
@@ -82,7 +91,7 @@ GET /=/model/Foo/created
 
 
 
-=== TEST 9: Check the column list
+=== TEST 10: Check the column list
 --- request
 GET /=/model/Foo/~
 --- response
@@ -94,7 +103,7 @@ GET /=/model/Foo/~
 
 
 
-=== TEST 10: Insert a row w/o setting "created"
+=== TEST 11: Insert a row w/o setting "created"
 --- request
 POST /=/model/Foo/~/~
 { "title": "Hi!" }
@@ -103,7 +112,7 @@ POST /=/model/Foo/~/~
 
 
 
-=== TEST 11: Check the newly added row
+=== TEST 12: Check the newly added row
 --- request
 GET /=/model/Foo/id/2
 --- response_like
@@ -111,7 +120,7 @@ GET /=/model/Foo/id/2
 
 
 
-=== TEST 12: Insert another row
+=== TEST 13: Insert another row
 --- request
 POST /=/model/Foo/~/~
 { "title": "Bah!" }
@@ -120,7 +129,7 @@ POST /=/model/Foo/~/~
 
 
 
-=== TEST 13: Check the newly added row
+=== TEST 14: Check the newly added row
 --- request
 GET /=/model/Foo/id/3
 --- response_like
@@ -128,7 +137,7 @@ GET /=/model/Foo/id/3
 
 
 
-=== TEST 14: change the default value of the "content" column
+=== TEST 15: change the default value of the "content" column
 --- request
 PUT /=/model/Foo/content
 { "default": "'hi'" }
@@ -137,7 +146,7 @@ PUT /=/model/Foo/content
 
 
 
-=== TEST 15: Insert another row
+=== TEST 16: Insert another row
 --- request
 POST /=/model/Foo/~/~
 { "title": "Cat!" }
@@ -146,7 +155,7 @@ POST /=/model/Foo/~/~
 
 
 
-=== TEST 16: Check the newly added row
+=== TEST 17: Check the newly added row
 --- request
 GET /=/model/Foo/id/4
 --- response_like
@@ -154,7 +163,7 @@ GET /=/model/Foo/id/4
 
 
 
-=== TEST 17: change the default value of the "content" column to now()
+=== TEST 18: change the default value of the "content" column to now()
 --- request
 PUT /=/model/Foo/content
 {"default": "now()"}
@@ -163,7 +172,7 @@ PUT /=/model/Foo/content
 
 
 
-=== TEST 18: Insert another row
+=== TEST 19: Insert another row
 --- request
 POST /=/model/Foo/~/~
 { "title": "Dog!" }
@@ -172,7 +181,7 @@ POST /=/model/Foo/~/~
 
 
 
-=== TEST 19: Check the newly added row
+=== TEST 20: Check the newly added row
 --- request
 GET /=/model/Foo/id/5
 --- response_like
@@ -180,7 +189,7 @@ GET /=/model/Foo/id/5
 
 
 
-=== TEST 20: model with default now()
+=== TEST 21: model with default now()
 --- request
 POST /=/model/~
 { "name":"Howdy", "description":"Howdy",
@@ -193,7 +202,7 @@ POST /=/model/~
 
 
 
-=== TEST 21: Check the columns
+=== TEST 22: Check the columns
 --- request
 GET /=/model/Howdy/~
 --- response
@@ -205,7 +214,7 @@ GET /=/model/Howdy/~
 
 
 
-=== TEST 22: Insert another row
+=== TEST 23: Insert another row
 --- request
 POST /=/model/Howdy/~/~
 { "title": "Hey" }
@@ -214,7 +223,7 @@ POST /=/model/Howdy/~/~
 
 
 
-=== TEST 23: Check the newly added row
+=== TEST 24: Check the newly added row
 --- request
 GET /=/model/Howdy/id/1
 --- response_like
@@ -222,7 +231,7 @@ GET /=/model/Howdy/id/1
 
 
 
-=== TEST 24: Create a new column with timestamp
+=== TEST 25: Create a new column with timestamp
 --- request
 POST /=/model/Howdy/colA
 { "label": "colA", "type":  "timestamp" }
@@ -231,7 +240,7 @@ POST /=/model/Howdy/colA
 
 
 
-=== TEST 25: Create a new column with timestamp(0)
+=== TEST 26: Create a new column with timestamp(0)
 --- request
 POST /=/model/Howdy/colB
 { "label": "colB", "type":  "timestamp(0)" }
@@ -240,7 +249,7 @@ POST /=/model/Howdy/colB
 
 
 
-=== TEST 26: extra space in type
+=== TEST 27: extra space in type
 --- request
 POST /=/model/Howdy/colC
 { "label": "colC", "type":  "  timestamp  (  0  )  " }
@@ -249,7 +258,7 @@ POST /=/model/Howdy/colC
 
 
 
-=== TEST 27: invalid stuff
+=== TEST 28: invalid stuff
 --- request
 POST /=/model/Howdy/colD
 { "label": "colD", "type":  "  timestamp  (  'a'  )  " }
@@ -258,7 +267,7 @@ POST /=/model/Howdy/colD
 
 
 
-=== TEST 28: with timezone (Bad)
+=== TEST 29: with timezone (Bad)
 --- request
 POST /=/model/Howdy/colE
 { "label": "colE", "type":  "  timestamp  (  0  )  with  timezone " }
@@ -267,7 +276,7 @@ POST /=/model/Howdy/colE
 
 
 
-=== TEST 29: with time zone (Good)
+=== TEST 30: with time zone (Good)
 --- request
 POST /=/model/Howdy/colE
 { "label": "colE", "type":  " timestamp ( 0 )  with  time  zone " }
@@ -276,7 +285,7 @@ POST /=/model/Howdy/colE
 
 
 
-=== TEST 30: with time zone but w/o precision
+=== TEST 31: with time zone but w/o precision
 --- request
 POST /=/model/Howdy/colF
 { "label": "colF", "type":  " timestamp with  time  zone " }
@@ -285,7 +294,7 @@ POST /=/model/Howdy/colF
 
 
 
-=== TEST 31: with time zone but w/o precision (for time)
+=== TEST 32: with time zone but w/o precision (for time)
 --- request
 POST /=/model/Howdy/colG
 { "label": "colG", "type":  " time (0) with  time  zone " }
@@ -294,7 +303,7 @@ POST /=/model/Howdy/colG
 
 
 
-=== TEST 32: Add a column with default 0
+=== TEST 33: Add a column with default 0
 --- request
 POST /=/model/Foo/~
 { "name": "num", "label": "num", "type": "integer", "default": "0" }
@@ -303,7 +312,7 @@ POST /=/model/Foo/~
 
 
 
-=== TEST 33: Add a column with default ""
+=== TEST 34: Add a column with default ""
 --- request
 POST /=/model/Foo/~
 { "name": "empty", "label": "num", "type": "text", "default": "''" }
@@ -312,7 +321,7 @@ POST /=/model/Foo/~
 
 
 
-=== TEST 34: Insert a line
+=== TEST 35: Insert a line
 --- request
 POST /=/model/Foo/~/~
 {"num":3,"created":"2008-05-06 14:36:27","content":"blah"}
@@ -321,7 +330,7 @@ POST /=/model/Foo/~/~
 
 
 
-=== TEST 35: check the new row
+=== TEST 36: check the new row
 --- request
 GET /=/model/Foo/id/6
 --- response
@@ -329,7 +338,7 @@ GET /=/model/Foo/id/6
 
 
 
-=== TEST 36: set an empty default value
+=== TEST 37: set an empty default value
 --- request
 PUT /=/model/Foo/content
 {"default":null}
@@ -338,7 +347,7 @@ PUT /=/model/Foo/content
 
 
 
-=== TEST 37: Insert a line
+=== TEST 38: Insert a line
 --- request
 POST /=/model/Foo/~/~
 {"created":"2008-05-06 14:36:27"}
@@ -347,7 +356,7 @@ POST /=/model/Foo/~/~
 
 
 
-=== TEST 38: check the new row
+=== TEST 39: check the new row
 --- request
 GET /=/model/Foo/id/7
 --- response
@@ -355,7 +364,7 @@ GET /=/model/Foo/id/7
 
 
 
-=== TEST 39: logout
+=== TEST 40: logout
 --- request
 GET /=/logout
 --- response

@@ -30,6 +30,7 @@ DELETE /=/model.js?_user=$TestAccount&_password=$TestPass&_use_cookie=1
 {"success":1}
 
 
+
 === TEST 2: Create a new model
 --- request
 POST /=/model/Human
@@ -39,6 +40,7 @@ POST /=/model/Human
 }
 --- response
 {"success":1}
+
 
 
 === TEST 3: Create a model with the same name
@@ -115,6 +117,7 @@ GET /=/model/Blah
   "name":"Blah",
   "description":"Blah"
 }
+
 
 
 === TEST 9: Syntax error in JSON data
