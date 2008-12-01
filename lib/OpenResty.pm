@@ -831,7 +831,7 @@ OpenResty takes runtime performance very seriously because we have to run it on 
 
 OpenResty prefers modules with XS over pure Perl ones and use cache aggressively. It's also in favor of source-filter based solutions provided by L<Filter::QuasiQuote> to reduce the length of subroutine calling chains and the number of indirections. Finally, the restyscript compiler is also written in carefully optimized Haskell code to maximize speed.
 
-The benchmark results for OpenResty 0.5.3's test suite on a Pentium 4 3.0GHz machine is given below:
+The benchmark results for OpenResty 0.5.3's test suite on a PentiumIV 3.0GHz machine is given below:
 
 =over
 
