@@ -42,7 +42,7 @@
                 [%- value = column.$key; %]
                 [%- is_json = 0 %]
                 [%- resty_type = (key == 'unique' || key == 'not_null') ? 'select':'text' %]
-                [%- resty_value = (key == 'unique' || key =='not_null') ? '{true:"true",false:"false","selected":true}': value %]
+                [%- resty_value = (key == 'unique' || key =='not_null') ? "{'true': 'true','false':'false','selected':'true'}": value %]
                 <b class="key">[%- key | html %]</b>: [% INCLUDE editable_model_value column=column.name %] &nbsp;&nbsp;
               [%- END %]
                 <b><a class="show-detail" href="javascript:void(0);" onclick="deleteModelColumn('[% model.name %]', '[% column.name %]')">Delete</a></b>

@@ -41,8 +41,8 @@ $.fn.postprocess = function (className, options) {
                 //debug(type);
                 if (!type) {
                     type = 'text';
-                } 
-                
+                }
+
                 if (type != 'select' && ((data && data.length > 30) || /\n/.test(data))) {
                     type = 'textarea';
                 }
@@ -54,8 +54,9 @@ $.fn.postprocess = function (className, options) {
                     settings.width = data ? (data.length + 5 + 'em') : '5em';
                 } else if (type == 'select') {
                     settings.width = '10em';
+                    settings.height = '6em';
                 } else {
-            
+
                 }
                 settings.data = data;
                 settings.type = type;

@@ -64,13 +64,13 @@
     <textarea name="console" rows="8" cols="60"></textarea><br/>
 </li>
 <li>
-    <label>Data Format</lable>
+    <label>Data Format</label>
     <select name="format">
     [%- FOREACH fmt IN ['YAML', 'JSON'] %]
         <option value ="[% fmt | lower %]">[% fmt %]</option>
     [%- END %]
     </select>
-<li>
+</li>
 <li>
     <input type="submit" value="Go!" style="width: 5em"></input>
 </li>
