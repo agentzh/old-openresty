@@ -45,7 +45,7 @@ requires:
   CGI::Cookie::XS: 0.15
   CGI::Simple: 1.103
   CGI::Simple::Cookie: 0
-  Cache::Memcached::Fast: 0.06
+  Cache::Memcached::libmemcached: 0.06
   Clone: 0.22
   Compress::Zlib: 0
   Config::Simple: 0

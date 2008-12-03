@@ -23,12 +23,12 @@ sub new {
     } elsif ($type eq 'memcached') {
         my $list = $OpenResty::Config{'cache.servers'} or
             die "No cache.servers specified in the config files.\n";
-        require Cache::Memcached;
+        require Cache::Memcached::libmemcached;
         my @addr = split /\s*,\s*|\s+/, $list;
         if (!@addr) {
             die "No memcached server found: $list.\n";
         }
-        $obj = Cache::Memcached->new({
+        $obj = Cache::Memcached::libmemcached->new({
             servers => [@addr],
         });
         #$obj->set(dog => 32);
@@ -203,7 +203,7 @@ OpenResty::Cache - Cache for OpenResty
 
 =head1 DESCRIPTION
 
-This class provides an abstract interface for two caching libraries, L<Cache::FileCache> and L<Cache::Memcached>.
+This class provides an abstract interface for two caching libraries, L<Cache::FileCache> and L<Cache::Memcached::libmemcached>.
 
 Which underlying cache library to use depends on the C<cache.type> config option in the F<etc/site_openresty.conf> file.
 
@@ -221,5 +221,5 @@ Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>.
 
 =head1 SEE ALSO
 
-L<OpenResty>, L<Cache::FileCache>, L<Cache::Memcached>.
+L<OpenResty>, L<Cache::FileCache>, L<Cache::Memcached::libmemcached>.
 

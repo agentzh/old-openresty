@@ -2,14 +2,14 @@ use strict;
 use warnings;
 use Test::More;
 
-use Cache::Memcached::Fast;
+use Cache::Memcached::libmemcached;
 my @servers = map glob, @ARGV;
 if (!@servers) { die "No server specified.\n"; }
 
 plan tests => 2 * @servers;
 
 for my $server (@servers) {
-    my $obj = Cache::Memcached::Fast->new({
+    my $obj = Cache::Memcached::libmemcached->new({
         servers => [$server],
     });
 
