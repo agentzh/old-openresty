@@ -5,7 +5,7 @@ sudo cpan Jemplate Template YAML GD CGI::Cookie::XS FCGI CGI::Simple \
 	YAML::Syck \
 	List::Util \
     DBI Clone Params::Util Parse::Yapp DBD::Pg Data::UUID \
-    GD::SecurityImage Cache::Memcached::Fast Hash::Merge \
+    GD::SecurityImage Cache::Memcached::libmemcached Hash::Merge \
     Config::Simple Encode::Guess List::MoreUtils JSON::XS \
     Data::Structure::Util DateTime::Format::Pg \
     DateTime::Format::Strptime Digest::MD5 File::ShareDir \

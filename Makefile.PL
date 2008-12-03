@@ -31,7 +31,7 @@ requires            ('Parse::Yapp');
 requires            ('DBD::Pg' => '1.49');
 requires            ('Data::UUID' => '1.148');
 requires            ('GD::SecurityImage' => '1.64');
-requires            ('Cache::Memcached::Fast' => '0.06');
+requires            ('Cache::Memcached::libmemcached' => '0.02008');
 requires            ('Hash::Merge');
 #requires            ('List::MoreUtils');
 requires            ('Config::Simple');
