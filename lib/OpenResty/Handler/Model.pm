@@ -365,19 +365,18 @@ sub GET_model_row {
     my $column = $bits->[2];
     my $value  = $bits->[3];
 
-    if ($column ne '~' and $value ne '~') {
-        return $self->select_records($openresty, $model, $column, $value);
-    }
-    if ($column ne '~' and $value eq '~') {
-        return $self->select_records($openresty, $model, $column);
-    }
-    if ($column eq '~' and $value eq '~') {
-        return $self->select_all_records($openresty, $model);
-    }
-    if ($column eq '~') {
-        return $self->select_records($openresty, $model, $column, $value);
+    if ($column ne '~') {
+        if ($value ne '~') {
+            return $self->select_records($openresty, $model, $column, $value);
+        } else {
+            return $self->select_records($openresty, $model, $column);
+        }
     } else {
-        return { success => 0, error => "Unsupported operation." };
+        if ($value eq '~') {
+            return $self->select_all_records($openresty, $model);
+        } else {
+            return $self->select_records($openresty, $model, $column, $value);
+        }
     }
 }
 
@@ -622,7 +621,14 @@ sub global_model_check {
 sub model_count {
     my ($self, $openresty) = @_;
     my $user = $openresty->current_user;
-    my $sql = [:sql| select count(*) from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname = $user and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_'|];
+    my $sql = [:sql|
+        select count(*)
+        from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+        where c.relkind in ('r','') and
+              n.nspname = $user and
+              pg_catalog.pg_table_is_visible(c.oid) and
+              substr(c.relname,1,1) <> '_'
+    |];
     return $openresty->select($sql)->[0][0];
 }
 
@@ -630,7 +636,16 @@ sub column_count {
     my ($self, $openresty, $model) = @_;
     my $user = $openresty->current_user;
 
-    my $sql = [:sql| select count(*) from pg_catalog.pg_attribute a where a.attnum > 0 and not a.attisdropped and a.attname <> 'id' and a.attrelid = (select c.oid from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relname =$model and n.nspname = $user)|];
+    my $sql = [:sql|
+        select count(*)
+        from pg_catalog.pg_attribute a
+        where a.attnum > 0 and
+              not a.attisdropped and
+              a.attname <> 'id' and
+              a.attrelid = (select c.oid
+                            from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+                            where c.relname =$model and n.nspname = $user)
+    |];
     return $openresty->select($sql)->[0][0];
 }
 
@@ -645,7 +660,14 @@ sub get_model_list {
     my ($self, $openresty, $model) = @_;
     my $user = $openresty->current_user;
 
-    my $sql = [:sql| select c.relname as name, obj_description(c.oid, 'pg_class') as description from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relkind in ('r','') and n.nspname = $user and pg_catalog.pg_table_is_visible(c.oid) and substr(c.relname,1,1) <> '_' |];
+    my $sql = [:sql|
+        select c.relname as name, obj_description(c.oid, 'pg_class') as description
+        from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+        where c.relkind in ('r','') and
+              n.nspname = $user and
+              pg_catalog.pg_table_is_visible(c.oid) and
+              substr(c.relname,1,1) <> '_'
+    |];
     if (defined $model) {
         $sql .= [:sql| and c.relname = $model |];
     }
@@ -667,14 +689,16 @@ sub get_model_cols {
                (select pg_catalog.pg_get_expr(d.adbin, d.adrelid)  from pg_catalog.pg_attrdef d  where d.adrelid = a.attrelid and d.adnum = a.attnum and a.atthasdef) as "default",
                (select con.conname from pg_catalog.pg_constraint con where con.conrelid=a.attrelid and con.contype='u' and array_upper(con.conkey,1)=1 and con.conkey[1]=a.attnum) as "unique",
                a.attnotnull as not_null
-         from pg_catalog.pg_attribute a
+        from  pg_catalog.pg_attribute a
         where a.attnum > 0 and not a.attisdropped and a.attname <> 'id'|];
     if (defined $col) {
-        $sql .= [:sql|
-            and a.attname = $col |];
+        $sql .= [:sql| and a.attname = $col |];
     }
-    $sql .= [:sql| and a.attrelid = (select c.oid from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relname =$model and n.nspname = $user)
-        order by a.attnum |];
+    $sql .= [:sql| and a.attrelid = (select c.oid
+                                     from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+                                     where c.relname =$model and n.nspname = $user)
+                   order by a.attnum
+            |];
     my $list = $openresty->select($sql, { use_hash => 1 });
     if (!$list or !ref $list) {
         $list = [];
@@ -714,14 +738,18 @@ sub get_model_col_names {
     my $sql = [:sql|
         select a.attname as name
         from pg_catalog.pg_attribute a
-        where a.attnum > 0 and not a.attisdropped and a.attname <> 'id' |];
+        where a.attnum > 0 and not a.attisdropped and a.attname <> 'id'
+    |];
     if (defined $col) {
         $sql .= [:sql| and  a.attname = $col |];
     }
 
     $sql .= [:sql|
-        and  a.attrelid = (select c.oid from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relname =$model and n.nspname = $user)
-        order by a.attnum |];
+        and  a.attrelid = (select c.oid
+                           from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+                           where c.relname =$model and n.nspname = $user)
+        order by a.attnum
+    |];
 
     my $list = $openresty->select($sql);
     if (!$list or !ref $list) { return []; }
@@ -735,9 +763,16 @@ sub get_unique_name {
         die "Model \"$model\" not found.\n";
     }
     my $sql = [:sql|
-        select (select con.conname from pg_catalog.pg_constraint con where con.conrelid=a.attrelid and con.contype='u' and array_upper(con.conkey,1)=1 and con.conkey[1]=a.attnum) as "unique_name"
-         from pg_catalog.pg_attribute a
-        where a.attnum > 0 and not a.attisdropped and a.attname <> 'id' and a.attname = $col and a.attrelid = (select c.oid from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace where c.relname =$model and n.nspname = $user) |];
+        select (select con.conname from pg_catalog.pg_constraint con where con.conrelid=a.attrelid and con.contype = 'u' and array_upper(con.conkey, 1) = 1 and con.conkey[1] = a.attnum) as "unique_name"
+        from pg_catalog.pg_attribute a
+        where a.attnum > 0 and
+              not a.attisdropped and
+              a.attname <> 'id' and
+              a.attname = $col and
+              a.attrelid = (select c.oid
+                            from pg_catalog.pg_class c left join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+                            where c.relname =$model and n.nspname = $user)
+    |];
     my $list = $openresty->select($sql);
     if (!$list or !ref $list) {
        die "Column '$col' not found.\n";
@@ -752,6 +787,7 @@ sub has_model_col {
     _IDENT($col) or die "Bad model column name: $col\n";
 
     return 1 if $col eq 'id';
+    return 1;
     my $res = $self->get_model_col_names($openresty, $model, $col);
     return $#$res != -1;
 }
@@ -878,8 +914,10 @@ sub process_order_by {
     }
     foreach my $item (@sub_order_by){
         my ($col, $dir) = split ':', $item, 2;
-        die "No column \"$col\" found in order_by.\n"
-            unless $self->has_model_col($openresty, $model, $col);
+        _IDENT($col) or die "Bad model column name: $col\n";
+        # comment it for performance
+        # die "No column \"$col\" found in order_by.\n"
+        #    unless $self->has_model_col($openresty, $model, $col);
         $dir = lc($dir) if $dir;
         die "Invalid order_by direction: $dir\n"
             if $dir and $dir ne 'asc' and $dir ne 'desc';
@@ -905,15 +943,7 @@ sub process_limit {
 
 sub select_records {
     my ($self, $openresty, $model, $user_col, $val) = @_;
-    my $cols = $self->get_model_col_names($openresty, $model);
 
-    if (lc($user_col) ne 'id' and $user_col ne '~') {
-        my $found = 0;
-        for my $col (@$cols) {
-            if ($col eq $user_col) { $found = 1; last; }
-        }
-        if (!$found) { die "Column $user_col not available.\n"; }
-    }
     my $select = OpenResty::SQL::Select->new;
     $select->from(QI($model));
     #warn "VAL: $val\n";
@@ -924,24 +954,19 @@ sub select_records {
         if ($op eq 'like') {
             $val = "%$val%";
         }
-        $select->select('id', QI(@$cols));
+        $select->select('*'); #, QI(@$cols));
         if ($user_col eq '~') {
             if ($op ne '=' && $op ne 'like' ) {
                 die "_op value not supported for values other than contains and eq.\n";
             }
-            # XXX
+            my $cols = $self->get_model_col_names($openresty, $model);
             $select->op('or');
             for my $col (@$cols) {
                 $select->where(QI($col).'::text' => $op => Q($val));
             }
         } else {
-            my $tmp_col;
-            if ($op eq 'like') {
-                $tmp_col = QI($user_col) . '::text';
-            } else {
-                $tmp_col = QI($user_col);
-            }
-            $select->where($tmp_col => $op => Q($val));
+            $user_col = QI($user_col) . ($op eq 'like' ? '::text' : '');
+            $select->where($user_col => $op => Q($val));
         }
     } else {
         $select->select($user_col);
@@ -991,15 +1016,7 @@ sub delete_records {
     if (!$openresty->has_model($model)) {
         die "Model \"$model\" not found.\n";
     }
-    my $cols = $self->get_model_col_names($openresty, $model);
-    if (lc($user_col) ne 'id' && $user_col ne '~') {
-        my $found = 0;
-        for my $col (@$cols) {
-            if ($col eq $user_col) { $found = 1; last; }
-        }
-        if (!$found) { die "Column $user_col not available.\n"; }
-    }
-    #my $flds = join(",", @$cols);
+
     my $sql;
     if (defined $val) {
         my $op = $openresty->builtin_param('_op') || 'eq';
@@ -1011,15 +1028,16 @@ sub delete_records {
             if ($op ne '=' && $op ne 'like' ) {
                 die "_op value not supported for values other than contains and eq.\n";
             }
-            $sql .= [:sql|delete from $sym:model where 1=0|];
+            my $cols = $self->get_model_col_names($openresty, $model);
+            $sql .= [:sql| delete from $sym:model where 1 = 0|];
             for my $col (@$cols) {
-                $sql .= [:sql| or $sym:col::text $kw:op $val|];
+                $sql .= [:sql| or $sym:col::text $kw:op $val |];
             }
         } else {
             if ($op eq 'like') {
-                $sql .= [:sql|delete from $sym:model where $sym:user_col::text $kw:op $val|]; 
+                $sql .= [:sql| delete from $sym:model where $sym:user_col::text $kw:op $val |]; 
             } else {
-                $sql .= [:sql|delete from $sym:model where $sym:user_col $kw:op $val|];
+                $sql .= [:sql| delete from $sym:model where $sym:user_col $kw:op $val |];
             }
         }
     } else {
@@ -1032,15 +1050,6 @@ sub delete_records {
 
 sub update_records {
     my ($self, $openresty, $model, $user_col, $val, $data) = @_;
-    my $cols = $self->get_model_col_names($openresty, $model);
-    if (lc($user_col) ne 'id' && $user_col ne '~') {
-        my $found = 0;
-        for my $col (@$cols) {
-            if ($col eq $user_col) { $found = 1; last; }
-        }
-        #my $flds = join(",", @$cols);
-        if (!$found) { die "Column $user_col not available.\n"; }
-    }
     if (!ref $data || ref $data ne 'HASH') {
         die "HASH data expected in the content body.\n";
     }
@@ -1065,27 +1074,16 @@ sub update_records {
             if ($op ne '=' && $op ne 'like' ) {
                 die "_op value not supported for values other than contains and eq.\n";
             }
+            my $cols = $self->get_model_col_names($openresty, $model);
             $update->op('or');
             for my $col (@$cols) {
                 $update->where(QI($col).'::text' => $op => Q($val));
             }
         } else {
-            my $tmp_col;
-            if ($op eq 'like') {
-                $tmp_col = QI($user_col) . '::text';
-            } else {
-                $tmp_col = QI($user_col);
-            }
-            $update->where($tmp_col => $op => Q($val));
+            $user_col = QI($user_col) . ($op eq 'like' ? '::text' : '');
+            $update->where($user_col => $op => Q($val));
         }
-        # XXX SQL injection point
-        # $update->where(QI($user_col) => Q($val));
     }
-    #warn "VAL:  $val";
-    #warn "is_utf8:", is_utf8($val), "\n";
-    #warn "is_utf8:", is_utf8($user_col), "\n";
-    ### SQL: "$update"
-    #warn "X<<<<>>>> $update";
     my $retval = $openresty->do("$update") + 0;
     return {success => $retval ? 1 : 0,rows_affected => $retval};
 }
