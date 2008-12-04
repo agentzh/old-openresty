@@ -202,7 +202,7 @@ GET /=/model/Foo/name/Bob?_order_by=age:desc
 --- request
 GET /=/model/Foo/name/Bob?_order_by=null
 --- response
-{"success":0,"error":"No column \"null\" found in order_by."}
+{"error":"non-integer constant in ORDER BY","success":0}
 
 
 
