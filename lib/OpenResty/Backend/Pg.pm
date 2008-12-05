@@ -146,16 +146,27 @@ sub set_user {
 }
 
 sub add_user {
-    my $self = shift;
-    my $user = shift;
-    $self->add_empty_user($user);
-    $self->SUPER::add_user($user, @_);
+    my ($self, $user, $password, $has_schema) = @_;
+    if ($has_schema) {
+       die "Schema $user not found.\n" if !$self->has_user($user);
+       $self->add_schema_user($user);
+    } else {
+        $self->add_empty_user($user);
+    }
+    $self->SUPER::add_user($user, $password);
 }
 
 sub add_empty_user {
     my ($self, $user) = @_;
     $self->do(<<"_EOC_");
 create schema $user;
+set search_path to $user;
+_EOC_
+}
+
+sub add_schema_user {
+    my ($self, $user) = @_;
+    $self->do(<<"_EOC_");
 set search_path to $user;
 _EOC_
 }
