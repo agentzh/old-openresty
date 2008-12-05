@@ -435,9 +435,12 @@ sub POST_action {
 
 sub new_action {
     my ($self, $openresty, $data) = @_;
-    my $action_count = $self->action_count($openresty);
-    if ($action_count >= $ACTION_LIMIT) {
-        die "Exceeded action count limit: $ACTION_LIMIT.\n";
+
+    if (!$openresty->is_unlimited) {
+        my $action_count = $self->action_count($openresty);
+        if ($action_count >= $ACTION_LIMIT) {
+            die "Exceeded action count limit: $ACTION_LIMIT.\n";
+        }
     }
 
     my ($action, $desc, $params, $def);
@@ -459,7 +462,7 @@ sub new_action {
         } :required :nonempty
     |]
     $params ||= [];
-    if (@$params > $ACTION_PARAM_LIMIT) {
+    if (!$openresty->is_unlimited && @$params > $ACTION_PARAM_LIMIT) {
         die "Exceeded model column count limit: $ACTION_LIMIT.\n";
     }
 
@@ -483,7 +486,7 @@ sub new_action {
 
     # Check if too many commands are given:
     my $cmds = $frags;
-    if ( @$cmds > $ACTION_CMD_COUNT_LIMIT ) {
+    if (!$openresty->is_unlimited && @$cmds > $ACTION_CMD_COUNT_LIMIT ) {
         die
             "Too many commands in the action (should be no more than $ACTION_CMD_COUNT_LIMIT)\n";
     }
@@ -715,7 +718,7 @@ sub exec_RunAction {
 
     # Check if too many commands are given:
     my $cmds = $frags;
-    if (@$cmds > $ACTION_CMD_COUNT_LIMIT) {
+    if (!$openresty->is_unlimited && @$cmds > $ACTION_CMD_COUNT_LIMIT) {
         die "Too many commands in the action (should be no more than $ACTION_CMD_COUNT_LIMIT)\n";
     }
 
@@ -878,7 +881,7 @@ sub alter_action {
 
         # Check if too many commands are given:
         my $cmds = $frags;
-        if ( @$cmds > $ACTION_CMD_COUNT_LIMIT ) {
+        if (!$openresty->is_unlimited && @$cmds > $ACTION_CMD_COUNT_LIMIT ) {
             die
                 "Too many commands in the action (should be no more than $ACTION_CMD_COUNT_LIMIT)\n";
         }
@@ -927,7 +930,7 @@ sub POST_action_param {
     my $params = $compiled->[0];
     my @param_names = keys %$params;
 
-    if (@param_names >= $ACTION_PARAM_LIMIT) {
+    if (!$openresty->is_unlimited && @param_names >= $ACTION_PARAM_LIMIT) {
         die "Exceeded model column count limit: $ACTION_PARAM_LIMIT.\n";
     }
 

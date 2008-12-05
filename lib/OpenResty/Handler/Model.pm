@@ -167,13 +167,12 @@ sub POST_model_column {
         die "Value must be a HASH.\n";
 
     # XXX has_model check?
-
-    my $num = $self->column_count($openresty, $model);
-
-    if ($num >= $COLUMN_LIMIT) {
-        die "Exceeded model column count limit: $COLUMN_LIMIT.\n";
+    if (!$openresty->is_unlimited) {
+        my $num = $self->column_count($openresty, $model);
+        if ($num >= $COLUMN_LIMIT) {
+            die "Exceeded model column count limit: $COLUMN_LIMIT.\n";
+        }
     }
-
     my $alias;
     if ($col ne '~') {
         $alias = $data->{name};
@@ -411,10 +410,11 @@ sub PUT_model {
 
 sub new_model {
     my ($self, $openresty, $data) = @_;
-    my $nmodels = $self->model_count($openresty);
-    if ($nmodels >= $MODEL_LIMIT) {
-        #warn "===================================> $num\n";
-        die "Exceeded model count limit $MODEL_LIMIT.\n";
+    if (!$openresty->is_unlimited) {
+        my $nmodels = $self->model_count($openresty);
+        if ($nmodels >= $MODEL_LIMIT) {
+            die "Exceeded model count limit $MODEL_LIMIT.\n";
+        }
     }
 
     my ($model, $desc, $columns);
@@ -444,7 +444,7 @@ sub new_model {
     } elsif (!@$columns) {
         $openresty->warning("'columns' empty for model \"$model\".");
     }
-    if (@$columns > $COLUMN_LIMIT) {
+    if (!$openresty->is_unlimited && @$columns > $COLUMN_LIMIT) {
         die "Exceeded model column count limit: $COLUMN_LIMIT.\n";
     }
 
@@ -807,7 +807,7 @@ sub insert_records {
         die "Malformed data: Hash or Array expected\n";
     }
     ### Data: $data
-    if ($self->row_count($openresty, $model) >= $RECORD_LIMIT) {
+    if (!$openresty->is_unlimited && $self->row_count($openresty, $model) >= $RECORD_LIMIT) {
         die "Exceeded model row count limit: $RECORD_LIMIT.\n";
     }
     ### HERE 2...

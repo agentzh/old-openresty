@@ -97,7 +97,13 @@ sub init {
             $OpenResty::UnsafeAccounts{$account} = 1;
         }
     }
-
+    if (my $unlimited_accounts = $OpenResty::Config{'frontend.unlimited'}) {
+        $unlimited_accounts =~ s/^\s+|\s+$//g;
+        my @accounts = split /\s+/, $unlimited_accounts;
+        for my $account (@accounts) {
+            $OpenResty::UnlimitedmAccounts{$account} = 1;
+        }
+    }
     my $hdls = $OpenResty::Config{'frontend.handlers'};
     my @handlers;
     if (!defined $hdls) {

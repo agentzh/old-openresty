@@ -34,7 +34,7 @@ use Encode::Guess;
 #$YAML::Syck::ImplicitBinary = 1;
 
 our ($Backend, $BackendName);
-our (%AccountFiltered, %UnsafeAccounts);
+our (%AccountFiltered, %UnsafeAccounts, %UnlimitedAccounts );
 our $Cache;
 our $UUID = Data::UUID->new;
 
@@ -107,7 +107,8 @@ sub new {
         _call_level => $call_level,
         _dumper => $Dumper,
         _importer => $Importer,
-        _http_status => 'HTTP/1.1 200 OK'
+        _http_status => 'HTTP/1.1 200 OK',
+        _unlimited => undef
     }, $class;
 }
 
@@ -639,6 +640,14 @@ sub set_role {
 
 sub get_role {
     $_[0]->{_role}
+}
+
+sub set_unlimited {
+    $_[0]->{_unlimted} = shift;
+}
+
+sub is_unlimited {
+    return $_[0]->{_unlimited};
 }
 
 sub url_param {
