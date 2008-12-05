@@ -355,12 +355,14 @@ sub role_count {
 
 sub new_role {
     my ($self, $openresty, $data) = @_;
-    my $nroles = $self->role_count($openresty);
-    my $res;
-    if ($nroles >= $ROLE_LIMIT) {
-        die "Exceeded role count limit $ROLE_LIMIT.\n";
-    }
 
+    if (!$openresty->is_unlimited) {
+        my $nroles = $self->role_count($openresty);
+        if ($nroles >= $ROLE_LIMIT) {
+            die "Exceeded role count limit $ROLE_LIMIT.\n";
+        }
+    }
+    my $res;
     my $name = delete $data->{name} or
         die "No 'name' specified.\n";
     _IDENT($name) or die "Bad role name: ", $OpenResty::Dumper->($name), "\n";

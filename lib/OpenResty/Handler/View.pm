@@ -217,13 +217,15 @@ sub view_count {
 
 sub new_view {
     my ($self, $openresty, $data) = @_;
-    my $nviews = $self->view_count($openresty);
-    my $res;
-    if ($nviews >= $VIEW_LIMIT) {
-        #warn "===================================> $num\n";
-        die "Exceeded view count limit $VIEW_LIMIT.\n";
+
+    if (!$openresty->is_unlimited) {
+        my $nviews = $self->view_count($openresty);
+        if ($nviews >= $VIEW_LIMIT) {
+            die "Exceeded view count limit $VIEW_LIMIT.\n";
+        }
     }
 
+    my $res;
     my $name = delete $data->{name} or
         die "No 'name' specified.\n";
     _IDENT($name) or die "Bad view name: ", $OpenResty::Dumper->($name), "\n";

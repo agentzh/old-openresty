@@ -249,13 +249,14 @@ sub feed_count {
 
 sub new_feed {
     my ($self, $openresty, $data) = @_;
-    my $nfeeds = $self->feed_count($openresty);
-    my $res;
-    if ($nfeeds >= $FEED_LIMIT) {
-        #warn "===================================> $num\n";
-        die "Exceeded feed count limit $FEED_LIMIT.\n";
+    if (!$openresty->is_unlimited) {
+        my $nfeeds = $self->feed_count($openresty);
+        if ($nfeeds >= $FEED_LIMIT) {
+            die "Exceeded feed count limit $FEED_LIMIT.\n";
+        }
     }
 
+    my $res;
     my $name = delete $data->{name} or
         die "No 'name' specified.\n";
     _IDENT($name) or die "Bad feed name: ", $OpenResty::Dumper->($name), "\n";

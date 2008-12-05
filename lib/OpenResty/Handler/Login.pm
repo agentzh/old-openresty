@@ -130,7 +130,7 @@ sub login_by_perl {
         die "Account \"$account\" does not exist.\n";
     }
     $openresty->set_user($account);
-
+    $openresty->set_unlimited($OpenResty::UnlimitedAccounts{$account});
     my $login_meth = $openresty->has_role($role);
     if (!$login_meth) {
         ### Found user: $user
