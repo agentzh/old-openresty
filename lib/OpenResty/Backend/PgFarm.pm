@@ -112,11 +112,11 @@ sub set_user {
 }
 
 sub add_user {
-    my $self = shift;
-    my $user = shift;
+    my ($self, $user, $password, $has_schema) = @_;
+    die "Not support add user has schema operation.\n" if $has_schema;
     my $retval = $self->add_empty_user($user);
     $self->set_user($user);
-    $self->SUPER::add_user($user, @_);
+    $self->SUPER::add_user($user, $password, $password);
     return $retval >= 0;
 }
 

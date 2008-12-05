@@ -10,37 +10,42 @@ use lib "$FindBin::Bin/../lib";
 use OpenResty::Dispatcher;
 use OpenResty::Limits;
 use Getopt::Std;
+use Getopt::Long;
 use Time::HiRes;
 
 use constant {
     MAX_STATS_CACHE_SIZE => 500,
 };
 
-my %opts;
+my $cmd;
 
 my $arg = $ARGV[0];
-if ($arg && substr($arg, 0, 1) eq '-') {
-    getopts('p:f:r:', \%opts);
+if ($arg && $arg !~ /^-/) {
+    $cmd = lc(shift);
 }
-my $cmd = lc(shift) || $ENV{OPENRESTY_COMMAND};
-if (@ARGV) { getopts('p:f:r:', \%opts); }
 
+my %opts = ( 
+    port => 8000,
+);
+
+if (@ARGV) {
+    GetOptions('port=i' => \$opts{port},
+               'file=s' => \$opts{conf_file},
+               'root-path=s' => \$opts{root_path},
+               'wrap-legacy' => \$opts{wrap_legacy}
+    );
+}
+
+$cmd = $ENV{OPENRESTY_COMMAND} if !$cmd;
 if ($ENV{REQUEST_URI}) {
     if (!$cmd) {
         $cmd = 'fastcgi';
         $ENV{OPENRESTY_COMMAND} = $cmd;
     }
 }
-
 $cmd ||= '';
 
-#my %opts;
-#getopts('p:f:r:', \%opts);
-
-my $port = $opts{p} || 8000;
 $opts{context} = $cmd;
-$opts{conf_file} = $opts{f};
-$opts{root_path} = $opts{r};
 
 eval {
     OpenResty::Dispatcher->init(\%opts);
@@ -115,13 +120,9 @@ if ($cmd eq 'fastcgi') {
     OpenResty::Dispatcher->process_request($cgi);
     exit;
 } elsif ($cmd eq 'start') {
-    # my %opts;
-    # getopts('p:f:', \%opts);
-    # my $port = $opts{p} || 8000;
-
     require OpenResty::Server;
     my $server = OpenResty::Server->new;
-    $server->port($port);
+    $server->port($opts{port});
     $server->run;
     exit;
 } elsif ($cmd eq 'fastcgi2') { # with PL/Proxy support
@@ -136,7 +137,7 @@ my $backend = $OpenResty::Backend;
 if ($cmd eq 'adduser') {
     my $user = shift or
         die "No user specified.\n";
-    if ($backend->has_user($user)) {
+    if (!$opts{'wrap_legacy'} && $backend->has_user($user)) {
         die "User $user already exists.\n";
     }
     eval "use Term::ReadKey;";
@@ -174,7 +175,7 @@ if ($cmd eq 'adduser') {
     }
     $password = $key;
 
-    $OpenResty::Backend->add_user($user, $password);
+    $OpenResty::Backend->add_user($user, $password, $opts{'wrap_legacy'});
     my $machine = $OpenResty::Backend->has_user($user);
     if ($machine) {
         warn "User $user created on node $machine.\n";
