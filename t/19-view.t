@@ -833,11 +833,19 @@ PUT /=/view/TitleOnly
 { "definition": "select * from Post, to_tsquery('chinesecfg', $query) as q where 1=1 order by ts_rank(ts_vector(content), q)" }
 --- response
 {"success":1}
---- SKIP
 
 
 
-=== TEST 90: don't recognize aliased proc as model
+=== TEST 90: from proc()
+--- request
+PUT /=/view/TitleOnly
+{ "definition": "select * from now()" }
+--- response
+{"success":1}
+
+
+
+=== TEST 91: don't recognize aliased proc as model
 --- request
 POST /=/view/TitleOnly2
 { "definition": "select * from (select * from Post) as a where a.title = 'a' " }
@@ -846,7 +854,7 @@ POST /=/view/TitleOnly2
 
 
 
-=== TEST 91: is not null
+=== TEST 92: is not null
 --- request
 POST /=/view/TitleOnly3
 {"definition":"select * from Post where title is not null"}
@@ -855,7 +863,7 @@ POST /=/view/TitleOnly3
 
 
 
-=== TEST 92: logout
+=== TEST 93: logout
 --- request
 GET /=/logout
 --- response
