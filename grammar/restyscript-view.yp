@@ -58,6 +58,8 @@ joined_obj: model 'as' symbol
              { join(' ', @_[1..$#_]) }
           | proc_call 'as' symbol
              { join(' ', @_[1..$#_]) }
+          | proc_call
+             { join(' ', @_[1..$#_]) }
           | model
           | subquery 'as' symbol
              { join(' ', @_[1..$#_]) }
@@ -133,7 +135,9 @@ array_index2: column '[' expr2 ']'
              { join(' ', @_[1..$#_]) }
            ;
 
-proc_call: IDENT '(' parameter_list ')'
+proc_call: IDENT '(' ')'
+             { join(' ', @_[1..$#_]) }
+         | IDENT '(' parameter_list ')'
              { join(' ', @_[1..$#_]) }
          | IDENT '(' '*' ')'
              { join(' ', @_[1..$#_]) }
