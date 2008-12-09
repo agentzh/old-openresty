@@ -500,7 +500,10 @@ sub current_user_can {
         from _access
         where role = $role and method = $meth and segments = $segs
             and $url like (prefix || '%') |];
-    if ($client_ip && $client_ip ne '127.0.0.1') {
+    if (!$client_ip) {
+        die "Cannot get client ip address.\n";
+    }
+    if ( $client_ip ne '127.0.0.1') {
         $sql .= [:sql| and cidr($client_ip) <<= any(applied_to) |];
     }
     $sql .= " order by prohibiting desc limit 1";

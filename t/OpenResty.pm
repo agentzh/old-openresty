@@ -220,7 +220,9 @@ sub run_test ($) {
         from_to($url, 'UTF-8', $charset) unless $charset eq 'UTF-8';
         from_to($body, 'UTF-8', $charset) unless $charset eq 'UTF-8';
         $client->content_type($type);
-        my $res = $client->request($body, $method, $url);
+        my $client_ip = $block->client_ip;
+        chomp $client_ip if $client_ip;
+        my $res = $client->request($body, $method, $url, undef, $client_ip);
         if ($should_skip) { return; }
         my $good_res = $res->is_success || $res->is_redirect;
         ok $good_res, "request returns OK - $name";
