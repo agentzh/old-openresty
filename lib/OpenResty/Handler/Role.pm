@@ -82,7 +82,7 @@ sub GET_access_rule {
     my $sql;
     if ($value eq '~') {
         $sql = [:sql|
-            select id, method, prefix, segments, prohibiting
+            select id, method, prefix, segments, array_to_string(applied_to,' ') as applied_to, prohibiting
             from _access
             where role = $role;
         |];
@@ -96,14 +96,14 @@ sub GET_access_rule {
 
         if ($col eq '~') {
             $sql = [:sql|
-                select id, method, prefix, segments, prohibiting
+                select id, method, prefix, segments, array_to_string(applied_to,' ') as applied_to, prohibiting
                 from _access where role = $role and
                     (id::text $kw:op $value or method $kw:op $value or
                      prefix $kw:op $value);
             |];
         } else {
             $sql = [:sql|
-                select id, method, prefix, segments, prohibiting
+                select id, method, prefix, segments, array_to_string(applied_to,' ') as applied_to, prohibiting
                 from _access
                 where role = $role and $sym:col $kw:op $value;
             |];
@@ -148,7 +148,8 @@ sub PUT_access_rule {
     if ($role eq 'Admin') {
         die "Role \"Admin\" is read only.\n";
     }
-    if ($col ne '~' and $col ne 'method' and $col ne 'url' and $col ne 'id') {
+    if ($col ne '~' and $col ne 'method' and $col ne 'url' and
+                        $col ne 'applied_to' and $col ne 'id') {
         die "Unknown access rule field: $col\n";
     }
 
@@ -168,6 +169,12 @@ sub PUT_access_rule {
             my $segs = @bits;
             $update->set(prefix => Q($prefix));
             $update->set(segments => Q($segs));
+        } elsif ($col eq 'applied_to') {
+            if ($val !~ /^[\d|\.|\/|\s]+$/) {
+                die "the acl column applied_to: $applied_to's format must be cidr type seperated by space.";
+            }
+            $val =~ s/\s+/,/g;
+            $update->set(applied_to => Q("{$val}"));
         } else {
             $update->set(QI($col) => Q($val));
         }
@@ -251,6 +258,12 @@ sub insert_rule {
     if (!defined $url) {
         die "row $row: Column \"url\" is missing.\n";
     }
+    my $applied_to = delete $data->{applied_to} || '0.0.0.0/0';
+    if ($applied_to !~ /^[\d|\.|\/|\s]+$/) {
+        die "the acl column applied_to: $applied_to's format must be cidr type seperated by space.";
+    }
+    $applied_to =~ s/\s+/,/g;
+    $applied_to = "{$applied_to}";
     my $prohibiting = delete $data->{prohibiting} ? 'true' : 'false';
     if ($url !~ s/^\/=\/+//) {
         die "URL must be lead by \"/=/\".\n";
@@ -265,8 +278,8 @@ sub insert_rule {
     $prefix = '' if $prefix eq '~';
     my $segs = @bits;
     my $sql = [:sql|
-        insert into _access (role, method, prefix, segments, prohibiting)
-        values ($role, $method, $prefix, $segs, $prohibiting) |];
+        insert into _access (role, method, prefix, segments, applied_to, prohibiting)
+        values ($role, $method, $prefix, $segs, $applied_to, $prohibiting) |];
     return $openresty->do($sql);
 }
 
@@ -302,6 +315,7 @@ sub GET_role {
     $res->{columns} = [
         { name => "method", type => "text", label => "HTTP method" },
         { name => "url", type => "text", label => "Resource"},
+        { name => "applied_to", type => "text", label => "Applied_to"},
         { name => "prohibiting", type => "boolean", label => "Prohibiting"}
     ];
     return $res;
@@ -449,6 +463,10 @@ sub PUT_role {
         }
         _STRING($new_password) or
             die "Bad password: ", $OpenResty::Dumper->($new_password), "\n";
+        if (length($new_password) < $PASSWORD_MIN_LEN) {
+            die "Password too short; at least $PASSWORD_MIN_LEN chars required.\n";
+        }
+
         #check_password($new_password);
         $update->set(password => Q($new_password));
     }
@@ -473,6 +491,7 @@ sub PUT_role {
 sub current_user_can {
     my ($self, $openresty, $meth, $bits) = @_;
     my $role = $openresty->{_role};
+    my $client_ip = $openresty->{_client_ip};
     return 1 if $role eq 'Admin'; # short cut
     my $url = join '/', @$bits;
     my $segs = @$bits;
@@ -480,10 +499,11 @@ sub current_user_can {
         select prohibiting
         from _access
         where role = $role and method = $meth and segments = $segs
-            and $url like (prefix || '%')
-        order by prohibiting desc
-        limit 1;
-    |];
+            and $url like (prefix || '%') |];
+    if ($client_ip && $client_ip ne '127.0.0.1') {
+        $sql .= [:sql| and cidr($client_ip) <<= any(applied_to) |];
+    }
+    $sql .= " order by prohibiting desc limit 1";
     ### $sql
     my $res = $openresty->select($sql);
     if ($res && @$res) {
