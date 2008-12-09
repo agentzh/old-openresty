@@ -149,6 +149,7 @@ _EOC_
     [ '0.006' => '' ],  # v0.4.0
     [ '0.007' => '' ],  # v0.5.0
     [ '0.008' => '' ],
+    [ '0.009' => '' ],
 );
 
 our @LocalVersionDelta = (
@@ -325,6 +326,14 @@ begin
 
     return 0;
 end;
+$$ language plpgsql;
+_EOC_
+   [ '0.009' => <<'_EOC_' ],
+create or replace function _upgrade() returns integer as $$
+begin
+    alter table _access add column applied_to cidr[] default '{0.0.0.0/0}';
+    return 0;
+end
 $$ language plpgsql;
 _EOC_
 );

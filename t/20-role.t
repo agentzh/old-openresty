@@ -67,6 +67,7 @@ GET /=/role
 
 
 
+
 === TEST 8: Use wildcard to get the role list
 --- request
 GET /=/role/~
@@ -86,6 +87,7 @@ GET /=/role/Admin
     "columns":[
         {"label":"HTTP method","name":"method","type":"text"},
         {"label":"Resource","name":"url","type":"text"},
+        {"label":"Applied_to","name":"applied_to","type":"text"},
         {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
     ],
     "name":"Admin",
@@ -103,6 +105,7 @@ GET /=/role/Public
   "columns":[
     {"label":"HTTP method","name":"method","type":"text"},
     {"label":"Resource","name":"url","type":"text"},
+    {"label":"Applied_to","name":"applied_to","type":"text"},
     {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
   ],
   "name":"Public",
@@ -155,10 +158,10 @@ POST /=/role/Public/~/~
 GET /=/role/Public/~/~
 --- response_like
 \[
-    \{"id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
-    \{"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/~"},
-    \{"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"},
-    \{"id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"}
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/~"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"}
 \]
 
 
@@ -168,10 +171,10 @@ GET /=/role/Public/~/~
 GET /=/role/Public/method/~
 --- response_like
 \[
-    \{"id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
-    \{"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/~"},
-    \{"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"},
-    \{"id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"}
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/~"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"}
 \]
 
 
@@ -188,7 +191,7 @@ GET /=/role/Public/method/model
 --- request
 GET /=/role/Public/~/model
 --- response_like
-\[{"id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},{"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/~"}\]
+\[{"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},{"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/~"}\]
 
 
 
@@ -197,10 +200,10 @@ GET /=/role/Public/~/model
 GET /=/role/Public/~/model?op=contains
 --- response_like
 \[
-    \{"id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
-    \{"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/~"},
-    \{"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"},
-    \{"id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"}
+    \{"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
+    \{"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/~"},
+    \{"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"},
+    \{"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"}
 \]
 
 
@@ -210,8 +213,8 @@ GET /=/role/Public/~/model?op=contains
 GET /=/role/Public/url/A?op=contains
 --- response_like
 \[
-    \{"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"},
-    \{"id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"}
+    \{"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"},
+    \{"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"}
 \]
 
 
@@ -220,7 +223,7 @@ GET /=/role/Public/url/A?op=contains
 --- request
 GET /=/role/Public/method/GET
 --- response_like
-\[{"id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"}\]
+\[{"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"}\]
 
 
 
@@ -229,8 +232,8 @@ GET /=/role/Public/method/GET
 GET /=/role/Public/method/POST
 --- response_like
 \[
-    {"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/~"},
-    {"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/~"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
 \]
 
 
@@ -240,8 +243,8 @@ GET /=/role/Public/method/POST
 GET /=/role/Public/~/POST
 --- response_like
 \[
-    {"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/~"},
-    {"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/~"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
 \]
 
 
@@ -615,8 +618,8 @@ POST /=/role/Poster/~/~
 GET /=/role/Poster/~/~
 --- response_like
 ^\[
-    {"id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
-    {"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
 \]$
 
 
@@ -722,6 +725,7 @@ GET /=/role/Admin
     "columns":[
         {"label":"HTTP method","name":"method","type":"text"},
         {"label":"Resource","name":"url","type":"text"},
+        {"label":"Applied_to","name":"applied_to","type":"text"},
         {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
     ],
     "name":"Admin",
@@ -747,6 +751,7 @@ GET /=/role/Public
     "columns":[
         {"label":"HTTP method","name":"method","type":"text"},
         {"label":"Resource","name":"url","type":"text"},
+        {"label":"Applied_to","name":"applied_to","type":"text"},
         {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
     ],
     "name":"Public",
@@ -761,10 +766,10 @@ GET /=/role/Public
 GET /=/role/Public/~/~
 --- response_like
 \[
-    \{"id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
-    {"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/~"},
-    {"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"},
-    {"id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"}
+    \{"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/~"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"}
 \]
 
 
@@ -782,8 +787,8 @@ DELETE /=/role/Public/method/POST
 GET /=/role/Public/~/~
 --- response_like
 \[
-    \{"id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
-    {"id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"}
+    \{"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"}
 \]
 
 
@@ -811,8 +816,8 @@ PUT /=/role/Public/method/GET
 GET /=/role/Public/~/~
 --- response_like
 \[
-    {"id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"},
-    {"id":"\d+","method":"GET","prohibiting":false,"url":"/=/model/A/~"}
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"GET","prohibiting":false,"url":"/=/model/A/~"}
 ]
 
 
@@ -831,8 +836,8 @@ PUT /=/role/Public/method/GET
 GET /=/role/Public/~/~
 --- response_like
 \[
-    {"id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"},
-    {"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~"}
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~"}
 ]
 
 
@@ -851,8 +856,8 @@ PUT /=/role/Public/method/POST
 GET /=/role/Public/~/~
 --- response_like
 \[
-    {"id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"},
-    \{"id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"}
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"DELETE","prohibiting":false,"url":"/=/model/A/id/~"},
+    \{"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"}
 \]
 
 
@@ -878,6 +883,7 @@ GET /=/role/Poster
   "columns":[
     {"label":"HTTP method","name":"method","type":"text"},
     {"label":"Resource","name":"url","type":"text"},
+    {"label":"Applied_to","name":"applied_to","type":"text"},
     {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
   ],
   "name":"Poster",
@@ -910,8 +916,8 @@ POST /=/role/Poster/~/~
 GET /=/role/Poster/~/~
 --- response_like
 ^\[
-    {"id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
-    {"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
 \]$
 
 
@@ -955,6 +961,7 @@ GET /=/role/Newposter
   "columns":[
     {"label":"HTTP method","name":"method","type":"text"},
     {"label":"Resource","name":"url","type":"text"},
+    {"label":"Applied_to","name":"applied_to","type":"text"},
     {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
   ],
   "name":"Newposter",
@@ -969,8 +976,8 @@ GET /=/role/Newposter
 GET /=/role/Newposter/~/~
 --- response_like
 ^\[
-    {"id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
-    {"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
 \]$
 
 
@@ -994,6 +1001,7 @@ GET /=/role/Newposter
   "columns":[
     {"label":"HTTP method","name":"method","type":"text"},
     {"label":"Resource","name":"url","type":"text"},
+    {"label":"Applied_to","name":"applied_to","type":"text"},
     {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
   ],
   "name":"Newposter",
@@ -1023,6 +1031,7 @@ GET /=/role/Newname
   "columns":[
     {"label":"HTTP method","name":"method","type":"text"},
     {"label":"Resource","name":"url","type":"text"},
+    {"label":"Applied_to","name":"applied_to","type":"text"},
     {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
   ],
   "name":"Newname",
@@ -1037,8 +1046,8 @@ GET /=/role/Newname
 GET /=/role/Newname/~/~
 --- response_like
 ^\[
-    {"id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
-    {"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
 \]$
 
 
@@ -1089,6 +1098,7 @@ GET /=/role/Newname
   "columns":[
     {"label":"HTTP method","name":"method","type":"text"},
     {"label":"Resource","name":"url","type":"text"},
+    {"label":"Applied_to","name":"applied_to","type":"text"},
     {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
   ],
   "name":"Newname",
@@ -1103,8 +1113,8 @@ GET /=/role/Newname
 GET /=/role/Newname/~/~
 --- response_like
 ^\[
-    {"id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
-    {"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
 \]$
 
 
@@ -1208,6 +1218,7 @@ GET /=/role/Poster
   "columns":[
     {"label":"HTTP method","name":"method","type":"text"},
     {"label":"Resource","name":"url","type":"text"},
+    {"label":"Applied_to","name":"applied_to","type":"text"},
     {"label":"Prohibiting","name":"prohibiting","type":"boolean"}
   ],
   "name":"Poster",
@@ -1216,14 +1227,13 @@ GET /=/role/Poster
 }
 
 
-
 === TEST 118: Check the rule list
 --- request
 GET /=/role/Poster/~/~
 --- response_like
 ^\[
-    {"id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
-    {"id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"GET","prohibiting":false,"url":"/=/model"},
+    {"applied_to":"0\.0\.0\.0/0","id":"\d+","method":"POST","prohibiting":false,"url":"/=/model/A/~/~"}
 \]$
 
 
@@ -1408,8 +1418,7 @@ PUT /=/role/Poster
     "password":"_1984"
 }
 --- response
-{"error":"Password too short; at least 6 chars are required.","success":0}
---- SKIP
+{"error":"Password too short; at least 6 chars required.","success":0}
 
 
 
