@@ -103,6 +103,7 @@ sub new {
     my ($class, $cgi, $call_level) = @_;
     return bless {
         _cgi => $cgi,
+        _client_ip => $cgi->remote_host(),
         _charset => 'UTF-8',
         _call_level => $call_level,
         _dumper => $Dumper,
@@ -129,7 +130,6 @@ sub init {
     my ($self, $rurl) = @_;
     my $class = ref $self;
     my $cgi = $self->{_cgi};
-    my $client_ip = $cgi->remote_host();
 
     if (!$Backend || !$Backend->ping) {
         warn "Re-connecting the database...\n";
@@ -149,7 +149,6 @@ sub init {
             $builtin_params{$param} = $cgi2->param($param);
         }
     }
-    $builtin_params{_client_ip} = $client_ip;
 
     $self->{_url_params} = \%url_params;
     $self->{_builtin_params} = \%builtin_params;

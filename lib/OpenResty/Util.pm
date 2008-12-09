@@ -65,7 +65,7 @@ sub url_encode {
 
 
 sub new_mocked_cgi {
-    my ($uri, $content) = @_;
+    my ($uri, $content, $client_ip) = @_;
     $uri =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
     my %url_params;
     if ($uri =~ /\?(.+)/) {
@@ -103,6 +103,7 @@ sub new_mocked_cgi {
             return $Cgi->header(@_);
         },
         remote_host => sub {
+            return $client_ip if $client_ip;
             return '127.0.0.1';
         },
     );
