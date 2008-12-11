@@ -396,18 +396,18 @@ sub new_role {
     }
     _STRING($login) or die "Bad 'login' value: ", $OpenResty::Dumper->($login), "\n";
 
-    if ($login !~ /^(?:password|captcha|anonymous)$/) {
+    if ($login !~ /^(?:captcha\+password|password|captcha|anonymous)$/) {
         die "Unknown login method: $login\n";
     }
 
     my $password = delete $data->{password};
-    if (defined $password and $login ne 'password') {
+    if (defined $password and $login !~ /password$/) {
         $openresty->warning("Field 'password' ignored.");
     }
 
-    if ($login eq 'password') {
+    if ($login eq 'password' or $login eq 'captcha+password') {
         if (!defined $password) {
-            die "No password given when 'login' is 'password'.\n";
+            die "No password given when 'login' is '$login'.\n";
         } elsif (length($password) < $PASSWORD_MIN_LEN) {
             die "Password too short; at least $PASSWORD_MIN_LEN chars required.\n";
         }
@@ -449,7 +449,7 @@ sub PUT_role {
     if (defined $new_login) {
         _STRING($new_login) or
             die "Bad login method: ", $OpenResty::Dumper->($new_login), "\n";
-        if ($new_login !~ /^(?:password|anonymous|captcha)$/) {
+        if ($new_login !~ /^(?:captcha\+password|password|anonymous|captcha)$/) {
             die "Bad login method: $new_login\n";
         }
         $OpenResty::Cache->remove_has_role($user, $role);
@@ -471,8 +471,9 @@ sub PUT_role {
         $update->set(password => Q($new_password));
     }
 
-    if (defined $new_login and $new_login eq 'password' and !defined $new_password) {
-        die "No password given when 'login' is 'password'.\n";
+    if (defined $new_login and !defined $new_password and
+            ($new_login eq 'password' or $new_login eq 'captcha+password')) {
+        die "No password given when 'login' is '$new_login'.\n";
     }
 
     my $new_desc = delete $data->{description};
