@@ -142,7 +142,28 @@ sub login_by_perl {
     ### $password
     ### capture param:  $captcha
     #warn "!!!!!!!!!!!!!!!!!!! Captcha Value: $captcha\n";
-    if (defined $captcha) {
+    if (defined $captcha && defined $password) {
+        my ($id, $user_sol) = split /:/, $captcha, 2;
+        if (!$id or !$user_sol) {
+            die "Bad captcha parameter: $captcha\n";
+        }
+        if ($login_meth ne 'captcha+password') {
+            die "Cannot login as $account.$role via captchas and password.\n";
+        }
+        my ($rc, $err) = OpenResty::Handler::Captcha::validate_captcha($openresty,$id,$user_sol);
+        if (!$rc) {
+            die $err."\n";
+        }
+        my $res = $openresty->select([:sql|
+            select id
+            from _roles
+            where name = $role and password = $password
+            limit 1;
+        |]);
+        if (! @$res) {
+            die "Password for $account.$role is incorrect.\n";
+        }
+    } elsif (defined $captcha) {
         #warn "!!!!!!!!!!!!!!!!!!! Captcha Value: $captcha\n";
         my ($id, $user_sol) = split /:/, $captcha, 2;
         if (!$id or !$user_sol) {
@@ -177,11 +198,8 @@ sub login_by_perl {
         if ($role eq 'Admin') {
             die "$account.$role is not anonymous.\n";
         }
-        if ($role ne 'Public') {
-            if ($login_meth ne 'anonymous') {
-                ### dying...
+        if ($role ne 'Public' && $login_meth ne 'anonymous') {
                 die "$account.$role is not anonymous.\n";
-            }
         }
     }
     $openresty->set_role($role);

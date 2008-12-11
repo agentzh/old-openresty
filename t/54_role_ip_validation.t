@@ -1,6 +1,15 @@
 # vi:filetype=
 
-use t::OpenResty;
+BEGIN {
+    use OpenResty::Config;
+    OpenResty::Config->init;
+    if ($OpenResty::Config{'test_suite.use_http'}) {
+        $skip = "Config option test_suite.use_http is set to true, cannot mock cgi's ip address.\n";
+        return;
+    }
+};
+
+use t::OpenResty $skip ? (skip_all => $skip) : ();
 
 plan tests => 3 * blocks();
 
