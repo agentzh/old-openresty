@@ -7,6 +7,7 @@ use Getopt::Long;
 use lib 'lib';
 use Params::Util qw( _HASH );
 use JSON::XS ();
+use JSON::Syck;
 use WWW::OpenResty::Simple;
 use Data::Dumper;
 use Data::Structure::Util qw(_utf8_off);
@@ -59,7 +60,7 @@ if ($help) { print usage() }
 $user or die "No --user given.\n";
 $model or die "No --model given.\n";
 
-my $json_xs = JSON::XS->new->utf8->allow_nonref;
+# my $json_xs = JSON::XS->new->utf8->allow_nonref;
 
 my $openresty = WWW::OpenResty::Simple->new(
     { server => $server, retries => $retries, ignore_dup_error => $ignore_dup_error }
@@ -76,7 +77,9 @@ while (<>) {
     #select(undef, undef, undef, 0.1);
     #warn "count: ", scalar(@elems), "\n";
     next if $. <= $skip;
-    my $row = $json_xs->decode($_);
+    # my $row = $json_xs->decode($_);
+    my $row = JSON::Syck::Load($_);
+
 
     if (!defined $row->{id}) {
         #warn "ADDing id...\n";
@@ -116,7 +119,8 @@ sub insert_rows {
         );
     };
     if ($@ || !_HASH($res)) {
-        die "Around line $.: $@", (defined $res ? $json_xs->encode($res) : $res);
+        #die "Around line $.: $@", (defined $res ? $json_xs->encode($res) : $res);
+        die "Around line $.: $@", (defined $res ? JSON::Syck::Dump($res) : $res);
         return 0;
     }
     #warn Dumper($res);
