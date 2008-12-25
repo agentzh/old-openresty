@@ -717,8 +717,9 @@ function createACLRule (role) {
     var method = $("#create-rule-method").val();
     var url = $("#create-rule-url").val();
     var prohibiting = $("#create-rule-prohibiting").val();
+    var applied_to = $("#create-rule-applied_to").val();
     setStatus(true, "createACLRule");
-    var data = { method: method, url: url };
+    var data = { method: method, url: url, applied_to: applied_to};
     if (prohibiting == "true")
         data.prohibiting = true;
     openresty.callback = afterCreateACLRule;
