@@ -8,6 +8,9 @@ use Encode qw(decode encode);
 use Params::Util qw(_HASH);
 use WWW::OpenResty::Simple;
 use Getopt::Std;
+use JSON::XS;
+
+my $json_xs = JSON::XS->new->utf8->allow_nonref;
 
 my %opts;
 getopts('u:p:s:', \%opts) or
@@ -57,7 +60,13 @@ print "\n$inserted row(s) inserted.\n";
 
 sub insert_rows {
     my $rows = shift;
-    my $res = $resty->post('/=/model/YahooStaff/~/~', $rows);
+    my $res;
+    eval {
+        $res = $resty->post('/=/model/YahooStaff/~/~', $rows);
+    };
+    if ($@) {
+        warn "$@: ", $json_xs->encode($rows);
+    }
     return 0 unless _HASH($res);
     return $res->{rows_affected} || 0;
     print STDERR "\t$inserted " if $inserted % 10 == 0;

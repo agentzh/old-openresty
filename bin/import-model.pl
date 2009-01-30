@@ -6,11 +6,11 @@ use warnings;
 use Getopt::Long;
 use lib 'lib';
 use Params::Util qw( _HASH );
-use JSON::XS ();
+#use JSON::XS ();
 use JSON::Syck;
 use WWW::OpenResty::Simple;
 use Data::Dumper;
-use Data::Structure::Util qw(_utf8_off);
+use Data::Structure::Util qw(_utf8_on _utf8_off);
 
 sub usage {
     my $progname;
@@ -112,6 +112,7 @@ sub insert_rows {
         };
         if ($@) { warn $@, "\n" };
     }
+    _utf8_on($rows);
     eval {
         $res = $openresty->post(
             "/=/model/$model/~/~",
