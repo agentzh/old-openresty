@@ -5,7 +5,7 @@
   <center>
   <div id="body">
     <div id="doc">
-    <a href="#menu/home"><img style="margin-top: 20px; display: inline; width: 200; padding-left: 7%; float: left;" src="logo.png"></a>
+    <!--<a href="#menu/home"><img style="margin-top: 20px; display: inline; width: 200; padding-left: 7%; float: left;" src="logo.png"></a>-->
       <div xmlns="" id="hd">
         <div id="hContent">
           <div id="headerContent" class="editorWrap">
