@@ -55,10 +55,10 @@
         <!-- this is a hack; we'll use OpenAPI's own RSS feed support later -->
         <ul class="module-list">
             <li class="module-list-item">
-                <a href="http://[% resty_server %]/=/feed/Post/~/~?_user=[% blog_owner %].Public">Subscribe to the article feed</a>
+                <a href="http://[% resty_server %]/=/feed/Post/_user/[% blog_owner %].Public">Subscribe to the article feed</a>
             </li>
             <li class="module-list-item">
-                <a href="http://[% resty_server %]/=/feed/Comment/~/~?_user=[% blog_owner %].Public">Subscribe to the comment feed</a>
+                <a href="http://[% resty_server %]/=/feed/Comment/_user/[% blog_owner %].Public">Subscribe to the comment feed</a>
             </li>
         </ul>
     </div>
