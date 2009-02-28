@@ -1,8 +1,4 @@
-package OpenResty::Backend::Pg;
-
-use strict;
-use warnings;
-
+package OpenResty::Backend::Pg; use strict; use warnings; 
 #use Smart::Comments;
 use DBI;
 use OpenResty::SQL::Select;
