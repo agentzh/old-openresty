@@ -797,7 +797,7 @@ sub drop_table {
     my $user = $openresty->current_user;
     $OpenResty::Cache->remove_has_model($user, $model);
     return [:sql|
-        drop table if exists $sym:model;
+        drop table if exists $sym:model cascade;
     |];
 }
 
