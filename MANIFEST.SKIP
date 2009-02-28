@@ -116,3 +116,4 @@ agentzh-live\.json$
 ^ChangeLogs$
 ^bin/test-account.sh
 demo/Onccf/out
+t/53_compiled_actions.t
