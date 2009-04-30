@@ -6,9 +6,9 @@
     <h2 class="module-header">Site search</h2>
     <div id="search-posts" class="module-content">
         <form id="form-search" onsubmit="doPostSearch();return false;" action="">
-            <input type="text" size="20" maxlength="125" id="searchbox"></input><br/>
-            <input type="submit" value="Search posts"></input>
-            <!-- <input type="button" value="Comments"></input> -->
+            <input type="text" size="20" maxlength="125" id="searchbox"/><br/>
+            <input type="submit" value="Search posts"/>
+            <!-- <input type="button" value="Comments"/> -->
         </form>
     </div>
 </div>
