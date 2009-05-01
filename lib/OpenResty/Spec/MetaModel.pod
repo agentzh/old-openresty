@@ -4,7 +4,7 @@ OpenResty::Spec::MetaModel - Metamodel for OpenResty backends
 
 =head1 VERSION
 
-This document describes OpenResty 0.5.3's meta model, version 0.008.
+This document describes OpenResty 0.5.4's meta model, version 0.009.
 
 =head1 DESCRIPTION
 
@@ -111,7 +111,8 @@ associated with the OpenResty Role objects.
         method varchar(10) not null,
         prefix text not null,
         segments smallint,
-        prohibiting boolean default false not null
+        prohibiting boolean default false not null,
+        applied_to cidr[] default '{0.0.0.0/0}'
     );
 
 The C<role> column stores the name of the role which owns the current rule.
