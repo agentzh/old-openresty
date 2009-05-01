@@ -178,8 +178,12 @@ sub quote {
     my ($self, $val) = @_;
     if (!defined $val) { return 'NULL' }
     $val =~ s/'/''/g;
-    $val =~ s{\\}{\\\\}g;
-    "'$val'";
+    my $count = ($val =~ s{\\}{\\\\}g);
+    if ($count) {
+        return "E'$val'";
+    } else {
+        return "'$val'";
+    }
 }
 
 sub quote_identifier {

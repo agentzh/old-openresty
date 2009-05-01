@@ -18,6 +18,12 @@ $version .= 0 until length($version) >= length('0.123456');
 $version =~ s{^(\d+)\.(\d{3})(\d{3})?$}{join '.', int($1), int($2), int($3||0)}e;
 version($version);
 
+install_script('bin/openresty');
+if (-f 'haskell/bin/restyscript') {
+    install_script('haskell/bin/restyscript');
+}
+use_test_base();
+
 requires            ('CGI::Cookie::XS' => '0.15');
 requires            ('FCGI');
 requires            ('CGI::Simple' => '1.103');
@@ -89,12 +95,6 @@ if ($arg eq 'product') {
 
 #recommends          ('Cache::FastMmap' => '1.24');
 
-install_script('bin/openresty');
-if (-f 'haskell/bin/restyscript') {
-    install_script('haskell/bin/restyscript');
-}
-
-use_test_base();
 no_index( directory => qw< etc misc tmp demo minisql clients doc t > );
 tests('t/*.t t/col-not-null/*.t t/col-unique/*.t');
 

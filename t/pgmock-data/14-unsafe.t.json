@@ -1,6 +1,6 @@
 ["set search_path to _global,public","0E0","data"]
 ["select count(*) from pg_tables where tablename = '_general' and schemaname = '_global'",[["1"]],"data"]
-["select version from _global._general limit 1",[["0.008"]],"data"]
+["select version from _global._general limit 1",[["0.009"]],"data"]
 ["set lc_messages to \"C\";","0E0","data"]
 ["select nspname from pg_namespace where nspname = 'tester' limit 1;\n",1,"data"]
 ["set search_path to tester,public","0E0","data"]
