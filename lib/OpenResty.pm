@@ -1,6 +1,6 @@
 package OpenResty;
 
-our $VERSION = '0.005004';
+our $VERSION = '0.005005';
 
 use strict;
 use warnings;
@@ -683,7 +683,7 @@ OpenResty - General-purpose web service platform for web applications
 
 =head1 VERSION
 
-This document describes OpenResty 0.5.4 released on May 1, 2009.
+This document describes OpenResty 0.5.5 released on May 1, 2009.
 
 =head1 DESCRIPTION
 
@@ -884,9 +884,9 @@ The benchmark results for OpenResty 0.5.3's test suite on a PentiumIV 3.0GHz mac
 =head1 SOURCE CONTROL
 
 For the very latest version of this module, check out the source from
-the SVN repos below:
+the Git repos below:
 
-L<http://svn.openfoundry.org/openapi/trunk>
+L<http://github.com/agentzh/openresty/tree/master>
 
 There is anonymous access to all. If you'd like a commit bit, please let
 us know. :)
