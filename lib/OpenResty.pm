@@ -358,13 +358,20 @@ sub response {
         index($ENV{HTTP_ACCEPT_ENCODING} || '', 'gzip') >= 0;
     #warn "use gzip: $use_gzip\n";
     my $http_status = $self->{_http_status};
-    print "$http_status\n";
+    if ($OpenResty::Server::IsRunning) {
+        print "$http_status\r\n";
+    } else {
+        $http_status =~ s{^\s*HTTP/\d+\.\d+\s*}{};
+        #warn "http_status: $http_status\n";
+        binmode \*STDOUT;
+        print "Status: $http_status\r\n";
+    }
+    #print "$http_status\r\n";
     # warn "$http_status";
     my $type = $self->{_type} || 'text/plain';
     #warn $s;
     my $str = '';
     if (my $bin_data = $self->{_bin_data}) {
-        binmode \*STDOUT;
         local $_;
         if (my $callback = $self->{_callback}) {
             chomp($bin_data);
