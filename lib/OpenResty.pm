@@ -946,6 +946,8 @@ L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=OpenResty>.
 
 =item Agent Zhang (agentzh) C<< <agentzh at yahoo dot cn> >>
 
+=item Xunxin Wan (万珣新) C<< <wanxunxin at gmail dot com > >>
+
 =item chaoslawful (王晓哲) C<< <chaoslawful at gmail dot com> >>
 
 =item Lei Yonghua (leiyh)
