@@ -24,7 +24,7 @@ use Data::Dumper;
 use subs 'dump';
 
 use constant {
-    NODE_COUNT => 2,
+    NODE_COUNT => 4,
     USER_COUNT => 10,
 };
 
