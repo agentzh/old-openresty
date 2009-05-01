@@ -2,7 +2,7 @@ NAME
     OpenResty - General-purpose web service platform for web applications
 
 VERSION
-    This document describes OpenResty 0.5.4 released on May 1, 2009.
+    This document describes OpenResty 0.5.5 released on May 1, 2009.
 
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
@@ -170,9 +170,9 @@ PERFORMANCE
 
 SOURCE CONTROL
     For the very latest version of this module, check out the source from
-    the SVN repos below:
+    the Git repos below:
 
-    <http://svn.openfoundry.org/openapi/trunk>
+    <http://github.com/agentzh/openresty/tree/master>
 
     There is anonymous access to all. If you'd like a commit bit, please let
     us know. :)
