@@ -1,3 +1,6 @@
+.rsync
+bin/openresty.fcgi
+demo/Admin/.rsync
 *~
 *.json
 *.o
