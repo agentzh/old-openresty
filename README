@@ -2,7 +2,7 @@ NAME
     OpenResty - General-purpose web service platform for web applications
 
 VERSION
-    This document describes OpenResty 0.5.3 released on November 30, 2008.
+    This document describes OpenResty 0.5.4 released on May 1, 2009.
 
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
@@ -140,14 +140,14 @@ PERFORMANCE
     run it on our not-so-good servers and support lots of Yahoo! China's
     online products with very heavy traffic.
 
-    OpenResty prefers modules with XS over pure Perl ones and use cache
+    OpenResty prefers modules with XS over pure Perl ones and uses cache
     aggressively. It's also in favor of source-filter based solutions
     provided by Filter::QuasiQuote to reduce the length of subroutine
     calling chains and the number of indirections. Finally, the restyscript
     compiler is also written in carefully optimized Haskell code to maximize
     speed.
 
-    The benchmark results for OpenResty 0.5.3's test suite on a Pentium 4
+    The benchmark results for OpenResty 0.5.3's test suite on a PentiumIV
     3.0GHz machine is given below:
 
     in-process frontend + PgMocked backend
@@ -238,6 +238,8 @@ License and Copyright
 
     Copyright (c) 2007-2008, Yahoo! China EEEE Works, Alibaba Inc. All
     rights reserved.
+
+    Copyright (c) 2007-2008, Agent Zhang (agentzh). All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are

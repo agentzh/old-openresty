@@ -1,6 +1,6 @@
 package OpenResty;
 
-our $VERSION = '0.005003';
+our $VERSION = '0.005004';
 
 use strict;
 use warnings;
@@ -683,7 +683,7 @@ OpenResty - General-purpose web service platform for web applications
 
 =head1 VERSION
 
-This document describes OpenResty 0.5.3 released on November 30, 2008.
+This document describes OpenResty 0.5.4 released on May 1, 2009.
 
 =head1 DESCRIPTION
 
@@ -962,8 +962,9 @@ For a complete list of the contributors, please see L<http://svn.openfoundry.org
 
 OpenResty is licensed under the BSD License:
 
-Copyright (c) 2007-2008, Yahoo! China EEEE Works, Alibaba Inc.
-All rights reserved.
+Copyright (c) 2007-2008, Yahoo! China EEEE Works, Alibaba Inc. All rights reserved.
+
+Copyright (c) 2007-2008, Agent Zhang (agentzh). All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 

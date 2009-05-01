@@ -6,34 +6,30 @@ build_requires:
   CGI: 3.33
   Cache::Cache: 1.05
   Class::Prototyped: 0
-  ExtUtils::MakeMaker: 6.11
+  ExtUtils::MakeMaker: 6.42
   HTTP::Response: 1.53
   LWP::UserAgent: 0
   Test::LongString: 0
   Text::Diff: 0
   WWW::OpenResty: 0.09
+configure_requires:
+  ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.77'
-license: BSD
+generated_by: 'Module::Install version 0.85'
+license: bsd
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
 name: OpenResty
 no_index:
   directory:
-    - etc
-    - misc
-    - tmp
-    - demo
-    - minisql
     - clients
-    - doc
-    - t
-    - share
-    - share
-    - inc
-    - t
     - demo
+    - etc
+    - inc
+    - misc
+    - share
+    - t
 recommends:
   Benchmark::Timer: 0
   HTTP::Server::Simple: 0.27
@@ -45,7 +41,7 @@ requires:
   CGI::Cookie::XS: 0.15
   CGI::Simple: 1.103
   CGI::Simple::Cookie: 0
-  Cache::Memcached::libmemcached: 0.06
+  Cache::Memcached::libmemcached: 0.02008
   Clone: 0.22
   Compress::Zlib: 0
   Config::Simple: 0
@@ -75,4 +71,6 @@ requires:
   Time::HiRes: 0
   YAML::Syck: 1.04
   perl: 5.6.1
-version: 0.5.3
+resources:
+  license: http://opensource.org/licenses/bsd-license.php
+version: 0.5.4
