@@ -1,0 +1,4 @@
+#!/bin/sh
+
+exec make test -f dev.mk
+
