@@ -143,8 +143,11 @@ sub _request {
     if (is_utf8($Buffer)) {
         $Buffer = encode('utf8', $Buffer);
     }
-    if ($Buffer =~ /^HTTP\/1\.[01] (\d+) (\w+)\n/) {
+    if ($Buffer =~ /^HTTP\/1\.[01] (\d+) (\w+)\r?\n/) {
         $code = $1;
+    } else {
+        $Buffer = "HTTP/1.1 200 OK\r\n$Buffer";
+        $code = 200;
     }
     my $res = HTTP::Response->parse($Buffer); # $code, $msg, $header, $content )
     ## $res

@@ -4,8 +4,11 @@ use strict;
 use warnings;
 use base qw(HTTP::Server::Simple::CGI);
 
+our $IsRunning = 0;
+
 sub handle_request {
     my ($self, $cgi) = @_;
+    $IsRunning = 1;
     OpenResty::Dispatcher->process_request($cgi);
 }
 

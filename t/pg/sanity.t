@@ -25,7 +25,7 @@ if ($backend->has_user("agentz")) {
 }
 
 my $res = $backend->add_user("agentz", 'blahblahblah');
-cmp_ok $res, '>', -1, "user added okay";
+ok $res, "user added okay";
 
 $backend->set_user("agentz");
 

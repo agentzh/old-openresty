@@ -3,6 +3,7 @@ define CMDS
     -perl -Iblib -c bin/openresty
     -sudo killall lighttpd
     sudo /etc/init.d/lighttpd restart
+    sudo /opt/eeeeresty/apache/bin/apachectl restart
     sleep 1
     -sudo find lib -name '*.pmc' -delete
     -sudo rm -rf /tmp/FileCache
@@ -34,6 +35,7 @@ debug: all
 %.t: all force
 	perl -c bin/openresty
 	sudo /etc/init.d/lighttpd restart
+	sudo /opt/eeeeresty/apache/bin/apachectl restart
 	-sudo rm -rf /tmp/FileCache
 	-rm  -f t/cur-timer.dat
 	-prove -Ilib $@
