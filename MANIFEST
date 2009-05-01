@@ -447,7 +447,7 @@ MANIFEST			This list of files
 MANIFEST.SKIP
 META.yml
 README
-share/openresty_revision
+#share/openresty_revision
 t/TODO
 t/01-sanity.t
 t/02-carrie.t

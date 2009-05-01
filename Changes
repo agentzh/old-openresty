@@ -1,5 +1,19 @@
 Change Log for OpenResty
 
+0.5.4 May 1 2009
+* now we honor the FastCGI protocol and send the Status header to the fastcgi manager. [agentzh]
+* updated the RSS links in the blog demo sites. [agentzh]
+* now we drop model in the cascaded fashion. [agentzh]
+* added applied_to column to _access table so that we can add ACL rules containing ip address validations. [xunxin]
+* replaced JSON::XS with JSON::Syck module in import-model.pl to allow loose JSON syntax in input data files. [xunxin]
+* implemented captcah+password login method and the test file t/55-login-by-captchapassword.t for it. [xunxin]
+* now we can add OpenResty account by --wrap-legacy option to reuse legacy Pg schemas insteading creating new ones. [xunxin]
+* now we support no limit accounts. [xunxin]
+* minor performance tuning by eliminating some unnecessary DB queries. [xunxin]
+* replaced Cache::Memcached::Fast by Cache::Memcached::libmemcached because the former might miss existing keys when access rate is very high. [xunxin]
+* minor UI fix in the Admin site for IE. [xunxin]
+* preliminary support for compiled actions. [xunxin]
+
 0.5.3 Nov 30 2008
 * switched the license from GPLv2 to BSD.
 * updated demo/Blog/script/init.pl to use the new column default value syntax.
