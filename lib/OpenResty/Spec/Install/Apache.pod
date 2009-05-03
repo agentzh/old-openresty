@@ -21,7 +21,7 @@ OpenResty::Spec::Install::Apache - Configuring OpenResty.pm with Apache2 + mod_f
         Allow from all
     </Location>
 
-    # File /some/path/to/my/doc/root/openresty.fcgi
+    # File /some/path/to/my/doc/root/openresty.fcgi (remember chmod +x this!)
     #!/bin/sh
     exec openresty fastcgi
 
