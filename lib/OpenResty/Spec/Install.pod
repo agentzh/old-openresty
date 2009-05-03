@@ -100,7 +100,7 @@ A quick test would be
 
 =item 7.
 
-Now you can already run the test suite without a lighttpd server (but with a true Pg backend):
+Now you can already run the test suite without an external HTTP server like Apache (but with a true Pg backend):
 
     $ make test
 
@@ -111,36 +111,9 @@ Also, it's already possible to start the OpenResty server using the standalone s
 
 =item 8.
 
-Sample lighttpd configuration:
+It's preferred to run OpenResty.pm as a FastCGI application under Apache2 or lighttpd. And Apache2 mod_fcgid is recommended.
 
-    # lighttpd.conf
-
-    server.modules              = (
-                "mod_fastcgi",
-                ...
-    )
-
-    fastcgi.server = (
-        "/=" => (
-            "openresty" => (
-                "socket"       => "/tmp/openresty.socket",
-                "check-local"  => "disable",
-                "bin-path"     => "/PATH/TO/YOUR/bin/openresty",
-                "bin-environment" => (
-                    "OPENRESTY_URL_PREFIX" => "",
-                    "OPENRESTY_COMMAND" => "fastcgi",
-                ),
-                "min-procs"    => 1,
-                "max-procs"    => 5,
-                "max-load-per-proc" => 1,
-                "idle-timeout" => 20,
-            )
-        )
-    )
-
-And also make sure the following line is commented out:
-
-    # url.access-deny            = ( "~", ".inc" )
+See L<OpenResty::Spec::Install::Apache> For configuration docs for Apache. And see L<OpenResty::Spec::Install::Lighttpd> for configuration docs for Lighttpd.
 
 =back
 

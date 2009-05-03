@@ -1,0 +1,41 @@
+=head1 NAME
+
+OpenResty::Spec::Install::Apache - Configuring OpenResty.pm with Apache2 + mod_fcgid
+
+=head1 SYNOPSIS
+
+    # File /opt/apache2/conf/httpd.conf
+    ...
+    LoadModule fcgid_module modules/mod_fcgid.so
+    LoadModule rewrite_module modules/mod_rewrite.so
+    # the line below is optional:
+    LoadModule deflate_module modules/mod_deflate.so
+    DocumentRoot "/some/path/to/my/doc/root"
+    RewriteEngine on
+    RewriteRule ^/=/ /openresty.fcgi [QSA,L]
+    <Location />
+        Options ExecCGI FollowSymLinks
+        # the line below is optional:
+        SetOutputFilter DEFLATE
+        AddHandler fcgid-script .fcgi
+        Allow from all
+    </Location>
+
+    # File /some/path/to/my/doc/root/openresty.fcgi
+    #!/bin/sh
+    exec openresty fastcgi
+
+=head1 DESCRIPTION
+
+OpenResty.pm could be run as a FastCGI application with C<mod_fcgid> or C<mod_fastcgi>. See L</SYNOPSIS> for sample configurations.
+
+Note that when using with C<mod_deflate> to do gzip/deflate compression, it's recommended to set C<frontend.use_gzip> to C<0>.
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>.
+
+=head1 SEE ALSO
+
+L<OpenResty::Spec::Install::Lighttpd>, L<OpenResty::Spec::Install>, L<OpenResty>.
+

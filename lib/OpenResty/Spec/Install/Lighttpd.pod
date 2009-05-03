@@ -1,0 +1,47 @@
+=head1 NAME
+
+OpenResty::Spec::Install::Lighttpd - Configuring OpenResty.pm with Lighttpd + mod_fastcgi
+
+=head1 SYNOPSIS
+
+    # lighttpd.conf
+
+    server.modules              = (
+                "mod_fastcgi",
+                ...
+    )
+
+    fastcgi.server = (
+        "/=" => (
+            "openresty" => (
+                "socket"       => "/tmp/openresty.socket",
+                "check-local"  => "disable",
+                "bin-path"     => "/PATH/TO/YOUR/bin/openresty",
+                "bin-environment" => (
+                    "OPENRESTY_URL_PREFIX" => "",
+                    "OPENRESTY_COMMAND" => "fastcgi",
+                ),
+                "min-procs"    => 1,
+                "max-procs"    => 5,
+                "max-load-per-proc" => 1,
+                "idle-timeout" => 20,
+            )
+        )
+    )
+
+And also B<make sure> the following line is commented out:
+
+    # url.access-deny            = ( "~", ".inc" )
+
+=head1 DESCRIPTION
+
+OpenResty.pm could be run by lighttpd 1.4.x's mod_fastcgi module. But note that because lighttpd's mod_fastcgi won't refresh its underlying perl processes, and one may observe slow momery leaks after weeks' run. It's recommended to use Apache2's mod_fcgid to run OpenResty.pm. See L<OpenResty::Spec::Install::Apache> for details.
+
+=head1 AUTHOR
+
+Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>.
+
+=head1 SEE ALSO
+
+L<OpenResty::Spec::Install::Apache>, L<OpenResty::Spec::Install>, L<OpenResty>.
+
