@@ -8,6 +8,8 @@ author              ('Agent Zhang <agentzh@yahoo.cn>');
 perl_version        ('5.006001');
 all_from            ('lib/OpenResty.pm');
 
+repository 'http://github.com/agentzh/openresty/tree/master';
+
 my $arg = 'devel';
 if (@ARGV && $ARGV[0] ne 'releng' && $ARGV[0] =~ /^\w+$/) {
     $arg = shift;
