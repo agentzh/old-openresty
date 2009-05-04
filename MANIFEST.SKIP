@@ -43,11 +43,13 @@ demo/Admin/tmp
 \.old$
 \.bak$
 ^cover_db
-'
 ^backup
 bin/.*\.dat
 ^t/cover-
 \.tar\.gz$
+\.rsync$
+^test$
+bin/openresty\.fcgi$
 ^demo/Admin/Jemplate\.js$
 ^demo/Admin/.*openresty\.js$
 ^demo/Admin/jemplates\.js$

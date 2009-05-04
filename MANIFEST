@@ -375,7 +375,6 @@ inc/Module/Install/TestBase.pm
 inc/Module/Install/Win32.pm
 inc/Module/Install/Share.pm
 inc/Module/Install/WriteAll.pm
-inc/Module/Install/Scripts.pm
 inc/Spiffy.pm
 inc/Test/Base.pm
 inc/Test/Base/Filter.pm
@@ -400,6 +399,8 @@ lib/OpenResty/Spec/Upgrading.pod
 lib/OpenResty/Spec/TestSuite.pod
 lib/OpenResty/Spec/Install.pod
 lib/OpenResty/Spec/Install/Binary_cn.pod
+lib/OpenResty/Spec/Install/Lighttpd.pod
+lib/OpenResty/Spec/Install/Apache.pod
 lib/OpenResty/Tutorial/RunTestsOnWin32_cn.pod
 lib/OpenResty/Inlined.pm
 lib/OpenResty/RestyScript/ViewUpgrade.pm
@@ -538,3 +539,9 @@ t/pgmock-data/38-global-search.t.json
 t/pgmock-data/39-model-col-bug.t.json
 t/pgmock-data/40-role-acl-bug.t.json
 TODO
+t/54_role_ip_validation.t
+t/55-login-by-captchapassword.t
+t/pgmock-data/53_compiled_actions.t.json
+t/pgmock-data/54_role_ip_validation.t.json
+t/pgmock-data/55-login-by-captchapassword.t.json
+t/pgmock-data/pg/sanity.t.json

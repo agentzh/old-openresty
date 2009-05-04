@@ -2,7 +2,7 @@ NAME
     OpenResty - General-purpose web service platform for web applications
 
 VERSION
-    This document describes OpenResty 0.5.5 released on May 1, 2009.
+    This document describes OpenResty 0.5.6 released on May 3, 2009.
 
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
@@ -225,6 +225,7 @@ BUGS
 
 AUTHORS
     Agent Zhang (agentzh) "<agentzh at yahoo dot cn>"
+    Xunxin Wan (万珣新) "<wanxunxin at gmail dot com >"
     chaoslawful (王晓哲) "<chaoslawful at gmail dot com>"
     Lei Yonghua (leiyh)
     Laser Henry (laser) "<laserhenry at gmail dot com>"
