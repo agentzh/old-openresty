@@ -51,3 +51,7 @@ upload2: pack
 upload: all
 	script/upload
 
+push:
+	-mkdir -p /opt/eeeeresty/htdocs/admin/
+	cp -rup `pwd`/out/* /opt/eeeeresty/htdocs/admin/
+

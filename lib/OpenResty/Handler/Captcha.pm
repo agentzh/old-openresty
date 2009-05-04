@@ -5,7 +5,7 @@ use warnings;
 
 use utf8;
 
-use File::ShareDir qw(module_dir);
+use File::ShareDir qw(dist_dir);
 use File::Spec;
 use Crypt::CBC;
 use MIME::Base64;
@@ -24,12 +24,19 @@ sub level2name {
 
 my $FontPath = "$FindBin::Bin/../share/font/wqy-zenhei.ttf";
 eval {
-    if ( !-f $FontPath )
-    {
-        $FontPath = File::Spec->catfile( module_dir('OpenResty'),
+    if ( !-f $FontPath ) {
+        $FontPath = File::Spec->catfile( dist_dir('OpenResty'),
             'font/wqy-zenhei.ttf' );
+        if ( ! -f $FontPath || !-r $FontPath ) {
+            warn "WARNING: Chinese font file $FontPath not found or not readable.\n";
+        } else {
+            #warn "Found chinese font file $FontPath.\n";
+        }
     }
 };
+if ($@) {
+    warn $@;
+}
 
 my $PLAINTEXT_SEP = ":";     # separator character in plaintext str
 my $MIN_TIMESPAN  = 1;       # minimum timespan(sec) for a valid Captcha,
