@@ -6,8 +6,13 @@ written in Haskell. Support for both OpenResty Views and Actions
 is provided.
 
 To build this program, you should first install GHC 6.8.2 (or better),
-its Parsec, bytestring, and json libraries. On Ubuntu/Debian, the
-following commands would install the first two prerequisites.
+its Parsec, bytestring, and json libraries. One can get GHC source
+code or binaries from
+
+    http://www.haskell.org/ghc/
+
+On Ubuntu/Debian, the following commands would install the first
+two prerequisites.
 
     $ sudo apt-get install ghc6 libghc6-parsec-dev
 
