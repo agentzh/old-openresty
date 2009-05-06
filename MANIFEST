@@ -2,6 +2,7 @@ demo/Onccf/image/background.gif
 demo/Onccf/image/bar.gif
 demo/Onccf/image/hd.gif
 demo/Onccf/image/logo.png
+inc/Module/Install/Scripts.pm
 t/pgmock-data/col-not-null/01.t.json
 t/pgmock-data/col-not-null/02.t.json
 t/pgmock-data/col-not-null/03.t.json

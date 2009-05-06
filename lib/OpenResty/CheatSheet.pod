@@ -35,22 +35,21 @@ SSL in the real thing.
 
     GET /=/model/MyModel            Read the info for MyModel
     POST /=/model/MyModel           Create a model MyModel
-        { description:"Model description",
-          columns:[
+        { "description":"Model description",
+          "columns":[
             {
-              name:"title",label:"Title",
-              type:"text",default:"No title",
-              required:1
+              "name":"title","label":"Title",
+              "type":"text","default":"No title",
+              "required":1
             },
             {
-              name:"gender",label:"Gender",
-              values:['M','F']
+              "name":"gender","label":"Gender"
             },
             ...
           ] }
 
     PUT /=/model/MyModel            Alter the model MyModel
-        { name:"NewName",description:"New Description" }
+        { "name":"NewName","description":"New Description" }
 
     DELETE /=/model/MyModel         Delete model MyModel
 
@@ -58,10 +57,10 @@ SSL in the real thing.
 
     GET /=/model/MyModel/mycol      Read the info for MyModel's mycol
     POST /=/model/MyModel/mycol     Add a new column named mycol
-        { label:"My column",type:"integer",default:0 }
+        { "label":"My column","type":"integer","default":0 }
 
     PUT /=/model/MyModel/mycol      Alter the column mycol
-        { name:"new_name", type:"real" }
+        { "name":"new_name", "type":"real" }
 
     DELETE /=/model/MyModel/mycol   Remove column mycol
 
@@ -69,13 +68,13 @@ SSL in the real thing.
 
     GET /=/model/MyModel/id/3       Read the row with id 3
     POST /=/model/MyModel/~/~       Insert new rows
-        [ { col1:"", col2:"", ... }, ... ]
+        [ { "col1":"", "col2":"", ... }, ... ]
 
     POST /=/model/MyModel/~/~       Insert a single new row
-        { col1:"", col2:"", ... }
+        { "col1":"", "col2":"", ... }
 
     PUT /=/model/MyModel/id/2       Update the row with id 2
-        { col1:"", col2:"", ... }
+        { "col1":"", "col2":"", ... }
 
     DELETE /=/model/MyModel/id/2    Delete the row with id 2
     DELETE /=/model/MyModel/~/~     Delete all the rows
@@ -102,14 +101,14 @@ SSL in the real thing.
 =item Views
 
     POST /=/view/MyView             Create a new view named MyView which
-    { description:"My view",        takes the parameters "table" and "min"
-      definition:
+    { "description":"My view",        takes the parameters "table" and "min"
+      "definition":
         "select * from Post, $table where Post.id >= $min"
     }
 
     GET /=/view/MyView              View the definition of the view MyView
     PUT /=/view/MyView              Update the information of MyView
-    { name:"NewName", description:"New desc" }
+    { "name":"NewName", "description":"New desc" }
 
     DELETE /=/view/NewName           Remove the NewName view
 
@@ -138,25 +137,30 @@ B<Note:> Actions have not yet been implemented.
 =item Actions
 
     POST /=/action/PostComment              Create an action for posting
-    { description:"Post a comment",         new comments
-      definition:"
+    { "description":"Post a comment",         new comments
+      "parameters":[
+        {"name":"author","label":"Author","type":"literal"},
+        {"name":"content","label":"Content","type":"literal"},
+        {"name":"post","label":"Post","type":"literal"}
+      ],
+      "definition":"
         POST /=/model/Comment/~/~
-        { author:   $author,
-          content:  $content,
-          post:     $post }
+        { \"author\":   $author,
+          \"content\":  $content,
+          \"post\":     $post };
         update Post set comments=comments+1
-        where post = $post" }
+        where post = $post;" }
 
     PUT /=/action/PostComment               Update an existing action
-    { name:"SendComment",
-      description:"Send a comment" }
+    { "name":"SendComment",
+      "description":"Send a comment" }
 
 =item Calling actions
 
     POST /=/action/PostComment/~/~       Invoke the PostComment action
-    { author:"agentzh",                  defined above
-      content:"Good post!",
-      post:125 }
+    { "author":"agentzh",                  defined above
+      "content":"Good post!",
+      "post":125 }
 
 =back
 
@@ -189,13 +193,13 @@ B<Note:> Actions have not yet been implemented.
 
     GET /=/role/MyRole           Get the info for the "MyRole" role
     POST /=/role/Reader          Create an anoymous role named "Reader"
-    { description:"My Role",
-      login:"anonymous" }
+    { "description":"My Role",
+      "login":"anonymous" }
 
     POST /=/role/Poster                        Create a "Poster" role
-    { description:"Article Poster",            which can ony
-      login:"password",                        login via passwords
-      password:"encrypted password"
+    { "description":"Article Poster",            which can ony
+      "login":"password",                        login via passwords
+      "password":"encrypted password"
     }
 
 =item ACL rules for a role
@@ -204,10 +208,10 @@ B<Note:> Actions have not yet been implemented.
     GET /=/role/MyRole/method/GET       Filter out ACL rules with GET method
                                         only
     POST /=/role/MyRole/~/~             Allow MyRole to insert new rows into
-    { method:"POST", "/=/model/Post" }  the Post model
+    { "method":"POST", "/=/model/Post" }  the Post model
 
     PUT /=/role/MyRole/id/5              Modify the ACL rule with id 5
-    { method:"PUT" }
+    { "method":"PUT" }
 
     DELETE /=/role/MyRole/method/DELETE  Banned delete operations from MyRole
     DELETE /=/role/MyRole/~/~            Delete all the ACL rules for MyRole
@@ -243,13 +247,13 @@ B<Note:> Actions have not yet been implemented.
 =item Admin Setup
 
     POST /=/role/Commenter              Create a CommentPoster role
-    { description:"Comment Poster",
-      login:"captcha" }
+    { "description":"Comment Poster",
+      "login":"captcha" }
 
     POST /=/role/Comment/~/~            Assign some permissions to it
 
-    { method:"POST",
-      url:"/=/model/Comment/~/~" }
+    { "method":"POST",
+      "url":"/=/model/Comment/~/~" }
 
 =item Use in clients
 
