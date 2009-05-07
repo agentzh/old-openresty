@@ -1,6 +1,9 @@
 Change Log for OpenResty
 
-0.5.8 May 5 2009
+0.5.9 May 6 2009
+* updated CheatSheet.pod to reflect the latest OpenResty API.
+
+0.5.8 May 6 2009
 * added support for frontend.unlimited config directive, which lists the OpenResty accounts without ordinary limits. (xunxin)
 * now we use dist_dir rather than module_dir in shared stuff locating. (agentzh)
 
