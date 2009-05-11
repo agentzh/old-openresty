@@ -24,7 +24,7 @@
 
 </div>
 <p style="text-align: left; padding-left: 1em;">
-This site can be downloaded from <a href="site-binary.tar.gz">here</a> (.tar.gz) and <a href="http://svn.openfoundry.org/openapi/trunk/demo/Admin/">its Subversion repository</a> has anonymous access to all.
+This site can be downloaded from <a href="site-binary.tar.gz">here</a> (.tar.gz) and <a href="http://github.com/agentzh/openresty/tree/8463c31834e1d007da26b8b6549e4d06b5963b70/demo/Admin">its Git repository</a> has anonymous access to all.
 </p>
 <hr>
 <center>
