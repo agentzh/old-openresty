@@ -1,6 +1,7 @@
 var account = 'agentzh';
-//var host = 'http://api.eeeeworks.org';
-var host = 'http://10.62.136.86';
+var host = 'http://api.eeeeworks.org';
+//var host = 'http://api.openresty.org';
+//var host = 'http://10.62.136.86';
 
 var openresty = null;
 var savedAnchor = null;

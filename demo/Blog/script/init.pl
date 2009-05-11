@@ -38,8 +38,8 @@ if ($user eq 'agentzh') {
 
 my $resty = WWW::OpenResty::Simple->new( { server => $server } );
 $resty->login($user, $password);
-$resty->delete("/=/role/Public/~/~");
-$resty->delete("/=/role");
+#$resty->delete("/=/role/Public/~/~");
+#$resty->delete("/=/role");
 $resty->delete("/=/view");
 $resty->delete("/=/action");
 $resty->delete("/=/feed");
@@ -369,6 +369,7 @@ $resty->post(
     ]
 );
 
+eval { $resty->delete("/=/role/Poster"); };
 $resty->post(
     '/=/role/Poster',
     { description => "Role for comment posters", login => 'captcha' }
