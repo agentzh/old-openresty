@@ -21,7 +21,8 @@ all:
 	cp js/*/*.js out/
 	cp css/*.css out/
 	-cp image/*.* out/
-	tar cf site-binary.tar out
+	-rm *.tar *.tar.gz
+	tar cvf site-binary.tar out
 	gzip -q --best site-binary.tar
 	mv site-binary.tar.gz out/
 
@@ -51,7 +52,7 @@ upload2: pack
 upload: all
 	script/upload
 
-push:
+push: pack
 	-mkdir -p /opt/eeeeresty/htdocs/admin/
 	cp -rup `pwd`/out/* /opt/eeeeresty/htdocs/admin/
 
