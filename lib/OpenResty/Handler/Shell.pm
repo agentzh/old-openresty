@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use IPC::Run qw( run timeout );
-use OpenResty::Util;
+use Params::Util qw( _STRING );
 use base 'OpenResty::Handler::Base';
 
 __PACKAGE__->register('shell');
@@ -42,26 +42,6 @@ sub GET_prog { # GET /=/shell/prog
     return $out;
 }
 
-sub GET_prog_run {
-    my ($self, $openresty, $bits) = @_;
-    my $prog_name = $bits->[1];  # $bits->[0] eq 'shell' ;)
-    my @cmd = $prog_name;
-    if ($bits->[2] ne '~') {
-        push @cmd, gen_option(@$bits[2..3]);
-    }
-    for my $var ($openresty->url_param) {
-        my $val = $openresty->url_param($var);
-        push @cmd, gen_option($var, $val);
-        #warn "$var => $val\n";
-    }
-    run \@cmd, \undef, \(my $out), \(my $err), timeout(2);
-    #warn "@cmd\n";
-    if ($? != 0) {
-        die "Failed to call program $prog_name: $err\n";
-    }
-    return $out;
-}
-
 sub gen_option {
     my ($param, $val) = @_;
     my $opt = '';
@@ -74,6 +54,50 @@ sub gen_option {
         $opt .= $val;
     }
     $opt;
+}
+
+sub GET_prog_run { # GET /=/shell/prog/~/~
+    my ($self, $openresty, $bits) = @_;
+    my $prog_name = $bits->[1];  # $bits->[0] eq 'shell' ;)
+    my @cmd = $prog_name;
+    if ($bits->[2] ne '~') {
+        push @cmd, gen_option(@$bits[2..3]);
+    }
+    for my $var ($openresty->url_param) {
+        my $val = $openresty->url_param($var);
+        push @cmd, gen_option($var, $val);
+        #warn "$var => $val\n";
+    }
+    run \@cmd, \undef, \(my $out), \(my $err), timeout(1);
+    #warn "@cmd\n";
+    if ($? != 0) {
+        die "Failed to call program $prog_name: $err\n";
+    }
+    return $out;
+}
+
+sub POST_prog_run { # POST /=/shell/prog/~/~
+    my ($self, $openresty, $bits) = @_;
+    my $prog_name = $bits->[1];
+    my @cmd = $prog_name;
+    if ($bits->[2] ne '~') {
+        push @cmd, gen_option(@$bits[2..3]);
+    }
+    for my $var ($openresty->url_param) {
+        my $val = $openresty->url_param($var);
+        push @cmd, gen_option($var, $val);
+        #warn "$var => $val\n";
+    }
+
+    my $stdin = _STRING($openresty->{_req_data}) or
+        die "POST data must be a plain string.\n";
+
+    run \@cmd, \$stdin, \(my $out), \(my $err), timeout(1);
+    #warn "@cmd\n";
+    if ($? != 0) {
+        die "Failed to call program $prog_name: $err\n";
+    }
+    return $out;
 }
 
 1;
@@ -95,7 +119,11 @@ OpenResty::Handler::Shell - Example Shell API for OpenResty custom handlers
     GET /=/shell/ls/~/~
 
     # call "ls -a"
-    GET /=/shell/ls/~/~?a
+    GET /=/shell/ls/~/~?a=""
+
+    # call perl oneliner: perl -e 'hello,world'
+    GET /=/shell/perl/e/print("hello,world")
+        # server returns "hello,world"
 
 =head1 DESCRIPTION
 

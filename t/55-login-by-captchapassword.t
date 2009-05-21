@@ -93,6 +93,7 @@ GET /=/model?_user=$TestAccount.Poster&_captcha=$SavedCapture:helloworld
 {"error":"Cannot login as $TestAccount.Poster via captchas.","success":0}
 
 
+
 === TEST 10: Use captcha and pasword to login
 --- sleep_before: 1
 --- request

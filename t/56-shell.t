@@ -33,7 +33,15 @@ GET /=/shell/ls
 
 
 
-=== TEST 4: prog run (ls -l)
+=== TEST 4: how about an invalid prog name?
+--- request
+GET /=/shell/something_really_bad
+--- response
+{"success":0,"error":"Can't find program something_really_bad: "}
+
+
+
+=== TEST 5: prog run (ls -l)
 --- request
 GET /=/shell/ls/~/~?l=""
 --- response_like
@@ -41,9 +49,44 @@ GET /=/shell/ls/~/~?l=""
 
 
 
-=== TEST 5: params take arguments
+=== TEST 6: params take arguments
 --- request
 GET /=/shell/perl/e/print("hello,world")
 --- response
 "hello,world"
+
+
+
+=== TEST 7: DELETE prog not allowed
+--- request
+DELETE /=/shell/perl
+--- response
+{"success":0,"error":"HTTP DELETE method not supported for prog."}
+
+
+
+=== TEST 8: POST "stdin"
+--- request
+POST /=/shell/perl/~/~
+"print 'hello, world!'"
+--- response
+"hello, world!"
+
+
+
+=== TEST 9: POST "stdin" (bad post content)
+--- request
+POST /=/shell/perl/~/~
+["print 'hello, world!'"]
+--- response
+{"success":0,"error":"POST data must be a plain string."}
+
+
+
+=== TEST 10: test timeout
+--- request
+POST /=/shell/perl/~/~
+"sleep 10"
+--- response
+{"success":0,"error":"IPC::Run: timeout on timer #7"}
 

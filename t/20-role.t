@@ -67,7 +67,6 @@ GET /=/role
 
 
 
-
 === TEST 8: Use wildcard to get the role list
 --- request
 GET /=/role/~
@@ -1225,6 +1224,7 @@ GET /=/role/Poster
   "description":"Comment poster",
   "login":"password"
 }
+
 
 
 === TEST 118: Check the rule list
