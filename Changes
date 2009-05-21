@@ -1,5 +1,9 @@
 Change Log for OpenResty
 
+0.5.10 May 21 2009
+* added a sample custom handler class OpenResty::Handler::Shell.
+* added the "openresty" mailing list page to the POD.
+
 0.5.9 May 6 2009
 * updated CheatSheet.pod to reflect the latest OpenResty API.
 

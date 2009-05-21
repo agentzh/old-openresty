@@ -891,6 +891,12 @@ L<http://github.com/agentzh/openresty/tree/master>
 There is anonymous access to all. If you'd like a commit bit, please let
 us know. :)
 
+=head1 Mailing list
+
+Subscribe to the C<openresty> Google Group here:
+
+  L<http://groups.google.com/group/openresty>
+
 =head1 IRC Channel
 
 Join us via IRC on C<#openresty> of the irc.freenode.net server ;)
