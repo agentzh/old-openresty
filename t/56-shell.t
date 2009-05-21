@@ -1,6 +1,14 @@
 # vi:filetype=
 
-use t::OpenResty ($ENV{USER} && $ENV{USER} ne 'agentz') ? (skip_all => $skip) : ();
+use OpenResty::Config;
+my $reason;
+BEGIN {
+    OpenResty::Config->init({root_path => '.'});
+    if ($OpenResty::Config{'frontend.handlers'} !~ /\bShell\b/) {
+        $reason = 'Shell handler not enabled in frontend.handlers';
+    }
+}
+use t::OpenResty $reason ? (skip_all => $reason) : ();
 
 plan tests => 3 * blocks();
 
