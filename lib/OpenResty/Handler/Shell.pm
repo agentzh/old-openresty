@@ -125,9 +125,39 @@ OpenResty::Handler::Shell - Example Shell API for OpenResty custom handlers
     GET /=/shell/perl/e/print("hello,world")
         # server returns "hello,world"
 
+    # or use POST to feed stdin: echo "print 'hello, world'"|perl -w
+    POST /=/shell/perl/~/~?w=""
+    "print 'hello, world'"
+
 =head1 DESCRIPTION
 
 This handler is merely served as a simple and also funny sample custom handler for users who want to write their own handlers.
+
+It's not meant to be used in the real world.
+
+To use this Shell handler in your OpenResty setup, set the C<frontend.handlers> to C<Shell> in your F<site_openresty.conf> file:
+
+    [frontend]
+    handlers=Shell
+
+To simplify things here, this Shell handler bypasses the OpenResty ACL mechansim, just like the Version and Login handler. So take care ;) For handlers requiring login, change the following line
+
+    sub requires_acl { undef }
+
+to
+
+    sub requires_acl { 1 }
+
+or just comment it out.
+
+Note that this handler does not require a PostgreSQL database to function. You can use the C<Empty> backend to run this handler. For example, in your F<site_openresty.conf> file:
+
+    [backend]
+    type=Empty
+
+Because OpenResty's Role API replies on a working Pg backend, you cannot use C<Empty> backend if you turns ACL on by returning true in your C<requires_acl> sub.
+
+Custom handler names must be under the C<OpenResty::Handler::> namespace, e.g., C<OpenResty::Handler::Shell>. It's not required to be included in the OpenResty source tree, just ensure it's installed into the same perl that L<OpenResty> uses.
 
 =head1 AUTHOR
 
