@@ -1,6 +1,6 @@
 # vi:filetype=
 
-use t::OpenResty ($ENV{USER} && $ENV{USER} ne 'xunxin') ? (skip_all => $skip) : ();
+use t::OpenResty ($ENV{USER} && $ENV{USER} ne 'xunxin') ? (skip_all => 'xunxin only') : ();
 
 =pod
 

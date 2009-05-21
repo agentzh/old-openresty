@@ -1,4 +1,5 @@
 #!/bin/sh
 
+#export PATH=/opt/perl/bin:$PATH
 exec make test -f dev.mk
 
