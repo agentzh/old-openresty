@@ -118,6 +118,7 @@ sub init {
         eval "use OpenResty::Handler::$hdl";
         if ($@) {
             $InitFatal = "Failed to load handler class OpenResty::Handler::$hdl: $@\n";
+            warn $InitFatal;
             last;
         }
     }

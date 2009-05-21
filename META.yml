@@ -74,4 +74,4 @@ requires:
 resources:
   license: http://opensource.org/licenses/bsd-license.php
   repository: http://github.com/agentzh/openresty/tree/master
-version: 0.5.9
+version: 0.5.10

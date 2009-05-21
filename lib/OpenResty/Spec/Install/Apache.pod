@@ -13,6 +13,7 @@ OpenResty::Spec::Install::Apache - Configuring OpenResty.pm with Apache2 + mod_f
     DocumentRoot "/some/path/to/my/doc/root"
     RewriteEngine on
     RewriteRule ^/=/ /openresty.fcgi [QSA,L]
+    AllowEncodedSlashes On
     <Location />
         Options ExecCGI FollowSymLinks
         # the line below is optional:
@@ -30,6 +31,10 @@ OpenResty::Spec::Install::Apache - Configuring OpenResty.pm with Apache2 + mod_f
 OpenResty.pm could be run as a FastCGI application with C<mod_fcgid> or C<mod_fastcgi>. See L</SYNOPSIS> for sample configurations.
 
 Note that when using with C<mod_deflate> to do gzip/deflate compression, it's recommended to set C<frontend.use_gzip> to C<0>.
+
+Apache's C<AllowEncodedSlashes> should be turned on or the following model request would result in a 404 error:
+
+   http://server:1234/=/model/urls/~/http%3A%2F%2Fwww.yahoo.cn%2Fhello%3Fabc%3D32
 
 =head1 AUTHOR
 

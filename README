@@ -2,7 +2,7 @@ NAME
     OpenResty - General-purpose web service platform for web applications
 
 VERSION
-    This document describes OpenResty 0.5.9 released on May 6, 2009.
+    This document describes OpenResty 0.5.10 released on May 21, 2009.
 
 DESCRIPTION
     This module implements the server-side OpenResty web service protocol.
@@ -177,8 +177,10 @@ SOURCE CONTROL
     There is anonymous access to all. If you'd like a commit bit, please let
     us know. :)
 
-IRC Channel
-    Join us via IRC on "#openresty" of the irc.freenode.net server ;)
+Mailing list
+    Subscribe to the "openresty" Google Group here:
+
+      L<http://groups.google.com/group/openresty>
 
 Project Roadmap
     Below is a list of currently planned release milestones (but it's also

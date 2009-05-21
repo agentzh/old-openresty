@@ -1,3 +1,6 @@
+lib/OpenResty/Handler/Shell.pm
+t/56-shell.t
+t/pgmock-data/56-shell.t.json
 demo/Onccf/image/background.gif
 demo/Onccf/image/bar.gif
 demo/Onccf/image/hd.gif
