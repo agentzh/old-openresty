@@ -1,3 +1,5 @@
+t/57-encoded-slashes.t
+t/pgmock-data/57-encoded-slashes.t.json
 lib/OpenResty/Handler/Shell.pm
 t/56-shell.t
 t/pgmock-data/56-shell.t.json

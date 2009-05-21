@@ -19,7 +19,7 @@ sub GET_prog_list { # GET /=/shell
     my ($self, $openresty, $bits) = @_;
     my @paths = split /[:;]/, $ENV{PATH};
     my @progs;
-    for my $path (@paths)
+    for my $path (@paths) {
         #warn "$path\n";
         my $dir;
         my $res = opendir $dir, $path;

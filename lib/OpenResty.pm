@@ -1,6 +1,6 @@
 package OpenResty;
 
-our $VERSION = '0.005010';
+our $VERSION = '0.005011';
 
 use strict;
 use warnings;
@@ -683,7 +683,7 @@ OpenResty - General-purpose web service platform for web applications
 
 =head1 VERSION
 
-This document describes OpenResty 0.5.10 released on May 21, 2009.
+This document describes OpenResty 0.5.11 released on May 21, 2009.
 
 =head1 DESCRIPTION
 

@@ -1,9 +1,12 @@
 Change Log for OpenResty
 
+0.5.11 May 21 2009
+* emphasized that OpenResty requires the line "AllowEncodedSlashes On" in the Apache2 config file.
+* now we croak loudly while failing to load handler classes.
+
 0.5.10 May 21 2009
 * added a sample custom handler class OpenResty::Handler::Shell.
 * added the "openresty" mailing list page to the POD.
-* emphasized that OpenResty requires the line "AllowEncodedSlashes On" in the Apache2 config file.
 
 0.5.9 May 6 2009
 * updated CheatSheet.pod to reflect the latest OpenResty API.
