@@ -897,10 +897,6 @@ Subscribe to the C<openresty> Google Group here:
 
   L<http://groups.google.com/group/openresty>
 
-=head1 IRC Channel
-
-Join us via IRC on C<#openresty> of the irc.freenode.net server ;)
-
 =head1 Project Roadmap
 
 Below is a list of currently planned release milestones (but it's also supposed to change as we go):
