@@ -17,7 +17,7 @@ OpenResty::Spec::Install::Apache - Configuring OpenResty.pm with Apache2 + mod_f
     <Location />
         Options ExecCGI FollowSymLinks
         # the line below is optional:
-        SetOutputFilter DEFLATE
+        AddOutputFilter DEFLATE .fcgi .html .css .js
         AddHandler fcgid-script .fcgi
         Allow from all
     </Location>
