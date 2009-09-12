@@ -326,9 +326,9 @@ $ClientP.putByGet = function (url) {
 };
 
 $ClientP.put = function (url) {
-    if (browser.opera) {  // work around an Opera bug
-        return $ClientP.putByGet.apply(this, arguments);
-    }
+    //if (browser.opera) {  // work around an Opera bug
+        //return $ClientP.putByGet.apply(this, arguments);
+    //}
 
     var args, content;
     if (arguments.length == 3) {
@@ -437,19 +437,6 @@ $ClientP.del = function (url, args) {
     if (!args) args = {};
     url = url.replace(/^\/=\//, '/=/delete/');
     this.get(url, args);
-};
-
-$ClientP.purge = function () {
-    // document.getElementByClassName('openapiScriptTag').remove();
-    OpenResty.callbackMap = {};
-    OpenResty.isDone = {};
-    var nodes = document.getElementsByTagName('script');
-    for (var i = 0; i < nodes.length; i++) {
-        var node = nodes[i];
-        if (node.className == '_openrestyScriptTag') {
-            node.parentNode.removeChild(node);
-        }
-    }
 };
 
 window.OpenResty = OpenResty;
