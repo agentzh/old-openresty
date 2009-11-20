@@ -99,7 +99,7 @@ This class provides an OO interface for generating SQL update statements without
 
 =item C<update($table)>
 
-=item C<< where($column => $value) >
+=item C<< where($column => $value) >>
 
 =item C<reset()>
 

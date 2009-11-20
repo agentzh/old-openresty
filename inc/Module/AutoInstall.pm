@@ -670,7 +670,7 @@ sub _load {
 
 # Load CPAN.pm and it's configuration
 sub _load_cpan {
-    return if $CPAN::VERSION and not @_;
+    return if $CPAN::VERSION and $CPAN::Config and not @_;
     require CPAN;
     if ( $CPAN::HandleConfig::VERSION ) {
         # Newer versions of CPAN have a HandleConfig module

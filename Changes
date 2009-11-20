@@ -1,5 +1,11 @@
 Change Log for OpenResty
 
+0.5.12 Nov 20 2009
+* removed purge from openresyt.js since it is obsolete and useless.
+* applied the patch from kindy++ for removing the dojo dependency from openresty.js.
+* no global deflate filter in the apache config because it may cause problems.
+* applied the POD patch from Frank Wiegand.
+
 0.5.11 May 21 2009
 * emphasized that OpenResty requires the line "AllowEncodedSlashes On" in the Apache2 config file.
 * now we croak loudly while failing to load handler classes.

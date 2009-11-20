@@ -15,7 +15,7 @@ build_requires:
 configure_requires:
   ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.88'
+generated_by: 'Module::Install version 0.91'
 license: bsd
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -58,6 +58,7 @@ requires:
   FCGI: 0
   File::ShareDir: 0
   Filter::QuasiQuote: 0.07
+  Filter::Util::Call: 0
   GD::SecurityImage: 1.64
   Hash::Merge: 0
   IPC::Run: 0
@@ -74,4 +75,4 @@ requires:
 resources:
   license: http://opensource.org/licenses/bsd-license.php
   repository: http://github.com/agentzh/openresty/tree/master
-version: 0.5.11
+version: 0.5.12
