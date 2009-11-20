@@ -117,10 +117,11 @@ This class provides an OO interface for generating SQL select statements without
 
 =item C<from(@tables)>
 
-=item C<where($column => $value)>
+=item C<< where($column => $value) >>
 
 =item C<order_by($column)>
-=item C<order_by($column => $direction)>
+
+=item C<< order_by($column => $direction) >
 
 =item C<limit($limit)>
 

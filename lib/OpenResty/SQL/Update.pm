@@ -94,13 +94,15 @@ This class provides an OO interface for generating SQL update statements without
 =over
 
 =item C<new($table)>
+
 =item C<new()>
 
 =item C<update($table)>
 
-=item C<where($column => $value)>
+=item C<< where($column => $value) >
 
 =item C<reset()>
+
 =item C<reset($table)>
 
 =item C<generate>
