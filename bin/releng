@@ -76,6 +76,7 @@ file_found 't/pod-coverage.t', 't/00-pod-coverage.t', 't/99-pod-coverage.t';
 ##
 # check META.yml related issues
 system('rm -rf *.tar.gz');
+run 'rm -rf inc META.yml';
 run 'make veryclean';
 run_and_check 'perl Makefile.PL releng';
 file_found 'META.yml';

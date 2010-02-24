@@ -21,7 +21,7 @@ $init = 1 if not defined $init;
 
 my @files = map glob, @ARGV;
 for my $file (@files) {
-    next if -d $file or $file !~ /\.t$/;
+    next if -d $file or $file !~ /\.t_?$/;
     reindex($file);
 }
 
