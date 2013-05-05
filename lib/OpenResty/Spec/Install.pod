@@ -81,10 +81,11 @@ You may have your own passwords here though.
 
 To have OpenResty's built-in actions C<RunView> and C<RunAction> working, you
 need to build the F<restyscript> compiler in the subdirectory F<haskell/>. It
-is written in Haskell and please see the README file in F<haskell/> for
-detailed installation instruction:
+is written in Haskell and you can find Haskell for a variety of distributions 
+as well as the source here...
 
-L<http://svn.openfoundry.org/openapi/trunk/haskell/README>
+http://www.haskell.org/platform/linux.html
+
 
 If you're really nervous about installing GHC and other Haskell libraries,
 you can fetch a binary version of the F<restyscript> compiler if you're
