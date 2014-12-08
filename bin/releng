@@ -142,7 +142,8 @@ $version =~ s{^(\d+)\.(\d{3})(\d{3})$}{join '.', int($1), int($2), int($3)}e;
 if (! file_contains 'Changes', qr/\b\Q$version\E\b/) {
     die "ERROR: File 'Changes' has nothing regarding release $version\n";
 }
-run_and_check "pod2text $main_pm > README";
+run_and_check "pod2markdown $main_pm README.md";
+run_and_check "markdown-toc.pl README.md";
 
 my $bin = -d 'bin' ? 'bin' : (-d 'script' ? 'script' : '');
 
