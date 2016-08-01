@@ -154,7 +154,7 @@ my $bin = -d 'bin' ? 'bin' : (-d 'script' ? 'script' : '');
 system(
     q{grep -E '^\\s*use Smart::Comments' } .
     ($bin ? "`ls $bin/* | grep -v '~\$' | grep -v '.swp\$'`" : " ") .
-    q{ `find -name '*.pm'` `find -name '*.t'`}
+    q{ `find . -name '*.pm'` `find . -name '*.t'`}
 );
 
 check_deps();
@@ -203,6 +203,7 @@ sub run_and_check ($) {
 
 sub run ($) {
     my $cmd = shift;
+    #warn $cmd;
     run3 $cmd, \undef, \$stdout, \$stderr;
 }
 
