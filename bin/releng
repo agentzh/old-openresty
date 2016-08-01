@@ -67,11 +67,15 @@ if ($ENV{USER} =~ /^agentz/) {
 }
 #
 # check missing files
-file_found 'Makefile.PL';
-file_found 'MANIFEST';
+if (-f "dist.ini") {
+    system("dzil build");
+} else {
+    file_found 'Makefile.PL';
+    file_found 'MANIFEST';
+}
 file_found 'Changes', 'ChangeLog';
 file_found 't/pod.t', 't/00-pod.t', 't/99-pod.t';
-file_found 't/pod-coverage.t', 't/00-pod-coverage.t', 't/99-pod-coverage.t';
+#file_found 't/pod-coverage.t', 't/00-pod-coverage.t', 't/99-pod-coverage.t';
 
 ##
 # check META.yml related issues
