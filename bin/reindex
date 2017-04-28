@@ -5,5 +5,5 @@ This tool is obsolete!
 Please use the reindex script in the openresty/lua-nginx-module
 GitHub repository instead:
 
-    https://github.com/openresty/lua-nginx-module/blob/master/util/reindex";
+    https://github.com/openresty/openresty-devel-utils/blob/master/reindex
 _EOC_
