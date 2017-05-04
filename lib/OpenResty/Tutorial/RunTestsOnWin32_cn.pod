@@ -128,7 +128,7 @@ L<http://svn.openfoundry.org/openapi/trunk>
 
 =head1 AUTHOR
 
-Agent Zhang (章亦春) C<< <agentzh@yahoo.cn> >>
+Yichun Zhang (章亦春) C<< <agentzh@gmail.com> >>
 
 =head1 LICENSE
 

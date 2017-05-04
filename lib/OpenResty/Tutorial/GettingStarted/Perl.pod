@@ -19,7 +19,7 @@ OpenResty account using Perl.
 You should already have an account on an OpenResty server. You can
 either set up an OpenResty server on your own machine or just request an
 account on our Yahoo! China's production server by sending an email to
-C<agentzh@yahoo.cn>. If you're running your own instance of the OpenResty
+C<agentzh@gmail.com>. If you're running your own instance of the OpenResty
 server, you can use the following command to create an account (named
 C<foo>) for yourself:
 
@@ -115,7 +115,7 @@ L<WWW::OpenResty::Simple> objects' C<post> method will issue an HTTP C<POST> com
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<agentzh@yahoo.cn>
+Yichun Zhang (agentzh) C<agentzh@gmail.com>
 
 Copyright (c) 2007 by Yahoo! China EEEE Works, Alibaba Inc.
 

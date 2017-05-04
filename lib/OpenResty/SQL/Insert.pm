@@ -89,7 +89,7 @@ This class provides an OO interface for generating SQL insert statements without
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
+Yichun Zhang (agentzh) C<< <agentzh@gmail.com> >>
 
 =head1 SEE ALSO
 

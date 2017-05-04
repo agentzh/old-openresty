@@ -241,7 +241,7 @@ OpenResty supports automatic upgrading for its meta model. See L<OpenResty::Spec
 
 =head1 AUTHOR
 
-agentzh C<< <agentzh@yahoo.cn> >>
+agentzh C<< <agentzh@gmail.com> >>
 
 =head1 COPYRIGHT AND LICENSE
 

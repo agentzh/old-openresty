@@ -268,7 +268,7 @@ B<Note:> Actions have not yet been implemented.
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh at yahoo.cn> >>.
+Yichun Zhang (agentzh) C<< <agentzh at yahoo.cn> >>.
 
 =head1 SEE ALSO
 

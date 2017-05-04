@@ -39,7 +39,7 @@ OpenResty.pm could be run by lighttpd 1.4.x's mod_fastcgi module. But note that 
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>.
+Yichun Zhang (agentzh) C<< <agentzh@gmail.com> >>.
 
 =head1 SEE ALSO
 

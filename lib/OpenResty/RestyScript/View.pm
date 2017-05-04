@@ -3106,7 +3106,7 @@ This compiler class is generated automatically by L<Parse::Yapp> from the gramma
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh at yahoo dot cn> >>
+Yichun Zhang (agentzh) C<< <agentzh@gmail.com> >>
 
 =head1 SEE ALSO
 

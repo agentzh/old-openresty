@@ -6,7 +6,7 @@ OpenResty::Spec::REST - OpenResty REST Service Specification [draft]
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) <agentzh@yahoo.cn>
+Yichun Zhang (agentzh) <agentzh@gmail.com>
 
 =head1 VERSION
 

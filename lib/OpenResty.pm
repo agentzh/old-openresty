@@ -946,7 +946,7 @@ L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=OpenResty>.
 
 =over
 
-=item Agent Zhang (agentzh) C<< <agentzh at yahoo dot cn> >>
+=item Yichun Zhang (agentzh) C<< <agentzh@gmail.com> >>
 
 =item Xunxin Wan (万珣新) C<< <wanxunxin at gmail dot com > >>
 
@@ -968,7 +968,7 @@ OpenResty is licensed under the BSD License:
 
 Copyright (c) 2007-2008, Yahoo! China EEEE Works, Alibaba Inc. All rights reserved.
 
-Copyright (c) 2007-2008, Agent Zhang (agentzh). All rights reserved.
+Copyright (c) 2007-2008, Yichun Zhang (agentzh). All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 

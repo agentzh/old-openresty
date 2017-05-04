@@ -8,7 +8,7 @@ OpenResty::Tutorial::GettingStarted_cn - 中文版快速入门教程
 
 =head2 申请 OpenResty 帐户
 
-OpenResty 帐户是以应用为单位的。一般来说，每一个应用都应注册一个独立的 OpenResty 帐户。目前注册帐户的方法是写信给我们：C<agentzh@yahoo.cn>.
+OpenResty 帐户是以应用为单位的。一般来说，每一个应用都应注册一个独立的 OpenResty 帐户。目前注册帐户的方法是写信给我们：C<agentzh@gmail.com>.
 
 请在来信中附上你希望的帐户名（全部小写字母加数字）以及 Admin 角色的初始密码。一般来说，我们创建的帐户都位于下面这个服务器：C<api.openresty.org>.
 
@@ -166,7 +166,7 @@ L<http://svn.openfoundry.org/openapi/trunk/clients/js/>
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
+Yichun Zhang (agentzh) C<< <agentzh@gmail.com> >>
 
 =head1 SEE ALSO
 

@@ -173,5 +173,5 @@ that L<OpenResty> uses.
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
+Yichun Zhang (agentzh) C<< <agentzh@gmail.com> >>
 

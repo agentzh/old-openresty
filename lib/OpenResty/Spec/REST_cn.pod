@@ -6,7 +6,7 @@ OpenResty::Spec::REST_cn - OpenResty REST 协议白皮书（草案）
 
 =head1 AUTHOR
 
-Agent Zhang (章亦春) <agentzh@yahoo.cn>
+Yichun Zhang (章亦春) <agentzh@gmail.com>
 Carrie Zhang (张皛珏)
 
 =head1 VERSION

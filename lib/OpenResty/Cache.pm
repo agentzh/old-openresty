@@ -217,7 +217,7 @@ Note that C<filecache> could eat up your hard disk very quickly. (you'll observe
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>.
+Yichun Zhang (agentzh) C<< <agentzh@gmail.com> >>.
 
 =head1 SEE ALSO
 

@@ -220,7 +220,7 @@ OpenResty::Backend::PgMocked - A mocked-up OpenResty backend for the Pg backend
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
+Yichun Zhang (agentzh) C<< <agentzh@gmail.com> >>
 
 =head1 SEE ALSO
 

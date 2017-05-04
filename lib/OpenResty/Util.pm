@@ -158,7 +158,7 @@ Returns a mocked-up CGI object from URL (specified by C<$url>) and the HTTP requ
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>.
+Yichun Zhang (agentzh) C<< <agentzh@gmail.com> >>.
 
 =head1 SEE ALSO
 

@@ -55,7 +55,7 @@ This OpenResty handler class implements the Unsafe API, i.e., the C</=/unsafe/*>
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
+Yichun Zhang (agentzh) C<< <agentzh@gmail.com> >>
 
 =head1 SEE ALSO
 

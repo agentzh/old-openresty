@@ -169,7 +169,7 @@ OpenResty::Backend::Prophet - OpenResty backend for Prophet databases
 
 =head1 AUTHOR
 
-Jesse Vincent C<< jesse@bestpractical.com >>, Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
+Jesse Vincent C<< jesse@bestpractical.com >>, Yichun Zhang (agentzh) C<< <agentzh@gmail.com> >>
 
 =head1 SEE ALSO
 

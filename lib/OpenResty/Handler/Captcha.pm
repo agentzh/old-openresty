@@ -588,7 +588,7 @@ This OpenResty handler class implements the Captcha API, i.e., the C</=/captcha/
 =head1 AUTHORS
 
 chaoslawful (王晓哲) C<< <chaoslawful at gmail dot com> >>,
-Agent Zhang (agentzh) C<< <agentzh@yahoo.cn> >>
+Yichun Zhang (agentzh) C<< <agentzh@gmail.com> >>
 
 =head1 SEE ALSO
 

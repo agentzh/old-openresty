@@ -52,7 +52,7 @@ Standalone 服务器使用 L<Net::Server::PreFork> 模块，启动方便，适�
 
 =head1 AUTHOR
 
-Agent Zhang (章亦春) C<< <agentzh@yahoo.cn> >>
+Yichun Zhang (章亦春) C<< <agentzh@gmail.com> >>
 
 =head1 LICENSE
 

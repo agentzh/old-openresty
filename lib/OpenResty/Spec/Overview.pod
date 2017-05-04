@@ -245,7 +245,7 @@ After creating a model, one can insert data via an HTTP POST request:
   {
     "title":"My first post",
     "content":"Blah blah blah...",
-    "author":"Agent Zhang"
+    "author":"Yichun Zhang"
   }
 
 Multiple rows can be inserted at a time as well, but there's a limit.
@@ -660,7 +660,7 @@ L<http://svn.openfoundry.org/openapi/trunk/demo/>.
 
 =head1 AUTHOR
 
-Agent Zhang C<< <agentzh@yahoo.cn> >>
+Yichun Zhang C<< <agentzh@gmail.com> >>
 
 =head1 COPYRIGHT AND LICENSE
 

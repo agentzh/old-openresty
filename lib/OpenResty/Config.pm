@@ -175,7 +175,7 @@ So in order to use the C<frontend.filtered> setting in the F<openresty.conf> fil
 
 =head1 AUTHOR
 
-Agent Zhang (agentzh) C<< <agentzh@yahoo.cn >>.
+Yichun Zhang (agentzh) C<< <agentzh@gmail.com >>.
 
 =head1 SEE ALSO
 
