@@ -226,7 +226,7 @@ BUGS
     <http://rt.cpan.org/NoAuth/Bugs.html?Dist=OpenResty>.
 
 AUTHORS
-    Agent Zhang (agentzh) "<agentzh at yahoo dot cn>"
+    Yichun Zhang (agentzh) "<agentzh at yahoo dot cn>"
     Xunxin Wan (万珣新) "<wanxunxin at gmail dot com >"
     chaoslawful (王晓哲) "<chaoslawful at gmail dot com>"
     Lei Yonghua (leiyh)
@@ -242,7 +242,7 @@ License and Copyright
     Copyright (c) 2007-2008, Yahoo! China EEEE Works, Alibaba Inc. All
     rights reserved.
 
-    Copyright (c) 2007-2008, Agent Zhang (agentzh). All rights reserved.
+    Copyright (c) 2007-2008, Yichun Zhang (agentzh). All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are
